@@ -18,11 +18,21 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "invite" | "compose" | "done";
+type View = "home" | "invite" | "compose" | "done";
+
+// August 2026, laid out Sun-Sat. Aug 1 falls on a Saturday.
+const AUG_1_WEEKDAY = 6;
+const MONTH_CELLS: (number | null)[] = [
+  ...Array.from({ length: AUG_1_WEEKDAY }, () => null),
+  ...Array.from({ length: 31 }, (_, i) => i + 1),
+];
+while (MONTH_CELLS.length % 7 !== 0) MONTH_CELLS.push(null);
+const TODAY = 21;
+const EVENT_DAY = 26;
 
 export default function CalendarTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("invite");
+  const [view, setView] = useState<View>("home");
   const [body, setBody] = useState("");
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
@@ -33,6 +43,12 @@ export default function CalendarTask() {
   const c = CALENDAR_COPY[lang];
 
   const wrongAccept = () => say(WRONG_ACCEPT_HINT[lang]);
+  const notYet = () =>
+    say(
+      lang === "en"
+        ? "Creating new events is a skill for later — for now, open the invite you already have."
+        : "Crear eventos nuevos es una destreza para más adelante — por ahora, abre la invitación que ya tienes."
+    );
 
   const trySend = () => {
     if (!body.trim()) {
@@ -52,7 +68,7 @@ export default function CalendarTask() {
   };
 
   const restart = () => {
-    setView("invite");
+    setView("home");
     setBody("");
     setConfidence(null);
   };
@@ -79,7 +95,74 @@ export default function CalendarTask() {
         </button>
       </div>
 
-      <div className="relative mx-auto min-h-0 w-full max-w-[640px] flex-1 overflow-y-auto p-6">
+      <div className={`relative mx-auto min-h-0 w-full flex-1 overflow-y-auto p-6 ${view === "home" ? "max-w-[760px]" : "max-w-[640px]"}`}>
+      {view === "home" && (
+        <div className="rounded-xl border border-[var(--border)] bg-white">
+          <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border)] px-4 py-3">
+            <button
+              onClick={notYet}
+              className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-white px-4 text-[14px] font-medium text-[#3c4043] shadow-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] cursor-pointer"
+            >
+              <span className="text-[18px] leading-none text-[#34a853]">+</span> {c.create}
+            </button>
+            <div className="flex items-center gap-1 text-[#5f6368]">
+              <button onClick={notYet} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[var(--surface-muted)] cursor-pointer" aria-label="Previous month">‹</button>
+              <button onClick={notYet} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-[var(--surface-muted)] cursor-pointer" aria-label="Next month">›</button>
+            </div>
+            <span className="text-[19px] text-[#3c4043]">{c.monthLabel}</span>
+            <div className="flex-1" />
+            <div className="flex items-center gap-1 rounded-full border border-[var(--border)] p-0.5 text-[13px] text-[#3c4043]">
+              {[c.viewDay, c.viewWeek, c.viewMonth].map((v, i) => (
+                <button
+                  key={v}
+                  onClick={notYet}
+                  className={`rounded-full px-3 py-1 cursor-pointer ${i === 2 ? "bg-[var(--surface-muted)] font-medium" : "hover:bg-[var(--surface-muted)]"}`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-7 border-b border-[var(--border)] text-center text-[11px] font-medium uppercase tracking-wide text-[#5f6368]">
+            {c.weekdayLabels.map((d) => (
+              <div key={d} className="border-r border-[var(--border)] py-2 last:border-r-0">
+                {d}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7">
+            {MONTH_CELLS.map((day, i) => (
+              <div
+                key={i}
+                className="flex h-[76px] flex-col gap-1 border-b border-r border-[var(--border)] p-1.5 [&:nth-child(7n)]:border-r-0"
+              >
+                {day !== null && (
+                  <>
+                    <span
+                      className={`self-start rounded-full px-1.5 text-[12px] ${
+                        day === TODAY ? "bg-[#1a73e8] text-white font-medium" : "text-[#3c4043]"
+                      }`}
+                    >
+                      {day}
+                    </span>
+                    {day === EVENT_DAY && (
+                      <button
+                        onClick={() => setView("invite")}
+                        className="truncate rounded px-1.5 py-0.5 text-left text-[11px] font-medium text-white cursor-pointer"
+                        style={{ background: "#1a73e8" }}
+                      >
+                        {MEETING.time.split(" – ")[0]} {MEETING.title}
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {view === "invite" && (
         <div className="rounded-xl border border-[var(--border)] bg-white p-5">
           <div className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-[var(--accent)]">
@@ -200,7 +283,7 @@ export default function CalendarTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][view === "invite" ? 0 : 1]}
+        lesson={LESSONS[lang][view === "compose" || view === "done" ? 1 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
         askPersonLabel={c.askPerson}

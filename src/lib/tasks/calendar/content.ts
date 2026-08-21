@@ -13,6 +13,12 @@ export const CALENDAR_COPY: Record<Lang, {
   heading: string;
   helpBtn: string;
   langBtn: string;
+  create: string;
+  monthLabel: string;
+  viewDay: string;
+  viewWeek: string;
+  viewMonth: string;
+  weekdayLabels: string[];
   invitedBy: string;
   scheduleNote: string;
   accept: string;
@@ -41,6 +47,12 @@ export const CALENDAR_COPY: Record<Lang, {
     heading: "Calendar",
     helpBtn: "Help me with this step",
     langBtn: "Español",
+    create: "Create",
+    monthLabel: "August 2026",
+    viewDay: "Day",
+    viewWeek: "Week",
+    viewMonth: "Month",
+    weekdayLabels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     invitedBy: "Invited by",
     scheduleNote: "You're not scheduled to work this day.",
     accept: "Accept",
@@ -69,6 +81,12 @@ export const CALENDAR_COPY: Record<Lang, {
     heading: "Calendario",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
+    create: "Crear",
+    monthLabel: "Agosto de 2026",
+    viewDay: "Día",
+    viewWeek: "Semana",
+    viewMonth: "Mes",
+    weekdayLabels: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
     invitedBy: "Invitado por",
     scheduleNote: "No estás programado para trabajar ese día.",
     accept: "Aceptar",

@@ -58,6 +58,14 @@ export const RENAME_TARGET = "schedule-week-of-aug-24";
 
 export const FILES_COPY: Record<Lang, {
   heading: string;
+  newBtn: string;
+  navHome: string;
+  navMyDrive: string;
+  navShared: string;
+  foldersHeading: string;
+  sharedHeading: string;
+  sharedFolderName: string;
+  sharedFrom: string;
   helpBtn: string;
   langBtn: string;
   scenarioKicker: string;
@@ -87,6 +95,14 @@ export const FILES_COPY: Record<Lang, {
 }> = {
   en: {
     heading: "Hdrive",
+    newBtn: "New",
+    navHome: "Home",
+    navMyDrive: "My Drive",
+    navShared: "Shared with me",
+    foldersHeading: "Folders",
+    sharedHeading: "Shared with me",
+    sharedFolderName: "Cafe Shared Drive",
+    sharedFrom: "Shared by Maria Delgado",
     helpBtn: "Help me with this step",
     langBtn: "Español",
     scenarioKicker: "Today's situation",
@@ -116,6 +132,14 @@ export const FILES_COPY: Record<Lang, {
   },
   es: {
     heading: "Unidad compartida",
+    newBtn: "Nuevo",
+    navHome: "Inicio",
+    navMyDrive: "Mi unidad",
+    navShared: "Compartido conmigo",
+    foldersHeading: "Carpetas",
+    sharedHeading: "Compartido conmigo",
+    sharedFolderName: "Unidad compartida del café",
+    sharedFrom: "Compartido por Maria Delgado",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     scenarioKicker: "La situación de hoy",

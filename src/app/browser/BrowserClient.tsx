@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import MailClient from "../mail/MailClient";
 import PortalPage from "./PortalPage";
 import CalendarTask from "./CalendarTask";
 import FilesTask from "./FilesTask";
+import SpreadsheetTask from "./SpreadsheetTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import { SHELF_HEIGHT } from "@/components/Shelf";
@@ -15,7 +16,7 @@ import { LEVELS, levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 
-type TabKey = "mail" | "portal" | "calendar" | "files" | "handbook" | "incident" | "newtab";
+type TabKey = "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "handbook" | "incident" | "newtab";
 
 interface TabDef {
   key: TabKey;
@@ -36,6 +37,7 @@ const BASE_TABS: TabDef[] = [
   { key: "handbook", label: "Hdocs",  url: "hdocs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: "level1" },
   { key: "calendar", label: "Hcal",   url: "hcal.harborsidecafe.com",   icon: "📅", color: "#34a853", levelKey: "level2" },
   { key: "files",    label: "Hdrive", url: "hdrive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: "level2" },
+  { key: "spreadsheet", label: "Hsheets", url: "hsheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: "level2" },
 ];
 
 /** The 4-color Chrome circle logo */
@@ -207,13 +209,18 @@ export default function BrowserClient() {
     ?? openTabs[0];
 
   // ── Tab actions ────────────────────────────────────────────
+  // A stable counter (not Date.now()) for unique new-tab keys — several can
+  // open within the same millisecond, and this stays a pure render.
+  const newTabCounter = useRef(0);
+  const nextNewTabId = () => `newtab-${++newTabCounter.current}` as TabKey;
+
   const openNewTab = () => {
     if (!isLevel2) {
       say("Opening new tabs is a Level 2 skill — you'll unlock it once you reach Shift Lead!");
       return;
     }
     // Add a new-tab placeholder if not already open
-    const newTabId = `newtab-${Date.now()}` as TabKey;
+    const newTabId = nextNewTabId();
     const newTabDef: TabDef = {
       key: "newtab",
       label: "New Tab",
@@ -234,7 +241,7 @@ export default function BrowserClient() {
     if (remaining.length === 0) {
       // Never leave the student with zero tabs — open a fresh New Tab
       const freshNewTab: TabDef = {
-        key: `newtab-${Date.now()}` as TabKey,
+        key: nextNewTabId(),
         label: "New Tab",
         url: "newtab",
         icon: "",
@@ -378,6 +385,7 @@ export default function BrowserClient() {
         {active?.key === "portal"   && <PortalPage />}
         {active?.key === "calendar" && <CalendarTask />}
         {active?.key === "files"    && <FilesTask />}
+        {active?.key === "spreadsheet" && <SpreadsheetTask />}
         {active?.key === "incident" && <IncidentTask />}
         {active?.key === "handbook" && <HandbookTask />}
         {(active?.key === "newtab" || active?.key?.startsWith("newtab-")) && <NewTabPage />}

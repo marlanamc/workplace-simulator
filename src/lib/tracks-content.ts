@@ -128,9 +128,9 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
     built: true,
   },
   spreadsheet: {
-    label: "Read and trust a total",
-    description: "Enter numbers into a shared sheet and check that the total is right.",
-    built: false,
+    label: "Enter data and share a total",
+    description: "Enter this week's numbers into a shared sheet and email the total to your lead.",
+    built: true,
   },
 };
 
@@ -174,4 +174,5 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, { appKey: AppKey; tab?: str
   handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Hdocs" },
   calendar: { appKey: "browser", ctaLabel: "Open Browser" },
   files: { appKey: "browser", ctaLabel: "Open Browser" },
+  spreadsheet: { appKey: "browser", ctaLabel: "Open Browser" },
 };

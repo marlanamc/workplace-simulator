@@ -20,9 +20,14 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "browse" | "rename" | "share" | "done";
+type View = "home" | "browse" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
+const FOLDER_ICONS: Record<string, string> = {
+  Schedules: "📅",
+  Forms: "📝",
+  "Manager Memos": "🗒",
+};
 
 function normalize(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-").replace(/\.pdf$/, "");
@@ -30,7 +35,7 @@ function normalize(value: string) {
 
 export default function FilesTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("browse");
+  const [view, setView] = useState<View>("home");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
@@ -83,8 +88,20 @@ export default function FilesTask() {
     markComplete("files", "share_with_right_access");
   };
 
-  const restart = () => {
+  const openFolder = (f: string) => {
+    setFolder(f);
     setView("browse");
+  };
+
+  const notYet = () =>
+    say(
+      lang === "en"
+        ? "That's not part of today's task — open the shared folder instead."
+        : "Eso no es parte de la tarea de hoy — abre la carpeta compartida en su lugar."
+    );
+
+  const restart = () => {
+    setView("home");
     setQuery("");
     setFolder(null);
     setRenameValue("");
@@ -114,13 +131,67 @@ export default function FilesTask() {
         </button>
       </div>
 
-      <div className="relative mx-auto min-h-0 w-full max-w-[640px] flex-1 overflow-y-auto p-6">
-        <div className="mb-4 rounded-xl border border-[var(--warning-tint)] bg-[var(--warning-tint)] px-4 py-3">
-          <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
-            {c.scenarioKicker}
+      <div className={`relative mx-auto min-h-0 w-full flex-1 overflow-y-auto p-6 ${view === "home" ? "max-w-[720px]" : "max-w-[640px]"}`}>
+        {view === "home" && (
+          <div>
+            <div className="mb-5 flex flex-wrap items-center gap-3">
+              <button
+                onClick={notYet}
+                className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-white px-5 text-[14px] font-medium text-[#3c4043] shadow-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] cursor-pointer"
+              >
+                <span className="text-[18px] leading-none text-[#fbbc04]">+</span> {c.newBtn}
+              </button>
+              <div className="flex items-center gap-1 rounded-full border border-[var(--border)] p-0.5 text-[13px] text-[#3c4043]">
+                {[c.navHome, c.navMyDrive, c.navShared].map((v, i) => (
+                  <button
+                    key={v}
+                    onClick={i === 2 ? () => setView("browse") : notYet}
+                    className={`rounded-full px-3 py-1 cursor-pointer ${i === 0 ? "bg-[var(--surface-muted)] font-medium" : "hover:bg-[var(--surface-muted)]"}`}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <h3 className="mb-3 text-[15px] font-medium text-[#3c4043]">{c.foldersHeading}</h3>
+            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {FOLDERS.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => openFolder(f)}
+                  className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+                >
+                  <span className="text-[22px]">{FOLDER_ICONS[f]}</span>
+                  <span className="truncate text-[14px] font-medium text-[#3c4043]">{f}</span>
+                </button>
+              ))}
+            </div>
+
+            <h3 className="mb-3 text-[15px] font-medium text-[#3c4043]">{c.sharedHeading}</h3>
+            <button
+              onClick={() => setView("browse")}
+              className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-tint)] text-[16px]">
+                🗂
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-medium text-[#3c4043]">{c.sharedFolderName}</span>
+                <span className="block text-[12px] text-[var(--text-tertiary)]">{c.sharedFrom}</span>
+              </span>
+            </button>
           </div>
-          <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-primary)]">{c.scenario}</p>
-        </div>
+        )}
+
+        {view !== "home" && (
+          <div className="mb-4 rounded-xl border border-[var(--warning-tint)] bg-[var(--warning-tint)] px-4 py-3">
+            <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
+              {c.scenarioKicker}
+            </div>
+            <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-primary)]">{c.scenario}</p>
+          </div>
+        )}
 
         {view === "browse" && (
           <div className="rounded-xl border border-[var(--border)] bg-white">
@@ -276,7 +347,7 @@ export default function FilesTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][view === "browse" ? 0 : 1]}
+        lesson={LESSONS[lang][view === "share" ? 1 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
         askPersonLabel={c.askPerson}
