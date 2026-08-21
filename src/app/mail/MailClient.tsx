@@ -86,10 +86,10 @@ export default function MailClient() {
       {/* task bar */}
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent)] text-[13px] text-white">
-            ✉
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ea4335] text-[13px] text-white font-bold">
+            M
           </span>
-          <span className="text-[15px] font-medium">WorkMail</span>
+          <span className="text-[18px] font-medium text-[#5f6368]">Hmail</span>
         </div>
 
         <div className="flex-1" />

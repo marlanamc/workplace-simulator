@@ -95,10 +95,10 @@ export default function FilesTask() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1a73e8] text-[13px] text-white">
-          🗂
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#fbbc04] text-[13px] text-white font-bold">
+          △
         </span>
-        <span className="text-[15px] font-medium">{c.heading}</span>
+        <span className="text-[18px] font-medium text-[#5f6368]">Hdrive</span>
         <div className="flex-1" />
         <button
           onClick={() => setHelp(true)}

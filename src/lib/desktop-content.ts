@@ -16,8 +16,8 @@ export interface AppDef {
 }
 
 export const APP_DEFS: AppDef[] = [
-  { key: "browser", icon: "◧", color: "#1a73e8", state: "ready" },
-  { key: "pdf", icon: "▤", color: "#c5221f", state: "ready" },
+  { key: "browser", icon: "🌐", color: "#1a73e8", state: "ready" },
+  { key: "pdf", icon: "📄", color: "#ea4335", state: "ready" },
 ];
 
 interface AppCopy {
@@ -30,7 +30,7 @@ interface AppCopy {
 export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
   en: {
     browser: {
-      name: "Browser",
+      name: "Hchrome",
       kicker: "Your main workspace",
       brief: "Almost everything for the job lives here — email, your schedule, pay stubs, and forms all open as tabs.",
       points: ["Open a bookmarked site or a tab", "Read what it's asking you to do", "Reply, fill in, or submit — then check it off"],
@@ -44,7 +44,7 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
   },
   es: {
     browser: {
-      name: "Navegador",
+      name: "Hchrome",
       kicker: "Tu espacio principal",
       brief: "Casi todo el trabajo pasa por aquí — correo, tu horario, recibos de pago y formularios se abren como pestañas.",
       points: ["Abre un sitio guardado o una pestaña", "Lee lo que te pide", "Responde, llena o envía — y márcalo como hecho"],
@@ -136,15 +136,15 @@ export const RECENT_ITEMS: RecentItem[] = [
   {
     icon: "▦",
     color: "#8430ce",
-    title: { en: "Employee Portal", es: "Portal del empleado" },
+    title: { en: "Hportal", es: "Hportal" },
     subtitle: { en: "Check your schedule", es: "Revisa tu horario" },
     appKey: "browser",
     tab: "portal",
   },
   {
-    icon: "▤",
-    color: "#3c4043",
-    title: { en: "Handbook", es: "Manual" },
+    icon: "📄",
+    color: "#4285f4",
+    title: { en: "Hdocs", es: "Hdocs" },
     subtitle: { en: "Look something up", es: "Busca algo" },
     appKey: "browser",
     tab: "handbook",

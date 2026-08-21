@@ -86,7 +86,7 @@ export const FILES_COPY: Record<Lang, {
   askPerson: string;
 }> = {
   en: {
-    heading: "Shared Drive",
+    heading: "Hdrive",
     helpBtn: "Help me with this step",
     langBtn: "Español",
     scenarioKicker: "Today's situation",
