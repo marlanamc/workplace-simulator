@@ -16,6 +16,7 @@ import { useNudge } from "@/lib/use-nudge";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { logout } from "@/app/actions";
+import { TASK_INFO, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
 
 export const SHELF_HEIGHT = 56;
 
@@ -63,10 +64,13 @@ export default function Shelf({ displayName }: { displayName: string }) {
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [progressOpen, setProgressOpen] = useState(false);
   const [brightness, setBrightness] = useState(80);
   const { nudge, say } = useNudge(4200);
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
-  const { points, justEarnedPoints } = useProgress();
+  const { points, justEarnedPoints, completedTaskKeys, currentTrack } = useProgress();
+  const currentLevel = levelForTrack(currentTrack.key);
+  const trackComplete = isTrackComplete(currentTrack, completedTaskKeys);
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -90,8 +94,10 @@ export default function Shelf({ displayName }: { displayName: string }) {
 
   const accountBoxRef = useRef<HTMLDivElement>(null);
   const launcherPanelRef = useRef<HTMLDivElement>(null);
+  const progressBoxRef = useRef<HTMLDivElement>(null);
   useClickOutside(accountBoxRef, accountOpen, () => setAccountOpen(false));
   useClickOutside(launcherPanelRef, launcherOpen, closeLauncher);
+  useClickOutside(progressBoxRef, progressOpen, () => setProgressOpen(false));
 
   return (
     <>
@@ -103,6 +109,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
         <button
           onClick={() => {
             setAccountOpen(false);
+            setProgressOpen(false);
             if (launcherOpen) closeLauncher();
             else setLauncherOpen(true);
           }}
@@ -128,16 +135,73 @@ export default function Shelf({ displayName }: { displayName: string }) {
             </button>
           ))}
         </div>
-        {/* points HUD */}
-        <div
-          className={`mr-1 flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white transition-transform ${
-            justEarnedPoints ? "scale-110" : ""
-          }`}
-        >
-          <span aria-hidden>★</span>
-          {points}
-          {justEarnedPoints && (
-            <span className="text-[11px] font-semibold text-[var(--success)]">+{justEarnedPoints}</span>
+        {/* points HUD — click to see your level and current progress */}
+        <div className="relative mr-1" ref={progressBoxRef}>
+          <button
+            onClick={() => {
+              closeLauncher();
+              setAccountOpen(false);
+              setProgressOpen((v) => !v);
+            }}
+            className={`flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white transition-transform cursor-pointer hover:bg-white/15 ${
+              justEarnedPoints ? "scale-110" : ""
+            }`}
+          >
+            <span aria-hidden>★</span>
+            {points}
+            {justEarnedPoints && (
+              <span className="text-[11px] font-semibold text-[var(--success)]">+{justEarnedPoints}</span>
+            )}
+          </button>
+
+          {progressOpen && (
+            <div className="absolute right-1/2 bottom-[46px] z-40 w-[280px] translate-x-1/2 rounded-2xl bg-white p-4 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
+              <div className="text-[11px] font-semibold uppercase tracking-wide text-[var(--accent)]">
+                {currentLevel.title}
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <span className="text-[14px] font-medium">{currentTrack.title}</span>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                    trackComplete
+                      ? "bg-[var(--success-tint)] text-[var(--success)]"
+                      : "bg-[var(--accent-tint)] text-[var(--accent)]"
+                  }`}
+                >
+                  {trackComplete ? "Complete" : "In progress"}
+                </span>
+              </div>
+              <div className="mt-2.5 flex flex-col gap-1.5">
+                {currentTrack.taskKeys.map((taskKey) => {
+                  const done = completedTaskKeys.includes(taskKey);
+                  return (
+                    <div key={taskKey} className="flex items-center gap-2">
+                      <span
+                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${
+                          done
+                            ? "bg-[var(--success)] text-white"
+                            : "bg-[var(--surface-muted)] text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
+                        }`}
+                      >
+                        {done ? "✓" : ""}
+                      </span>
+                      <span
+                        className={`text-[13px] ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
+                      >
+                        {TASK_INFO[taskKey].label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5 text-[12px] text-[var(--text-tertiary)]">
+                <span>★ {points} pts total</span>
+              </div>
+              <div
+                className="absolute bottom-[-6px] left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-white"
+                aria-hidden
+              />
+            </div>
           )}
         </div>
 
@@ -146,6 +210,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
           <button
             onClick={() => {
               closeLauncher();
+              setProgressOpen(false);
               setAccountOpen((v) => !v);
             }}
             className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-white/90 cursor-pointer hover:bg-white/10"
