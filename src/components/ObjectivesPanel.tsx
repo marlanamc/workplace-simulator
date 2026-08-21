@@ -2,15 +2,26 @@
 
 import { useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
-import { TRACKS, TASK_INFO, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
+import { useWindowManager } from "@/lib/window-manager";
+import { TRACKS, TASK_INFO, LEVELS, TAB_LEVEL_KEYS, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
 import { useClickOutside } from "@/lib/use-click-outside";
 
 export default function ObjectivesPanel() {
   const [open, setOpen] = useState(false);
   const { completedTaskKeys, currentTrack, certificateTrackKeys, learnerId } = useProgress();
+  const { browserTab, active: activeApp } = useWindowManager();
   const panelRef = useRef<HTMLDivElement>(null);
   useClickOutside(panelRef, open, () => setOpen(false));
-  const currentLevel = levelForTrack(currentTrack.key);
+
+  const progressLevel = levelForTrack(currentTrack.key);
+  // Whatever level's tab is actually on screen right now, when the Browser
+  // is the active app — so the panel matches what a learner is looking at
+  // (e.g. after using the Levels navigator to look back at an earlier
+  // level), not just their overall progress. Falls back to the progress
+  // level when nothing maps (a blank New Tab, or the Browser isn't open).
+  const viewedLevelKey = activeApp === "browser" ? TAB_LEVEL_KEYS[browserTab] : undefined;
+  const currentLevel = (viewedLevelKey && LEVELS.find((l) => l.key === viewedLevelKey)) || progressLevel;
+  const levelTracks = TRACKS.filter((t) => currentLevel.trackKeys.includes(t.key));
 
   return (
     <>
@@ -36,7 +47,9 @@ export default function ObjectivesPanel() {
                 Your progress
               </div>
               <h2 className="mt-1 text-[20px] font-medium leading-tight">{currentLevel.title}</h2>
-              <p className="mt-1 text-[13px] text-[var(--text-secondary)]">{currentTrack.subtitle}</p>
+              {viewedLevelKey && viewedLevelKey !== progressLevel.key && (
+                <p className="mt-1 text-[13px] text-[var(--accent)]">Looking back at this level</p>
+              )}
             </div>
             <button
               onClick={() => setOpen(false)}
@@ -74,58 +87,64 @@ export default function ObjectivesPanel() {
             </div>
           )}
 
-          {(() => {
-            const trackComplete = isTrackComplete(currentTrack, completedTaskKeys);
-            return (
-              <div
-                className={`rounded-xl border p-4 ${
-                  trackComplete
-                    ? "border-[var(--success)] bg-[var(--success-tint)]"
-                    : "border-[var(--accent)] bg-[var(--accent-tint)]"
-                }`}
-              >
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-[14px] font-semibold text-[var(--text-primary)]">{currentTrack.title}</span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                      trackComplete ? "bg-[var(--success)] text-white" : "bg-[var(--accent)] text-white"
-                    }`}
-                  >
-                    {trackComplete ? "Complete" : "In progress"}
-                  </span>
-                </div>
-            <div className="flex flex-col gap-1.5">
-              {currentTrack.taskKeys.map((taskKey) => {
-                const info = TASK_INFO[taskKey];
-                const done = completedTaskKeys.includes(taskKey);
-                return (
-                  <div key={taskKey} className="flex items-start gap-2.5">
+          <div className="flex flex-col gap-3">
+            {levelTracks.map((track) => {
+              const trackComplete = isTrackComplete(track, completedTaskKeys);
+              return (
+                <div
+                  key={track.key}
+                  className={`rounded-xl border p-4 ${
+                    trackComplete
+                      ? "border-[var(--success)] bg-[var(--success-tint)]"
+                      : "border-[var(--accent)] bg-[var(--accent-tint)]"
+                  }`}
+                >
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <span className="text-[14px] font-semibold text-[var(--text-primary)]">{track.title}</span>
+                      <p className="text-[12px] text-[var(--text-secondary)]">{track.subtitle}</p>
+                    </div>
                     <span
-                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
-                        done
-                          ? "bg-[var(--success)] text-white"
-                          : "bg-white text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                        trackComplete ? "bg-[var(--success)] text-white" : "bg-[var(--accent)] text-white"
                       }`}
                     >
-                      {done ? "✓" : ""}
+                      {trackComplete ? "Complete" : "In progress"}
                     </span>
-                    <div className="min-w-0 flex-1">
-                      <div
-                        className={`text-[13px] font-medium ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
-                      >
-                        {info.label}
-                      </div>
-                      <div className="text-[12px] text-[var(--text-tertiary)]">
-                        {info.built ? info.description : `${info.description} (not built yet)`}
-                      </div>
-                    </div>
                   </div>
-                );
-              })}
+                  <div className="flex flex-col gap-1.5">
+                    {track.taskKeys.map((taskKey) => {
+                      const info = TASK_INFO[taskKey];
+                      const done = completedTaskKeys.includes(taskKey);
+                      return (
+                        <div key={taskKey} className="flex items-start gap-2.5">
+                          <span
+                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                              done
+                                ? "bg-[var(--success)] text-white"
+                                : "bg-white text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
+                            }`}
+                          >
+                            {done ? "✓" : ""}
+                          </span>
+                          <div className="min-w-0 flex-1">
+                            <div
+                              className={`text-[13px] font-medium ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
+                            >
+                              {info.label}
+                            </div>
+                            <div className="text-[12px] text-[var(--text-tertiary)]">
+                              {info.built ? info.description : `${info.description} (not built yet)`}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })}
+          </div>
 
           {certificateTrackKeys.length < TRACKS.length && (
             <p className="text-[12px] text-[var(--text-tertiary)]">

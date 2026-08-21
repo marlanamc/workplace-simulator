@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MailClient from "../mail/MailClient";
 import PortalPage from "./PortalPage";
 import CalendarTask from "./CalendarTask";
@@ -12,7 +12,7 @@ import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
-import { LEVELS, levelForTrack } from "@/lib/tracks-content";
+import { LEVELS, TAB_LEVEL_KEYS, levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 
@@ -31,13 +31,13 @@ interface TabDef {
 }
 
 const BASE_TABS: TabDef[] = [
-  { key: "mail",     label: "Hmail",  url: "hmail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: "level1" },
-  { key: "portal",   label: "Hportal",url: "hportal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: "level2" },
-  { key: "incident", label: "Hforms", url: "hforms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: "level2" },
-  { key: "handbook", label: "Hdocs",  url: "hdocs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: "level2" },
-  { key: "calendar", label: "Hcal",   url: "hcal.harborsidecafe.com",   icon: "📅", color: "#34a853", levelKey: "level3" },
-  { key: "files",    label: "Hdrive", url: "hdrive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: "level3" },
-  { key: "spreadsheet", label: "Hsheets", url: "hsheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: "level3" },
+  { key: "mail",     label: "Hmail",  url: "hmail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: TAB_LEVEL_KEYS.mail },
+  { key: "portal",   label: "Hportal",url: "hportal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
+  { key: "incident", label: "Hforms", url: "hforms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
+  { key: "handbook", label: "Hdocs",  url: "hdocs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: TAB_LEVEL_KEYS.handbook },
+  { key: "calendar", label: "Hcal",   url: "hcal.harborsidecafe.com",   icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS.calendar },
+  { key: "files",    label: "Hdrive", url: "hdrive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: TAB_LEVEL_KEYS.files },
+  { key: "spreadsheet", label: "Hsheets", url: "hsheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS.spreadsheet },
 ];
 
 /** The 4-color Chrome circle logo */
@@ -144,7 +144,7 @@ function NewTabPage() {
 }
 
 export default function BrowserClient() {
-  const { browserTab, browserTabToken } = useWindowManager();
+  const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { currentTrack } = useProgress();
   const { nudge, say } = useNudge(3500);
 
@@ -180,23 +180,29 @@ export default function BrowserClient() {
       : defaultTab
   );
 
-  // Deep-link handling from launcher / shelf navigator
+  // Deep-link handling from launcher / shelf navigator / Levels dropdown.
+  // `browserTabExplicit` (from window-manager) tells "go to this exact tab"
+  // (a CTA, a Recent item, the Levels navigator) apart from a bare re-open
+  // (pinned shelf icon) that should just resync to current progress —
+  // relying on whether the *value* changed doesn't work, since re-picking
+  // the same level/tab twice in a row is a real, common case.
   const [lastToken, setLastToken] = useState(browserTabToken);
-  const [lastBrowserTab, setLastBrowserTab] = useState(browserTab);
   if (browserTabToken !== lastToken) {
     setLastToken(browserTabToken);
-    const explicitTabRequested = browserTab !== lastBrowserTab;
-    setLastBrowserTab(browserTab);
-    const newLevelKey = levelForTrack(currentTrack.key).key;
-    const newLevelDef = LEVELS.find((l) => l.key === newLevelKey);
-    if (explicitTabRequested && BASE_TABS.some((t) => t.key === browserTab)) {
+    if (browserTabExplicit && BASE_TABS.some((t) => t.key === browserTab)) {
+      const tabDef = BASE_TABS.find((t) => t.key === browserTab)!;
+      const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
       setActiveTab(browserTab as TabKey);
-      // Ensure that tab is open in our tab list
-      const tabDef = BASE_TABS.find((t) => t.key === browserTab);
-      if (tabDef && !openTabs.some((t) => t.key === browserTab)) {
+      if (activeLevelKey !== tabDef.levelKey) {
+        // Jumping to a different level's tab — start clean instead of
+        // mixing tab strips from two different levels together.
+        setOpenTabs([tabDef]);
+      } else if (!openTabs.some((t) => t.key === browserTab)) {
         setOpenTabs((prev) => [...prev, tabDef]);
       }
     } else {
+      const newLevelKey = levelForTrack(currentTrack.key).key;
+      const newLevelDef = LEVELS.find((l) => l.key === newLevelKey);
       const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
       if (activeLevelKey !== newLevelKey) {
         setOpenTabs(BASE_TABS.filter((t) => t.levelKey === newLevelKey));
@@ -204,6 +210,13 @@ export default function BrowserClient() {
       }
     }
   }
+
+  // Mirror the actually-active tab back to window-manager on every internal
+  // switch (bookmark click, ChromeTab click, etc.) — not just deep links —
+  // so other UI (the Objectives panel) can always tell what's on screen.
+  useEffect(() => {
+    setBrowserTab(activeTab);
+  }, [activeTab, setBrowserTab]);
 
   const active = [...openTabs].find((t) => t.key === activeTab)
     ?? openTabs[0];

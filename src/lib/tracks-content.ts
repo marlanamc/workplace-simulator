@@ -107,6 +107,44 @@ export const LEVELS: Level[] = [
   },
 ];
 
+/** A group of levels sharing one job title/story arc — mirrors the curriculum's act-N folders. Purely a display grouping; nothing structural depends on it. */
+export interface Act {
+  key: string;
+  title: string;
+  levelKeys: string[];
+}
+
+/**
+ * Only lists acts that have at least one level actually built in `LEVELS` —
+ * add an act's entry here as its first level ships, same incremental
+ * pattern as everything else in this file. The full 7-act roadmap lives in
+ * `curriculum/00-scope-and-sequence.md`.
+ */
+export const ACTS: Act[] = [
+  { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2"] },
+  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3"] },
+];
+
+export function actForLevel(level: Level): Act | undefined {
+  return ACTS.find((a) => a.levelKeys.includes(level.key));
+}
+
+/**
+ * Which level each Browser tab belongs to. Single source of truth for
+ * BrowserClient's tab strip *and* for other UI (e.g. the Objectives panel)
+ * that needs to know which level's checklist matches whatever tab is
+ * currently open.
+ */
+export const TAB_LEVEL_KEYS: Record<string, string> = {
+  mail: "level1",
+  portal: "level2",
+  incident: "level2",
+  handbook: "level2",
+  calendar: "level3",
+  files: "level3",
+  spreadsheet: "level3",
+};
+
 export function levelForTrack(trackKey: string): Level {
   return LEVELS.find((l) => l.trackKeys.includes(trackKey)) ?? LEVELS[LEVELS.length - 1];
 }

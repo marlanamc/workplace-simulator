@@ -11,6 +11,14 @@ interface WindowManagerState {
   apps: Partial<Record<AppKey, AppWindowState>>;
   active: AppKey | null;
   browserTab: string;
+  /**
+   * Whether the current `browserTab` was explicitly requested (a CTA, the
+   * Levels navigator, a recent item — the caller named a specific tab) vs.
+   * just a bare re-open (pinned shelf icon, generic launcher open) that
+   * should resync to whatever the learner's actual progress level is.
+   * Read by BrowserClient to tell "go here" apart from "reopen where I was."
+   */
+  browserTabExplicit: boolean;
   browserTabToken: number;
   pdfDocId: string | null;
   pdfDocToken: number;
@@ -22,6 +30,8 @@ interface WindowManagerValue extends WindowManagerState {
   closeApp: (key: AppKey) => void;
   minimizeActive: () => void;
   isOpen: (key: AppKey) => boolean;
+  /** BrowserClient reports its actually-active tab here on every internal switch (bookmark click, etc.), independent of the explicit-deep-link token/flag above — this is what other UI (the Objectives panel) reads to know what's on screen right now. */
+  setBrowserTab: (tab: string) => void;
 }
 
 const WindowManagerContext = createContext<WindowManagerValue | null>(null);
@@ -31,6 +41,7 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
     apps: {},
     active: null,
     browserTab: "mail",
+    browserTabExplicit: false,
     browserTabToken: 0,
     pdfDocId: null,
     pdfDocToken: 0,
@@ -48,6 +59,7 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
         apps: { ...s.apps, [key]: { minimized: false } },
         active: key,
         browserTab: key === "browser" && opts?.tab ? opts.tab : s.browserTab,
+        browserTabExplicit: key === "browser" ? !!opts?.tab : s.browserTabExplicit,
         browserTabToken:
           key === "browser" && (opts?.tab || isFreshBrowserOpen) ? s.browserTabToken + 1 : s.browserTabToken,
         pdfDocId: key === "pdf" && opts?.docId ? opts.docId : s.pdfDocId,
@@ -62,15 +74,21 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
       const entry = s.apps[key];
       // Restoring the Browser from closed or minimized is also a "fresh open" —
       // bump the token so BrowserClient re-checks its tab against current
-      // progress, same as opening it via a CTA or deep link.
+      // progress, same as opening it via a CTA or deep link. No explicit tab
+      // was named, so this always resyncs to current progress, not a specific spot.
       const isFreshBrowserReopen = key === "browser" && (!entry || entry.minimized);
       const browserTabToken = isFreshBrowserReopen ? s.browserTabToken + 1 : s.browserTabToken;
-      if (!entry) return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken };
+      const browserTabExplicit = isFreshBrowserReopen ? false : s.browserTabExplicit;
+      if (!entry) return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken, browserTabExplicit };
       if (s.active === key && !entry.minimized) {
         return { ...s, apps: { ...s.apps, [key]: { minimized: true } }, active: null };
       }
-      return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken };
+      return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken, browserTabExplicit };
     });
+  }, []);
+
+  const setBrowserTab = useCallback((tab: string) => {
+    setState((s) => (s.browserTab === tab ? s : { ...s, browserTab: tab }));
   }, []);
 
   const closeApp = useCallback((key: AppKey) => {
@@ -92,7 +110,7 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
 
   return (
     <WindowManagerContext.Provider
-      value={{ ...state, openApp, toggleFromShelf, closeApp, minimizeActive, isOpen }}
+      value={{ ...state, openApp, toggleFromShelf, closeApp, minimizeActive, isOpen, setBrowserTab }}
     >
       {children}
     </WindowManagerContext.Provider>

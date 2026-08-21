@@ -16,7 +16,7 @@ import { useNudge } from "@/lib/use-nudge";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { logout } from "@/app/actions";
-import { TASK_INFO, LEVELS, isTrackComplete, isLevelComplete, levelForTrack } from "@/lib/tracks-content";
+import { TASK_INFO, LEVELS, ACTS, isTrackComplete, isLevelComplete, levelForTrack } from "@/lib/tracks-content";
 
 export const SHELF_HEIGHT = 56;
 
@@ -150,30 +150,44 @@ export default function Shelf({ displayName }: { displayName: string }) {
           </button>
 
           {levelsOpen && (
-            <div className="absolute left-0 bottom-[46px] z-40 w-[240px] rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
-              {LEVELS.map((level, i) => {
-                const locked = i > currentLevelIndex;
-                const isCurrent = i === currentLevelIndex;
-                const complete = !locked && isLevelComplete(level, completedTaskKeys);
+            <div className="absolute left-0 bottom-[46px] z-40 max-h-[70vh] w-[260px] overflow-y-auto rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
+              {ACTS.map((act) => {
+                const actLevels = act.levelKeys
+                  .map((key) => LEVELS.findIndex((l) => l.key === key))
+                  .filter((i) => i !== -1);
+                if (actLevels.length === 0) return null;
                 return (
-                  <button
-                    key={level.key}
-                    onClick={() => goToLevel(level, i)}
-                    disabled={locked}
-                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] ${
-                      locked
-                        ? "cursor-not-allowed text-[var(--text-tertiary)]"
-                        : "cursor-pointer hover:bg-[var(--surface-muted)]"
-                    } ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}
-                  >
-                    <span aria-hidden>{locked ? "🔒" : complete ? "🏆" : "🏁"}</span>
-                    <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
-                    {isCurrent && (
-                      <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-                        Here
-                      </span>
-                    )}
-                  </button>
+                  <div key={act.key} className="mb-1 last:mb-0">
+                    <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">
+                      {act.title}
+                    </div>
+                    {actLevels.map((i) => {
+                      const level = LEVELS[i];
+                      const locked = i > currentLevelIndex;
+                      const isCurrent = i === currentLevelIndex;
+                      const complete = !locked && isLevelComplete(level, completedTaskKeys);
+                      return (
+                        <button
+                          key={level.key}
+                          onClick={() => goToLevel(level, i)}
+                          disabled={locked}
+                          className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] ${
+                            locked
+                              ? "cursor-not-allowed text-[var(--text-tertiary)]"
+                              : "cursor-pointer hover:bg-[var(--surface-muted)]"
+                          } ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}
+                        >
+                          <span aria-hidden>{locked ? "🔒" : complete ? "🏆" : "🏁"}</span>
+                          <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
+                          {isCurrent && (
+                            <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                              Here
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
                 );
               })}
             </div>
