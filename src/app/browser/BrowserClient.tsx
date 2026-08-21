@@ -10,6 +10,8 @@ import IncidentTask from "./IncidentTask";
 import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
+import { useProgress } from "@/lib/progress-context";
+import { LEVELS, levelForTrack } from "@/lib/tracks-content";
 
 type TabKey = "mail" | "portal" | "calendar" | "files" | "handbook" | "incident";
 
@@ -19,41 +21,70 @@ interface TabDef {
   url: string;
   icon: string;
   color: string;
+  /** Which level this tab belongs to — only tabs matching the level currently being viewed show up. */
+  levelKey: string;
 }
 
 const TABS: TabDef[] = [
-  { key: "mail", label: "WorkMail", url: "mail.harborsidecafe.com", icon: "✉", color: "#1a73e8" },
-  { key: "portal", label: "Employee Portal", url: "portal.harborsidecafe.com", icon: "▦", color: "#8430ce" },
-  { key: "calendar", label: "Calendar", url: "calendar.harborsidecafe.com", icon: "📅", color: "#188038" },
-  { key: "files", label: "Shared Drive", url: "drive.harborsidecafe.com", icon: "🗂", color: "#1a73e8" },
-  { key: "incident", label: "Incident Report", url: "incidents.harborsidecafe.com", icon: "⚠", color: "#b06000" },
-  { key: "handbook", label: "Handbook", url: "handbook.harborsidecafe.com", icon: "▤", color: "#3c4043" },
+  { key: "mail", label: "WorkMail", url: "mail.harborsidecafe.com", icon: "✉", color: "#1a73e8", levelKey: "level1" },
+  { key: "portal", label: "Employee Portal", url: "portal.harborsidecafe.com", icon: "▦", color: "#8430ce", levelKey: "level1" },
+  { key: "incident", label: "Incident Report", url: "incidents.harborsidecafe.com", icon: "⚠", color: "#b06000", levelKey: "level1" },
+  { key: "handbook", label: "Handbook", url: "handbook.harborsidecafe.com", icon: "▤", color: "#3c4043", levelKey: "level1" },
+  { key: "calendar", label: "Calendar", url: "calendar.harborsidecafe.com", icon: "📅", color: "#188038", levelKey: "level2" },
+  { key: "files", label: "Shared Drive", url: "drive.harborsidecafe.com", icon: "🗂", color: "#1a73e8", levelKey: "level2" },
 ];
 
 export default function BrowserClient() {
   const { browserTab, browserTabToken } = useWindowManager();
+  const { currentTrack } = useProgress();
+  const progressLevelKey = levelForTrack(currentTrack.key).key;
+  const defaultTab =
+    (LEVELS.find((l) => l.key === progressLevelKey)?.firstTabKey as TabKey | undefined) ?? "mail";
+
   const [activeTab, setActiveTab] = useState<TabKey>(
-    TABS.some((t) => t.key === browserTab) ? (browserTab as TabKey) : "mail"
+    TABS.some((t) => t.key === browserTab) ? (browserTab as TabKey) : defaultTab
   );
 
-  // A deep link (e.g. "Employee Portal" from the launcher) requests a tab —
-  // jump to it even if Browser is already open on a different tab. Adjusted
-  // during render (React's recommended pattern), not in an effect.
+  // Every time the Browser is freshly (re)opened — a deep link naming an exact
+  // tab (from the launcher, a task CTA, or the shelf's level navigator), or a
+  // generic "Open Browser" click — re-check which tab it should land on.
+  // Adjusted during render (React's recommended pattern), not in an effect,
+  // and gated on the token so this only runs on an actual open, never on
+  // every render while the Browser stays mounted through a task's own
+  // completion screen (which would yank it away before "Back to desktop").
   const [lastToken, setLastToken] = useState(browserTabToken);
+  const [lastBrowserTab, setLastBrowserTab] = useState(browserTab);
   if (browserTabToken !== lastToken) {
     setLastToken(browserTabToken);
-    if (TABS.some((t) => t.key === browserTab)) {
+    const explicitTabRequested = browserTab !== lastBrowserTab;
+    setLastBrowserTab(browserTab);
+    if (explicitTabRequested && TABS.some((t) => t.key === browserTab)) {
+      // A deep link named an exact tab — honor it even if it belongs to a
+      // level other than current progress (e.g. the shelf navigator
+      // revisiting a past level on purpose).
       setActiveTab(browserTab as TabKey);
+    } else {
+      // A generic reopen with no tab named — keep the current tab if it
+      // still belongs to the learner's current level, otherwise it's a
+      // stale tab left over from a level since moved past, so land on
+      // that level's first tab instead.
+      const activeLevelKey = TABS.find((t) => t.key === activeTab)?.levelKey;
+      setActiveTab(activeLevelKey === progressLevelKey ? activeTab : defaultTab);
     }
   }
 
   const active = TABS.find((t) => t.key === activeTab)!;
+  // Only show tabs from whichever level the active tab belongs to — a
+  // learner in Level 2 shouldn't see Level 1's tabs cluttering the strip.
+  // Revisiting an earlier level (via the shelf's navigator) swaps this
+  // whole set, the same way switching tabs within a level already works.
+  const visibleTabs = TABS.filter((t) => t.levelKey === active.levelKey);
 
   return (
     <div className="flex flex-col bg-[#dee1e6]" style={{ height: `calc(100vh - ${SHELF_HEIGHT}px)` }}>
       {/* tab strip */}
       <div className="flex items-end gap-1 bg-[#dee1e6] px-2 pt-2">
-        {TABS.map((t) => {
+        {visibleTabs.map((t) => {
           const isActive = t.key === activeTab;
           return (
             <button
@@ -90,7 +121,7 @@ export default function BrowserClient() {
 
       {/* bookmarks bar */}
       <div className="flex items-center gap-1 border-b border-[#c6ccd1] bg-white px-3 py-1.5">
-        {TABS.map((t) => (
+        {visibleTabs.map((t) => (
           <button
             key={t.key}
             onClick={() => setActiveTab(t.key)}

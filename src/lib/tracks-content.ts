@@ -42,6 +42,8 @@ export interface Level {
   /** Which tracks (by Track.key) belong to this level — the environment/wallpaper stays constant across all of them. */
   trackKeys: string[];
   wallpaper: string;
+  /** The Browser tab to land on when a learner opens or revisits this level. */
+  firstTabKey: string;
 }
 
 /**
@@ -56,17 +58,25 @@ export const LEVELS: Level[] = [
     title: "Level 1: New Hire",
     trackKeys: ["starter", "schedules", "judgment"],
     wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
+    firstTabKey: "mail",
   },
   {
     key: "level2",
     title: "Level 2: Shift Lead",
     trackKeys: ["growing"],
     wallpaper: "linear-gradient(155deg, #43266e 0%, #6d3f9e 42%, #9a5fc9 75%, #d4af65 100%)",
+    firstTabKey: "calendar",
   },
 ];
 
 export function levelForTrack(trackKey: string): Level {
   return LEVELS.find((l) => l.trackKeys.includes(trackKey)) ?? LEVELS[LEVELS.length - 1];
+}
+
+/** Levels the learner has actually reached — their current level and every one before it. */
+export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
+  const currentIndex = LEVELS.findIndex((l) => l.key === levelForTrack(activeTrack(completedTaskKeys).key).key);
+  return LEVELS.slice(0, currentIndex + 1);
 }
 
 export interface TaskInfo {

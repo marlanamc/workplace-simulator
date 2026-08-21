@@ -21,7 +21,7 @@ export default function TrackCelebration() {
         </div>
         <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title}</h2>
         <p className="mb-6 text-[15px] leading-relaxed text-[var(--text-secondary)]">
-          You finished every task in this track. Great work — it&rsquo;s saved to your certificates.
+          You finished everything in {celebrateTrack.title}. Great work — it&rsquo;s saved to your certificates.
         </p>
         <button
           onClick={dismissCelebration}

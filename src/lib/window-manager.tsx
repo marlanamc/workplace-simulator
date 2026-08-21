@@ -37,15 +37,23 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
   });
 
   const openApp = useCallback((key: AppKey, opts?: { tab?: string; docId?: string }) => {
-    setState((s) => ({
-      ...s,
-      apps: { ...s.apps, [key]: { minimized: false } },
-      active: key,
-      browserTab: key === "browser" && opts?.tab ? opts.tab : s.browserTab,
-      browserTabToken: key === "browser" && opts?.tab ? s.browserTabToken + 1 : s.browserTabToken,
-      pdfDocId: key === "pdf" && opts?.docId ? opts.docId : s.pdfDocId,
-      pdfDocToken: key === "pdf" && opts?.docId ? s.pdfDocToken + 1 : s.pdfDocToken,
-    }));
+    setState((s) => {
+      // A "fresh open" (the Browser wasn't already the visible app) is when the
+      // Browser should re-check which tab it's showing against current progress —
+      // not on every render while it stays open and mounted through a task's own
+      // completion screen.
+      const isFreshBrowserOpen = key === "browser" && s.active !== "browser";
+      return {
+        ...s,
+        apps: { ...s.apps, [key]: { minimized: false } },
+        active: key,
+        browserTab: key === "browser" && opts?.tab ? opts.tab : s.browserTab,
+        browserTabToken:
+          key === "browser" && (opts?.tab || isFreshBrowserOpen) ? s.browserTabToken + 1 : s.browserTabToken,
+        pdfDocId: key === "pdf" && opts?.docId ? opts.docId : s.pdfDocId,
+        pdfDocToken: key === "pdf" && opts?.docId ? s.pdfDocToken + 1 : s.pdfDocToken,
+      };
+    });
   }, []);
 
   /** Pinned-shelf-icon click: launch if closed, minimize if active, restore/focus otherwise. */

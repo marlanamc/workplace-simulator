@@ -16,7 +16,7 @@ import { useNudge } from "@/lib/use-nudge";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { logout } from "@/app/actions";
-import { TASK_INFO, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
+import { TASK_INFO, TRACKS, LEVELS, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
 
 export const SHELF_HEIGHT = 56;
 
@@ -65,12 +65,19 @@ export default function Shelf({ displayName }: { displayName: string }) {
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   const [progressOpen, setProgressOpen] = useState(false);
+  const [levelsOpen, setLevelsOpen] = useState(false);
   const [brightness, setBrightness] = useState(80);
   const { nudge, say } = useNudge(4200);
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
   const { points, justEarnedPoints, completedTaskKeys, currentTrack } = useProgress();
   const currentLevel = levelForTrack(currentTrack.key);
+  const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
   const trackComplete = isTrackComplete(currentTrack, completedTaskKeys);
+  const isLevelComplete = (level: (typeof LEVELS)[number]) =>
+    level.trackKeys.every((tk) => {
+      const track = TRACKS.find((t) => t.key === tk);
+      return track ? isTrackComplete(track, completedTaskKeys) : false;
+    });
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -95,9 +102,17 @@ export default function Shelf({ displayName }: { displayName: string }) {
   const accountBoxRef = useRef<HTMLDivElement>(null);
   const launcherPanelRef = useRef<HTMLDivElement>(null);
   const progressBoxRef = useRef<HTMLDivElement>(null);
+  const levelsBoxRef = useRef<HTMLDivElement>(null);
   useClickOutside(accountBoxRef, accountOpen, () => setAccountOpen(false));
   useClickOutside(launcherPanelRef, launcherOpen, closeLauncher);
   useClickOutside(progressBoxRef, progressOpen, () => setProgressOpen(false));
+  useClickOutside(levelsBoxRef, levelsOpen, () => setLevelsOpen(false));
+
+  const goToLevel = (level: (typeof LEVELS)[number], index: number) => {
+    if (index > currentLevelIndex) return;
+    openApp("browser", { tab: level.firstTabKey });
+    setLevelsOpen(false);
+  };
 
   return (
     <>
@@ -110,6 +125,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
           onClick={() => {
             setAccountOpen(false);
             setProgressOpen(false);
+            setLevelsOpen(false);
             if (launcherOpen) closeLauncher();
             else setLauncherOpen(true);
           }}
@@ -120,6 +136,55 @@ export default function Shelf({ displayName }: { displayName: string }) {
             boxShadow: launcherOpen ? "0 0 0 2px #fff, 0 0 0 4px rgba(255,255,255,0.35)" : "inset 0 0 0 1px rgba(0,0,0,0.08)",
           }}
         />
+
+        {/* level navigator — jump back to any level you've already reached */}
+        <div className="relative" ref={levelsBoxRef}>
+          <button
+            onClick={() => {
+              closeLauncher();
+              setAccountOpen(false);
+              setProgressOpen(false);
+              setLevelsOpen((v) => !v);
+            }}
+            aria-label="Levels"
+            title="Levels"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] text-white cursor-pointer hover:bg-white/10"
+            style={levelsOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
+          >
+            🏁
+          </button>
+
+          {levelsOpen && (
+            <div className="absolute left-0 bottom-[46px] z-40 w-[240px] rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
+              {LEVELS.map((level, i) => {
+                const locked = i > currentLevelIndex;
+                const isCurrent = i === currentLevelIndex;
+                const complete = !locked && isLevelComplete(level);
+                return (
+                  <button
+                    key={level.key}
+                    onClick={() => goToLevel(level, i)}
+                    disabled={locked}
+                    className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] ${
+                      locked
+                        ? "cursor-not-allowed text-[var(--text-tertiary)]"
+                        : "cursor-pointer hover:bg-[var(--surface-muted)]"
+                    } ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}
+                  >
+                    <span aria-hidden>{locked ? "🔒" : complete ? "🏆" : "🏁"}</span>
+                    <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
+                    {isCurrent && (
+                      <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                        Here
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
         <div className="flex flex-1 items-stretch justify-center gap-1 self-stretch">
           {APP_DEFS.map((a) => (
             <button
@@ -141,6 +206,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
             onClick={() => {
               closeLauncher();
               setAccountOpen(false);
+              setLevelsOpen(false);
               setProgressOpen((v) => !v);
             }}
             className={`flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white transition-transform cursor-pointer hover:bg-white/15 ${
@@ -211,6 +277,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
             onClick={() => {
               closeLauncher();
               setProgressOpen(false);
+              setLevelsOpen(false);
               setAccountOpen((v) => !v);
             }}
             className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-white/90 cursor-pointer hover:bg-white/10"

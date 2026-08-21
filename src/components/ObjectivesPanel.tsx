@@ -129,7 +129,7 @@ export default function ObjectivesPanel() {
 
           {certificateTrackKeys.length < TRACKS.length && (
             <p className="text-[12px] text-[var(--text-tertiary)]">
-              {certificateTrackKeys.length} of {TRACKS.length} tracks complete so far.
+              {certificateTrackKeys.length} of {TRACKS.length} certificates earned so far.
             </p>
           )}
         </div>

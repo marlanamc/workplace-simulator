@@ -62,7 +62,7 @@ export default async function CertificatePage({
 
           {earnedTracks.length === 0 ? (
             <p className="text-[15px] text-[var(--text-secondary)]">
-              No certificates earned yet — {displayName} hasn&apos;t finished a full track in the simulator.
+              No certificates earned yet — {displayName} hasn&apos;t completed a full level in the simulator.
             </p>
           ) : (
             <div className="flex flex-col gap-6">
