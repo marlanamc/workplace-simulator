@@ -1,6 +1,6 @@
 # Lesson 11: Read a Financial Aid Letter
 
-**Time:** 20 minutes total (10 + 10) · **Track:** 5 — Planning What's Next
+**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `financial-aid` · **Status:** not built yet — mirrors
 `paystub`'s shape on purpose (open a real document, answer a "find it"
 check), reusing the PDF Reader.
@@ -14,27 +14,19 @@ check), reusing the PDF Reader.
 - [ ] Simulator: a financial aid award letter PDF (real-looking, like the
       pay stub and safety report already in PDF Reader) reachable from the
       College Portal tab, with a findable award amount and accept-by date.
-- [ ] Google Classroom: post a real-looking mock award letter PDF with the
-      same two findable facts.
-- [ ] Have the real FAFSA/financial-aid office contact info ready in case a
-      student has real questions afterward — this lesson can surface real
-      needs.
+- [ ] No Google Classroom post needed yet — bundled into the Level 2
+      wrap-up assignment (`13a-level2-real-practice.md`). Have the real
+      FAFSA/financial-aid office contact info ready for when you do assign
+      it, in case a student has real questions afterward — this lesson can
+      surface real needs.
 
-## Part A: Simulator (~10 min) — once built
+## Simulator practice (~10–15 min) — once built
 1. Open the **Browser** → **College Portal**, then open the award letter —
    it opens as a real document in **PDF Reader**, the same way a pay stub
    did in Lesson 4.
 2. Find the award amount.
 3. Find the accept-by deadline.
 4. Answer the two quick check questions back in the portal.
-
-## Part B: Real Practice (~10 min)
-1. Open the mock award letter PDF from Google Classroom.
-2. Find the same two facts.
-3. Tell your teacher, or write the answers on a handout.
-
-**Optional extra challenge:** calculate how many days are left between
-today and the accept-by deadline.
 
 ## Confidence check-in
 - "I could find the amount and the deadline on a real award letter." 🙂 😐 🙁

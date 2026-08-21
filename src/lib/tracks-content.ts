@@ -7,8 +7,6 @@ export interface Track {
   title: string;
   subtitle: string;
   taskKeys: TaskKey[];
-  /** The desktop wallpaper while this is the learner's current track — a visual cue that the workspace has grown with them. */
-  wallpaper: string;
 }
 
 export const TRACKS: Track[] = [
@@ -17,30 +15,59 @@ export const TRACKS: Track[] = [
     title: "Getting Started",
     subtitle: "Your first jobs on shift",
     taskKeys: ["mail"],
-    wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
   },
   {
     key: "schedules",
     title: "Schedules & Documents",
     subtitle: "Keep the shift running smoothly",
     taskKeys: ["schedule", "timeclock", "paystub"],
-    wallpaper: "linear-gradient(155deg, #1e8e7e 0%, #2fa696 42%, #5cc0ab 75%, #9adfc4 100%)",
   },
   {
     key: "judgment",
     title: "Judgment & Follow-Through",
     subtitle: "Handle it like a lead",
     taskKeys: ["incident", "handbook"],
-    wallpaper: "linear-gradient(155deg, #a34a1f 0%, #c06a2f 42%, #d99248 75%, #eec27a 100%)",
   },
   {
     key: "growing",
     title: "Growing at Work",
     subtitle: "New tools that come with the promotion",
     taskKeys: ["calendar", "files", "spreadsheet"],
+  },
+];
+
+export interface Level {
+  key: string;
+  title: string;
+  /** Which tracks (by Track.key) belong to this level — the environment/wallpaper stays constant across all of them. */
+  trackKeys: string[];
+  wallpaper: string;
+}
+
+/**
+ * A level bundles several tracks into one shared environment — one job
+ * title, one moment in the story. Finishing every track in a level is what
+ * moves a learner into the next one (new emails, new schedule, a new
+ * wallpaper) — nothing changes between tracks *within* the same level.
+ */
+export const LEVELS: Level[] = [
+  {
+    key: "level1",
+    title: "Level 1: New Hire",
+    trackKeys: ["starter", "schedules", "judgment"],
+    wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
+  },
+  {
+    key: "level2",
+    title: "Level 2: Shift Lead",
+    trackKeys: ["growing"],
     wallpaper: "linear-gradient(155deg, #43266e 0%, #6d3f9e 42%, #9a5fc9 75%, #d4af65 100%)",
   },
 ];
+
+export function levelForTrack(trackKey: string): Level {
+  return LEVELS.find((l) => l.trackKeys.includes(trackKey)) ?? LEVELS[LEVELS.length - 1];
+}
 
 export interface TaskInfo {
   label: string;

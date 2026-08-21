@@ -1,11 +1,11 @@
 # Lesson 10: Navigate a College Portal
 
-**Time:** 20 minutes total (10 + 10) · **Track:** 5 — Planning What's Next
+**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `enrollment` · **Status:** not built yet — first lesson of
-Track 5, a parallel storyline layered onto the same desktop.
-**Prerequisite:** Track 4 complete (or teacher's discretion — this track can
-run alongside Track 4 rather than strictly after it, since it's a separate
-storyline, not a continuation of workplace duties)
+Track 5, which runs alongside Track 4 inside Level 2 rather than after it —
+a parallel storyline on the same desktop, not a continuation of work duties.
+**Prerequisite:** none within Level 2 — can be done any time alongside
+Track 4, teacher's discretion
 
 ## We will learn...
 - navigate an unfamiliar portal under a real deadline — find what's due,
@@ -15,11 +15,11 @@ storyline, not a continuation of workplace duties)
 - [ ] Simulator: a new College Portal Browser tab/bookmark with an
       application deadline, a required-documents checklist, and a short
       "statement of interest" text box to submit.
-- [ ] Google Classroom: post a real (or realistic mock) community college
-      application page or PDF with the same shape — a deadline and a
-      checklist — and a prompt to find both.
+- [ ] No Google Classroom post needed yet — bundled into the Level 2
+      wrap-up assignment (`13a-level2-real-practice.md`), given after
+      Track 5 (and Track 4) are both done.
 
-## Part A: Simulator (~10 min) — once built
+## Simulator practice (~10–15 min) — once built
 1. Open the **Browser** → **College Portal** tab (new bookmark, alongside
    the work ones).
 2. Find the application deadline.
@@ -27,22 +27,14 @@ storyline, not a continuation of workplace duties)
 4. Write a short statement of interest (sentence starters available) and
    submit it.
 
-## Part B: Real Practice (~10 min)
-1. Open the real application page/PDF from Google Classroom.
-2. Find the deadline and the checklist the same way.
-3. Tell your teacher what's still missing for you personally, if anything —
-   this can be a real first step, not just an exercise.
-
-**Optional extra challenge:** compare two different program deadlines (e.g.
-a certificate program vs. a full degree) and decide which to prioritize.
-
 ## Confidence check-in
 - "I could figure out a real application deadline and checklist on my own."
   🙂 😐 🙁
 - "The part of applying to school that worries me most is: ___________"
 
 ## Notes for next time
-- For some students this lesson is purely simulated; for others, Part B may
-  become genuinely real (an actual application they're considering). Read
-  the room — this is the most personally significant lesson in the app so
-  far, and worth a few extra minutes of conversation if a student wants it.
+- For some students this lesson is purely simulated; for others, the Level 2
+  wrap-up may become genuinely real (an actual application they're
+  considering). Read the room — this is the most personally significant
+  lesson in the app so far, and worth a few extra minutes of conversation if
+  a student wants it.

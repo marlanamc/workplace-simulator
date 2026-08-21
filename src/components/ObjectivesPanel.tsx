@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
-import { TRACKS, TASK_INFO, isTrackComplete } from "@/lib/tracks-content";
+import { TRACKS, TASK_INFO, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
 import { useClickOutside } from "@/lib/use-click-outside";
 
 export default function ObjectivesPanel() {
@@ -10,6 +10,7 @@ export default function ObjectivesPanel() {
   const { completedTaskKeys, currentTrack, certificateTrackKeys, learnerId } = useProgress();
   const panelRef = useRef<HTMLDivElement>(null);
   useClickOutside(panelRef, open, () => setOpen(false));
+  const currentLevel = levelForTrack(currentTrack.key);
 
   return (
     <>
@@ -34,7 +35,7 @@ export default function ObjectivesPanel() {
               <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--accent)]">
                 Your progress
               </div>
-              <h2 className="mt-1 text-[20px] font-medium leading-tight">{currentTrack.title}</h2>
+              <h2 className="mt-1 text-[20px] font-medium leading-tight">{currentLevel.title}</h2>
               <p className="mt-1 text-[13px] text-[var(--text-secondary)]">{currentTrack.subtitle}</p>
             </div>
             <button

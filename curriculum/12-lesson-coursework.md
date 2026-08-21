@@ -1,6 +1,6 @@
 # Lesson 12: Read a Syllabus, Submit an Assignment
 
-**Time:** 20 minutes total (10 + 10) · **Track:** 5 — Planning What's Next
+**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `coursework` · **Status:** not built yet — mirrors `mail`'s
 shape on purpose (read what's asked, attach the right thing, send it), in a
 new tool.
@@ -14,11 +14,10 @@ new tool.
 - [ ] Simulator: a new Coursework (LMS-style) Browser tab with a short
       syllabus and one assignment with a due date, plus a submission box
       that accepts a short written response.
-- [ ] Google Classroom: post a real short syllabus excerpt with an
-      assignment and due date, formatted the same way (this can literally be
-      how your own class already uses Google Classroom).
+- [ ] No Google Classroom post needed yet — bundled into the Level 2
+      wrap-up assignment (`13a-level2-real-practice.md`).
 
-## Part A: Simulator (~10 min) — once built
+## Simulator practice (~10–15 min) — once built
 1. Open the **Browser** → **Coursework** tab.
 2. Read the syllabus section for the assignment.
 3. Find the due date.
@@ -26,14 +25,6 @@ new tool.
    available).
 5. Submit it before you'd run out of time, the way Lesson 1 asked you to
    reply to Maria before end of day.
-
-## Part B: Real Practice (~10 min)
-1. Open the real syllabus excerpt from Google Classroom.
-2. Find the due date the same way.
-3. Submit a real short response in Google Classroom.
-
-**Optional extra challenge:** find and note the late-submission policy, if
-one is listed — a real skill for balancing school and work.
 
 ## Confidence check-in
 - "I could find a due date and submit something on time in a new online

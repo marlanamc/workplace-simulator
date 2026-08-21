@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { APP_DEFS, DESKTOP_COPY, type Lang, type TaskKey } from "@/lib/desktop-content";
-import { TASK_INFO, TASK_LOCATIONS, TRACKS, nextTaskInTrack } from "@/lib/tracks-content";
+import { TASK_INFO, TASK_LOCATIONS, TRACKS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
 import Shelf, { AppIcon, SHELF_HEIGHT } from "@/components/Shelf";
 import ObjectivesPanel from "@/components/ObjectivesPanel";
 import TrackCelebration from "@/components/TrackCelebration";
@@ -52,18 +52,20 @@ function DesktopShell({ displayName }: { displayName: string }) {
   const comingSoon = nextTaskKey !== null && nextTaskInfo === null;
 
   const anyAppActive = active !== null;
+  const currentLevel = levelForTrack(currentTrack.key);
 
-  // Wallpaper shifts with the learner's current track. A gradient can't be
-  // CSS-transitioned directly, so the old one is kept mounted just long
-  // enough to fade out over the new one underneath. Adjusted during render
-  // (React's recommended pattern), not in an effect.
-  const [lastWallpaper, setLastWallpaper] = useState(currentTrack.wallpaper);
+  // Wallpaper shifts with the learner's current level (not track — the
+  // environment stays constant across every track inside one level). A
+  // gradient can't be CSS-transitioned directly, so the old one is kept
+  // mounted just long enough to fade out over the new one underneath.
+  // Adjusted during render (React's recommended pattern), not in an effect.
+  const [lastWallpaper, setLastWallpaper] = useState(currentLevel.wallpaper);
   const [outgoingWallpaper, setOutgoingWallpaper] = useState<string | null>(null);
   const [wallpaperFadeKey, setWallpaperFadeKey] = useState(0);
-  if (lastWallpaper !== currentTrack.wallpaper) {
+  if (lastWallpaper !== currentLevel.wallpaper) {
     setOutgoingWallpaper(lastWallpaper);
     setWallpaperFadeKey((k) => k + 1);
-    setLastWallpaper(currentTrack.wallpaper);
+    setLastWallpaper(currentLevel.wallpaper);
   }
 
   return (
@@ -71,8 +73,8 @@ function DesktopShell({ displayName }: { displayName: string }) {
       className="relative min-h-screen overflow-hidden text-[15px]"
       style={{ color: "var(--text-primary)" }}
     >
-      {/* wallpaper — shifts with the learner's current track, so the workspace visibly grows with them */}
-      <div className="fixed inset-0 -z-10" style={{ background: currentTrack.wallpaper }} />
+      {/* wallpaper — shifts with the learner's current level, so the workspace visibly grows with them */}
+      <div className="fixed inset-0 -z-10" style={{ background: currentLevel.wallpaper }} />
       {outgoingWallpaper && (
         <div
           key={wallpaperFadeKey}

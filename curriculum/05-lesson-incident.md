@@ -1,6 +1,6 @@
 # Lesson 5: File an Incident Report
 
-**Time:** 20 minutes total (10 + 10) · **Track:** 3 — Judgment & Follow-Through
+**Time:** ~15 minutes · **Level:** 1 — New Hire · **Track:** 3 — Judgment & Follow-Through
 **Task key:** `incident` · **Status:** built — a new "Incident Report" Browser
 tab holds a planted scenario (a customer slip near the front door) and a
 what/when/where form that submits to Maria.
@@ -13,32 +13,19 @@ what/when/where form that submits to Maria.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Incident Report tab always shows the
       same scenario.
-- [ ] Google Classroom: post **"Lesson 5 Scenario"** — a short written
-      situation, e.g.: *"A customer slipped near the front door. Nobody was
-      hurt. Write up what happened for your manager."*
-- [ ] Have 2–3 example phrasings ready (one too vague, one over-explained, one
-      "just right") to discuss if useful — this is about calibration, not a
-      single correct template.
+- [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
+      assignment (`06a-level1-real-practice.md`), given after Track 3 is done.
+      When you do assign it, have 2–3 example phrasings ready for this skill
+      (one too vague, one over-explained, one "just right") — this is about
+      calibration, not a single correct template.
 
-## Part A: Simulator (~10 min)
+## Simulator practice (~10–15 min)
 1. Open the **Browser** → **Incident Report** tab.
 2. Read the scenario.
 3. Fill in when and where it happened, and write what happened, in order —
    sentence starters are there if you want them.
 4. Click **Submit report** (a blank write-up just gets a friendly reminder
    to add a sentence or two).
-
-## Part B: Real Practice (~10 min)
-1. Read **"Lesson 5 Scenario"** in Google Classroom.
-2. Write a real email to your teacher describing what happened, in order,
-   as if they were your manager.
-3. Send it.
-4. Teacher gives one honest, specific note back — not a grade: *"This part
-   landed well," "Try putting the time before the description next time."*
-
-**Optional extra challenge:** write the same incident two ways — a quick
-verbal-style note to a coworker, and the full written report to a manager —
-and notice how the level of detail should change.
 
 ## Confidence check-in
 - "I feel okay writing something up even if the situation was a little
