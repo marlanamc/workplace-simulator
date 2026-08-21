@@ -6,6 +6,7 @@ import { TASK_INFO, TASK_LOCATIONS, TRACKS, levelForTrack, nextTaskInTrack } fro
 import Shelf, { AppIcon, SHELF_HEIGHT } from "@/components/Shelf";
 import ObjectivesPanel from "@/components/ObjectivesPanel";
 import TrackCelebration from "@/components/TrackCelebration";
+import MobileNudge from "@/components/MobileNudge";
 import { WindowManagerProvider, useWindowManager } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import BrowserClient from "./browser/BrowserClient";
@@ -170,6 +171,7 @@ function DesktopShell({ displayName }: { displayName: string }) {
       <ObjectivesPanel />
       <TrackCelebration />
       <Shelf displayName={displayName} />
+      <MobileNudge />
     </div>
   );
 }

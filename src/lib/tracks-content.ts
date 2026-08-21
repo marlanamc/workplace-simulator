@@ -115,7 +115,7 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   files: {
     label: "Share a file the right way",
     description: "Find the right file in a shared drive and share it with the right access.",
-    built: false,
+    built: true,
   },
   spreadsheet: {
     label: "Read and trust a total",
@@ -163,4 +163,5 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, { appKey: AppKey; tab?: str
   incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Incident Report" },
   handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Handbook" },
   calendar: { appKey: "browser", ctaLabel: "Open Browser" },
+  files: { appKey: "browser", ctaLabel: "Open Browser" },
 };

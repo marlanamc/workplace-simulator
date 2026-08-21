@@ -1,7 +1,10 @@
 # Lesson 2: Share a File the Right Way
 
 **Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
-**Task key:** `files` · **Status:** not built yet.
+**Task key:** `files` · **Status:** built — the Shared Drive tab has a small
+folder structure with a couple of decoy files; sharing the right one
+requires renaming it to match a naming convention first, then choosing
+"Can view" instead of "Can edit."
 **Prerequisite:** Lesson 1
 
 ## We will learn...
@@ -9,24 +12,22 @@
   right permission — view, not edit, unless someone actually needs to change
   it.
 
-## Before class (teacher prep) — once built
-- [ ] Simulator: a Shared Drive tab with a small folder structure (e.g.
-      Schedules, Forms, Manager Memos) and a few similar-looking decoy files,
-      plus a scenario: "Share this week's schedule with the new hire — view
-      only, they don't need to edit it."
+## Before class (teacher prep)
+- [ ] Simulator: nothing to set up — the Shared Drive tab always has the
+      same scenario and decoy files.
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
       wrap-up assignment (`real-practice-assignment.md`), given after
       Track 4 is done.
 
-## Simulator practice (~5 min) — once built
-1. Open the **Browser** → **Shared Drive** tab.
-2. Find the right file — use the folders, or search if you're not sure which
-   folder it's in.
-3. Share it with the person named in the scenario.
-4. Choose **view** access, not **edit** — unless the scenario actually asks
-   for edit access.
-5. Rename the file if the scenario asks for a specific naming convention
-   (e.g. `schedule-week-of-[date]`).
+## Simulator practice (~5 min)
+1. Open the **Browser** → **Shared Drive** tab (finding the bookmark is
+   part of the task now — see Lesson 1's note).
+2. Find the right file — use the folder tabs, or search if you're not sure
+   which folder it's in (clicking a decoy file just gets a friendly
+   reminder to keep looking).
+3. Rename it to match the convention (`schedule-week-of-aug-24`).
+4. Share it with Jordan Diaz, choosing **Can view**, not **Can edit**
+   (choosing edit gets a reminder that Jordan doesn't need to change it).
 
 ## Confidence check-in
 - "I know the difference between view and edit access, and when each one

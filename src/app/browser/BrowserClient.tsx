@@ -4,13 +4,14 @@ import { useState } from "react";
 import MailClient from "../mail/MailClient";
 import PortalPage from "./PortalPage";
 import CalendarTask from "./CalendarTask";
+import FilesTask from "./FilesTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 
-type TabKey = "mail" | "portal" | "calendar" | "handbook" | "incident";
+type TabKey = "mail" | "portal" | "calendar" | "files" | "handbook" | "incident";
 
 interface TabDef {
   key: TabKey;
@@ -24,6 +25,7 @@ const TABS: TabDef[] = [
   { key: "mail", label: "WorkMail", url: "mail.harborsidecafe.com", icon: "✉", color: "#1a73e8" },
   { key: "portal", label: "Employee Portal", url: "portal.harborsidecafe.com", icon: "▦", color: "#8430ce" },
   { key: "calendar", label: "Calendar", url: "calendar.harborsidecafe.com", icon: "📅", color: "#188038" },
+  { key: "files", label: "Shared Drive", url: "drive.harborsidecafe.com", icon: "🗂", color: "#1a73e8" },
   { key: "incident", label: "Incident Report", url: "incidents.harborsidecafe.com", icon: "⚠", color: "#b06000" },
   { key: "handbook", label: "Handbook", url: "handbook.harborsidecafe.com", icon: "▤", color: "#3c4043" },
 ];
@@ -110,6 +112,7 @@ export default function BrowserClient() {
         {activeTab === "mail" && <MailClient />}
         {activeTab === "portal" && <PortalPage />}
         {activeTab === "calendar" && <CalendarTask />}
+        {activeTab === "files" && <FilesTask />}
         {activeTab === "incident" && <IncidentTask />}
         {activeTab === "handbook" && <HandbookTask />}
       </div>
