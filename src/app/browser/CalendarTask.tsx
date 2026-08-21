@@ -16,6 +16,7 @@ import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
+import { TASK_ICONS, CircleGlyph } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
 type View = "home" | "invite" | "compose" | "done";
@@ -76,9 +77,7 @@ export default function CalendarTask() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#34a853] text-[13px] text-white">
-          📅
-        </span>
+        <CircleGlyph icon={TASK_ICONS.calendar} color="#34a853" size={28} />
         <span className="text-[18px] font-medium text-[#5f6368]">Hcal</span>
         <div className="flex-1" />
         <button

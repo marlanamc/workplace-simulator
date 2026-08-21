@@ -17,6 +17,7 @@ import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
+import { TASK_ICONS, CircleGlyph } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
@@ -88,9 +89,7 @@ export default function MailClient() {
       {/* task bar */}
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#ea4335] text-[13px] text-white font-bold">
-            M
-          </span>
+          <CircleGlyph icon={TASK_ICONS.mail} color="#ea4335" size={28} />
           <span className="text-[18px] font-medium text-[#5f6368]">Hmail</span>
         </div>
 
@@ -174,7 +173,7 @@ export default function MailClient() {
         {/* content pane */}
         <div className="min-w-0 flex-1 overflow-y-auto">
           {view === "intro" && (
-            <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("empty")} />
+            <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.mail} onContinue={() => setView("empty")} />
           )}
 
           {view === "empty" && (

@@ -67,27 +67,84 @@ browser playtest — the Chrome extension was disconnected this session, so
 this was verified by careful code review + build/lint only, not by
 actually clicking through it. Worth doing before calling this fully done.
 
+## Since the above: a bigger visual/product pass (also done, now committed)
+
+On top of the game-feel pass above, this same continued session built a
+real desktop-shell redesign — bigger in scope than the event-intro/
+level-up/confetti work, and not yet reflected above until now:
+
+1. **A real icon system** — new `src/lib/icons.tsx` wraps `lucide-react`
+   (new dependency) with `TASK_ICONS`, `CircleGlyph`, and a few named icons
+   (`Hourglass`, `Coffee`, `FileText`, etc.), replacing ad hoc emoji/inline
+   SVGs across task headers, the Shelf, and the PDF reader.
+2. **Painted desktop scenes, not flat gradients** — new
+   `src/components/DesktopWallpaper.tsx` renders an actual illustrated room
+   (walls, floor, espresso machine, window, lamp) per `DesktopScene`, keyed
+   off the new `Act`/`sceneForLevel()` concept in `tracks-content.ts`
+   (`ACTS`, `actForLevel`, `DesktopScene`). Wallpaper now follows the *act*
+   (the room), not the individual level — `DesktopClient.tsx` was rewritten
+   to fade between scenes instead of gradients.
+3. **A real desktop homepage** — the old single "focus card" was replaced
+   by `ShiftBriefing.tsx` (next-task dispatch copy, hourglass/coffee
+   framing) plus a `LiveClock.tsx` widget (`useSyncExternalStore`-based
+   shared ticker so the desktop and Shelf never drift apart).
+4. **In-game Awards Case replaces the printable certificate page** — new
+   `AwardsCase.tsx` (a modal browsing earned track trophies) opens from the
+   Shelf; `/certificate/[learnerId]` now just `redirect("/")`s so old links
+   don't 404, and `CertificatePrintButton.tsx` was deleted as dead code.
+5. **A "restart this level" capability** — new `restartLevelProgress`
+   server action (`src/app/actions.ts`) + `deleteCompletions`/
+   `deleteBadges` query helpers (`src/lib/db/queries.ts`), scoped to only
+   that level's own task/badge keys (`taskKeysForLevel`) so later-level
+   progress is never touched. Wired into the Shelf's Level Navigator.
+6. **`tracks-content.ts` grew several more exports** on top of last time's:
+   `Act`/`ACTS`/`actForLevel`/`sceneForLevel`/`DesktopScene`,
+   `TAB_LEVEL_KEYS`, `taskKeysForLevel`, `furthestLevelIndex` (replacing a
+   simpler "current level index" calc so a replayed earlier level doesn't
+   regress the learner's furthest-reached level), an `awardEmoji` per
+   track, and a `dispatch` one-liner per `TaskInfo` (the copy
+   `ShiftBriefing` shows, distinct from the fuller `description`).
+7. **PDF reader got a realism pass** — `PdfReaderClient.tsx` now renders
+   actual US-Letter-proportioned pages (8.5×11in, 1in margins, Times New
+   Roman at realistic point sizes) instead of an arbitrary styled box.
+8. Every task component's header got the new icon system swapped in
+   (small diffs — icon import changes, not logic changes).
+
+`npm run build` and `npm run lint` both pass. Reviewed via diff (icon
+library added cleanly to `package.json`, DB helpers are scoped/
+parameterized with no destructive blast radius, certificate redirect
+doesn't break old links) rather than a live click-through — **still no
+browser playtest done this session** (Chrome extension was disconnected
+throughout). This is now the top priority before building anything else.
+
 ## What's next (pick one)
 
-### Option A — Playtest tonight's Act I changes first
+### Option A — Playtest everything so far first (highest priority)
 
-Before building more, actually click through Level 1 → Level 2 in a real
-browser (reconnect the Chrome extension, or `npm run dev` and look
-yourself) — confirm the event intro cards look right in both the
-two-pane `MailClient` layout and the simpler `PortalPage`/`IncidentTask`/
-`HandbookTask` layouts, and that the Day-One level-up modal actually fires
-once, at the right moment, without double-popping alongside a track
-celebration.
+Nothing since the "New Hire, Day One" split has actually been clicked
+through in a real browser — reconnect the Chrome extension, or
+`npm run dev` and look yourself. Specifically check: the event intro cards
+in both the two-pane `MailClient` layout and the simpler `PortalPage`/
+`IncidentTask`/`HandbookTask` layouts; the Day-One level-up modal fires
+once without double-popping alongside a track celebration; the new
+painted desktop scenes render correctly and fade between acts; the Shelf's
+Level Navigator and its "restart this level" action actually work
+end-to-end (including that it doesn't touch other levels' progress); the
+Awards Case opens and shows the right trophies; old `/certificate/<id>`
+links land cleanly on the desktop.
 
-### Option B — Extend the same game-feel pass to Act II (Level 3)
+### Option B — Extend the game-feel + visual pass to Act II (Level 3)
 
-Level 3 ("Shift Lead") currently has no `EVENT_INTRO` cards and no
-`levelUp` welcome copy for entering it. Same pattern as tonight: add
-`EVENT_INTRO` to `calendar`/`files`/`spreadsheet`'s `content.ts` files,
-wire an `"intro"` view into `CalendarTask`/`FilesTask`/`SpreadsheetTask`,
-and write `level3.levelUp` copy in `tracks-content.ts` (the "you're a
-Shift Lead now" moment, currently the biggest gap since Level 2 → Level 3
-is the actual in-story promotion).
+Level 3 ("Shift Lead") still has no `EVENT_INTRO` cards, no `levelUp`
+welcome copy, and — now — no painted scene of its own (it'll fall back to
+whatever `sceneForLevel` resolves to for Act II's `ACTS` entry, check
+`tracks-content.ts` for what that currently is). Same pattern as before:
+add `EVENT_INTRO` to `calendar`/`files`/`spreadsheet`'s `content.ts`
+files, wire an `"intro"` view into their task components, write
+`level3.levelUp` copy, and consider whether Act II deserves its own
+`DesktopScene` in `DesktopWallpaper.tsx` (the "you're a Shift Lead now"
+moment is the biggest still-open gap, since Level 2 → Level 3 is the
+actual in-story promotion).
 
 ### Option C — Build Act II's levels 4-5 in code
 

@@ -1,158 +1,213 @@
 "use client";
 
-import { useRef, useState } from "react";
+import type { TaskKey } from "@/lib/desktop-content";
+import {
+  TRACKS,
+  TASK_INFO,
+  TASK_LOCATIONS,
+  LEVELS,
+  TAB_LEVEL_KEYS,
+  isTrackComplete,
+  levelForTrack,
+} from "@/lib/tracks-content";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
-import { TRACKS, TASK_INFO, LEVELS, TAB_LEVEL_KEYS, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
-import { useClickOutside } from "@/lib/use-click-outside";
+import { TASK_ICONS, TRACK_ICONS } from "@/lib/icons";
+import { Check } from "lucide-react";
+import { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 
-export default function ObjectivesPanel() {
-  const [open, setOpen] = useState(false);
-  const { completedTaskKeys, currentTrack, certificateTrackKeys, learnerId } = useProgress();
-  const { browserTab, active: activeApp } = useWindowManager();
-  const panelRef = useRef<HTMLDivElement>(null);
-  useClickOutside(panelRef, open, () => setOpen(false));
+export default function ObjectivesPanel({
+  open,
+  onOpenChange,
+  onOpenAwards,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onOpenAwards: () => void;
+}) {
+  const { completedTaskKeys, currentTrack, certificateTrackKeys } = useProgress();
+  const { browserTab, active: activeApp, openApp } = useWindowManager();
 
   const progressLevel = levelForTrack(currentTrack.key);
-  // Whatever level's tab is actually on screen right now, when the Browser
-  // is the active app — so the panel matches what a learner is looking at
-  // (e.g. after using the Levels navigator to look back at an earlier
-  // level), not just their overall progress. Falls back to the progress
-  // level when nothing maps (a blank New Tab, or the Browser isn't open).
   const viewedLevelKey = activeApp === "browser" ? TAB_LEVEL_KEYS[browserTab] : undefined;
   const currentLevel = (viewedLevelKey && LEVELS.find((l) => l.key === viewedLevelKey)) || progressLevel;
   const levelTracks = TRACKS.filter((t) => currentLevel.trackKeys.includes(t.key));
+  const nextKey =
+    levelTracks.flatMap((t) => t.taskKeys).find((k) => !completedTaskKeys.includes(k)) ?? null;
+  const lookingBack = Boolean(viewedLevelKey && viewedLevelKey !== progressLevel.key);
+  const levelDone = levelTracks.every((t) => isTrackComplete(t, completedTaskKeys));
+
+  const openTask = (taskKey: TaskKey) => {
+    const loc = TASK_LOCATIONS[taskKey];
+    if (!loc) return;
+    onOpenChange(false);
+    openApp(loc.appKey, { tab: loc.tab });
+  };
+
+  if (!open) return null;
 
   return (
     <>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        aria-label="Objectives"
-        className="fixed right-4 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-1 rounded-l-xl bg-white px-2.5 py-3 text-[var(--text-primary)] shadow-[0_8px_24px_rgba(0,0,0,0.18)] cursor-pointer hover:bg-[var(--surface-muted)]"
+      <div
+        aria-hidden
+        onClick={() => onOpenChange(false)}
+        className="fixed inset-x-0 top-0 z-40"
+        style={{ bottom: SHELF_RESERVE }}
+      />
+      <div
+        className="fixed z-50 flex w-[min(100%-24px,360px)] flex-col overflow-hidden animate-slide-in"
+        style={{
+          top: SHELF_INSET,
+          right: SHELF_INSET,
+          bottom: SHELF_RESERVE + 8,
+          background: "#f3e6d4",
+          color: "#1c1410",
+          boxShadow: "0 16px 48px rgba(0,0,0,0.32), 0 1px 0 rgba(255,255,255,0.4) inset",
+          borderRadius: 4,
+        }}
       >
-        <span aria-hidden className="text-[16px]">🎯</span>
-        <span className="text-[10px] font-semibold uppercase tracking-wide [writing-mode:vertical-rl]">
-          Objectives
-        </span>
-      </button>
-
-      {open && (
         <div
-          ref={panelRef}
-          className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[380px] flex-col gap-5 overflow-y-auto bg-white p-6 shadow-[-8px_0_40px_rgba(0,0,0,0.25)] animate-slide-in"
+          className="relative flex h-5 shrink-0 items-center justify-center"
+          style={{ background: "linear-gradient(180deg, #e0c15a 0%, #c9a227 48%, #8a7018 100%)" }}
+          aria-hidden
         >
-          <div className="flex items-start justify-between">
-            <div>
-              <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--accent)]">
-                Your progress
-              </div>
-              <h2 className="mt-1 text-[20px] font-medium leading-tight">{currentLevel.title}</h2>
-              {viewedLevelKey && viewedLevelKey !== progressLevel.key && (
-                <p className="mt-1 text-[13px] text-[var(--accent)]">Looking back at this level</p>
+          <div
+            className="h-3.5 w-3.5 rounded-full"
+            style={{ background: "radial-gradient(circle at 35% 30%, #f4e6b0, #8a7018)" }}
+          />
+        </div>
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pb-5 pt-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-[22px] font-medium leading-tight tracking-[-0.02em]">{currentLevel.title}</h2>
+              {lookingBack && (
+                <p className="mt-1 text-[14px] leading-snug text-[#6a4e32]">Peeking at an earlier shift.</p>
+              )}
+              {levelDone && !lookingBack && (
+                <p className="mt-1 text-[14px] leading-snug text-[#6a4e32]">This shift is done. Replay it anytime.</p>
               )}
             </div>
             <button
-              onClick={() => setOpen(false)}
+              onClick={() => onOpenChange(false)}
               aria-label="Close"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[16px] text-[var(--text-secondary)] cursor-pointer"
+              className="flex h-9 w-9 shrink-0 items-center justify-center text-[18px] text-[#6a4e32] hover:text-[#1c1410] cursor-pointer"
             >
               ✕
             </button>
           </div>
 
-          {certificateTrackKeys.length > 0 && (
-            <div className="flex flex-col gap-2.5">
-              <div className="flex flex-wrap gap-2">
-                {certificateTrackKeys.map((key) => {
-                  const track = TRACKS.find((t) => t.key === key);
-                  if (!track) return null;
-                  return (
-                    <span
-                      key={key}
-                      className="flex items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3 py-1.5 text-[12px] font-medium text-[var(--warning)]"
-                    >
-                      🏆 {track.title}
-                    </span>
-                  );
-                })}
-              </div>
-              <a
-                href={`/certificate/${learnerId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex min-h-[40px] items-center gap-1.5 self-start rounded-full border border-[var(--accent)] px-3.5 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)]"
-              >
-                🎓 View my certificate
-              </a>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-3">
+          <div className="mt-5 flex flex-col gap-6">
             {levelTracks.map((track) => {
               const trackComplete = isTrackComplete(track, completedTaskKeys);
               return (
-                <div
-                  key={track.key}
-                  className={`rounded-xl border p-4 ${
-                    trackComplete
-                      ? "border-[var(--success)] bg-[var(--success-tint)]"
-                      : "border-[var(--accent)] bg-[var(--accent-tint)]"
-                  }`}
-                >
-                  <div className="mb-2 flex items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <span className="text-[14px] font-semibold text-[var(--text-primary)]">{track.title}</span>
-                      <p className="text-[12px] text-[var(--text-secondary)]">{track.subtitle}</p>
-                    </div>
-                    <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                        trackComplete ? "bg-[var(--success)] text-white" : "bg-[var(--accent)] text-white"
-                      }`}
-                    >
-                      {trackComplete ? "Complete" : "In progress"}
-                    </span>
+                <section key={track.key}>
+                  <div className="flex items-center gap-2">
+                    {(() => {
+                      const Icon = TRACK_ICONS[track.key];
+                      return Icon ? <Icon size={16} strokeWidth={2.25} aria-hidden /> : null;
+                    })()}
+                    <h3 className="text-[16px] font-medium leading-tight">{track.title}</h3>
                   </div>
-                  <div className="flex flex-col gap-1.5">
+                  <p className="mt-0.5 pl-6 text-[13px] leading-snug text-[#6a4e32]">{track.subtitle}</p>
+
+                  <ul className="mt-3 flex flex-col">
                     {track.taskKeys.map((taskKey) => {
                       const info = TASK_INFO[taskKey];
                       const done = completedTaskKeys.includes(taskKey);
+                      const isNext = taskKey === nextKey;
+                      const loc = TASK_LOCATIONS[taskKey];
+                      const canOpen = Boolean(loc && info.built);
+                      const Row = canOpen ? "button" : "div";
                       return (
-                        <div key={taskKey} className="flex items-start gap-2.5">
-                          <span
-                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
-                              done
-                                ? "bg-[var(--success)] text-white"
-                                : "bg-white text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
+                        <li key={taskKey}>
+                          <Row
+                            {...(canOpen
+                              ? {
+                                  type: "button" as const,
+                                  onClick: () => openTask(taskKey),
+                                }
+                              : {})}
+                            className={`flex w-full items-start gap-2.5 py-2 text-left ${
+                              canOpen ? "cursor-pointer hover:underline" : ""
                             }`}
                           >
-                            {done ? "✓" : ""}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div
-                              className={`text-[13px] font-medium ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
+                            <span
+                              className="mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center"
+                              style={{
+                                border: done ? "none" : "1.5px solid #1c1410",
+                                borderRadius: 4,
+                                background: done ? "#1c1410" : "transparent",
+                                color: done ? "#f3e6d4" : "#1c1410",
+                              }}
+                              aria-hidden
                             >
-                              {info.label}
-                            </div>
-                            <div className="text-[12px] text-[var(--text-tertiary)]">
-                              {info.built ? info.description : `${info.description} (not built yet)`}
-                            </div>
-                          </div>
-                        </div>
+                              {done ? (
+                                <Check size={14} strokeWidth={3} />
+                              ) : isNext ? (
+                                (() => {
+                                  const Icon = TASK_ICONS[taskKey];
+                                  return <Icon size={13} strokeWidth={2.25} />;
+                                })()
+                              ) : null}
+                            </span>
+                            <span className="min-w-0 flex-1">
+                              <span
+                                className={`block text-[15px] leading-snug ${
+                                  done ? "text-[#6a4e32]" : "font-medium text-[#1c1410]"
+                                }`}
+                              >
+                                {info.label}
+                              </span>
+                              {isNext && !done && (
+                                <span className="mt-0.5 block text-[13px] leading-snug text-[#6a4e32]">
+                                  {info.dispatch}
+                                </span>
+                              )}
+                              {!info.built && (
+                                <span className="mt-0.5 block text-[13px] leading-snug text-[#6a4e32]">
+                                  Not built yet
+                                </span>
+                              )}
+                            </span>
+                          </Row>
+                        </li>
                       );
                     })}
-                  </div>
-                </div>
+                    {trackComplete && (
+                      <li className="pl-[30px] pt-1 text-[13px] text-[#6a4e32]">
+                        <button
+                          type="button"
+                          onClick={onOpenAwards}
+                          className="underline decoration-[#6a4e32]/40 underline-offset-4 hover:text-[#1c1410] cursor-pointer"
+                        >
+                          See the {track.awardEmoji} award
+                        </button>
+                      </li>
+                    )}
+                  </ul>
+                </section>
               );
             })}
           </div>
 
-          {certificateTrackKeys.length < TRACKS.length && (
-            <p className="text-[12px] text-[var(--text-tertiary)]">
-              {certificateTrackKeys.length} of {TRACKS.length} certificates earned so far.
-            </p>
+          {certificateTrackKeys.length > 0 && (
+            <div className="mt-auto flex items-center gap-2 pt-6">
+              {TRACKS.filter((t) => certificateTrackKeys.includes(t.key)).map((track) => (
+                <button
+                  key={track.key}
+                  onClick={onOpenAwards}
+                  title={track.title}
+                  aria-label={`${track.title} award`}
+                  className="text-[22px] leading-none cursor-pointer"
+                >
+                  {track.awardEmoji}
+                </button>
+              ))}
+            </div>
           )}
         </div>
-      )}
+      </div>
     </>
   );
 }

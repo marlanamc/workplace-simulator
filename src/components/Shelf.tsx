@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import {
   APP_DEFS,
   APP_COPY,
@@ -13,12 +13,20 @@ import {
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { useNudge } from "@/lib/use-nudge";
+import { QuickSettingsClock, ShelfClock } from "@/components/LiveClock";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
+import { APP_ICONS, TAB_ICONS, Flag, Lock, Target, Languages } from "@/lib/icons";
+import { Check } from "lucide-react";
 import { logout } from "@/app/actions";
-import { TASK_INFO, LEVELS, ACTS, isTrackComplete, isLevelComplete, levelForTrack } from "@/lib/tracks-content";
+import { LEVELS, ACTS, isLevelComplete, levelForTrack, furthestLevelIndex, taskKeysForLevel } from "@/lib/tracks-content";
 
+/** Height of the shelf bar itself. */
 export const SHELF_HEIGHT = 56;
+/** Gap between the floating shelf and the screen edges. */
+export const SHELF_INSET = 12;
+/** Space reserved at the bottom of the screen for the floating shelf. */
+export const SHELF_RESERVE = SHELF_HEIGHT + SHELF_INSET;
 
 function badgeStyle(state: AppState) {
   if (state === "done") return "bg-[var(--success-tint)] text-[var(--success)]";
@@ -47,32 +55,89 @@ function BatteryIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-export function AppIcon({ icon, color, size = 44 }: { icon: string; color: string; size?: number }) {
+export function AppIcon({ icon, color, size = 44 }: { icon: ReactNode; color: string; size?: number }) {
   return (
     <span
-      className="flex shrink-0 items-center justify-center rounded-2xl text-white"
-      style={{ background: color, width: size, height: size, fontSize: Math.round(size * 0.44) }}
+      className="flex shrink-0 items-center justify-center text-white"
+      style={{
+        background: color,
+        width: size,
+        height: size,
+        fontSize: Math.round(size * 0.5),
+        borderRadius: Math.round(size * 0.26),
+      }}
     >
       {icon}
     </span>
   );
 }
 
-export default function Shelf({ displayName }: { displayName: string }) {
+function LucideAppIcon({
+  appKey,
+  color,
+  size,
+}: {
+  appKey: AppKey;
+  color: string;
+  size: number;
+}) {
+  const Icon = APP_ICONS[appKey];
+  return <AppIcon icon={<Icon size={Math.round(size * 0.5)} strokeWidth={2.25} />} color={color} size={size} />;
+}
+
+function ShelfPin({
+  label,
+  active = false,
+  onClick,
+  children,
+}: {
+  label: string;
+  active?: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      title={label}
+      aria-label={label}
+      aria-pressed={active}
+      onClick={onClick}
+      className="relative flex h-12 w-12 items-center justify-center rounded-[14px] text-white cursor-pointer hover:bg-white/10"
+      style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
+    >
+      {children}
+      {active && <span className="absolute bottom-1 h-[3px] w-4 rounded-full bg-white" aria-hidden />}
+    </button>
+  );
+}
+
+export default function Shelf({
+  displayName,
+  objectivesOpen,
+  onObjectivesOpenChange,
+  awardsOpen,
+  onAwardsOpenChange,
+}: {
+  displayName: string;
+  objectivesOpen: boolean;
+  onObjectivesOpenChange: (open: boolean) => void;
+  awardsOpen: boolean;
+  onAwardsOpenChange: (open: boolean) => void;
+}) {
   const [lang, setLang] = useState<Lang>("en");
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [progressOpen, setProgressOpen] = useState(false);
   const [levelsOpen, setLevelsOpen] = useState(false);
+  const [pendingReplay, setPendingReplay] = useState<string | null>(null);
   const [brightness, setBrightness] = useState(80);
   const { nudge, say } = useNudge(4200);
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
-  const { points, justEarnedPoints, completedTaskKeys, currentTrack } = useProgress();
+  const { points, justEarnedPoints, completedTaskKeys, currentTrack, restartLevel } = useProgress();
   const currentLevel = levelForTrack(currentTrack.key);
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
-  const trackComplete = isTrackComplete(currentTrack, completedTaskKeys);
+  const reachedIndex = furthestLevelIndex(completedTaskKeys);
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -96,61 +161,91 @@ export default function Shelf({ displayName }: { displayName: string }) {
 
   const accountBoxRef = useRef<HTMLDivElement>(null);
   const launcherPanelRef = useRef<HTMLDivElement>(null);
-  const progressBoxRef = useRef<HTMLDivElement>(null);
   const levelsBoxRef = useRef<HTMLDivElement>(null);
   useClickOutside(accountBoxRef, accountOpen, () => setAccountOpen(false));
   useClickOutside(launcherPanelRef, launcherOpen, closeLauncher);
-  useClickOutside(progressBoxRef, progressOpen, () => setProgressOpen(false));
   useClickOutside(levelsBoxRef, levelsOpen, () => setLevelsOpen(false));
 
+  const closeOverlays = () => {
+    closeLauncher();
+    setAccountOpen(false);
+    setLevelsOpen(false);
+    onObjectivesOpenChange(false);
+    onAwardsOpenChange(false);
+  };
+
   const goToLevel = (level: (typeof LEVELS)[number], index: number) => {
-    if (index > currentLevelIndex) return;
+    if (index > reachedIndex) return;
     openApp("browser", { tab: level.firstTabKey });
     setLevelsOpen(false);
+    setPendingReplay(null);
   };
 
   return (
     <>
-      {/* shelf */}
+      {/* shelf — floating ChromeOS pill: apps left, status right */}
       <div
-        className="fixed inset-x-0 bottom-0 z-30 flex items-center gap-1 border-t border-white/25 bg-[#2a2f38]/85 px-2 backdrop-blur-xl"
-        style={{ height: SHELF_HEIGHT }}
+        className="fixed z-40 flex items-center gap-0.5 px-1.5 backdrop-blur-2xl"
+        style={{
+          left: SHELF_INSET,
+          right: SHELF_INSET,
+          bottom: SHELF_INSET,
+          height: SHELF_HEIGHT,
+          borderRadius: SHELF_HEIGHT / 2,
+          background: "rgba(32, 33, 36, 0.72)",
+          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 28px rgba(0,0,0,0.28)",
+        }}
       >
         <button
           onClick={() => {
             setAccountOpen(false);
-            setProgressOpen(false);
             setLevelsOpen(false);
+            onObjectivesOpenChange(false);
+            onAwardsOpenChange(false);
             if (launcherOpen) closeLauncher();
             else setLauncherOpen(true);
           }}
           aria-label={c.appsBtn}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full cursor-pointer"
+          aria-expanded={launcherOpen}
+          className="ml-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full cursor-pointer"
           style={{
             background: "radial-gradient(circle at 34% 32%, #fff 0%, #dbe6f4 55%, #a9c0d2 100%)",
             boxShadow: launcherOpen ? "0 0 0 2px #fff, 0 0 0 4px rgba(255,255,255,0.35)" : "inset 0 0 0 1px rgba(0,0,0,0.08)",
           }}
         />
 
+        {APP_DEFS.map((a) => (
+          <ShelfPin
+            key={a.key}
+            label={appCopy[a.key].name}
+            active={isOpen(a.key)}
+            onClick={() => {
+              closeOverlays();
+              toggleFromShelf(a.key);
+            }}
+          >
+            <LucideAppIcon appKey={a.key} color={a.color} size={32} />
+          </ShelfPin>
+        ))}
+
         {/* level navigator — jump back to any level you've already reached */}
         <div className="relative" ref={levelsBoxRef}>
-          <button
+          <ShelfPin
+            label={lang === "en" ? "Levels" : "Niveles"}
+            active={levelsOpen}
             onClick={() => {
               closeLauncher();
               setAccountOpen(false);
-              setProgressOpen(false);
+              onObjectivesOpenChange(false);
+              onAwardsOpenChange(false);
               setLevelsOpen((v) => !v);
             }}
-            aria-label="Levels"
-            title="Levels"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[15px] text-white cursor-pointer hover:bg-white/10"
-            style={levelsOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
           >
-            🏁
-          </button>
+            <AppIcon icon={<Flag size={16} strokeWidth={2.25} />} color="#1e8e3e" size={32} />
+          </ShelfPin>
 
           {levelsOpen && (
-            <div className="absolute left-0 bottom-[46px] z-40 max-h-[70vh] w-[260px] overflow-y-auto rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
+            <div className="absolute left-0 bottom-[52px] z-40 max-h-[70vh] w-[300px] overflow-y-auto rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
               {ACTS.map((act) => {
                 const actLevels = act.levelKeys
                   .map((key) => LEVELS.findIndex((l) => l.key === key))
@@ -163,28 +258,70 @@ export default function Shelf({ displayName }: { displayName: string }) {
                     </div>
                     {actLevels.map((i) => {
                       const level = LEVELS[i];
-                      const locked = i > currentLevelIndex;
+                      const locked = i > reachedIndex;
                       const isCurrent = i === currentLevelIndex;
                       const complete = !locked && isLevelComplete(level, completedTaskKeys);
+                      const canReplay =
+                        !locked && taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k));
                       return (
-                        <button
+                        <div
                           key={level.key}
-                          onClick={() => goToLevel(level, i)}
-                          disabled={locked}
-                          className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] ${
-                            locked
-                              ? "cursor-not-allowed text-[var(--text-tertiary)]"
-                              : "cursor-pointer hover:bg-[var(--surface-muted)]"
-                          } ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}
+                          className={`rounded-xl ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}
                         >
-                          <span aria-hidden>{locked ? "🔒" : complete ? "🏆" : "🏁"}</span>
-                          <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
-                          {isCurrent && (
-                            <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-                              Here
-                            </span>
+                          <div className="flex items-center">
+                            <button
+                              onClick={() => goToLevel(level, i)}
+                              disabled={locked}
+                              className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] ${
+                                locked
+                                  ? "cursor-not-allowed text-[var(--text-tertiary)]"
+                                  : "cursor-pointer hover:bg-[var(--surface-muted)]"
+                              }`}
+                            >
+                              <span aria-hidden className="flex h-4 w-4 items-center justify-center text-[var(--text-secondary)]">
+                                {locked ? <Lock size={14} /> : complete ? <Check size={16} strokeWidth={2.5} /> : <Flag size={14} />}
+                              </span>
+                              <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
+                              {isCurrent && (
+                                <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
+                                  Here
+                                </span>
+                              )}
+                            </button>
+                            {canReplay && pendingReplay !== level.key && (
+                              <button
+                                onClick={() => setPendingReplay(level.key)}
+                                className="mr-2 shrink-0 rounded-full px-2 py-1 text-[12px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+                              >
+                                {c.replayShort}
+                              </button>
+                            )}
+                          </div>
+                          {pendingReplay === level.key && (
+                            <div className="px-3 pb-2.5">
+                              <p className="text-[12px] leading-snug text-[var(--text-secondary)]">{c.replayConfirm}</p>
+                              <div className="mt-1.5 flex gap-3">
+                                <button
+                                  onClick={() => {
+                                    restartLevel(level);
+                                    setPendingReplay(null);
+                                    setLevelsOpen(false);
+                                    openApp("browser", { tab: level.firstTabKey });
+                                  }}
+                                  className="text-[12px] font-medium text-[var(--accent)] cursor-pointer"
+                                >
+                                  {c.replayConfirmCta}
+                                </button>
+                                <button
+                                  onClick={() => setPendingReplay(null)}
+                                  className="text-[12px] text-[var(--text-tertiary)] cursor-pointer"
+                                >
+                                  {c.replayCancel}
+                                </button>
+                              </div>
+                            </div>
                           )}
-                        </button>
+                        </div>
                       );
                     })}
                   </div>
@@ -194,118 +331,79 @@ export default function Shelf({ displayName }: { displayName: string }) {
           )}
         </div>
 
-        <div className="flex flex-1 items-stretch justify-center gap-1 self-stretch">
-          {APP_DEFS.map((a) => (
-            <button
-              key={a.key}
-              title={appCopy[a.key].name}
-              onClick={() => toggleFromShelf(a.key)}
-              className="relative flex h-full w-9 items-center justify-center rounded-lg text-[16px] text-white cursor-pointer hover:bg-white/10"
-            >
-              <AppIcon icon={a.icon} color={a.color} size={30} />
-              {isOpen(a.key) && (
-                <span className="absolute bottom-0.5 h-[3px] w-6 rounded-full bg-white" aria-hidden />
-              )}
-            </button>
-          ))}
-        </div>
-        {/* points HUD — click to see your level and current progress */}
-        <div className="relative mr-1" ref={progressBoxRef}>
+        <ShelfPin
+          label={lang === "en" ? "Objectives" : "Objetivos"}
+          active={objectivesOpen}
+          onClick={() => {
+            closeLauncher();
+            setAccountOpen(false);
+            setLevelsOpen(false);
+            onAwardsOpenChange(false);
+            onObjectivesOpenChange(!objectivesOpen);
+          }}
+        >
+            <AppIcon icon={<Target size={16} strokeWidth={2.25} />} color="#e37400" size={32} />
+        </ShelfPin>
+
+        <ShelfPin
+          label={lang === "en" ? "Awards" : "Premios"}
+          active={awardsOpen}
+          onClick={() => {
+            closeLauncher();
+            setAccountOpen(false);
+            setLevelsOpen(false);
+            onObjectivesOpenChange(false);
+            onAwardsOpenChange(!awardsOpen);
+          }}
+        >
+          <AppIcon icon="🏆" color="#e8a317" size={32} />
+        </ShelfPin>
+
+        <div className="flex-1" />
+
+        {/* status area — one pill, like ChromeOS Quick Settings */}
+        <div className="relative mr-1" ref={accountBoxRef}>
           <button
             onClick={() => {
               closeLauncher();
-              setAccountOpen(false);
               setLevelsOpen(false);
-              setProgressOpen((v) => !v);
-            }}
-            className={`flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white transition-transform cursor-pointer hover:bg-white/15 ${
-              justEarnedPoints ? "scale-110" : ""
-            }`}
-          >
-            <span aria-hidden>★</span>
-            {points}
-            {justEarnedPoints && (
-              <span className="text-[11px] font-semibold text-[var(--success)]">+{justEarnedPoints}</span>
-            )}
-          </button>
-
-          {progressOpen && (
-            <div className="absolute right-1/2 bottom-[46px] z-40 w-[280px] translate-x-1/2 rounded-2xl bg-white p-4 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-[var(--accent)]">
-                {currentLevel.title}
-              </div>
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-[14px] font-medium">{currentTrack.title}</span>
-                <span
-                  className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                    trackComplete
-                      ? "bg-[var(--success-tint)] text-[var(--success)]"
-                      : "bg-[var(--accent-tint)] text-[var(--accent)]"
-                  }`}
-                >
-                  {trackComplete ? "Complete" : "In progress"}
-                </span>
-              </div>
-              <div className="mt-2.5 flex flex-col gap-1.5">
-                {currentTrack.taskKeys.map((taskKey) => {
-                  const done = completedTaskKeys.includes(taskKey);
-                  return (
-                    <div key={taskKey} className="flex items-center gap-2">
-                      <span
-                        className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-semibold ${
-                          done
-                            ? "bg-[var(--success)] text-white"
-                            : "bg-[var(--surface-muted)] text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
-                        }`}
-                      >
-                        {done ? "✓" : ""}
-                      </span>
-                      <span
-                        className={`text-[13px] ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
-                      >
-                        {TASK_INFO[taskKey].label}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-3 flex items-center justify-between border-t border-[var(--border)] pt-2.5 text-[12px] text-[var(--text-tertiary)]">
-                <span>★ {points} pts total</span>
-              </div>
-              <div
-                className="absolute bottom-[-6px] left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 bg-white"
-                aria-hidden
-              />
-            </div>
-          )}
-        </div>
-
-        {/* system tray — click opens the account menu, like ChromeOS */}
-        <div className="relative" ref={accountBoxRef}>
-          <button
-            onClick={() => {
-              closeLauncher();
-              setProgressOpen(false);
-              setLevelsOpen(false);
+              onObjectivesOpenChange(false);
+              onAwardsOpenChange(false);
               setAccountOpen((v) => !v);
             }}
-            className="flex items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-white/90 cursor-pointer hover:bg-white/10"
+            aria-label={lang === "en" ? "Status area" : "Área de estado"}
+            aria-expanded={accountOpen}
+            className="flex items-center gap-2.5 rounded-full px-3 py-1 text-white/90 cursor-pointer hover:bg-white/10"
             style={accountOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
           >
+            <span
+              className={`flex items-center gap-1 text-[13px] font-medium tabular-nums transition-transform ${
+                justEarnedPoints ? "scale-110" : ""
+              }`}
+            >
+              <span aria-hidden>★</span>
+              {points}
+              {justEarnedPoints && (
+                <span className="text-[11px] font-semibold text-[#81c995]">+{justEarnedPoints}</span>
+              )}
+            </span>
+            <span className="h-4 w-px shrink-0 bg-white/20" aria-hidden />
             <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
             <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-semibold text-white">
               1
             </span>
-            <span className="ml-1 whitespace-nowrap text-[13px] font-medium">
-              Aug 19 · 9:12
-            </span>
+            <ShelfClock lang={lang} />
           </button>
 
           {accountOpen && (
               <div
-                className="absolute right-0 bottom-[46px] z-40 w-[336px] rounded-2xl bg-[#202124] p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] animate-fade-up"
+                className="absolute right-0 bottom-[52px] z-40 w-[336px] rounded-2xl bg-[#202124] p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] animate-fade-up"
               >
+                <div className="mb-3 rounded-xl bg-white/8 px-3 py-2.5 text-[12px] leading-snug text-white/70">
+                  {c.practiceBanner}
+                </div>
+
                 {/* account row */}
                 <div className="mb-3 flex items-center gap-2">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[13px] font-semibold text-white">
@@ -350,7 +448,9 @@ export default function Shelf({ displayName }: { displayName: string }) {
                     onClick={() => setLang(lang === "en" ? "es" : "en")}
                     className="flex flex-col items-center gap-1.5 rounded-xl bg-white/8 py-2.5 hover:bg-white/12 cursor-pointer"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-[13px]">🌐</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-white">
+                      <Languages size={16} strokeWidth={2.25} />
+                    </span>
                     <span className="text-[11px] font-medium leading-none">{lang === "en" ? "Language" : "Idioma"}</span>
                     <span className="text-[10px] leading-none text-white/60">{c.langBtn}</span>
                   </button>
@@ -380,7 +480,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
 
                 {/* footer */}
                 <div className="flex items-center justify-between border-t border-white/10 pt-2.5 text-[12px] text-white/70">
-                  <span>Aug 19 · 9:12</span>
+                  <span><QuickSettingsClock lang={lang} /></span>
                   <span>{lang === "en" ? "Practice device" : "Dispositivo de práctica"}</span>
                 </div>
               </div>
@@ -398,7 +498,8 @@ export default function Shelf({ displayName }: { displayName: string }) {
       {launcherOpen && (
           <div
             ref={launcherPanelRef}
-            className="fixed bottom-[62px] left-2 z-40 flex w-[560px] max-w-[calc(100vw-16px)] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
+            className="fixed z-40 flex w-[560px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
+            style={{ bottom: SHELF_RESERVE + 8, left: SHELF_INSET }}
           >
             {/* search bar */}
             <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3.5">
@@ -419,7 +520,9 @@ export default function Shelf({ displayName }: { displayName: string }) {
                     <span className="text-[13px] font-medium text-[var(--text-secondary)]">{c.continueLabel}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-1 px-2 pb-2">
-                    {RECENT_ITEMS.map((r, i) => (
+                    {RECENT_ITEMS.map((r, i) => {
+                      const Icon = (r.tab && TAB_ICONS[r.tab]) || APP_ICONS[r.appKey];
+                      return (
                       <button
                         key={i}
                         onClick={() => {
@@ -428,7 +531,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
                         }}
                         className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
                       >
-                        <AppIcon icon={r.icon} color={r.color} size={34} />
+                        <AppIcon icon={<Icon size={17} strokeWidth={2.25} />} color={r.color} size={34} />
                         <div className="min-w-0">
                           <div className="truncate text-[13px] font-medium text-[var(--text-primary)]">
                             {r.title[lang]}
@@ -438,7 +541,8 @@ export default function Shelf({ displayName }: { displayName: string }) {
                           </div>
                         </div>
                       </button>
-                    ))}
+                      );
+                    })}
                   </div>
                   <div className="mx-4 h-px bg-[var(--border)]" />
                 </>
@@ -461,7 +565,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
                         onClick={() => openFromLauncher(a.key)}
                         className="flex flex-col items-center gap-2 rounded-xl px-2 py-3.5 hover:bg-[var(--surface-muted)] cursor-pointer"
                       >
-                        <AppIcon icon={a.icon} color={a.color} size={48} />
+                        <LucideAppIcon appKey={a.key} color={a.color} size={48} />
                         <span className="text-center text-[13px] leading-tight text-[var(--text-primary)]">
                           {cp.name}
                         </span>
@@ -488,7 +592,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-start gap-3">
-              <AppIcon icon={activeApp.icon} color={activeApp.color} size={44} />
+              <LucideAppIcon appKey={activeApp.key} color={activeApp.color} size={44} />
               <div className="flex-1">
                 <div className="text-[12px] font-medium uppercase tracking-wide text-[var(--accent)]">
                   {appCopy[activeApp.key].kicker}
@@ -551,7 +655,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
         </div>
       )}
 
-      <NudgeToast text={nudge} bottom={SHELF_HEIGHT + 20} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
     </>
   );
 }

@@ -15,6 +15,7 @@ import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
+import { TASK_ICONS, CircleGlyph } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
@@ -65,9 +66,7 @@ export default function IncidentTask() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#7248b9] text-[13px] text-white">
-          📝
-        </span>
+        <CircleGlyph icon={TASK_ICONS.incident} color="#7248b9" size={28} />
         <span className="text-[18px] font-medium text-[#5f6368]">Hforms</span>
         <div className="flex-1" />
         <button
@@ -86,7 +85,7 @@ export default function IncidentTask() {
 
       <div className="min-h-0 flex-1 overflow-y-auto p-6">
         {view === "intro" && (
-          <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("form")} />
+          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.incident} onContinue={() => setView("form")} />
         )}
 
         {view === "form" && (

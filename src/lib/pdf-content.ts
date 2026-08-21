@@ -58,15 +58,15 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
     payPeriod: "Aug 1 – Aug 15, 2026",
     payDate: "Aug 16, 2026",
     earnings: [
-      { label: "Regular hours", detail: "62.5 @ $13.20/hr", amount: "$825.00" },
-      { label: "Overtime hours", detail: "3 @ $19.80/hr", amount: "$59.40" },
+      { label: "Regular hours", detail: "62.5 @ $15.00/hr", amount: "$937.50" },
+      { label: "Overtime hours", detail: "3 @ $22.50/hr", amount: "$67.50" },
     ],
-    grossPay: "$864.00",
+    grossPay: "$1,005.00",
     deductions: [
-      { label: "Federal tax withheld", amount: "-$86.40" },
-      { label: "State tax withheld", amount: "-$25.92" },
-      { label: "Social Security / Medicare", amount: "-$9.50" },
+      { label: "Federal tax withheld", amount: "-$100.50" },
+      { label: "State tax withheld", amount: "-$30.15" },
+      { label: "Social Security / Medicare", amount: "-$11.05" },
     ],
-    netPay: "$742.18",
+    netPay: "$863.30",
   },
 ];

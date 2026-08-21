@@ -7,6 +7,8 @@ export interface Track {
   title: string;
   subtitle: string;
   taskKeys: TaskKey[];
+  /** Emoji shown in the in-game awards case for this track. */
+  awardEmoji: string;
 }
 
 export const TRACKS: Track[] = [
@@ -15,24 +17,28 @@ export const TRACKS: Track[] = [
     title: "Getting Started",
     subtitle: "Your first jobs on shift",
     taskKeys: ["mail"],
+    awardEmoji: "☕",
   },
   {
     key: "schedules",
     title: "Schedules & Documents",
     subtitle: "Keep the shift running smoothly",
     taskKeys: ["schedule", "timeclock", "paystub"],
+    awardEmoji: "📅",
   },
   {
     key: "judgment",
     title: "Judgment & Follow-Through",
     subtitle: "Handle it like a lead",
     taskKeys: ["incident", "handbook"],
+    awardEmoji: "🧭",
   },
   {
     key: "growing",
     title: "Growing at Work",
     subtitle: "New tools that come with the promotion",
     taskKeys: ["calendar", "files", "spreadsheet"],
+    awardEmoji: "🛠️",
   },
 ];
 
@@ -48,9 +54,8 @@ export interface LevelUpCopy {
 export interface Level {
   key: string;
   title: string;
-  /** Which tracks (by Track.key) belong to this level — the environment/wallpaper stays constant across all of them. */
+  /** Which tracks (by Track.key) belong to this level — the environment stays constant across all of them. */
   trackKeys: string[];
-  wallpaper: string;
   /** The Browser tab to land on when a learner opens or revisits this level. */
   firstTabKey: string;
   /**
@@ -72,22 +77,20 @@ export interface Level {
 /**
  * A level bundles several tracks into one shared environment — one job
  * title, one moment in the story. Finishing every track in a level is what
- * moves a learner into the next one (new emails, new schedule, a new
- * wallpaper) — nothing changes between tracks *within* the same level.
+ * moves a learner into the next one (new emails, new schedule). The
+ * desktop room stays put across every level in the same act.
  */
 export const LEVELS: Level[] = [
   {
     key: "level1",
     title: "Level 1: New Hire, Day One",
     trackKeys: ["starter"],
-    wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
     firstTabKey: "mail",
   },
   {
     key: "level2",
     title: "Level 2: Settling In",
     trackKeys: ["schedules", "judgment"],
-    wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
     firstTabKey: "portal",
     levelUp: {
       emoji: "🎉",
@@ -101,18 +104,22 @@ export const LEVELS: Level[] = [
     key: "level3",
     title: "Level 3: Shift Lead",
     trackKeys: ["growing"],
-    wallpaper: "linear-gradient(155deg, #43266e 0%, #6d3f9e 42%, #9a5fc9 75%, #d4af65 100%)",
     firstTabKey: "calendar",
     freeTabbing: true,
   },
 ];
 
-/** A group of levels sharing one job title/story arc — mirrors the curriculum's act-N folders. Purely a display grouping; nothing structural depends on it. */
+/** A group of levels sharing one job title, story arc, and desktop place. */
 export interface Act {
   key: string;
   title: string;
   levelKeys: string[];
+  /** Which room the Chromebook is sitting in for this act. */
+  scene: DesktopScene;
 }
+
+/** Places the learner's desktop looks out on. Built acts get a full scene; later acts reuse the closest room until they're painted. */
+export type DesktopScene = "harborside-open" | "harborside-shift";
 
 /**
  * Only lists acts that have at least one level actually built in `LEVELS` —
@@ -121,12 +128,16 @@ export interface Act {
  * `curriculum/00-scope-and-sequence.md`.
  */
 export const ACTS: Act[] = [
-  { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2"] },
-  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3"] },
+  { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2"], scene: "harborside-open" },
+  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3"], scene: "harborside-shift" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
   return ACTS.find((a) => a.levelKeys.includes(level.key));
+}
+
+export function sceneForLevel(level: Level): DesktopScene {
+  return actForLevel(level)?.scene ?? "harborside-open";
 }
 
 /**
@@ -149,10 +160,27 @@ export function levelForTrack(trackKey: string): Level {
   return LEVELS.find((l) => l.trackKeys.includes(trackKey)) ?? LEVELS[LEVELS.length - 1];
 }
 
-/** Levels the learner has actually reached — their current level and every one before it. */
+export function taskKeysForLevel(level: Level): TaskKey[] {
+  return level.trackKeys.flatMap((tk) => TRACKS.find((t) => t.key === tk)?.taskKeys ?? []);
+}
+
+/** Highest level the learner has reached, even if they replayed an earlier one. */
+export function furthestLevelIndex(completedTaskKeys: TaskKey[]): number {
+  let max = 0;
+  LEVELS.forEach((level, i) => {
+    if (taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k))) {
+      max = Math.max(max, i);
+    }
+    if (i > 0 && isLevelComplete(LEVELS[i - 1], completedTaskKeys)) {
+      max = Math.max(max, i);
+    }
+  });
+  return max;
+}
+
+/** Levels the learner has actually reached — their furthest level and every one before it. */
 export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
-  const currentIndex = LEVELS.findIndex((l) => l.key === levelForTrack(activeTrack(completedTaskKeys).key).key);
-  return LEVELS.slice(0, currentIndex + 1);
+  return LEVELS.slice(0, furthestLevelIndex(completedTaskKeys) + 1);
 }
 
 /** Whether every track in a level is fully done. */
@@ -172,6 +200,8 @@ export function nextLevel(level: Level): Level | null {
 export interface TaskInfo {
   label: string;
   description: string;
+  /** One-line dispatch for the desktop briefing — what just happened, not a tutorial. */
+  dispatch: string;
   /** False for tasks the app doesn't grade yet — shown as "not built yet," not "locked." */
   built: boolean;
 }
@@ -180,46 +210,55 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   mail: {
     label: "Answer your supervisor",
     description: "Reply to Maria's email and attach the safety report.",
+    dispatch: "Maria already needs something. First shift, first email.",
     built: true,
   },
   schedule: {
     label: "Request a shift swap",
     description: "Find a scheduling conflict and ask for a change the right way.",
+    dispatch: "Two shifts overlap. Somebody has to swap.",
     built: true,
   },
   timeclock: {
     label: "Clock out for the day",
     description: "Clock out and check that your hours look right.",
+    dispatch: "End of day. Clock out, then check the hours.",
     built: true,
   },
   paystub: {
     label: "Read a pay stub",
     description: "Find your net pay and confirm the hours match.",
+    dispatch: "Payday. Make sure the numbers actually match.",
     built: true,
   },
   incident: {
     label: "File an incident report",
     description: "Write up what happened, in order, for your lead.",
+    dispatch: "Someone slipped. Write it up before you forget.",
     built: true,
   },
   handbook: {
     label: "Look something up",
     description: "Find an answer in the employee handbook under pressure.",
+    dispatch: "They need an answer. The handbook is on your desk.",
     built: true,
   },
   calendar: {
     label: "Handle a meeting invite",
     description: "Spot a conflict with your schedule and propose a different time.",
+    dispatch: "Meeting vs. your shift. Pick a time that works.",
     built: true,
   },
   files: {
     label: "Share a file the right way",
     description: "Find the right file in a shared drive and share it with the right access.",
+    dispatch: "They need the file. Share it — not the whole folder.",
     built: true,
   },
   spreadsheet: {
     label: "Enter data and share a total",
     description: "Enter this week's numbers into a shared sheet and email the total to your lead.",
+    dispatch: "This week's numbers. Total them and send it up.",
     built: true,
   },
 };

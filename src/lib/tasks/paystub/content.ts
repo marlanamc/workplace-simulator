@@ -28,9 +28,9 @@ export interface PayStub {
 }
 
 export const PAY_STUBS: PayStub[] = [
-  { id: "aug-1", period: "Aug 1 – Aug 15", payDate: "Aug 16, 2026", gross: "$864.00", net: "$742.18", pdfDocId: "paystub-aug-1" },
-  { id: "jul-2", period: "Jul 16 – Jul 31", payDate: "Aug 1, 2026", gross: "$901.50", net: "$774.61" },
-  { id: "jul-1", period: "Jul 1 – Jul 15", payDate: "Jul 16, 2026", gross: "$832.00", net: "$714.99" },
+  { id: "aug-1", period: "Aug 1 – Aug 15", payDate: "Aug 16, 2026", gross: "$1,005.00", net: "$863.30", pdfDocId: "paystub-aug-1" },
+  { id: "jul-2", period: "Jul 16 – Jul 31", payDate: "Aug 1, 2026", gross: "$1,024.43", net: "$880.24" },
+  { id: "jul-1", period: "Jul 1 – Jul 15", payDate: "Jul 16, 2026", gross: "$945.45", net: "$812.49" },
 ];
 
 export interface CheckOption {
@@ -43,17 +43,17 @@ export const NET_PAY_CHECK: Record<Lang, { question: string; options: CheckOptio
   en: {
     question: "What was the net pay on your most recent pay stub?",
     options: [
-      { label: "$864.00", isTarget: false, wrongHint: { en: "That's the gross pay — before taxes and deductions come out. Look for Net pay.", es: "Ese es el pago bruto — antes de impuestos y deducciones. Busca el pago neto." } },
-      { label: "$742.18", isTarget: true },
-      { label: "$901.50", isTarget: false, wrongHint: { en: "That's from a different pay period. Make sure you're reading the Aug 1–15 stub.", es: "Ese es de otro período de pago. Asegúrate de leer el recibo del 1 al 15 de agosto." } },
+      { label: "$1,005.00", isTarget: false, wrongHint: { en: "That's the gross pay — before taxes and deductions come out. Look for Net pay.", es: "Ese es el pago bruto — antes de impuestos y deducciones. Busca el pago neto." } },
+      { label: "$863.30", isTarget: true },
+      { label: "$1,024.43", isTarget: false, wrongHint: { en: "That's from a different pay period. Make sure you're reading the Aug 1–15 stub.", es: "Ese es de otro período de pago. Asegúrate de leer el recibo del 1 al 15 de agosto." } },
     ],
   },
   es: {
     question: "¿Cuál fue el pago neto en tu recibo de pago más reciente?",
     options: [
-      { label: "$864.00", isTarget: false, wrongHint: { en: "That's the gross pay — before taxes and deductions come out. Look for Net pay.", es: "Ese es el pago bruto — antes de impuestos y deducciones. Busca el pago neto." } },
-      { label: "$742.18", isTarget: true },
-      { label: "$901.50", isTarget: false, wrongHint: { en: "That's from a different pay period. Make sure you're reading the Aug 1–15 stub.", es: "Ese es de otro período de pago. Asegúrate de leer el recibo del 1 al 15 de agosto." } },
+      { label: "$1,005.00", isTarget: false, wrongHint: { en: "That's the gross pay — before taxes and deductions come out. Look for Net pay.", es: "Ese es el pago bruto — antes de impuestos y deducciones. Busca el pago neto." } },
+      { label: "$863.30", isTarget: true },
+      { label: "$1,024.43", isTarget: false, wrongHint: { en: "That's from a different pay period. Make sure you're reading the Aug 1–15 stub.", es: "Ese es de otro período de pago. Asegúrate de leer el recibo del 1 al 15 de agosto." } },
     ],
   },
 };
@@ -64,7 +64,7 @@ export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[
     options: [
       { label: "62.5 hours", isTarget: false, wrongHint: { en: "That's just the regular hours — don't forget to add the overtime hours too.", es: "Esas son solo las horas regulares — no olvides sumar las horas extra." } },
       { label: "65.5 hours", isTarget: true },
-      { label: "$59.40", isTarget: false, wrongHint: { en: "That's the overtime pay in dollars, not a number of hours.", es: "Eso es el pago de horas extra en dólares, no un número de horas." } },
+      { label: "$67.50", isTarget: false, wrongHint: { en: "That's the overtime pay in dollars, not a number of hours.", es: "Eso es el pago de horas extra en dólares, no un número de horas." } },
     ],
   },
   es: {
@@ -72,7 +72,7 @@ export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[
     options: [
       { label: "62.5 horas", isTarget: false, wrongHint: { en: "That's just the regular hours — don't forget to add the overtime hours too.", es: "Esas son solo las horas regulares — no olvides sumar las horas extra." } },
       { label: "65.5 horas", isTarget: true },
-      { label: "$59.40", isTarget: false, wrongHint: { en: "That's the overtime pay in dollars, not a number of hours.", es: "Eso es el pago de horas extra en dólares, no un número de horas." } },
+      { label: "$67.50", isTarget: false, wrongHint: { en: "That's the overtime pay in dollars, not a number of hours.", es: "Eso es el pago de horas extra en dólares, no un número de horas." } },
     ],
   },
 };

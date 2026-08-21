@@ -3,7 +3,7 @@
 import { useProgress } from "@/lib/progress-context";
 import Confetti from "@/components/task/Confetti";
 
-export default function TrackCelebration() {
+export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => void }) {
   const { celebrateTrack, dismissCelebration } = useProgress();
   if (!celebrateTrack) return null;
 
@@ -17,19 +17,16 @@ export default function TrackCelebration() {
         onClick={(e) => e.stopPropagation()}
       >
         <Confetti count={26} />
-        <div className="animate-pop-in mb-4 text-[40px]">🏆</div>
-        <div className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
-          Certificate earned
-        </div>
+        <div className="animate-pop-in mb-4 text-[48px] leading-none">{celebrateTrack.awardEmoji}</div>
         <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title}</h2>
         <p className="mb-6 text-[15px] leading-relaxed text-[var(--text-secondary)]">
-          You finished everything in {celebrateTrack.title}. Great work — it&rsquo;s saved to your certificates.
+          Award unlocked — it&rsquo;s in your trophy case.
         </p>
         <button
-          onClick={dismissCelebration}
+          onClick={onSeeAward}
           className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
         >
-          Keep going
+          See award
         </button>
       </div>
     </div>

@@ -10,10 +10,11 @@ import {
   levelForTrack,
   isLevelComplete,
   nextLevel,
+  taskKeysForLevel,
   type Track,
   type Level,
 } from "@/lib/tracks-content";
-import { completeTask, awardCertificate } from "@/app/actions";
+import { completeTask, awardCertificate, restartLevelProgress } from "@/app/actions";
 
 interface ProgressValue {
   learnerId: string;
@@ -24,7 +25,9 @@ interface ProgressValue {
   celebrateTrack: Track | null;
   celebrateLevel: Level | null;
   currentTrack: Track;
+  progressEpoch: number;
   markComplete: (taskKey: TaskKey, badgeKey?: string) => void;
+  restartLevel: (level: Level) => void;
   dismissCelebration: () => void;
   dismissLevelCelebration: () => void;
 }
@@ -47,6 +50,7 @@ export function ProgressProvider({
   const [justEarnedPoints, setJustEarnedPoints] = useState<number | null>(null);
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
+  const [progressEpoch, setProgressEpoch] = useState(0);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const markComplete = useCallback((taskKey: TaskKey, badgeKey?: string) => {
@@ -81,6 +85,17 @@ export function ProgressProvider({
     completeTask(taskKey, badgeKey);
   }, []);
 
+  const restartLevel = useCallback((level: Level) => {
+    const taskKeys = new Set(taskKeysForLevel(level));
+    const trackKeys = new Set(level.trackKeys);
+    setCompletedTaskKeys((prev) => prev.filter((k) => !taskKeys.has(k)));
+    setCertificateTrackKeys((prev) => prev.filter((k) => !trackKeys.has(k)));
+    setCelebrateTrack(null);
+    setCelebrateLevel(null);
+    setProgressEpoch((n) => n + 1);
+    restartLevelProgress(level.key);
+  }, []);
+
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
   const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
 
@@ -95,7 +110,9 @@ export function ProgressProvider({
         celebrateTrack,
         celebrateLevel,
         currentTrack: activeTrack(completedTaskKeys),
+        progressEpoch,
         markComplete,
+        restartLevel,
         dismissCelebration,
         dismissLevelCelebration,
       }}

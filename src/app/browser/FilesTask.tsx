@@ -18,16 +18,12 @@ import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
+import { TAB_ICONS, FOLDER_ICONS, CircleGlyph } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
 type View = "home" | "browse" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
-const FOLDER_ICONS: Record<string, string> = {
-  Schedules: "📅",
-  Forms: "📝",
-  "Manager Memos": "🗒",
-};
 
 function normalize(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-").replace(/\.pdf$/, "");
@@ -112,9 +108,7 @@ export default function FilesTask() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#fbbc04] text-[13px] text-white font-bold">
-          △
-        </span>
+        <CircleGlyph icon={TAB_ICONS.files} color="#fbbc04" size={28} />
         <span className="text-[18px] font-medium text-[#5f6368]">Hdrive</span>
         <div className="flex-1" />
         <button
@@ -162,7 +156,10 @@ export default function FilesTask() {
                   onClick={() => openFolder(f)}
                   className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
                 >
-                  <span className="text-[22px]">{FOLDER_ICONS[f]}</span>
+                  {(() => {
+                    const Icon = FOLDER_ICONS[f];
+                    return Icon ? <Icon size={20} strokeWidth={2.1} className="shrink-0 text-[#5f6368]" /> : null;
+                  })()}
                   <span className="truncate text-[14px] font-medium text-[#3c4043]">{f}</span>
                 </button>
               ))}

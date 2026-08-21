@@ -8,13 +8,14 @@ import FilesTask from "./FilesTask";
 import SpreadsheetTask from "./SpreadsheetTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
-import { SHELF_HEIGHT } from "@/components/Shelf";
+import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { LEVELS, TAB_LEVEL_KEYS, levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
+import { TAB_ICONS } from "@/lib/icons";
 
 type TabKey = "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "handbook" | "incident" | "newtab";
 
@@ -97,10 +98,17 @@ function ChromeTab({
       )}
       {/* favicon */}
       <span
-        className="relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-white text-[9px] font-bold"
+        className="relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-white"
         style={{ background: tab.key === "newtab" ? "#e8eaed" : tab.color }}
       >
-        {tab.key === "newtab" ? "" : tab.icon}
+        {tab.key !== "newtab" && TAB_ICONS[tab.key] && (
+          <span className="flex text-white">
+            {(() => {
+              const Icon = TAB_ICONS[tab.key];
+              return <Icon size={11} strokeWidth={2.5} />;
+            })()}
+          </span>
+        )}
       </span>
       {/* label */}
       <span
@@ -282,8 +290,7 @@ export default function BrowserClient() {
 
   return (
     <div
-      className="flex flex-col"
-      style={{ height: `calc(100vh - ${SHELF_HEIGHT}px)`, background: "#dee1e6" }}
+      className="flex min-h-0 flex-1 flex-col bg-[#dee1e6]"
     >
       {/* ── Top Chrome bar ─────────────────────────────────────── */}
       <div className="flex items-end bg-[#dee1e6] px-2 pt-2 gap-0" style={{ height: 40 }}>
@@ -384,10 +391,13 @@ export default function BrowserClient() {
             }`}
           >
             <span
-              className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm text-white text-[7px] font-bold"
+              className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm text-white"
               style={{ background: t.color }}
             >
-              {t.icon}
+              {(() => {
+                const Icon = TAB_ICONS[t.key];
+                return Icon ? <Icon size={10} strokeWidth={2.5} /> : null;
+              })()}
             </span>
             {t.label}
           </button>
@@ -406,7 +416,7 @@ export default function BrowserClient() {
         {(active?.key === "newtab" || active?.key?.startsWith("newtab-")) && <NewTabPage />}
       </div>
 
-      <NudgeToast text={nudge} bottom={SHELF_HEIGHT + 20} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
     </div>
   );
 }

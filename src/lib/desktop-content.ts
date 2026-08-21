@@ -10,14 +10,13 @@ export type AppState = "ready" | "done" | "locked";
 
 export interface AppDef {
   key: AppKey;
-  icon: string;
   color: string;
   state: AppState;
 }
 
 export const APP_DEFS: AppDef[] = [
-  { key: "browser", icon: "🌐", color: "#1a73e8", state: "ready" },
-  { key: "pdf", icon: "📄", color: "#ea4335", state: "ready" },
+  { key: "browser", color: "#1a73e8", state: "ready" },
+  { key: "pdf", color: "#ea4335", state: "ready" },
 ];
 
 interface AppCopy {
@@ -76,6 +75,11 @@ export const DESKTOP_COPY: Record<Lang, {
   allDoneHeadline: string;
   allDoneBody: string;
   allDoneCta: string;
+  replayLevel: string;
+  replayShort: string;
+  replayConfirm: string;
+  replayConfirmCta: string;
+  replayCancel: string;
   comingSoonHeadline: string;
   comingSoonBody: string;
 }> = {
@@ -94,9 +98,14 @@ export const DESKTOP_COPY: Record<Lang, {
     done: "Done",
     ready: "Ready",
     locked: "Later",
-    allDoneHeadline: "You've completed every track!",
-    allDoneBody: "Every task in the simulator is done. Check out your certificate, or do any task again for more practice.",
-    allDoneCta: "View my certificate",
+    allDoneHeadline: "You ran the whole cafe.",
+    allDoneBody: "Awards are in the case. Replay any level if you want another round.",
+    allDoneCta: "See awards",
+    replayLevel: "Replay a level",
+    replayShort: "Replay",
+    replayConfirm: "Resets this level's checkmarks. Later levels stay.",
+    replayConfirmCta: "Reset it",
+    replayCancel: "Never mind",
     comingSoonHeadline: "More coming soon",
     comingSoonBody: "You're all caught up — the next task in this track isn't built yet. Check back later, or do any task again for more practice.",
   },
@@ -115,16 +124,20 @@ export const DESKTOP_COPY: Record<Lang, {
     done: "Hecho",
     ready: "Listo",
     locked: "Después",
-    allDoneHeadline: "¡Completaste todas las rutas!",
-    allDoneBody: "Ya terminaste todas las tareas del simulador. Mira tu certificado, o repite cualquier tarea para practicar más.",
-    allDoneCta: "Ver mi certificado",
+    allDoneHeadline: "Terminaste todo el café.",
+    allDoneBody: "Tus premios están en la vitrina. Repite cualquier nivel si quieres otra ronda.",
+    allDoneCta: "Ver premios",
+    replayLevel: "Repetir un nivel",
+    replayShort: "Repetir",
+    replayConfirm: "Se borran las marcas de este nivel. Los niveles siguientes se quedan.",
+    replayConfirmCta: "Reiniciar",
+    replayCancel: "Mejor no",
     comingSoonHeadline: "Muy pronto más",
     comingSoonBody: "Ya estás al día — la siguiente tarea de esta ruta todavía no está lista. Vuelve más tarde, o repite cualquier tarea para practicar más.",
   },
 };
 
 export interface RecentItem {
-  icon: string;
   color: string;
   title: Localized;
   subtitle: Localized;
@@ -134,7 +147,6 @@ export interface RecentItem {
 
 export const RECENT_ITEMS: RecentItem[] = [
   {
-    icon: "▦",
     color: "#8430ce",
     title: { en: "Hportal", es: "Hportal" },
     subtitle: { en: "Check your schedule", es: "Revisa tu horario" },
@@ -142,7 +154,6 @@ export const RECENT_ITEMS: RecentItem[] = [
     tab: "portal",
   },
   {
-    icon: "📄",
     color: "#4285f4",
     title: { en: "Hdocs", es: "Hdocs" },
     subtitle: { en: "Look something up", es: "Busca algo" },

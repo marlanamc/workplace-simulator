@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { getDb } from "./client";
 import { badges, learners, taskCompletions } from "./schema";
 
@@ -62,4 +62,18 @@ export async function getBadges(learnerId: string) {
     .from(badges)
     .where(eq(badges.learnerId, learnerId))
     .orderBy(desc(badges.awardedAt));
+}
+
+export async function deleteCompletions(learnerId: string, taskKeys: string[]) {
+  if (taskKeys.length === 0) return;
+  const db = getDb();
+  await db
+    .delete(taskCompletions)
+    .where(and(eq(taskCompletions.learnerId, learnerId), inArray(taskCompletions.taskKey, taskKeys)));
+}
+
+export async function deleteBadges(learnerId: string, badgeKeys: string[]) {
+  if (badgeKeys.length === 0) return;
+  const db = getDb();
+  await db.delete(badges).where(and(eq(badges.learnerId, learnerId), inArray(badges.badgeKey, badgeKeys)));
 }

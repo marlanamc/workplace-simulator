@@ -1,23 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { PDF_DOCUMENTS, type PdfDocument } from "@/lib/pdf-content";
-import { SHELF_HEIGHT } from "@/components/Shelf";
+import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { useWindowManager } from "@/lib/window-manager";
+import { FileText } from "@/lib/icons";
+
+/** A real US Letter sheet: 8.5in × 11in, ~1in margins, 12pt Times. Zoom scales the whole page. */
+const LETTER = { widthIn: 8.5, heightIn: 11 } as const;
+
+function PdfPage({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="relative box-border h-full w-full"
+      style={{
+        padding: "1in 1in 1.15in",
+        fontFamily: '"Times New Roman", Times, Georgia, serif',
+        fontSize: "12pt",
+        lineHeight: 1.35,
+        color: "#1a1a1a",
+      }}
+    >
+      {children}
+      <div
+        className="absolute flex items-center justify-between border-t border-[#1a1a1a]/30 text-[9pt] text-[#444]"
+        style={{ left: "1in", right: "1in", bottom: "0.55in", paddingTop: "0.2in" }}
+      >
+        <span>Harborside Cafe · Internal</span>
+        <span>Page 1 of 1</span>
+      </div>
+    </div>
+  );
+}
 
 function Letterhead() {
   return (
-    <div className="mb-6 flex items-center gap-3 border-b border-[#dfe3e6] pb-4">
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#123a5c] text-[13px] font-bold text-white">
-        HC
-      </span>
-      <div>
-        <div className="text-[14px] font-semibold tracking-wide text-[#123a5c]">HARBORSIDE CAFE</div>
-        <div className="text-[11px] text-[#7e8d9a]">142 Main Street · Harborside</div>
-      </div>
+    <div className="mb-[14pt] border-b-[1.5pt] border-[#1a1a1a] pb-[8pt]">
+      <div className="text-[16pt] font-bold tracking-[0.14em]">HARBORSIDE CAFE</div>
+      <div className="mt-[2pt] text-[10pt] tracking-wide text-[#333]">142 Main Street · Harborside</div>
     </div>
   );
 }
@@ -26,29 +49,30 @@ function ReportPage({ doc }: { doc: Extract<PdfDocument, { kind: "report" }> }) 
   return (
     <>
       <Letterhead />
-      <h1 className="mb-4 text-[22px] font-bold text-[#1f2a30]">{doc.title}</h1>
-      <div className="mb-6 flex gap-8">
-        {doc.meta.map((m) => (
-          <div key={m.label}>
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-[#9aa5ad]">{m.label}</div>
-            <div className="text-[14px] text-[#1f2a30]">{m.value}</div>
-          </div>
+      <h1 className="mb-[16pt] text-center text-[16pt] font-bold tracking-wide">{doc.title}</h1>
+      <table className="mb-[16pt] w-full border-collapse text-[12pt]">
+        <tbody>
+          <tr>
+            {doc.meta.map((m) => (
+              <td key={m.label} className="border border-[#1a1a1a] px-[8pt] py-[6pt] align-top">
+                <div className="text-[9pt] font-bold">{m.label}</div>
+                <div className="mt-[0.1em]">{m.value}</div>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+      <h2 className="mb-[6pt] text-[12pt] font-bold">{doc.sectionHeading}</h2>
+      <ol className="m-0 flex list-decimal flex-col gap-[8pt] pl-[18pt] text-[12pt] leading-[1.35]">
+        {doc.items.map((item) => (
+          <li key={item}>{item}</li>
         ))}
-      </div>
-      <div className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-[#123a5c]">
-        {doc.sectionHeading}
-      </div>
-      <div className="mb-8 flex flex-col gap-2">
-        {doc.items.map((item, i) => (
-          <div key={i} className="flex items-start gap-2.5 text-[14px] leading-relaxed text-[#1f2a30]">
-            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#7e8d9a]" />
-            {item}
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-[#dfe3e6] pt-4 text-[13px] italic text-[#5f6b74]">
-        Prepared by: {doc.signedBy}
-      </div>
+      </ol>
+      <p className="mt-[28pt] text-[12pt] leading-relaxed">
+        Prepared by
+        <br />
+        <span className="italic">{doc.signedBy}</span>
+      </p>
     </>
   );
 }
@@ -57,62 +81,74 @@ function PayStubPage({ doc }: { doc: Extract<PdfDocument, { kind: "paystub" }> }
   return (
     <>
       <Letterhead />
-      <h1 className="mb-4 text-[20px] font-bold tracking-wide text-[#1f2a30]">EARNINGS STATEMENT</h1>
-      <div className="mb-6 grid grid-cols-3 gap-4">
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-[#9aa5ad]">Employee</div>
-          <div className="text-[14px] text-[#1f2a30]">{doc.employee}</div>
-        </div>
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-[#9aa5ad]">Pay period</div>
-          <div className="text-[14px] text-[#1f2a30]">{doc.payPeriod}</div>
-        </div>
-        <div>
-          <div className="text-[10px] font-semibold uppercase tracking-wide text-[#9aa5ad]">Pay date</div>
-          <div className="text-[14px] text-[#1f2a30]">{doc.payDate}</div>
-        </div>
-      </div>
+      <h1 className="mb-[0.7em] text-center text-[1.35em] font-bold tracking-[0.08em]">EARNINGS STATEMENT</h1>
+      <table className="mb-[0.85em] w-full border-collapse text-[1em]">
+        <tbody>
+          <tr>
+            <td className="border border-[#1a1a1a] px-[0.7em] py-[0.4em]">
+              <div className="text-[0.78em] font-bold">Employee</div>
+              <div className="mt-[0.1em]">{doc.employee}</div>
+            </td>
+            <td className="border border-[#1a1a1a] px-[0.7em] py-[0.4em]">
+              <div className="text-[0.78em] font-bold">Pay period</div>
+              <div className="mt-[0.1em]">{doc.payPeriod}</div>
+            </td>
+            <td className="border border-[#1a1a1a] px-[0.7em] py-[0.4em]">
+              <div className="text-[0.78em] font-bold">Pay date</div>
+              <div className="mt-[0.1em]">{doc.payDate}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-[#123a5c]">Earnings</div>
-      <div className="mb-1 overflow-hidden rounded border border-[#dfe3e6]">
-        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 bg-[#f2f4f5] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide text-[#7e8d9a]">
-          <span>Description</span>
-          <span>Detail</span>
-          <span className="text-right">Amount</span>
-        </div>
-        {doc.earnings.map((e, i) => (
-          <div
-            key={e.label}
-            className={`grid grid-cols-[1fr_1fr_auto] gap-2 px-3 py-2 text-[13px] text-[#1f2a30] ${i !== 0 ? "border-t border-[#eceff0]" : ""}`}
-          >
-            <span>{e.label}</span>
-            <span className="text-[#5f6b74]">{e.detail}</span>
-            <span className="text-right tabular-nums">{e.amount}</span>
-          </div>
-        ))}
-        <div className="grid grid-cols-[1fr_1fr_auto] gap-2 border-t border-[#dfe3e6] bg-[#f9fafb] px-3 py-2 text-[13px] font-semibold text-[#1f2a30]">
-          <span className="col-span-2">Gross pay</span>
-          <span className="text-right tabular-nums">{doc.grossPay}</span>
-        </div>
-      </div>
+      <h2 className="mb-[0.2em] text-[1em] font-bold">Earnings</h2>
+      <table className="mb-[0.75em] w-full border-collapse text-[0.95em]">
+        <thead>
+          <tr className="bg-[#f3f3f3]">
+            <th className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-left font-bold">Description</th>
+            <th className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-left font-bold">Detail</th>
+            <th className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-right font-bold">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          {doc.earnings.map((e) => (
+            <tr key={e.label}>
+              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">{e.label}</td>
+              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">{e.detail}</td>
+              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-right tabular-nums">{e.amount}</td>
+            </tr>
+          ))}
+          <tr>
+            <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] font-bold" colSpan={2}>
+              Gross pay
+            </td>
+            <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-right font-bold tabular-nums">{doc.grossPay}</td>
+          </tr>
+        </tbody>
+      </table>
 
-      <div className="mb-4 mt-5 text-[11px] font-semibold uppercase tracking-wide text-[#123a5c]">Deductions</div>
-      <div className="mb-6 overflow-hidden rounded border border-[#dfe3e6]">
-        {doc.deductions.map((d, i) => (
-          <div
-            key={d.label}
-            className={`flex items-center justify-between px-3 py-2 text-[13px] text-[#1f2a30] ${i !== 0 ? "border-t border-[#eceff0]" : ""}`}
-          >
-            <span>{d.label}</span>
-            <span className="tabular-nums text-[#b5342b]">{d.amount}</span>
-          </div>
-        ))}
-      </div>
+      <h2 className="mb-[0.2em] text-[1em] font-bold">Deductions</h2>
+      <table className="mb-[0.75em] w-full border-collapse text-[0.95em]">
+        <tbody>
+          {doc.deductions.map((d) => (
+            <tr key={d.label}>
+              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">{d.label}</td>
+              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-right tabular-nums">{d.amount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-      <div className="flex items-center justify-between rounded-lg bg-[#e4f1ec] px-4 py-3">
-        <span className="text-[13px] font-semibold uppercase tracking-wide text-[#1e5a4c]">Net pay</span>
-        <span className="text-[19px] font-bold tabular-nums text-[#1e5a4c]">{doc.netPay}</span>
-      </div>
+      <table className="w-full border-collapse text-[1em]">
+        <tbody>
+          <tr>
+            <td className="border-[2px] border-[#1a1a1a] px-[0.7em] py-[0.45em] font-bold">Net pay</td>
+            <td className="border-[2px] border-[#1a1a1a] px-[0.7em] py-[0.45em] text-right text-[1.25em] font-bold tabular-nums">
+              {doc.netPay}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </>
   );
 }
@@ -137,14 +173,14 @@ export default function PdfReaderClient() {
   }
 
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
-
+  const scale = zoom / 100;
   const notAvailable = () => say("That's not available in this practice space — just look and read here.");
 
   return (
-    <div className="flex flex-col bg-[var(--surface-muted)]" style={{ height: `calc(100vh - ${SHELF_HEIGHT}px)` }}>
+    <div className="flex min-h-0 flex-1 flex-col bg-[var(--surface-muted)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-2">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--danger)] text-[13px] text-white">
-          ▤
+        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--danger)] text-white">
+          <FileText size={15} strokeWidth={2.25} />
         </span>
         <span className="text-[15px] font-medium">PDF Reader</span>
         <div className="flex-1" />
@@ -176,7 +212,6 @@ export default function PdfReaderClient() {
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col">
-          {/* viewer toolbar */}
           <div className="flex items-center justify-center gap-1 border-b border-[#3a3d40] bg-[#323639] px-3 py-1.5">
             <span className="mr-3 truncate text-[13px] text-white/80">{active.name}</span>
             <button
@@ -215,20 +250,40 @@ export default function PdfReaderClient() {
             </button>
           </div>
 
-          <div className="min-h-0 flex-1 overflow-auto bg-[#525659] p-8">
-            <div className="flex justify-center" style={{ minWidth: 560 * (zoom / 100) }}>
+          <div className="relative min-h-0 flex-1 bg-[#525659]">
+            <div className="absolute inset-0 overflow-auto">
               <div
-                className="w-[560px] shrink-0 rounded-sm bg-white p-10 shadow-xl transition-transform"
-                style={{ transform: `scale(${zoom / 100})`, transformOrigin: "top center" }}
+                className="flex justify-center"
+                style={{ padding: 28, minWidth: "min-content" }}
               >
-                {active.kind === "report" ? <ReportPage doc={active} /> : <PayStubPage doc={active} />}
+                <div
+                  className="shrink-0"
+                  style={{
+                    width: `${LETTER.widthIn * scale}in`,
+                    height: `${LETTER.heightIn * scale}in`,
+                  }}
+                >
+                  <div
+                    className="origin-top-left overflow-hidden bg-white"
+                    style={{
+                      width: `${LETTER.widthIn}in`,
+                      height: `${LETTER.heightIn}in`,
+                      transform: `scale(${scale})`,
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.22)",
+                    }}
+                  >
+                    <PdfPage>
+                      {active.kind === "report" ? <ReportPage doc={active} /> : <PayStubPage doc={active} />}
+                    </PdfPage>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <NudgeToast text={nudge} bottom={SHELF_HEIGHT + 20} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
     </div>
   );
 }

@@ -17,6 +17,7 @@ import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
+import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
@@ -74,7 +75,7 @@ export default function PaystubTask() {
       </div>
 
       {view === "intro" && (
-        <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("list")} />
+        <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.paystub} onContinue={() => setView("list")} />
       )}
 
       {view === "list" && (

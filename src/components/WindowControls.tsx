@@ -4,7 +4,7 @@ import type { AppKey } from "@/lib/desktop-content";
 import { useWindowManager } from "@/lib/window-manager";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
-import { SHELF_HEIGHT } from "@/components/Shelf";
+import { SHELF_RESERVE } from "@/components/Shelf";
 
 function MinimizeIcon() {
   return (
@@ -61,7 +61,7 @@ export default function WindowControls({ appKey, dark = false }: { appKey: AppKe
           <CloseIcon />
         </button>
       </div>
-      <NudgeToast text={nudge} bottom={SHELF_HEIGHT + 20} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
     </>
   );
 }

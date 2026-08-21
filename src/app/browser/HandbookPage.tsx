@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { HANDBOOK_ARTICLES } from "@/lib/handbook-content";
+import { TAB_ICONS, CircleGlyph } from "@/lib/icons";
 
 export default function HandbookPage() {
   const [query, setQuery] = useState("");
@@ -20,9 +21,7 @@ export default function HandbookPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-white text-[15px] text-[var(--text-primary)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#3c4043] text-[13px] text-white">
-          ▤
-        </span>
+        <CircleGlyph icon={TAB_ICONS.handbook} color="#3c4043" size={28} />
         <span className="text-[15px] font-medium">Employee Handbook</span>
       </div>
 

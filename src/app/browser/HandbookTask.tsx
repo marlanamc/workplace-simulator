@@ -15,6 +15,7 @@ import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
+import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
@@ -52,7 +53,7 @@ export default function HandbookTask() {
     <div className="flex h-full min-h-0 flex-col bg-white text-[15px] text-[var(--text-primary)]">
       {view === "intro" && (
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("task")} />
+          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.handbook} onContinue={() => setView("task")} />
         </div>
       )}
 

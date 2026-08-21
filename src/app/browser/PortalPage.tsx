@@ -4,6 +4,7 @@ import { useState } from "react";
 import ScheduleTask from "./ScheduleTask";
 import TimeclockTask from "./TimeclockTask";
 import PaystubTask from "./PaystubTask";
+import { TAB_ICONS, CircleGlyph } from "@/lib/icons";
 
 type Section = "schedule" | "timeclock" | "paystubs";
 
@@ -19,9 +20,7 @@ export default function PortalPage() {
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#8430ce] text-[13px] text-white">
-          ▦
-        </span>
+        <CircleGlyph icon={TAB_ICONS.portal} color="#8430ce" size={28} />
         <span className="text-[15px] font-medium">Employee Portal</span>
       </div>
 
