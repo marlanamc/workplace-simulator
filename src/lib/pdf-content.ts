@@ -1,50 +1,72 @@
-export interface PdfDocument {
+interface PdfBase {
   id: string;
   name: string;
   size: string;
   date: string;
-  pages: string[][];
 }
+
+export interface ReportDoc extends PdfBase {
+  kind: "report";
+  title: string;
+  meta: { label: string; value: string }[];
+  sectionHeading: string;
+  items: string[];
+  signedBy: string;
+}
+
+export interface PayStubDoc extends PdfBase {
+  kind: "paystub";
+  employee: string;
+  payPeriod: string;
+  payDate: string;
+  earnings: { label: string; detail: string; amount: string }[];
+  grossPay: string;
+  deductions: { label: string; amount: string }[];
+  netPay: string;
+}
+
+export type PdfDocument = ReportDoc | PayStubDoc;
 
 export const PDF_DOCUMENTS: PdfDocument[] = [
   {
+    kind: "report",
     id: "safety-report-july",
     name: "safety-report-july.pdf",
     size: "248 KB",
     date: "Aug 1, 2026",
-    pages: [
-      [
-        "HARBORSIDE CAFE — MONTHLY SAFETY REPORT",
-        "Month: July 2026    Location: Main Street",
-        "",
-        "Incidents reported: 1 (minor slip, no injury — cleaned within 5 minutes)",
-        "Fire extinguisher check: Passed, Jul 3",
-        "First aid kit restocked: Jul 10",
-        "Floor mats inspected: Jul 10 — replaced one worn mat near the ice machine",
-        "",
-        "Prepared by: Maria Delgado, Cafe Manager",
-      ],
+    title: "Monthly Safety Report",
+    meta: [
+      { label: "Month", value: "July 2026" },
+      { label: "Location", value: "Main Street" },
     ],
+    sectionHeading: "Summary",
+    items: [
+      "Incidents reported: 1 (minor slip, no injury — cleaned within 5 minutes)",
+      "Fire extinguisher check: Passed, Jul 3",
+      "First aid kit restocked: Jul 10",
+      "Floor mats inspected: Jul 10 — replaced one worn mat near the ice machine",
+    ],
+    signedBy: "Maria Delgado, Cafe Manager",
   },
   {
+    kind: "paystub",
     id: "paystub-aug-1",
     name: "paystub-aug-1-15.pdf",
     size: "96 KB",
     date: "Aug 16, 2026",
-    pages: [
-      [
-        "HARBORSIDE CAFE — EARNINGS STATEMENT",
-        "Pay period: Aug 1 – Aug 15, 2026    Pay date: Aug 16, 2026",
-        "",
-        "Regular hours: 62.5 @ $13.20/hr        $825.00",
-        "Overtime hours: 3 @ $19.80/hr           $59.40",
-        "Gross pay:                              $864.00",
-        "",
-        "Federal tax withheld:                   -$86.40",
-        "State tax withheld:                     -$25.92",
-        "Social Security / Medicare:              -$9.50",
-        "Net pay:                                $742.18",
-      ],
+    employee: "Jordan R.",
+    payPeriod: "Aug 1 – Aug 15, 2026",
+    payDate: "Aug 16, 2026",
+    earnings: [
+      { label: "Regular hours", detail: "62.5 @ $13.20/hr", amount: "$825.00" },
+      { label: "Overtime hours", detail: "3 @ $19.80/hr", amount: "$59.40" },
     ],
+    grossPay: "$864.00",
+    deductions: [
+      { label: "Federal tax withheld", amount: "-$86.40" },
+      { label: "State tax withheld", amount: "-$25.92" },
+      { label: "Social Security / Medicare", amount: "-$9.50" },
+    ],
+    netPay: "$742.18",
   },
 ];

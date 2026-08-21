@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import MailClient from "../mail/MailClient";
 import PortalPage from "./PortalPage";
 import HandbookPage from "./HandbookPage";
 import Shelf, { SHELF_HEIGHT } from "@/components/Shelf";
+import WindowControls from "@/components/WindowControls";
 
 type TabKey = "mail" | "portal" | "handbook";
 
@@ -37,13 +37,6 @@ export default function BrowserClient({ displayName }: { displayName: string }) 
     <div className="flex flex-col bg-[#dee1e6]" style={{ height: `calc(100vh - ${SHELF_HEIGHT}px)` }}>
       {/* tab strip */}
       <div className="flex items-end gap-1 bg-[#dee1e6] px-2 pt-2">
-        <Link
-          href="/"
-          aria-label="Back to desktop"
-          className="mb-1.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[15px] text-[#5f6368] hover:bg-black/5"
-        >
-          ⌂
-        </Link>
         {TABS.map((t) => {
           const isActive = t.key === activeTab;
           return (
@@ -64,6 +57,8 @@ export default function BrowserClient({ displayName }: { displayName: string }) 
             </button>
           );
         })}
+        <div className="flex-1" />
+        <WindowControls />
       </div>
 
       {/* address bar */}
