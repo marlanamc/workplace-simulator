@@ -6,6 +6,7 @@ import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
+import { useWindowManager } from "@/lib/window-manager";
 
 function Letterhead() {
   return (
@@ -117,9 +118,24 @@ function PayStubPage({ doc }: { doc: Extract<PdfDocument, { kind: "paystub" }> }
 }
 
 export default function PdfReaderClient() {
-  const [activeId, setActiveId] = useState(PDF_DOCUMENTS[0].id);
+  const { pdfDocId, pdfDocToken } = useWindowManager();
+  const [activeId, setActiveId] = useState(
+    pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
+  );
   const [zoom, setZoom] = useState(100);
   const { nudge, say } = useNudge();
+
+  // A deep link (e.g. "open this pay stub" from the Portal) requests a doc —
+  // jump to it even if the reader is already open on a different file.
+  // Adjusted during render (React's recommended pattern), not in an effect.
+  const [lastToken, setLastToken] = useState(pdfDocToken);
+  if (pdfDocToken !== lastToken) {
+    setLastToken(pdfDocToken);
+    if (pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId)) {
+      setActiveId(pdfDocId);
+    }
+  }
+
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
 
   const notAvailable = () => say("That's not available in this practice space — just look and read here.");

@@ -56,7 +56,7 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   paystub: {
     label: "Read a pay stub",
     description: "Find your net pay and confirm the hours match.",
-    built: false,
+    built: true,
   },
   incident: {
     label: "File an incident report",

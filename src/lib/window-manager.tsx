@@ -12,10 +12,12 @@ interface WindowManagerState {
   active: AppKey | null;
   browserTab: string;
   browserTabToken: number;
+  pdfDocId: string | null;
+  pdfDocToken: number;
 }
 
 interface WindowManagerValue extends WindowManagerState {
-  openApp: (key: AppKey, opts?: { tab?: string }) => void;
+  openApp: (key: AppKey, opts?: { tab?: string; docId?: string }) => void;
   toggleFromShelf: (key: AppKey) => void;
   closeApp: (key: AppKey) => void;
   minimizeActive: () => void;
@@ -30,15 +32,19 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
     active: null,
     browserTab: "mail",
     browserTabToken: 0,
+    pdfDocId: null,
+    pdfDocToken: 0,
   });
 
-  const openApp = useCallback((key: AppKey, opts?: { tab?: string }) => {
+  const openApp = useCallback((key: AppKey, opts?: { tab?: string; docId?: string }) => {
     setState((s) => ({
       ...s,
       apps: { ...s.apps, [key]: { minimized: false } },
       active: key,
       browserTab: key === "browser" && opts?.tab ? opts.tab : s.browserTab,
       browserTabToken: key === "browser" && opts?.tab ? s.browserTabToken + 1 : s.browserTabToken,
+      pdfDocId: key === "pdf" && opts?.docId ? opts.docId : s.pdfDocId,
+      pdfDocToken: key === "pdf" && opts?.docId ? s.pdfDocToken + 1 : s.pdfDocToken,
     }));
   }, []);
 

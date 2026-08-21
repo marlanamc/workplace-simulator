@@ -29,7 +29,7 @@ function AppWindow({ active, children }: { active: boolean; children: ReactNode 
   }, [active]);
 
   return (
-    <div ref={ref} className={active ? "h-full" : "hidden"}>
+    <div ref={ref} className={active ? "fixed inset-0 h-full" : "hidden"}>
       {children}
     </div>
   );
@@ -127,18 +127,14 @@ function DesktopShell({ displayName }: { displayName: string }) {
       {/* app windows — mounted once opened, visible only while active, so
           minimizing preserves state (e.g. which mail step you're on) */}
       {apps.browser && (
-        <div className="fixed inset-0">
-          <AppWindow active={active === "browser"}>
-            <BrowserClient />
-          </AppWindow>
-        </div>
+        <AppWindow active={active === "browser"}>
+          <BrowserClient />
+        </AppWindow>
       )}
       {apps.pdf && (
-        <div className="fixed inset-0">
-          <AppWindow active={active === "pdf"}>
-            <PdfReaderClient />
-          </AppWindow>
-        </div>
+        <AppWindow active={active === "pdf"}>
+          <PdfReaderClient />
+        </AppWindow>
       )}
 
       <ObjectivesPanel />
