@@ -24,11 +24,17 @@ import SettingsPopover from "@/components/task/SettingsPopover";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
+import NeedAStart from "@/components/task/NeedAStart";
+import { storyMailsFor, type InboxRow } from "@/lib/story-beats";
 
-type View = "intro" | "empty" | "read" | "compose" | "done";
+type View = "intro" | "empty" | "read" | "compose" | "done" | "story";
+
+function isStoryMail(m: { key: string }): m is InboxRow {
+  return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
+}
 
 export default function MailClient() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, storyFlags } = useProgress();
   const [plain, setPlain] = useState(true);
   const [speak, setSpeak] = useState(false);
   const [step, setStep] = useState(0);
@@ -38,11 +44,24 @@ export default function MailClient() {
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
+  const [openStory, setOpenStory] = useState<InboxRow | null>(null);
+  const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
 
   const c = MAIL_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
+  const inbox = [...storyMailsFor(completedTaskKeys, storyFlags), ...EMAILS];
+  const mailDone = completedTaskKeys.includes("mail");
+  const unreadCount = inbox.filter((m) => {
+    if ("story" in m && m.story) {
+      return Boolean(m.unread) && !readStoryKeys.includes(m.key) && !(view === "story" && openStory?.key === m.key);
+    }
+    if (m.isTarget) {
+      return Boolean(m.unread) && !mailDone && view !== "read" && view !== "compose" && view !== "done";
+    }
+    return Boolean(m.unread);
+  }).length;
 
   const advance = (n: number) => setStep((s) => (s < n ? n : s));
 
@@ -82,6 +101,7 @@ export default function MailClient() {
     setConfidence(null);
     setHelp(false);
     setPicker(false);
+    setOpenStory(null);
   };
 
   const notThisFolder = () =>
@@ -129,7 +149,7 @@ export default function MailClient() {
             {c.compose}
           </button>
           {[
-            { id: "inbox", label: c.inbox, icon: Inbox, onClick: undefined as (() => void) | undefined, count: EMAILS.filter((m) => m.unread).length },
+            { id: "inbox", label: c.inbox, icon: Inbox, onClick: undefined as (() => void) | undefined, count: unreadCount },
             { id: "starred", label: c.starred, icon: Star, onClick: notThisFolder, count: 0 },
             { id: "sent", label: c.sent, icon: Send, onClick: notThisFolder, count: 0 },
             { id: "drafts", label: c.drafts, icon: FileText, onClick: notThisFolder, count: 0 },
@@ -154,17 +174,32 @@ export default function MailClient() {
           <div className="flex w-[300px] shrink-0 flex-col border-r border-[#e0e3e8] sm:w-[340px]">
             <div className="flex items-center justify-between px-4 py-3 text-[14px] font-medium text-[#1f1f1f]">
               <span>{c.inbox}</span>
-              <span className="text-[12px] font-normal text-[#444746]">{EMAILS.length}</span>
+              <span className="text-[12px] font-normal text-[#444746]">{inbox.length}</span>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {EMAILS.map((m) => {
+              {inbox.map((m) => {
                 const mariaOpen = view === "read" || view === "compose" || view === "done";
-                const unread = Boolean(m.unread) && !(m.isTarget && mariaOpen);
-                const selected = m.isTarget && (view === "read" || view === "compose");
+                const storyOpen = view === "story" && openStory?.key === m.key;
+                const storyRead = Boolean("story" in m && m.story) && (storyOpen || readStoryKeys.includes(m.key));
+                const unread = Boolean(m.unread) && !(m.isTarget && (mariaOpen || mailDone)) && !storyRead;
+                const selected = (m.isTarget && (view === "read" || view === "compose")) || storyOpen;
                 return (
                   <button
                     key={m.key}
-                    onClick={m.isTarget ? openMail : () => wrongMail(m.wrongHint)}
+                    onClick={() => {
+                      if (isStoryMail(m)) {
+                        setOpenStory(m);
+                        setReadStoryKeys((keys) => (keys.includes(m.key) ? keys : [...keys, m.key]));
+                        setView("story");
+                        return;
+                      }
+                      if (m.isTarget) {
+                        setOpenStory(null);
+                        openMail();
+                        return;
+                      }
+                      wrongMail(m.wrongHint);
+                    }}
                     className={`flex w-full items-start gap-3 border-b border-[#f0f4f9] px-4 py-3 text-left cursor-pointer ${
                       selected ? "bg-[#c2e7ff]/50" : unread ? "bg-white" : "bg-white hover:bg-[#f2f6fc]"
                     }`}
@@ -264,19 +299,14 @@ export default function MailClient() {
                       className="min-h-[120px] w-full resize-y border-none px-4 py-3 text-[14px] leading-relaxed outline-none placeholder:text-[#767676]"
                     />
                     <div className="flex flex-wrap items-center gap-2 px-4 pb-2">
-                      <span className="text-[12px] text-[#5f6368]">{c.startersLabel}:</span>
-                      {STARTERS[lang].map((s, i) => (
-                        <button
-                          key={i}
-                          onClick={() => {
-                            setBody((b) => (b ? b + " " : "") + s);
-                            advance(3);
-                          }}
-                          className="min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
-                        >
-                          {s}
-                        </button>
-                      ))}
+                      <NeedAStart
+                        lang={lang}
+                        starters={STARTERS[lang]}
+                        onPick={(s) => {
+                          setBody((b) => (b ? b + " " : "") + s);
+                          advance(3);
+                        }}
+                      />
                     </div>
                     {attached && (
                       <div className="mx-4 mb-2 inline-flex items-center gap-2 rounded-lg border border-[#d3e3fd] bg-[#f8fbff] px-3 py-2">
@@ -323,6 +353,34 @@ export default function MailClient() {
                     </div>
                   </div>
                 )}
+              </div>
+            )}
+
+            {view === "story" && openStory?.body && (
+              <div className="px-6 py-4 sm:px-8">
+                <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{openStory.subject[lang]}</h2>
+                <div className="flex items-start gap-3">
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-medium text-white"
+                    style={{ background: openStory.color }}
+                  >
+                    {openStory.initials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <div>
+                        <span className="text-[14px] font-medium">{openStory.from}</span>
+                      </div>
+                      <div className="text-[12px] text-[#5f6368]">{openStory.time}</div>
+                    </div>
+                    <div className="text-[12px] text-[#5f6368]">to me</div>
+                    <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
+                      {openStory.body[lang].map((p, i) => (
+                        <p key={i} className="m-0">{p}</p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
 

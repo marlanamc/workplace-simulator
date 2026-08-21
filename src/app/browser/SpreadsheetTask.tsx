@@ -10,15 +10,19 @@ import {
   STARTERS,
   LESSONS,
   CONFIDENCE_OPTIONS,
+  EVENT_INTRO,
 } from "@/lib/tasks/spreadsheet/content";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
-import { TAB_ICONS } from "@/lib/icons";
+import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
+import NeedAStart from "@/components/task/NeedAStart";
 
-type View = "home" | "sheet" | "compose" | "done";
+type View = "intro" | "home" | "sheet" | "compose" | "done";
 type CellCol = "A" | "B" | "C" | "D" | "E";
 type Cell = { row: number; col: CellCol };
 
@@ -41,7 +45,7 @@ function cellRef(cell: Cell) {
 
 export default function SpreadsheetTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("spreadsheet") ? "done" : "home");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("spreadsheet") ? "done" : "intro");
   const [entries, setEntries] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "B" });
   const [body, setBody] = useState("");
@@ -135,14 +139,12 @@ export default function SpreadsheetTask() {
             return <Icon size={18} strokeWidth={2.25} />;
           })()}
         </span>
-        <span className="text-[18px] text-[#3c4043]">{view === "home" ? c.appName : c.sheetName}</span>
+        <span className="text-[18px] text-[#3c4043]">{view === "home" || view === "intro" ? c.appName : c.sheetName}</span>
         <div className="flex-1" />
-        <button
-          onClick={() => setHelp(true)}
-          className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
-        >
-          ? {c.helpBtn}
-        </button>
+        <AppHeaderTools
+          helpLabel={c.helpBtn}
+          onHelp={() => setHelp(true)}
+        />
       </div>
 
       {view === "sheet" && (
@@ -181,6 +183,12 @@ export default function SpreadsheetTask() {
             </span>
           </div>
         </>
+      )}
+
+      {view === "intro" && (
+        <div className="min-h-0 flex-1 overflow-auto px-6">
+          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.spreadsheet} onContinue={() => setView("home")} />
+        </div>
       )}
 
       {view === "home" && (
@@ -387,17 +395,13 @@ export default function SpreadsheetTask() {
               placeholder={c.writeHere}
               className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-[var(--text-tertiary)]"
             />
-            <div className="mb-4 flex flex-wrap items-center gap-2">
-              <span className="text-[12px] font-medium text-[var(--text-tertiary)]">{c.startersLabel}:</span>
-              {STARTERS[lang].map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => setBody((b) => (b ? b + " " : "") + s)}
-                  className="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
-                >
-                  {s}
-                </button>
-              ))}
+            <div className="mb-4">
+            <NeedAStart
+              lang={lang}
+              starters={STARTERS[lang]}
+              onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+              chipClassName="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+            />
             </div>
 
             <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">

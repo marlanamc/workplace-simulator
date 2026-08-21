@@ -73,7 +73,7 @@ export default function HandbookPage() {
               Staff policies · Effective August 1, 2026
             </p>
             <p className="mt-2 mb-0 max-w-[58ch] text-[11pt] text-[#3c4043]">
-              If a coworker tells you something different, this document is the rule. Ask your shift lead if a policy is unclear.
+              This handbook is the official rule, even if a coworker tells you something different. If you are not sure, ask your shift lead.
             </p>
             <hr className="mt-5 mb-0 border-0 border-t border-[#202124]" />
           </header>

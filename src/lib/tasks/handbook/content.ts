@@ -5,14 +5,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "🤒",
     kicker: "Uh oh",
     headline: "You feel sick and you are not sure what to do.",
-    body: "Tomorrow's shift is booked, but you don't think you can make it in. Before you guess, check the handbook for how to call out sick.",
+    body: "Tomorrow you have a shift, but you don't think you can make it. Before you guess, check the handbook for how to call out sick.",
     cta: "Check the handbook",
   },
   es: {
     emoji: "🤒",
     kicker: "Uy no",
     headline: "Te sientes enferma/o y no sabes qué hacer.",
-    body: "Tu turno de mañana ya está programado, pero no crees que puedas ir. Antes de adivinar, revisa el manual para conocer la política real de cómo avisar.",
+    body: "Tu turno es mañana, pero no crees que puedas ir. Antes de adivinar, revisa el manual para ver cómo avisar que estás enfermo.",
     cta: "Revisar el manual",
   },
 };
@@ -25,8 +25,8 @@ export interface CheckOption {
 
 export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; options: CheckOption[] }> = {
   en: {
-    scenario: "You're feeling sick and don't think you can work tomorrow's shift. Search or browse the Handbook for how to call out sick, then answer the question below.",
-    question: "How soon before your shift should you call or text your shift lead?",
+    scenario: "Jordan, I heard you might not make it tomorrow. The handbook says how early you have to tell us. Can you check and tell me? I need to cover your shift.",
+    question: "How early do I have to call if I can't come in?",
     options: [
       {
         label: "At least 2 hours before",
@@ -51,8 +51,8 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
     ],
   },
   es: {
-    scenario: "Te sientes enferma/o y crees que no podrás trabajar tu turno de mañana. Busca en el Manual la política de cómo avisar, y luego responde la pregunta.",
-    question: "¿Con cuánto tiempo antes de tu turno debes llamar o enviar un mensaje a tu líder de turno?",
+    scenario: "Jordan, oí que tal vez no puedas venir mañana. El manual dice con cuánta anticipación hay que avisarnos. ¿Puedes revisar y decirme? Necesito cubrir tu turno.",
+    question: "¿Con cuánta anticipación tengo que llamar si no puedo ir?",
     options: [
       {
         label: "Al menos 2 horas antes",

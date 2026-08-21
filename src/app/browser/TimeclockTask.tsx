@@ -19,6 +19,8 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
+import NeedAStart from "@/components/task/NeedAStart";
 
 type View = "intro" | "clocked_in" | "review" | "compose" | "done";
 
@@ -62,14 +64,10 @@ export default function TimeclockTask() {
     <div className="relative">
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setHelp(true)}
-            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
-          >
-            ? {c.helpBtn}
-          </button>
-        </div>
+        <AppHeaderTools
+          helpLabel={c.helpBtn}
+          onHelp={() => setHelp(true)}
+        />
       </div>
 
       {view === "intro" && (
@@ -168,17 +166,13 @@ export default function TimeclockTask() {
             placeholder={c.writeHere}
             className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-[var(--text-tertiary)]"
           />
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="text-[12px] font-medium text-[var(--text-tertiary)]">{c.startersLabel}:</span>
-            {STARTERS[lang].map((s, i) => (
-              <button
-                key={i}
-                onClick={() => setBody((b) => (b ? b + " " : "") + s)}
-                className="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
-              >
-                {s}
-              </button>
-            ))}
+          <div className="mb-4">
+          <NeedAStart
+            lang={lang}
+            starters={STARTERS[lang]}
+            onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+            chipClassName="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+          />
           </div>
 
           <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">

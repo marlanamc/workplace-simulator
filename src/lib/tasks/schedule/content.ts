@@ -4,15 +4,15 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Uh oh",
-    headline: "Something on next week's schedule doesn't look right.",
-    body: "You just opened next week's shifts. One of them overlaps something you already can't miss. Fix it before it gets worse.",
+    headline: "Next week's shifts are up. Check them against your own calendar.",
+    body: "Work posts the schedule. You have to notice if it lands on something you already have. If it does, ask Maria for a swap.",
     cta: "Check my schedule",
   },
   es: {
     emoji: "📅",
     kicker: "Uy no",
-    headline: "Algo en el horario de la próxima semana no cuadra.",
-    body: "Acabas de ver los turnos de la próxima semana... y uno de ellos choca con algo que ya no puedes faltar. Hay que resolverlo antes de que sea un problema mayor.",
+    headline: "Ya salieron los turnos de la próxima semana. Compáralos con tu propio calendario.",
+    body: "El trabajo publica el horario. Tú tienes que ver si cae en algo que ya tienes. Si es así, pídele un cambio a Maria.",
     cta: "Revisar mi horario",
   },
 };
@@ -21,26 +21,32 @@ export interface ShiftDay {
   day: string;
   date: string;
   shift: string | null;
-  /** Set only on the one shift that conflicts with something the learner already can't do. */
-  conflict?: Localized;
+  /** True on the one shift that overlaps a personal calendar event. Never shown as a warning on the row. */
+  conflict?: boolean;
 }
 
 export const SCHEDULE: ShiftDay[] = [
   { day: "Mon", date: "Aug 24", shift: "7:00 AM – 3:00 PM" },
   { day: "Tue", date: "Aug 25", shift: "7:00 AM – 3:00 PM" },
   { day: "Wed", date: "Aug 26", shift: null },
-  {
-    day: "Thu",
-    date: "Aug 27",
-    shift: "10:00 AM – 6:00 PM",
-    conflict: {
-      en: "You already have a doctor's appointment at 11:00 AM this day.",
-      es: "Ya tienes una cita con el doctor a las 11:00 AM este día.",
-    },
-  },
+  { day: "Thu", date: "Aug 27", shift: "10:00 AM – 6:00 PM", conflict: true },
   { day: "Fri", date: "Aug 28", shift: "10:00 AM – 6:00 PM" },
   { day: "Sat", date: "Aug 29", shift: "8:00 AM – 4:00 PM" },
   { day: "Sun", date: "Aug 30", shift: null },
+];
+
+export interface PersonalEvent {
+  day: string;
+  date: string;
+  time: string;
+  title: Localized;
+}
+
+/** Sits next to the work schedule. The student has to match days and times. */
+export const PERSONAL_CALENDAR: PersonalEvent[] = [
+  { day: "Tue", date: "Aug 25", time: "7:30 PM", title: { en: "Call the school", es: "Llamar a la escuela" } },
+  { day: "Thu", date: "Aug 27", time: "11:00 AM", title: { en: "Doctor", es: "Doctor" } },
+  { day: "Sat", date: "Aug 29", time: "6:00 PM", title: { en: "Soccer", es: "Fútbol" } },
 ];
 
 export const SCHEDULE_COPY: Record<Lang, {
@@ -49,7 +55,8 @@ export const SCHEDULE_COPY: Record<Lang, {
   helpBtn: string;
   langBtn: string;
   requestSwap: string;
-  conflictTag: string;
+  phoneLabel: string;
+  phoneHeading: string;
   to: string;
   subjectLabel: string;
   subjectPrefix: string;
@@ -77,7 +84,8 @@ export const SCHEDULE_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     requestSwap: "Request a swap",
-    conflictTag: "Conflicts with your schedule",
+    phoneLabel: "Your phone",
+    phoneHeading: "Calendar",
     to: "To",
     subjectLabel: "Subject",
     subjectPrefix: "Shift swap request:",
@@ -105,7 +113,8 @@ export const SCHEDULE_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     requestSwap: "Pedir un cambio",
-    conflictTag: "No coincide con tu horario",
+    phoneLabel: "Tu teléfono",
+    phoneHeading: "Calendario",
     to: "Para",
     subjectLabel: "Asunto",
     subjectPrefix: "Solicitud de cambio de turno:",
@@ -130,8 +139,8 @@ export const SCHEDULE_COPY: Record<Lang, {
 };
 
 export const WRONG_SWAP_HINT: Localized = {
-  en: "That shift doesn't conflict with anything. Look for the one that overlaps something you already can't do.",
-  es: "Ese turno no tiene ningún conflicto. Busca el que se cruza con algo que ya no puedes hacer.",
+  en: "That shift is fine. Look at your calendar too. Which work day is at the same time as something you already have?",
+  es: "Ese turno está bien. Mira tu calendario también. ¿Qué día de trabajo cae a la misma hora que algo que ya tienes?",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
@@ -156,7 +165,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Each row is one day. The time on the right is your shift.",
         "\"Off\" means you're not scheduled that day.",
-        "Check every day against anything else you already have planned.",
+        "Look at your own calendar too. If a shift is at the same time as something you already have, ask for a swap.",
       ],
       tip: "Do this as soon as a new schedule is posted. The sooner you catch a conflict, the easier it is to fix.",
     },
@@ -176,7 +185,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Cada fila es un día. La hora a la derecha es tu turno.",
         "\"Off\" significa que no trabajas ese día.",
-        "Revisa cada día contra cualquier otra cosa que ya tengas planeada.",
+        "Mira tu propio calendario también. Si un turno cae a la misma hora que algo que ya tienes, pide un cambio.",
       ],
       tip: "Hazlo en cuanto se publique un horario nuevo. Mientras antes veas el conflicto, más fácil es resolverlo.",
     },

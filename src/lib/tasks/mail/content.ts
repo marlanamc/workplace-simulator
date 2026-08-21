@@ -73,10 +73,10 @@ export const MAIL_COPY: Record<Lang, {
     reply: "Reply",
     forward: "Forward",
     supervisor: "Your supervisor",
-    emailSubject: "Safety report for July. Need today",
+    emailSubject: "Need the July safety report today",
     to: "To",
     subjectLabel: "Subject",
-    reSubject: "Re: Safety report for July",
+    reSubject: "Re: Need the July safety report today",
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
@@ -115,10 +115,10 @@ export const MAIL_COPY: Record<Lang, {
     reply: "Responder",
     forward: "Reenviar",
     supervisor: "Tu supervisora",
-    emailSubject: "Reporte de seguridad de julio. Para hoy",
+    emailSubject: "Necesito el reporte de seguridad de julio hoy",
     to: "Para",
     subjectLabel: "Asunto",
-    reSubject: "Re: Reporte de seguridad de julio",
+    reSubject: "Re: Necesito el reporte de seguridad de julio hoy",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
@@ -147,12 +147,34 @@ export const MAIL_COPY: Record<Lang, {
 
 export const BODY: Record<Lang, { plain: string[]; full: string[] }> = {
   en: {
-    plain: ["Hi,", "Please send me the safety report for July.", "Send it today. Attach the file to your email.", "Thank you.", "Maria"],
-    full: ["Good morning,", "Could you send me the July safety report before the end of the day? Corporate is asking for it and I don't have a copy.", "Please attach the PDF to your reply so I can forward it directly.", "Thanks so much,", "Maria Delgado · Cafe Manager"],
+    plain: [
+      "Hi,",
+      "Can you send me the July safety report today? Please attach the file to your reply.",
+      "Thanks,",
+      "Maria",
+    ],
+    full: [
+      "Hi,",
+      "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
+      "Please attach the PDF to your reply so I can send it along.",
+      "Thanks,",
+      "Maria",
+    ],
   },
   es: {
-    plain: ["Hola,", "Por favor envíame el reporte de seguridad de julio.", "Envíalo hoy. Adjunta el archivo a tu correo.", "Gracias.", "Maria"],
-    full: ["Buenos días,", "¿Puedes enviarme el reporte de seguridad de julio antes del final del día? La oficina central lo está pidiendo y no tengo una copia.", "Por favor adjunta el PDF a tu respuesta para poder reenviarlo directamente.", "Muchas gracias,", "Maria Delgado · Gerente del café"],
+    plain: [
+      "Hola,",
+      "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
+      "Gracias,",
+      "Maria",
+    ],
+    full: [
+      "Hola,",
+      "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
+      "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
+      "Gracias,",
+      "Maria",
+    ],
   },
 };
 
@@ -164,14 +186,14 @@ export const STARTERS: Record<Lang, string[]> = {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row. That is who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado. She is your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
-    { t: "Reading a work email", s: ["Look for what the person is asking you to DO.", "Look for WHEN they need it.", "Here: send the July safety report, today."], tip: "You can read it twice. Nobody sees how long you take." },
+    { t: "Reading a work email", s: ["Look for what the person is asking you to do.", "Look for when they need it.", "Here, Maria wants the July safety report today, attached to your reply."], tip: "You can read it twice. Nobody sees how long you take." },
     { t: "Reply vs. Forward", s: ["Reply sends your message back to the person who wrote to you.", "Forward sends their email to somebody else.", "Maria wrote to you, so click Reply."], tip: "If you're answering the person who emailed you, it's always Reply." },
     { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens showing your files. Downloaded files are usually in Downloads.", "Click the file name safety-report-july.pdf to attach it."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
     { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached? Do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
   ],
   es: [
     { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila. Esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado. Ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
-    { t: "Leer un correo del trabajo", s: ["Busca qué te pide HACER la persona.", "Busca CUÁNDO lo necesita.", "Aquí: enviar el reporte de seguridad de julio, hoy."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
+    { t: "Leer un correo del trabajo", s: ["Busca qué te pide hacer la persona.", "Busca cuándo lo necesita.", "Aquí, Maria quiere el reporte de seguridad de julio hoy, adjunto en tu respuesta."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
     { t: "Responder o Reenviar", s: ["Responder envía tu mensaje a la persona que te escribió.", "Reenviar manda su correo a otra persona.", "Maria te escribió a ti, así que haz clic en Responder."], tip: "Si contestas a quien te escribió, siempre es Responder." },
     { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus archivos. Lo descargado suele estar en Descargas.", "Haz clic en safety-report-july.pdf para adjuntarlo."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
     { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto? ¿Ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
@@ -192,8 +214,8 @@ export const FILES: PickableItem[] = [
 
 export const EMAILS = [
   { key: "maria", from: "Maria Delgado", initials: "MD", color: "#1a73e8", time: "8:14 AM", isTarget: true, unread: true,
-    subject: { en: "Safety report for July. Need today", es: "Reporte de seguridad de julio. Para hoy" },
-    preview: { en: "Hi, can you send me the July safety…", es: "Hola, ¿puedes enviarme el reporte…" } },
+    subject: { en: "Need the July safety report today", es: "Necesito el reporte de seguridad de julio hoy" },
+    preview: { en: "Hi, can you send me the July safety report today?", es: "Hola, ¿me puedes enviar hoy el reporte de seguridad de julio?" } },
   { key: "luis", from: "Luis Ortiz", initials: "LO", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
     preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },

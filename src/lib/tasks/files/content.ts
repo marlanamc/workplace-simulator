@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "📁",
+    kicker: "Monday morning",
+    headline: "Jordan starts today and needs this week's schedule.",
+    body: "Maria asked you to find the file, rename it so people can find it later, and share it with Jordan. View only. Jordan should not be able to change it.",
+    cta: "Open Drive",
+  },
+  es: {
+    emoji: "📁",
+    kicker: "Lunes por la mañana",
+    headline: "Jordan empieza hoy y necesita el horario de esta semana.",
+    body: "Maria te pidió encontrar el archivo, cambiarle el nombre para que se pueda encontrar después, y compartirlo con Jordan. Solo ver. Jordan no debe poder cambiarlo.",
+    cta: "Abrir Drive",
+  },
+};
 
 export interface DriveFile {
   key: string;

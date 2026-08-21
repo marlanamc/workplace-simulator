@@ -1,11 +1,11 @@
-# Lesson 2: Share a File the Right Way
+# Lesson 1: Share a File the Right Way
 
-**Time:** ~5 minutes · **Level:** 4 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 5 — Shared Files · **Track:** Shared Files
 **Task key:** `files` · **Status:** built — the Shared Drive tab has a small
 folder structure with a couple of decoy files; sharing the right one
 requires renaming it to match a naming convention first, then choosing
 "Can view" instead of "Can edit."
-**Prerequisite:** Lesson 1
+**Prerequisite:** Level 4 complete
 
 ## We will learn...
 - find a file in a shared drive (not just one inbox), and share it with the
@@ -16,8 +16,8 @@ requires renaming it to match a naming convention first, then choosing
 - [ ] Simulator: nothing to set up — the Shared Drive tab always has the
       same scenario and decoy files.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 4 wrap-up assignment
-      (`real-practice-assignment.md`), offered after Track 4 is done. Never
+      practice bundled into the lead-tools wrap-up
+      (`real-practice-assignment.md`), offered after Level 6. Never
       a gate — a student who skips it still moves on.
 
 ## Simulator practice (~5 min)

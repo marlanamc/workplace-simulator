@@ -16,6 +16,32 @@ import {
   type Level,
 } from "@/lib/tracks-content";
 import { completeTask, awardCertificate, restartLevelProgress } from "@/app/actions";
+import { storyFlagKeysForTasks, type StoryFlags } from "@/lib/story-beats";
+
+function flagsStorageKey(learnerId: string) {
+  return `ws-story-flags:${learnerId}`;
+}
+
+function loadStoryFlags(learnerId: string): StoryFlags {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(flagsStorageKey(learnerId));
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return {};
+    return parsed as StoryFlags;
+  } catch {
+    return {};
+  }
+}
+
+function saveStoryFlags(learnerId: string, flags: StoryFlags) {
+  try {
+    window.localStorage.setItem(flagsStorageKey(learnerId), JSON.stringify(flags));
+  } catch {
+    // Private browsing can block localStorage. The flag still lives in memory this session.
+  }
+}
 
 interface ProgressValue {
   learnerId: string;
@@ -27,6 +53,8 @@ interface ProgressValue {
   celebrateLevel: Level | null;
   currentTrack: Track;
   progressEpoch: number;
+  storyFlags: StoryFlags;
+  setStoryFlag: (key: string, value: string) => void;
   markComplete: (taskKey: TaskKey, badgeKey?: string) => void;
   restartLevel: (level: Level) => void;
   dismissCelebration: () => void;
@@ -54,8 +82,17 @@ export function ProgressProvider({
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
   const [progressEpoch, setProgressEpoch] = useState(0);
+  const [storyFlags, setStoryFlags] = useState<StoryFlags>(() => loadStoryFlags(learnerId));
   const [lang, setLang] = useState<Lang>("en");
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const setStoryFlag = useCallback((key: string, value: string) => {
+    setStoryFlags((prev) => {
+      const next = { ...prev, [key]: value };
+      saveStoryFlags(learnerId, next);
+      return next;
+    });
+  }, [learnerId]);
 
   const markComplete = useCallback((taskKey: TaskKey, badgeKey?: string) => {
     setCompletedTaskKeys((prev) => {
@@ -94,11 +131,17 @@ export function ProgressProvider({
     const trackKeys = new Set(level.trackKeys);
     setCompletedTaskKeys((prev) => prev.filter((k) => !taskKeys.has(k)));
     setCertificateTrackKeys((prev) => prev.filter((k) => !trackKeys.has(k)));
+    setStoryFlags((prev) => {
+      const next = { ...prev };
+      for (const flag of storyFlagKeysForTasks(taskKeys)) delete next[flag];
+      saveStoryFlags(learnerId, next);
+      return next;
+    });
     setCelebrateTrack(null);
     setCelebrateLevel(null);
     setProgressEpoch((n) => n + 1);
     restartLevelProgress(level.key);
-  }, []);
+  }, [learnerId]);
 
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
   const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
@@ -115,6 +158,8 @@ export function ProgressProvider({
         celebrateLevel,
         currentTrack: activeTrack(completedTaskKeys),
         progressEpoch,
+        storyFlags,
+        setStoryFlag,
         markComplete,
         restartLevel,
         dismissCelebration,

@@ -1,10 +1,10 @@
-# Lesson 3: Read and Trust a Total
+# Lesson 1: Read and Trust a Total
 
-**Time:** ~5 minutes · **Level:** 4 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 6 — The Numbers · **Track:** The Numbers
 **Task key:** `spreadsheet` · **Status:** built — a small "weekly tally"
 sheet (a few rows of shift tips) in the Sheets Browser tab, with one
 planted-wrong total (a stale number, not a real formula error) to catch.
-**Prerequisite:** Lesson 2
+**Prerequisite:** Level 5 complete
 
 ## We will learn...
 - enter numbers into a shared spreadsheet, and notice when a total looks
@@ -13,10 +13,11 @@ planted-wrong total (a stale number, not a real formula error) to catch.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the sheet always has the same rows and
       the same planted-wrong total.
-- [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 4 wrap-up assignment
-      (`real-practice-assignment.md`), offered after Track 4 is done. Never
-      a gate — a student who skips it still moves on.
+- [ ] Google Classroom (optional): this is the last of the three lead-tool
+      levels (Calendar, Drive, Sheets). You can offer the combined
+      wrap-up now (`real-practice-assignment.md`). It's supplementary, not a
+      gate. After this, a student may keep going in Act II, or pick a door:
+      stay and lead, healthcare, or office.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Sheets** tab.

@@ -6,6 +6,7 @@ import { useProgress } from "@/lib/progress-context";
 import {
   SCHEDULE,
   SCHEDULE_COPY,
+  PERSONAL_CALENDAR,
   STARTERS,
   LESSONS,
   EVENT_INTRO,
@@ -19,6 +20,8 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
+import NeedAStart from "@/components/task/NeedAStart";
 
 type View = "intro" | "list" | "compose" | "done";
 
@@ -69,14 +72,10 @@ export default function ScheduleTask() {
     <div className="relative">
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setHelp(true)}
-            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
-          >
-            ? {c.helpBtn}
-          </button>
-        </div>
+        <AppHeaderTools
+          helpLabel={c.helpBtn}
+          onHelp={() => setHelp(true)}
+        />
       </div>
       <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
 
@@ -85,16 +84,16 @@ export default function ScheduleTask() {
       )}
 
       {view === "list" && (
-        <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
-          {SCHEDULE.map((d, i) => (
-            <div
-              key={d.day}
-              className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
-            >
-              <div className="flex min-w-0 flex-1 items-center gap-3">
-                <span className="w-11 shrink-0 text-[14px] font-semibold text-[var(--text-primary)]">{d.day}</span>
-                <span className="shrink-0 text-[13px] text-[var(--text-tertiary)]">{d.date}</span>
-                <div className="min-w-0">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+          <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+            {SCHEDULE.map((d, i) => (
+              <div
+                key={d.day}
+                className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
+              >
+                <div className="flex min-w-0 flex-1 items-center gap-3">
+                  <span className="w-11 shrink-0 text-[14px] font-semibold text-[var(--text-primary)]">{d.day}</span>
+                  <span className="shrink-0 text-[13px] text-[var(--text-tertiary)]">{d.date}</span>
                   <div
                     className={
                       d.shift
@@ -104,23 +103,44 @@ export default function ScheduleTask() {
                   >
                     {d.shift ?? "Off"}
                   </div>
-                  {d.conflict && (
-                    <div className="mt-0.5 text-[12px] font-medium text-[var(--danger)]">
-                      ⚠ {c.conflictTag}: {d.conflict[lang]}
-                    </div>
-                  )}
                 </div>
+                {d.shift && (
+                  <button
+                    onClick={() => requestSwap(d)}
+                    className="shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+                  >
+                    {c.requestSwap}
+                  </button>
+                )}
               </div>
-              {d.shift && (
-                <button
-                  onClick={() => requestSwap(d)}
-                  className="shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
-                >
-                  {c.requestSwap}
-                </button>
-              )}
+            ))}
+          </div>
+
+          <aside className="w-full shrink-0 lg:w-[260px]">
+            <div className="overflow-hidden rounded-[28px] bg-[#1c1c1e] p-3 text-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
+              <div className="px-2 pb-2 pt-1">
+                <div className="text-[11px] text-white/55">{c.phoneLabel}</div>
+                <div className="text-[17px] font-medium">{c.phoneHeading}</div>
+              </div>
+              <div className="overflow-hidden rounded-2xl bg-[#2c2c2e]">
+                {PERSONAL_CALENDAR.map((event, i) => (
+                  <div
+                    key={event.date}
+                    className={`flex items-start gap-3 px-3 py-2.5 ${i !== 0 ? "border-t border-white/10" : ""}`}
+                  >
+                    <div className="w-[4.5rem] shrink-0">
+                      <div className="text-[11px] text-white/55">{event.day}</div>
+                      <div className="text-[13px] font-medium">{event.date}</div>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-[14px] font-medium">{event.title[lang]}</div>
+                      <div className="text-[12px] text-white/65">{event.time}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+          </aside>
         </div>
       )}
 
@@ -142,17 +162,13 @@ export default function ScheduleTask() {
             placeholder={c.writeHere}
             className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-[var(--text-tertiary)]"
           />
-          <div className="mb-4 flex flex-wrap items-center gap-2">
-            <span className="text-[12px] font-medium text-[var(--text-tertiary)]">{c.startersLabel}:</span>
-            {STARTERS[lang].map((s, i) => (
-              <button
-                key={i}
-                onClick={() => setBody((b) => (b ? b + " " : "") + s)}
-                className="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
-              >
-                {s}
-              </button>
-            ))}
+          <div className="mb-4">
+          <NeedAStart
+            lang={lang}
+            starters={STARTERS[lang]}
+            onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+            chipClassName="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+          />
           </div>
 
           <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">

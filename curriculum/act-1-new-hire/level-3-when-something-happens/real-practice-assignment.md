@@ -1,55 +1,51 @@
-# Level 3 Real-World Practice: When Something Happens Wrap-Up
+# Act I Real-World Practice: Do It For Real
 
-**When to offer:** after a student has finished every task in Level 3 in
-the simulator — the incident report and the handbook look-up (Lessons 1–2).
-Not after each individual lesson. This is **optional and supplementary** —
-a student who skips it still moves straight on to Level 4 (Shift Lead).
-Offer it during office hours, or post it to Google Classroom for anyone
-who wants the extra practice; it should never hold anyone back.
+**When to offer:** after a student finishes Level 3 (the last New Hire
+level) in the simulator. This is the one real-tool beat for Act I. Still
+**not a gate** — a student who skips it still moves on to Level 4. For
+busy students, this is the wrap-up worth posting. Incident and handbook
+practice on paper can wait.
 
-**Why bundled, not per-lesson:** doing a full round-trip to a real document
-after every single simulator task was exhausting — by the time a student
-built real momentum in the app, going back to real practice constantly
-broke the flow. Now, for anyone who wants it, there's one focused
-real-world assignment covering the whole level at once.
+**Why this one:** they just practiced Mail, the portal, a form, and a
+handbook *in the fake apps*. Twenty minutes on a real Gmail thread is
+what makes the job transfer. One email, one file. Not five tasks. **You
+check this one** (tone, reply not forward, right file). The app has
+already unlocked Level 4. Do not hold them there.
 
-## Before class (teacher prep, only if offering this)
-- [ ] Google Classroom (optional): post **one** assignment — "Level 3
-      Wrap-Up" — with all of the following attached together (a folder, or
-      one combined doc/slide deck, works best):
-  - a short incident scenario (Lesson 1)
-  - a policy excerpt/scenario for the handbook skill (Lesson 2)
-- [ ] One combined instruction sheet, not two — use the student
-      instructions below as-is or adapt them.
+## Before class (teacher prep)
+- [ ] Google Classroom: post **one** assignment — "Act I: Do it for real"
+      — with:
+  - a short email written *as if* from a supervisor (ask them to reply,
+    not forward, and to attach one file)
+  - one file to attach (a one-page PDF or Doc)
+- [ ] Use the student's real Gmail or Classroom email, the same account
+      they will use at work or class.
 
-## Student instructions (post as-is, or adapt — optional)
-You just finished Level 3 in the simulator — nice work. If you'd like extra
-practice, try the same two things for real, in one sitting if you can:
-1. Write up the incident scenario, in order, as if for your manager.
-2. Find the answer to the handbook scenario and say where you found it.
+## Student instructions (post as-is, or adapt)
+You finished Act I in the simulator. If you have 15 minutes, do the same
+kind of email for real:
 
-Turn it all in together — one submission, not two.
+1. Open the practice email from your teacher.
+2. Reply (do not forward). Answer what they asked.
+3. Attach the file they named.
+4. Send.
 
-**Optional extra challenge** (for students who finish quickly or have prior
-office experience): on #1, name one thing you would tell a coworker so it
-doesn't happen again, without blaming anyone.
+That is the whole assignment. One send.
+
+**Optional extra** (only if they finish fast): also cc the teacher on the
+reply, the way a lead is copied at work.
 
 ## Teacher review
-Skim for completion, not perfection — the simulator already did the graded
-practice. This is about confirming the skill holds up outside the guided
-environment. One or two specific notes back (not a grade) is plenty:
-"this part landed well," "try this next time."
+Skim for: they replied, they attached the right file, the tone is short
+and clear. One note back is enough.
 
-## Confidence check-in — end of Level 3
-The app already asked a version of this at the end of Lesson 2 — no need to
-repeat it, but it's worth reading the student's answers with them, if you
-get the chance during office hours:
-- "Out of everything we've practiced (schedules, pay stubs, incident
-  reports, the handbook), the thing I feel most ready for is: ___________"
-- "The thing I still want more practice with is: ___________"
-- "One thing I'd tell a friend starting this class: ___________"
+## After this
+- A student who wants to **stay and become a lead** (cafe, store,
+  cleaning, job site) goes on to Act II, then Acts III–IV.
+- A student aiming at **healthcare / front desk** can start Act V Path B
+  after Act II. They do not have to become a cafe manager first.
+- A student aiming at **office / admin** can start Act VI after Act II.
 
-## Notes for the teacher
-- A student is ready for Level 4 (Shift Lead) as soon as every Level 3
-  task shows complete in their Objectives panel, whether or not they did
-  this optional practice.
+Level 4 in the app is next for everyone on the shared trunk. This
+Classroom email is the job. The next simulator levels are extra practice
+on new tools.

@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Fragment } from "react";
 import { redirect } from "next/navigation";
 import { getSessionLearnerId } from "@/lib/auth";
 import {
+  AFTER_ACT_2_PATHS,
   CATALOG_ACTS,
+  TRACK0_LESSONS,
   catalogStats,
   firstPlayableHref,
   lessonIsBuilt,
+  lessonNeedsTeacher,
   playHref,
 } from "@/lib/curriculum-catalog";
 
@@ -28,9 +32,10 @@ export default async function StudioPage() {
             <div>
               <h1 className="text-[22px] font-medium leading-tight">Studio</h1>
               <p className="mt-1 max-w-[540px] text-[14px] leading-relaxed text-[#9aa0a6]">
-                Every level in the curriculum. Open anything that is built. The rest
-                stay here as stubs until they ship. This page skips learner locks. Don&apos;t
-                send students here.
+                Acts I and II are the shared trunk. Early levels are scaffolded;
+                the app can check the click. Later, they write their own emails
+                and formulas, and those come to you. Open anything that is built.
+                This page skips learner locks. Don&apos;t send students here.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -66,22 +71,49 @@ export default async function StudioPage() {
         <section className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
           <h2 className="text-[15px] font-medium">Track 0: Foundations</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-[#9aa0a6]">
-            Happens on a real Chromebook before anyone opens the app. Turn on the
-            device, use the mouse, type, and download from Classroom. Not a level in the app.
+            Real Chromebook, before Level 1. Skip any skill they already have. Lesson
+            0.5 is login safety: passwords, PIN, and a fake email.
+          </p>
+          <ul className="mt-3 flex flex-col divide-y divide-white/6">
+            {TRACK0_LESSONS.map((lesson) => (
+              <li key={lesson.n} className="flex items-start justify-between gap-3 py-2 first:pt-0 last:pb-0">
+                <p className="text-[13px] leading-snug text-[#e8eaed]">{lesson.skill}</p>
+                <p className="shrink-0 text-[12px] text-[#80868b]">
+                  <span className="tabular-nums">{lesson.n}</span>
+                  <span className="mx-1.5 text-white/20">·</span>
+                  {lesson.where}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-3 font-mono text-[11px] text-[#80868b]">
+            curriculum/track-0/05-lesson-login-safety.md
           </p>
         </section>
 
         {CATALOG_ACTS.map((act) => {
           const actLessons = act.levels.flatMap((l) => l.lessons);
           const actBuilt = actLessons.filter(lessonIsBuilt).length;
+          const pathLabel =
+            act.path === "trunk"
+              ? "Shared trunk"
+              : act.path === "stay"
+                ? "Stay and lead"
+                : act.path === "bridge"
+                  ? "Open after Act II"
+                  : "Office path";
           return (
-            <section key={act.key} id={act.key} className="scroll-mt-28">
+            <Fragment key={act.key}>
+            <section id={act.key} className="scroll-mt-28">
               <div className="mb-3 flex items-baseline justify-between gap-3">
                 <div>
                   <h2 className="text-[18px] font-medium" style={{ color: act.color }}>
                     {act.title}
                   </h2>
-                  <p className="mt-0.5 text-[13px] text-[#9aa0a6]">{act.jobTitle}</p>
+                  <p className="mt-0.5 text-[12px] font-medium text-white/45">{pathLabel}</p>
+                  <p className="mt-1 max-w-[640px] text-[13px] leading-relaxed text-[#9aa0a6]">
+                    {act.blurb}
+                  </p>
                 </div>
                 <p className="shrink-0 text-[12px] tabular-nums text-[#9aa0a6]">
                   {actBuilt}/{actLessons.length} built
@@ -132,6 +164,7 @@ export default async function StudioPage() {
                         {level.lessons.map((lesson) => {
                           const built = lessonIsBuilt(lesson);
                           const href = playHref(lesson);
+                          const teacherCheck = lessonNeedsTeacher(lesson);
                           const pathLabel =
                             lesson.path === "a"
                               ? "Path A"
@@ -158,6 +191,12 @@ export default async function StudioPage() {
                                   <code className="text-[11px] text-[#9aa0a6]">{lesson.taskKey}</code>
                                   <span className="mx-1.5 text-white/20">·</span>
                                   {lesson.app}
+                                  <span className="mx-1.5 text-white/20">·</span>
+                                  {teacherCheck ? (
+                                    <span className="text-[#fdd663]">You check</span>
+                                  ) : (
+                                    <span>App checks</span>
+                                  )}
                                 </p>
                               </div>
                               {href ? (
@@ -183,6 +222,28 @@ export default async function StudioPage() {
                 })}
               </div>
             </section>
+            {act.key === "act2" && (
+              <section className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
+                <h2 className="text-[15px] font-medium">After Act II, pick a door</h2>
+                <p className="mt-1 text-[13px] leading-relaxed text-[#9aa0a6]">
+                  Busy students can stop here and already be more employable. The three
+                  paths below are equal. Nobody has to climb the cafe ladder first.
+                </p>
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  {AFTER_ACT_2_PATHS.map((path) => (
+                    <a
+                      key={path.id}
+                      href={path.href}
+                      className="rounded-xl border border-white/8 bg-white/[0.04] p-3 hover:bg-white/[0.07]"
+                    >
+                      <p className="text-[14px] font-medium text-[#e8eaed]">{path.title}</p>
+                      <p className="mt-1 text-[12px] leading-relaxed text-[#9aa0a6]">{path.body}</p>
+                    </a>
+                  ))}
+                </div>
+              </section>
+            )}
+            </Fragment>
           );
         })}
       </main>

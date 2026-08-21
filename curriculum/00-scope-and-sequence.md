@@ -1,23 +1,26 @@
 # Ready for the Lead Role — Scope & Sequence
 
-**Goal:** Prepare adult ESOL students for real advancement — promotion into a
-lead/supervisor role, and eventually office jobs, management tracks, higher
-ed, and healthcare-admin-adjacent work — by building confidence with
-everyday office technology through low-stakes practice, organized into
-**levels** so the world grows with the student instead of staying static
-forever.
+**Goal:** Help busy adult ESOL students get workplace-ready on a Chromebook
+in short sittings (about 20–45 minutes). The cafe story is the shared first
+world because many students work food service now. The *skills* are how a
+lead works in food service, retail, cleaning, or on a job site, and the
+same habits transfer to healthcare front desk and office / admin jobs.
+
+This class has three equal goals, not one:
+- **Stay and lead** in the job they have (or one like it).
+- **Move toward healthcare / front desk.**
+- **Move toward office / admin.**
 
 **This is a micro-module program, not a bridge program.** Some students can
-spare 20 minutes a week, not 20 minutes a day. Everything below is designed
-around that constraint: short, self-contained levels; nothing that requires
-a scheduled class time; real value delivered early, not only after finishing
-everything. A student who only ever finishes Act I (Levels 1-3) should already be
-meaningfully more employable — this isn't a substitute for a program like
-Bunker Hill's year-long Transitions to College Program, it's a fast, low-
-stakes on-ramp that can run entirely alongside one, or on its own.
+spare 20 minutes a week, not 20 minutes a day. Acts I and II are the shared
+trunk. A student who only finishes Act I should already be more employable.
+After Act II they pick a door. Nobody has to finish all later acts. This
+isn't a substitute for a program like Bunker Hill's year-long Transitions
+to College Program. It's a fast, low-stakes on-ramp that can run alongside
+one, or on its own.
 
 **Format for every lesson:**
-- ~15-20 minutes per **level** (not per lesson — some levels bundle a few
+- ~20–45 minutes per **level** (not per lesson — some levels bundle a few
   short lessons, some are a single lesson), one simulator task per lesson.
 - **Simulator practice.** Practice the skill in the Workplace Simulator app.
   Nothing is real; nothing can be broken; wrong clicks get a friendly nudge, not
@@ -26,15 +29,23 @@ stakes on-ramp that can run entirely alongside one, or on its own.
   the current track and task are, and a **Help** button inside the task gives a
   short on-demand lesson if they get stuck. The apps otherwise look and behave
   like the real thing.
-- **Real-world practice is optional, per level, never a gate.** After a
-  student finishes every task in a level, the class *may* get one combined
-  Google Classroom assignment covering that level — but it's supplementary
-  practice, not a requirement to advance. A student can move straight from
-  one level to the next in the app without ever touching Google Classroom.
+- **Real-world practice is optional, per level, never a gate** — except
+  treat the **Act I wrap-up** as the one real Gmail beat we actually want
+  them to try (still not a gate if they skip it).
+- **Scaffold now, write later.** Early levels (Acts I–II, through Calendar,
+  Drive, and Sheets) use planted scenarios, sentence starters, and an app
+  that can check the click. Later levels, students write their own emails,
+  build their own sheets, and author their own formulas. The app cannot
+  grade tone or a fair performance note. Those get sent to the teacher
+  (Classroom or office hours) for a human check. That is on purpose.
+  Finishing in the simulator still unlocks the next level, so a busy
+  student is never stuck waiting for feedback.
 - **Fully asynchronous.** A student can sit down, read the one-page
   instruction sheet, and work through a level alone, on their own schedule.
   The instructor holds **optional office hours 1-2 nights a week** for
-  anyone who wants live help — never a requirement either.
+  anyone who wants live help — never a requirement either. Teacher-check
+  work can wait in Classroom until the next office hours. It never blocks
+  the next level in the app.
 
 **Digital literacy range in the room:** some students have never turned on a
 computer; others are ready for spreadsheets. Track 0 exists so nobody starts
@@ -45,33 +56,34 @@ skips straight to Level 1.
 
 ---
 
-## The roadmap: New Hire to Team Lead (and beyond)
+## The roadmap: three doors after a shared trunk
 
-The full arc runs 25 levels across 7 "acts," each one a job title and a
-moment in the story. **The whole thing is now written level-by-level** —
-every level from 1 to 25 has a lesson doc and a wrap-up assignment. Only
-Act I (Levels 1-3) and Level 4 are actually built in code; everything from
-Level 5 on is curriculum only, ready to build whenever that's the next
-priority.
+The full arc is written level-by-level across 7 acts. **Acts I–II are the
+course** for busy students. After Act II, the three paths are equal. Studio
+numbers are the learner-facing numbers. Folder names in Act II and later
+still use older numbers (`level-3-shift-lead/`, and so on).
 
-| Act | Levels | Job title | Status |
-|---|---|---|---|
-| **I — New Hire** | 1-3 | New Hire | Written & built |
-| **II — Shift Lead** | 4-6 | Shift Lead | Written; Level 4 built, 5-6 not built |
-| **III — Shift Supervisor** | 7-10 | Shift Supervisor | Written, not built |
-| **IV — Assistant Manager** | 11-13 | Assistant Manager | Written, not built |
-| **V — Bridge (elective)** | 14-17 | "Prepping for BHCC" *or* "Front Office / Healthcare Admin" | Written, not built |
-| **VI — Office Administrator** | 18-21 | Office Administrator (HQ) | Written, not built |
-| **VII — Team Lead (capstone)** | 22-25 | Team Lead | Written, not built |
+Only Act I and Levels 4–6 are built in the app today. Everything after
+Level 6 is curriculum, ready to build later.
 
-Act V is deliberately optional and comes with two flavors a student can pick
-between (or skip past to Act VI): a taste of college-style digital tasks
-(built from the four `future-planning-what's-next` lessons, now sequenced
-into Levels 14-17 as Path A), or healthcare-admin office tasks (appointment
-scheduling, patient intake, confidentiality judgment, a small billing
-spreadsheet — Path B). Neither is a program simulation — both are framed to
-the student as "building the muscle for this kind of digital task," honest
-about not being a substitute for a real program.
+| Act | Levels | Path | For whom | Status |
+|---|---|---|---|---|
+| **I — New Hire** | 1-3 | Shared trunk | Any hourly job | Written & built |
+| **II — Shift Lead tools** | 4-8 | Shared trunk | Lead tools in any industry | Written; 4-6 built, 7-8 not |
+| **III — Shift Supervisor** | 9-12 | Stay and lead | Crew lead in this industry | Written, not built |
+| **IV — Assistant Manager** | 13-15 | Stay and lead | Last stop if this industry is the goal | Written, not built |
+| **V — Bridge (elective)** | 16-19 | Open after Act II | Path A college *or* Path B healthcare / front desk | Written, not built |
+| **VI — Office Administrator** | 20-23 | Office path | Office / admin after Act II | Written, not built |
+| **VII — Team Lead (capstone)** | 24-27 | Office path | Office capstone; stay-and-lead can skip | Written, not built |
+
+**After Act II, pick a door (do not wait for Assistant Manager):**
+- Stay and lead → Acts III–IV
+- Healthcare / front desk → Act V Path B
+- Office / admin → Acts VI–VII
+
+Act V Path A (college-style tasks) stays elective. Neither Path A nor Path
+B is a real program simulation. They build the muscle for that kind of
+digital task.
 
 **File layout:** each act has its own folder — `act-1-new-hire/`,
 `act-2-shift-lead/`, and so on through `act-7-team-lead/` — and each level
@@ -98,10 +110,24 @@ before Level 1 begins.
 | 0.2 | Mouse/trackpad & clicking targets | Click-practice screen in simulator (big buttons) | Open Google Classroom, click into "our class" |
 | 0.3 | Typing & using a keyboard | Type a short practice message in a mock text box | Type your name and today's date into a real Google Doc |
 | 0.4 | Downloading a file from Google Classroom | n/a | Open Classroom, find "Practice Files," download one file, find it in Downloads |
+| 0.5 | Keep your login safe; spot a fake email | later stub: `phishing` | Lock screen, never share PIN/password, pick the fake email and say why |
+
+See `track-0/05-lesson-login-safety.md`. Do 0.5 before Level 1 if the
+student is new to a work login. Skip if they already treat passwords as
+private and can say why they would not click a “reset your hours” email.
 
 ---
 
-## Act I: Levels 1-3 — New Hire
+## Act I: Levels 1-3 — New Hire (shared trunk)
+
+Three short levels. The story is Harborside Cafe. Name out loud that the
+same moves show up in a store, a cleaning job, a job site, or a front
+desk: email a lead, check hours and pay, write up what happened, look up
+the rule.
+
+Level 1 is one lesson, so the first sitting is small. After Level 3, offer
+the **Act I real Gmail beat** (`level-3-when-something-happens/real-practice-assignment.md`).
+Still not a gate. That one real email is the transfer.
 
 Three short levels, so each stays a 15-20 minute session. Level 1 is a
 single lesson, deliberately tiny, so the very first session in the app is
@@ -150,88 +176,86 @@ See `level-3-when-something-happens/01-lesson-incident.md` and
 
 ---
 
-## Act II: Levels 4-6 — Shift Lead
+## Act II: Levels 4-8 — Shift Lead tools (shared trunk)
 
-**Story bridge:** finishing Level 3 earns the promotion the Level 1 email
-hinted was coming. The environment refreshes — new emails, a new schedule,
-a new week — and the student picks up the tools that come with being a
-shift lead.
+**Story bridge:** finishing Level 3 earns the promotion. The environment
+refreshes. These tools are what a lead uses in a cafe, a store, cleaning,
+or a job-site office. One app per sitting for Calendar, Drive, and Sheets.
 
 Also starting with Level 4: the desktop's "do this next" button stops
-naming the exact tab (a generic "Open Browser" instead of "Open Calendar")
-— a deliberate step down in hand-holding. Free tab management (opening/
-closing tabs, starting on a blank New Tab) unlocks here too.
+naming the exact tab (a generic "Open Browser"). Free tab management
+unlocks here too.
 
-Folder names in Act II and later still use the older numbers
-(`level-3-shift-lead/`, and so on). The circle number in Studio is the
-learner-facing number.
-
-### Level 4: Shift Lead
+### Level 4: The Calendar
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Calendar |
-| 2 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Drive |
-| 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Sheets |
 
-See `level-3-shift-lead/`. (The `video-call` task originally written here
-as an optional bonus has since moved to Act VI, where it pairs
-naturally with multi-person calendar scheduling.)
+See `level-3-shift-lead/01-lesson-calendar.md`.
 
-### Level 5: Reporting In
+### Level 5: Shared Files
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Drive |
+
+See `level-3-shift-lead/02-lesson-files.md`.
+
+### Level 6: The Numbers
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Sheets |
+
+See `level-3-shift-lead/03-lesson-spreadsheet.md`. After Level 6, a student
+already has the lead-tool pack. They may pick a door (stay / healthcare /
+office) or keep going through Levels 7–8 in this act.
+
+### Level 7: Reporting In
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `make-a-copy` | Open a view-only / read-only template, understand viewer vs editor, File → Make a copy so you don't overwrite the master | Browser → Sheets (same menu as Docs) |
 | 2 | `status-report` | Author a `=SUM()` formula yourself (not just verify one) on *your* copy, cc a second recipient on a status email | Browser → Sheets + Mail |
 
-See `level-4-reporting-in/`. (Lesson 1 is the flip side of Level 4's
+See `level-4-reporting-in/`. (Lesson 1 is the flip side of Level 5's
 `files` lesson: there you *gave* view access; here you *are* the viewer.)
 
-### Level 6: Covering More Ground
+### Level 8: Covering More Ground
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `triage` | Handle two competing requests (a calendar conflict, a file request) without dropping either | Browser → Calendar + Drive |
 
-See `level-5-covering-more-ground/01-lesson-triage.md`. This is the first
-"divided attention" level — closes out Act II.
+See `level-5-covering-more-ground/01-lesson-triage.md`. Closes the Act II
+folder. Stay-and-lead students continue to Act III. Healthcare and office
+students may skip ahead from here (or from Level 6).
 
 **Design notes:**
-- `calendar` chains directly off the `schedule`/`mail` skills from Level 2 —
-  same "notice a conflict, say something" shape, new tool.
-- `files` extends the file-picker pattern already built for `mail`'s
-  attachment step (`PickerModal`) — same component, a folder layer added on
-  top, plus a new "who can see this" permission choice. The *receiving*
-  side of that permission (a locked template, then **Make a copy**) is
-  Level 4 Lesson 1, not extra content here.
-- `spreadsheet` is the first task that isn't itself the point — the *point*
-  is still judgment (a formula-looking total can be wrong; do you just copy
-  it, or check it?), the spreadsheet is the setting.
-- `make-a-copy` is the everyday office move students miss: a shared Doc or
-  Sheet that won't let them type is usually *supposed* to be locked.
-  **View only** and **read only** are the same idea; **Can edit** changes
-  the real file. File → Make a copy is how you work without touching the
-  master. Same menu in Docs and Sheets.
-- `status-report` is the first task where the student *authors* a formula
-  instead of just reading/verifying one — and it runs on the copy from
-  `make-a-copy`, not on Maria's template.
-- `triage` deliberately caps at exactly two competing items — more would
-  turn it into an overwhelm exercise instead of a divided-attention one.
+- `calendar` chains off `schedule` / `mail` — same "notice a conflict, say
+  something" shape, new tool. Same move a closer or crew lead makes.
+- `files` extends the file-picker pattern from `mail`.
+- `spreadsheet` is judgment in a sheet: a total can look official and still
+  be wrong.
+- `make-a-copy` is the everyday office move students miss. **View only**
+  and **read only** are the same idea; **Can edit** changes the real file.
+- `triage` caps at two competing items.
 
 ---
 
-## Act III: Levels 7-10 — Shift Supervisor
+## Act III: Levels 9-12 — Shift Supervisor (stay and lead)
 
-**Story bridge:** finishing Level 5 earns a second promotion. New
-responsibility: deciding *for* the team, not just for yourself.
+**Story bridge:** for students staying in this kind of work. New job: decide
+*for* the crew, not only for yourself. Construction, retail, food, and
+cleaning leads all do a version of this.
 
 | Level | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 6 | `team-schedule` | Build part of a week's shift schedule for the crew, resolve a coverage gap | Browser → Sheets |
-| 7 | `formula-check` | Use `SUM`/`AVERAGE`, spot and fix a formula pointing at the wrong range | Browser → Sheets |
-| 8 | `team-meeting` | Create a meeting invite (not just accept one), write a short agenda | Browser → Calendar + Docs |
-| 9 | `priority-call` | Handle three competing demands at once — a complaint, a coverage gap, a scheduling conflict — capstone of the act | Browser → Mail + Sheets + Calendar |
+| 9 | `team-schedule` | Build part of a week's shift schedule for the crew, resolve a coverage gap | Browser → Sheets |
+| 10 | `formula-check` | Use `SUM`/`AVERAGE`, spot and fix a formula pointing at the wrong range | Browser → Sheets |
+| 11 | `team-meeting` | Create a meeting invite (not just accept one), write a short agenda | Browser → Calendar + Docs |
+| 12 | `priority-call` | Handle three competing demands at once — a complaint, a coverage gap, a scheduling conflict — capstone of the act | Browser → Mail + Sheets + Calendar |
 
 See `level-6-scheduling-the-team/` through `level-9-under-pressure/`.
 Finishing Level 9 awards the "Shift Supervisor" certificate and triggers
@@ -248,7 +272,7 @@ the promotion into Assistant Manager.
 
 ---
 
-## Act IV: Levels 11-13 — Assistant Manager
+## Act IV: Levels 13-15 — Assistant Manager (stay and lead)
 
 **Story bridge:** finishing Level 9 earns the promotion, and with it, an
 offer — Harborside will pay for a Bunker Hill Community College Business
@@ -278,17 +302,16 @@ completes Act IV.
 
 ---
 
-## Act V: Levels 14-17 — Bridge (elective)
+## Act V: Levels 16-19 — Bridge (elective; open after Act II)
 
-**Story bridge:** Act IV's promotion into Assistant Manager is complete.
-Act V is entirely optional — a student can pick one path, try both, or
-skip straight to Act VI (Office Administrator) without missing anything
-required. Every level in this act has two parallel lessons, `01a` (Path A)
-and `01b` (Path B); a student does one, not both, unless they want the
-extra practice. A student stays on whichever path they pick for all four
-levels — there's no requirement to pick the same path you started with,
-but the lesson docs assume continuity for the cross-references to make
-sense.
+**Story bridge:** open after Act II. Do not wait until Assistant Manager.
+Healthcare-curious students take Path B. College-curious students take Path
+A. Office-curious students can skip this act and go to Act VI. Stay-and-lead
+students can skip this act too.
+
+Act V is optional — pick one path, try both, or skip. Every level has two
+parallel lessons, `01a` (Path A) and `01b` (Path B). A student does one, not
+both, unless they want extra practice.
 
 | Level | Path A: Prepping for BHCC | Path B: Front Office / Healthcare Admin |
 |---|---|---|
@@ -317,11 +340,10 @@ Finishing either path's Level 16 lesson completes Act V.
 
 ---
 
-## Act VI: Levels 18-21 — Office Administrator
+## Act VI: Levels 20-23 — Office Administrator (office path; open after Act II)
 
-**Story bridge:** whether or not a student did Act V, finishing it (or
-skipping it) earns the move to Harborside's HQ office — a new building, a
-new title, and tools scaled up from what a single cafe location needed.
+**Story bridge:** open after Act II. Scaled-up Drive, meetings, expense
+reports, a short deck. Stay-and-lead students can skip this whole path.
 
 | Level | Task key(s) | Skill focus | Simulator app |
 |---|---|---|---|
@@ -335,7 +357,7 @@ Finishing Level 20 awards the "Office Administrator" certificate and
 completes Act VI.
 
 **Design notes:**
-- `office-drive` is `files` (Level 4) at HQ scale — same skill, genuinely
+- `office-drive` is `files` (Level 5) at HQ scale — same skill, genuinely
   harder because of scale, not a new mechanic.
 - `video-call` was originally written and parked as an optional bonus in
   Act II (Shift Lead); it's moved here, right after
@@ -346,7 +368,7 @@ completes Act VI.
 
 ---
 
-## Act VII: Levels 22-25 — Team Lead (capstone)
+## Act VII: Levels 24-27 — Team Lead (office capstone)
 
 **Story bridge:** finishing Act VI earns the final promotion in the
 currently-written arc — Team Lead. This act is the payoff: every earlier
@@ -420,8 +442,20 @@ The same lesson structure serves both without splitting into separate curricula:
 4. **Confidence check-in** — 3 quick self-rating questions ("I could do this at
    work," "I would ask for help if," etc.) — not a graded quiz, alongside the
    points/certificate the app already awarded automatically
+5. **Teacher check, later levels only** — if Studio marks the lesson "You
+   check," the student sends the email, sheet, or write-up through Classroom.
+   Skim for the skill (clear reply, formula that works, fair tone), one note
+   back. This does not gate the next simulator level.
 
 Real-world practice is **optional and supplementary**, never part of the
 per-lesson template, and never a gate — it happens once, at the end of the
 level, per that level's own `real-practice-assignment.md`, and a student
 who skips it moves on exactly the same as one who doesn't.
+
+**What the app can check vs what you check**
+- **App checks (early, scaffolded):** right file attached, right tab, right
+  permission, a number that matches, a multiple-choice look-up. Sentence
+  starters are there on purpose.
+- **You check (later, authored):** their own email, their own formula, a
+  short agenda, a performance note, a packet. Studio labels these
+  **You check**.

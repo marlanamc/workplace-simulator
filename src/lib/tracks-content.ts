@@ -24,7 +24,7 @@ export const TRACKS: Track[] = [
     title: "Schedules & Documents",
     subtitle: "Keep the shift running well",
     taskKeys: ["schedule", "timeclock", "paystub"],
-    awardEmoji: "📅",
+    awardEmoji: "🗓️",
   },
   {
     key: "judgment",
@@ -34,11 +34,25 @@ export const TRACKS: Track[] = [
     awardEmoji: "🧭",
   },
   {
-    key: "growing",
-    title: "Growing at Work",
-    subtitle: "New tools for your new job",
-    taskKeys: ["calendar", "files", "spreadsheet"],
-    awardEmoji: "🛠️",
+    key: "calendar",
+    title: "The Calendar",
+    subtitle: "Meetings that fit your shift",
+    taskKeys: ["calendar"],
+    awardEmoji: "📅",
+  },
+  {
+    key: "files",
+    title: "Shared Files",
+    subtitle: "Send the right file, the right way",
+    taskKeys: ["files"],
+    awardEmoji: "📁",
+  },
+  {
+    key: "spreadsheet",
+    title: "The Numbers",
+    subtitle: "Enter them, then check the total",
+    taskKeys: ["spreadsheet"],
+    awardEmoji: "📊",
   },
 ];
 
@@ -115,16 +129,44 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level4",
-    title: "Level 4: Shift Lead",
-    trackKeys: ["growing"],
+    title: "Level 4: The Calendar",
+    trackKeys: ["calendar"],
     firstTabKey: "calendar",
     freeTabbing: true,
     levelUp: {
       emoji: "⭐",
       kicker: "A new job",
       title: "You are a Shift Lead now!",
-      body: "Maria saw you handle the hard calls. New tools come with the job. Let's try them.",
+      body: "Maria saw you handle the hard calls. These tools are what a lead uses in a cafe, a store, a job site, or a front desk.",
       cta: "Let's go",
+    },
+  },
+  {
+    key: "level5",
+    title: "Level 5: Shared Files",
+    trackKeys: ["files"],
+    firstTabKey: "files",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📁",
+      kicker: "Next tool",
+      title: "Now: shared files.",
+      body: "A lead sends the right file, with the right access. Same move at a cafe, a store, or a job site.",
+      cta: "Keep going",
+    },
+  },
+  {
+    key: "level6",
+    title: "Level 6: The Numbers",
+    trackKeys: ["spreadsheet"],
+    firstTabKey: "spreadsheet",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📊",
+      kicker: "Next tool",
+      title: "Now: the numbers.",
+      body: "Enter them. Then check the total. Do not just copy it. Leads catch mistakes.",
+      cta: "Keep going",
     },
   },
 ];
@@ -149,7 +191,7 @@ export type DesktopScene = "harborside-open" | "harborside-shift";
  */
 export const ACTS: Act[] = [
   { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2", "level3"], scene: "harborside-open" },
-  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4"], scene: "harborside-shift" },
+  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4", "level5", "level6"], scene: "harborside-shift" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
@@ -172,8 +214,8 @@ export const TAB_LEVEL_KEYS: Record<string, string> = {
   incident: "level3",
   handbook: "level3",
   calendar: "level4",
-  files: "level4",
-  spreadsheet: "level4",
+  files: "level5",
+  spreadsheet: "level6",
 };
 
 export function levelForTrack(trackKey: string): Level {
@@ -289,6 +331,24 @@ export function findTrackForTask(taskKey: TaskKey): Track | undefined {
 
 export function isTrackComplete(track: Track, completedTaskKeys: TaskKey[]): boolean {
   return track.taskKeys.every((k) => completedTaskKeys.includes(k));
+}
+
+/**
+ * Act II used to be one trophy (`growing`). Learners who already earned it
+ * should still see trophies after that track split into calendar / files /
+ * spreadsheet.
+ */
+export function normalizeCertificateTrackKeys(
+  keys: string[],
+  completedTaskKeys: TaskKey[],
+): string[] {
+  const next = new Set(keys.filter((k) => k !== "growing"));
+  if (keys.includes("growing")) {
+    for (const task of ["calendar", "files", "spreadsheet"] as const) {
+      if (completedTaskKeys.includes(task)) next.add(task);
+    }
+  }
+  return [...next];
 }
 
 /** The first track that isn't fully complete yet - where a learner should focus. */

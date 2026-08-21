@@ -20,6 +20,7 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
 
 type View = "intro" | "list" | "check1" | "check2" | "done";
 
@@ -56,14 +57,10 @@ export default function PaystubTask() {
     <div className="relative">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setHelp(true)}
-            className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
-          >
-            ? {c.helpBtn}
-          </button>
-        </div>
+        <AppHeaderTools
+          helpLabel={c.helpBtn}
+          onHelp={() => setHelp(true)}
+        />
       </div>
 
       {view === "intro" && (

@@ -19,6 +19,7 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import NeedAStart from "@/components/task/NeedAStart";
 
 type View = "intro" | "form" | "done";
 
@@ -125,18 +126,13 @@ export default function IncidentTask() {
                 placeholder={c.writeHere}
                 className="min-h-[96px] w-full resize-y border-0 border-b border-[#e0e0e0] bg-transparent py-2 text-[16px] leading-relaxed outline-none placeholder:text-[#80868b] focus:border-b-2 focus:border-[#673ab7]"
               />
-              <div className="mt-3 flex flex-wrap items-center gap-2">
-                <span className="text-[12px] text-[#5f6368]">{c.startersLabel}:</span>
-                {STARTERS[lang].map((s, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setWhat((w) => (w ? w + " " : "") + s)}
-                    className="min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] hover:bg-[#f0ebf8] cursor-pointer"
-                    style={{ color: PURPLE }}
-                  >
-                    {s}
-                  </button>
-                ))}
+              <div className="mt-3">
+                <NeedAStart
+                  lang={lang}
+                  starters={STARTERS[lang]}
+                  onPick={(s) => setWhat((w) => (w ? w + " " : "") + s)}
+                  chipClassName="min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] text-[#673ab7] hover:bg-[#f0ebf8] cursor-pointer"
+                />
               </div>
             </QuestionCard>
 

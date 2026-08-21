@@ -15,6 +15,7 @@ import { DESKTOP_COPY, type Lang } from "@/lib/desktop-content";
 import { useProgress } from "@/lib/progress-context";
 import { TASK_ICONS, Hourglass, Coffee } from "@/lib/icons";
 import { useWindowManager } from "@/lib/window-manager";
+import { SHIFT_MOMENT } from "@/lib/story-beats";
 
 const shadow = { textShadow: "0 2px 18px rgba(0,0,0,0.35)" };
 
@@ -52,20 +53,24 @@ export default function ShiftBriefing({
   };
 
   const BriefingIcon = nextTaskKey && nextTaskInfo ? TASK_ICONS[nextTaskKey] : comingSoon ? Hourglass : Coffee;
+  const moment = nextTaskKey ? SHIFT_MOMENT[nextTaskKey][lang] : null;
   const headline = nextTaskInfo
-    ? nextTaskInfo.label
+    ? nextTaskInfo.dispatch
     : comingSoon
       ? c.comingSoonHeadline
       : c.allDoneHeadline;
-  const body = nextTaskInfo ? nextTaskInfo.dispatch : comingSoon ? c.comingSoonBody : c.allDoneBody;
+  const body = comingSoon ? c.comingSoonBody : allDone ? c.allDoneBody : null;
 
   return (
     <div className="text-white" style={shadow}>
       <BriefingIcon size={44} strokeWidth={1.75} className="text-white" aria-hidden />
-      <h1 className="mt-3 max-w-[18ch] text-[28px] font-medium leading-[1.15] tracking-[-0.02em]">
+      {moment ? (
+        <p className="mt-3 text-[15px] text-white/80">{moment}</p>
+      ) : null}
+      <h1 className="mt-2 max-w-[28ch] text-[28px] font-medium leading-[1.15] tracking-[-0.02em]">
         {headline}
       </h1>
-      <p className="mt-2 max-w-[36ch] text-[16px] leading-relaxed text-white/90">{body}</p>
+      {body ? <p className="mt-2 max-w-[36ch] text-[16px] leading-relaxed text-white/90">{body}</p> : null}
 
       {nextTaskLocation && (
         <button

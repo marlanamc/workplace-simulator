@@ -10,15 +10,21 @@ import {
   LESSONS,
   CONFIDENCE_OPTIONS,
   WRONG_ACCEPT_HINT,
+  EVENT_INTRO,
+  HUDDLE_TIMES,
 } from "@/lib/tasks/calendar/content";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import NeedAStart from "@/components/task/NeedAStart";
+import { TASK_ICONS } from "@/lib/icons";
+import { extractHuddleTime, HUDDLE_TIME_FLAG } from "@/lib/story-beats";
 
-type View = "home" | "invite" | "compose" | "done";
+type View = "intro" | "home" | "invite" | "compose" | "done";
 
 type Cell = { day: number; other: boolean };
 
@@ -54,9 +60,10 @@ function CalendarMark() {
 }
 
 export default function CalendarTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "home");
+  const { markComplete, completedTaskKeys, lang, setStoryFlag } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "intro");
   const [body, setBody] = useState("");
+  const [chosenTime, setChosenTime] = useState<"10am" | "2pm" | null>(null);
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
@@ -101,6 +108,7 @@ export default function CalendarTask() {
         T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien.")
       );
     }
+    setStoryFlag(HUDDLE_TIME_FLAG, chosenTime ?? extractHuddleTime(body));
     setView("done");
     markComplete("calendar", "handle_meeting_invite");
   };
@@ -113,6 +121,7 @@ export default function CalendarTask() {
   const restart = () => {
     setView("home");
     setBody("");
+    setChosenTime(null);
     setConfidence(null);
   };
 
@@ -250,6 +259,12 @@ export default function CalendarTask() {
               </div>
             </div>
 
+            {view === "intro" ? (
+              <div className="flex min-h-0 flex-1 items-start overflow-y-auto px-6">
+                <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.calendar} onContinue={() => setView("home")} />
+              </div>
+            ) : (
+              <>
             <div className="grid grid-cols-7 border-t border-[#dadce0] text-center text-[11px] font-medium text-[#70757a]">
               {c.weekdayLabels.map((d) => (
                 <div key={d} className="py-2">{d}</div>
@@ -299,6 +314,8 @@ export default function CalendarTask() {
                 );
               })}
             </div>
+              </>
+            )}
           </div>
 
           {showingCal && (view === "invite" || view === "compose") && (
@@ -384,17 +401,32 @@ export default function CalendarTask() {
                       placeholder={c.writeHere}
                       className="min-h-[110px] w-full resize-y border-none py-3 text-[14px] leading-relaxed outline-none placeholder:text-[#767676]"
                     />
-                    <div className="mb-3 flex flex-wrap items-center gap-2">
-                      <span className="text-[12px] text-[#5f6368]">{c.startersLabel}:</span>
-                      {STARTERS[lang].map((s, i) => (
-                        <button
-                          key={i}
-                          onClick={() => setBody((b) => (b ? b + " " : "") + s)}
-                          className="min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
-                        >
-                          {s}
-                        </button>
-                      ))}
+                    <div className="mb-3">
+                      <div className="mb-2 text-[12px] text-[#5f6368]">{c.whatTime}</div>
+                      <div className="mb-3 flex flex-wrap gap-2">
+                        {HUDDLE_TIMES.map((slot) => (
+                          <button
+                            key={slot.key}
+                            type="button"
+                            onClick={() => {
+                              setChosenTime(slot.key);
+                              setBody(slot.starter[lang]);
+                            }}
+                            className={`min-h-[32px] rounded-full border px-3 text-[12px] cursor-pointer ${
+                              chosenTime === slot.key
+                                ? "border-[#0b57d0] bg-[#e8f0fe] font-medium text-[#0b57d0]"
+                                : "border-[#dadce0] text-[#3c4043] hover:bg-[#f2f6fc]"
+                            }`}
+                          >
+                            {slot.label[lang]}
+                          </button>
+                        ))}
+                      </div>
+                      <NeedAStart
+                        lang={lang}
+                        starters={STARTERS[lang]}
+                        onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+                      />
                     </div>
                     <div className="flex items-center gap-2 pb-4">
                       <button

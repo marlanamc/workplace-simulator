@@ -2,7 +2,9 @@
 
 **Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 1 — Getting Started
 **Task key:** `mail` · **Status:** built and playable today
-**Prerequisite:** Track 0 (or teacher confirms student can open a browser tab and type)
+**Prerequisite:** Track 0, including 0.5 login safety if they are new to a
+work login (or teacher confirms they can open a browser tab, type, and
+will not share a password)
 
 ## We will learn...
 *(read aloud / post on board — plain language, one idea)*

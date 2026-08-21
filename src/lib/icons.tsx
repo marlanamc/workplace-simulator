@@ -16,7 +16,6 @@ import {
   Mail,
   StickyNote,
   Table2,
-  Wrench,
 } from "lucide-react";
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 
@@ -53,7 +52,9 @@ export const TRACK_ICONS: Record<string, LucideIcon> = {
   starter: Coffee,
   schedules: CalendarDays,
   judgment: Compass,
-  growing: Wrench,
+  calendar: Calendar,
+  files: FolderOpen,
+  spreadsheet: Table2,
 };
 
 export const FOLDER_ICONS: Record<string, LucideIcon> = {

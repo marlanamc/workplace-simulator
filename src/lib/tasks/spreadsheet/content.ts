@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "📊",
+    kicker: "Friday afternoon",
+    headline: "This week's tips still need a total.",
+    body: "Maria needs the number for payroll. Open the sheet, enter the slips, and send her the total.",
+    cta: "Open Sheets",
+  },
+  es: {
+    emoji: "📊",
+    kicker: "Viernes por la tarde",
+    headline: "Las propinas de esta semana todavía no tienen total.",
+    body: "Maria necesita el número para la nómina. Abre la hoja, ingresa los recibos y envíale el total.",
+    cta: "Abrir Sheets",
+  },
+};
 
 export interface TipRow {
   key: string;

@@ -28,6 +28,30 @@ export interface CatalogLesson {
   path?: "a" | "b";
 }
 
+/** Later lessons where the student authors the email, sheet, or formula. The app cannot grade those. They go to the teacher. */
+const TEACHER_CHECK_TASKS = new Set([
+  "status-report",
+  "team-schedule",
+  "team-meeting",
+  "priority-call",
+  "college-offer",
+  "reply-all",
+  "enrollment",
+  "coursework",
+  "research",
+  "patient-intake",
+  "confidentiality-call",
+  "slide-deck",
+  "meeting-minutes",
+  "performance-review",
+  "ops-report-packet",
+  "portfolio-reflection",
+]);
+
+export function lessonNeedsTeacher(lesson: CatalogLesson): boolean {
+  return TEACHER_CHECK_TASKS.has(lesson.taskKey);
+}
+
 export interface CatalogLevel {
   key: string;
   n: number;
@@ -41,8 +65,61 @@ export interface CatalogAct {
   title: string;
   jobTitle: string;
   color: string;
+  /** Who this act is for. Trunk is everyone. The others are doors after Act II. */
+  path: "trunk" | "stay" | "bridge" | "office";
+  blurb: string;
   levels: CatalogLevel[];
 }
+
+export const TRACK0_LESSONS = [
+  {
+    n: "0.1",
+    skill: "Turn on the device and open a browser",
+    where: "Real Chromebook",
+  },
+  {
+    n: "0.2",
+    skill: "Use the mouse or trackpad and hit a target",
+    where: "Real Chromebook",
+  },
+  {
+    n: "0.3",
+    skill: "Type a short message with the keyboard",
+    where: "Real Chromebook",
+  },
+  {
+    n: "0.4",
+    skill: "Download a file from Google Classroom and find it",
+    where: "Real Chromebook",
+  },
+  {
+    n: "0.5",
+    skill: "Keep your login safe, and spot a fake email",
+    where: "Real Chromebook",
+    folder: "track-0/05-lesson-login-safety.md",
+  },
+] as const;
+
+export const AFTER_ACT_2_PATHS = [
+  {
+    id: "stay",
+    title: "Stay and lead",
+    href: "#act3",
+    body: "Acts III and IV. Become the person who writes the schedule and runs the huddle. Same path for a cafe, a store, cleaning, or a crew on a job site.",
+  },
+  {
+    id: "healthcare",
+    title: "Healthcare / front desk",
+    href: "#act5",
+    body: "Act V, Path B. Appointments, intake, billing, and saying no to the wrong request. You do not have to become a cafe manager first.",
+  },
+  {
+    id: "office",
+    title: "Office / admin",
+    href: "#act6",
+    body: "Acts VI and VII. Nested Drive, meetings, expense reports, a short slide deck. You can start this after Act II.",
+  },
+] as const;
 
 function isLessonBuilt(taskKey: string): boolean {
   return (TASK_KEYS as readonly string[]).includes(taskKey) && TASK_INFO[taskKey as TaskKey]?.built === true;
@@ -72,7 +149,7 @@ export function catalogStats(acts: CatalogAct[] = CATALOG_ACTS) {
 }
 
 /**
- * The full 25-level map for the designer studio. Independent of `LEVELS` in
+ * The full level map for the designer studio. Independent of `LEVELS` in
  * tracks-content - that list is only what's playable. This one is the
  * curriculum, with built lessons lighting up as they ship.
  */
@@ -82,6 +159,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act I: New Hire",
     jobTitle: "New Hire",
     color: "#1a73e8",
+    path: "trunk",
+    blurb: "Shared start. The story is a cafe, but the moves are any hourly job: email, schedule, hours, pay, speak up.",
     levels: [
       {
         key: "level1",
@@ -156,11 +235,13 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act II: Shift Lead",
     jobTitle: "Shift Lead",
     color: "#e37400",
+    path: "trunk",
+    blurb: "Lead tools: Calendar, Drive, Sheets. After this, pick a door: stay and lead, healthcare, or office.",
     levels: [
       {
         key: "level4",
         n: 4,
-        title: "Shift Lead",
+        title: "The Calendar",
         folder: "act-2-shift-lead/level-3-shift-lead",
         lessons: [
           {
@@ -170,15 +251,31 @@ export const CATALOG_ACTS: CatalogAct[] = [
             app: "Calendar",
             tab: "calendar",
           },
+        ],
+      },
+      {
+        key: "level5",
+        n: 5,
+        title: "Shared Files",
+        folder: "act-2-shift-lead/level-3-shift-lead",
+        lessons: [
           {
-            n: "2",
+            n: "1",
             taskKey: "files",
             skill: "Find a file in a shared drive and share it at view, not edit",
             app: "Drive",
             tab: "files",
           },
+        ],
+      },
+      {
+        key: "level6",
+        n: 6,
+        title: "The Numbers",
+        folder: "act-2-shift-lead/level-3-shift-lead",
+        lessons: [
           {
-            n: "3",
+            n: "1",
             taskKey: "spreadsheet",
             skill: "Enter numbers, read a formula total, flag one that's wrong",
             app: "Sheets",
@@ -187,8 +284,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level5",
-        n: 5,
+        key: "level7",
+        n: 7,
         title: "Reporting In",
         folder: "act-2-shift-lead/level-4-reporting-in",
         lessons: [
@@ -209,8 +306,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level6",
-        n: 6,
+        key: "level8",
+        n: 8,
         title: "Covering More Ground",
         folder: "act-2-shift-lead/level-5-covering-more-ground",
         lessons: [
@@ -230,10 +327,12 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act III: Shift Supervisor",
     jobTitle: "Shift Supervisor",
     color: "#1e8e3e",
+    path: "stay",
+    blurb: "Stay and lead. Decide for the crew: the schedule, the huddle, three things at once. Food, retail, cleaning, or a job site.",
     levels: [
       {
-        key: "level7",
-        n: 7,
+        key: "level9",
+        n: 9,
         title: "Scheduling the Team",
         folder: "act-3-shift-supervisor/level-6-scheduling-the-team",
         lessons: [
@@ -247,8 +346,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level8",
-        n: 8,
+        key: "level10",
+        n: 10,
         title: "Weekly Numbers",
         folder: "act-3-shift-supervisor/level-7-weekly-numbers",
         lessons: [
@@ -262,8 +361,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level9",
-        n: 9,
+        key: "level11",
+        n: 11,
         title: "First Team Meeting",
         folder: "act-3-shift-supervisor/level-8-first-team-meeting",
         lessons: [
@@ -277,8 +376,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level10",
-        n: 10,
+        key: "level12",
+        n: 12,
         title: "Under Pressure",
         folder: "act-3-shift-supervisor/level-9-under-pressure",
         lessons: [
@@ -298,10 +397,12 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act IV: Assistant Manager",
     jobTitle: "Assistant Manager",
     color: "#8430ce",
+    path: "stay",
+    blurb: "Stay and lead. A formal offer, a budget, and reply vs reply-all. Last required stop if this industry is the goal.",
     levels: [
       {
-        key: "level11",
-        n: 11,
+        key: "level13",
+        n: 13,
         title: "An Offer",
         folder: "act-4-assistant-manager/level-10-an-offer",
         lessons: [
@@ -315,8 +416,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level12",
-        n: 12,
+        key: "level14",
+        n: 14,
         title: "The Budget",
         folder: "act-4-assistant-manager/level-11-the-budget",
         lessons: [
@@ -330,8 +431,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level13",
-        n: 13,
+        key: "level15",
+        n: 15,
         title: "Reply-All",
         folder: "act-4-assistant-manager/level-12-reply-all",
         lessons: [
@@ -351,10 +452,12 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act V: Bridge (elective)",
     jobTitle: "Prepping for BHCC or Front Office",
     color: "#00897b",
+    path: "bridge",
+    blurb: "Open after Act II. Path A is college-style tasks. Path B is healthcare / front desk. Do one path, not both.",
     levels: [
       {
-        key: "level14",
-        n: 14,
+        key: "level16",
+        n: 16,
         title: "Getting Ready",
         folder: "act-5-bridge/level-13-getting-ready",
         lessons: [
@@ -377,8 +480,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level15",
-        n: 15,
+        key: "level17",
+        n: 17,
         title: "The Paperwork",
         folder: "act-5-bridge/level-14-the-paperwork",
         lessons: [
@@ -400,8 +503,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level16",
-        n: 16,
+        key: "level18",
+        n: 18,
         title: "Staying On Top of It",
         folder: "act-5-bridge/level-15-staying-on-top-of-it",
         lessons: [
@@ -424,8 +527,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level17",
-        n: 17,
+        key: "level19",
+        n: 19,
         title: "Finding a Real Answer",
         folder: "act-5-bridge/level-16-finding-a-real-answer",
         lessons: [
@@ -453,10 +556,12 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act VI: Office Administrator",
     jobTitle: "Office Administrator (HQ)",
     color: "#c5221f",
+    path: "office",
+    blurb: "Open after Act II. Nested Drive, multi-person calendar, expense report, a 3-slide deck.",
     levels: [
       {
-        key: "level18",
-        n: 18,
+        key: "level20",
+        n: 20,
         title: "Welcome to HQ",
         folder: "act-6-office-administrator/level-17-welcome-to-hq",
         lessons: [
@@ -470,8 +575,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level19",
-        n: 19,
+        key: "level21",
+        n: 21,
         title: "Get Everyone in the Room",
         folder: "act-6-office-administrator/level-18-get-everyone-in-the-room",
         lessons: [
@@ -492,8 +597,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level20",
-        n: 20,
+        key: "level22",
+        n: 22,
         title: "The Expense Report",
         folder: "act-6-office-administrator/level-19-the-expense-report",
         lessons: [
@@ -507,8 +612,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level21",
-        n: 21,
+        key: "level23",
+        n: 23,
         title: "Presenting to the Team",
         folder: "act-6-office-administrator/level-20-presenting-to-the-team",
         lessons: [
@@ -527,10 +632,12 @@ export const CATALOG_ACTS: CatalogAct[] = [
     title: "Act VII: Team Lead",
     jobTitle: "Team Lead",
     color: "#e8a317",
+    path: "office",
+    blurb: "Office-path capstone. Run a meeting, write a review, put a packet together. Stay-and-lead students can stop after Act IV.",
     levels: [
       {
-        key: "level22",
-        n: 22,
+        key: "level24",
+        n: 24,
         title: "Run the Meeting",
         folder: "act-7-team-lead/level-21-run-the-meeting",
         lessons: [
@@ -544,8 +651,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level23",
-        n: 23,
+        key: "level25",
+        n: 25,
         title: "The Review",
         folder: "act-7-team-lead/level-22-the-review",
         lessons: [
@@ -559,8 +666,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level24",
-        n: 24,
+        key: "level26",
+        n: 26,
         title: "Put It All Together",
         folder: "act-7-team-lead/level-23-put-it-all-together",
         lessons: [
@@ -574,8 +681,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
         ],
       },
       {
-        key: "level25",
-        n: 25,
+        key: "level27",
+        n: 27,
         title: "Where You've Been",
         folder: "act-7-team-lead/level-24-where-youve-been",
         lessons: [

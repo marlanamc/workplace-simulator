@@ -1,4 +1,40 @@
-import type { ConfidenceOption, Lang, Lesson } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "📅",
+    kicker: "Next week",
+    headline: "Maria put a meeting on a day you work.",
+    body: "The Weekly Lead Huddle is on the calendar. Check the day against your shifts before you say yes.",
+    cta: "Open Calendar",
+  },
+  es: {
+    emoji: "📅",
+    kicker: "La semana que viene",
+    headline: "Maria puso una reunión un día que trabajas.",
+    body: "La reunión semanal de líderes está en el calendario. Revisa el día contra tus turnos antes de decir que sí.",
+    cta: "Abrir Calendar",
+  },
+};
+
+export const HUDDLE_TIMES = [
+  {
+    key: "10am" as const,
+    label: { en: "Thu 10:00 AM", es: "Jue 10:00 AM" },
+    starter: {
+      en: "Could we do Thursday at 10 AM instead?",
+      es: "¿Podríamos el jueves a las 10 AM?",
+    },
+  },
+  {
+    key: "2pm" as const,
+    label: { en: "Thu 2:00 PM", es: "Jue 2:00 PM" },
+    starter: {
+      en: "Could we do Thursday at 2 PM instead?",
+      es: "¿Podríamos el jueves a las 2 PM?",
+    },
+  },
+];
 
 export const MEETING = {
   title: "Weekly Lead Huddle",
@@ -31,6 +67,7 @@ export const CALENDAR_COPY: Record<Lang, {
   no: string;
   maybe: string;
   proposeTime: string;
+  whatTime: string;
   to: string;
   subjectLabel: string;
   subject: string;
@@ -73,6 +110,7 @@ export const CALENDAR_COPY: Record<Lang, {
     no: "No",
     maybe: "Maybe",
     proposeTime: "Propose a new time",
+    whatTime: "What time works?",
     to: "To",
     subjectLabel: "Subject",
     subject: "Re: Weekly Lead Huddle. Different time?",
@@ -115,6 +153,7 @@ export const CALENDAR_COPY: Record<Lang, {
     no: "No",
     maybe: "Quizá",
     proposeTime: "Proponer otro horario",
+    whatTime: "¿Qué hora te funciona?",
     to: "Para",
     subjectLabel: "Asunto",
     subject: "Re: Reunión semanal de líderes. ¿Otro horario?",

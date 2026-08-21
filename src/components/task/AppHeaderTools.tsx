@@ -15,12 +15,11 @@ export default function AppHeaderTools({
         onClick={onHelp}
         title={helpLabel}
         aria-label={helpLabel}
-        className="flex h-10 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-[#444746] hover:bg-black/[0.06] cursor-pointer"
+        className="flex h-10 w-10 items-center justify-center rounded-full text-[#444746] hover:bg-black/[0.06] cursor-pointer"
       >
         <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#747775] text-[13px] font-medium">
           ?
         </span>
-        <span className="hidden sm:inline">{helpLabel}</span>
       </button>
     </div>
   );

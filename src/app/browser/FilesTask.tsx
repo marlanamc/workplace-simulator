@@ -11,18 +11,20 @@ import {
   WRONG_EDIT_HINT,
   LESSONS,
   CONFIDENCE_OPTIONS,
+  EVENT_INTRO,
   type DriveFile,
 } from "@/lib/tasks/files/content";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
-import { FOLDER_ICONS } from "@/lib/icons";
+import { FOLDER_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Folder, Home, Plus, Users } from "lucide-react";
 
-type View = "home" | "browse" | "rename" | "share" | "done";
+type View = "intro" | "home" | "browse" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
 
@@ -42,7 +44,7 @@ function DriveMark() {
 
 export default function FilesTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "intro");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
@@ -204,10 +206,8 @@ export default function FilesTask() {
           </div>
 
           <div className="relative min-w-0 flex-1 overflow-y-auto px-4 pb-6 pt-2">
-            {listOpen && (
-              <p className="mb-4 max-w-[62ch] rounded-lg bg-[#e8f0fe] px-4 py-3 text-[13px] leading-relaxed text-[#174ea6]">
-                {c.scenario}
-              </p>
+            {view === "intro" && (
+              <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.files} onContinue={() => setView("home")} />
             )}
 
             {view === "home" && (

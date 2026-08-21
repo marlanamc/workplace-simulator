@@ -14,11 +14,10 @@ view used in the earlier exploration pass.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Handbook tab always opens the same
       scenario and question.
-- [ ] Google Classroom (optional): this is the last lesson in Level 3 — you
-      can offer the combined **Level 3 wrap-up assignment** now (see
-      `real-practice-assignment.md`), covering this skill and the incident
-      report together, in one sitting. It's supplementary, not a
-      gate — a student who skips it still moves on to Level 4 (Shift Lead).
+- [ ] Google Classroom (optional): this is the last lesson in Level 3, and
+      the end of Act I. Offer the **Act I real Gmail beat** now (see
+      `real-practice-assignment.md`): one real reply with a file attached.
+      Still not a gate — a student who skips it still moves on to Level 4.
 
 ## Simulator practice (~5 min)
 1. Read the scenario prompt at the top of the **Handbook** tab.
