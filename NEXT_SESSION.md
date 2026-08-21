@@ -29,27 +29,37 @@ etc.) and the level-by-level table.
      levels get added instead of assuming exactly two.
 2. ✅ **Partially built the environment-reset gap** (see below) —
    NOT the full fix, but the highest-leverage piece of it.
-3. ✅ **Curriculum folder now fully written through Act IV (Levels 1-12).**
-   Before building any more code, the user asked to get the curriculum
-   folder itself complete first. Reorganized existing docs to match the new
-   3-level split (`level-1-new-hire/`, `level-2-settling-in/`,
-   `level-3-shift-lead/` — renamed from `level-2-shift-lead/`), rewrote
-   every level/lesson cross-reference and the Google-Classroom-is-optional
-   wording throughout, and wrote full new lesson docs + wrap-up assignments
-   for Levels 4-12 (Act II's remaining two levels, all of Act III "Shift
-   Supervisor," all of Act IV "Assistant Manager" — this is where the BHCC
-   offer story beat lands, at Level 10). `00-scope-and-sequence.md` was
-   rewritten top to bottom: full roadmap table for all 7 acts, detailed
-   sections for Acts I-IV, a scoped (not yet lesson-by-lesson) outline for
-   Acts V-VII, and the async/optional-Classroom framing threaded through.
-   None of this new curriculum content is built in code yet — Levels 4-12
-   are lesson docs only, task keys (`status-report`, `triage`,
-   `team-schedule`, `formula-check`, `team-meeting`, `priority-call`,
-   `college-offer`, `budget-sheet`, `reply-all`) don't exist in
-   `tracks-content.ts`/`desktop-content.ts` yet.
-4. ⬜ **Not started:** actually building Act II's new levels 4-5 in code
-   ("Reporting In" — student authors `=SUM()` + cc's a second recipient;
-   "Covering More Ground" — two competing requests at once).
+3. ✅ **The entire 24-level, 7-act curriculum is now fully written.** Before
+   building any more code, the user asked to get the curriculum folder
+   itself complete first — across two sessions, that's now done end to end:
+   - Reorganized existing docs to match the new 3-level Act I/II split
+     (`level-1-new-hire/`, `level-2-settling-in/`, `level-3-shift-lead/` —
+     renamed from `level-2-shift-lead/`).
+   - Wrote full lesson docs + wrap-up assignments for every level from 4
+     through 24: the rest of Act II (Shift Lead), all of Act III (Shift
+     Supervisor), all of Act IV (Assistant Manager — the BHCC offer story
+     beat lands at Level 10), all of Act V (Bridge, elective — two
+     parallel paths, Prepping for BHCC vs. Front Office/Healthcare Admin,
+     Levels 13-16), all of Act VI (Office Administrator, Levels 17-20),
+     and all of Act VII (Team Lead capstone, Levels 21-24, ending on a
+     closing reflection tied to the shareable certificate page).
+   - The old `future-planning-what's-next/` folder is gone — its 4 lessons
+     are now sequenced into Act V's Path A (Levels 13-16) instead of
+     staying deferred. The `video-call` task, originally parked as a Shift
+     Lead bonus, is now sequenced into Act VI, Level 18.
+   - `00-scope-and-sequence.md` was rewritten top to bottom: full roadmap
+     table for all 7 acts, and a detailed level-by-level section for every
+     single act (no more "scoped only" placeholder), with the async/
+     optional-Classroom framing threaded through everywhere.
+   - **None of Levels 4-24 are built in code.** Task keys from `status-report`
+     through `portfolio-reflection` don't exist in
+     `tracks-content.ts`/`desktop-content.ts` yet — this was a
+     curriculum-only pass, by design.
+4. ⬜ **Not started:** building any of Levels 4-24 in code. Act II's levels
+   4-5 ("Reporting In" — student authors `=SUM()` + cc's a second
+   recipient; "Covering More Ground" — two competing requests at once) are
+   the smallest, most natural next step since they're closest to what's
+   already built.
 
 ### What "environment reset" means now, and what's actually fixed
 
@@ -96,13 +106,16 @@ Reuses `SpreadsheetTask.tsx`'s UI pattern and the `mail`/`files`
 picker-modal pattern. This is the natural next step — content is ready,
 code isn't.
 
-### Option B — Write Act V's lesson docs (elective: college-prep or healthcare-admin)
+### Option B — Build a later act in code instead
 
-Act V (Levels 13-15) is still only scoped at the table level in
-`00-scope-and-sequence.md`. The college-prep half can lean heavily on the
-four already-written `curriculum/future-planning-what's-next/` lessons
-(reframe, don't rewrite from scratch); the healthcare-admin half needs
-fully new content. Needs its own lesson-doc pass before either gets built.
+If Act II feels too incremental, any later act's lesson docs are also
+ready to build from — e.g. Act III's `team-schedule`/`formula-check`/
+`team-meeting`/`priority-call`, or Act V's elective paths. Building out of
+order is fine; nothing in the code forces sequential act construction,
+just sequential *play* order once built (`LEVELS` in `tracks-content.ts`
+needs every level up to whichever one you build to exist, even as stubs,
+or `levelForTrack()`'s fallback-to-last-level logic will misattribute
+tracks).
 
 ### Option C — Realism & accessibility pass (lower priority, do last)
 
