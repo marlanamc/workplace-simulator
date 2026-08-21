@@ -11,7 +11,7 @@
   there, and send a short status email that cc's a second person.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: reopen the Hsheets tab from Level 3 with this week's
+- [ ] Simulator: reopen the Sheets tab from Level 3 with this week's
       numbers already entered from that lesson. A blank total cell is
       waiting — the student types the formula themselves this time, instead
       of just checking one that's already filled in.
@@ -22,12 +22,12 @@
       on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hsheets** — the total cell from Level 3's sheet is blank now.
+1. Open **Sheets** — the total cell from Level 3's sheet is blank now.
 2. Click the blank cell and type `=SUM(` followed by the range of cells
    with this week's numbers, then close the parenthesis and press Enter.
 3. Check the total looks right (same "does this match what I'd expect"
    habit from Level 3).
-4. Open **Hmail**, start a new message to your lead with the total, and
+4. Open **Mail**, start a new message to your lead with the total, and
    click **Cc** to add a second recipient (a co-lead who also needs to see
    it) — the first time the app asks for more than one recipient.
 5. Send it.

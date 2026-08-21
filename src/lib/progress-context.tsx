@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
+import type { Lang } from "@/lib/task-types";
 import {
   POINTS_PER_TASK,
   activeTrack,
@@ -30,6 +31,8 @@ interface ProgressValue {
   restartLevel: (level: Level) => void;
   dismissCelebration: () => void;
   dismissLevelCelebration: () => void;
+  lang: Lang;
+  setLang: (lang: Lang) => void;
 }
 
 const ProgressContext = createContext<ProgressValue | null>(null);
@@ -51,6 +54,7 @@ export function ProgressProvider({
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
   const [progressEpoch, setProgressEpoch] = useState(0);
+  const [lang, setLang] = useState<Lang>("en");
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const markComplete = useCallback((taskKey: TaskKey, badgeKey?: string) => {
@@ -115,6 +119,8 @@ export function ProgressProvider({
         restartLevel,
         dismissCelebration,
         dismissLevelCelebration,
+        lang,
+        setLang,
       }}
     >
       {children}

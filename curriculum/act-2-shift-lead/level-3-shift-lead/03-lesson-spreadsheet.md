@@ -2,7 +2,7 @@
 
 **Time:** ~5 minutes · **Level:** 3 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `spreadsheet` · **Status:** built — a small "weekly tally"
-sheet (a few rows of shift tips) in the Hsheets Browser tab, with one
+sheet (a few rows of shift tips) in the Sheets Browser tab, with one
 planted-wrong total (a stale number, not a real formula error) to catch.
 **Prerequisite:** Lesson 2
 
@@ -19,7 +19,7 @@ planted-wrong total (a stale number, not a real formula error) to catch.
       a gate — a student who skips it still moves on.
 
 ## Simulator practice (~5 min)
-1. Open the **Browser** → **Hsheets** tab.
+1. Open the **Browser** → **Sheets** tab.
 2. Enter the numbers you're given into the right cells.
 3. Look at the total the sheet calculates.
 4. Add up the numbers yourself (or estimate) and check: does the total

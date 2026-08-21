@@ -8,7 +8,6 @@ import {
   RECENT_ITEMS,
   type AppKey,
   type AppState,
-  type Lang,
 } from "@/lib/desktop-content";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
@@ -124,7 +123,7 @@ export default function Shelf({
   awardsOpen: boolean;
   onAwardsOpenChange: (open: boolean) => void;
 }) {
-  const [lang, setLang] = useState<Lang>("en");
+  const { points, justEarnedPoints, completedTaskKeys, currentTrack, restartLevel, lang, setLang } = useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
@@ -134,7 +133,6 @@ export default function Shelf({
   const [brightness, setBrightness] = useState(80);
   const { nudge, say } = useNudge(4200);
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
-  const { points, justEarnedPoints, completedTaskKeys, currentTrack, restartLevel } = useProgress();
   const currentLevel = levelForTrack(currentTrack.key);
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
   const reachedIndex = furthestLevelIndex(completedTaskKeys);

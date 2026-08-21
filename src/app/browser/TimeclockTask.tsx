@@ -12,7 +12,6 @@ import {
   CONFIDENCE_OPTIONS,
   WRONG_LOOKS_RIGHT_HINT,
 } from "@/lib/tasks/timeclock/content";
-import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
@@ -24,8 +23,7 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 type View = "intro" | "clocked_in" | "review" | "compose" | "done";
 
 export default function TimeclockTask() {
-  const [lang, setLang] = useState<Lang>("en");
-  const { markComplete, completedTaskKeys } = useProgress();
+  const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "intro");
   const [body, setBody] = useState("");
   const [confidence, setConfidence] = useState<string | null>(null);
@@ -70,12 +68,6 @@ export default function TimeclockTask() {
             className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
           >
             ? {c.helpBtn}
-          </button>
-          <button
-            onClick={() => setLang(lang === "en" ? "es" : "en")}
-            className="inline-flex min-h-[40px] items-center rounded-full border border-[var(--border)] px-3.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
-          >
-            {c.langBtn}
           </button>
         </div>
       </div>

@@ -29,7 +29,7 @@ interface AppCopy {
 export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
   en: {
     browser: {
-      name: "Hchrome",
+      name: "Browser",
       kicker: "Your main workspace",
       brief: "Almost everything for the job lives here — email, your schedule, pay stubs, and forms all open as tabs.",
       points: ["Open a bookmarked site or a tab", "Read what it's asking you to do", "Reply, fill in, or submit — then check it off"],
@@ -43,7 +43,7 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
   },
   es: {
     browser: {
-      name: "Hchrome",
+      name: "Navegador",
       kicker: "Tu espacio principal",
       brief: "Casi todo el trabajo pasa por aquí — correo, tu horario, recibos de pago y formularios se abren como pestañas.",
       points: ["Abre un sitio guardado o una pestaña", "Lee lo que te pide", "Responde, llena o envía — y márcalo como hecho"],
@@ -148,14 +148,14 @@ export interface RecentItem {
 export const RECENT_ITEMS: RecentItem[] = [
   {
     color: "#8430ce",
-    title: { en: "Hportal", es: "Hportal" },
+    title: { en: "Portal", es: "Portal" },
     subtitle: { en: "Check your schedule", es: "Revisa tu horario" },
     appKey: "browser",
     tab: "portal",
   },
   {
     color: "#4285f4",
-    title: { en: "Hdocs", es: "Hdocs" },
+    title: { en: "Docs", es: "Docs" },
     subtitle: { en: "Look something up", es: "Busca algo" },
     appKey: "browser",
     tab: "handbook",

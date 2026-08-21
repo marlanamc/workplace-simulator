@@ -10,17 +10,17 @@
   report, and catch the one that's missing a receipt before submitting.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: a short Hsheets-style expense report (a handful of rows —
+- [ ] Simulator: a short Sheets-style expense report (a handful of rows —
       supplies, travel, meals) plus a small stack of receipt images/PDFs in
-      Hdrive. One row is missing its matching receipt.
+      Drive. One row is missing its matching receipt.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 19 wrap-up assignment
       (`real-practice-assignment.md`), offered once this lesson is done.
       Never a gate — a student who skips it still moves on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hsheets** → the expense report.
-2. Open each receipt in **Hdrive** and match it to the right row and
+1. Open **Sheets** → the expense report.
+2. Open each receipt in **Drive** and match it to the right row and
    category.
 3. Notice the row with no matching receipt.
 4. Don't submit it as-is — flag it and ask the person who submitted the

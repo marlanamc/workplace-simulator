@@ -15,7 +15,7 @@ office, not the cafe), a new wallpaper.
   similarly-named files — using search, not just browsing.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: an HQ-scale Hdrive with several folders, sub-folders
+- [ ] Simulator: an HQ-scale Drive with several folders, sub-folders
       inside those, and 3-4 similarly-named files (different dates or
       versions) so the student has to read carefully, not just guess.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
@@ -24,7 +24,7 @@ office, not the cafe), a new wallpaper.
       Never a gate — a student who skips it still moves on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hdrive** at HQ — notice it's much bigger than Level 3's shared
+1. Open **Drive** at HQ — notice it's much bigger than Level 3's shared
    drive.
 2. Use the search bar rather than clicking through every folder — the same
    "search instead of browsing blind" instinct from Level 3's `files`

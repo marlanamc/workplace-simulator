@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { type Lang, type TaskKey } from "@/lib/desktop-content";
+import { type TaskKey } from "@/lib/desktop-content";
 import { DesktopClock } from "@/components/LiveClock";
 import { levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
@@ -50,11 +50,10 @@ function AppWindow({ active, children }: { active: boolean; children: ReactNode 
 }
 
 function DesktopShell({ displayName }: { displayName: string }) {
-  const [lang] = useState<Lang>("en");
+  const { lang, currentTrack, dismissCelebration, progressEpoch } = useProgress();
   const [objectivesOpen, setObjectivesOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const { apps, active } = useWindowManager();
-  const { currentTrack, dismissCelebration, progressEpoch } = useProgress();
 
   const anyAppActive = active !== null;
   const currentLevel = levelForTrack(currentTrack.key);

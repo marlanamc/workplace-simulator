@@ -13,7 +13,7 @@ capstone — finishing it completes the Assistant Manager arc.
   professional one before sending.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: an Hmail thread with 4-5 people across two departments
+- [ ] Simulator: an Mail thread with 4-5 people across two departments
       (the cafe crew and Harborside's HQ ops team), including one message
       that's genuinely FYI-only (no action needed) and one that needs a
       specific answer from the student. A pre-written casual draft reply
@@ -26,7 +26,7 @@ capstone — finishing it completes the Assistant Manager arc.
       on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hmail** and read the whole thread, top to bottom.
+1. Open **Mail** and read the whole thread, top to bottom.
 2. Decide: does the message that needs a response actually need
    **reply-all**, or just a reply to the one person who asked?
 3. Edit the casual pre-written draft into something professional — same

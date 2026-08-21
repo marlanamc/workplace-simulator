@@ -19,6 +19,10 @@ import { TAB_ICONS } from "@/lib/icons";
 
 type TabKey = "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "handbook" | "incident" | "newtab";
 
+function isNewTabKey(key: string | undefined) {
+  return key === "newtab" || Boolean(key?.startsWith("newtab-"));
+}
+
 interface TabDef {
   key: TabKey;
   label: string;
@@ -32,29 +36,16 @@ interface TabDef {
 }
 
 const BASE_TABS: TabDef[] = [
-  { key: "mail",     label: "Hmail",  url: "hmail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: TAB_LEVEL_KEYS.mail },
-  { key: "portal",   label: "Hportal",url: "hportal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
-  { key: "incident", label: "Hforms", url: "hforms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
-  { key: "handbook", label: "Hdocs",  url: "hdocs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: TAB_LEVEL_KEYS.handbook },
-  { key: "calendar", label: "Hcal",   url: "hcal.harborsidecafe.com",   icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS.calendar },
-  { key: "files",    label: "Hdrive", url: "hdrive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: TAB_LEVEL_KEYS.files },
-  { key: "spreadsheet", label: "Hsheets", url: "hsheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS.spreadsheet },
+  { key: "mail",     label: "Mail",  url: "mail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: TAB_LEVEL_KEYS.mail },
+  { key: "calendar", label: "Calendar", url: "calendar.harborsidecafe.com", icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS.calendar },
+  { key: "files",    label: "Drive", url: "drive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: TAB_LEVEL_KEYS.files },
+  { key: "handbook", label: "Docs",  url: "docs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: TAB_LEVEL_KEYS.handbook },
+  { key: "spreadsheet", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS.spreadsheet },
+  { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
+  { key: "portal",   label: "Portal",url: "portal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
 ];
 
-/** The 4-color Chrome circle logo */
-function ChromeLogo({ size = 24 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" aria-label="Chrome" fill="none">
-      <path d="M24 8 A16 16 0 0 1 37.9 30 L30.4 26 A8 8 0 0 0 24 16 Z" fill="#ea4335" />
-      <path d="M37.9 30 A16 16 0 0 1 10.1 30 L17.6 26 A8 8 0 0 0 30.4 26 Z" fill="#34a853" />
-      <path d="M10.1 30 A16 16 0 0 1 24 8 L24 16 A8 8 0 0 0 17.6 26 Z" fill="#4285f4" />
-      <circle cx="24" cy="24" r="8" fill="#fbbc04" />
-      <circle cx="24" cy="24" r="5.5" fill="white" />
-    </svg>
-  );
-}
-
-/** Chrome-style tombstone tab */
+/** Chrome-style tab — active tab is the same white as the toolbar, so they read as one piece. */
 function ChromeTab({
   tab,
   isActive,
@@ -68,65 +59,45 @@ function ChromeTab({
   onClick: () => void;
   onClose: () => void;
 }) {
+  const newTab = isNewTabKey(tab.key);
+  const Icon = TAB_ICONS[tab.key];
   return (
     <button
       onClick={onClick}
       title={tab.label}
-      className="relative flex min-w-0 w-44 shrink-0 items-center gap-2 px-3 pt-2 pb-0 cursor-pointer group"
-      style={{ height: 36 }}
+      className={`group relative flex h-[34px] min-w-[72px] max-w-[240px] flex-1 items-center gap-2 px-3 cursor-pointer ${
+        isActive ? "z-10" : "z-0"
+      }`}
     >
-      {/* tombstone background */}
-      <span
-        className="absolute inset-0 rounded-t-lg"
-        style={{
-          background: isActive ? "white" : "transparent",
-          boxShadow: isActive ? "inset 0 1px 0 rgba(0,0,0,0.08)" : undefined,
-        }}
-      />
-      {/* curved corner notches for active tab */}
-      {isActive && (
-        <>
-          <span
-            className="pointer-events-none absolute -left-2 bottom-0 h-3 w-3"
-            style={{ background: "white", borderBottomRightRadius: "100%", boxShadow: "3px 0 0 0 #dee1e6" }}
-          />
-          <span
-            className="pointer-events-none absolute -right-2 bottom-0 h-3 w-3"
-            style={{ background: "white", borderBottomLeftRadius: "100%", boxShadow: "-3px 0 0 0 #dee1e6" }}
-          />
-        </>
+      {isActive ? (
+        <span className="absolute inset-0 rounded-t-[10px] bg-white" />
+      ) : (
+        <span className="absolute inset-[3px_2px] rounded-lg group-hover:bg-black/[0.08]" />
       )}
-      {/* favicon */}
       <span
-        className="relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-white"
-        style={{ background: tab.key === "newtab" ? "#e8eaed" : tab.color }}
+        className="relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] text-white"
+        style={{ background: newTab ? "#dadce0" : tab.color }}
       >
-        {tab.key !== "newtab" && TAB_ICONS[tab.key] && (
-          <span className="flex text-white">
-            {(() => {
-              const Icon = TAB_ICONS[tab.key];
-              return <Icon size={11} strokeWidth={2.5} />;
-            })()}
-          </span>
-        )}
+        {!newTab && Icon && <Icon size={11} strokeWidth={2.5} />}
       </span>
-      {/* label */}
       <span
-        className={`relative z-10 flex-1 truncate text-left text-[13px] ${
-          isActive ? "font-medium text-[#202124]" : "text-[#3c4043] group-hover:text-[#202124]"
+        className={`relative z-10 min-w-0 flex-1 truncate text-left text-[13px] ${
+          isActive ? "text-[#202124]" : "text-[#474747]"
         }`}
       >
         {tab.label}
       </span>
-      {/* close ✕ — only visible for closeable tabs */}
       {canClose && (
         <span
           role="button"
           aria-label={`Close ${tab.label}`}
-          onClick={(e) => { e.stopPropagation(); onClose(); }}
-          className={`relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] transition-opacity cursor-pointer ${
-            isActive ? "opacity-60 hover:opacity-100 hover:bg-black/10" : "opacity-0 group-hover:opacity-60 hover:opacity-100"
-          } text-[#5f6368]`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          className={`relative z-10 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] text-[#5f6368] cursor-pointer hover:bg-black/10 ${
+            isActive ? "opacity-70" : "opacity-0 group-hover:opacity-70"
+          }`}
         >
           ✕
         </span>
@@ -135,18 +106,35 @@ function ChromeTab({
   );
 }
 
-/** Chrome new tab page — minimal but recognisable */
+function GoogleWordmark() {
+  return (
+    <div
+      className="select-none text-[68px] font-medium leading-none tracking-[-0.04em]"
+      aria-label="Google"
+    >
+      <span className="text-[#4285f4]">G</span>
+      <span className="text-[#ea4335]">o</span>
+      <span className="text-[#fbbc05]">o</span>
+      <span className="text-[#4285f4]">g</span>
+      <span className="text-[#34a853]">l</span>
+      <span className="text-[#ea4335]">e</span>
+    </div>
+  );
+}
+
 function NewTabPage() {
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-8 bg-[#f5f6fa]">
-      <ChromeLogo size={64} />
-      <div className="flex w-[560px] max-w-full items-center gap-3 rounded-full border border-[#dadce0] bg-white px-5 py-3 shadow-sm text-[15px] text-[#5f6368]">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-[#4285f4]">
-          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+    <div className="flex h-full flex-col items-center bg-white pt-[12vh]">
+      <GoogleWordmark />
+      <div className="mt-8 flex w-[min(584px,92%)] items-center gap-3 rounded-full bg-white px-5 py-[13px] text-[16px] text-[#5f6368] shadow-[0_1px_6px_rgba(32,33,36,0.28)]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="shrink-0 text-[#9aa0a6]">
+          <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
         </svg>
-        Search or type a web address
+        Search Google or type a URL
       </div>
-      <p className="text-[13px] text-[#80868b]">This is a practice browser — use the bookmarks bar above to open your apps.</p>
+      <p className="mt-10 text-[13px] text-[#70757a]">
+        This is a practice browser — use the bookmarks bar to open your apps.
+      </p>
     </div>
   );
 }
@@ -286,21 +274,26 @@ export default function BrowserClient() {
   // Each tab is closeable in a freeTabbing level IF it's a "newtab" placeholder
   // OR if there's more than one tab open
   const canCloseTab = (tab: TabDef) =>
-    freeTabbing && (tab.key === "newtab" || tab.closeable || openTabs.length > 1);
+    freeTabbing && (isNewTabKey(tab.key) || tab.closeable || openTabs.length > 1);
+
+  const goToBookmark = (t: TabDef) => {
+    if (openTabs.some((ot) => ot.key === t.key)) {
+      setActiveTab(t.key);
+      return;
+    }
+    setOpenTabs((prev) => prev.map((ot) => (ot.key === activeTab ? t : ot)));
+    setActiveTab(t.key);
+  };
+
+  const showingNewTab = isNewTabKey(active?.key);
 
   return (
     <div
       className="flex min-h-0 flex-1 flex-col bg-[#dee1e6]"
     >
       {/* ── Top Chrome bar ─────────────────────────────────────── */}
-      <div className="flex items-end bg-[#dee1e6] px-2 pt-2 gap-0" style={{ height: 40 }}>
-        {/* Chrome logo */}
-        <div className="flex items-center justify-center px-2 pb-1 shrink-0">
-          <ChromeLogo size={22} />
-        </div>
-
-        {/* Tab strip */}
-        <div className="flex items-end flex-1 gap-0 overflow-x-auto min-w-0" style={{ height: 36 }}>
+      <div className="flex items-end bg-[#dee1e6] pl-2 pr-1 pt-1.5">
+        <div className="flex min-w-0 flex-1 items-end overflow-x-auto">
           {openTabs.map((t) => (
             <ChromeTab
               key={t.key}
@@ -311,9 +304,8 @@ export default function BrowserClient() {
               onClose={() => closeTab(t.key as TabKey)}
             />
           ))}
-          {/* New tab button */}
           <button
-            className={`flex h-7 w-7 mb-1 ml-1 shrink-0 items-center justify-center rounded-full text-[20px] font-light transition-colors cursor-pointer ${
+            className={`mb-[3px] ml-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[20px] font-light cursor-pointer ${
               freeTabbing
                 ? "text-[#3c4043] hover:bg-black/10"
                 : "text-[#3c4043]/40 cursor-default"
@@ -326,72 +318,71 @@ export default function BrowserClient() {
           </button>
         </div>
 
-        {/* Window controls */}
-        <div className="shrink-0 pb-1">
+        <div className="mb-0.5 shrink-0">
           <WindowControls appKey="browser" />
         </div>
       </div>
 
       {/* ── Toolbar ──────────────────────────────────────────────── */}
-      <div className="flex items-center gap-1 bg-[#f1f3f4] px-3 py-1.5 border-b border-[#c8cace]">
-        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/8 cursor-pointer" aria-label="Back">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <div className="flex items-center gap-1 bg-white px-2 py-1.5">
+        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/[0.06] cursor-pointer" aria-label="Back">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
           </svg>
         </button>
         <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#c8cace] cursor-default" aria-label="Forward" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z" />
           </svg>
         </button>
-        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/8 cursor-pointer" aria-label="Reload">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/[0.06] cursor-pointer" aria-label="Reload">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4C7.58 4 4 7.58 4 12s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
           </svg>
         </button>
 
-        {/* Address bar */}
-        <div className="flex flex-1 items-center gap-2 rounded-full bg-white border border-[#dadce0] px-3 py-1.5 text-[14px] text-[#202124] hover:shadow-sm transition-shadow">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="#188038" className="shrink-0">
-            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-          </svg>
-          <span className="flex-1 truncate text-[13px]">
-            {active?.key === "newtab" ? "New Tab" : active?.url ?? ""}
-          </span>
-          <button className="shrink-0 text-[#5f6368] hover:text-[#1a73e8] transition-colors cursor-pointer" title="Bookmark" aria-label="Bookmark this tab">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        <div className="flex h-9 flex-1 items-center gap-2 rounded-full bg-[#e9eef6] px-3 text-[14px] text-[#202124]">
+          {showingNewTab ? (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#5f6368" className="shrink-0">
+              <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
             </svg>
-          </button>
+          ) : (
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#188038" className="shrink-0">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+            </svg>
+          )}
+          <span className={`flex-1 truncate text-[14px] ${showingNewTab ? "text-[#5f6368]" : "text-[#202124]"}`}>
+            {showingNewTab ? "Search Google or type a URL" : active?.url ?? ""}
+          </span>
+          {!showingNewTab && (
+            <span className="shrink-0 text-[#f9ab00]" title="Bookmarked" aria-label="Bookmarked">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </span>
+          )}
         </div>
 
-        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/8 cursor-pointer" aria-label="Chrome menu">
+        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/[0.06] cursor-pointer" aria-label="Chrome menu">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
             <circle cx="12" cy="5" r="1.5" /><circle cx="12" cy="12" r="1.5" /><circle cx="12" cy="19" r="1.5" />
           </svg>
         </button>
       </div>
 
-      {/* ── Bookmarks bar — always shows every tab so students can always find their apps ── */}
-      <div className="flex items-center gap-0.5 bg-[#f1f3f4] px-3 py-1 border-b border-[#c8cace]">
+      <div className="flex items-center gap-0.5 border-b border-[#dadce0] bg-white px-3 py-[3px]">
         {BASE_TABS.map((t) => (
           <button
             key={t.key}
-            onClick={() => {
-              // If not already open, open it as a new tab
-              if (!openTabs.some((ot) => ot.key === t.key)) {
-                setOpenTabs((prev) => [...prev, t]);
-              }
-              setActiveTab(t.key as TabKey);
-            }}
-            className={`flex items-center gap-1.5 rounded px-2.5 py-1 text-[12px] font-medium cursor-pointer transition-colors ${
+            onClick={() => goToBookmark(t)}
+            className={`flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer ${
               active?.key === t.key
-                ? "bg-[#dadce0] text-[#202124]"
-                : "text-[#3c4043] hover:bg-[#e8eaed]"
+                ? "bg-[#e8eaed] text-[#202124]"
+                : "text-[#3c4043] hover:bg-[#f1f3f4]"
             }`}
           >
             <span
-              className="flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-sm text-white"
+              className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] text-white"
               style={{ background: t.color }}
             >
               {(() => {
@@ -413,7 +404,7 @@ export default function BrowserClient() {
         {active?.key === "spreadsheet" && <SpreadsheetTask />}
         {active?.key === "incident" && <IncidentTask />}
         {active?.key === "handbook" && <HandbookTask />}
-        {(active?.key === "newtab" || active?.key?.startsWith("newtab-")) && <NewTabPage />}
+        {showingNewTab && <NewTabPage />}
       </div>
 
       <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />

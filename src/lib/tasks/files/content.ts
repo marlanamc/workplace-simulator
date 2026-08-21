@@ -94,7 +94,7 @@ export const FILES_COPY: Record<Lang, {
   askPerson: string;
 }> = {
   en: {
-    heading: "Hdrive",
+    heading: "Drive",
     newBtn: "New",
     navHome: "Home",
     navMyDrive: "My Drive",

@@ -24,7 +24,7 @@ Weekly Numbers
       on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hsheets** → the week's hours grid.
+1. Open **Sheets** → the week's hours grid.
 2. Click the `SUM` cell and look at what range it's actually adding up
    (not just what number it shows).
 3. Compare that range against the actual list of names — is anyone missing?

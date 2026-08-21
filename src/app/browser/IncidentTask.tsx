@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
@@ -11,20 +11,21 @@ import {
   EVENT_INTRO,
   CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/incident/content";
-import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
-import { TASK_ICONS, CircleGlyph } from "@/lib/icons";
+import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
 
 type View = "intro" | "form" | "done";
 
+const PURPLE = "#673ab7";
+
 export default function IncidentTask() {
-  const [lang, setLang] = useState<Lang>("en");
-  const { markComplete, completedTaskKeys } = useProgress();
+  const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "intro");
   const [when, setWhen] = useState(DEFAULTS.en.when);
   const [where, setWhere] = useState(DEFAULTS.en.where);
@@ -64,102 +65,103 @@ export default function IncidentTask() {
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
-      <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <CircleGlyph icon={TASK_ICONS.incident} color="#7248b9" size={28} />
-        <span className="text-[18px] font-medium text-[#5f6368]">Hforms</span>
+    <div className="flex h-full min-h-0 flex-col bg-[#f0ebf8] text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+      <div className="flex items-center gap-3 border-b border-[#dadce0] bg-white px-4 py-2">
+        <span className="flex h-8 w-8 items-center justify-center rounded-[4px]" style={{ background: PURPLE }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="white" aria-hidden>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <path d="M14 2v6h6" fill="#d1c4e9" />
+            <path d="M8 13h8v1.5H8zm0 3h5v1.5H8z" />
+          </svg>
+        </span>
+        <span className="text-[18px] text-[#5f6368]">Forms</span>
         <div className="flex-1" />
-        <button
-          onClick={() => setHelp(true)}
-          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
-        >
-          ? {c.helpBtn}
-        </button>
-        <button
-          onClick={() => setLang(lang === "en" ? "es" : "en")}
-          className="inline-flex min-h-[40px] items-center rounded-full border border-[var(--border)] px-3.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
-        >
-          {c.langBtn}
-        </button>
+        <AppHeaderTools
+          helpLabel={c.helpBtn}
+          onHelp={() => setHelp(true)}
+        />
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto">
         {view === "intro" && (
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.incident} onContinue={() => setView("form")} />
+          <div className="p-6">
+            <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.incident} onContinue={() => setView("form")} />
+          </div>
         )}
 
         {view === "form" && (
-          <div className="mx-auto flex max-w-[640px] flex-col gap-5">
-            <div className="rounded-xl border border-[var(--warning-tint)] bg-[var(--warning-tint)] p-4">
-              <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
-                {c.scenarioKicker}
+          <div className="mx-auto flex w-full max-w-[640px] flex-col gap-3 px-4 py-6">
+            <div className="overflow-hidden rounded-lg bg-white shadow-[0_1px_2px_rgba(0,0,0,.15)]">
+              <div className="h-[10px]" style={{ background: PURPLE }} />
+              <div className="px-6 pb-5 pt-4">
+                <h1 className="text-[32px] font-normal leading-tight text-[#202124]">{c.heading}</h1>
+                <p className="mt-2 text-[14px] leading-relaxed text-[#444746]">{c.scenario}</p>
+                <p className="mt-3 text-[13px] text-[#d93025]">
+                  * {lang === "en" ? "Required" : "Obligatorio"}
+                </p>
               </div>
-              <p className="mt-1.5 text-[15px] leading-relaxed text-[var(--text-primary)]">{c.scenario}</p>
             </div>
 
-            <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-              <div className="mb-4 flex flex-wrap gap-4">
-                <div className="min-w-[180px] flex-1">
-                  <label className="mb-1 block text-[12px] font-medium text-[var(--text-tertiary)]">
-                    {c.whenLabel}
-                  </label>
-                  <input
-                    value={when}
-                    onChange={(e) => setWhen(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-[14px] outline-none focus:border-[var(--accent)]"
-                  />
-                </div>
-                <div className="min-w-[180px] flex-1">
-                  <label className="mb-1 block text-[12px] font-medium text-[var(--text-tertiary)]">
-                    {c.whereLabel}
-                  </label>
-                  <input
-                    value={where}
-                    onChange={(e) => setWhere(e.target.value)}
-                    className="w-full rounded-lg border border-[var(--border)] px-3 py-2 text-[14px] outline-none focus:border-[var(--accent)]"
-                  />
-                </div>
-              </div>
+            <QuestionCard label={c.whenLabel} required>
+              <input
+                value={when}
+                onChange={(e) => setWhen(e.target.value)}
+                className="w-full border-0 border-b border-[#e0e0e0] bg-transparent py-2 text-[16px] outline-none focus:border-b-2 focus:border-[#673ab7]"
+              />
+            </QuestionCard>
 
-              <label className="mb-1 block text-[12px] font-medium text-[var(--text-tertiary)]">
-                {c.whatLabel}
-              </label>
+            <QuestionCard label={c.whereLabel} required>
+              <input
+                value={where}
+                onChange={(e) => setWhere(e.target.value)}
+                className="w-full border-0 border-b border-[#e0e0e0] bg-transparent py-2 text-[16px] outline-none focus:border-b-2 focus:border-[#673ab7]"
+              />
+            </QuestionCard>
+
+            <QuestionCard label={c.whatLabel} required>
               <textarea
                 value={what}
                 onChange={(e) => setWhat(e.target.value)}
                 placeholder={c.writeHere}
-                className="min-h-[130px] w-full resize-y rounded-lg border border-[var(--border)] p-3 text-[16px] leading-relaxed outline-none focus:border-[var(--accent)] placeholder:text-[var(--text-tertiary)]"
+                className="min-h-[96px] w-full resize-y border-0 border-b border-[#e0e0e0] bg-transparent py-2 text-[16px] leading-relaxed outline-none placeholder:text-[#80868b] focus:border-b-2 focus:border-[#673ab7]"
               />
-              <div className="mb-4 mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-[12px] font-medium text-[var(--text-tertiary)]">{c.startersLabel}:</span>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <span className="text-[12px] text-[#5f6368]">{c.startersLabel}:</span>
                 {STARTERS[lang].map((s, i) => (
                   <button
                     key={i}
                     onClick={() => setWhat((w) => (w ? w + " " : "") + s)}
-                    className="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+                    className="min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] hover:bg-[#f0ebf8] cursor-pointer"
+                    style={{ color: PURPLE }}
                   >
                     {s}
                   </button>
                 ))}
               </div>
+            </QuestionCard>
 
-              <div className="flex items-center justify-between border-t border-[var(--border)] pt-4">
-                <div className="text-[13px] text-[var(--text-tertiary)]">
-                  {c.submitTo}: <span className="font-medium text-[var(--text-primary)]">Maria Delgado, Shift Supervisor</span>
-                </div>
-                <button
-                  onClick={trySubmit}
-                  className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
-                >
-                  {c.submit}
-                </button>
-              </div>
+            <div className="flex items-center justify-between pt-1">
+              <button
+                onClick={trySubmit}
+                className="inline-flex min-h-[40px] items-center rounded px-6 text-[14px] font-medium text-white cursor-pointer hover:brightness-95"
+                style={{ background: PURPLE }}
+              >
+                {c.submit}
+              </button>
+              <p className="text-[12px] text-[#5f6368]">
+                {c.submitTo} Maria Delgado
+              </p>
             </div>
+            <p className="text-[12px] text-[#5f6368]">
+              {lang === "en"
+                ? "Never submit passwords through this form."
+                : "Nunca envíes contraseñas en este formulario."}
+            </p>
           </div>
         )}
 
         {view === "done" && (
-          <div className="mx-auto flex max-w-[640px] flex-col gap-5">
+          <div className="mx-auto flex max-w-[640px] flex-col gap-5 p-6">
             <TaskDoneCard
               kicker={c.sentKicker}
               title={c.doneTitle}
@@ -168,24 +170,23 @@ export default function IncidentTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-
             <ConfidenceCheck
               question={c.confidenceQ}
               options={CONFIDENCE_OPTIONS[lang]}
               selected={confidence}
               onSelect={setConfidence}
             />
-
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={restart}
-                className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+                className="inline-flex min-h-[40px] items-center rounded px-5 text-[14px] font-medium text-white cursor-pointer"
+                style={{ background: PURPLE }}
               >
                 {c.tryAgain}
               </button>
               <button
                 onClick={minimizeActive}
-                className="inline-flex min-h-[46px] items-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+                className="inline-flex min-h-[40px] items-center rounded border border-[#747775] bg-white px-5 text-[14px] font-medium hover:bg-[#f8f9fa] cursor-pointer"
               >
                 {c.backToDesk}
               </button>
@@ -205,6 +206,26 @@ export default function IncidentTask() {
       />
 
       <NudgeToast text={nudge} bottom={32} />
+    </div>
+  );
+}
+
+function QuestionCard({
+  label,
+  required,
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className="rounded-lg bg-white px-6 py-5 shadow-[0_1px_2px_rgba(0,0,0,.15)]">
+      <div className="mb-3 text-[16px] text-[#202124]">
+        {label}
+        {required && <span className="ml-0.5 text-[#d93025]">*</span>}
+      </div>
+      {children}
     </div>
   );
 }

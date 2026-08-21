@@ -11,7 +11,6 @@ import {
   LESSONS,
   CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/spreadsheet/content";
-import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -41,8 +40,7 @@ function cellRef(cell: Cell) {
 }
 
 export default function SpreadsheetTask() {
-  const [lang, setLang] = useState<Lang>("en");
-  const { markComplete, completedTaskKeys } = useProgress();
+  const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("spreadsheet") ? "done" : "home");
   const [entries, setEntries] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "B" });
@@ -144,12 +142,6 @@ export default function SpreadsheetTask() {
           className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
         >
           ? {c.helpBtn}
-        </button>
-        <button
-          onClick={() => setLang(lang === "en" ? "es" : "en")}
-          className="inline-flex min-h-[36px] items-center rounded-full border border-[var(--border)] px-3.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
-        >
-          {c.langBtn}
         </button>
       </div>
 

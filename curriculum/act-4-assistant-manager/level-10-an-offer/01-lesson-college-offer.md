@@ -16,7 +16,7 @@ title, new emails, an Assistant Manager's first week)
   have to share the same calendar.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: an email in Hmail from Maria/HR laying out the offer —
+- [ ] Simulator: an email in Mail from Maria/HR laying out the offer —
       Harborside will pay for one Business Essentials class at Bunker
       Hill Community College, with a specific day/time the class meets.
       That day/time overlaps one of the student's regular shifts.
@@ -27,12 +27,12 @@ title, new emails, an Assistant Manager's first week)
       on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hmail** and read the offer letter carefully — what's being
+1. Open **Mail** and read the offer letter carefully — what's being
    offered, and what's expected in return (usually: keep your grades up,
    stay employed).
 2. Reply, accepting the offer, in a professional tone — sentence starters
    are there if you want them.
-3. Open **Hcal** and add the class as a recurring personal event.
+3. Open **Calendar** and add the class as a recurring personal event.
 4. Notice it overlaps a work shift — the same "spot it, say something"
    skill from Level 3/6 — and message your manager to sort out the
    schedule change *before* the semester starts, not after.

@@ -20,6 +20,10 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 export const MAIL_COPY: Record<Lang, {
   practiceBanner: string;
   inbox: string;
+  starred: string;
+  sent: string;
+  drafts: string;
+  searchPlaceholder: string;
   compose: string;
   emptyPane: string;
   helpBtn: string;
@@ -58,6 +62,10 @@ export const MAIL_COPY: Record<Lang, {
   en: {
     practiceBanner: "Practice space — nothing here is real",
     inbox: "Inbox",
+    starred: "Starred",
+    sent: "Sent",
+    drafts: "Drafts",
+    searchPlaceholder: "Search mail",
     compose: "Compose",
     emptyPane: "Click an email on the left to open it.",
     helpBtn: "Help me with this step",
@@ -95,7 +103,11 @@ export const MAIL_COPY: Record<Lang, {
   },
   es: {
     practiceBanner: "Espacio de práctica — nada aquí es real",
-    inbox: "Bandeja",
+    inbox: "Recibidos",
+    starred: "Destacados",
+    sent: "Enviados",
+    drafts: "Borradores",
+    searchPlaceholder: "Buscar en el correo",
     compose: "Redactar",
     emptyPane: "Haz clic en un correo a la izquierda para abrirlo.",
     helpBtn: "Ayúdame con este paso",
@@ -151,14 +163,14 @@ export const STARTERS: Record<Lang, string[]> = {
 
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
-    { t: "Which email is mine?", s: ["Look at the name on the left of each row — that's who sent it.", "Bold rows are emails you haven't opened yet.", "Click the row from Maria Delgado — she's your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
+    { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row — that's who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado — she's your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
     { t: "Reading a work email", s: ["Look for what the person is asking you to DO.", "Look for WHEN they need it.", "Here: send the July safety report, today."], tip: "You can read it twice. Nobody sees how long you take." },
     { t: "Reply vs. Forward", s: ["Reply sends your message back to the person who wrote to you.", "Forward sends their email to somebody else.", "Maria wrote to you, so click Reply."], tip: "If you're answering the person who emailed you, it's always Reply." },
     { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens showing your files. Downloaded files are usually in Downloads.", "Click the file name — safety-report-july.pdf — to attach it."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
     { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached — do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
   ],
   es: [
-    { t: "¿Cuál correo es el mío?", s: ["Mira el nombre a la izquierda de cada fila — esa persona lo envió.", "Las filas en negrita son correos que no has abierto.", "Haz clic en el de Maria Delgado — ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
+    { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila — esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado — ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
     { t: "Leer un correo del trabajo", s: ["Busca qué te pide HACER la persona.", "Busca CUÁNDO lo necesita.", "Aquí: enviar el reporte de seguridad de julio, hoy."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
     { t: "Responder o Reenviar", s: ["Responder envía tu mensaje a la persona que te escribió.", "Reenviar manda su correo a otra persona.", "Maria te escribió a ti, así que haz clic en Responder."], tip: "Si contestas a quien te escribió, siempre es Responder." },
     { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus archivos. Lo descargado suele estar en Descargas.", "Haz clic en safety-report-july.pdf para adjuntarlo."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
@@ -179,15 +191,37 @@ export const FILES: PickableItem[] = [
 ];
 
 export const EMAILS = [
-  { key: "maria", from: "Maria Delgado", initials: "MD", color: "#1a73e8", time: "8:14 AM", isTarget: true,
+  { key: "maria", from: "Maria Delgado", initials: "MD", color: "#1a73e8", time: "8:14 AM", isTarget: true, unread: true,
     subject: { en: "Safety report for July — need today", es: "Reporte de seguridad de julio — para hoy" },
     preview: { en: "Hi, can you send me the July safety…", es: "Hola, ¿puedes enviarme el reporte…" } },
-  { key: "hr", from: "Harborside HR", initials: "HR", color: "#5f6368", time: "Mon", isTarget: false,
+  { key: "luis", from: "Luis Ortiz", initials: "LO", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
+    subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
+    preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
+    wrongHint: wrongHint("Luis is a coworker, not your manager. Look for the email from Maria Delgado.", "Luis es un compañero, no tu gerente. Busca el correo de Maria Delgado.") },
+  { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
+    subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
+    preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },
+    wrongHint: wrongHint("That's an automatic message about the schedule. Maria's email has her name on the left.", "Ese es un mensaje automático del horario. El correo de Maria tiene su nombre a la izquierda.") },
+  { key: "hr", from: "Harborside HR", initials: "HR", color: "#9334e6", time: "Yesterday", isTarget: false,
     subject: { en: "Your paystub is ready", es: "Tu recibo de pago está listo" },
-    preview: { en: "View your paystub in the portal.", es: "Ve tu recibo en el portal." } },
+    preview: { en: "View your paystub in the portal.", es: "Ve tu recibo en el portal." },
+    wrongHint: wrongHint("That's from HR about pay. Today's task is the email from Maria Delgado.", "Eso es de RR.HH. sobre el pago. La tarea de hoy es el correo de Maria Delgado.") },
+  { key: "it", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Yesterday", isTarget: false,
+    subject: { en: "Reminder: update your password", es: "Recordatorio: cambia tu contraseña" },
+    preview: { en: "Your password expires in 12 days.", es: "Tu contraseña vence en 12 días." },
+    wrongHint: wrongHint("That's from IT. You can ignore it for now — find Maria Delgado.", "Eso es de sistemas. Puedes ignorarlo por ahora — busca a Maria Delgado.") },
   { key: "team", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Mon", isTarget: false,
     subject: { en: "Break room fridge cleaning", es: "Limpieza del refrigerador" },
-    preview: { en: "Please remove your food by Friday.", es: "Saca tu comida antes del viernes." } },
+    preview: { en: "Please remove your food by Friday.", es: "Saca tu comida antes del viernes." },
+    wrongHint: wrongHint("That's a team note about the fridge, not from your manager.", "Eso es una nota del equipo sobre el refrigerador, no de tu gerente.") },
+  { key: "vendor", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "Aug 18", isTarget: false,
+    subject: { en: "Friday delivery window changed", es: "Cambió la entrega del viernes" },
+    preview: { en: "Trucks will arrive after 10 AM.", es: "Los camiones llegarán después de las 10 AM." },
+    wrongHint: wrongHint("That's a vendor — not your manager. Look for Maria Delgado.", "Eso es un proveedor — no tu gerente. Busca a Maria Delgado.") },
+  { key: "promo", from: "Uniform Outlet", initials: "UO", color: "#c5221f", time: "Aug 12", isTarget: false,
+    subject: { en: "15% off fall uniforms", es: "15% de descuento en uniformes" },
+    preview: { en: "Sale ends Sunday. Use code FALL15.", es: "La oferta termina el domingo. Usa el código FALL15." },
+    wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {

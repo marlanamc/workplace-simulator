@@ -12,8 +12,8 @@
 
 ## Before class (teacher prep) — once built
 - [ ] Simulator: a short prompt (e.g. "the team needs 15 minutes to go over
-      next week's schedule before it's finalized") plus Hcal open to an
-      empty invite-creation view and a blank one-page agenda doc in Hdocs.
+      next week's schedule before it's finalized") plus Calendar open to an
+      empty invite-creation view and a blank one-page agenda doc in Docs.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 8 wrap-up assignment
       (`real-practice-assignment.md`), offered once this lesson (all of
@@ -22,10 +22,10 @@
 
 ## Simulator practice (~15-20 min) — once built
 1. Read the prompt describing why the team needs to meet.
-2. Open **Hcal** and create a new invite — pick a day/time that doesn't
+2. Open **Calendar** and create a new invite — pick a day/time that doesn't
    conflict with anyone's shift (the same conflict-checking skill from
    Level 3), add the crew, and write a one-line title.
-3. Open **Hdocs** and write a short agenda — 2-3 bullet points of what the
+3. Open **Docs** and write a short agenda — 2-3 bullet points of what the
    meeting needs to cover, using sentence starters if you want them.
 4. Send the invite with the agenda attached or linked.
 

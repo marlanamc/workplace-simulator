@@ -12,7 +12,7 @@
   everyone.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: Hcal showing 3-4 people's calendars side by side (a
+- [ ] Simulator: Calendar showing 3-4 people's calendars side by side (a
       standard "find a time" view), each with a few busy blocks, and
       exactly one slot in the week that's open for all of them.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
@@ -22,7 +22,7 @@
       moves on.
 
 ## Simulator practice (~10 min) — once built
-1. Open **Hcal**'s multi-calendar view for the 3-4 people who need to
+1. Open **Calendar**'s multi-calendar view for the 3-4 people who need to
    meet.
 2. Scan across the week for a slot where nobody has a conflict.
 3. Send the invite for that slot.

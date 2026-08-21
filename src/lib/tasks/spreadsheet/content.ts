@@ -58,7 +58,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
   askPerson: string;
 }> = {
   en: {
-    heading: "Hsheets",
+    heading: "Sheets",
     helpBtn: "Help me with this step",
     langBtn: "Español",
     scenarioKicker: "Today's situation",
@@ -95,7 +95,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     askPerson: "Ask a person instead",
   },
   es: {
-    heading: "Hsheets",
+    heading: "Sheets",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     scenarioKicker: "La situación de hoy",

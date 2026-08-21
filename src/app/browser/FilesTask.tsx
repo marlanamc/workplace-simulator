@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
@@ -13,13 +13,14 @@ import {
   CONFIDENCE_OPTIONS,
   type DriveFile,
 } from "@/lib/tasks/files/content";
-import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
-import { TAB_ICONS, FOLDER_ICONS, CircleGlyph } from "@/lib/icons";
+import { FOLDER_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
+import { Folder, Home, Plus, Users } from "lucide-react";
 
 type View = "home" | "browse" | "rename" | "share" | "done";
 
@@ -29,9 +30,18 @@ function normalize(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, "-").replace(/\.pdf$/, "");
 }
 
+function DriveMark() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden>
+      <path fill="#0f9d58" d="M1.5 21 8.25 21 15.5 8 8.75 8z" />
+      <path fill="#4285f4" d="M15.5 8 22.5 21 15.75 21 8.75 8z" />
+      <path fill="#fbbc04" d="M8.25 21 15.75 21 12 14.5z" />
+    </svg>
+  );
+}
+
 export default function FilesTask() {
-  const [lang, setLang] = useState<Lang>("en");
-  const { markComplete, completedTaskKeys } = useProgress();
+  const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
@@ -43,6 +53,7 @@ export default function FilesTask() {
   const { minimizeActive } = useWindowManager();
 
   const c = FILES_COPY[lang];
+  const listOpen = view === "browse" || view === "rename" || view === "share";
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -105,207 +116,48 @@ export default function FilesTask() {
     setConfidence(null);
   };
 
+  const navItem = (active: boolean, onClick: () => void, icon: ReactNode, label: string) => (
+    <button
+      onClick={onClick}
+      className={`flex h-10 items-center gap-3 rounded-full px-4 text-[14px] cursor-pointer ${
+        active ? "bg-[#c2e7ff] font-medium text-[#041e49]" : "text-[#444746] hover:bg-[#e8eaed]"
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
-      <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <CircleGlyph icon={TAB_ICONS.files} color="#fbbc04" size={28} />
-        <span className="text-[18px] font-medium text-[#5f6368]">Hdrive</span>
-        <div className="flex-1" />
-        <button
-          onClick={() => setHelp(true)}
-          className="inline-flex min-h-[40px] items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3.5 text-[13px] font-medium text-[var(--warning)] hover:brightness-95 cursor-pointer"
-        >
-          ? {c.helpBtn}
-        </button>
-        <button
-          onClick={() => setLang(lang === "en" ? "es" : "en")}
-          className="inline-flex min-h-[40px] items-center rounded-full border border-[var(--border)] px-3.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
-        >
-          {c.langBtn}
-        </button>
+    <div className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#1f1f1f]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+      <div className="flex items-center gap-3 px-3 py-2">
+        <div className="flex w-[220px] shrink-0 items-center gap-2 px-2">
+          <DriveMark />
+          <span className="text-[22px] font-normal text-[#5f6368]">Drive</span>
+        </div>
+        <div className="flex h-12 flex-1 items-center gap-3 rounded-full bg-[#e9eef6] px-4 text-[#444746]">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">
+            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+          </svg>
+          <input
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              if (view === "home") setView("browse");
+            }}
+            placeholder={c.searchPlaceholder}
+            className="h-full w-full bg-transparent text-[16px] outline-none placeholder:text-[#444746]"
+          />
+        </div>
+        <AppHeaderTools
+          helpLabel={c.helpBtn}
+          onHelp={() => setHelp(true)}
+        />
       </div>
 
-      <div className={`relative mx-auto min-h-0 w-full flex-1 overflow-y-auto p-6 ${view === "home" ? "max-w-[720px]" : "max-w-[640px]"}`}>
-        {view === "home" && (
-          <div>
-            <div className="mb-5 flex flex-wrap items-center gap-3">
-              <button
-                onClick={notYet}
-                className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-white px-5 text-[14px] font-medium text-[#3c4043] shadow-sm border border-[var(--border)] hover:bg-[var(--surface-muted)] cursor-pointer"
-              >
-                <span className="text-[18px] leading-none text-[#fbbc04]">+</span> {c.newBtn}
-              </button>
-              <div className="flex items-center gap-1 rounded-full border border-[var(--border)] p-0.5 text-[13px] text-[#3c4043]">
-                {[c.navHome, c.navMyDrive, c.navShared].map((v, i) => (
-                  <button
-                    key={v}
-                    onClick={i === 2 ? () => setView("browse") : notYet}
-                    className={`rounded-full px-3 py-1 cursor-pointer ${i === 0 ? "bg-[var(--surface-muted)] font-medium" : "hover:bg-[var(--surface-muted)]"}`}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <h3 className="mb-3 text-[15px] font-medium text-[#3c4043]">{c.foldersHeading}</h3>
-            <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {FOLDERS.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => openFolder(f)}
-                  className="flex items-center gap-2.5 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
-                >
-                  {(() => {
-                    const Icon = FOLDER_ICONS[f];
-                    return Icon ? <Icon size={20} strokeWidth={2.1} className="shrink-0 text-[#5f6368]" /> : null;
-                  })()}
-                  <span className="truncate text-[14px] font-medium text-[#3c4043]">{f}</span>
-                </button>
-              ))}
-            </div>
-
-            <h3 className="mb-3 text-[15px] font-medium text-[#3c4043]">{c.sharedHeading}</h3>
-            <button
-              onClick={() => setView("browse")}
-              className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
-            >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-tint)] text-[16px]">
-                🗂
-              </span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-[14px] font-medium text-[#3c4043]">{c.sharedFolderName}</span>
-                <span className="block text-[12px] text-[var(--text-tertiary)]">{c.sharedFrom}</span>
-              </span>
-            </button>
-          </div>
-        )}
-
-        {view !== "home" && (
-          <div className="mb-4 rounded-xl border border-[var(--warning-tint)] bg-[var(--warning-tint)] px-4 py-3">
-            <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
-              {c.scenarioKicker}
-            </div>
-            <p className="mt-1 text-[14px] leading-relaxed text-[var(--text-primary)]">{c.scenario}</p>
-          </div>
-        )}
-
-        {view === "browse" && (
-          <div className="rounded-xl border border-[var(--border)] bg-white">
-            <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] p-3">
-              <button
-                onClick={() => setFolder(null)}
-                className={`min-h-[36px] rounded-full px-3 text-[13px] font-medium cursor-pointer ${
-                  folder === null ? "bg-[var(--accent)] text-white" : "border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface-muted)]"
-                }`}
-              >
-                {c.allFolders}
-              </button>
-              {FOLDERS.map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFolder(f)}
-                  className={`min-h-[36px] rounded-full px-3 text-[13px] font-medium cursor-pointer ${
-                    folder === f ? "bg-[var(--accent)] text-white" : "border border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface-muted)]"
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-              <div className="flex-1" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder={c.searchPlaceholder}
-                className="min-h-[36px] w-[180px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3.5 text-[13px] outline-none focus:border-[var(--accent)]"
-              />
-            </div>
-            <div>
-              {filtered.map((f, i) => (
-                <button
-                  key={f.key}
-                  onClick={() => pickFile(f)}
-                  className={`flex w-full items-center justify-between gap-3 px-4 py-3 text-left hover:bg-[var(--surface-muted)] cursor-pointer ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
-                >
-                  <span className="flex min-w-0 items-center gap-3">
-                    <span className="shrink-0 rounded bg-[var(--danger)] px-1.5 py-0.5 text-[10px] font-bold text-white">
-                      PDF
-                    </span>
-                    <span className="truncate text-[14px]">{f.name}</span>
-                    <span className="shrink-0 text-[12px] text-[var(--text-tertiary)]">{f.folder}</span>
-                  </span>
-                  <span className="shrink-0 text-[13px] text-[var(--text-tertiary)]">{f.date}</span>
-                </button>
-              ))}
-              {filtered.length === 0 && (
-                <p className="px-4 py-6 text-[14px] text-[var(--text-tertiary)]">
-                  {lang === "en" ? "No files match." : "No hay archivos que coincidan."}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
-        {view === "rename" && (
-          <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-            <label className="mb-1 block text-[13px] font-medium text-[var(--text-secondary)]">
-              {c.renameLabel}
-            </label>
-            <p className="mb-3 text-[12px] text-[var(--text-tertiary)]">{c.renameHint}</p>
-            <input
-              value={renameValue}
-              onChange={(e) => setRenameValue(e.target.value)}
-              placeholder={c.renamePlaceholder}
-              className="mb-4 w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)]"
-            />
-            <button
-              onClick={tryRename}
-              className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
-            >
-              {c.renameContinue}
-            </button>
-          </div>
-        )}
-
-        {view === "share" && (
-          <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-            <div className="mb-4 text-[14px]">
-              <span className="text-[var(--text-tertiary)]">{c.shareWith}: </span>
-              <span className="font-medium">Jordan Diaz · New Hire</span>
-            </div>
-            <div className="mb-4 flex flex-wrap gap-2">
-              <button
-                onClick={() => setPermission("view")}
-                className={`min-h-[44px] rounded-full border px-4 text-[14px] font-medium cursor-pointer ${
-                  permission === "view"
-                    ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
-                    : "border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface-muted)]"
-                }`}
-              >
-                {c.canView}
-              </button>
-              <button
-                onClick={() => setPermission("edit")}
-                className={`min-h-[44px] rounded-full border px-4 text-[14px] font-medium cursor-pointer ${
-                  permission === "edit"
-                    ? "border-[var(--accent)] bg-[var(--accent-tint)] text-[var(--accent)]"
-                    : "border-[var(--border)] text-[var(--text-primary)] hover:bg-[var(--surface-muted)]"
-                }`}
-              >
-                {c.canEdit}
-              </button>
-            </div>
-            <button
-              onClick={tryShare}
-              className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
-            >
-              {c.share}
-            </button>
-          </div>
-        )}
-
-        {view === "done" && (
-          <div className="flex flex-col gap-5">
+      {view === "done" ? (
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+          <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.sentKicker}
               title={c.doneTitle}
@@ -314,31 +166,185 @@ export default function FilesTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-
             <ConfidenceCheck
               question={c.confidenceQ}
               options={CONFIDENCE_OPTIONS[lang]}
               selected={confidence}
               onSelect={setConfidence}
             />
-
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={restart}
-                className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+                className="inline-flex min-h-[40px] items-center rounded-full bg-[#0b57d0] px-5 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
               >
                 {c.tryAgain}
               </button>
               <button
                 onClick={minimizeActive}
-                className="inline-flex min-h-[46px] items-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+                className="inline-flex min-h-[40px] items-center rounded-full border border-[#747775] px-5 text-[14px] font-medium hover:bg-[#f8f9fa] cursor-pointer"
               >
                 {c.backToDesk}
               </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="flex min-h-0 flex-1">
+          <div className="flex w-[220px] shrink-0 flex-col gap-0.5 px-3 pt-1">
+            <button
+              onClick={notYet}
+              className="mb-3 flex h-14 items-center gap-3 rounded-2xl bg-white px-4 text-[14px] font-medium text-[#1f1f1f] shadow-[0_1px_2px_0_rgba(60,64,67,.3),0_1px_3px_1px_rgba(60,64,67,.15)] hover:bg-[#f8f9fa] cursor-pointer"
+            >
+              <Plus size={20} strokeWidth={2} className="text-[#444746]" />
+              {c.newBtn}
+            </button>
+            {navItem(view === "home", () => setView("home"), <Home size={18} />, c.navHome)}
+            {navItem(false, notYet, <Folder size={18} />, c.navMyDrive)}
+            {navItem(listOpen, () => { setFolder(null); setView("browse"); }, <Users size={18} />, c.navShared)}
+          </div>
+
+          <div className="relative min-w-0 flex-1 overflow-y-auto px-4 pb-6 pt-2">
+            {listOpen && (
+              <p className="mb-4 max-w-[62ch] rounded-lg bg-[#e8f0fe] px-4 py-3 text-[13px] leading-relaxed text-[#174ea6]">
+                {c.scenario}
+              </p>
+            )}
+
+            {view === "home" && (
+              <>
+                <h2 className="mb-3 mt-2 text-[16px] font-medium">{c.foldersHeading}</h2>
+                <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  {FOLDERS.map((f) => {
+                    const Icon = FOLDER_ICONS[f];
+                    return (
+                      <button
+                        key={f}
+                        onClick={() => openFolder(f)}
+                        className="flex items-center gap-3 rounded-xl bg-[#f0f4f9] px-4 py-3 text-left hover:bg-[#e8eaed] cursor-pointer"
+                      >
+                        {Icon ? <Icon size={20} strokeWidth={2} className="shrink-0 text-[#5f6368]" /> : <Folder size={20} className="text-[#5f6368]" />}
+                        <span className="truncate text-[14px] font-medium">{f}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <h2 className="mb-3 text-[16px] font-medium">{c.sharedHeading}</h2>
+                <button
+                  onClick={() => { setFolder(null); setView("browse"); }}
+                  className="flex w-full max-w-[420px] items-center gap-3 rounded-xl bg-[#f0f4f9] px-4 py-3 text-left hover:bg-[#e8eaed] cursor-pointer"
+                >
+                  <Users size={20} className="text-[#1a73e8]" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[14px] font-medium">{c.sharedFolderName}</span>
+                    <span className="block text-[12px] text-[#5f6368]">{c.sharedFrom}</span>
+                  </span>
+                </button>
+              </>
+            )}
+
+            {listOpen && (
+              <div>
+                <div className="mb-2 flex flex-wrap items-center gap-1 text-[13px] text-[#444746]">
+                  <button
+                    onClick={() => setFolder(null)}
+                    className={`h-8 rounded-full px-3 cursor-pointer ${folder === null ? "bg-[#e8f0fe] font-medium text-[#0b57d0]" : "hover:bg-[#f1f3f4]"}`}
+                  >
+                    {c.allFolders}
+                  </button>
+                  {FOLDERS.map((f) => (
+                    <button
+                      key={f}
+                      onClick={() => setFolder(f)}
+                      className={`h-8 rounded-full px-3 cursor-pointer ${folder === f ? "bg-[#e8f0fe] font-medium text-[#0b57d0]" : "hover:bg-[#f1f3f4]"}`}
+                    >
+                      {f}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-[1fr_120px_88px] gap-2 border-b border-[#e0e3e8] px-3 py-2 text-[12px] font-medium text-[#444746]">
+                  <span>{lang === "en" ? "Name" : "Nombre"}</span>
+                  <span>{lang === "en" ? "Owner" : "Propietario"}</span>
+                  <span className="text-right">{lang === "en" ? "Date" : "Fecha"}</span>
+                </div>
+                {filtered.map((f) => (
+                  <button
+                    key={f.key}
+                    onClick={() => pickFile(f)}
+                    className="grid w-full grid-cols-[1fr_120px_88px] items-center gap-2 rounded-xl px-3 py-2.5 text-left hover:bg-[#f1f3f4] cursor-pointer"
+                  >
+                    <span className="flex min-w-0 items-center gap-3">
+                      <span className="flex h-6 w-5 shrink-0 items-center justify-center rounded-[2px] bg-[#ea4335] text-[8px] font-bold text-white">
+                        PDF
+                      </span>
+                      <span className="truncate text-[14px]">{f.name}</span>
+                    </span>
+                    <span className="truncate text-[13px] text-[#444746]">Maria Delgado</span>
+                    <span className="text-right text-[13px] text-[#444746]">{f.date}</span>
+                  </button>
+                ))}
+                {filtered.length === 0 && (
+                  <p className="px-3 py-8 text-[14px] text-[#5f6368]">
+                    {lang === "en" ? "No files match." : "No hay archivos que coincidan."}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {view === "rename" && (
+              <DriveDialog
+                title={lang === "en" ? "Rename" : "Cambiar nombre"}
+                onCancel={() => setView("browse")}
+                cancelLabel={lang === "en" ? "Cancel" : "Cancelar"}
+                confirmLabel={c.renameContinue}
+                onConfirm={tryRename}
+              >
+                <p className="mb-2 text-[12px] text-[#5f6368]">{c.renameHint}</p>
+                <input
+                  autoFocus
+                  value={renameValue}
+                  onChange={(e) => setRenameValue(e.target.value)}
+                  placeholder={c.renamePlaceholder}
+                  className="w-full rounded border border-[#747775] px-3 py-2 text-[14px] outline-none focus:border-[#0b57d0] focus:border-2"
+                />
+              </DriveDialog>
+            )}
+
+            {view === "share" && (
+              <DriveDialog
+                title={`${c.share} "${renameValue}.pdf"`}
+                onCancel={() => setView("rename")}
+                cancelLabel={lang === "en" ? "Cancel" : "Cancelar"}
+                confirmLabel={c.share}
+                onConfirm={tryShare}
+              >
+                <p className="mb-3 text-[13px] text-[#444746]">
+                  {c.shareWith} <span className="font-medium">Jordan Diaz</span>
+                </p>
+                <div className="flex flex-col gap-1">
+                  <button
+                    onClick={() => setPermission("view")}
+                    className={`flex min-h-[44px] items-center justify-between rounded-lg border px-3 text-left text-[14px] cursor-pointer ${
+                      permission === "view" ? "border-[#0b57d0] bg-[#e8f0fe]" : "border-[#dadce0] hover:bg-[#f8f9fa]"
+                    }`}
+                  >
+                    <span>{c.canView}</span>
+                    <span className="text-[12px] text-[#5f6368]">{lang === "en" ? "Viewer" : "Lector"}</span>
+                  </button>
+                  <button
+                    onClick={() => setPermission("edit")}
+                    className={`flex min-h-[44px] items-center justify-between rounded-lg border px-3 text-left text-[14px] cursor-pointer ${
+                      permission === "edit" ? "border-[#0b57d0] bg-[#e8f0fe]" : "border-[#dadce0] hover:bg-[#f8f9fa]"
+                    }`}
+                  >
+                    <span>{c.canEdit}</span>
+                    <span className="text-[12px] text-[#5f6368]">{lang === "en" ? "Editor" : "Editor"}</span>
+                  </button>
+                </div>
+              </DriveDialog>
+            )}
+          </div>
+        </div>
+      )}
 
       <HelpDrawer
         open={help}
@@ -351,6 +357,45 @@ export default function FilesTask() {
       />
 
       <NudgeToast text={nudge} bottom={32} />
+    </div>
+  );
+}
+
+function DriveDialog({
+  title,
+  children,
+  onCancel,
+  onConfirm,
+  cancelLabel,
+  confirmLabel,
+}: {
+  title: string;
+  children: ReactNode;
+  onCancel: () => void;
+  onConfirm: () => void;
+  cancelLabel: string;
+  confirmLabel: string;
+}) {
+  return (
+    <div className="absolute inset-0 z-10 flex items-start justify-center bg-black/32 pt-16">
+      <div className="w-[min(100%-2rem,420px)] rounded-3xl bg-white p-6 shadow-[0_4px_8px_3px_rgba(60,64,67,.15)]">
+        <h2 className="mb-4 text-[22px] font-normal">{title}</h2>
+        {children}
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className="h-10 rounded-full px-4 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
+          >
+            {cancelLabel}
+          </button>
+          <button
+            onClick={onConfirm}
+            className="h-10 rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
+          >
+            {confirmLabel}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

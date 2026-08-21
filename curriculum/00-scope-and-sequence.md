@@ -114,7 +114,7 @@ from a supervisor. Single tab, auto-opened — no tab-hunting yet.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `mail` | Read a supervisor's email, reply, and attach the right file | Browser → Hmail |
+| 1 | `mail` | Read a supervisor's email, reply, and attach the right file | Browser → Mail |
 
 See `level-1-new-hire/01-lesson-mail.md`.
 
@@ -126,11 +126,11 @@ judgment calls.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Hportal |
-| 2 | `timeclock` | Clock out and confirm your hours look right | Browser → Hportal |
-| 3 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Hportal + PDF Reader |
-| 4 | `incident` | Write up what happened, in order, in a professional tone | Browser → Hforms |
-| 5 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Hdocs |
+| 1 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Portal |
+| 2 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
+| 3 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Portal + PDF Reader |
+| 4 | `incident` | Write up what happened, in order, in a professional tone | Browser → Forms |
+| 5 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Docs |
 
 See `level-2-settling-in/01-lesson-schedule.md` through
 `05-lesson-handbook.md`. Finishing `handbook` completes Level 2.
@@ -153,9 +153,9 @@ closing tabs, starting on a blank New Tab) unlocks here too.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Hcal |
-| 2 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Hdrive |
-| 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Hsheets |
+| 1 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Calendar |
+| 2 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Drive |
+| 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Sheets |
 
 See `level-3-shift-lead/`. (The `video-call` task originally written here
 as an optional bonus has since moved to Act VI, Level 18, where it pairs
@@ -165,7 +165,7 @@ naturally with multi-person calendar scheduling.)
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `status-report` | Author a `=SUM()` formula yourself (not just verify one), cc a second recipient on a status email | Browser → Hsheets + Hmail |
+| 1 | `status-report` | Author a `=SUM()` formula yourself (not just verify one), cc a second recipient on a status email | Browser → Sheets + Mail |
 
 See `level-4-reporting-in/01-lesson-status-report.md`.
 
@@ -173,7 +173,7 @@ See `level-4-reporting-in/01-lesson-status-report.md`.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `triage` | Handle two competing requests (a calendar conflict, a file request) without dropping either | Browser → Hcal + Hdrive |
+| 1 | `triage` | Handle two competing requests (a calendar conflict, a file request) without dropping either | Browser → Calendar + Drive |
 
 See `level-5-covering-more-ground/01-lesson-triage.md`. This is the first
 "divided attention" level — closes out Act II.
@@ -201,10 +201,10 @@ responsibility: deciding *for* the team, not just for yourself.
 
 | Level | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 6 | `team-schedule` | Build part of a week's shift schedule for the crew, resolve a coverage gap | Browser → Hsheets |
-| 7 | `formula-check` | Use `SUM`/`AVERAGE`, spot and fix a formula pointing at the wrong range | Browser → Hsheets |
-| 8 | `team-meeting` | Create a meeting invite (not just accept one), write a short agenda | Browser → Hcal + Hdocs |
-| 9 | `priority-call` | Handle three competing demands at once — a complaint, a coverage gap, a scheduling conflict — capstone of the act | Browser → Hmail + Hsheets + Hcal |
+| 6 | `team-schedule` | Build part of a week's shift schedule for the crew, resolve a coverage gap | Browser → Sheets |
+| 7 | `formula-check` | Use `SUM`/`AVERAGE`, spot and fix a formula pointing at the wrong range | Browser → Sheets |
+| 8 | `team-meeting` | Create a meeting invite (not just accept one), write a short agenda | Browser → Calendar + Docs |
+| 9 | `priority-call` | Handle three competing demands at once — a complaint, a coverage gap, a scheduling conflict — capstone of the act | Browser → Mail + Sheets + Calendar |
 
 See `level-6-scheduling-the-team/` through `level-9-under-pressure/`.
 Finishing Level 9 awards the "Shift Supervisor" certificate and triggers
@@ -230,9 +230,9 @@ scoped around landing near "Level 10."
 
 | Level | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 10 | `college-offer` | Read a formal offer letter, reply professionally, add a personal commitment to a calendar already full of shifts | Browser → Hmail + Hcal |
-| 11 | `budget-sheet` | Read a budget with an `IF`-based status column and a chart, flag what's over budget | Browser → Hsheets |
-| 12 | `reply-all` | Read a multi-department thread, decide reply vs. reply-all, edit a casual draft into a professional one | Browser → Hmail |
+| 10 | `college-offer` | Read a formal offer letter, reply professionally, add a personal commitment to a calendar already full of shifts | Browser → Mail + Calendar |
+| 11 | `budget-sheet` | Read a budget with an `IF`-based status column and a chart, flag what's over budget | Browser → Sheets |
+| 12 | `reply-all` | Read a multi-department thread, decide reply vs. reply-all, edit a casual draft into a professional one | Browser → Mail |
 
 See `level-10-an-offer/` through `level-12-reply-all/`. Finishing Level 12
 completes Act IV.
@@ -298,9 +298,9 @@ new title, and tools scaled up from what a single cafe location needed.
 
 | Level | Task key(s) | Skill focus | Simulator app |
 |---|---|---|---|
-| 17 — Welcome to HQ | `office-drive` | Search (not browse) a much bigger, more deeply nested shared drive for the right file version | Browser → Hdrive |
-| 18 — Get Everyone in the Room | `multi-person-scheduling`, `video-call` | Find a time that works across 3-4 calendars, then join and run the meeting itself | Browser → Hcal |
-| 19 — The Expense Report | `expense-report` | Match receipts to categories, catch the one that's missing | Browser → Hsheets + Hdrive |
+| 17 — Welcome to HQ | `office-drive` | Search (not browse) a much bigger, more deeply nested shared drive for the right file version | Browser → Drive |
+| 18 — Get Everyone in the Room | `multi-person-scheduling`, `video-call` | Find a time that works across 3-4 calendars, then join and run the meeting itself | Browser → Calendar |
+| 19 — The Expense Report | `expense-report` | Match receipts to categories, catch the one that's missing | Browser → Sheets + Drive |
 | 20 — Presenting to the Team | `slide-deck` | Build and present a 3-slide deck using a real number from earlier work | Browser → new Slides-style tab |
 
 See `level-17-welcome-to-hq/` through `level-20-presenting-to-the-team/`.
@@ -327,9 +327,9 @@ skill gets reused, not replaced.
 
 | Level | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 21 — Run the Meeting | `meeting-minutes` | Run a meeting start to finish — agenda, brief notes, a follow-up email with owners and dates | Browser → Hcal + Hdocs + Hmail |
-| 22 — The Review | `performance-review` | Write a fair, specific, constructive performance note | Browser → Hforms-style form |
-| 23 — Put It All Together | `ops-report-packet` | Combine a spreadsheet number, a calendar note, and a written summary into one emailed packet | Browser → Hsheets + Hcal + Hdocs + Hmail |
+| 21 — Run the Meeting | `meeting-minutes` | Run a meeting start to finish — agenda, brief notes, a follow-up email with owners and dates | Browser → Calendar + Docs + Mail |
+| 22 — The Review | `performance-review` | Write a fair, specific, constructive performance note | Browser → Forms-style form |
+| 23 — Put It All Together | `ops-report-packet` | Combine a spreadsheet number, a calendar note, and a written summary into one emailed packet | Browser → Sheets + Calendar + Docs + Mail |
 | 24 — Where You've Been | `portfolio-reflection` | No new skill — review every certificate earned, reflect, and generate a shareable summary | Desktop review screen + `/certificate/[learnerId]` |
 
 See `level-21-run-the-meeting/` through `level-24-where-youve-been/`.

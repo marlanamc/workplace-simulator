@@ -14,9 +14,9 @@ Manager.
 
 ## Before class (teacher prep) — once built
 - [ ] Simulator: on opening the Browser, three things are already
-      waiting — an unhappy-customer email in Hmail, a "we're short a
+      waiting — an unhappy-customer email in Mail, a "we're short a
       person tonight" alert tied to the team schedule (Level 6's tool),
-      and a meeting-invite conflict in Hcal. None has an objectively
+      and a meeting-invite conflict in Calendar. None has an objectively
       "correct" order — the point is that all three get handled, with a
       reasonable read on urgency, not a trick answer.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
@@ -36,7 +36,7 @@ Manager.
 5. Resolve the calendar conflict — same skill from Level 3/6.
 6. Finishing all three awards the "Shift Supervisor" certificate and moves
    the story into the promotion — a note from Maria about the Assistant
-   Manager opening waits in Hmail once this is done.
+   Manager opening waits in Mail once this is done.
 
 ## Confidence check-in — end-of-act reflection
 This closes out Act III. Worth a real conversation, not just the usual

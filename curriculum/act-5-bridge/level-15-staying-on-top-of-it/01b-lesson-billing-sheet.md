@@ -13,7 +13,7 @@ they chose.
   `spreadsheet`/`formula-check`, in a billing context.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: a Hsheets billing sheet with a handful of visits, each
+- [ ] Simulator: a Sheets billing sheet with a handful of visits, each
       with a code and a charge, plus a reference list of what each code
       should cost. One row's charge doesn't match its code.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
@@ -22,7 +22,7 @@ they chose.
       Never a gate — a student who skips it still moves on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hsheets** → the billing sheet.
+1. Open **Sheets** → the billing sheet.
 2. Compare each row's code and charge against the reference list.
 3. Find the row that doesn't match.
 4. Flag it in a short message to the office manager, naming the row and

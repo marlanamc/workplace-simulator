@@ -11,7 +11,7 @@ The Budget
   the first lesson with both formula logic and a chart, not just a total.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: a Hsheets budget with a handful of spending categories
+- [ ] Simulator: a Sheets budget with a handful of spending categories
       (supplies, labor, etc.), a budgeted amount and an actual amount per
       row, and a status column using an `IF` formula (`=IF(actual>budget,
       "over","under")`). A simple bar chart next to it shows the same data
@@ -23,7 +23,7 @@ The Budget
       on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hsheets** → the budget tab.
+1. Open **Sheets** → the budget tab.
 2. Read the status column — which category is flagged "over"?
 3. Click that cell's formula and read it — see how `IF` is comparing two
    numbers to decide what to show, the same logic as "if this, then that"

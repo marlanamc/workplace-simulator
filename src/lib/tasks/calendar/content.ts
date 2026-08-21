@@ -14,6 +14,11 @@ export const CALENDAR_COPY: Record<Lang, {
   helpBtn: string;
   langBtn: string;
   create: string;
+  todayBtn: string;
+  searchPlaceholder: string;
+  myCalendars: string;
+  workShifts: string;
+  cafeCalendar: string;
   monthLabel: string;
   viewDay: string;
   viewWeek: string;
@@ -21,7 +26,10 @@ export const CALENDAR_COPY: Record<Lang, {
   weekdayLabels: string[];
   invitedBy: string;
   scheduleNote: string;
+  going: string;
   accept: string;
+  no: string;
+  maybe: string;
   proposeTime: string;
   to: string;
   subjectLabel: string;
@@ -48,15 +56,23 @@ export const CALENDAR_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     create: "Create",
+    todayBtn: "Today",
+    searchPlaceholder: "Search for people",
+    myCalendars: "My calendars",
+    workShifts: "Work shifts",
+    cafeCalendar: "Harborside Cafe",
     monthLabel: "August 2026",
     viewDay: "Day",
     viewWeek: "Week",
     viewMonth: "Month",
     weekdayLabels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-    invitedBy: "Invited by",
+    invitedBy: "Organizer",
     scheduleNote: "You're not scheduled to work this day.",
-    accept: "Accept",
-    proposeTime: "Propose a different time",
+    going: "Going?",
+    accept: "Yes",
+    no: "No",
+    maybe: "Maybe",
+    proposeTime: "Propose a new time",
     to: "To",
     subjectLabel: "Subject",
     subject: "Re: Weekly Lead Huddle — different time?",
@@ -82,14 +98,22 @@ export const CALENDAR_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     create: "Crear",
+    todayBtn: "Hoy",
+    searchPlaceholder: "Buscar personas",
+    myCalendars: "Mis calendarios",
+    workShifts: "Turnos",
+    cafeCalendar: "Harborside Cafe",
     monthLabel: "Agosto de 2026",
     viewDay: "Día",
     viewWeek: "Semana",
     viewMonth: "Mes",
     weekdayLabels: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-    invitedBy: "Invitado por",
+    invitedBy: "Organizador",
     scheduleNote: "No estás programado para trabajar ese día.",
-    accept: "Aceptar",
+    going: "¿Asistirás?",
+    accept: "Sí",
+    no: "No",
+    maybe: "Quizá",
     proposeTime: "Proponer otro horario",
     to: "Para",
     subjectLabel: "Asunto",

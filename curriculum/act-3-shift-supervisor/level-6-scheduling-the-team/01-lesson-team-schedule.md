@@ -12,7 +12,7 @@ title)
   own — and resolve a coverage gap before it becomes a problem.
 
 ## Before class (teacher prep) — once built
-- [ ] Simulator: a Hsheets-style weekly grid (crew names down the side,
+- [ ] Simulator: a Sheets-style weekly grid (crew names down the side,
       days across the top) with most shifts already filled in and one day
       left with a gap (nobody scheduled for a shift that needs coverage).
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
@@ -22,7 +22,7 @@ title)
       on.
 
 ## Simulator practice (~15-20 min) — once built
-1. Open **Hsheets** → the team schedule grid.
+1. Open **Sheets** → the team schedule grid.
 2. Find the day with the coverage gap.
 3. Check who's already scheduled fewer hours that week (a small "hours so
    far" column is there to reference) — pick someone who has room, not just

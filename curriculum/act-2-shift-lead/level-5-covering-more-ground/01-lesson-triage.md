@@ -12,8 +12,8 @@
 
 ## Before class (teacher prep) — once built
 - [ ] Simulator: on opening the Browser, two things are already waiting —
-      an unread meeting invite in Hcal that overlaps a shift, and a Slack-
-      style/Hmail message from a coworker asking for a file from Hdrive.
+      an unread meeting invite in Calendar that overlaps a shift, and a Slack-
+      style/Mail message from a coworker asking for a file from Drive.
       Neither is more "correct" to handle first; the point is noticing both
       exist, not a trick answer about order.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
@@ -28,7 +28,7 @@
 2. Handle the calendar conflict the way you practiced in Level 3 — propose
    a different time.
 3. Handle the file request the way you practiced in Level 3 — find the
-   file in Hdrive and share it with the right access.
+   file in Drive and share it with the right access.
 4. Order doesn't matter — what matters is that neither one gets forgotten
    before you close the Browser.
 

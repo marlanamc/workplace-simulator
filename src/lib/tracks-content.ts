@@ -295,12 +295,12 @@ export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
  * is still right there in the Browser's tab strip; finding it is the task.
  */
 export const TASK_LOCATIONS: Partial<Record<TaskKey, { appKey: AppKey; tab?: string; ctaLabel: string }>> = {
-  mail: { appKey: "browser", tab: "mail", ctaLabel: "Open Hmail" },
-  schedule: { appKey: "browser", tab: "portal", ctaLabel: "Open Hportal" },
-  timeclock: { appKey: "browser", tab: "portal", ctaLabel: "Open Hportal" },
-  paystub: { appKey: "browser", tab: "portal", ctaLabel: "Open Hportal" },
-  incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Hforms" },
-  handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Hdocs" },
+  mail: { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
+  schedule: { appKey: "browser", tab: "portal", ctaLabel: "Open Portal" },
+  timeclock: { appKey: "browser", tab: "portal", ctaLabel: "Open Portal" },
+  paystub: { appKey: "browser", tab: "portal", ctaLabel: "Open Portal" },
+  incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Forms" },
+  handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Docs" },
   calendar: { appKey: "browser", ctaLabel: "Open Browser" },
   files: { appKey: "browser", ctaLabel: "Open Browser" },
   spreadsheet: { appKey: "browser", ctaLabel: "Open Browser" },

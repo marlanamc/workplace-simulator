@@ -2,7 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { HANDBOOK_ARTICLES } from "@/lib/handbook-content";
-import { TAB_ICONS, CircleGlyph } from "@/lib/icons";
+
+const SECTIONS = [...new Set(HANDBOOK_ARTICLES.map((a) => a.section))];
 
 export default function HandbookPage() {
   const [query, setQuery] = useState("");
@@ -16,68 +17,104 @@ export default function HandbookPage() {
     );
   }, [query]);
 
-  const active = HANDBOOK_ARTICLES.find((a) => a.slug === activeSlug) ?? filtered[0] ?? null;
+  const goTo = (slug: string) => {
+    setActiveSlug(slug);
+    document.getElementById(`hb-${slug}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white text-[15px] text-[var(--text-primary)]">
-      <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3">
-        <CircleGlyph icon={TAB_ICONS.handbook} color="#3c4043" size={28} />
-        <span className="text-[15px] font-medium">Employee Handbook</span>
-      </div>
-
-      <div className="flex flex-1 min-h-0">
-        <div className="flex w-[260px] shrink-0 flex-col border-r border-[var(--border)]">
-          <div className="p-3">
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search the handbook…"
-              className="w-full rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-2 text-[14px] outline-none focus:border-[var(--accent)]"
-            />
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {filtered.length === 0 && (
-              <p className="px-4 py-3 text-[13px] text-[var(--text-tertiary)]">No articles match.</p>
-            )}
-            {filtered.map((a) => (
-              <button
-                key={a.slug}
-                onClick={() => setActiveSlug(a.slug)}
-                className={`flex w-full flex-col gap-0.5 border-b border-[var(--surface-muted)] px-4 py-3 text-left cursor-pointer ${
-                  active?.slug === a.slug ? "bg-[var(--accent-tint)]" : "hover:bg-[var(--surface-muted)]"
-                }`}
-              >
-                <span className="text-[11px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">
-                  {a.section}
-                </span>
-                <span className="text-[14px] font-medium text-[var(--text-primary)]">{a.title}</span>
-              </button>
-            ))}
-          </div>
+    <div className="flex h-full min-h-0" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
+      <div className="flex w-[200px] shrink-0 flex-col border-r border-[#e8eaed] bg-white">
+        <div className="px-3 py-3">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Find in document"
+            className="w-full border-0 border-b border-[#e0e0e0] bg-transparent py-1.5 text-[13px] outline-none focus:border-[#1a73e8]"
+          />
         </div>
-
-        <div className="min-w-0 flex-1 overflow-y-auto p-6">
-          {active ? (
-            <>
-              <div className="mb-1 text-[12px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">
-                {active.section}
-              </div>
-              <h2 className="mb-4 text-[21px] font-medium">{active.title}</h2>
-              <div className="flex flex-col gap-2.5">
-                {active.body.map((p, i) => (
-                  <div key={i} className="flex items-start gap-3 rounded-lg bg-[var(--surface-muted)] px-4 py-3">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-[11px] font-semibold text-[var(--text-tertiary)]">
-                      {i + 1}
-                    </span>
-                    <span className="text-[15px] leading-relaxed">{p}</span>
-                  </div>
+        <div className="px-3 pb-2 text-[12px] text-[#5f6368]">Document outline</div>
+        <div className="flex-1 overflow-y-auto pb-3">
+          {filtered.length === 0 && (
+            <p className="px-3 py-2 text-[13px] text-[#5f6368]">No matches.</p>
+          )}
+          {SECTIONS.map((section) => {
+            const items = filtered.filter((a) => a.section === section);
+            if (items.length === 0) return null;
+            return (
+              <div key={section} className="mb-2">
+                <div className="px-3 py-1 text-[11px] text-[#80868b]">{section}</div>
+                {items.map((a) => (
+                  <button
+                    key={a.slug}
+                    onClick={() => goTo(a.slug)}
+                    className={`flex w-full px-3 py-1.5 text-left text-[13px] leading-snug cursor-pointer ${
+                      activeSlug === a.slug ? "bg-[#e8f0fe] text-[#1967d2]" : "text-[#3c4043] hover:bg-[#f1f3f4]"
+                    }`}
+                  >
+                    {a.title}
+                  </button>
                 ))}
               </div>
-            </>
-          ) : (
-            <p className="text-[14px] text-[var(--text-tertiary)]">Select an article on the left.</p>
-          )}
+            );
+          })}
         </div>
+      </div>
+
+      <div className="min-w-0 flex-1 overflow-y-auto bg-[#f9fbfd] px-4 py-6">
+        <article
+          className="mx-auto flex min-h-[11in] w-full max-w-[816px] flex-col bg-white px-[1in] py-[0.9in] text-[#202124] shadow-[0_1px_3px_rgba(60,64,67,.15)]"
+          style={{ fontSize: "11pt", lineHeight: 1.5 }}
+        >
+          <header className="mb-8">
+            <p className="m-0 text-[10pt] tracking-[0.04em] text-[#5f6368]">Harborside Cafe</p>
+            <h1 className="mt-1 mb-0 text-[22pt] font-normal leading-tight">Employee Handbook</h1>
+            <p className="mt-3 mb-0 text-[10pt] text-[#5f6368]">
+              Staff policies · Effective August 1, 2026
+            </p>
+            <p className="mt-2 mb-0 max-w-[58ch] text-[11pt] text-[#3c4043]">
+              If a coworker tells you something different, this document is the rule. Ask your shift lead if a policy is unclear.
+            </p>
+            <hr className="mt-5 mb-0 border-0 border-t border-[#202124]" />
+          </header>
+
+          {SECTIONS.map((section) => {
+            const items = HANDBOOK_ARTICLES.filter((a) => a.section === section);
+            return (
+              <section key={section} className="mb-8">
+                <h2 className="mb-4 mt-0 text-[11pt] font-bold tracking-[0.02em] text-[#202124]">
+                  {section}
+                </h2>
+                {items.map((a) => {
+                  const n = HANDBOOK_ARTICLES.indexOf(a) + 1;
+                  return (
+                    <div
+                      key={a.slug}
+                      id={`hb-${a.slug}`}
+                      className="mb-6 scroll-mt-4"
+                    >
+                      <h3 className="mb-2 mt-0 text-[13pt] font-normal text-[#202124]">
+                        <span className="mr-2 tabular-nums text-[#5f6368]">{n}.</span>
+                        {a.title}
+                      </h3>
+                      <ol className="m-0 list-decimal space-y-2 pl-8">
+                        {a.body.map((p, pi) => (
+                          <li key={pi} className="pl-1 text-[11pt] leading-[1.5]">
+                            {p}
+                          </li>
+                        ))}
+                      </ol>
+                    </div>
+                  );
+                })}
+              </section>
+            );
+          })}
+
+          <footer className="mt-auto border-t border-[#dadce0] pt-3 text-[9pt] text-[#5f6368]">
+            Harborside Cafe · Employee Handbook · Internal use
+          </footer>
+        </article>
       </div>
     </div>
   );
