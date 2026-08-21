@@ -60,11 +60,16 @@ export function WindowManagerProvider({ children }: { children: ReactNode }) {
   const toggleFromShelf = useCallback((key: AppKey) => {
     setState((s) => {
       const entry = s.apps[key];
-      if (!entry) return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key };
+      // Restoring the Browser from closed or minimized is also a "fresh open" —
+      // bump the token so BrowserClient re-checks its tab against current
+      // progress, same as opening it via a CTA or deep link.
+      const isFreshBrowserReopen = key === "browser" && (!entry || entry.minimized);
+      const browserTabToken = isFreshBrowserReopen ? s.browserTabToken + 1 : s.browserTabToken;
+      if (!entry) return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken };
       if (s.active === key && !entry.minimized) {
         return { ...s, apps: { ...s.apps, [key]: { minimized: true } }, active: null };
       }
-      return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key };
+      return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken };
     });
   }, []);
 
