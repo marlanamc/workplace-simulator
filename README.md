@@ -11,24 +11,37 @@ rather than as separate desktop apps.
 
 ## Structure
 
+Everything runs as **windows managed client-side on one page**, like a real desktop —
+not separate route navigations — so an app can be minimized and restored with its state
+intact, and the shelf can show a "running" indicator for open apps.
+
 - `/login` — sign in with a first name, a 4-digit PIN, and a class code. No email or
   password; first-time use creates the profile.
-- `/` — the simulated desktop: one focused "do this next" card. Server component
-  (`page.tsx`) checks the session and loads real progress; `DesktopClient.tsx` is the
-  interactive shell.
-- `/browser` — the main workspace. Real tab strip, address bar, and bookmarks bar; hosts:
+- `/` — the only real screen after login. Server component (`page.tsx`) checks the session
+  and loads real progress; `DesktopClient.tsx` renders the desktop (wallpaper + "do this
+  next" card) and hosts `WindowManagerProvider` (`src/lib/window-manager.tsx`), which tracks
+  which apps are open/minimized/active. `/browser`, `/pdf-reader`, and `/mail` are just
+  redirect shims to `/` for any old links — the real content lives in the components below,
+  rendered as windows.
+- **Browser** (`src/app/browser/BrowserClient.tsx`) — the main workspace. Real tab strip,
+  address bar, and bookmarks bar; hosts:
   - **WorkMail** tab (`src/app/mail/MailClient.tsx`) — the email task: inbox,
     read/reply/compose, a file picker, a help lesson, and a confidence check-in. Completing
     it calls the `completeTask` server action.
   - **Employee Portal** tab (`PortalPage.tsx`) — schedule, time clock, and pay stubs.
     Currently read-only/explorable, not yet wired to graded completions.
   - **Handbook** tab (`HandbookPage.tsx`) — searchable reference articles.
-- `/pdf-reader` — a real second app (not a browser tab, since PDFs open natively): a
-  Downloads-style file list plus a document viewer, seeded with a couple of sample PDFs
-  (`src/lib/pdf-content.ts`).
-- `src/components/Shelf.tsx` — the persistent bottom shelf/taskbar (app icons, launcher with
-  search, the ChromeOS-style account tray with sign-out/language/brightness) rendered by
-  every signed-in page, fixed above the page content (`SHELF_HEIGHT`).
+- **PDF Reader** (`src/app/pdf-reader/PdfReaderClient.tsx`) — a real second app (not a
+  browser tab, since PDFs open natively): a Downloads-style file list plus a document
+  viewer, seeded with a couple of sample PDFs (`src/lib/pdf-content.ts`).
+- `src/components/WindowControls.tsx` — the minimize/maximize/close trio in each app
+  window's top-right. Minimize and close call into the window manager; maximize is a
+  decorative nudge (there's no windowed/restore-size concept here, only full-screen).
+- `src/components/Shelf.tsx` — the persistent bottom shelf/taskbar (app icons with a
+  running-app dot, launcher with search, the ChromeOS-style account tray with
+  sign-out/language/brightness), rendered once by `DesktopClient` and always on top.
+  Clicking a pinned shelf icon opens the app if closed, minimizes it if it's the active
+  window, or restores/focuses it otherwise — real taskbar behavior.
 - `src/lib/auth.ts` — signed session cookie (HMAC, no external auth library) and PIN
   hashing (`scrypt`).
 - `src/lib/db/` — Postgres (Neon, via Vercel Marketplace) accessed with Drizzle ORM:

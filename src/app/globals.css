@@ -83,3 +83,18 @@ textarea:focus-visible,
 .animate-slide-in {
   animation: slide-in 0.16s ease-out;
 }
+
+@keyframes window-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-window-in {
+  animation: window-in 0.18s ease-out;
+}

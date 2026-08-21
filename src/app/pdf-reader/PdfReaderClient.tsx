@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { PDF_DOCUMENTS, type PdfDocument } from "@/lib/pdf-content";
-import Shelf, { SHELF_HEIGHT } from "@/components/Shelf";
+import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -116,7 +116,7 @@ function PayStubPage({ doc }: { doc: Extract<PdfDocument, { kind: "paystub" }> }
   );
 }
 
-export default function PdfReaderClient({ displayName }: { displayName: string }) {
+export default function PdfReaderClient() {
   const [activeId, setActiveId] = useState(PDF_DOCUMENTS[0].id);
   const [zoom, setZoom] = useState(100);
   const { nudge, say } = useNudge();
@@ -132,7 +132,7 @@ export default function PdfReaderClient({ displayName }: { displayName: string }
         </span>
         <span className="text-[15px] font-medium">PDF Reader</span>
         <div className="flex-1" />
-        <WindowControls />
+        <WindowControls appKey="pdf" />
       </div>
 
       <div className="flex min-h-0 flex-1">
@@ -213,7 +213,6 @@ export default function PdfReaderClient({ displayName }: { displayName: string }
       </div>
 
       <NudgeToast text={nudge} bottom={SHELF_HEIGHT + 20} />
-      <Shelf displayName={displayName} />
     </div>
   );
 }

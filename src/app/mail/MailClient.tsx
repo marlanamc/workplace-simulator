@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+import { useWindowManager } from "@/lib/window-manager";
 import {
   MAIL_COPY,
   BODY,
@@ -37,6 +37,7 @@ export default function MailClient() {
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
   const { nudge, say } = useNudge();
+  const { minimizeActive } = useWindowManager();
 
   const c = MAIL_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
@@ -351,12 +352,12 @@ export default function MailClient() {
                 >
                   {c.tryAgain}
                 </button>
-                <Link
-                  href="/"
-                  className="inline-flex min-h-[46px] items-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)]"
+                <button
+                  onClick={minimizeActive}
+                  className="inline-flex min-h-[46px] items-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
                 >
                   {c.backToDesk}
-                </Link>
+                </button>
               </div>
             </div>
           )}

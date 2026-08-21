@@ -1,6 +1,7 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import type { AppKey } from "@/lib/desktop-content";
+import { useWindowManager } from "@/lib/window-manager";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { SHELF_HEIGHT } from "@/components/Shelf";
@@ -30,8 +31,8 @@ function CloseIcon() {
 }
 
 /** The minimize/maximize/close trio real app windows have, for visual realism. */
-export default function WindowControls({ dark = false }: { dark?: boolean }) {
-  const router = useRouter();
+export default function WindowControls({ appKey, dark = false }: { appKey: AppKey; dark?: boolean }) {
+  const { minimizeActive, closeApp } = useWindowManager();
   const { nudge, say } = useNudge();
   const iconColor = dark ? "text-white/70" : "text-[#5f6368]";
 
@@ -39,7 +40,7 @@ export default function WindowControls({ dark = false }: { dark?: boolean }) {
     <>
       <div className="flex items-center gap-0.5">
         <button
-          onClick={() => say("Nothing to minimize to here — click the shelf to switch apps.")}
+          onClick={minimizeActive}
           aria-label="Minimize"
           className={`flex h-8 w-9 items-center justify-center hover:bg-black/8 cursor-pointer ${iconColor}`}
         >
@@ -53,7 +54,7 @@ export default function WindowControls({ dark = false }: { dark?: boolean }) {
           <MaximizeIcon />
         </button>
         <button
-          onClick={() => router.push("/")}
+          onClick={() => closeApp(appKey)}
           aria-label="Close"
           className={`flex h-8 w-9 items-center justify-center hover:bg-[#e81123] hover:text-white cursor-pointer ${iconColor}`}
         >

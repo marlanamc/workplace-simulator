@@ -12,13 +12,12 @@ export interface AppDef {
   key: AppKey;
   icon: string;
   color: string;
-  href: string | null;
   state: AppState;
 }
 
 export const APP_DEFS: AppDef[] = [
-  { key: "browser", icon: "◧", color: "#1a73e8", href: "/browser", state: "ready" },
-  { key: "pdf", icon: "▤", color: "#c5221f", href: "/pdf-reader", state: "ready" },
+  { key: "browser", icon: "◧", color: "#1a73e8", state: "ready" },
+  { key: "pdf", icon: "▤", color: "#c5221f", state: "ready" },
 ];
 
 interface AppCopy {
@@ -120,7 +119,8 @@ export interface RecentItem {
   color: string;
   title: Localized;
   subtitle: Localized;
-  href: string;
+  appKey: AppKey;
+  tab?: string;
 }
 
 export const RECENT_ITEMS: RecentItem[] = [
@@ -129,14 +129,16 @@ export const RECENT_ITEMS: RecentItem[] = [
     color: "#8430ce",
     title: { en: "Employee Portal", es: "Portal del empleado" },
     subtitle: { en: "Check your schedule", es: "Revisa tu horario" },
-    href: "/browser?tab=portal",
+    appKey: "browser",
+    tab: "portal",
   },
   {
     icon: "▤",
     color: "#3c4043",
     title: { en: "Handbook", es: "Manual" },
     subtitle: { en: "Look something up", es: "Busca algo" },
-    href: "/browser?tab=handbook",
+    appKey: "browser",
+    tab: "handbook",
   },
 ];
 

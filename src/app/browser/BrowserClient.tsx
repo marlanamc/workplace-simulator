@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
 import MailClient from "../mail/MailClient";
 import PortalPage from "./PortalPage";
 import HandbookPage from "./HandbookPage";
-import Shelf, { SHELF_HEIGHT } from "@/components/Shelf";
+import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
+import { useWindowManager } from "@/lib/window-manager";
 
 type TabKey = "mail" | "portal" | "handbook";
 
@@ -24,12 +24,22 @@ const TABS: TabDef[] = [
   { key: "handbook", label: "Handbook", url: "handbook.harborsidecafe.com", icon: "▤", color: "#3c4043" },
 ];
 
-export default function BrowserClient({ displayName }: { displayName: string }) {
-  const params = useSearchParams();
-  const initialTab = (params.get("tab") as TabKey) || "mail";
+export default function BrowserClient() {
+  const { browserTab, browserTabToken } = useWindowManager();
   const [activeTab, setActiveTab] = useState<TabKey>(
-    TABS.some((t) => t.key === initialTab) ? initialTab : "mail"
+    TABS.some((t) => t.key === browserTab) ? (browserTab as TabKey) : "mail"
   );
+
+  // A deep link (e.g. "Employee Portal" from the launcher) requests a tab —
+  // jump to it even if Browser is already open on a different tab. Adjusted
+  // during render (React's recommended pattern), not in an effect.
+  const [lastToken, setLastToken] = useState(browserTabToken);
+  if (browserTabToken !== lastToken) {
+    setLastToken(browserTabToken);
+    if (TABS.some((t) => t.key === browserTab)) {
+      setActiveTab(browserTab as TabKey);
+    }
+  }
 
   const active = TABS.find((t) => t.key === activeTab)!;
 
@@ -58,7 +68,7 @@ export default function BrowserClient({ displayName }: { displayName: string }) 
           );
         })}
         <div className="flex-1" />
-        <WindowControls />
+        <WindowControls appKey="browser" />
       </div>
 
       {/* address bar */}
@@ -97,8 +107,6 @@ export default function BrowserClient({ displayName }: { displayName: string }) 
         {activeTab === "portal" && <PortalPage />}
         {activeTab === "handbook" && <HandbookPage />}
       </div>
-
-      <Shelf displayName={displayName} />
     </div>
   );
 }

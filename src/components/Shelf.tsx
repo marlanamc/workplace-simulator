@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import {
   APP_DEFS,
   APP_COPY,
@@ -11,6 +10,7 @@ import {
   type AppState,
   type Lang,
 } from "@/lib/desktop-content";
+import { useWindowManager } from "@/lib/window-manager";
 import { useNudge } from "@/lib/use-nudge";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -60,14 +60,15 @@ export default function Shelf({ displayName }: { displayName: string }) {
   const [lang, setLang] = useState<Lang>("en");
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const [openApp, setOpenApp] = useState<AppKey | null>(null);
+  const [infoApp, setInfoApp] = useState<AppKey | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   const [brightness, setBrightness] = useState(80);
   const { nudge, say } = useNudge(4200);
+  const { openApp, toggleFromShelf, isOpen } = useWindowManager();
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
-  const activeApp = openApp ? APP_DEFS.find((a) => a.key === openApp) : null;
+  const activeApp = infoApp ? APP_DEFS.find((a) => a.key === infoApp) : null;
 
   const filteredApps = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -81,7 +82,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
   };
 
   const openFromLauncher = (key: AppKey) => {
-    setOpenApp(key);
+    setInfoApp(key);
     closeLauncher();
   };
 
@@ -115,10 +116,13 @@ export default function Shelf({ displayName }: { displayName: string }) {
             <button
               key={a.key}
               title={appCopy[a.key].name}
-              onClick={() => setOpenApp(a.key)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-[16px] text-white cursor-pointer hover:bg-white/10"
+              onClick={() => toggleFromShelf(a.key)}
+              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[16px] text-white cursor-pointer hover:bg-white/10"
             >
               <AppIcon icon={a.icon} color={a.color} size={30} />
+              {isOpen(a.key) && (
+                <span className="absolute bottom-0.5 h-1 w-1 rounded-full bg-white" aria-hidden />
+              )}
             </button>
           ))}
         </div>
@@ -260,11 +264,13 @@ export default function Shelf({ displayName }: { displayName: string }) {
                   </div>
                   <div className="grid grid-cols-2 gap-1 px-2 pb-2">
                     {RECENT_ITEMS.map((r, i) => (
-                      <Link
+                      <button
                         key={i}
-                        href={r.href}
-                        onClick={closeLauncher}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-[var(--surface-muted)]"
+                        onClick={() => {
+                          openApp(r.appKey, { tab: r.tab });
+                          closeLauncher();
+                        }}
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
                       >
                         <AppIcon icon={r.icon} color={r.color} size={34} />
                         <div className="min-w-0">
@@ -275,7 +281,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
                             {r.subtitle[lang]}
                           </div>
                         </div>
-                      </Link>
+                      </button>
                     ))}
                   </div>
                   <div className="mx-4 h-px bg-[var(--border)]" />
@@ -319,7 +325,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
       {activeApp && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-6"
-          onClick={() => setOpenApp(null)}
+          onClick={() => setInfoApp(null)}
         >
           <div
             className="w-full max-w-[480px] rounded-2xl bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up"
@@ -336,7 +342,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
                 </h3>
               </div>
               <button
-                onClick={() => setOpenApp(null)}
+                onClick={() => setInfoApp(null)}
                 aria-label={c.back}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[16px] text-[var(--text-secondary)] cursor-pointer"
               >
@@ -357,17 +363,20 @@ export default function Shelf({ displayName }: { displayName: string }) {
               ))}
             </div>
             <div className="flex gap-2">
-              {activeApp.href ? (
-                <Link
-                  href={activeApp.href}
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)]"
+              {activeApp.state !== "locked" ? (
+                <button
+                  onClick={() => {
+                    openApp(activeApp.key);
+                    setInfoApp(null);
+                  }}
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
                 >
                   {c.start}
-                </Link>
+                </button>
               ) : (
                 <button
                   onClick={() => {
-                    setOpenApp(null);
+                    setInfoApp(null);
                     say(lang === "en" ? "Coming soon in the full build." : "Próximamente en la versión completa.");
                   }}
                   className="inline-flex min-h-[48px] cursor-not-allowed items-center justify-center rounded-full bg-[var(--surface-muted)] px-5 text-[15px] font-medium text-[var(--text-tertiary)]"
@@ -376,7 +385,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
                 </button>
               )}
               <button
-                onClick={() => setOpenApp(null)}
+                onClick={() => setInfoApp(null)}
                 className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-secondary)] cursor-pointer"
               >
                 {c.back}
