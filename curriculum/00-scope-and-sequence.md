@@ -105,9 +105,83 @@ something up instead of guessing.
 | 6 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Handbook |
 
 See `05-lesson-incident.md`, `06-lesson-handbook.md`. By the time a student
-finishes both, they've independently used every app in the simulator — the
-old "capstone" lesson is really just what finishing this track already means,
-not a separate exercise.
+finishes both, they've independently used every app in the simulator today —
+the old "capstone" lesson is really just what finishing this track already
+means, not a separate exercise. Tracks 4 and 5 below continue the story
+past this point and introduce more apps; they're planned but not yet built.
+
+---
+
+## Track 4: Growing at Work *(planned — not yet built)*
+
+**Story bridge:** finishing Track 3 is what actually earns the promotion the
+Track 1 email hinted was coming — the student is now a shift lead, and shift
+leads use a few tools individual crew members didn't need: a shared
+calendar, a shared drive of files instead of one inbox, and a simple
+spreadsheet instead of a paper tally sheet. No new desktop app — these are
+new Browser tabs, same as Employee Portal and the Incident Report were.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 7 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → a new Calendar tab |
+| 8 | `files` | Find the right file in a shared drive (folders + search), share it at "view" not "edit," rename it to match a naming convention | Browser → a new Shared Drive tab |
+| 9 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → a new Sheets-style tab |
+
+Optional stretch, lower priority (can slip to a later pass): `video-call` —
+join a mock team meeting, mute/unmute, use chat, understand basic etiquette
+(camera optional, no need for real video since the etiquette is the point,
+not the technology).
+
+**Design notes:**
+- `calendar` chains directly off the `schedule`/`mail` skills from Track 2 —
+  same "notice a conflict, say something" shape, new tool.
+- `files` extends the file-picker pattern already built for `mail`'s
+  attachment step (`PickerModal`) — same component, a folder layer added on
+  top, plus a new "who can see this" permission choice.
+- `spreadsheet` is the first task that isn't itself the point — the *point*
+  is still judgment (a formula-looking total can be wrong; do you just copy
+  it, or check it?), the spreadsheet is the setting. Keeps this from turning
+  into a spreadsheet-software tutorial.
+
+---
+
+## Track 5: Planning What's Next *(planned — not yet built)*
+
+**Story bridge:** with the promotion behind them, the student starts
+considering community college or a training program — not instead of work,
+alongside it. This runs as a second storyline layered onto the same
+Harborside Cafe desktop: new bookmarks appear in the same Browser next to
+the work ones (a college portal, a coursework site, a library search), the
+same way a real person's browser mixes work and personal tabs. The point
+being made on purpose: the skills already practiced (read it carefully,
+reply with what's asked, attach the right file, look it up instead of
+guessing) are exactly the skills these new tools need too — nothing about
+them is actually new.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 10 | `enrollment` | Navigate a college portal: find the application deadline, check a required-documents checklist, submit a short statement of interest | Browser → a new College Portal tab |
+| 11 | `financial-aid` | Read a financial aid award letter (a real document, not a summary) and find the amount and the accept-by deadline | PDF Reader + Browser → College Portal |
+| 12 | `coursework` | Read a syllabus, find an assignment's due date, and submit a short response — same "read it, attach it, send it" shape as `mail`, in a new tool | Browser → a new Coursework (LMS) tab |
+| 13 | `research` | Search a library-style database for a source on a given topic, and tell a credible source from an unreliable one | Browser → a new Library Search tab |
+
+**Design notes:**
+- `financial-aid` mirrors `paystub`'s shape exactly (open a real document,
+  answer a "find it" check) — deliberately, so a student who did `paystub`
+  confidently should recognize the pattern immediately.
+- `coursework` mirrors `mail`'s shape (read what's asked, attach the right
+  thing, send/submit) for the same reason — proof to the student that a new
+  logo and color scheme doesn't mean a new skill.
+- `research` is the one genuinely new skill in this track: telling a
+  credible source from an unreliable one. It plants 3–4 decoy sources (one
+  obviously promotional, one outdated, one a forum post, one a real-looking
+  library database entry) and asks which one to cite — same "spot it, don't
+  guess" shape as `handbook`, applied to a new judgment call.
+- Consider whether `enrollment` and `financial-aid` should be one task
+  instead of two before building — they're presented separately here
+  because they're different documents/interactions, but they may feel like
+  one continuous errand to a student. Worth watching in Track 4 (`calendar`/
+  `files`/`spreadsheet`) whether that instinct holds before finalizing.
 
 ---
 
