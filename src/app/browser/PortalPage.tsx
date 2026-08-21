@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { SCHEDULE, TIMECLOCK, PAY_STUBS } from "@/lib/portal-content";
+import { TIMECLOCK, PAY_STUBS } from "@/lib/portal-content";
+import ScheduleTask from "./ScheduleTask";
 
 type Section = "schedule" | "timeclock" | "paystubs";
 
@@ -41,36 +42,7 @@ export default function PortalPage() {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-6">
-        {section === "schedule" && (
-          <div>
-            <h2 className="mb-1 text-[19px] font-medium">Your schedule — next week</h2>
-            <p className="mb-4 text-[14px] text-[var(--text-secondary)]">
-              Times are shown in your local time. Talk to your shift lead about swaps.
-            </p>
-            <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
-              {SCHEDULE.map((d, i) => (
-                <div
-                  key={d.day}
-                  className={`flex items-center justify-between px-4 py-3.5 ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="w-11 text-[14px] font-semibold text-[var(--text-primary)]">{d.day}</span>
-                    <span className="text-[13px] text-[var(--text-tertiary)]">{d.date}</span>
-                  </div>
-                  <span
-                    className={
-                      d.shift
-                        ? "text-[14px] font-medium text-[var(--text-primary)]"
-                        : "text-[14px] text-[var(--text-tertiary)]"
-                    }
-                  >
-                    {d.shift ?? "Off"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {section === "schedule" && <ScheduleTask />}
 
         {section === "timeclock" && (
           <div className="flex flex-col gap-5">

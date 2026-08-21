@@ -1,28 +1,30 @@
 # Lesson 2: Request a Shift Swap
 
 **Time:** 20 minutes total (10 + 10) · **Track:** 2 — Schedules & Documents
-**Task key:** `schedule` · **Status:** not built yet — Employee Portal's schedule
-view exists and is explorable, but this graded task doesn't exist yet.
+**Task key:** `schedule` · **Status:** built — the Employee Portal's Schedule
+tab flags a planted conflict; requesting a swap opens a short message to
+Maria, right there in the portal.
 **Prerequisite:** Track 1 complete
 
 ## We will learn...
 - read a work schedule, spot a conflict, and ask for a change the right way.
 
-## Before class (teacher prep) — once built
-- [ ] Simulator: assign the Employee Portal's **Schedule** section with a
-      conflict planted (e.g., a shift that overlaps something the student's
-      profile already says they can't work).
+## Before class (teacher prep)
+- [ ] Simulator: nothing to set up — the Schedule tab always shows the same
+      planted conflict (a Thursday shift that overlaps a doctor's appointment).
 - [ ] Google Classroom: post a **view-only** schedule (Sheet or Doc) with the
       same shape of conflict, plus a short prompt: *"Find the shift you can't
       work, and write a message asking to swap it."*
 
-## Part A: Simulator (~10 min) — once built
+## Part A: Simulator (~10 min)
 1. Open the **Browser** → **Employee Portal** → **Schedule**.
 2. Find your shifts for the week.
-3. Notice the one that conflicts with something you can't do.
-4. Open **WorkMail**, write a short message to Maria explaining the conflict
-   and asking for a swap.
-5. Send it.
+3. Notice the one flagged with a conflict warning.
+4. Click **Request a swap** on that shift (clicking any other shift's button
+   just gets a friendly reminder to keep looking).
+5. Write a short message to Maria explaining the conflict and asking for a
+   swap — sentence starters are there if you want them.
+6. Click **Send**.
 
 ## Part B: Real Practice (~10 min)
 1. Open **Google Classroom** → open the posted schedule.

@@ -46,7 +46,7 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   schedule: {
     label: "Request a shift swap",
     description: "Find a scheduling conflict and ask for a change the right way.",
-    built: false,
+    built: true,
   },
   timeclock: {
     label: "Clock out for the day",

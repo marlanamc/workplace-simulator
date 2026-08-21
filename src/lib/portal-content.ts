@@ -1,19 +1,3 @@
-export interface ShiftDay {
-  day: string;
-  date: string;
-  shift: string | null;
-}
-
-export const SCHEDULE: ShiftDay[] = [
-  { day: "Mon", date: "Aug 18", shift: "7:00 AM – 3:00 PM" },
-  { day: "Tue", date: "Aug 19", shift: "7:00 AM – 3:00 PM" },
-  { day: "Wed", date: "Aug 20", shift: null },
-  { day: "Thu", date: "Aug 21", shift: "10:00 AM – 6:00 PM" },
-  { day: "Fri", date: "Aug 22", shift: "10:00 AM – 6:00 PM" },
-  { day: "Sat", date: "Aug 23", shift: "8:00 AM – 4:00 PM" },
-  { day: "Sun", date: "Aug 24", shift: null },
-];
-
 export const TIMECLOCK = {
   status: "Clocked in",
   clockedInAt: "8:02 AM",

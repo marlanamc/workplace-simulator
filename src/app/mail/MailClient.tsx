@@ -19,6 +19,7 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
 import SettingsPopover from "@/components/task/SettingsPopover";
+import TaskDoneCard from "@/components/task/TaskDoneCard";
 
 type View = "empty" | "read" | "compose" | "done";
 
@@ -296,26 +297,14 @@ export default function MailClient() {
 
           {view === "done" && (
             <div className="flex flex-col gap-5 p-6 sm:p-8">
-              <div>
-                <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--success)]">
-                  {c.sentKicker}
-                </div>
-                <h2 className="mt-1.5 text-[24px] font-medium leading-tight">{c.doneTitle}</h2>
-                <p className="mt-2 max-w-[60ch] text-[16px] leading-relaxed text-[var(--text-secondary)]">
-                  {c.doneBody}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-4 rounded-xl border border-[var(--warning-tint)] bg-[var(--warning-tint)] p-4">
-                <div className="flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl bg-[#3c4043] leading-tight text-white">
-                  <span className="text-[9px] tracking-wide">SKILL</span>
-                  <span className="text-[19px] font-semibold">01</span>
-                </div>
-                <div>
-                  <div className="text-[16px] font-medium">{c.badgeName}</div>
-                  <div className="mt-0.5 text-[13px] text-[var(--text-secondary)]">{c.badgeWhere}</div>
-                </div>
-              </div>
+              <TaskDoneCard
+                kicker={c.sentKicker}
+                title={c.doneTitle}
+                body={c.doneBody}
+                badgeNumber="01"
+                badgeName={c.badgeName}
+                badgeWhere={c.badgeWhere}
+              />
 
               <ConfidenceCheck
                 question={c.confidenceQ}
