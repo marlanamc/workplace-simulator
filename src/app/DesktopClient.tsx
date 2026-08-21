@@ -145,6 +145,7 @@ function DesktopShell({ displayName }: { displayName: string }) {
 }
 
 export default function DesktopClient(props: {
+  learnerId: string;
   displayName: string;
   completedTaskKeys: TaskKey[];
   certificateTrackKeys: string[];
@@ -152,6 +153,7 @@ export default function DesktopClient(props: {
   return (
     <WindowManagerProvider>
       <ProgressProvider
+        learnerId={props.learnerId}
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
       >

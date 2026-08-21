@@ -6,6 +6,7 @@ import { POINTS_PER_TASK, activeTrack, findTrackForTask, isTrackComplete, type T
 import { completeTask, awardCertificate } from "@/app/actions";
 
 interface ProgressValue {
+  learnerId: string;
   completedTaskKeys: TaskKey[];
   points: number;
   justEarnedPoints: number | null;
@@ -19,10 +20,12 @@ interface ProgressValue {
 const ProgressContext = createContext<ProgressValue | null>(null);
 
 export function ProgressProvider({
+  learnerId,
   initialCompletedTaskKeys,
   initialCertificateTrackKeys,
   children,
 }: {
+  learnerId: string;
   initialCompletedTaskKeys: TaskKey[];
   initialCertificateTrackKeys: string[];
   children: ReactNode;
@@ -60,6 +63,7 @@ export function ProgressProvider({
   return (
     <ProgressContext.Provider
       value={{
+        learnerId,
         completedTaskKeys,
         points: completedTaskKeys.length * POINTS_PER_TASK,
         justEarnedPoints,

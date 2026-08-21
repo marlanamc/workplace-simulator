@@ -20,6 +20,7 @@ export default async function DesktopPage() {
 
   return (
     <DesktopClient
+      learnerId={learnerId}
       displayName={learner.displayName}
       completedTaskKeys={completedTaskKeys}
       certificateTrackKeys={certificateTrackKeys}

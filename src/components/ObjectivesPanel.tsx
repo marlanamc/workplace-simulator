@@ -7,7 +7,7 @@ import { useClickOutside } from "@/lib/use-click-outside";
 
 export default function ObjectivesPanel() {
   const [open, setOpen] = useState(false);
-  const { completedTaskKeys, currentTrack, certificateTrackKeys } = useProgress();
+  const { completedTaskKeys, currentTrack, certificateTrackKeys, learnerId } = useProgress();
   const panelRef = useRef<HTMLDivElement>(null);
   useClickOutside(panelRef, open, () => setOpen(false));
 
@@ -47,19 +47,29 @@ export default function ObjectivesPanel() {
           </div>
 
           {certificateTrackKeys.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {certificateTrackKeys.map((key) => {
-                const track = TRACKS.find((t) => t.key === key);
-                if (!track) return null;
-                return (
-                  <span
-                    key={key}
-                    className="flex items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3 py-1.5 text-[12px] font-medium text-[var(--warning)]"
-                  >
-                    🏆 {track.title}
-                  </span>
-                );
-              })}
+            <div className="flex flex-col gap-2.5">
+              <div className="flex flex-wrap gap-2">
+                {certificateTrackKeys.map((key) => {
+                  const track = TRACKS.find((t) => t.key === key);
+                  if (!track) return null;
+                  return (
+                    <span
+                      key={key}
+                      className="flex items-center gap-1.5 rounded-full bg-[var(--warning-tint)] px-3 py-1.5 text-[12px] font-medium text-[var(--warning)]"
+                    >
+                      🏆 {track.title}
+                    </span>
+                  );
+                })}
+              </div>
+              <a
+                href={`/certificate/${learnerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[40px] items-center gap-1.5 self-start rounded-full border border-[var(--accent)] px-3.5 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)]"
+              >
+                🎓 View my certificate
+              </a>
             </div>
           )}
 
