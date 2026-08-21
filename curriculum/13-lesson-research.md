@@ -1,6 +1,6 @@
 # Lesson 13: Tell a Credible Source From an Unreliable One
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `research` · **Status:** not built yet — the last lesson in
 the current curriculum plan, and the one genuinely new judgment skill in
 Track 5. Finishing this (and Track 4) completes Level 2.
@@ -24,7 +24,7 @@ Track 5. Finishing this (and Track 4) completes Level 2.
       forum post isn't a citable source) — this is a discussion skill as
       much as a click skill.
 
-## Simulator practice (~10–15 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **Library Search** tab.
 2. Search for the given topic.
 3. Look at the 3–4 results — notice what's promotional, outdated, informal,

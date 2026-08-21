@@ -1,6 +1,6 @@
 # Lesson 7: Handle a Meeting Invite
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `calendar` · **Status:** built — the first task of Level 2.
 Note: from this task on, the desktop's "Do this next" card no longer opens
 the exact tab for you (it just says "Open Browser") — finding the right
@@ -22,7 +22,7 @@ new schedule, a new week at Harborside Cafe)
       wrap-up assignment (`13a-level2-real-practice.md`), given after
       Track 5 is done.
 
-## Simulator practice (~10–15 min)
+## Simulator practice (~5 min)
 1. Click **Open Browser** on the desktop — it won't jump straight to
    Calendar anymore. Find the **Calendar** bookmark yourself, in the tab
    strip or the bookmarks bar.

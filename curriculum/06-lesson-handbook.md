@@ -1,6 +1,6 @@
 # Lesson 6: Look Something Up Under Pressure
 
-**Time:** ~15 minutes · **Level:** 1 — New Hire · **Track:** 3 — Judgment & Follow-Through
+**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 3 — Judgment & Follow-Through
 **Task key:** `handbook` · **Status:** built — the Handbook tab opens straight
 into a planted scenario ("you're sick tomorrow — what's the call-out
 policy?") with a multiple-choice check pinned below the same search/browse
@@ -19,7 +19,7 @@ view used in the earlier exploration pass.
       `06a-level1-real-practice.md`), covering this skill and every other
       Level 1 skill together, in one sitting.
 
-## Simulator practice (~10–15 min)
+## Simulator practice (~5 min)
 1. Read the scenario prompt at the top of the **Handbook** tab.
 2. Search or browse to the right article.
 3. Answer the question pinned at the bottom, based on what the handbook

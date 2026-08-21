@@ -1,6 +1,6 @@
 # Lesson 5: File an Incident Report
 
-**Time:** ~15 minutes · **Level:** 1 — New Hire · **Track:** 3 — Judgment & Follow-Through
+**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 3 — Judgment & Follow-Through
 **Task key:** `incident` · **Status:** built — a new "Incident Report" Browser
 tab holds a planted scenario (a customer slip near the front door) and a
 what/when/where form that submits to Maria.
@@ -19,7 +19,7 @@ what/when/where form that submits to Maria.
       (one too vague, one over-explained, one "just right") — this is about
       calibration, not a single correct template.
 
-## Simulator practice (~10–15 min)
+## Simulator practice (~5 min)
 1. Open the **Browser** → **Incident Report** tab.
 2. Read the scenario.
 3. Fill in when and where it happened, and write what happened, in order —

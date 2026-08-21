@@ -6,7 +6,7 @@ stubs, and workplace judgment — through low-stakes practice, organized into
 **levels** so the world grows with the student instead of staying static forever.
 
 **Format for every lesson:**
-- 15 minutes, one simulator task.
+- ~5 minutes, one simulator task.
 - **Simulator practice.** Practice the skill in the Workplace Simulator app.
   Nothing is real; nothing can be broken; wrong clicks get a friendly nudge, not
   an error. There's no step-by-step wizard inside the app itself — a dismissible
@@ -261,8 +261,8 @@ The same lesson structure serves both without splitting into separate curricula:
   experienced students should spend their attention — Track 3 in particular is
   built around this, not around clicking.
 - **Self-pacing does the differentiation for you**: a beginner spends the full
-  15 minutes getting comfortable with clicks; an experienced student blows
-  through a task in 2 minutes and reaches the end-of-level real practice
+  5 minutes getting comfortable with clicks; an experienced student blows
+  through a task in under a minute and reaches the end-of-level real practice
   faster. Nobody needs to be held back or given separate material — the task
   is the same, the time spent just differs.
 - When you *do* want to stretch the stronger students, add an optional "extra
@@ -276,7 +276,7 @@ The same lesson structure serves both without splitting into separate curricula:
 
 1. **We will learn...** (1 objective, plain language, read aloud if needed)
 2. **Watch** — 1-minute teacher demo or short screen-recording, if available
-3. **Simulator practice** (~10–15 min) — do the task in the app, at least
+3. **Simulator practice** (~5 min) — do the task in the app, at least
    twice if it's quick; the Help button is available the whole time, the
    Objectives panel shows what track/task is current
 4. **Confidence check-in** — 3 quick self-rating questions ("I could do this at

@@ -1,6 +1,6 @@
 # Bonus Lesson: Join a Team Meeting
 
-**Time:** 10 minutes (simulator only — no separate homework) · **Level:**
+**Time:** ~5 minutes (simulator only — no separate homework) · **Level:**
 2 — Shift Lead · **Track:** 4 — Growing at Work (optional, lower priority)
 **Task key:** `video-call` · **Status:** not built yet, and not a required
 lesson — this is a stretch task that can slip if time runs short.
@@ -18,7 +18,7 @@ lesson — this is a stretch task that can slip if time runs short.
       design, since the point is etiquette, not a real video call with
       classmates.
 
-## Part A: Simulator (~10 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the mock meeting from the Browser.
 2. Join with your mic muted by default — notice the app doesn't force you to
    figure this out.

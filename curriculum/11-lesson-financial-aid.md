@@ -1,6 +1,6 @@
 # Lesson 11: Read a Financial Aid Letter
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `financial-aid` · **Status:** not built yet — mirrors
 `paystub`'s shape on purpose (open a real document, answer a "find it"
 check), reusing the PDF Reader.
@@ -20,7 +20,7 @@ check), reusing the PDF Reader.
       it, in case a student has real questions afterward — this lesson can
       surface real needs.
 
-## Simulator practice (~10–15 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **College Portal**, then open the award letter —
    it opens as a real document in **PDF Reader**, the same way a pay stub
    did in Lesson 4.

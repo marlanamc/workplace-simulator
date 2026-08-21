@@ -1,6 +1,6 @@
 # Lesson 8: Share a File the Right Way
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `files` · **Status:** not built yet.
 **Prerequisite:** Lesson 7
 
@@ -18,7 +18,7 @@
       wrap-up assignment (`13a-level2-real-practice.md`), given after
       Track 5 is done.
 
-## Simulator practice (~10–15 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **Shared Drive** tab.
 2. Find the right file — use the folders, or search if you're not sure which
    folder it's in.

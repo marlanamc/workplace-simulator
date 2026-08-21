@@ -1,6 +1,6 @@
 # Lesson 12: Read a Syllabus, Submit an Assignment
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `coursework` · **Status:** not built yet — mirrors `mail`'s
 shape on purpose (read what's asked, attach the right thing, send it), in a
 new tool.
@@ -17,7 +17,7 @@ new tool.
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
       wrap-up assignment (`13a-level2-real-practice.md`).
 
-## Simulator practice (~10–15 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **Coursework** tab.
 2. Read the syllabus section for the assignment.
 3. Find the due date.

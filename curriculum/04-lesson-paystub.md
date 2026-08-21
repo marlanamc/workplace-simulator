@@ -1,6 +1,6 @@
 # Lesson 4: Read a Pay Stub
 
-**Time:** ~15 minutes · **Level:** 1 — New Hire · **Track:** 2 — Schedules & Documents
+**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 2 — Schedules & Documents
 **Task key:** `paystub` · **Status:** built — opening the most recent pay
 stub from the Employee Portal opens the real PDF in PDF Reader, then two
 quick multiple-choice checks (net pay, then total hours) confirm the student
@@ -16,7 +16,7 @@ found the right numbers.
 - [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
       assignment (`06a-level1-real-practice.md`), given after Track 3 is done.
 
-## Simulator practice (~10–15 min)
+## Simulator practice (~5 min)
 1. Open the **Browser** → **Employee Portal** → **Pay Stubs**.
 2. Click the most recent one — it opens as a real document in **PDF Reader**.
 3. Read the net pay and the hours listed, then switch back to the **Browser**.

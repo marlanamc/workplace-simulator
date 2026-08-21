@@ -1,6 +1,6 @@
 # Lesson 10: Navigate a College Portal
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `enrollment` · **Status:** not built yet — first lesson of
 Track 5, which runs alongside Track 4 inside Level 2 rather than after it —
 a parallel storyline on the same desktop, not a continuation of work duties.
@@ -19,7 +19,7 @@ Track 4, teacher's discretion
       wrap-up assignment (`13a-level2-real-practice.md`), given after
       Track 5 (and Track 4) are both done.
 
-## Simulator practice (~10–15 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **College Portal** tab (new bookmark, alongside
    the work ones).
 2. Find the application deadline.

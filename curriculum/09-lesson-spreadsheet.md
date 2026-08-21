@@ -1,6 +1,6 @@
 # Lesson 9: Read and Trust a Total
 
-**Time:** ~15 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `spreadsheet` · **Status:** not built yet.
 **Prerequisite:** Lesson 8
 
@@ -16,7 +16,7 @@
       wrap-up assignment (`13a-level2-real-practice.md`), given after
       Track 5 is done.
 
-## Simulator practice (~10–15 min) — once built
+## Simulator practice (~5 min) — once built
 1. Open the **Browser** → the new **Sheets**-style tab.
 2. Enter the numbers you're given into the right cells.
 3. Look at the total the sheet calculates.

@@ -1,6 +1,6 @@
 # Lesson 1: Answer Your Supervisor
 
-**Time:** ~15 minutes · **Level:** 1 — New Hire · **Track:** 1 — Getting Started
+**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 1 — Getting Started
 **Task key:** `mail` · **Status:** built and playable today
 **Prerequisite:** Track 0 (or teacher confirms student can open a browser tab and type)
 
@@ -15,7 +15,7 @@
       skill is bundled into the Level 1 wrap-up assignment, given only after
       Track 3 is done. See `06a-level1-real-practice.md`.
 
-## Simulator practice (~10–15 min)
+## Simulator practice (~5 min)
 1. Sign in with your name, PIN, and class code, then open the **Browser** →
    **WorkMail** tab.
 2. Find the email from Maria Delgado in the inbox.
