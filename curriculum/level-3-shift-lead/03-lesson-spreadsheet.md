@@ -1,29 +1,32 @@
 # Lesson 3: Read and Trust a Total
 
-**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
-**Task key:** `spreadsheet` · **Status:** not built yet.
+**Time:** ~5 minutes · **Level:** 3 — Shift Lead · **Track:** 4 — Growing at Work
+**Task key:** `spreadsheet` · **Status:** built — a small "weekly tally"
+sheet (a few rows of shift tips) in the Hsheets Browser tab, with one
+planted-wrong total (a stale number, not a real formula error) to catch.
 **Prerequisite:** Lesson 2
 
 ## We will learn...
 - enter numbers into a shared spreadsheet, and notice when a total looks
   wrong instead of assuming it's right because a computer calculated it.
 
-## Before class (teacher prep) — once built
-- [ ] Simulator: a small "weekly tally" sheet (a few rows of shift tips or
-      hours) in a new Sheets-style Browser tab. One cell's total is planted
-      to be wrong (a formula pointing at the wrong row, or a stale number).
-- [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`real-practice-assignment.md`), given after
-      Track 4 is done.
+## Before class (teacher prep)
+- [ ] Simulator: nothing to set up — the sheet always has the same rows and
+      the same planted-wrong total.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 3 wrap-up assignment
+      (`real-practice-assignment.md`), offered after Track 4 is done. Never
+      a gate — a student who skips it still moves on.
 
-## Simulator practice (~5 min) — once built
-1. Open the **Browser** → the new **Sheets**-style tab.
+## Simulator practice (~5 min)
+1. Open the **Browser** → **Hsheets** tab.
 2. Enter the numbers you're given into the right cells.
 3. Look at the total the sheet calculates.
 4. Add up the numbers yourself (or estimate) and check: does the total
    match?
 5. If it doesn't, don't just accept it — flag it, the same way you flagged
-   an hours mismatch in Level 1's Lesson 3.
+   an hours mismatch in Level 2's Lesson 2, then email the total to your
+   lead.
 
 ## Confidence check-in
 - "I know how to double-check a total instead of just trusting it." 🙂 😐 🙁

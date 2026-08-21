@@ -1,11 +1,11 @@
-# Lesson 4: Read a Pay Stub
+# Lesson 3: Read a Pay Stub
 
-**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 2 — Schedules & Documents
+**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 2 — Schedules & Documents
 **Task key:** `paystub` · **Status:** built — opening the most recent pay
 stub from the Employee Portal opens the real PDF in PDF Reader, then two
 quick multiple-choice checks (net pay, then total hours) confirm the student
 found the right numbers.
-**Prerequisite:** Lesson 3 (comfortable checking that hours match)
+**Prerequisite:** Lesson 2 (comfortable checking that hours match)
 
 ## We will learn...
 - find your net pay on a pay stub and confirm the hours match what you worked.
@@ -13,8 +13,10 @@ found the right numbers.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the most recent pay stub always opens
       the same document and the same two check questions.
-- [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
-      assignment (`real-practice-assignment.md`), given after Track 3 is done.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 2 wrap-up assignment
+      (`real-practice-assignment.md`), offered after Track 3 is done. Never a
+      gate — a student who skips it still moves on.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Employee Portal** → **Pay Stubs**.

@@ -1,10 +1,10 @@
-# Lesson 3: Clock Out for the Day
+# Lesson 2: Clock Out for the Day
 
-**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 2 — Schedules & Documents
+**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 2 — Schedules & Documents
 **Task key:** `timeclock` · **Status:** built — the Employee Portal's Time
 Clock tab clocks out into a planted hours mismatch; flagging it opens a short
 message to Maria, right there in the portal.
-**Prerequisite:** Track 1 complete
+**Prerequisite:** Lesson 1
 
 ## We will learn...
 - clock out at the end of a shift and check that the hours recorded look right.
@@ -13,8 +13,10 @@ message to Maria, right there in the portal.
 - [ ] Simulator: nothing to set up — clocking out always shows the same
       planted mismatch (clocked in later than the scheduled start, so today's
       total is short).
-- [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
-      assignment (`real-practice-assignment.md`), given after Track 3 is done.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 2 wrap-up assignment
+      (`real-practice-assignment.md`), offered after Track 3 is done. Never a
+      gate — a student who skips it still moves on.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Employee Portal** → **Time Clock**.
@@ -30,6 +32,6 @@ message to Maria, right there in the portal.
 - "If my hours looked wrong, I would: ___________"
 
 ## Notes for next time
-- Short lesson by design — pairs well in the same class session as Lesson 4
+- Short lesson by design — pairs well in the same session as Lesson 3
   (pay stubs), since they're the same underlying skill (checking that numbers
   add up) applied twice.

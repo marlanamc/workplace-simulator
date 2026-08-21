@@ -1,6 +1,6 @@
 # Lesson 2: Share a File the Right Way
 
-**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 3 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `files` · **Status:** built — the Shared Drive tab has a small
 folder structure with a couple of decoy files; sharing the right one
 requires renaming it to match a naming convention first, then choosing
@@ -15,9 +15,10 @@ requires renaming it to match a naming convention first, then choosing
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Shared Drive tab always has the
       same scenario and decoy files.
-- [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`real-practice-assignment.md`), given after
-      Track 4 is done.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 3 wrap-up assignment
+      (`real-practice-assignment.md`), offered after Track 4 is done. Never
+      a gate — a student who skips it still moves on.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Shared Drive** tab (finding the bookmark is

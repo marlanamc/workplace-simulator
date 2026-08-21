@@ -1,12 +1,24 @@
 # Ready for the Lead Role — Scope & Sequence
 
-**Goal:** Prepare adult ESOL students for promotion into a supervisor/lead role by
-building confidence with everyday office technology — email, PDFs, schedules, pay
-stubs, and workplace judgment — through low-stakes practice, organized into
-**levels** so the world grows with the student instead of staying static forever.
+**Goal:** Prepare adult ESOL students for real advancement — promotion into a
+lead/supervisor role, and eventually office jobs, management tracks, higher
+ed, and healthcare-admin-adjacent work — by building confidence with
+everyday office technology through low-stakes practice, organized into
+**levels** so the world grows with the student instead of staying static
+forever.
+
+**This is a micro-module program, not a bridge program.** Some students can
+spare 20 minutes a week, not 20 minutes a day. Everything below is designed
+around that constraint: short, self-contained levels; nothing that requires
+a scheduled class time; real value delivered early, not only after finishing
+everything. A student who only ever finishes Level 1 and 2 should already be
+meaningfully more employable — this isn't a substitute for a program like
+Bunker Hill's year-long Transitions to College Program, it's a fast, low-
+stakes on-ramp that can run entirely alongside one, or on its own.
 
 **Format for every lesson:**
-- ~5 minutes, one simulator task.
+- ~15-20 minutes per **level** (not per lesson — some levels bundle a few
+  short lessons, some are a single lesson), one simulator task per lesson.
 - **Simulator practice.** Practice the skill in the Workplace Simulator app.
   Nothing is real; nothing can be broken; wrong clicks get a friendly nudge, not
   an error. There's no step-by-step wizard inside the app itself — a dismissible
@@ -14,87 +26,61 @@ stubs, and workplace judgment — through low-stakes practice, organized into
   the current track and task are, and a **Help** button inside the task gives a
   short on-demand lesson if they get stuck. The apps otherwise look and behave
   like the real thing.
-- **Real-world practice happens once per level, not once per lesson.** After a
-  student finishes every task in a level, the class gets **one combined Google
-  Classroom assignment** covering everything practiced in that level — not a
-  separate real-practice homework after every single lesson. See "Levels" below
-  for why.
-- Designed to be done **asynchronously** — a student can sit down, read the one-page
-  instruction sheet, and work through a level alone.
+- **Real-world practice is optional, per level, never a gate.** After a
+  student finishes every task in a level, the class *may* get one combined
+  Google Classroom assignment covering that level — but it's supplementary
+  practice, not a requirement to advance. A student can move straight from
+  one level to the next in the app without ever touching Google Classroom.
+- **Fully asynchronous.** A student can sit down, read the one-page
+  instruction sheet, and work through a level alone, on their own schedule.
+  The instructor holds **optional office hours 1-2 nights a week** for
+  anyone who wants live help — never a requirement either.
 
 **Digital literacy range in the room:** some students have never turned on a
-computer; others are ready for spreadsheets. Track 0 exists so nobody starts the
-manager-skills levels without the physical basics (mouse/trackpad, opening a
-browser tab, using Google Classroom itself). Track 0 is a prerequisite, not a
-gate everyone repeats — a student who can already do it skips straight to Level 1.
+computer; others are ready for spreadsheets. Track 0 exists so nobody starts
+the manager-skills levels without the physical basics (mouse/trackpad,
+opening a browser tab, using Google Classroom itself). Track 0 is a
+prerequisite, not a gate everyone repeats — a student who can already do it
+skips straight to Level 1.
 
 ---
 
-## Levels: how the world grows with the student
+## The roadmap: New Hire to Assistant Manager (and beyond)
 
-Earlier drafts of this curriculum treated every task as permanent — one email
-stayed in the inbox forever, one schedule never changed, and real-world
-homework was assigned after every single lesson. In practice that meant a lot
-of back-and-forth between the simulator and real Google Classroom work, one
-small assignment at a time — exhausting before a student built any real
-momentum, and a real risk for someone already unsure about being here.
+The full arc runs to roughly 26 levels across 7 "acts," each one a job
+title and a moment in the story. **Acts I-IV are written level-by-level
+below** (Levels 1-12). Acts V-VII exist as a scoped table for now — full
+lesson docs get written act-by-act, right before each one is built, the
+same way Acts I-IV were.
 
-**Levels fix both problems at once.** A level is a bundle of tracks that all
-share one environment — one job title, one moment in the story, with its own
-emails, schedule, calendar invite, pay stub, and so on. Two things happen at
-a level boundary, and nothing happens in between:
+| Act | Levels | Job title | Status |
+|---|---|---|---|
+| **I — New Hire** | 1-2 | New Hire | Written & built |
+| **II — Shift Lead** | 3-5 | Shift Lead | Written; Level 3 built, 4-5 not built |
+| **III — Shift Supervisor** | 6-9 | Shift Supervisor | Written, not built |
+| **IV — Assistant Manager** | 10-12 | Assistant Manager | Written, not built |
+| **V — Bridge (elective)** | 13-15 | "Prepping for BHCC" *or* "Front Office / Healthcare Admin" | Scoped only — see below |
+| **VI — Office Administrator** | 16-19 | Office Administrator (HQ) | Scoped only |
+| **VII — Team Lead (capstone)** | 20-23 | Team Lead | Scoped only |
 
-- **The environment refreshes.** Finishing every track in a level moves the
-  story forward — new emails, a new schedule, a new pay period, a new meeting
-  invite, maybe a new wallpaper. Old task content doesn't linger; a completed
-  email doesn't sit in the inbox forever once the student has moved on. It
-  should feel like time passed — and, in Level 2's case, like a promotion —
-  the way a new job doesn't replay the last one's inbox.
-- **Every badge, certificate, and point earned stays earned.** Nothing about a
-  student's actual progress is erased — it's all still visible any time in the
-  Objectives panel and on their certificate page. Only the *live* scenario
-  content moves forward; the record of what they've already done never does.
+Act V is deliberately optional and comes with two flavors a student can pick
+between (or skip past to Act VI): a taste of college-style digital tasks
+(built from the already-written `future-planning-what's-next/` content —
+enrollment, financial aid, coursework, research), or healthcare-admin office
+tasks (appointment scheduling, patient intake, confidentiality judgment,
+a small billing spreadsheet — not yet written). Neither is a program
+simulation — both are framed to the student as "building the muscle for
+this kind of digital task," honest about not being a substitute for a real
+program.
 
-Inside a level, tasks and tracks work exactly as before — nothing resets
-*within* a level, so a student can move through every track inside Level 1,
-or every track inside Level 2, without losing anything. The reset only
-happens once, at the end of the whole level, right before the next one
-begins.
-
-**Real-world practice moves to the level boundary too.** Instead of several
-small Google Classroom assignments (one per lesson), the class gets **one**
-combined assignment once the whole level is done — see each level folder's
-`real-practice-assignment.md`, kept separate from the numbered lesson docs
-so it's never mistaken for "just another lesson." This is the single
-biggest change from earlier drafts: less context-switching, one wrap-up
-moment instead of constant back-and-forth, and a natural place to pause and
-reflect before the world changes again.
-
-**File layout:** each level has its own folder — `level-1-new-hire/` and
-`level-2-shift-lead/` — with lessons numbered `01`, `02`, `03`… *within that
-level* (not globally), plus its own `real-practice-assignment.md`. A lesson
-in one level referencing a lesson in the other always says "Level 1's
-Lesson 2" or similar, since both levels have their own Lesson 1, Lesson 2,
-etc. Content written but not yet assigned to any level lives in its own
-non-numbered folder instead, e.g. `future-planning-what's-next/`.
-
-| Level | Tracks inside it | Status |
-|---|---|---|
-| **Level 1 — New Hire** | Track 1 (Getting Started), Track 2 (Schedules & Documents), Track 3 (Judgment & Follow-Through) | Built |
-| **Level 2 — Shift Lead** | Track 4 (Growing at Work) | Started (`calendar` built) |
-
-A "Planning What's Next" track (college portal, financial aid, coursework,
-source evaluation) was originally planned to sit inside Level 2 too, but
-most students in this program won't go on to higher education — they'll
-deal with Google Classroom at most. That content is written and kept in
-`curriculum/future-planning-what's-next/`, deferred to a much later level
-once one actually fits it, rather than built into the path every student
-takes.
-
-Level 2 begins exactly where the story already said it would: finishing
-Track 3 is the promotion. That's the level boundary — new title, new
-environment, new responsibilities — not just another track inside the same
-world.
+**File layout:** each level has its own folder — `level-1-new-hire/`,
+`level-2-settling-in/`, `level-3-shift-lead/`, `level-4-reporting-in/`, and
+so on — with lessons numbered `01`, `02`… *within that level* (not
+globally), plus its own `real-practice-assignment.md`. A lesson in one
+level referencing a lesson in another always says "Level 2's Lesson 1" or
+similar, since every level restarts its own lesson numbering. Content
+written but not yet assigned to any level lives in its own non-numbered
+folder, e.g. `future-planning-what's-next/`.
 
 ## Track 0: Foundations (prerequisite — skip if already comfortable)
 
@@ -110,128 +96,184 @@ before Level 1 begins.
 
 ---
 
-## Level 1: New Hire
+## Act I: Levels 1-2 — New Hire
 
-One consistent environment across all three tracks below — the same shift,
-the same week, the same cast of characters (Maria and the rest of the crew).
-Finishing Track 3 is what triggers the Level 1 → Level 2 reset and the
-combined real-world assignment below — it's also the promotion.
+Two levels, not one — split so each stays a genuinely short, self-contained
+15-20 minute session. Level 1 is a single lesson, deliberately tiny, so the
+very first session in the app is low-stakes. Level 2 picks up the rest of
+what a brand-new hire has to handle.
 
-### Track 1: Getting Started
+### Level 1: New Hire, Day One
 
 One task — the first thing a new hire actually has to do: answer a message
-from a supervisor.
+from a supervisor. Single tab, auto-opened — no tab-hunting yet.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `mail` | Read a supervisor's email, reply, and attach the right file | Browser → WorkMail |
+| 1 | `mail` | Read a supervisor's email, reply, and attach the right file | Browser → Hmail |
 
-See `level-1-new-hire/01-lesson-mail.md`. This single lesson covers what used
-to be two separate lessons (reply, then attach) — the built app already asks
-for both in one flow.
+See `level-1-new-hire/01-lesson-mail.md`.
 
-### Track 2: Schedules & Documents
+### Level 2: Settling In
 
-| Lesson | Task key | Skill focus | Simulator app |
-|---|---|---|---|
-| 2 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Employee Portal |
-| 3 | `timeclock` | Clock out and confirm your hours look right | Browser → Employee Portal |
-| 4 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Employee Portal + PDF Reader |
-
-See `level-1-new-hire/02-lesson-schedule.md`,
-`level-1-new-hire/03-lesson-timeclock.md`,
-`level-1-new-hire/04-lesson-paystub.md`.
-
-### Track 3: Judgment & Follow-Through
-
-This is where tool confidence turns into workplace judgment — writing
-something under a little social pressure, and knowing where to look
-something up instead of guessing.
+Two or three tabs, student-chosen (not auto-opened) — the first small step
+up in independence. Everything a new hire needs before their first real
+judgment calls.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 5 | `incident` | Write up what happened, in order, in a professional tone | Browser → Incident Report |
-| 6 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Handbook |
+| 1 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Hportal |
+| 2 | `timeclock` | Clock out and confirm your hours look right | Browser → Hportal |
+| 3 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Hportal + PDF Reader |
+| 4 | `incident` | Write up what happened, in order, in a professional tone | Browser → Hforms |
+| 5 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Hdocs |
 
-See `level-1-new-hire/05-lesson-incident.md`,
-`level-1-new-hire/06-lesson-handbook.md`. Finishing `handbook` completes
-both the "Judgment & Follow-Through" certificate and Level 1 itself.
-
-### Level 1 real-world practice
-
-One combined assignment, given only after Track 3 is fully done — see
-`level-1-new-hire/real-practice-assignment.md`. Do not assign the old
-per-lesson Part B homework anymore.
+See `level-2-settling-in/01-lesson-schedule.md` through
+`05-lesson-handbook.md`. Finishing `handbook` completes Level 2.
 
 ---
 
-## Level 2: Shift Lead
+## Act II: Levels 3-5 — Shift Lead
 
-**Story bridge:** finishing Level 1 is what earns the promotion the Track 1
-email hinted was coming. The environment refreshes here — new emails, a new
-schedule, a new week — and the student picks up the tools that come with
-being a shift lead. Any future spreadsheet-editing practice lives as a
-Browser tab, not a separate desktop app, matching how Employee Portal and
-the Incident Report were added.
+**Story bridge:** finishing Level 2 earns the promotion the Level 1 email
+hinted was coming. The environment refreshes — new emails, a new schedule,
+a new week — and the student picks up the tools that come with being a
+shift lead.
 
-Also starting with this level: the desktop's "do this next" button stops
+Also starting with Level 3: the desktop's "do this next" button stops
 naming the exact tab (a generic "Open Browser" instead of "Open Calendar")
-— a deliberate step down in hand-holding once a student has some practice
-under their belt. The bookmark is still right there in the tab strip;
-finding it is now part of the task.
+— a deliberate step down in hand-holding. Free tab management (opening/
+closing tabs, starting on a blank New Tab) unlocks here too.
 
-### Track 4: Growing at Work
-
-Shift leads use a few tools individual crew members didn't need: a shared
-calendar, a shared drive of files instead of one inbox, and a simple
-spreadsheet instead of a paper tally sheet.
+### Level 3: Shift Lead
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Calendar |
-| 2 | `files` | Find the right file in a shared drive (folders + search), share it at "view" not "edit," rename it to match a naming convention | Browser → a new Shared Drive tab |
-| 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → a new Sheets-style tab |
+| 1 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Hcal |
+| 2 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Hdrive |
+| 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Hsheets |
 
-Optional stretch, lower priority (can slip to a later pass): `video-call` —
-join a mock team meeting, mute/unmute, use chat, understand basic etiquette
-(camera optional, no need for real video since the etiquette is the point,
-not the technology).
+Optional stretch, lower priority: `video-call` — join a mock team meeting,
+mute/unmute, use chat, understand basic etiquette. Currently parked here
+(`03b-lesson-video-call.md`) but may move to Act VI (Office Administrator)
+where it fits a full-office environment better.
 
-See `level-2-shift-lead/01-lesson-calendar.md` (built),
-`level-2-shift-lead/02-lesson-files.md`,
-`level-2-shift-lead/03-lesson-spreadsheet.md` (both planned, not yet
-built), and the bonus `level-2-shift-lead/03b-lesson-video-call.md`.
+See `level-3-shift-lead/`.
+
+### Level 4: Reporting In
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `status-report` | Author a `=SUM()` formula yourself (not just verify one), cc a second recipient on a status email | Browser → Hsheets + Hmail |
+
+See `level-4-reporting-in/01-lesson-status-report.md`.
+
+### Level 5: Covering More Ground
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `triage` | Handle two competing requests (a calendar conflict, a file request) without dropping either | Browser → Hcal + Hdrive |
+
+See `level-5-covering-more-ground/01-lesson-triage.md`. This is the first
+"divided attention" level — closes out Act II.
 
 **Design notes:**
-- `calendar` chains directly off the `schedule`/`mail` skills from Track 2 —
+- `calendar` chains directly off the `schedule`/`mail` skills from Level 2 —
   same "notice a conflict, say something" shape, new tool.
 - `files` extends the file-picker pattern already built for `mail`'s
   attachment step (`PickerModal`) — same component, a folder layer added on
   top, plus a new "who can see this" permission choice.
 - `spreadsheet` is the first task that isn't itself the point — the *point*
   is still judgment (a formula-looking total can be wrong; do you just copy
-  it, or check it?), the spreadsheet is the setting. Keeps this from turning
-  into a spreadsheet-software tutorial.
+  it, or check it?), the spreadsheet is the setting.
+- `status-report` is the first task where the student *authors* a formula
+  instead of just reading/verifying one.
+- `triage` deliberately caps at exactly two competing items — more would
+  turn it into an overwhelm exercise instead of a divided-attention one.
 
-### Level 2 real-world practice
+---
 
-One combined assignment, given only after Track 4 is fully done — see
-`level-2-shift-lead/real-practice-assignment.md`.
+## Act III: Levels 6-9 — Shift Supervisor
 
-### Deferred: Planning What's Next
+**Story bridge:** finishing Level 5 earns a second promotion. New
+responsibility: deciding *for* the team, not just for yourself.
 
-Originally planned as Track 5 inside Level 2 — a college portal, a
-financial aid letter, an LMS-style coursework tab, and a library
-source-evaluation task, meant to run alongside Track 4 as a parallel
-storyline ("thinking about school while working"). Pulled out because most
-students in this program won't go on to higher education; the ones who do
-will mostly deal with Google Classroom, not a college portal or Google
-Scholar. The four lesson docs are written and kept in
-`curriculum/future-planning-what's-next/` (renumbered Lessons 1–4, no
-level assigned) for whenever a later level actually fits this content —
-see that folder's docs for the full design notes (e.g. `financial-aid`
-mirrors `paystub`'s shape, `coursework` mirrors `mail`'s shape, `research`
-is the one genuinely new judgment skill in the track).
+| Level | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 6 | `team-schedule` | Build part of a week's shift schedule for the crew, resolve a coverage gap | Browser → Hsheets |
+| 7 | `formula-check` | Use `SUM`/`AVERAGE`, spot and fix a formula pointing at the wrong range | Browser → Hsheets |
+| 8 | `team-meeting` | Create a meeting invite (not just accept one), write a short agenda | Browser → Hcal + Hdocs |
+| 9 | `priority-call` | Handle three competing demands at once — a complaint, a coverage gap, a scheduling conflict — capstone of the act | Browser → Hmail + Hsheets + Hcal |
+
+See `level-6-scheduling-the-team/` through `level-9-under-pressure/`.
+Finishing Level 9 awards the "Shift Supervisor" certificate and triggers
+the promotion into Assistant Manager.
+
+**Design notes:**
+- `formula-check` is a step up from Level 3/4's "does the number look
+  right" — the student opens the formula itself and reasons about *why*
+  it's wrong.
+- `team-meeting`'s agenda stays to 2-3 bullets by design — the skill is
+  "give the meeting a point," not formal minute-taking.
+- `priority-call` is the hardest lesson in the app so far by design — three
+  competing demands is the ceiling for one 15-20 minute session.
+
+---
+
+## Act IV: Levels 10-12 — Assistant Manager
+
+**Story bridge:** finishing Level 9 earns the promotion, and with it, an
+offer — Harborside will pay for a Bunker Hill Community College Business
+Essentials class. This is the story beat the whole program was originally
+scoped around landing near "Level 10."
+
+| Level | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 10 | `college-offer` | Read a formal offer letter, reply professionally, add a personal commitment to a calendar already full of shifts | Browser → Hmail + Hcal |
+| 11 | `budget-sheet` | Read a budget with an `IF`-based status column and a chart, flag what's over budget | Browser → Hsheets |
+| 12 | `reply-all` | Read a multi-department thread, decide reply vs. reply-all, edit a casual draft into a professional one | Browser → Hmail |
+
+See `level-10-an-offer/` through `level-12-reply-all/`. Finishing Level 12
+completes Act IV.
+
+**Design notes:**
+- `college-offer` is explicitly framed to the student as a short taste of
+  the kind of digital task college expects, not a semester simulation —
+  see that lesson's notes for the exact wording, and point students
+  genuinely considering higher ed toward a real program like Bunker Hill's
+  Transitions to College Program.
+- `budget-sheet` is a *reading* lesson (interpret an `IF` and a chart), not
+  a formula-writing lesson — writing conditional formulas can come later.
+- `reply-all` targets one of the most common real missteps for someone new
+  to office email culture: reply-all overuse. The skill is pausing on "who
+  actually needs to see this," not just fixing tone.
+
+---
+
+## Acts V-VII: scoped, not yet written level-by-level
+
+Full lesson docs for these will be written act-by-act, right before each is
+built — the same process Acts I-IV just went through. For now:
+
+**Act V — Bridge (elective), Levels 13-15.** A student picks one path (or
+skips this act entirely and goes straight to Act VI):
+- *Prepping for BHCC*: built from the four already-written lessons in
+  `future-planning-what's-next/` (`enrollment`, `financial-aid`,
+  `coursework`, `research`) — reframed as short tastes, sequenced into an
+  actual level for the first time instead of staying deferred.
+- *Front Office / Healthcare Admin*: appointment scheduling, patient
+  intake, a confidentiality judgment call, a small billing spreadsheet —
+  not yet written.
+
+**Act VI — Office Administrator, Levels 16-19.** New environment (an HQ
+office, not the cafe). Larger nested shared drive, meeting scheduling
+across multiple people's calendars, an expense report, a first slide deck,
+and (likely) the `video-call` task currently parked in Act III.
+
+**Act VII — Team Lead capstone, Levels 20-23.** Leading a meeting with
+agenda + minutes + follow-up, a performance-review-style write-up, a final
+level combining mail + docs + sheet + calendar into one deliverable, and a
+closing reflective/portfolio level.
 
 ---
 
@@ -249,17 +291,17 @@ The same lesson structure serves both without splitting into separate curricula:
   pay stub) is where beginners spend most of their time. This is what the
   in-task **Help** button is for — it's always available, never required, and
   it's the *only* place step-by-step hand-holding lives now (the app itself
-  doesn't narrate what to click, and from Level 2 on it doesn't even open the
+  doesn't narrate what to click, and from Level 3 on it doesn't even open the
   right tab for you).
 - **Workplace judgment** (what tone to use, when to ask instead of assume, how
   to word a schedule-change request) is where the college-background/
-  experienced students should spend their attention — Track 3 in particular is
-  built around this, not around clicking.
+  experienced students should spend their attention — Level 2's judgment
+  tasks in particular, and every act after, are built around this, not
+  around clicking.
 - **Self-pacing does the differentiation for you**: a beginner spends the full
-  5 minutes getting comfortable with clicks; an experienced student blows
-  through a task in under a minute and reaches the end-of-level real practice
-  faster. Nobody needs to be held back or given separate material — the task
-  is the same, the time spent just differs.
+  15-20 minutes getting comfortable with clicks; an experienced student blows
+  through a level in a few minutes. Nobody needs to be held back or given
+  separate material — the task is the same, the time spent just differs.
 - When you *do* want to stretch the stronger students, add an optional "extra
   challenge" line to the end-of-level real-practice assignment rather than a
   separate per-lesson worksheet — keeps things low-prep for you and doesn't
@@ -271,13 +313,14 @@ The same lesson structure serves both without splitting into separate curricula:
 
 1. **We will learn...** (1 objective, plain language, read aloud if needed)
 2. **Watch** — 1-minute teacher demo or short screen-recording, if available
-3. **Simulator practice** (~5 min) — do the task in the app, at least
-   twice if it's quick; the Help button is available the whole time, the
-   Objectives panel shows what track/task is current
+3. **Simulator practice** (~15-20 min per level) — do the task in the app,
+   at least twice if it's quick; the Help button is available the whole
+   time, the Objectives panel shows what track/task is current
 4. **Confidence check-in** — 3 quick self-rating questions ("I could do this at
    work," "I would ask for help if," etc.) — not a graded quiz, alongside the
    points/certificate the app already awarded automatically
 
-Real-world practice is **not** part of the per-lesson template anymore — it
-happens once, at the end of the level, per that level's own
-`real-practice-assignment.md`.
+Real-world practice is **optional and supplementary**, never part of the
+per-lesson template, and never a gate — it happens once, at the end of the
+level, per that level's own `real-practice-assignment.md`, and a student
+who skips it moves on exactly the same as one who doesn't.

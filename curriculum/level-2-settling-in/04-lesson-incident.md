@@ -1,10 +1,10 @@
-# Lesson 5: File an Incident Report
+# Lesson 4: File an Incident Report
 
-**Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 3 — Judgment & Follow-Through
+**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 3 — Judgment & Follow-Through
 **Task key:** `incident` · **Status:** built — a new "Incident Report" Browser
 tab holds a planted scenario (a customer slip near the front door) and a
 what/when/where form that submits to Maria.
-**Prerequisite:** Track 2 complete
+**Prerequisite:** Track 2 complete (Lessons 1–3)
 
 ## We will learn...
 - write up what happened, in order, in a tone that's clear and professional —
@@ -13,11 +13,13 @@ what/when/where form that submits to Maria.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Incident Report tab always shows the
       same scenario.
-- [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
-      assignment (`real-practice-assignment.md`), given after Track 3 is done.
-      When you do assign it, have 2–3 example phrasings ready for this skill
-      (one too vague, one over-explained, one "just right") — this is about
-      calibration, not a single correct template.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 2 wrap-up assignment
+      (`real-practice-assignment.md`), offered after Track 3 is done. Never a
+      gate — a student who skips it still moves on. If you do offer it, have
+      2–3 example phrasings ready for this skill (one too vague, one
+      over-explained, one "just right") — this is about calibration, not a
+      single correct template.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Incident Report** tab.

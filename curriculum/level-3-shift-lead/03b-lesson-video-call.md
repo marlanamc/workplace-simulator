@@ -1,9 +1,12 @@
 # Bonus Lesson: Join a Team Meeting
 
 **Time:** ~5 minutes (simulator only — no separate homework) · **Level:**
-2 — Shift Lead · **Track:** 4 — Growing at Work (optional, lower priority)
+3 — Shift Lead · **Track:** 4 — Growing at Work (optional, lower priority)
 **Task key:** `video-call` · **Status:** not built yet, and not a required
-lesson — this is a stretch task that can slip if time runs short.
+lesson — this is a stretch task that can slip if time runs short. Per the
+current roadmap (`00-scope-and-sequence.md`), this may end up moved to the
+Office Administrator act (Level 16+) instead, where video-call etiquette
+fits a full-office environment better — treat it as parked here for now.
 **Prerequisite:** none within Track 4 — can be done any time after Lesson 1
 
 ## We will learn...
