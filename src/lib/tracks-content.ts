@@ -61,7 +61,7 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   incident: {
     label: "File an incident report",
     description: "Write up what happened, in order, for your lead.",
-    built: false,
+    built: true,
   },
   handbook: {
     label: "Look something up",

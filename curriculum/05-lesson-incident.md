@@ -1,18 +1,18 @@
 # Lesson 5: File an Incident Report
 
 **Time:** 20 minutes total (10 + 10) · **Track:** 3 — Judgment & Follow-Through
-**Task key:** `incident` · **Status:** not built yet — no Incident Form exists
-in the app today; this would be a new Browser tab or intranet-style form.
+**Task key:** `incident` · **Status:** built — a new "Incident Report" Browser
+tab holds a planted scenario (a customer slip near the front door) and a
+what/when/where form that submits to Maria.
 **Prerequisite:** Track 2 complete
 
 ## We will learn...
 - write up what happened, in order, in a tone that's clear and professional —
   the first lesson that's really about judgment, not just software mechanics.
 
-## Before class (teacher prep) — once built
-- [ ] Simulator: a short scenario (something minor — a spill, a broken item,
-      a customer complaint) with a form asking what/when/where/who, then
-      routing it to a supervisor.
+## Before class (teacher prep)
+- [ ] Simulator: nothing to set up — the Incident Report tab always shows the
+      same scenario.
 - [ ] Google Classroom: post **"Lesson 5 Scenario"** — a short written
       situation, e.g.: *"A customer slipped near the front door. Nobody was
       hurt. Write up what happened for your manager."*
@@ -20,11 +20,13 @@ in the app today; this would be a new Browser tab or intranet-style form.
       "just right") to discuss if useful — this is about calibration, not a
       single correct template.
 
-## Part A: Simulator (~10 min) — once built
-1. Open the incident form from the Browser.
+## Part A: Simulator (~10 min)
+1. Open the **Browser** → **Incident Report** tab.
 2. Read the scenario.
-3. Fill in what happened, in the order it happened, with when and where.
-4. Submit it to the right person.
+3. Fill in when and where it happened, and write what happened, in order —
+   sentence starters are there if you want them.
+4. Click **Submit report** (a blank write-up just gets a friendly reminder
+   to add a sentence or two).
 
 ## Part B: Real Practice (~10 min)
 1. Read **"Lesson 5 Scenario"** in Google Classroom.
