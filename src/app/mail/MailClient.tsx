@@ -2,26 +2,23 @@
 
 import { useState } from "react";
 import { useWindowManager } from "@/lib/window-manager";
+import { useProgress } from "@/lib/progress-context";
 import {
   MAIL_COPY,
   BODY,
   STARTERS,
   LESSONS,
-  COACH,
   FILES,
   EMAILS,
   CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/mail/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
-import CoachBanner from "@/components/task/CoachBanner";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
-import ProgressBar from "@/components/task/ProgressBar";
 import SettingsPopover from "@/components/task/SettingsPopover";
-import { completeTask } from "../actions";
 
 type View = "empty" | "read" | "compose" | "done";
 
@@ -38,6 +35,7 @@ export default function MailClient() {
   const [picker, setPicker] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
+  const { markComplete } = useProgress();
 
   const c = MAIL_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
@@ -69,7 +67,7 @@ export default function MailClient() {
     if (!attached) return say(T("Maria asked for the file. Click Attach file before you send.", "Maria pidió el archivo. Haz clic en Adjuntar archivo antes de enviar."));
     setView("done");
     setStep(5);
-    completeTask("mail", "reply_with_attachment");
+    markComplete("mail", "reply_with_attachment");
   };
 
   const restart = () => {
@@ -82,8 +80,6 @@ export default function MailClient() {
     setPicker(false);
   };
 
-  const stepLabel = T(`Step ${Math.min(step + 1, 5)} of 5`, `Paso ${Math.min(step + 1, 5)} de 5`);
-
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
       {/* task bar */}
@@ -93,13 +89,6 @@ export default function MailClient() {
             ✉
           </span>
           <span className="text-[15px] font-medium">WorkMail</span>
-        </div>
-
-        <div className="mx-2 hidden h-6 w-px bg-[var(--border)] sm:block" />
-
-        <div className="hidden flex-col sm:flex">
-          <span className="text-[13px] font-medium text-[var(--text-primary)]">{c.taskTitle}</span>
-          <span className="text-[12px] text-[var(--text-tertiary)]">{stepLabel}</span>
         </div>
 
         <div className="flex-1" />
@@ -128,16 +117,6 @@ export default function MailClient() {
           }}
         />
       </div>
-
-      <ProgressBar value={step} max={5} />
-
-      {/* goal line, mobile-friendly + always visible but compact */}
-      <div className="flex items-center gap-2 border-b border-[var(--border)] bg-white px-4 py-2.5 sm:hidden">
-        <span className="text-[13px] font-medium">{c.taskTitle}</span>
-        <span className="text-[12px] text-[var(--text-tertiary)]">· {stepLabel}</span>
-      </div>
-
-      {step < 5 && <CoachBanner text={COACH[lang][lessonIdx]} />}
 
       {/* main two-pane area */}
       <div className="flex flex-1 min-h-0">

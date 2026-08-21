@@ -11,6 +11,7 @@ import {
   type Lang,
 } from "@/lib/desktop-content";
 import { useWindowManager } from "@/lib/window-manager";
+import { useProgress } from "@/lib/progress-context";
 import { useNudge } from "@/lib/use-nudge";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -65,6 +66,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
   const [brightness, setBrightness] = useState(80);
   const { nudge, say } = useNudge(4200);
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
+  const { points, justEarnedPoints } = useProgress();
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -126,6 +128,19 @@ export default function Shelf({ displayName }: { displayName: string }) {
             </button>
           ))}
         </div>
+        {/* points HUD */}
+        <div
+          className={`mr-1 flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5 text-[13px] font-semibold text-white transition-transform ${
+            justEarnedPoints ? "scale-110" : ""
+          }`}
+        >
+          <span aria-hidden>★</span>
+          {points}
+          {justEarnedPoints && (
+            <span className="text-[11px] font-semibold text-[var(--success)]">+{justEarnedPoints}</span>
+          )}
+        </div>
+
         {/* system tray — click opens the account menu, like ChromeOS */}
         <div className="relative" ref={accountBoxRef}>
           <button

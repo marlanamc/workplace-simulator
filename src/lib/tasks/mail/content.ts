@@ -5,8 +5,6 @@ export const MAIL_COPY: Record<Lang, {
   inbox: string;
   compose: string;
   emptyPane: string;
-  taskTitle: string;
-  taskGoal: string;
   helpBtn: string;
   langBtn: string;
   reply: string;
@@ -39,15 +37,12 @@ export const MAIL_COPY: Record<Lang, {
   open: string;
   colName: string;
   colDate: string;
-  steps: string[];
 }> = {
   en: {
     practiceBanner: "Practice space — nothing here is real",
     inbox: "Inbox",
     compose: "Compose",
     emptyPane: "Click an email on the left to open it.",
-    taskTitle: "Answer your supervisor",
-    taskGoal: "Maria needs last month's safety report. Read her email, reply, and send the file.",
     helpBtn: "Help me with this step",
     langBtn: "Español",
     reply: "Reply",
@@ -80,15 +75,12 @@ export const MAIL_COPY: Record<Lang, {
     open: "Open",
     colName: "Name",
     colDate: "Date modified",
-    steps: ["Open Maria's email", "Read what she's asking for", "Click Reply", "Attach the safety report", "Send your reply"],
   },
   es: {
     practiceBanner: "Espacio de práctica — nada aquí es real",
     inbox: "Bandeja",
     compose: "Redactar",
     emptyPane: "Haz clic en un correo a la izquierda para abrirlo.",
-    taskTitle: "Responde a tu supervisora",
-    taskGoal: "Maria necesita el reporte de seguridad del mes pasado. Lee su correo, responde y envía el archivo.",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     reply: "Responder",
@@ -121,7 +113,6 @@ export const MAIL_COPY: Record<Lang, {
     open: "Abrir",
     colName: "Nombre",
     colDate: "Fecha",
-    steps: ["Abre el correo de Maria", "Lee lo que ella pide", "Haz clic en Responder", "Adjunta el reporte de seguridad", "Envía tu respuesta"],
   },
 };
 
@@ -156,11 +147,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus archivos. Lo descargado suele estar en Descargas.", "Haz clic en safety-report-july.pdf para adjuntarlo."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
     { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto — ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
   ],
-};
-
-export const COACH: Record<Lang, string[]> = {
-  en: ["Click the email from Maria Delgado.", "Read her message, then click Reply.", "Type a short answer, or tap a sentence starter below.", "Click Attach file and choose the safety report.", "Everything's ready. Click Send."],
-  es: ["Haz clic en el correo de Maria Delgado.", "Lee su mensaje y haz clic en Responder.", "Escribe una respuesta corta, o toca una frase de ayuda.", "Haz clic en Adjuntar archivo y elige el reporte.", "Todo está listo. Haz clic en Enviar."],
 };
 
 const wrongHint = (en: string, es: string): Localized => ({ en, es });

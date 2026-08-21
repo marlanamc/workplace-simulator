@@ -17,3 +17,11 @@ export async function completeTask(taskKey: string, badgeKey?: string) {
   if (badgeKey) await awardBadge(learnerId, badgeKey);
   return { ok: true as const };
 }
+
+/** Awards a track-completion certificate, stored as a badge keyed "track:<trackKey>". */
+export async function awardCertificate(trackKey: string) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) return { ok: false as const };
+  await awardBadge(learnerId, `track:${trackKey}`);
+  return { ok: true as const };
+}

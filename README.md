@@ -53,14 +53,45 @@ intact, and the shelf can show a "running" indicator for open apps.
   and `TASK_KEYS` — the underlying curriculum tasks used for progress, independent of how
   many desktop app icons exist (several tasks live as browser tabs, not separate apps).
 - `src/lib/tasks/<task>/content.ts` — one file per graded task (starting with `mail/`)
-  holding that task's copy, lessons, coach steps, and pickable items.
+  holding that task's copy, lessons, and pickable items.
 - `src/lib/task-types.ts` — shared shapes (`Lesson`, `ConfidenceOption`, `PickableItem`) every
   task's content implements, so new tasks don't redefine them.
 - `src/components/task/` — task-agnostic UI reused across tasks: `HelpDrawer`,
-  `ConfidenceCheck`, `CoachBanner`, `SettingsPopover`, `ProgressBar`, `PickerModal`,
-  `NudgeToast`.
+  `ConfidenceCheck`, `SettingsPopover`, `PickerModal`, `NudgeToast`. Deliberately does **not**
+  include a step counter or an inline "do this next" banner — see Tracks below.
 - `src/lib/use-nudge.ts` / `src/lib/use-click-outside.ts` — small shared hooks (coaching
   toast auto-dismiss; closing a popover on an outside click).
+
+## Tracks, points, and certificates
+
+Learners move through **tracks** — small groups of tasks, all set in the same Harborside
+Cafe story/desktop, that unlock in order. This is deliberately *not* a step-by-step wizard
+inside each app (no "Step 1 of 5" header, no inline "click here next" banner) — apps stay
+clean and realistic. Instead:
+
+- `src/lib/tracks-content.ts` — `TRACKS` (each a title + ordered `taskKeys`) and `TASK_INFO`
+  (a label/description per task, plus a `built` flag for tasks that exist in the curriculum
+  but aren't implemented yet). Only `mail` is `built: true` today; `schedule`, `timeclock`,
+  `paystub`, `incident`, and `handbook` are defined but show as "not built yet" — the
+  mechanics are in place for when that content gets built (schedule/pay-stub-style tasks
+  will live as new Browser tabs — a "Sheets"-style Google-Workspace tab, not a separate
+  desktop app — matching the Browser-as-hub pattern already used for Employee Portal).
+- `src/lib/progress-context.tsx` — `ProgressProvider`/`useProgress()`, mounted once by
+  `DesktopClient` and seeded from the server. Holds `completedTaskKeys` client-side (fixing
+  a staleness bug: since windows never navigate away from `/`, the server-fetched progress
+  would otherwise go stale for the rest of the session), derives `points` from it
+  (`POINTS_PER_TASK` each), and `markComplete(taskKey, badgeKey?)` — call this instead of the
+  `completeTask` server action directly, so the desktop/shelf/objectives panel update
+  immediately. Detects when a track just became fully complete and fires the
+  `awardCertificate` server action + a celebration.
+- `src/components/ObjectivesPanel.tsx` — a dismissible side panel (not baked into any app)
+  showing all tracks, the active one highlighted, each task's one-line description, and
+  earned certificates. This is the "what should I do" surface now; the coach banner and
+  step counter previously inside WorkMail were removed in favor of it.
+- `src/components/TrackCelebration.tsx` — the certificate-earned modal, shown the moment a
+  track completes (even if that's mid-task, over the "done" screen).
+- The Shelf's system tray shows a live points total with a brief "+100" pop
+  (`justEarnedPoints` in the progress context).
 
 ## Getting started
 
@@ -75,10 +106,6 @@ Open [http://localhost:3000](http://localhost:3000). To change the DB schema, ed
 
 ## Design notes
 
-- Only the email task ("Answer your supervisor") is graded/wired to persistence right now.
-  Employee Portal, Handbook, and PDF Reader are built out to be real and explorable, but not
-  yet tied to badges/completions — that's the next layer to add, once the shell itself feels
-  solid.
 - Wrong actions (wrong email, Forward instead of Reply, wrong file) never break the task —
   they show a short coaching toast and let the learner keep trying.
 - Accounts are intentionally low-friction for a shared classroom device: first name + a

@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { APP_DEFS, DESKTOP_COPY, TASK_KEYS, type Lang, type TaskKey } from "@/lib/desktop-content";
+import { APP_DEFS, DESKTOP_COPY, type Lang, type TaskKey } from "@/lib/desktop-content";
+import { TRACKS } from "@/lib/tracks-content";
 import Shelf, { AppIcon, SHELF_HEIGHT } from "@/components/Shelf";
+import ObjectivesPanel from "@/components/ObjectivesPanel";
+import TrackCelebration from "@/components/TrackCelebration";
 import { WindowManagerProvider, useWindowManager } from "@/lib/window-manager";
+import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import BrowserClient from "./browser/BrowserClient";
 import PdfReaderClient from "./pdf-reader/PdfReaderClient";
 
@@ -31,20 +35,15 @@ function AppWindow({ active, children }: { active: boolean; children: ReactNode 
   );
 }
 
-function DesktopShell({
-  displayName,
-  completedTaskKeys,
-}: {
-  displayName: string;
-  completedTaskKeys: TaskKey[];
-}) {
+function DesktopShell({ displayName }: { displayName: string }) {
   const [lang] = useState<Lang>("en");
   const { apps, active, openApp } = useWindowManager();
+  const { completedTaskKeys, points } = useProgress();
 
   const c = DESKTOP_COPY[lang];
   const focusApp = APP_DEFS[0];
   const mailDone = completedTaskKeys.includes("mail");
-  const doneCount = TASK_KEYS.filter((k) => completedTaskKeys.includes(k)).length;
+  const totalTaskCount = TRACKS.reduce((n, t) => n + t.taskKeys.length, 0);
 
   const anyAppActive = active !== null;
 
@@ -114,11 +113,11 @@ function DesktopShell({
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-muted)]">
                 <div
                   className="h-full rounded-full bg-[var(--accent)]"
-                  style={{ width: `${Math.round((doneCount / TASK_KEYS.length) * 100)}%` }}
+                  style={{ width: `${Math.round((completedTaskKeys.length / totalTaskCount) * 100)}%` }}
                 />
               </div>
               <span className="whitespace-nowrap text-[13px] font-medium text-[var(--text-tertiary)]">
-                {doneCount}/{TASK_KEYS.length} {c.progressWord}
+                {points} pts
               </span>
             </div>
           </div>
@@ -142,15 +141,26 @@ function DesktopShell({
         </div>
       )}
 
+      <ObjectivesPanel />
+      <TrackCelebration />
       <Shelf displayName={displayName} />
     </div>
   );
 }
 
-export default function DesktopClient(props: { displayName: string; completedTaskKeys: TaskKey[] }) {
+export default function DesktopClient(props: {
+  displayName: string;
+  completedTaskKeys: TaskKey[];
+  certificateTrackKeys: string[];
+}) {
   return (
     <WindowManagerProvider>
-      <DesktopShell {...props} />
+      <ProgressProvider
+        initialCompletedTaskKeys={props.completedTaskKeys}
+        initialCertificateTrackKeys={props.certificateTrackKeys}
+      >
+        <DesktopShell displayName={props.displayName} />
+      </ProgressProvider>
     </WindowManagerProvider>
   );
 }
