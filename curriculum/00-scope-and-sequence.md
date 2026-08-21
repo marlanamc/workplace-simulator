@@ -66,7 +66,7 @@ Unchanged — this happens before the student ever opens the simulator.
 ## Track 1: Getting Started
 
 One task — the first thing a new hire actually has to do: answer a message
-from a supervisor. **This is the only track built and playable today.**
+from a supervisor. **All three tracks are now built and playable.**
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
@@ -79,12 +79,9 @@ lessons (reply, then attach) — the built app already asks for both in one flow
 
 ## Track 2: Schedules & Documents
 
-*Not yet built in the app* — the tasks below are written and ready, but the
-Employee Portal's schedule/time-clock/pay-stub sections are currently
-read-only exploration, not graded tasks. Building them is the next content
-pass. Any spreadsheet-editing practice (a roster, a tally) will live as a new
-"Sheets"-style tab inside the Browser, alongside WorkMail and the Employee
-Portal — not as a separate desktop app.
+**Built.** Any future spreadsheet-editing practice (a roster, a tally) will
+live as a new "Sheets"-style tab inside the Browser, alongside WorkMail and
+the Employee Portal — not as a separate desktop app.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
@@ -98,9 +95,9 @@ See `02-lesson-schedule.md`, `03-lesson-timeclock.md`, `04-lesson-paystub.md`.
 
 ## Track 3: Judgment & Follow-Through
 
-*Not yet built in the app.* This is where tool confidence turns into workplace
-judgment — writing something under a little social pressure, and knowing where
-to look something up instead of guessing.
+**Built.** This is where tool confidence turns into workplace judgment —
+writing something under a little social pressure, and knowing where to look
+something up instead of guessing.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|

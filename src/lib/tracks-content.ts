@@ -66,7 +66,7 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   handbook: {
     label: "Look something up",
     description: "Find an answer in the employee handbook under pressure.",
-    built: false,
+    built: true,
   },
 };
 

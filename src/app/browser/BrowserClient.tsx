@@ -3,7 +3,7 @@
 import { useState } from "react";
 import MailClient from "../mail/MailClient";
 import PortalPage from "./PortalPage";
-import HandbookPage from "./HandbookPage";
+import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import { SHELF_HEIGHT } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
@@ -108,7 +108,7 @@ export default function BrowserClient() {
         {activeTab === "mail" && <MailClient />}
         {activeTab === "portal" && <PortalPage />}
         {activeTab === "incident" && <IncidentTask />}
-        {activeTab === "handbook" && <HandbookPage />}
+        {activeTab === "handbook" && <HandbookTask />}
       </div>
     </div>
   );
