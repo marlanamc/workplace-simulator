@@ -62,7 +62,7 @@ export const FOLDER_ICONS: Record<string, LucideIcon> = {
   "Manager Memos": StickyNote,
 };
 
-export { Flag, Lock, Target, FileText, PartyPopper, Hourglass, Coffee, Languages, Check } from "lucide-react";
+export { Flag, Lock, Target, FileText, PartyPopper, Hourglass, Coffee, Languages, Check, Trophy } from "lucide-react";
 
 export function CircleGlyph({
   icon: Icon,

@@ -15,7 +15,7 @@ import { useNudge } from "@/lib/use-nudge";
 import { QuickSettingsClock, ShelfClock } from "@/components/LiveClock";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
-import { APP_ICONS, TAB_ICONS, Flag, Lock, Target, Languages } from "@/lib/icons";
+import { APP_ICONS, TAB_ICONS, Flag, Lock, Target, Languages, Trophy } from "@/lib/icons";
 import { Check } from "lucide-react";
 import { logout } from "@/app/actions";
 import { LEVELS, ACTS, isLevelComplete, levelForTrack, furthestLevelIndex, taskKeysForLevel } from "@/lib/tracks-content";
@@ -354,7 +354,7 @@ export default function Shelf({
             onAwardsOpenChange(!awardsOpen);
           }}
         >
-          <AppIcon icon="🏆" color="#e8a317" size={32} />
+          <AppIcon icon={<Trophy size={16} strokeWidth={2.25} />} color="#e8a317" size={32} />
         </ShelfPin>
 
         <div className="flex-1" />
