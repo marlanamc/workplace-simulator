@@ -1,4 +1,4 @@
-import type { TaskKey } from "./desktop-content";
+import type { AppKey, TaskKey } from "./desktop-content";
 
 export const POINTS_PER_TASK = 100;
 
@@ -82,3 +82,22 @@ export function isTrackComplete(track: Track, completedTaskKeys: TaskKey[]): boo
 export function activeTrack(completedTaskKeys: TaskKey[]): Track {
   return TRACKS.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? TRACKS[TRACKS.length - 1];
 }
+
+/** The first not-yet-done task in a track, or null if the track is fully complete. */
+export function nextTaskInTrack(track: Track, completedTaskKeys: TaskKey[]): TaskKey | null {
+  return track.taskKeys.find((k) => !completedTaskKeys.includes(k)) ?? null;
+}
+
+export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
+  return TRACKS.every((t) => isTrackComplete(t, completedTaskKeys));
+}
+
+/** Where a task actually lives, so the desktop's "do this next" card can open the right thing. */
+export const TASK_LOCATIONS: Record<TaskKey, { appKey: AppKey; tab?: string; ctaLabel: string }> = {
+  mail: { appKey: "browser", tab: "mail", ctaLabel: "Open WorkMail" },
+  schedule: { appKey: "browser", tab: "portal", ctaLabel: "Open Employee Portal" },
+  timeclock: { appKey: "browser", tab: "portal", ctaLabel: "Open Employee Portal" },
+  paystub: { appKey: "browser", tab: "portal", ctaLabel: "Open Employee Portal" },
+  incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Incident Report" },
+  handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Handbook" },
+};

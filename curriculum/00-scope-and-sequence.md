@@ -132,6 +132,9 @@ join a mock team meeting, mute/unmute, use chat, understand basic etiquette
 (camera optional, no need for real video since the etiquette is the point,
 not the technology).
 
+See `07-lesson-calendar.md`, `08-lesson-files.md`, `09-lesson-spreadsheet.md`,
+and the bonus `09b-lesson-video-call.md`.
+
 **Design notes:**
 - `calendar` chains directly off the `schedule`/`mail` skills from Track 2 —
   same "notice a conflict, say something" shape, new tool.
@@ -164,6 +167,9 @@ them is actually new.
 | 11 | `financial-aid` | Read a financial aid award letter (a real document, not a summary) and find the amount and the accept-by deadline | PDF Reader + Browser → College Portal |
 | 12 | `coursework` | Read a syllabus, find an assignment's due date, and submit a short response — same "read it, attach it, send it" shape as `mail`, in a new tool | Browser → a new Coursework (LMS) tab |
 | 13 | `research` | Search a library-style database for a source on a given topic, and tell a credible source from an unreliable one | Browser → a new Library Search tab |
+
+See `10-lesson-enrollment.md`, `11-lesson-financial-aid.md`,
+`12-lesson-coursework.md`, `13-lesson-research.md`.
 
 **Design notes:**
 - `financial-aid` mirrors `paystub`'s shape exactly (open a real document,

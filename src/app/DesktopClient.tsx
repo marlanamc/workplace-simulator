@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { APP_DEFS, DESKTOP_COPY, type Lang, type TaskKey } from "@/lib/desktop-content";
-import { TRACKS } from "@/lib/tracks-content";
+import { TASK_INFO, TASK_LOCATIONS, TRACKS, nextTaskInTrack } from "@/lib/tracks-content";
 import Shelf, { AppIcon, SHELF_HEIGHT } from "@/components/Shelf";
 import ObjectivesPanel from "@/components/ObjectivesPanel";
 import TrackCelebration from "@/components/TrackCelebration";
@@ -38,12 +38,14 @@ function AppWindow({ active, children }: { active: boolean; children: ReactNode 
 function DesktopShell({ displayName }: { displayName: string }) {
   const [lang] = useState<Lang>("en");
   const { apps, active, openApp } = useWindowManager();
-  const { completedTaskKeys, points } = useProgress();
+  const { completedTaskKeys, points, currentTrack, learnerId } = useProgress();
 
   const c = DESKTOP_COPY[lang];
   const focusApp = APP_DEFS[0];
-  const mailDone = completedTaskKeys.includes("mail");
   const totalTaskCount = TRACKS.reduce((n, t) => n + t.taskKeys.length, 0);
+  const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
+  const nextTaskInfo = nextTaskKey ? TASK_INFO[nextTaskKey] : null;
+  const nextTaskLocation = nextTaskKey ? TASK_LOCATIONS[nextTaskKey] : null;
 
   const anyAppActive = active !== null;
 
@@ -83,31 +85,35 @@ function DesktopShell({ displayName }: { displayName: string }) {
               <AppIcon icon={focusApp.icon} color={focusApp.color} size={44} />
               <div>
                 <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-wide text-[var(--accent)]">
-                  {c.nextLabel}
-                  {mailDone && (
-                    <span className="rounded-full bg-[var(--success-tint)] px-2 py-0.5 text-[10px] font-semibold text-[var(--success)]">
-                      {c.done}
-                    </span>
-                  )}
+                  {nextTaskInfo ? c.nextLabel : "🎉"}
                 </div>
                 <div className="text-[21px] font-medium leading-tight text-[var(--text-primary)]">
-                  {c.focusHeadline}
+                  {nextTaskInfo ? nextTaskInfo.label : c.allDoneHeadline}
                 </div>
               </div>
             </div>
 
             <p className="text-[15px] leading-relaxed text-[var(--text-secondary)]">
-              {lang === "en"
-                ? "Maria needs last month's safety report. Open the Browser, read her email, and reply with the file."
-                : "Maria necesita el reporte de seguridad del mes pasado. Abre el Navegador, lee su correo y responde con el archivo."}
+              {nextTaskInfo ? nextTaskInfo.description : c.allDoneBody}
             </p>
 
-            <button
-              onClick={() => openApp("browser", { tab: "mail" })}
-              className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
-            >
-              {c.focusCta}
-            </button>
+            {nextTaskLocation ? (
+              <button
+                onClick={() => openApp(nextTaskLocation.appKey, { tab: nextTaskLocation.tab })}
+                className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+              >
+                {nextTaskLocation.ctaLabel}
+              </button>
+            ) : (
+              <a
+                href={`/certificate/${learnerId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)]"
+              >
+                {c.allDoneCta}
+              </a>
+            )}
 
             <div className="flex items-center gap-3">
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--surface-muted)]">

@@ -73,8 +73,9 @@ export const DESKTOP_COPY: Record<Lang, {
   done: string;
   ready: string;
   locked: string;
-  focusHeadline: string;
-  focusCta: string;
+  allDoneHeadline: string;
+  allDoneBody: string;
+  allDoneCta: string;
 }> = {
   en: {
     practiceBanner: "Practice space — nothing here is real",
@@ -91,8 +92,9 @@ export const DESKTOP_COPY: Record<Lang, {
     done: "Done",
     ready: "Ready",
     locked: "Later",
-    focusHeadline: "Answer Maria's email",
-    focusCta: "Open WorkMail",
+    allDoneHeadline: "You've completed every track!",
+    allDoneBody: "Every task in the simulator is done. Check out your certificate, or do any task again for more practice.",
+    allDoneCta: "View my certificate",
   },
   es: {
     practiceBanner: "Espacio de práctica — nada aquí es real",
@@ -109,8 +111,9 @@ export const DESKTOP_COPY: Record<Lang, {
     done: "Hecho",
     ready: "Listo",
     locked: "Después",
-    focusHeadline: "Contesta el correo de Maria",
-    focusCta: "Abrir WorkMail",
+    allDoneHeadline: "¡Completaste todas las rutas!",
+    allDoneBody: "Ya terminaste todas las tareas del simulador. Mira tu certificado, o repite cualquier tarea para practicar más.",
+    allDoneCta: "Ver mi certificado",
   },
 };
 

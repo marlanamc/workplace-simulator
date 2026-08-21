@@ -113,17 +113,17 @@ export default function Shelf({ displayName }: { displayName: string }) {
             boxShadow: launcherOpen ? "0 0 0 2px #fff, 0 0 0 4px rgba(255,255,255,0.35)" : "inset 0 0 0 1px rgba(0,0,0,0.08)",
           }}
         />
-        <div className="flex flex-1 justify-center gap-1">
+        <div className="flex flex-1 items-stretch justify-center gap-1 self-stretch">
           {APP_DEFS.map((a) => (
             <button
               key={a.key}
               title={appCopy[a.key].name}
               onClick={() => toggleFromShelf(a.key)}
-              className="relative flex h-9 w-9 items-center justify-center rounded-lg text-[16px] text-white cursor-pointer hover:bg-white/10"
+              className="relative flex h-full w-9 items-center justify-center rounded-lg text-[16px] text-white cursor-pointer hover:bg-white/10"
             >
               <AppIcon icon={a.icon} color={a.color} size={30} />
               {isOpen(a.key) && (
-                <span className="absolute bottom-0.5 h-1 w-1 rounded-full bg-white" aria-hidden />
+                <span className="absolute bottom-0.5 h-[3px] w-6 rounded-full bg-white" aria-hidden />
               )}
             </button>
           ))}
