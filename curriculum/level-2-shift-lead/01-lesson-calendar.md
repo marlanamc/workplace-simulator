@@ -1,4 +1,4 @@
-# Lesson 7: Handle a Meeting Invite
+# Lesson 1: Handle a Meeting Invite
 
 **Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `calendar` · **Status:** built — the first task of Level 2.
@@ -19,7 +19,7 @@ new schedule, a new week at Harborside Cafe)
 - [ ] Simulator: nothing to set up — the Calendar tab always has the same
       invite (a weekly huddle on a day the student isn't scheduled).
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`13a-level2-real-practice.md`), given after
+      wrap-up assignment (`real-practice-assignment.md`), given after
       Track 5 is done.
 
 ## Simulator practice (~5 min)
@@ -30,7 +30,7 @@ new schedule, a new week at Harborside Cafe)
 3. Check it against your schedule — does it overlap a shift?
 4. If it does, don't just accept it — click **Propose a different time**
    and write a short reply, the same way you asked for a shift swap in
-   Lesson 2.
+   Level 1's Lesson 2.
 5. If it doesn't conflict, accept it.
 
 ## Confidence check-in
@@ -38,6 +38,6 @@ new schedule, a new week at Harborside Cafe)
 - "The part that felt hardest was: ___________"
 
 ## Notes for next time
-- This is deliberately the *same skill* as Lesson 2 (`schedule`) in a new
-  tool — if a student breezes through this, that's the point landing: new
-  logo, same judgment call.
+- This is deliberately the *same skill* as Level 1's Lesson 2 (`schedule`)
+  in a new tool — if a student breezes through this, that's the point
+  landing: new logo, same judgment call.

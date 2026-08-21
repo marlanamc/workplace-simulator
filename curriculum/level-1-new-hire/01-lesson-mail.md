@@ -13,7 +13,7 @@
       WorkMail" (or the Browser app → WorkMail tab) already loads this scenario.
 - [ ] No Google Classroom post needed yet — real-world practice for this
       skill is bundled into the Level 1 wrap-up assignment, given only after
-      Track 3 is done. See `06a-level1-real-practice.md`.
+      Track 3 is done. See `real-practice-assignment.md`.
 
 ## Simulator practice (~5 min)
 1. Sign in with your name, PIN, and class code, then open the **Browser** →

@@ -1,8 +1,8 @@
-# Lesson 9: Read and Trust a Total
+# Lesson 3: Read and Trust a Total
 
 **Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `spreadsheet` · **Status:** not built yet.
-**Prerequisite:** Lesson 8
+**Prerequisite:** Lesson 2
 
 ## We will learn...
 - enter numbers into a shared spreadsheet, and notice when a total looks
@@ -13,7 +13,7 @@
       hours) in a new Sheets-style Browser tab. One cell's total is planted
       to be wrong (a formula pointing at the wrong row, or a stale number).
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`13a-level2-real-practice.md`), given after
+      wrap-up assignment (`real-practice-assignment.md`), given after
       Track 5 is done.
 
 ## Simulator practice (~5 min) — once built
@@ -23,7 +23,7 @@
 4. Add up the numbers yourself (or estimate) and check: does the total
    match?
 5. If it doesn't, don't just accept it — flag it, the same way you flagged
-   an hours mismatch in Lesson 3.
+   an hours mismatch in Level 1's Lesson 3.
 
 ## Confidence check-in
 - "I know how to double-check a total instead of just trusting it." 🙂 😐 🙁

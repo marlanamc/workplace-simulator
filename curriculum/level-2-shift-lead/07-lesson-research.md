@@ -1,10 +1,10 @@
-# Lesson 13: Tell a Credible Source From an Unreliable One
+# Lesson 7: Tell a Credible Source From an Unreliable One
 
 **Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `research` · **Status:** not built yet — the last lesson in
 the current curriculum plan, and the one genuinely new judgment skill in
 Track 5. Finishing this (and Track 4) completes Level 2.
-**Prerequisite:** Lesson 12
+**Prerequisite:** Lesson 6
 
 ## We will learn...
 - search for a source on a topic, and tell a credible one from an
@@ -18,7 +18,7 @@ Track 5. Finishing this (and Track 4) completes Level 2.
       prompt to pick which one to cite.
 - [ ] Google Classroom: this is the last lesson in Level 2 — post the
       combined **Level 2 wrap-up assignment** now (see
-      `13a-level2-real-practice.md`), once both Track 4 and Track 5 are
+      `real-practice-assignment.md`), once both Track 4 and Track 5 are
       done. Have 2–3 quick "why" talking points ready for this skill's
       decoys (why the promotional one is weak, why outdated matters, why a
       forum post isn't a citable source) — this is a discussion skill as
@@ -49,4 +49,4 @@ instead of at the end of every track:
   ready for is: ___________"
 - "One thing I'd tell a friend starting this whole program: ___________"
 
-Assign the Level 2 wrap-up (`13a-level2-real-practice.md`) now.
+Assign the Level 2 wrap-up (`real-practice-assignment.md`) now.

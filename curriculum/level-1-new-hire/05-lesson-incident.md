@@ -14,7 +14,7 @@ what/when/where form that submits to Maria.
 - [ ] Simulator: nothing to set up — the Incident Report tab always shows the
       same scenario.
 - [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
-      assignment (`06a-level1-real-practice.md`), given after Track 3 is done.
+      assignment (`real-practice-assignment.md`), given after Track 3 is done.
       When you do assign it, have 2–3 example phrasings ready for this skill
       (one too vague, one over-explained, one "just right") — this is about
       calibration, not a single correct template.

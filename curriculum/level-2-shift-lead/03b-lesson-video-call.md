@@ -4,7 +4,7 @@
 2 — Shift Lead · **Track:** 4 — Growing at Work (optional, lower priority)
 **Task key:** `video-call` · **Status:** not built yet, and not a required
 lesson — this is a stretch task that can slip if time runs short.
-**Prerequisite:** none within Track 4 — can be done any time after Lesson 7
+**Prerequisite:** none within Track 4 — can be done any time after Lesson 1
 
 ## We will learn...
 - basic video-call etiquette (mute, camera, chat) — not the technology

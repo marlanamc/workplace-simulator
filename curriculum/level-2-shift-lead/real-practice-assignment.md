@@ -1,8 +1,8 @@
 # Level 2 Real-World Practice: Shift Lead Wrap-Up
 
 **When to assign:** only after a student has finished every track in
-Level 2 in the simulator — Growing at Work (Lessons 7–9) **and** Planning
-What's Next (Lessons 10–13). Not after each individual lesson.
+Level 2 in the simulator — Growing at Work (Lessons 1–3) **and** Planning
+What's Next (Lessons 4–7). Not after each individual lesson.
 
 **Why bundled, not per-lesson:** same reason as Level 1 — one focused
 real-world assignment at the end of the level beats seven small ones
@@ -13,18 +13,18 @@ Track 4 and Track 5 both live in Level 2 together.
 ## Before class (teacher prep)
 - [ ] Google Classroom: post **one** assignment — "Level 2 Wrap-Up" — with
       all of the following attached together:
-  - a short written meeting-invite scenario (Lesson 7)
+  - a short written meeting-invite scenario (Lesson 1)
   - *(once built)* a shared Google Drive folder for the sharing scenario
-    (Lesson 8)
+    (Lesson 2)
   - *(once built)* a real Google Sheet with a wrong-looking total
-    (Lesson 9)
+    (Lesson 3)
   - a real (or realistic mock) community college application page/PDF
-    (Lesson 10)
-  - a real-looking mock financial aid award letter PDF (Lesson 11)
+    (Lesson 4)
+  - a real-looking mock financial aid award letter PDF (Lesson 5)
   - a real short syllabus excerpt with an assignment and due date
-    (Lesson 12)
+    (Lesson 6)
   - the same style of source-evaluation search task, using a real library
-    database or Google Scholar (Lesson 13)
+    database or Google Scholar (Lesson 7)
 - [ ] Have the real FAFSA/financial-aid office contact info on hand — this
       level's content can surface real needs, not just practice ones.
 - [ ] One combined instruction sheet, not seven — use the student
@@ -64,7 +64,7 @@ school; treat that as a real conversation, not a curriculum item to check
 off.
 
 ## Confidence check-in — end of Level 2
-The app already asked a version of this at the end of Lesson 13 — no need
+The app already asked a version of this at the end of Lesson 7 — no need
 to repeat it, but it's worth reading the student's answers with them:
 - "Out of everything since the promotion (calendar, files, spreadsheets,
   college, financial aid, coursework, research), the thing I feel most

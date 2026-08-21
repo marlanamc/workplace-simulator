@@ -63,11 +63,19 @@ begins.
 
 **Real-world practice moves to the level boundary too.** Instead of several
 small Google Classroom assignments (one per lesson), the class gets **one**
-combined assignment once the whole level is done — see each level's
-`*-real-practice.md` doc. This is the single biggest change from earlier
-drafts: less context-switching, one wrap-up moment instead of constant
-back-and-forth, and a natural place to pause and reflect before the world
-changes again.
+combined assignment once the whole level is done — see each level folder's
+`real-practice-assignment.md`, kept separate from the numbered lesson docs
+so it's never mistaken for "just another lesson." This is the single
+biggest change from earlier drafts: less context-switching, one wrap-up
+moment instead of constant back-and-forth, and a natural place to pause and
+reflect before the world changes again.
+
+**File layout:** each level has its own folder — `level-1-new-hire/` and
+`level-2-shift-lead/` — with lessons numbered `01`, `02`, `03`… *within that
+level* (not globally), plus its own `real-practice-assignment.md`. A lesson
+in one level referencing a lesson in the other always says "Level 1's
+Lesson 2" or similar, since both levels have their own Lesson 1, Lesson 2,
+etc.
 
 | Level | Tracks inside it | Status |
 |---|---|---|
@@ -109,8 +117,9 @@ from a supervisor.
 |---|---|---|---|
 | 1 | `mail` | Read a supervisor's email, reply, and attach the right file | Browser → WorkMail |
 
-See `01-lesson-mail.md`. This single lesson covers what used to be two separate
-lessons (reply, then attach) — the built app already asks for both in one flow.
+See `level-1-new-hire/01-lesson-mail.md`. This single lesson covers what used
+to be two separate lessons (reply, then attach) — the built app already asks
+for both in one flow.
 
 ### Track 2: Schedules & Documents
 
@@ -120,7 +129,9 @@ lessons (reply, then attach) — the built app already asks for both in one flow
 | 3 | `timeclock` | Clock out and confirm your hours look right | Browser → Employee Portal |
 | 4 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Employee Portal + PDF Reader |
 
-See `02-lesson-schedule.md`, `03-lesson-timeclock.md`, `04-lesson-paystub.md`.
+See `level-1-new-hire/02-lesson-schedule.md`,
+`level-1-new-hire/03-lesson-timeclock.md`,
+`level-1-new-hire/04-lesson-paystub.md`.
 
 ### Track 3: Judgment & Follow-Through
 
@@ -133,15 +144,15 @@ something up instead of guessing.
 | 5 | `incident` | Write up what happened, in order, in a professional tone | Browser → Incident Report |
 | 6 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Handbook |
 
-See `05-lesson-incident.md`, `06-lesson-handbook.md`. Finishing `handbook`
-completes both the "Judgment & Follow-Through" certificate and Level 1
-itself.
+See `level-1-new-hire/05-lesson-incident.md`,
+`level-1-new-hire/06-lesson-handbook.md`. Finishing `handbook` completes
+both the "Judgment & Follow-Through" certificate and Level 1 itself.
 
 ### Level 1 real-world practice
 
 One combined assignment, given only after Track 3 is fully done — see
-`06a-level1-real-practice.md`. Do not assign the old per-lesson Part B
-homework anymore.
+`level-1-new-hire/real-practice-assignment.md`. Do not assign the old
+per-lesson Part B homework anymore.
 
 ---
 
@@ -169,18 +180,19 @@ spreadsheet instead of a paper tally sheet.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 7 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Calendar |
-| 8 | `files` | Find the right file in a shared drive (folders + search), share it at "view" not "edit," rename it to match a naming convention | Browser → a new Shared Drive tab |
-| 9 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → a new Sheets-style tab |
+| 1 | `calendar` | Accept a meeting invite, spot a double-booking against your shift, propose a different time | Browser → Calendar |
+| 2 | `files` | Find the right file in a shared drive (folders + search), share it at "view" not "edit," rename it to match a naming convention | Browser → a new Shared Drive tab |
+| 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → a new Sheets-style tab |
 
 Optional stretch, lower priority (can slip to a later pass): `video-call` —
 join a mock team meeting, mute/unmute, use chat, understand basic etiquette
 (camera optional, no need for real video since the etiquette is the point,
 not the technology).
 
-See `07-lesson-calendar.md` (built), `08-lesson-files.md`,
-`09-lesson-spreadsheet.md` (both planned, not yet built), and the bonus
-`09b-lesson-video-call.md`.
+See `level-2-shift-lead/01-lesson-calendar.md` (built),
+`level-2-shift-lead/02-lesson-files.md`,
+`level-2-shift-lead/03-lesson-spreadsheet.md` (both planned, not yet
+built), and the bonus `level-2-shift-lead/03b-lesson-video-call.md`.
 
 **Design notes:**
 - `calendar` chains directly off the `schedule`/`mail` skills from Track 2 —
@@ -208,13 +220,15 @@ skills these new tools need too — nothing about them is actually new.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 10 | `enrollment` | Navigate a college portal: find the application deadline, check a required-documents checklist, submit a short statement of interest | Browser → a new College Portal tab |
-| 11 | `financial-aid` | Read a financial aid award letter (a real document, not a summary) and find the amount and the accept-by deadline | PDF Reader + Browser → College Portal |
-| 12 | `coursework` | Read a syllabus, find an assignment's due date, and submit a short response — same "read it, attach it, send it" shape as `mail`, in a new tool | Browser → a new Coursework (LMS) tab |
-| 13 | `research` | Search a library-style database for a source on a given topic, and tell a credible source from an unreliable one | Browser → a new Library Search tab |
+| 4 | `enrollment` | Navigate a college portal: find the application deadline, check a required-documents checklist, submit a short statement of interest | Browser → a new College Portal tab |
+| 5 | `financial-aid` | Read a financial aid award letter (a real document, not a summary) and find the amount and the accept-by deadline | PDF Reader + Browser → College Portal |
+| 6 | `coursework` | Read a syllabus, find an assignment's due date, and submit a short response — same "read it, attach it, send it" shape as `mail`, in a new tool | Browser → a new Coursework (LMS) tab |
+| 7 | `research` | Search a library-style database for a source on a given topic, and tell a credible source from an unreliable one | Browser → a new Library Search tab |
 
-See `10-lesson-enrollment.md`, `11-lesson-financial-aid.md`,
-`12-lesson-coursework.md`, `13-lesson-research.md`. All planned, not yet built.
+See `level-2-shift-lead/04-lesson-enrollment.md`,
+`level-2-shift-lead/05-lesson-financial-aid.md`,
+`level-2-shift-lead/06-lesson-coursework.md`,
+`level-2-shift-lead/07-lesson-research.md`. All planned, not yet built.
 
 **Design notes:**
 - `financial-aid` mirrors `paystub`'s shape exactly (open a real document,
@@ -236,7 +250,7 @@ See `10-lesson-enrollment.md`, `11-lesson-financial-aid.md`,
 ### Level 2 real-world practice
 
 One combined assignment, given only after **both** Track 4 and Track 5 are
-fully done — see `13a-level2-real-practice.md`.
+fully done — see `level-2-shift-lead/real-practice-assignment.md`.
 
 ---
 
@@ -284,5 +298,5 @@ The same lesson structure serves both without splitting into separate curricula:
    points/certificate the app already awarded automatically
 
 Real-world practice is **not** part of the per-lesson template anymore — it
-happens once, at the end of the level, per the level's own
-`*-real-practice.md` doc.
+happens once, at the end of the level, per that level's own
+`real-practice-assignment.md`.

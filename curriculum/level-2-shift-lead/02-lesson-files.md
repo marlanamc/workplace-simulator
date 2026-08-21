@@ -1,8 +1,8 @@
-# Lesson 8: Share a File the Right Way
+# Lesson 2: Share a File the Right Way
 
 **Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `files` · **Status:** not built yet.
-**Prerequisite:** Lesson 7
+**Prerequisite:** Lesson 1
 
 ## We will learn...
 - find a file in a shared drive (not just one inbox), and share it with the
@@ -15,7 +15,7 @@
       plus a scenario: "Share this week's schedule with the new hire — view
       only, they don't need to edit it."
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`13a-level2-real-practice.md`), given after
+      wrap-up assignment (`real-practice-assignment.md`), given after
       Track 5 is done.
 
 ## Simulator practice (~5 min) — once built

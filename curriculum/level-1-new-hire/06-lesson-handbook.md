@@ -16,7 +16,7 @@ view used in the earlier exploration pass.
       scenario and question.
 - [ ] Google Classroom: this is the last lesson in Level 1 — post the
       combined **Level 1 wrap-up assignment** now (see
-      `06a-level1-real-practice.md`), covering this skill and every other
+      `real-practice-assignment.md`), covering this skill and every other
       Level 1 skill together, in one sitting.
 
 ## Simulator practice (~5 min)
@@ -50,5 +50,5 @@ being repeated at the end of every track:
   earned so far (visible any time in their Objectives panel), to decide which
   lesson to loop back to with each student individually, rather than moving
   the whole class forward in lockstep.
-- Assign the Level 1 wrap-up (`06a-level1-real-practice.md`) now, before
+- Assign the Level 1 wrap-up (`real-practice-assignment.md`) now, before
   moving anyone on to Level 2 (Lesson 7).

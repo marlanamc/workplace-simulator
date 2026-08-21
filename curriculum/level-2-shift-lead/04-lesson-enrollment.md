@@ -1,4 +1,4 @@
-# Lesson 10: Navigate a College Portal
+# Lesson 4: Navigate a College Portal
 
 **Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
 **Task key:** `enrollment` · **Status:** not built yet — first lesson of
@@ -16,7 +16,7 @@ Track 4, teacher's discretion
       application deadline, a required-documents checklist, and a short
       "statement of interest" text box to submit.
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`13a-level2-real-practice.md`), given after
+      wrap-up assignment (`real-practice-assignment.md`), given after
       Track 5 (and Track 4) are both done.
 
 ## Simulator practice (~5 min) — once built

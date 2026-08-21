@@ -14,7 +14,7 @@ message to Maria, right there in the portal.
       planted mismatch (clocked in later than the scheduled start, so today's
       total is short).
 - [ ] No Google Classroom post needed yet — bundled into the Level 1 wrap-up
-      assignment (`06a-level1-real-practice.md`), given after Track 3 is done.
+      assignment (`real-practice-assignment.md`), given after Track 3 is done.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Employee Portal** → **Time Clock**.
