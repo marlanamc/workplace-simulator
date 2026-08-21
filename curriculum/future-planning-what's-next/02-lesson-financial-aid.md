@@ -1,10 +1,11 @@
-# Lesson 5: Read a Financial Aid Letter
+# Lesson 2: Read a Financial Aid Letter
 
-**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
+**Time:** ~5 minutes · **Level:** Deferred — not currently sequenced into a
+level · **Track:** Planning What's Next
 **Task key:** `financial-aid` · **Status:** not built yet — mirrors
 `paystub`'s shape on purpose (open a real document, answer a "find it"
 check), reusing the PDF Reader.
-**Prerequisite:** Lesson 4
+**Prerequisite:** Lesson 1
 
 ## We will learn...
 - find the amount and the accept-by deadline on a financial aid award
@@ -14,11 +15,10 @@ check), reusing the PDF Reader.
 - [ ] Simulator: a financial aid award letter PDF (real-looking, like the
       pay stub and safety report already in PDF Reader) reachable from the
       College Portal tab, with a findable award amount and accept-by date.
-- [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`real-practice-assignment.md`). Have the real
-      FAFSA/financial-aid office contact info ready for when you do assign
-      it, in case a student has real questions afterward — this lesson can
-      surface real needs.
+- [ ] No Google Classroom post needed yet — this track isn't sequenced into
+      a level, so there's no wrap-up assignment written for it yet. Have
+      the real FAFSA/financial-aid office contact info ready for whenever
+      you do assign it — this lesson can surface real needs.
 
 ## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **College Portal**, then open the award letter —

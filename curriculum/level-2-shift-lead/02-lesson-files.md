@@ -16,7 +16,7 @@
       only, they don't need to edit it."
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
       wrap-up assignment (`real-practice-assignment.md`), given after
-      Track 5 is done.
+      Track 4 is done.
 
 ## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **Shared Drive** tab.

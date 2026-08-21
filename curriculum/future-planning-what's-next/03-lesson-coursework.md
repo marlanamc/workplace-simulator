@@ -1,10 +1,11 @@
-# Lesson 6: Read a Syllabus, Submit an Assignment
+# Lesson 3: Read a Syllabus, Submit an Assignment
 
-**Time:** ~5 minutes · **Level:** 2 — Shift Lead · **Track:** 5 — Planning What's Next
+**Time:** ~5 minutes · **Level:** Deferred — not currently sequenced into a
+level · **Track:** Planning What's Next
 **Task key:** `coursework` · **Status:** not built yet — mirrors `mail`'s
 shape on purpose (read what's asked, attach the right thing, send it), in a
 new tool.
-**Prerequisite:** Lesson 5
+**Prerequisite:** Lesson 2
 
 ## We will learn...
 - read a syllabus for a due date, and submit a short response the same way
@@ -14,8 +15,8 @@ new tool.
 - [ ] Simulator: a new Coursework (LMS-style) Browser tab with a short
       syllabus and one assignment with a due date, plus a submission box
       that accepts a short written response.
-- [ ] No Google Classroom post needed yet — bundled into the Level 2
-      wrap-up assignment (`real-practice-assignment.md`).
+- [ ] No Google Classroom post needed yet — this track isn't sequenced into
+      a level, so there's no wrap-up assignment written for it yet.
 
 ## Simulator practice (~5 min) — once built
 1. Open the **Browser** → **Coursework** tab.

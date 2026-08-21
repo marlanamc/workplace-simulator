@@ -75,12 +75,21 @@ reflect before the world changes again.
 level* (not globally), plus its own `real-practice-assignment.md`. A lesson
 in one level referencing a lesson in the other always says "Level 1's
 Lesson 2" or similar, since both levels have their own Lesson 1, Lesson 2,
-etc.
+etc. Content written but not yet assigned to any level lives in its own
+non-numbered folder instead, e.g. `future-planning-what's-next/`.
 
 | Level | Tracks inside it | Status |
 |---|---|---|
 | **Level 1 — New Hire** | Track 1 (Getting Started), Track 2 (Schedules & Documents), Track 3 (Judgment & Follow-Through) | Built |
-| **Level 2 — Shift Lead** | Track 4 (Growing at Work), Track 5 (Planning What's Next) | Track 4 started; Track 5 planned |
+| **Level 2 — Shift Lead** | Track 4 (Growing at Work) | Started (`calendar` built) |
+
+A "Planning What's Next" track (college portal, financial aid, coursework,
+source evaluation) was originally planned to sit inside Level 2 too, but
+most students in this program won't go on to higher education — they'll
+deal with Google Classroom at most. That content is written and kept in
+`curriculum/future-planning-what's-next/`, deferred to a much later level
+once one actually fits it, rather than built into the path every student
+takes.
 
 Level 2 begins exactly where the story already said it would: finishing
 Track 3 is the promotion. That's the level boundary — new title, new
@@ -160,11 +169,10 @@ per-lesson Part B homework anymore.
 
 **Story bridge:** finishing Level 1 is what earns the promotion the Track 1
 email hinted was coming. The environment refreshes here — new emails, a new
-schedule, a new week — and the student now has two things going on at once,
-both living in this level: new responsibilities at work (Track 4), and
-starting to think about school on the side (Track 5). Any future
-spreadsheet-editing practice lives as a Browser tab, not a separate desktop
-app, matching how Employee Portal and the Incident Report were added.
+schedule, a new week — and the student picks up the tools that come with
+being a shift lead. Any future spreadsheet-editing practice lives as a
+Browser tab, not a separate desktop app, matching how Employee Portal and
+the Incident Report were added.
 
 Also starting with this level: the desktop's "do this next" button stops
 naming the exact tab (a generic "Open Browser" instead of "Open Calendar")
@@ -205,52 +213,25 @@ built), and the bonus `level-2-shift-lead/03b-lesson-video-call.md`.
   it, or check it?), the spreadsheet is the setting. Keeps this from turning
   into a spreadsheet-software tutorial.
 
-### Track 5: Planning What's Next
-
-**Story bridge:** with the promotion behind them, the student starts
-considering community college or a training program — not instead of work,
-alongside it. This runs alongside Track 4 rather than strictly after it,
-since it's a separate storyline sharing the same Level 2 environment: new
-bookmarks appear in the same Browser next to the work ones (a college
-portal, a coursework site, a library search), the same way a real person's
-browser mixes work and personal tabs. The point being made on purpose: the
-skills already practiced (read it carefully, reply with what's asked,
-attach the right file, look it up instead of guessing) are exactly the
-skills these new tools need too — nothing about them is actually new.
-
-| Lesson | Task key | Skill focus | Simulator app |
-|---|---|---|---|
-| 4 | `enrollment` | Navigate a college portal: find the application deadline, check a required-documents checklist, submit a short statement of interest | Browser → a new College Portal tab |
-| 5 | `financial-aid` | Read a financial aid award letter (a real document, not a summary) and find the amount and the accept-by deadline | PDF Reader + Browser → College Portal |
-| 6 | `coursework` | Read a syllabus, find an assignment's due date, and submit a short response — same "read it, attach it, send it" shape as `mail`, in a new tool | Browser → a new Coursework (LMS) tab |
-| 7 | `research` | Search a library-style database for a source on a given topic, and tell a credible source from an unreliable one | Browser → a new Library Search tab |
-
-See `level-2-shift-lead/04-lesson-enrollment.md`,
-`level-2-shift-lead/05-lesson-financial-aid.md`,
-`level-2-shift-lead/06-lesson-coursework.md`,
-`level-2-shift-lead/07-lesson-research.md`. All planned, not yet built.
-
-**Design notes:**
-- `financial-aid` mirrors `paystub`'s shape exactly (open a real document,
-  answer a "find it" check) — deliberately, so a student who did `paystub`
-  confidently should recognize the pattern immediately.
-- `coursework` mirrors `mail`'s shape (read what's asked, attach the right
-  thing, send/submit) for the same reason — proof to the student that a new
-  logo and color scheme doesn't mean a new skill.
-- `research` is the one genuinely new skill in this level: telling a
-  credible source from an unreliable one. It plants 3–4 decoy sources (one
-  obviously promotional, one outdated, one a forum post, one a real-looking
-  library database entry) and asks which one to cite — same "spot it, don't
-  guess" shape as `handbook`, applied to a new judgment call.
-- Consider whether `enrollment` and `financial-aid` should be one task
-  instead of two before building — they're presented separately here
-  because they're different documents/interactions, but they may feel like
-  one continuous errand to a student.
-
 ### Level 2 real-world practice
 
-One combined assignment, given only after **both** Track 4 and Track 5 are
-fully done — see `level-2-shift-lead/real-practice-assignment.md`.
+One combined assignment, given only after Track 4 is fully done — see
+`level-2-shift-lead/real-practice-assignment.md`.
+
+### Deferred: Planning What's Next
+
+Originally planned as Track 5 inside Level 2 — a college portal, a
+financial aid letter, an LMS-style coursework tab, and a library
+source-evaluation task, meant to run alongside Track 4 as a parallel
+storyline ("thinking about school while working"). Pulled out because most
+students in this program won't go on to higher education; the ones who do
+will mostly deal with Google Classroom, not a college portal or Google
+Scholar. The four lesson docs are written and kept in
+`curriculum/future-planning-what's-next/` (renumbered Lessons 1–4, no
+level assigned) for whenever a later level actually fits this content —
+see that folder's docs for the full design notes (e.g. `financial-aid`
+mirrors `paystub`'s shape, `coursework` mirrors `mail`'s shape, `research`
+is the one genuinely new judgment skill in the track).
 
 ---
 

@@ -20,7 +20,7 @@ new schedule, a new week at Harborside Cafe)
       invite (a weekly huddle on a day the student isn't scheduled).
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
       wrap-up assignment (`real-practice-assignment.md`), given after
-      Track 5 is done.
+      Track 4 is done.
 
 ## Simulator practice (~5 min)
 1. Click **Open Browser** on the desktop — it won't jump straight to

@@ -14,7 +14,7 @@
       to be wrong (a formula pointing at the wrong row, or a stale number).
 - [ ] No Google Classroom post needed yet — bundled into the Level 2
       wrap-up assignment (`real-practice-assignment.md`), given after
-      Track 5 is done.
+      Track 4 is done.
 
 ## Simulator practice (~5 min) — once built
 1. Open the **Browser** → the new **Sheets**-style tab.
