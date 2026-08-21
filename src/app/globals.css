@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+:root {
+  --bg-wallpaper-1: #e3edfb;
+  --bg-wallpaper-2: #cfe0f5;
+
+  --surface: #ffffff;
+  --surface-muted: #f1f3f4;
+  --border: #dadce0;
+  --border-strong: #c4c9ce;
+
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-tertiary: #80868b;
+
+  --accent: #1a73e8;
+  --accent-hover: #1558b0;
+  --accent-tint: #e8f0fe;
+
+  --success: #1e8e3e;
+  --success-tint: #e6f4ea;
+  --warning: #b06000;
+  --warning-tint: #fef0dc;
+  --danger: #c5221f;
+
+  --focus-ring: #1a73e8;
+}
+
+@theme inline {
+  --color-background: var(--surface);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-roboto);
+}
+
+body {
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: var(--font-roboto), Roboto, "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button {
+  font-family: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.16s ease-out;
+}
+
+.animate-slide-in {
+  animation: slide-in 0.16s ease-out;
+}
