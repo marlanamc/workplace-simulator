@@ -45,13 +45,13 @@ skips straight to Level 1.
 
 ---
 
-## The roadmap: New Hire to Assistant Manager (and beyond)
+## The roadmap: New Hire to Team Lead (and beyond)
 
-The full arc runs to roughly 26 levels across 7 "acts," each one a job
-title and a moment in the story. **Acts I-IV are written level-by-level
-below** (Levels 1-12). Acts V-VII exist as a scoped table for now — full
-lesson docs get written act-by-act, right before each one is built, the
-same way Acts I-IV were.
+The full arc runs 24 levels across 7 "acts," each one a job title and a
+moment in the story. **The whole thing is now written level-by-level** —
+every level from 1 to 24 has a lesson doc and a wrap-up assignment. Only
+Levels 1-3 are actually built in code; everything from Level 4 on is
+curriculum only, ready to build whenever that's the next priority.
 
 | Act | Levels | Job title | Status |
 |---|---|---|---|
@@ -59,28 +59,28 @@ same way Acts I-IV were.
 | **II — Shift Lead** | 3-5 | Shift Lead | Written; Level 3 built, 4-5 not built |
 | **III — Shift Supervisor** | 6-9 | Shift Supervisor | Written, not built |
 | **IV — Assistant Manager** | 10-12 | Assistant Manager | Written, not built |
-| **V — Bridge (elective)** | 13-15 | "Prepping for BHCC" *or* "Front Office / Healthcare Admin" | Scoped only — see below |
-| **VI — Office Administrator** | 16-19 | Office Administrator (HQ) | Scoped only |
-| **VII — Team Lead (capstone)** | 20-23 | Team Lead | Scoped only |
+| **V — Bridge (elective)** | 13-16 | "Prepping for BHCC" *or* "Front Office / Healthcare Admin" | Written, not built |
+| **VI — Office Administrator** | 17-20 | Office Administrator (HQ) | Written, not built |
+| **VII — Team Lead (capstone)** | 21-24 | Team Lead | Written, not built |
 
 Act V is deliberately optional and comes with two flavors a student can pick
 between (or skip past to Act VI): a taste of college-style digital tasks
-(built from the already-written `future-planning-what's-next/` content —
-enrollment, financial aid, coursework, research), or healthcare-admin office
-tasks (appointment scheduling, patient intake, confidentiality judgment,
-a small billing spreadsheet — not yet written). Neither is a program
-simulation — both are framed to the student as "building the muscle for
-this kind of digital task," honest about not being a substitute for a real
-program.
+(built from the four `future-planning-what's-next` lessons, now sequenced
+into Levels 13-16 as Path A), or healthcare-admin office tasks (appointment
+scheduling, patient intake, confidentiality judgment, a small billing
+spreadsheet — Path B). Neither is a program simulation — both are framed to
+the student as "building the muscle for this kind of digital task," honest
+about not being a substitute for a real program.
 
 **File layout:** each level has its own folder — `level-1-new-hire/`,
 `level-2-settling-in/`, `level-3-shift-lead/`, `level-4-reporting-in/`, and
 so on — with lessons numbered `01`, `02`… *within that level* (not
 globally), plus its own `real-practice-assignment.md`. A lesson in one
 level referencing a lesson in another always says "Level 2's Lesson 1" or
-similar, since every level restarts its own lesson numbering. Content
-written but not yet assigned to any level lives in its own non-numbered
-folder, e.g. `future-planning-what's-next/`.
+similar, since every level restarts its own lesson numbering. In Act V's
+two-path levels, the two lessons are numbered `01a`/`01b` instead of `01`/
+`02`, since they're alternatives, not a sequence — a student does one, not
+both.
 
 ## Track 0: Foundations (prerequisite — skip if already comfortable)
 
@@ -153,12 +153,9 @@ closing tabs, starting on a blank New Tab) unlocks here too.
 | 2 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Hdrive |
 | 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Hsheets |
 
-Optional stretch, lower priority: `video-call` — join a mock team meeting,
-mute/unmute, use chat, understand basic etiquette. Currently parked here
-(`03b-lesson-video-call.md`) but may move to Act VI (Office Administrator)
-where it fits a full-office environment better.
-
-See `level-3-shift-lead/`.
+See `level-3-shift-lead/`. (The `video-call` task originally written here
+as an optional bonus has since moved to Act VI, Level 18, where it pairs
+naturally with multi-person calendar scheduling.)
 
 ### Level 4: Reporting In
 
@@ -250,30 +247,103 @@ completes Act IV.
 
 ---
 
-## Acts V-VII: scoped, not yet written level-by-level
+## Act V: Levels 13-16 — Bridge (elective)
 
-Full lesson docs for these will be written act-by-act, right before each is
-built — the same process Acts I-IV just went through. For now:
+**Story bridge:** Act IV's promotion into Assistant Manager is complete.
+Act V is entirely optional — a student can pick one path, try both, or
+skip straight to Act VI (Office Administrator) without missing anything
+required. Every level in this act has two parallel lessons, `01a` (Path A)
+and `01b` (Path B); a student does one, not both, unless they want the
+extra practice. A student stays on whichever path they pick for all four
+levels — there's no requirement to pick the same path you started with,
+but the lesson docs assume continuity for the cross-references to make
+sense.
 
-**Act V — Bridge (elective), Levels 13-15.** A student picks one path (or
-skips this act entirely and goes straight to Act VI):
-- *Prepping for BHCC*: built from the four already-written lessons in
-  `future-planning-what's-next/` (`enrollment`, `financial-aid`,
-  `coursework`, `research`) — reframed as short tastes, sequenced into an
-  actual level for the first time instead of staying deferred.
-- *Front Office / Healthcare Admin*: appointment scheduling, patient
-  intake, a confidentiality judgment call, a small billing spreadsheet —
-  not yet written.
+| Level | Path A: Prepping for BHCC | Path B: Front Office / Healthcare Admin |
+|---|---|---|
+| 13 — Getting Ready | `enrollment` — navigate a college portal, an application deadline, a document checklist | `appointment-scheduling` — book/move a patient appointment, resolve a double-booking |
+| 14 — The Paperwork | `financial-aid` — read a real award letter (PDF), find the amount and deadline | `patient-intake` — process an intake form, judge who's allowed to see it |
+| 15 — Staying On Top of It | `coursework` — read a syllabus, submit a short assignment on time | `billing-sheet` — match visit codes to charges, flag a mismatch |
+| 16 — Finding a Real Answer | `research` — tell a credible source from an unreliable one | `confidentiality-call` — decline a plausible-sounding request for information over the phone |
 
-**Act VI — Office Administrator, Levels 16-19.** New environment (an HQ
-office, not the cafe). Larger nested shared drive, meeting scheduling
-across multiple people's calendars, an expense report, a first slide deck,
-and (likely) the `video-call` task currently parked in Act III.
+See `level-13-getting-ready/` through `level-16-finding-a-real-answer/`.
+Finishing either path's Level 16 lesson completes Act V.
 
-**Act VII — Team Lead capstone, Levels 20-23.** Leading a meeting with
-agenda + minutes + follow-up, a performance-review-style write-up, a final
-level combining mail + docs + sheet + calendar into one deliverable, and a
-closing reflective/portfolio level.
+**Design notes:**
+- Path A is the four lessons originally written for a deferred, unnumbered
+  "Planning What's Next" track, now sequenced into an actual level for the
+  first time — the content itself is unchanged, just reframed with real
+  level numbers and optional-Classroom wording.
+- Path B deliberately escalates its judgment difficulty across the act:
+  Level 14's `patient-intake` is an easy call (a coworker with no reason to
+  see the file); Level 16's `confidentiality-call` is a harder one (a
+  plausible-sounding request that still needs a firm no). This mirrors how
+  Act III's `priority-call` escalates difficulty within a single act.
+- Both paths deliberately mirror earlier shapes the student already knows
+  (`financial-aid` mirrors `paystub`; `coursework` mirrors `mail`;
+  `billing-sheet` mirrors `formula-check`) — naming that transfer out loud
+  is part of the lesson, not just a design note for whoever builds it.
+
+---
+
+## Act VI: Levels 17-20 — Office Administrator
+
+**Story bridge:** whether or not a student did Act V, finishing it (or
+skipping it) earns the move to Harborside's HQ office — a new building, a
+new title, and tools scaled up from what a single cafe location needed.
+
+| Level | Task key(s) | Skill focus | Simulator app |
+|---|---|---|---|
+| 17 — Welcome to HQ | `office-drive` | Search (not browse) a much bigger, more deeply nested shared drive for the right file version | Browser → Hdrive |
+| 18 — Get Everyone in the Room | `multi-person-scheduling`, `video-call` | Find a time that works across 3-4 calendars, then join and run the meeting itself | Browser → Hcal |
+| 19 — The Expense Report | `expense-report` | Match receipts to categories, catch the one that's missing | Browser → Hsheets + Hdrive |
+| 20 — Presenting to the Team | `slide-deck` | Build and present a 3-slide deck using a real number from earlier work | Browser → new Slides-style tab |
+
+See `level-17-welcome-to-hq/` through `level-20-presenting-to-the-team/`.
+Finishing Level 20 awards the "Office Administrator" certificate and
+completes Act VI.
+
+**Design notes:**
+- `office-drive` is `files` (Level 3) at HQ scale — same skill, genuinely
+  harder because of scale, not a new mechanic.
+- `video-call` was originally written and parked as an optional bonus in
+  Act II (Shift Lead); it's moved here, right after
+  `multi-person-scheduling`, since scheduling a meeting and then actually
+  running it are naturally one continuous action.
+- `slide-deck` stays to exactly 3 slides — the skill is a clear point with
+  real data, not deck design.
+
+---
+
+## Act VII: Levels 21-24 — Team Lead (capstone)
+
+**Story bridge:** finishing Act VI earns the final promotion in the
+currently-written arc — Team Lead. This act is the payoff: every earlier
+skill gets reused, not replaced.
+
+| Level | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 21 — Run the Meeting | `meeting-minutes` | Run a meeting start to finish — agenda, brief notes, a follow-up email with owners and dates | Browser → Hcal + Hdocs + Hmail |
+| 22 — The Review | `performance-review` | Write a fair, specific, constructive performance note | Browser → Hforms-style form |
+| 23 — Put It All Together | `ops-report-packet` | Combine a spreadsheet number, a calendar note, and a written summary into one emailed packet | Browser → Hsheets + Hcal + Hdocs + Hmail |
+| 24 — Where You've Been | `portfolio-reflection` | No new skill — review every certificate earned, reflect, and generate a shareable summary | Desktop review screen + `/certificate/[learnerId]` |
+
+See `level-21-run-the-meeting/` through `level-24-where-youve-been/`.
+Finishing Level 24 closes the currently-written curriculum.
+
+**Design notes:**
+- `meeting-minutes` completes the loop Level 8's `team-meeting` started
+  (create the invite) — now it's create, run, *and* follow up.
+- `performance-review` is the second most personally vulnerable lesson in
+  the program, after Level 2's incident report — being fair to someone
+  else in writing is genuinely hard, and deserves the same warm handling.
+- `ops-report-packet` is a synthesis level, not a new-skill level — every
+  app together, under one deadline, is the whole point.
+- `portfolio-reflection` isn't a graded task at all — it's a closing
+  reflection paired with the existing shareable certificate page. The
+  program doesn't have to end here (more acts can always be written and
+  added, following this same process), but everything written as of this
+  pass forms one complete, honest arc on its own.
 
 ---
 

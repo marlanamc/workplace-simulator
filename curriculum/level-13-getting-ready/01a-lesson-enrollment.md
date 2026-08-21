@@ -1,15 +1,15 @@
-# Lesson 1: Navigate a College Portal
+# Lesson 1a: Navigate a College Portal (Path A — Prepping for BHCC)
 
-**Time:** ~5 minutes · **Level:** Deferred — not currently sequenced into a
-level · **Track:** Planning What's Next
-**Task key:** `enrollment` · **Status:** not built yet, and not scheduled
-into a level right now. This track (college portal, financial aid,
-coursework, source evaluation) was originally planned to follow right
-after the promotion, but most students in this program won't go on to
-higher education — they'll deal with Google Classroom at most. Keeping
-this content written and ready for whichever later level actually fits it,
-rather than building ahead of what most students need.
-**Prerequisite:** none — not currently sequenced
+**Time:** ~15-20 minutes (whole level) · **Level:** 13 — Getting Ready ·
+**Track:** 14 — Prepping for BHCC (Path A)
+**Task key:** `enrollment` · **Status:** not built yet. This is one of two
+optional paths through Act V — see `01b-lesson-appointment-scheduling.md`
+for Path B (Front Office / Healthcare Admin). A student does one path, not
+both, unless they want the extra practice.
+**Prerequisite:** Level 12 complete. Choose this path if the student is
+genuinely considering more schooling; choose Path B if they're more drawn
+to front-office/medical-office work. Either is a fine choice, and a
+student can always come back and try the other path later.
 
 ## We will learn...
 - navigate an unfamiliar portal under a real deadline — find what's due,
@@ -19,12 +19,12 @@ rather than building ahead of what most students need.
 - [ ] Simulator: a new College Portal Browser tab/bookmark with an
       application deadline, a required-documents checklist, and a short
       "statement of interest" text box to submit.
-- [ ] No Google Classroom post needed yet — this track isn't sequenced into
-      a level, so there's no wrap-up assignment written for it yet. When it
-      is, follow the same pattern as Level 1/Level 2: one combined
-      assignment after every lesson in this track is done.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 13 wrap-up assignment
+      (`real-practice-assignment.md`), offered once this lesson is done.
+      Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~5 min) — once built
+## Simulator practice (~15-20 min) — once built
 1. Open the **Browser** → **College Portal** tab (new bookmark, alongside
    the work ones).
 2. Find the application deadline.

@@ -1,11 +1,12 @@
-# Lesson 3: Read a Syllabus, Submit an Assignment
+# Lesson 1a: Read a Syllabus, Submit an Assignment (Path A — Prepping for BHCC)
 
-**Time:** ~5 minutes · **Level:** Deferred — not currently sequenced into a
-level · **Track:** Planning What's Next
+**Time:** ~15-20 minutes (whole level) · **Level:** 15 — Staying On Top of
+It · **Track:** 14 — Prepping for BHCC (Path A)
 **Task key:** `coursework` · **Status:** not built yet — mirrors `mail`'s
 shape on purpose (read what's asked, attach the right thing, send it), in a
-new tool.
-**Prerequisite:** Lesson 2
+new tool. See `01b-lesson-billing-sheet.md` for Path B (Front Office /
+Healthcare Admin) — a student stays on whichever path they chose.
+**Prerequisite:** Level 14's Path A lesson (`financial-aid`)
 
 ## We will learn...
 - read a syllabus for a due date, and submit a short response the same way
@@ -15,10 +16,12 @@ new tool.
 - [ ] Simulator: a new Coursework (LMS-style) Browser tab with a short
       syllabus and one assignment with a due date, plus a submission box
       that accepts a short written response.
-- [ ] No Google Classroom post needed yet — this track isn't sequenced into
-      a level, so there's no wrap-up assignment written for it yet.
+- [ ] No Google Classroom post needed yet — this is optional, supplementary
+      practice bundled into the Level 15 wrap-up assignment
+      (`real-practice-assignment.md`), offered once this lesson is done.
+      Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~5 min) — once built
+## Simulator practice (~15-20 min) — once built
 1. Open the **Browser** → **Coursework** tab.
 2. Read the syllabus section for the assignment.
 3. Find the due date.

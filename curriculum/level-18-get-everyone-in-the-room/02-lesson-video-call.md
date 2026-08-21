@@ -1,13 +1,12 @@
-# Bonus Lesson: Join a Team Meeting
+# Lesson 2: Join the Meeting You Just Scheduled
 
-**Time:** ~5 minutes (simulator only — no separate homework) · **Level:**
-3 — Shift Lead · **Track:** 4 — Growing at Work (optional, lower priority)
-**Task key:** `video-call` · **Status:** not built yet, and not a required
-lesson — this is a stretch task that can slip if time runs short. Per the
-current roadmap (`00-scope-and-sequence.md`), this may end up moved to the
-Office Administrator act (Level 16+) instead, where video-call etiquette
-fits a full-office environment better — treat it as parked here for now.
-**Prerequisite:** none within Track 4 — can be done any time after Lesson 1
+**Time:** ~10 minutes (simulator only — no separate homework) · **Level:**
+18 — Get Everyone in the Room · **Track:** 17 — Get Everyone in the Room
+**Task key:** `video-call` · **Status:** not built yet. Originally written
+and parked at the Shift Lead act; moved here where it fits a full-office
+environment better, and pairs naturally with Lesson 1's multi-person
+scheduling — you scheduled the meeting, now you're in it.
+**Prerequisite:** Lesson 1 (`multi-person-scheduling`)
 
 ## We will learn...
 - basic video-call etiquette (mute, camera, chat) — not the technology
@@ -19,10 +18,12 @@ fits a full-office environment better — treat it as parked here for now.
       arrived late and everyone's already talking — what do you do first?").
 - [ ] No Google Classroom component — this lesson is simulator-only by
       design, since the point is etiquette, not a real video call with
-      classmates.
+      classmates. It still counts toward the (optional) Level 18 wrap-up
+      assignment (`real-practice-assignment.md`) alongside Lesson 1.
 
-## Simulator practice (~5 min) — once built
-1. Open the mock meeting from the Browser.
+## Simulator practice (~10 min) — once built
+1. Open the mock meeting from the Browser — it's the meeting you just
+   scheduled in Lesson 1.
 2. Join with your mic muted by default — notice the app doesn't force you to
    figure this out.
 3. Try muting/unmuting, and toggling your camera.
@@ -36,7 +37,7 @@ fits a full-office environment better — treat it as parked here for now.
   ___________"
 
 ## Notes for next time
-- Because there's no Real Practice half, spend the confidence check-in
-  question actually talking through it with the student if time allows —
-  this is the one lesson where the discussion matters more than the click
-  practice.
+- This is the last lesson in Level 18 — finishing it completes the level.
+  Spend the confidence check-in question actually talking through it with
+  the student if time allows — this is one lesson where the discussion
+  matters more than the click practice.
