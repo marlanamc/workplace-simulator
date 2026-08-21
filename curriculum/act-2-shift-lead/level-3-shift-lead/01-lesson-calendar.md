@@ -1,12 +1,12 @@
 # Lesson 1: Handle a Meeting Invite
 
-**Time:** ~5 minutes · **Level:** 3 — Shift Lead · **Track:** 4 — Growing at Work
-**Task key:** `calendar` · **Status:** built — the first task of Level 3.
+**Time:** ~5 minutes · **Level:** 4 — Shift Lead · **Track:** 4 — Growing at Work
+**Task key:** `calendar` · **Status:** built — the first task of Level 4.
 Note: from this task on, the desktop's "Do this next" card no longer opens
 the exact tab for you (it just says "Open Browser") — finding the right
 bookmark is deliberately part of the task now that a student has some
 practice under their belt.
-**Prerequisite:** Level 2 complete (this is the promotion the earlier
+**Prerequisite:** Level 3 complete (this is the promotion the earlier
 levels were building toward — the environment refreshes here: new emails,
 new schedule, a new week at Harborside Cafe)
 
@@ -19,7 +19,7 @@ new schedule, a new week at Harborside Cafe)
 - [ ] Simulator: nothing to set up — the Calendar tab always has the same
       invite (a weekly huddle on a day the student isn't scheduled).
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 3 wrap-up assignment
+      practice bundled into the Level 4 wrap-up assignment
       (`real-practice-assignment.md`), offered after Track 4 is done. Never
       a gate — a student who skips it still moves on.
 

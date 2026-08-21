@@ -1,11 +1,11 @@
-# Lesson 5: Look Something Up Under Pressure
+# Lesson 2: Look Something Up Under Pressure
 
-**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 3 — Judgment & Follow-Through
+**Time:** ~5 minutes · **Level:** 3 — When Something Happens · **Track:** 3 — Think It Through
 **Task key:** `handbook` · **Status:** built — the Handbook tab opens straight
 into a planted scenario ("you're sick tomorrow — what's the call-out
 policy?") with a multiple-choice check pinned below the same search/browse
 view used in the earlier exploration pass.
-**Prerequisite:** Lesson 4
+**Prerequisite:** Lesson 1
 
 ## We will learn...
 - find an answer in the employee handbook instead of guessing, when it
@@ -14,11 +14,11 @@ view used in the earlier exploration pass.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Handbook tab always opens the same
       scenario and question.
-- [ ] Google Classroom (optional): this is the last lesson in Level 2 — you
-      can offer the combined **Level 2 wrap-up assignment** now (see
-      `real-practice-assignment.md`), covering this skill and every other
-      Level 2 skill together, in one sitting. It's supplementary, not a
-      gate — a student who skips it still moves on to Level 3.
+- [ ] Google Classroom (optional): this is the last lesson in Level 3 — you
+      can offer the combined **Level 3 wrap-up assignment** now (see
+      `real-practice-assignment.md`), covering this skill and the incident
+      report together, in one sitting. It's supplementary, not a
+      gate — a student who skips it still moves on to Level 4 (Shift Lead).
 
 ## Simulator practice (~5 min)
 1. Read the scenario prompt at the top of the **Handbook** tab.
@@ -26,17 +26,16 @@ view used in the earlier exploration pass.
 3. Answer the question pinned at the bottom, based on what the handbook
    actually says — a wrong pick gets a friendly reminder to check again, not
    the answer.
-4. This is the last task in Track 3 — finishing it awards the "Judgment &
-   Follow-Through" certificate **and** completes Level 2. The desktop and
-   Objectives panel will reflect the move into Level 3 once a student is
-   ready to continue.
+4. This is the last task in Track 3 — finishing it awards the "Think It
+   Through" certificate **and** completes Level 3 and Act I. The desktop and
+   Objectives panel will reflect the move into Level 4 (Shift Lead) once a
+   student is ready to continue.
 
 ## Confidence check-in — end-of-level reflection
-By the end of this lesson a student has, on their own, used the Employee
-Portal, PDF Reader, the Incident Report, and the Handbook — every app in
-Level 2, on top of WorkMail from Level 1. There's no separate "capstone"
-exercise; finishing this level already is one. This reflection now happens
-once, here, instead of being repeated at the end of every track:
+By the end of this lesson a student has, on their own, used Mail, the
+Employee Portal, PDF Reader, the Incident Report, and the Handbook — every
+app in Act I. There's no separate "capstone" exercise; finishing this level
+already is one. This reflection now happens once, here, at the end of Act I:
 
 - "Out of everything we've practiced (email, schedules, pay stubs, incident
   reports, the handbook), the thing I feel most ready for is: ___________"
@@ -51,6 +50,6 @@ once, here, instead of being repeated at the end of every track:
   earned so far (visible any time in their Objectives panel), to decide which
   lesson to loop back to with each student individually, rather than moving
   the whole class forward in lockstep.
-- Offer the Level 2 wrap-up (`real-practice-assignment.md`) now if you're
+- Offer the Level 3 wrap-up (`real-practice-assignment.md`) now if you're
   holding office hours this week — it's optional, so a student can move
-  straight on to Level 3 without it.
+  straight on to Level 4 without it.

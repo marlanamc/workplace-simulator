@@ -13,10 +13,10 @@ found the right numbers.
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the most recent pay stub always opens
       the same document and the same two check questions.
-- [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 2 wrap-up assignment
-      (`real-practice-assignment.md`), offered after Track 3 is done. Never a
-      gate — a student who skips it still moves on.
+- [ ] Google Classroom (optional): this is the last lesson in Level 2 — you
+      can offer the combined **Level 2 wrap-up assignment** now (see
+      `real-practice-assignment.md`). It's supplementary, not a gate — a
+      student who skips it still moves on to Level 3.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Employee Portal** → **Pay Stubs**.
@@ -30,6 +30,8 @@ found the right numbers.
 - "If the numbers didn't match what I expected, I would: ___________"
 
 ## Notes for next time
+- Finishing this lesson completes Level 2. The student then moves into
+  Level 3 (incident report and handbook), still as a New Hire.
 - This is a good diagnostic for reading-comprehension and basic-math pacing —
   some students will need the document simplified or read aloud; that's a
   content fix (a simpler mock pay stub), not a skill fix.

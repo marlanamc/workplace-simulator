@@ -11,7 +11,7 @@ forever.
 spare 20 minutes a week, not 20 minutes a day. Everything below is designed
 around that constraint: short, self-contained levels; nothing that requires
 a scheduled class time; real value delivered early, not only after finishing
-everything. A student who only ever finishes Level 1 and 2 should already be
+everything. A student who only ever finishes Act I (Levels 1-3) should already be
 meaningfully more employable — this isn't a substitute for a program like
 Bunker Hill's year-long Transitions to College Program, it's a fast, low-
 stakes on-ramp that can run entirely alongside one, or on its own.
@@ -47,26 +47,27 @@ skips straight to Level 1.
 
 ## The roadmap: New Hire to Team Lead (and beyond)
 
-The full arc runs 24 levels across 7 "acts," each one a job title and a
+The full arc runs 25 levels across 7 "acts," each one a job title and a
 moment in the story. **The whole thing is now written level-by-level** —
-every level from 1 to 24 has a lesson doc and a wrap-up assignment. Only
-Levels 1-3 are actually built in code; everything from Level 4 on is
-curriculum only, ready to build whenever that's the next priority.
+every level from 1 to 25 has a lesson doc and a wrap-up assignment. Only
+Act I (Levels 1-3) and Level 4 are actually built in code; everything from
+Level 5 on is curriculum only, ready to build whenever that's the next
+priority.
 
 | Act | Levels | Job title | Status |
 |---|---|---|---|
-| **I — New Hire** | 1-2 | New Hire | Written & built |
-| **II — Shift Lead** | 3-5 | Shift Lead | Written; Level 3 built, 4-5 not built |
-| **III — Shift Supervisor** | 6-9 | Shift Supervisor | Written, not built |
-| **IV — Assistant Manager** | 10-12 | Assistant Manager | Written, not built |
-| **V — Bridge (elective)** | 13-16 | "Prepping for BHCC" *or* "Front Office / Healthcare Admin" | Written, not built |
-| **VI — Office Administrator** | 17-20 | Office Administrator (HQ) | Written, not built |
-| **VII — Team Lead (capstone)** | 21-24 | Team Lead | Written, not built |
+| **I — New Hire** | 1-3 | New Hire | Written & built |
+| **II — Shift Lead** | 4-6 | Shift Lead | Written; Level 4 built, 5-6 not built |
+| **III — Shift Supervisor** | 7-10 | Shift Supervisor | Written, not built |
+| **IV — Assistant Manager** | 11-13 | Assistant Manager | Written, not built |
+| **V — Bridge (elective)** | 14-17 | "Prepping for BHCC" *or* "Front Office / Healthcare Admin" | Written, not built |
+| **VI — Office Administrator** | 18-21 | Office Administrator (HQ) | Written, not built |
+| **VII — Team Lead (capstone)** | 22-25 | Team Lead | Written, not built |
 
 Act V is deliberately optional and comes with two flavors a student can pick
 between (or skip past to Act VI): a taste of college-style digital tasks
 (built from the four `future-planning-what's-next` lessons, now sequenced
-into Levels 13-16 as Path A), or healthcare-admin office tasks (appointment
+into Levels 14-17 as Path A), or healthcare-admin office tasks (appointment
 scheduling, patient intake, confidentiality judgment, a small billing
 spreadsheet — Path B). Neither is a program simulation — both are framed to
 the student as "building the muscle for this kind of digital task," honest
@@ -100,12 +101,12 @@ before Level 1 begins.
 
 ---
 
-## Act I: Levels 1-2 — New Hire
+## Act I: Levels 1-3 — New Hire
 
-Two levels, not one — split so each stays a genuinely short, self-contained
-15-20 minute session. Level 1 is a single lesson, deliberately tiny, so the
-very first session in the app is low-stakes. Level 2 picks up the rest of
-what a brand-new hire has to handle.
+Three short levels, so each stays a 15-20 minute session. Level 1 is a
+single lesson, deliberately tiny, so the very first session in the app is
+low-stakes. Level 2 is the portal week (schedule, hours, pay). Level 3 is
+the first judgment calls, on their own, after the mechanics are in place.
 
 ### Level 1: New Hire, Day One
 
@@ -120,36 +121,52 @@ See `level-1-new-hire/01-lesson-mail.md`.
 
 ### Level 2: Settling In
 
-Two or three tabs, student-chosen (not auto-opened) — the first small step
-up in independence. Everything a new hire needs before their first real
-judgment calls.
+One app, three short tasks — the Employee Portal. First small step up in
+independence (tabs are there, not auto-opened as the only option). Hours,
+schedule, and pay stay together because they are the same tool.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Portal |
 | 2 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
 | 3 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Portal + PDF Reader |
-| 4 | `incident` | Write up what happened, in order, in a professional tone | Browser → Forms |
-| 5 | `handbook` | Find an answer in the employee handbook under pressure | Browser → Docs |
 
 See `level-2-settling-in/01-lesson-schedule.md` through
-`05-lesson-handbook.md`. Finishing `handbook` completes Level 2.
+`03-lesson-paystub.md`. Finishing `paystub` completes Level 2.
+
+### Level 3: When Something Happens
+
+New tabs (Forms, Docs). Two judgment tasks, after the student already
+knows the portal. This is the last New Hire level; finishing it earns the
+Shift Lead promotion.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `incident` | Write up what happened, in order, in a professional tone | Browser → Forms |
+| 2 | `handbook` | Find an answer in the employee handbook, even when you feel rushed | Browser → Docs |
+
+See `level-3-when-something-happens/01-lesson-incident.md` and
+`02-lesson-handbook.md`. Finishing `handbook` completes Level 3 and Act I.
 
 ---
 
-## Act II: Levels 3-5 — Shift Lead
+## Act II: Levels 4-6 — Shift Lead
 
-**Story bridge:** finishing Level 2 earns the promotion the Level 1 email
+**Story bridge:** finishing Level 3 earns the promotion the Level 1 email
 hinted was coming. The environment refreshes — new emails, a new schedule,
 a new week — and the student picks up the tools that come with being a
 shift lead.
 
-Also starting with Level 3: the desktop's "do this next" button stops
+Also starting with Level 4: the desktop's "do this next" button stops
 naming the exact tab (a generic "Open Browser" instead of "Open Calendar")
 — a deliberate step down in hand-holding. Free tab management (opening/
 closing tabs, starting on a blank New Tab) unlocks here too.
 
-### Level 3: Shift Lead
+Folder names in Act II and later still use the older numbers
+(`level-3-shift-lead/`, and so on). The circle number in Studio is the
+learner-facing number.
+
+### Level 4: Shift Lead
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
@@ -158,20 +175,20 @@ closing tabs, starting on a blank New Tab) unlocks here too.
 | 3 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Sheets |
 
 See `level-3-shift-lead/`. (The `video-call` task originally written here
-as an optional bonus has since moved to Act VI, Level 18, where it pairs
+as an optional bonus has since moved to Act VI, where it pairs
 naturally with multi-person calendar scheduling.)
 
-### Level 4: Reporting In
+### Level 5: Reporting In
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `make-a-copy` | Open a view-only / read-only template, understand viewer vs editor, File → Make a copy so you don't overwrite the master | Browser → Sheets (same menu as Docs) |
 | 2 | `status-report` | Author a `=SUM()` formula yourself (not just verify one) on *your* copy, cc a second recipient on a status email | Browser → Sheets + Mail |
 
-See `level-4-reporting-in/`. (Lesson 1 is the flip side of Level 3's
+See `level-4-reporting-in/`. (Lesson 1 is the flip side of Level 4's
 `files` lesson: there you *gave* view access; here you *are* the viewer.)
 
-### Level 5: Covering More Ground
+### Level 6: Covering More Ground
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
@@ -204,7 +221,7 @@ See `level-5-covering-more-ground/01-lesson-triage.md`. This is the first
 
 ---
 
-## Act III: Levels 6-9 — Shift Supervisor
+## Act III: Levels 7-10 — Shift Supervisor
 
 **Story bridge:** finishing Level 5 earns a second promotion. New
 responsibility: deciding *for* the team, not just for yourself.
@@ -221,7 +238,7 @@ Finishing Level 9 awards the "Shift Supervisor" certificate and triggers
 the promotion into Assistant Manager.
 
 **Design notes:**
-- `formula-check` is a step up from Level 3/4's "does the number look
+- `formula-check` is a step up from Level 4/5's "does the number look
   right" — the student opens the formula itself and reasons about *why*
   it's wrong.
 - `team-meeting`'s agenda stays to 2-3 bullets by design — the skill is
@@ -231,7 +248,7 @@ the promotion into Assistant Manager.
 
 ---
 
-## Act IV: Levels 10-12 — Assistant Manager
+## Act IV: Levels 11-13 — Assistant Manager
 
 **Story bridge:** finishing Level 9 earns the promotion, and with it, an
 offer — Harborside will pay for a Bunker Hill Community College Business
@@ -261,7 +278,7 @@ completes Act IV.
 
 ---
 
-## Act V: Levels 13-16 — Bridge (elective)
+## Act V: Levels 14-17 — Bridge (elective)
 
 **Story bridge:** Act IV's promotion into Assistant Manager is complete.
 Act V is entirely optional — a student can pick one path, try both, or
@@ -300,7 +317,7 @@ Finishing either path's Level 16 lesson completes Act V.
 
 ---
 
-## Act VI: Levels 17-20 — Office Administrator
+## Act VI: Levels 18-21 — Office Administrator
 
 **Story bridge:** whether or not a student did Act V, finishing it (or
 skipping it) earns the move to Harborside's HQ office — a new building, a
@@ -318,7 +335,7 @@ Finishing Level 20 awards the "Office Administrator" certificate and
 completes Act VI.
 
 **Design notes:**
-- `office-drive` is `files` (Level 3) at HQ scale — same skill, genuinely
+- `office-drive` is `files` (Level 4) at HQ scale — same skill, genuinely
   harder because of scale, not a new mechanic.
 - `video-call` was originally written and parked as an optional bonus in
   Act II (Shift Lead); it's moved here, right after
@@ -329,7 +346,7 @@ completes Act VI.
 
 ---
 
-## Act VII: Levels 21-24 — Team Lead (capstone)
+## Act VII: Levels 22-25 — Team Lead (capstone)
 
 **Story bridge:** finishing Act VI earns the final promotion in the
 currently-written arc — Team Lead. This act is the payoff: every earlier
@@ -375,11 +392,11 @@ The same lesson structure serves both without splitting into separate curricula:
   pay stub) is where beginners spend most of their time. This is what the
   in-task **Help** button is for — it's always available, never required, and
   it's the *only* place step-by-step hand-holding lives now (the app itself
-  doesn't narrate what to click, and from Level 3 on it doesn't even open the
+  doesn't narrate what to click, and from Level 4 on it doesn't even open the
   right tab for you).
 - **Workplace judgment** (what tone to use, when to ask instead of assume, how
   to word a schedule-change request) is where the college-background/
-  experienced students should spend their attention — Level 2's judgment
+  experienced students should spend their attention — Level 3's judgment
   tasks in particular, and every act after, are built around this, not
   around clicking.
 - **Self-pacing does the differentiation for you**: a beginner spends the full

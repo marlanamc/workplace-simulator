@@ -128,7 +128,7 @@ export default async function StudioPage() {
                         )}
                       </div>
 
-                      <ul className="flex flex-col gap-1">
+                      <ul className="flex flex-col divide-y divide-white/6">
                         {level.lessons.map((lesson) => {
                           const built = lessonIsBuilt(lesson);
                           const href = playHref(lesson);
@@ -141,36 +141,36 @@ export default async function StudioPage() {
                           return (
                             <li
                               key={lesson.taskKey}
-                              className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-xl px-2 py-2 hover:bg-white/[0.04]"
+                              className="flex items-start justify-between gap-3 px-1 py-2.5 first:pt-0 last:pb-0"
                             >
-                              <span className="w-8 shrink-0 text-center text-[12px] tabular-nums text-[#80868b]">
-                                {lesson.n}
-                              </span>
-                              <code className="w-[168px] shrink-0 truncate text-[12px] text-[#c4c7c5]">
-                                {lesson.taskKey}
-                              </code>
-                              <span className="min-w-[140px] flex-1 text-[13px] leading-snug text-[#bdc1c6]">
-                                {pathLabel && isElective && (
-                                  <span className="mr-1.5 text-[11px] font-medium text-white/50">
-                                    {pathLabel}
-                                  </span>
-                                )}
-                                {lesson.skill}
-                              </span>
-                              <span className="w-[92px] shrink-0 text-[12px] text-[#80868b]">
-                                {lesson.app}
-                              </span>
+                              <div className="min-w-0">
+                                <p className="text-[13px] leading-snug text-[#e8eaed]">
+                                  {pathLabel && isElective && (
+                                    <span className="mr-1.5 text-[11px] font-medium text-white/50">
+                                      {pathLabel}
+                                    </span>
+                                  )}
+                                  {lesson.skill}
+                                </p>
+                                <p className="mt-0.5 text-[12px] text-[#80868b]">
+                                  <span className="tabular-nums">{lesson.n}</span>
+                                  <span className="mx-1.5 text-white/20">·</span>
+                                  <code className="text-[11px] text-[#9aa0a6]">{lesson.taskKey}</code>
+                                  <span className="mx-1.5 text-white/20">·</span>
+                                  {lesson.app}
+                                </p>
+                              </div>
                               {href ? (
                                 <Link
                                   href={href}
-                                  className="shrink-0 rounded-full bg-[#81c995]/15 px-2.5 py-1 text-[12px] font-medium text-[#81c995] hover:bg-[#81c995]/25"
+                                  className="mt-0.5 shrink-0 rounded-full bg-[#81c995]/15 px-2.5 py-1 text-[12px] font-medium text-[#81c995] hover:bg-[#81c995]/25"
                                 >
                                   Open
                                 </Link>
                               ) : built ? (
-                                <span className="shrink-0 text-[12px] text-[#81c995]">Built</span>
+                                <span className="mt-0.5 shrink-0 text-[12px] text-[#81c995]">Built</span>
                               ) : (
-                                <span className="w-[52px] shrink-0 text-right text-[12px] text-[#80868b]">
+                                <span className="mt-0.5 shrink-0 text-[12px] text-[#80868b]">
                                   Stub
                                 </span>
                               )}

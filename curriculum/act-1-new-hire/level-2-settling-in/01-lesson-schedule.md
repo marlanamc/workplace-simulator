@@ -14,7 +14,7 @@ Maria, right there in the portal.
       planted conflict (a Thursday shift that overlaps a doctor's appointment).
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 2 wrap-up assignment
-      (`real-practice-assignment.md`), offered after Track 3 is done. Never a
+      (`real-practice-assignment.md`), offered after this level is done. Never a
       gate — a student who skips it still moves on.
 
 ## Simulator practice (~5 min)

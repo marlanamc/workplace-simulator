@@ -90,22 +90,42 @@ export const LEVELS: Level[] = [
   {
     key: "level2",
     title: "Level 2: Settling In",
-    trackKeys: ["schedules", "judgment"],
+    trackKeys: ["schedules"],
     firstTabKey: "portal",
     levelUp: {
       emoji: "🎉",
       kicker: "Day one: complete",
       title: "You survived Day One!",
-      body: "Maria noticed. You have a real rhythm now: schedules, the time clock, pay stubs, and knowing when to speak up. Let's keep going.",
+      body: "Maria noticed. Your first email is done. Next up: your schedule, your hours, and your pay.",
       cta: "Let's keep going",
     },
   },
   {
     key: "level3",
-    title: "Level 3: Shift Lead",
+    title: "Level 3: When Something Happens",
+    trackKeys: ["judgment"],
+    firstTabKey: "incident",
+    levelUp: {
+      emoji: "✅",
+      kicker: "The portal: done",
+      title: "You can run the basics now.",
+      body: "You can read a schedule, clock out, and check your pay. Next, something goes wrong on the floor.",
+      cta: "Keep going",
+    },
+  },
+  {
+    key: "level4",
+    title: "Level 4: Shift Lead",
     trackKeys: ["growing"],
     firstTabKey: "calendar",
     freeTabbing: true,
+    levelUp: {
+      emoji: "⭐",
+      kicker: "A new job",
+      title: "You are a Shift Lead now!",
+      body: "Maria saw you handle the hard calls. New tools come with the job. Let's try them.",
+      cta: "Let's go",
+    },
   },
 ];
 
@@ -128,8 +148,8 @@ export type DesktopScene = "harborside-open" | "harborside-shift";
  * `curriculum/00-scope-and-sequence.md`.
  */
 export const ACTS: Act[] = [
-  { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2"], scene: "harborside-open" },
-  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3"], scene: "harborside-shift" },
+  { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2", "level3"], scene: "harborside-open" },
+  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4"], scene: "harborside-shift" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
@@ -149,11 +169,11 @@ export function sceneForLevel(level: Level): DesktopScene {
 export const TAB_LEVEL_KEYS: Record<string, string> = {
   mail: "level1",
   portal: "level2",
-  incident: "level2",
-  handbook: "level2",
-  calendar: "level3",
-  files: "level3",
-  spreadsheet: "level3",
+  incident: "level3",
+  handbook: "level3",
+  calendar: "level4",
+  files: "level4",
+  spreadsheet: "level4",
 };
 
 export function levelForTrack(trackKey: string): Level {

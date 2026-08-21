@@ -35,6 +35,6 @@ time") is plenty.
 ## Notes for the teacher
 - This is the smallest wrap-up in the whole curriculum by design — Level 1
   is a single lesson, so there's no reflection round-up needed yet. The
-  first real end-of-level reflection happens at the end of Level 2.
+  first real end-of-level reflection happens at the end of Level 3.
 - A student is ready for Level 2 as soon as `mail` shows complete in their
   Objectives panel, whether or not they did this optional practice.

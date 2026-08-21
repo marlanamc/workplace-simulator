@@ -1,21 +1,22 @@
-# Lesson 4: File an Incident Report
+# Lesson 1: File an Incident Report
 
-**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 3 — Judgment & Follow-Through
-**Task key:** `incident` · **Status:** built — a new "Incident Report" Browser
+**Time:** ~5 minutes · **Level:** 3 — When Something Happens · **Track:** 3 — Think It Through
+**Task key:** `incident` · **Status:** built — a "Incident Report" Browser
 tab holds a planted scenario (a customer slip near the front door) and a
 what/when/where form that submits to Maria.
-**Prerequisite:** Track 2 complete (Lessons 1–3)
+**Prerequisite:** Level 2 complete (schedule, time clock, and pay stub)
 
 ## We will learn...
-- write up what happened, in order, in a tone that's clear and professional —
-  the first lesson that's really about judgment, not just software mechanics.
+- write up what happened, in order, in a tone that's clear and professional.
+  This is the first lesson that's really about judgment, not just software
+  mechanics.
 
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Incident Report tab always shows the
       same scenario.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 2 wrap-up assignment
-      (`real-practice-assignment.md`), offered after Track 3 is done. Never a
+      practice bundled into the Level 3 wrap-up assignment
+      (`real-practice-assignment.md`), offered after this level is done. Never a
       gate — a student who skips it still moves on. If you do offer it, have
       2–3 example phrasings ready for this skill (one too vague, one
       over-explained, one "just right") — this is about calibration, not a

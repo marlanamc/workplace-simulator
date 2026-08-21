@@ -1,6 +1,6 @@
 # Lesson 3: Read and Trust a Total
 
-**Time:** ~5 minutes · **Level:** 3 — Shift Lead · **Track:** 4 — Growing at Work
+**Time:** ~5 minutes · **Level:** 4 — Shift Lead · **Track:** 4 — Growing at Work
 **Task key:** `spreadsheet` · **Status:** built — a small "weekly tally"
 sheet (a few rows of shift tips) in the Sheets Browser tab, with one
 planted-wrong total (a stale number, not a real formula error) to catch.
@@ -14,7 +14,7 @@ planted-wrong total (a stale number, not a real formula error) to catch.
 - [ ] Simulator: nothing to set up — the sheet always has the same rows and
       the same planted-wrong total.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 3 wrap-up assignment
+      practice bundled into the Level 4 wrap-up assignment
       (`real-practice-assignment.md`), offered after Track 4 is done. Never
       a gate — a student who skips it still moves on.
 
