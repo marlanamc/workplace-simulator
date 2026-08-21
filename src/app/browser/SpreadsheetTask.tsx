@@ -41,7 +41,8 @@ function cellRef(cell: Cell) {
 
 export default function SpreadsheetTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("home");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("spreadsheet") ? "done" : "home");
   const [entries, setEntries] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "B" });
   const [body, setBody] = useState("");
@@ -49,7 +50,6 @@ export default function SpreadsheetTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = SPREADSHEET_COPY[lang];
 

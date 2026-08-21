@@ -22,14 +22,14 @@ type View = "list" | "compose" | "done";
 
 export default function ScheduleTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("list");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "list");
   const [swapDay, setSwapDay] = useState<(typeof SCHEDULE)[number] | null>(null);
   const [body, setBody] = useState("");
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = SCHEDULE_COPY[lang];
 

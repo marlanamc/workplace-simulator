@@ -28,7 +28,8 @@ export default function MailClient() {
   const [plain, setPlain] = useState(true);
   const [speak, setSpeak] = useState(false);
   const [step, setStep] = useState(0);
-  const [view, setView] = useState<View>("empty");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("mail") ? "done" : "empty");
   const [body, setBody] = useState("");
   const [attached, setAttached] = useState(false);
   const [confidence, setConfidence] = useState<string | null>(null);
@@ -36,7 +37,6 @@ export default function MailClient() {
   const [picker, setPicker] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = MAIL_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);

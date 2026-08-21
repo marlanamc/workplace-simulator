@@ -21,7 +21,8 @@ type View = "form" | "done";
 
 export default function IncidentTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("form");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "form");
   const [when, setWhen] = useState(DEFAULTS.en.when);
   const [where, setWhere] = useState(DEFAULTS.en.where);
   const [what, setWhat] = useState("");
@@ -29,7 +30,6 @@ export default function IncidentTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = INCIDENT_COPY[lang];
 

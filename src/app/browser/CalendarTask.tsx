@@ -32,13 +32,13 @@ const EVENT_DAY = 26;
 
 export default function CalendarTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("home");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "home");
   const [body, setBody] = useState("");
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = CALENDAR_COPY[lang];
 

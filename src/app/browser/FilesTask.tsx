@@ -35,7 +35,8 @@ function normalize(value: string) {
 
 export default function FilesTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("home");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
@@ -44,7 +45,6 @@ export default function FilesTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = FILES_COPY[lang];
 

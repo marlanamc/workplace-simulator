@@ -23,13 +23,13 @@ type View = "list" | "check1" | "check2" | "done";
 
 export default function PaystubTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("list");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
   const [openStub, setOpenStub] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { openApp, minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = PAYSTUB_COPY[lang];
 

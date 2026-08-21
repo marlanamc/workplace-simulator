@@ -44,6 +44,13 @@ export interface Level {
   wallpaper: string;
   /** The Browser tab to land on when a learner opens or revisits this level. */
   firstTabKey: string;
+  /**
+   * Whether this level lets the learner open/close tabs freely and starts
+   * them on a blank New Tab (finding the right bookmark is the exercise).
+   * Levels without this pre-open every one of their tabs and land the
+   * learner directly on `firstTabKey` — no tab-hunting required yet.
+   */
+  freeTabbing?: boolean;
 }
 
 /**
@@ -55,17 +62,25 @@ export interface Level {
 export const LEVELS: Level[] = [
   {
     key: "level1",
-    title: "Level 1: New Hire",
-    trackKeys: ["starter", "schedules", "judgment"],
+    title: "Level 1: New Hire, Day One",
+    trackKeys: ["starter"],
     wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
     firstTabKey: "mail",
   },
   {
     key: "level2",
-    title: "Level 2: Shift Lead",
+    title: "Level 2: Settling In",
+    trackKeys: ["schedules", "judgment"],
+    wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
+    firstTabKey: "portal",
+  },
+  {
+    key: "level3",
+    title: "Level 3: Shift Lead",
     trackKeys: ["growing"],
     wallpaper: "linear-gradient(155deg, #43266e 0%, #6d3f9e 42%, #9a5fc9 75%, #d4af65 100%)",
     firstTabKey: "calendar",
+    freeTabbing: true,
   },
 ];
 

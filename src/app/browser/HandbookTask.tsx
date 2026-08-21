@@ -22,12 +22,12 @@ type View = "task" | "done";
 
 export default function HandbookTask() {
   const [lang, setLang] = useState<Lang>("en");
-  const [view, setView] = useState<View>("task");
+  const { markComplete, completedTaskKeys } = useProgress();
+  const [view, setView] = useState<View>(completedTaskKeys.includes("handbook") ? "done" : "task");
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { minimizeActive } = useWindowManager();
-  const { markComplete } = useProgress();
 
   const c = HANDBOOK_TASK_COPY[lang];
   const check = SCENARIO_CHECK[lang];

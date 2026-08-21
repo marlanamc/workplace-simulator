@@ -32,12 +32,12 @@ interface TabDef {
 
 const BASE_TABS: TabDef[] = [
   { key: "mail",     label: "Hmail",  url: "hmail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: "level1" },
-  { key: "portal",   label: "Hportal",url: "hportal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: "level1" },
-  { key: "incident", label: "Hforms", url: "hforms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: "level1" },
-  { key: "handbook", label: "Hdocs",  url: "hdocs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: "level1" },
-  { key: "calendar", label: "Hcal",   url: "hcal.harborsidecafe.com",   icon: "📅", color: "#34a853", levelKey: "level2" },
-  { key: "files",    label: "Hdrive", url: "hdrive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: "level2" },
-  { key: "spreadsheet", label: "Hsheets", url: "hsheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: "level2" },
+  { key: "portal",   label: "Hportal",url: "hportal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: "level2" },
+  { key: "incident", label: "Hforms", url: "hforms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: "level2" },
+  { key: "handbook", label: "Hdocs",  url: "hdocs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: "level2" },
+  { key: "calendar", label: "Hcal",   url: "hcal.harborsidecafe.com",   icon: "📅", color: "#34a853", levelKey: "level3" },
+  { key: "files",    label: "Hdrive", url: "hdrive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: "level3" },
+  { key: "spreadsheet", label: "Hsheets", url: "hsheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: "level3" },
 ];
 
 /** The 4-color Chrome circle logo */
@@ -149,14 +149,15 @@ export default function BrowserClient() {
   const { nudge, say } = useNudge(3500);
 
   const progressLevelKey = levelForTrack(currentTrack.key).key;
-  const isLevel2 = progressLevelKey === "level2";
+  const currentLevelDef = LEVELS.find((l) => l.key === progressLevelKey);
+  const freeTabbing = currentLevelDef?.freeTabbing ?? false;
 
-  const defaultTab =
-    (LEVELS.find((l) => l.key === progressLevelKey)?.firstTabKey as TabKey | undefined) ?? "mail";
+  const defaultTab = (currentLevelDef?.firstTabKey as TabKey | undefined) ?? "mail";
 
-  // Level 1: pre-open all curriculum tabs so students can see them right away.
-  // Level 2: start with a blank New Tab — students must find and click a bookmark
-  //          themselves, which is the point of the exercise.
+  // Levels without freeTabbing: pre-open all of that level's curriculum tabs
+  // so students can see them right away. Levels with freeTabbing: start on a
+  // blank New Tab — students must find and click a bookmark themselves,
+  // which is the point of the exercise.
   const NEWTAB_STUB: TabDef = {
     key: "newtab" as TabKey,
     label: "New Tab",
@@ -167,12 +168,12 @@ export default function BrowserClient() {
     closeable: true,
   };
   const [openTabs, setOpenTabs] = useState<TabDef[]>(
-    isLevel2
+    freeTabbing
       ? [NEWTAB_STUB]
       : BASE_TABS.filter((t) => t.levelKey === progressLevelKey)
   );
   const [activeTab, setActiveTab] = useState<TabKey>(
-    isLevel2
+    freeTabbing
       ? ("newtab" as TabKey)
       : BASE_TABS.some((t) => t.key === browserTab)
       ? (browserTab as TabKey)
@@ -187,7 +188,7 @@ export default function BrowserClient() {
     const explicitTabRequested = browserTab !== lastBrowserTab;
     setLastBrowserTab(browserTab);
     const newLevelKey = levelForTrack(currentTrack.key).key;
-    const newIsLevel2 = newLevelKey === "level2";
+    const newLevelDef = LEVELS.find((l) => l.key === newLevelKey);
     if (explicitTabRequested && BASE_TABS.some((t) => t.key === browserTab)) {
       setActiveTab(browserTab as TabKey);
       // Ensure that tab is open in our tab list
@@ -197,10 +198,9 @@ export default function BrowserClient() {
       }
     } else {
       const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
-      const correctLevel = newIsLevel2 ? "level2" : "level1";
-      if (activeLevelKey !== correctLevel) {
-        setOpenTabs(BASE_TABS.filter((t) => t.levelKey === correctLevel));
-        setActiveTab(defaultTab);
+      if (activeLevelKey !== newLevelKey) {
+        setOpenTabs(BASE_TABS.filter((t) => t.levelKey === newLevelKey));
+        setActiveTab((newLevelDef?.firstTabKey as TabKey | undefined) ?? "mail");
       }
     }
   }
@@ -214,9 +214,11 @@ export default function BrowserClient() {
   const newTabCounter = useRef(0);
   const nextNewTabId = () => `newtab-${++newTabCounter.current}` as TabKey;
 
+  const freeTabbingLevelTitle = LEVELS.find((l) => l.freeTabbing)?.title ?? "a later level";
+
   const openNewTab = () => {
-    if (!isLevel2) {
-      say("Opening new tabs is a Level 2 skill — you'll unlock it once you reach Shift Lead!");
+    if (!freeTabbing) {
+      say(`Opening new tabs is a ${freeTabbingLevelTitle} skill — you'll unlock it once you get there!`);
       return;
     }
     // Add a new-tab placeholder if not already open
@@ -227,7 +229,7 @@ export default function BrowserClient() {
       url: "newtab",
       icon: "",
       color: "#e8eaed",
-      levelKey: "level2",
+      levelKey: progressLevelKey,
       closeable: true,
     };
     setOpenTabs((prev) => [...prev, { ...newTabDef, key: newTabId }]);
@@ -235,7 +237,7 @@ export default function BrowserClient() {
   };
 
   const closeTab = (key: TabKey) => {
-    if (!isLevel2) return;
+    if (!freeTabbing) return;
     const idx = openTabs.findIndex((t) => t.key === key);
     const remaining = openTabs.filter((t) => t.key !== key);
     if (remaining.length === 0) {
@@ -246,7 +248,7 @@ export default function BrowserClient() {
         url: "newtab",
         icon: "",
         color: "#e8eaed",
-        levelKey: "level2",
+        levelKey: progressLevelKey,
         closeable: true,
       };
       setOpenTabs([freshNewTab]);
@@ -260,10 +262,10 @@ export default function BrowserClient() {
     }
   };
 
-  // Each tab is closeable in level 2 IF it's a "newtab" placeholder
+  // Each tab is closeable in a freeTabbing level IF it's a "newtab" placeholder
   // OR if there's more than one tab open
   const canCloseTab = (tab: TabDef) =>
-    isLevel2 && (tab.key === "newtab" || tab.closeable || openTabs.length > 1);
+    freeTabbing && (tab.key === "newtab" || tab.closeable || openTabs.length > 1);
 
   return (
     <div
@@ -292,12 +294,12 @@ export default function BrowserClient() {
           {/* New tab button */}
           <button
             className={`flex h-7 w-7 mb-1 ml-1 shrink-0 items-center justify-center rounded-full text-[20px] font-light transition-colors cursor-pointer ${
-              isLevel2
+              freeTabbing
                 ? "text-[#3c4043] hover:bg-black/10"
                 : "text-[#3c4043]/40 cursor-default"
             }`}
             aria-label="New tab"
-            title={isLevel2 ? "New tab" : "Unlock in Level 2"}
+            title={freeTabbing ? "New tab" : `Unlock in ${freeTabbingLevelTitle}`}
             onClick={openNewTab}
           >
             +
