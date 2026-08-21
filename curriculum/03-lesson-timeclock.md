@@ -1,27 +1,30 @@
 # Lesson 3: Clock Out for the Day
 
 **Time:** 20 minutes total (10 + 10) · **Track:** 2 — Schedules & Documents
-**Task key:** `timeclock` · **Status:** not built yet — Employee Portal's Time
-Clock section exists and is explorable, but this graded task doesn't exist yet.
+**Task key:** `timeclock` · **Status:** built — the Employee Portal's Time
+Clock tab clocks out into a planted hours mismatch; flagging it opens a short
+message to Maria, right there in the portal.
 **Prerequisite:** Track 1 complete
 
 ## We will learn...
 - clock out at the end of a shift and check that the hours recorded look right.
 
-## Before class (teacher prep) — once built
-- [ ] Simulator: Employee Portal's **Time Clock** section shows the student
-      already clocked in; the task is to clock out and notice whether the
-      total hours match the shift they worked.
+## Before class (teacher prep)
+- [ ] Simulator: nothing to set up — clocking out always shows the same
+      planted mismatch (clocked in later than the scheduled start, so today's
+      total is short).
 - [ ] Google Classroom: post a short worksheet — a mock time card with a
       clock-in and clock-out time, asking the student to calculate the total
       and flag it if it looks wrong (build in one example with an error).
 
-## Part A: Simulator (~10 min) — once built
+## Part A: Simulator (~10 min)
 1. Open the **Browser** → **Employee Portal** → **Time Clock**.
 2. Find the **Clock Out** button and use it.
-3. Check today's total hours against what you expect for your shift.
-4. If something looks off, notice what you'd do about it (message your lead —
-   this can chain into the `schedule`/`mail` skills already practiced).
+3. Check today's total hours against your scheduled shift.
+4. Click **Something's off — message my lead** (clicking "Looks right" just
+   gets a friendly reminder to look again).
+5. Write a short message to Maria — sentence starters are there if you want
+   them — and click **Send**.
 
 ## Part B: Real Practice (~10 min)
 1. Open the mock time card in Google Classroom.

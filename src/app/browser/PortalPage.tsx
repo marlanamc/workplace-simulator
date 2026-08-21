@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { TIMECLOCK, PAY_STUBS } from "@/lib/portal-content";
+import { PAY_STUBS } from "@/lib/portal-content";
 import ScheduleTask from "./ScheduleTask";
+import TimeclockTask from "./TimeclockTask";
 
 type Section = "schedule" | "timeclock" | "paystubs";
 
@@ -44,35 +45,7 @@ export default function PortalPage() {
       <div className="min-h-0 flex-1 overflow-y-auto p-6">
         {section === "schedule" && <ScheduleTask />}
 
-        {section === "timeclock" && (
-          <div className="flex flex-col gap-5">
-            <div className="rounded-xl border border-[var(--success-tint)] bg-[var(--success-tint)] p-5">
-              <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--success)]">
-                {TIMECLOCK.status}
-              </div>
-              <div className="mt-1 text-[20px] font-medium">Since {TIMECLOCK.clockedInAt}</div>
-              <div className="mt-1 text-[14px] text-[var(--text-secondary)]">
-                {TIMECLOCK.todayHours} · {TIMECLOCK.weekHours}
-              </div>
-            </div>
-            <div>
-              <h3 className="mb-2 text-[15px] font-medium">Recent shifts</h3>
-              <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
-                {TIMECLOCK.recent.map((r, i) => (
-                  <div
-                    key={r.date}
-                    className={`grid grid-cols-4 gap-2 px-4 py-3 text-[13px] ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
-                  >
-                    <span className="text-[var(--text-primary)]">{r.date}</span>
-                    <span className="text-[var(--text-secondary)]">In {r.in}</span>
-                    <span className="text-[var(--text-secondary)]">Out {r.out}</span>
-                    <span className="text-right font-medium text-[var(--text-primary)]">{r.total}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        {section === "timeclock" && <TimeclockTask />}
 
         {section === "paystubs" && (
           <div>

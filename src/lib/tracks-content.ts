@@ -51,7 +51,7 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   timeclock: {
     label: "Clock out for the day",
     description: "Clock out and check that your hours look right.",
-    built: false,
+    built: true,
   },
   paystub: {
     label: "Read a pay stub",

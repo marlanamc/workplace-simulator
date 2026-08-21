@@ -1,15 +1,3 @@
-export const TIMECLOCK = {
-  status: "Clocked in",
-  clockedInAt: "8:02 AM",
-  todayHours: "1h 10m so far",
-  weekHours: "24h 30m this week",
-  recent: [
-    { date: "Mon, Aug 18", in: "6:58 AM", out: "3:04 PM", total: "8h 06m" },
-    { date: "Sat, Aug 16", in: "8:01 AM", out: "4:00 PM", total: "7h 59m" },
-    { date: "Fri, Aug 15", in: "10:03 AM", out: "6:02 PM", total: "7h 59m" },
-  ],
-};
-
 export interface PayStub {
   id: string;
   period: string;
