@@ -29,7 +29,7 @@ interface TabDef {
   url: string;
   icon: string;
   color: string;
-  /** Which level this tab belongs to — only tabs matching the level currently being viewed show up. */
+  /** Which level this tab belongs to - only tabs matching the level currently being viewed show up. */
   levelKey: string;
   /** Whether this tab can be closed by the user */
   closeable?: boolean;
@@ -45,7 +45,7 @@ const BASE_TABS: TabDef[] = [
   { key: "portal",   label: "Portal",url: "portal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
 ];
 
-/** Chrome-style tab — active tab is the same white as the toolbar, so they read as one piece. */
+/** Chrome-style tab - active tab is the same white as the toolbar, so they read as one piece. */
 function ChromeTab({
   tab,
   isActive,
@@ -133,7 +133,7 @@ function NewTabPage() {
         Search Google or type a URL
       </div>
       <p className="mt-10 text-[13px] text-[#70757a]">
-        This is a practice browser — use the bookmarks bar to open your apps.
+        This is a practice browser. Use the bookmarks bar to open your apps.
       </p>
     </div>
   );
@@ -145,41 +145,51 @@ export default function BrowserClient() {
   const { nudge, say } = useNudge(3500);
 
   const progressLevelKey = levelForTrack(currentTrack.key).key;
-  const currentLevelDef = LEVELS.find((l) => l.key === progressLevelKey);
-  const freeTabbing = currentLevelDef?.freeTabbing ?? false;
-
-  const defaultTab = (currentLevelDef?.firstTabKey as TabKey | undefined) ?? "mail";
+  const jumpDef =
+    browserTabExplicit && BASE_TABS.some((t) => t.key === browserTab)
+      ? BASE_TABS.find((t) => t.key === browserTab)
+      : undefined;
+  const initialLevelKey = jumpDef?.levelKey ?? progressLevelKey;
+  const initialLevelDef = LEVELS.find((l) => l.key === initialLevelKey);
+  const initialFreeTabbing = initialLevelDef?.freeTabbing ?? false;
+  const defaultTab = (initialLevelDef?.firstTabKey as TabKey | undefined) ?? "mail";
 
   // Levels without freeTabbing: pre-open all of that level's curriculum tabs
   // so students can see them right away. Levels with freeTabbing: start on a
-  // blank New Tab — students must find and click a bookmark themselves,
-  // which is the point of the exercise.
-  const NEWTAB_STUB: TabDef = {
+  // blank New Tab - students must find and click a bookmark themselves,
+  // which is the point of the exercise. A studio/Levels jump names a tab and
+  // opens that one instead, even in a free-tabbing level.
+  const makeNewTabStub = (levelKey: string): TabDef => ({
     key: "newtab" as TabKey,
     label: "New Tab",
     url: "newtab",
     icon: "",
     color: "#e8eaed",
-    levelKey: progressLevelKey,
+    levelKey,
     closeable: true,
-  };
-  const [openTabs, setOpenTabs] = useState<TabDef[]>(
-    freeTabbing
-      ? [NEWTAB_STUB]
-      : BASE_TABS.filter((t) => t.levelKey === progressLevelKey)
-  );
-  const [activeTab, setActiveTab] = useState<TabKey>(
-    freeTabbing
-      ? ("newtab" as TabKey)
-      : BASE_TABS.some((t) => t.key === browserTab)
-      ? (browserTab as TabKey)
-      : defaultTab
-  );
+  });
+  const [openTabs, setOpenTabs] = useState<TabDef[]>(() => {
+    if (jumpDef) return [jumpDef];
+    return initialFreeTabbing
+      ? [makeNewTabStub(initialLevelKey)]
+      : BASE_TABS.filter((t) => t.levelKey === initialLevelKey);
+  });
+  const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    if (jumpDef) return jumpDef.key;
+    return initialFreeTabbing ? ("newtab" as TabKey) : defaultTab;
+  });
+
+  const viewedLevelKey =
+    openTabs.find((t) => t.key === activeTab)?.levelKey ??
+    BASE_TABS.find((t) => t.key === activeTab)?.levelKey ??
+    progressLevelKey;
+  const viewedLevelDef = LEVELS.find((l) => l.key === viewedLevelKey);
+  const freeTabbing = viewedLevelDef?.freeTabbing ?? false;
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.
   // `browserTabExplicit` (from window-manager) tells "go to this exact tab"
   // (a CTA, a Recent item, the Levels navigator) apart from a bare re-open
-  // (pinned shelf icon) that should just resync to current progress —
+  // (pinned shelf icon) that should just resync to current progress -
   // relying on whether the *value* changed doesn't work, since re-picking
   // the same level/tab twice in a row is a real, common case.
   const [lastToken, setLastToken] = useState(browserTabToken);
@@ -190,7 +200,7 @@ export default function BrowserClient() {
       const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
       setActiveTab(browserTab as TabKey);
       if (activeLevelKey !== tabDef.levelKey) {
-        // Jumping to a different level's tab — start clean instead of
+        // Jumping to a different level's tab - start clean instead of
         // mixing tab strips from two different levels together.
         setOpenTabs([tabDef]);
       } else if (!openTabs.some((t) => t.key === browserTab)) {
@@ -208,7 +218,7 @@ export default function BrowserClient() {
   }
 
   // Mirror the actually-active tab back to window-manager on every internal
-  // switch (bookmark click, ChromeTab click, etc.) — not just deep links —
+  // switch (bookmark click, ChromeTab click, etc.) - not just deep links -
   // so other UI (the Objectives panel) can always tell what's on screen.
   useEffect(() => {
     setBrowserTab(activeTab);
@@ -218,7 +228,7 @@ export default function BrowserClient() {
     ?? openTabs[0];
 
   // ── Tab actions ────────────────────────────────────────────
-  // A stable counter (not Date.now()) for unique new-tab keys — several can
+  // A stable counter (not Date.now()) for unique new-tab keys - several can
   // open within the same millisecond, and this stays a pure render.
   const newTabCounter = useRef(0);
   const nextNewTabId = () => `newtab-${++newTabCounter.current}` as TabKey;
@@ -227,7 +237,7 @@ export default function BrowserClient() {
 
   const openNewTab = () => {
     if (!freeTabbing) {
-      say(`Opening new tabs is a ${freeTabbingLevelTitle} skill — you'll unlock it once you get there!`);
+      say(`Opening new tabs is a ${freeTabbingLevelTitle} skill. You will unlock it once you get there!`);
       return;
     }
     // Add a new-tab placeholder if not already open
@@ -238,7 +248,7 @@ export default function BrowserClient() {
       url: "newtab",
       icon: "",
       color: "#e8eaed",
-      levelKey: progressLevelKey,
+      levelKey: viewedLevelKey,
       closeable: true,
     };
     setOpenTabs((prev) => [...prev, { ...newTabDef, key: newTabId }]);
@@ -250,14 +260,14 @@ export default function BrowserClient() {
     const idx = openTabs.findIndex((t) => t.key === key);
     const remaining = openTabs.filter((t) => t.key !== key);
     if (remaining.length === 0) {
-      // Never leave the student with zero tabs — open a fresh New Tab
+      // Never leave the student with zero tabs - open a fresh New Tab
       const freshNewTab: TabDef = {
         key: nextNewTabId(),
         label: "New Tab",
         url: "newtab",
         icon: "",
         color: "#e8eaed",
-        levelKey: progressLevelKey,
+        levelKey: viewedLevelKey,
         closeable: true,
       };
       setOpenTabs([freshNewTab]);

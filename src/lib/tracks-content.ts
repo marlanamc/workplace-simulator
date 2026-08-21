@@ -22,21 +22,21 @@ export const TRACKS: Track[] = [
   {
     key: "schedules",
     title: "Schedules & Documents",
-    subtitle: "Keep the shift running smoothly",
+    subtitle: "Keep the shift running well",
     taskKeys: ["schedule", "timeclock", "paystub"],
     awardEmoji: "📅",
   },
   {
     key: "judgment",
-    title: "Judgment & Follow-Through",
-    subtitle: "Handle it like a lead",
+    title: "Think It Through",
+    subtitle: "Handle it like a team lead",
     taskKeys: ["incident", "handbook"],
     awardEmoji: "🧭",
   },
   {
     key: "growing",
     title: "Growing at Work",
-    subtitle: "New tools that come with the promotion",
+    subtitle: "New tools for your new job",
     taskKeys: ["calendar", "files", "spreadsheet"],
     awardEmoji: "🛠️",
   },
@@ -54,7 +54,7 @@ export interface LevelUpCopy {
 export interface Level {
   key: string;
   title: string;
-  /** Which tracks (by Track.key) belong to this level — the environment stays constant across all of them. */
+  /** Which tracks (by Track.key) belong to this level - the environment stays constant across all of them. */
   trackKeys: string[];
   /** The Browser tab to land on when a learner opens or revisits this level. */
   firstTabKey: string;
@@ -62,12 +62,12 @@ export interface Level {
    * Whether this level lets the learner open/close tabs freely and starts
    * them on a blank New Tab (finding the right bookmark is the exercise).
    * Levels without this pre-open every one of their tabs and land the
-   * learner directly on `firstTabKey` — no tab-hunting required yet.
+   * learner directly on `firstTabKey` - no tab-hunting required yet.
    */
   freeTabbing?: boolean;
   /**
    * Copy for the level-up celebration shown when a learner finishes every
-   * track in the *previous* level. Optional — a level without this doesn't
+   * track in the *previous* level. Optional - a level without this doesn't
    * get a dedicated celebration moment (the wallpaper/environment still
    * changes either way).
    */
@@ -75,7 +75,7 @@ export interface Level {
 }
 
 /**
- * A level bundles several tracks into one shared environment — one job
+ * A level bundles several tracks into one shared environment - one job
  * title, one moment in the story. Finishing every track in a level is what
  * moves a learner into the next one (new emails, new schedule). The
  * desktop room stays put across every level in the same act.
@@ -96,7 +96,7 @@ export const LEVELS: Level[] = [
       emoji: "🎉",
       kicker: "Day one: complete",
       title: "You survived Day One!",
-      body: "Maria noticed. You've got a real rhythm going now — schedules, time clock, pay stubs, and knowing when to speak up. Let's keep it rolling.",
+      body: "Maria noticed. You have a real rhythm now: schedules, the time clock, pay stubs, and knowing when to speak up. Let's keep going.",
       cta: "Let's keep going",
     },
   },
@@ -122,7 +122,7 @@ export interface Act {
 export type DesktopScene = "harborside-open" | "harborside-shift";
 
 /**
- * Only lists acts that have at least one level actually built in `LEVELS` —
+ * Only lists acts that have at least one level actually built in `LEVELS` -
  * add an act's entry here as its first level ships, same incremental
  * pattern as everything else in this file. The full 7-act roadmap lives in
  * `curriculum/00-scope-and-sequence.md`.
@@ -178,7 +178,7 @@ export function furthestLevelIndex(completedTaskKeys: TaskKey[]): number {
   return max;
 }
 
-/** Levels the learner has actually reached — their furthest level and every one before it. */
+/** Levels the learner has actually reached - their furthest level and every one before it. */
 export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
   return LEVELS.slice(0, furthestLevelIndex(completedTaskKeys) + 1);
 }
@@ -200,9 +200,9 @@ export function nextLevel(level: Level): Level | null {
 export interface TaskInfo {
   label: string;
   description: string;
-  /** One-line dispatch for the desktop briefing — what just happened, not a tutorial. */
+  /** One-line dispatch for the desktop briefing - what just happened, not a tutorial. */
   dispatch: string;
-  /** False for tasks the app doesn't grade yet — shown as "not built yet," not "locked." */
+  /** False for tasks the app doesn't grade yet - shown as "not built yet," not "locked." */
   built: boolean;
 }
 
@@ -239,20 +239,20 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   },
   handbook: {
     label: "Look something up",
-    description: "Find an answer in the employee handbook under pressure.",
+    description: "Find an answer in the employee handbook, even when you feel rushed.",
     dispatch: "They need an answer. The handbook is on your desk.",
     built: true,
   },
   calendar: {
     label: "Handle a meeting invite",
     description: "Spot a conflict with your schedule and propose a different time.",
-    dispatch: "Meeting vs. your shift. Pick a time that works.",
+    dispatch: "The meeting is at the same time as your shift. Pick a time that works.",
     built: true,
   },
   files: {
     label: "Share a file the right way",
     description: "Find the right file in a shared drive and share it with the right access.",
-    dispatch: "They need the file. Share it — not the whole folder.",
+    dispatch: "They need the file. Share the file, not the whole folder.",
     built: true,
   },
   spreadsheet: {
@@ -271,7 +271,7 @@ export function isTrackComplete(track: Track, completedTaskKeys: TaskKey[]): boo
   return track.taskKeys.every((k) => completedTaskKeys.includes(k));
 }
 
-/** The first track that isn't fully complete yet — where a learner should focus. */
+/** The first track that isn't fully complete yet - where a learner should focus. */
 export function activeTrack(completedTaskKeys: TaskKey[]): Track {
   return TRACKS.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? TRACKS[TRACKS.length - 1];
 }
@@ -287,11 +287,11 @@ export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
 
 /**
  * Where a task actually lives, so the desktop's "do this next" card can open
- * the right thing. Only built tasks get an entry — an unbuilt next task
+ * the right thing. Only built tasks get an entry - an unbuilt next task
  * shows a "coming soon" state instead of a button.
  *
  * From Track 4 on, the card stops naming the exact tab (no `tab`, and a
- * generic ctaLabel) — a deliberate step down in hand-holding. The bookmark
+ * generic ctaLabel) - a deliberate step down in hand-holding. The bookmark
  * is still right there in the Browser's tab strip; finding it is the task.
  */
 export const TASK_LOCATIONS: Partial<Record<TaskKey, { appKey: AppKey; tab?: string; ctaLabel: string }>> = {

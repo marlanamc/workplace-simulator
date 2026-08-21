@@ -4,14 +4,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "🤒",
     kicker: "Uh oh",
-    headline: "You're feeling sick — and you're not sure what to do.",
-    body: "Tomorrow's shift is booked, but you don't think you can make it in. Before you guess, check the handbook for the real call-out policy.",
+    headline: "You feel sick and you are not sure what to do.",
+    body: "Tomorrow's shift is booked, but you don't think you can make it in. Before you guess, check the handbook for how to call out sick.",
     cta: "Check the handbook",
   },
   es: {
     emoji: "🤒",
     kicker: "Uy no",
-    headline: "Te sientes enferma/o — y no sabes qué hacer.",
+    headline: "Te sientes enferma/o y no sabes qué hacer.",
     body: "Tu turno de mañana ya está programado, pero no crees que puedas ir. Antes de adivinar, revisa el manual para conocer la política real de cómo avisar.",
     cta: "Revisar el manual",
   },
@@ -25,7 +25,7 @@ export interface CheckOption {
 
 export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; options: CheckOption[] }> = {
   en: {
-    scenario: "You're feeling sick and don't think you can work tomorrow's shift. Search or browse the Handbook for the call-out policy, then answer the question below.",
+    scenario: "You're feeling sick and don't think you can work tomorrow's shift. Search or browse the Handbook for how to call out sick, then answer the question below.",
     question: "How soon before your shift should you call or text your shift lead?",
     options: [
       {
@@ -36,7 +36,7 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         label: "30 minutes before",
         isTarget: false,
         wrongHint: {
-          en: "That's how long a meal break is, not the call-out window. Check the \"Calling out sick\" article again.",
+          en: "That's how long a meal break is, not how early you must call out. Check the \"Calling out sick\" article again.",
           es: "Esa es la duración de un descanso para comer, no la ventana para avisar. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
         },
       },
@@ -44,8 +44,8 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         label: "Anytime before midnight",
         isTarget: false,
         wrongHint: {
-          en: "The handbook gives an exact number of hours — look at the \"Calling out sick\" article again.",
-          es: "El manual da un número exacto de horas — revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
+          en: "The handbook gives an exact number of hours. Look at the \"Calling out sick\" article again.",
+          es: "El manual da un número exacto de horas. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
         },
       },
     ],
@@ -62,7 +62,7 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         label: "30 minutos antes",
         isTarget: false,
         wrongHint: {
-          en: "That's how long a meal break is, not the call-out window. Check the \"Calling out sick\" article again.",
+          en: "That's how long a meal break is, not how early you must call out. Check the \"Calling out sick\" article again.",
           es: "Esa es la duración de un descanso para comer, no la ventana para avisar. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
         },
       },
@@ -70,8 +70,8 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         label: "En cualquier momento antes de la medianoche",
         isTarget: false,
         wrongHint: {
-          en: "The handbook gives an exact number of hours — look at the \"Calling out sick\" article again.",
-          es: "El manual da un número exacto de horas — revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
+          en: "The handbook gives an exact number of hours. Look at the \"Calling out sick\" article again.",
+          es: "El manual da un número exacto de horas. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
         },
       },
     ],
@@ -103,15 +103,15 @@ export const HANDBOOK_TASK_COPY: Record<Lang, {
     answerLabel: "Once you've found it",
     sentKicker: "Checked",
     doneTitle: "You found the real answer instead of guessing.",
-    doneBody: "The handbook had the exact policy — checking it took less time than guessing wrong would have cost you.",
-    badgeName: "Look something up under pressure",
+    doneBody: "The handbook had the real rule. Checking it was faster than guessing wrong.",
+    badgeName: "Look something up when you feel rushed",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     confidenceQ: "How do you feel about looking something up instead of guessing?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
@@ -121,7 +121,7 @@ export const HANDBOOK_TASK_COPY: Record<Lang, {
     answerLabel: "Cuando lo encuentres",
     sentKicker: "Revisado",
     doneTitle: "Encontraste la respuesta real en vez de adivinar.",
-    doneBody: "El manual tenía la política exacta — revisarlo tomó menos tiempo del que te habría costado adivinar mal.",
+    doneBody: "El manual tenía la política exacta. Revisarlo tomó menos tiempo que adivinar mal.",
     badgeName: "Buscar algo bajo presión",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     confidenceQ: "¿Cómo te sientes de buscar algo en vez de adivinar?",
@@ -129,7 +129,7 @@ export const HANDBOOK_TASK_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
   },
 };
@@ -140,8 +140,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Finding the right article",
       s: [
         "Use the search box, or scan the section labels on the left.",
-        "Match the words in the scenario to the article title — \"sick\" points to \"Calling out sick.\"",
-        "Read the whole article before answering — the exact number or rule is usually in the first line or two.",
+        "Match the words in the story to the article title. \"Sick\" points to \"Calling out sick.\"",
+        "Read the whole article before you answer. The exact number or rule is usually in the first line or two.",
       ],
       tip: "Guessing feels faster, but checking takes less time than fixing a guess that was wrong.",
     },
@@ -151,8 +151,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Encontrar el artículo correcto",
       s: [
         "Usa la caja de búsqueda, o revisa las secciones a la izquierda.",
-        "Relaciona las palabras de la situación con el título del artículo — \"enfermo\" apunta a \"Cómo avisar si estás enfermo\".",
-        "Lee todo el artículo antes de responder — el número o la regla exacta suele estar en las primeras líneas.",
+        "Relaciona las palabras de la situación con el título del artículo. \"Enfermo\" apunta a \"Cómo avisar si estás enfermo\".",
+        "Lee todo el artículo antes de responder. El número o la regla exacta suele estar en las primeras líneas.",
       ],
       tip: "Adivinar parece más rápido, pero revisar toma menos tiempo que arreglar una respuesta equivocada.",
     },
@@ -161,13 +161,13 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help — you've now used every app in the simulator. Nice work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
+    { label: "I can do this", reply: "You just did it with no help. You have now used every app in this practice space. Nice work." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda — ya usaste todas las apps del simulador. Buen trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
+    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Ya usaste todas las apps del espacio de práctica. Buen trabajo." },
   ],
 };

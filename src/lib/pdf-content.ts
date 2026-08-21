@@ -41,10 +41,10 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
     ],
     sectionHeading: "Summary",
     items: [
-      "Incidents reported: 1 (minor slip, no injury — cleaned within 5 minutes)",
+      "Incidents reported: 1 (minor slip, no injury. Cleaned within 5 minutes)",
       "Fire extinguisher check: Passed, Jul 3",
       "First aid kit restocked: Jul 10",
-      "Floor mats inspected: Jul 10 — replaced one worn mat near the ice machine",
+      "Floor mats inspected: Jul 10. Replaced one worn mat near the ice machine",
     ],
     signedBy: "Maria Delgado, Cafe Manager",
   },

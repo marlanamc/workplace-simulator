@@ -39,3 +39,6 @@
   "give the meeting a point," not "write formal minutes." A longer,
   post-meeting-notes skill can come later once running a meeting itself
   feels comfortable.
+- If you ever start from last week's agenda instead of a blank page,
+  that's **File → Make a copy** in Docs — same move as Level 4 Lesson 1
+  in Sheets. Don't type over the shared original.

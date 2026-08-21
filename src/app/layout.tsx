@@ -10,7 +10,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "Workplace Simulator",
-  description: "Practice everyday workplace technology tasks in a safe, simulated environment.",
+  description: "Practice everyday work computer tasks in a safe place. Nothing here is real.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

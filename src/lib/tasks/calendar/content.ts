@@ -6,7 +6,7 @@ export const MEETING = {
   day: "Wed",
   date: "Aug 26",
   time: "9:00 AM – 9:30 AM",
-  description: "Quick weekly check-in with the shift leads — inventory counts, any callouts, anything coming up.",
+  description: "A short weekly check-in with the shift leads. Counts, callouts, and anything coming up.",
 };
 
 export const CALENDAR_COPY: Record<Lang, {
@@ -75,7 +75,7 @@ export const CALENDAR_COPY: Record<Lang, {
     proposeTime: "Propose a new time",
     to: "To",
     subjectLabel: "Subject",
-    subject: "Re: Weekly Lead Huddle — different time?",
+    subject: "Re: Weekly Lead Huddle. Different time?",
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
@@ -90,7 +90,7 @@ export const CALENDAR_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
@@ -117,7 +117,7 @@ export const CALENDAR_COPY: Record<Lang, {
     proposeTime: "Proponer otro horario",
     to: "Para",
     subjectLabel: "Asunto",
-    subject: "Re: Reunión semanal de líderes — ¿otro horario?",
+    subject: "Re: Reunión semanal de líderes. ¿Otro horario?",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
@@ -132,14 +132,14 @@ export const CALENDAR_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
   },
 };
 
 export const WRONG_ACCEPT_HINT: Record<Lang, string> = {
-  en: "Check your schedule first — you're not working that day. Propose a different time instead of just accepting.",
-  es: "Revisa tu horario primero — no trabajas ese día. Propón otro horario en vez de solo aceptar.",
+  en: "Check your schedule first. You are not working that day. Suggest a different time instead of just saying yes.",
+  es: "Revisa tu horario primero. No trabajas ese día. Propón otro horario en vez de solo aceptar.",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
@@ -147,13 +147,13 @@ export const STARTERS: Record<Lang, string[]> = {
     "Hi Maria, I'm not scheduled to work Wednesday.",
     "Could we move the huddle to a day I'm already in?",
     "I'm happy to call in instead, if that works better.",
-    "Let me know what works — thank you.",
+    "Let me know what works. Thank you.",
   ],
   es: [
     "Hola Maria, no estoy programado para trabajar el miércoles.",
     "¿Podríamos mover la reunión a un día que ya trabaje?",
     "Con gusto puedo llamar en vez de eso, si funciona mejor.",
-    "Avísame qué funciona — gracias.",
+    "Avísame qué funciona. Gracias.",
   ],
 };
 
@@ -166,16 +166,16 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Check that day against your actual schedule.",
         "A meeting on a day you're not working is worth flagging, not just accepting.",
       ],
-      tip: "This is the same move as checking a shift for a conflict — same skill, new tool.",
+      tip: "This is the same move as checking a shift for a conflict. Same skill, new tool.",
     },
     {
       t: "Proposing a different time",
       s: [
         "Say plainly that the time doesn't work and why.",
         "Suggest what would work instead, if you can.",
-        "Keep it short — one or two sentences is plenty.",
+        "Keep it short. One or two sentences is enough.",
       ],
-      tip: "You don't need to solve it yourself — flagging it clearly is enough.",
+      tip: "You don't need to fix it yourself. Saying it clearly is enough.",
     },
   ],
   es: [
@@ -186,29 +186,29 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Compara ese día con tu horario real.",
         "Una reunión en un día que no trabajas vale la pena señalarla, no solo aceptarla.",
       ],
-      tip: "Es el mismo movimiento que revisar un turno por un conflicto — misma habilidad, nueva herramienta.",
+      tip: "Es el mismo movimiento que revisar un turno por un conflicto. Misma habilidad, nueva herramienta.",
     },
     {
       t: "Proponer otro horario",
       s: [
         "Di claramente que ese horario no funciona y por qué.",
         "Sugiere qué funcionaría en su lugar, si puedes.",
-        "Manténlo corto — una o dos oraciones es suficiente.",
+        "Manténlo corto. Una o dos oraciones es suficiente.",
       ],
-      tip: "No tienes que resolverlo tú mismo — señalarlo claramente es suficiente.",
+      tip: "No tienes que resolverlo tú mismo. Señalarlo claramente es suficiente.",
     },
   ],
 };
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
     { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
     { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
   ],
 };

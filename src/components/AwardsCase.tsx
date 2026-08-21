@@ -112,7 +112,7 @@ export default function AwardsCase({
               </ul>
             ) : (
               <p className="mt-4 text-[14px] leading-relaxed text-white/45">
-                Keep going — this one unlocks when you finish every task in the track.
+                Keep going. This one unlocks when you finish every task in the track.
               </p>
             )}
           </div>

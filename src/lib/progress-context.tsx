@@ -68,7 +68,7 @@ export function ProgressProvider({
         awardCertificate(track.key);
 
         // A level-up moment (when this was the level's last track) takes
-        // priority over the smaller per-track celebration — only one
+        // priority over the smaller per-track celebration - only one
         // modal shows for a task completion that finishes both at once.
         const level = levelForTrack(track.key);
         const upcoming = isLevelComplete(level, next) ? nextLevel(level) : null;

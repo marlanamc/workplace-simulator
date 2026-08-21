@@ -103,8 +103,8 @@ export default function FilesTask() {
   const notYet = () =>
     say(
       lang === "en"
-        ? "That's not part of today's task — open the shared folder instead."
-        : "Eso no es parte de la tarea de hoy — abre la carpeta compartida en su lugar."
+        ? "That's not part of today's task. Open the shared folder instead."
+        : "Eso no es parte de la tarea de hoy. Abre la carpeta compartida en su lugar."
     );
 
   const restart = () => {

@@ -1,7 +1,7 @@
 import type { DesktopScene } from "@/lib/tracks-content";
 
 /** Unsplash stand-in until each act has its own room.
- *  Photo: Jonas Jacobsson — https://unsplash.com/photos/RFHFV7lVQBY */
+ *  Photo: Jonas Jacobsson - https://unsplash.com/photos/RFHFV7lVQBY */
 export default function DesktopWallpaper({ scene: _scene }: { scene: DesktopScene }) {
   return (
     <div className="absolute inset-0 overflow-hidden" aria-hidden>

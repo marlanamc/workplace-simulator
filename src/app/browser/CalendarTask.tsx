@@ -69,36 +69,36 @@ export default function CalendarTask() {
   const wrongNo = () =>
     say(
       T(
-        "Don't just decline — Maria still needs a huddle. Propose a new time instead.",
-        "No solo rechaces — Maria igual necesita la reunión. Propón otro horario."
+        "Don't just say no. Maria still needs a meeting. Suggest a new time instead.",
+        "No solo rechaces. Maria igual necesita la reunión. Propón otro horario."
       )
     );
   const wrongMaybe = () =>
     say(
       T(
-        "Maybe leaves Maria waiting. You're off that day — propose a new time.",
-        "Quizá deja a Maria esperando. Ese día no trabajas — propón otro horario."
+        "Maybe leaves Maria waiting. You are off that day. Suggest a new time.",
+        "Quizá deja a Maria esperando. Ese día no trabajas. Propón otro horario."
       )
     );
   const wrongShift = () =>
     say(
       T(
-        "That's one of your work shifts. Open the meeting on Aug 26 — Weekly Lead Huddle.",
-        "Ese es uno de tus turnos. Abre la reunión del 26 de ago — Weekly Lead Huddle."
+        "That's one of your work shifts. Open the meeting on Aug 26. It is called Weekly Lead Huddle.",
+        "Ese es uno de tus turnos. Abre la reunión del 26 de ago. Se llama Weekly Lead Huddle."
       )
     );
   const notYet = () =>
     say(
       T(
-        "Creating new events is a skill for later — for now, open the invite you already have.",
-        "Crear eventos nuevos es una destreza para más adelante — por ahora, abre la invitación que ya tienes."
+        "Making new events comes later. For now, open the invite you already have.",
+        "Crear eventos nuevos es una destreza para más adelante. Por ahora, abre la invitación que ya tienes."
       )
     );
 
   const trySend = () => {
     if (!body.trim()) {
       return say(
-        T("Write a short message first — even one sentence is fine.", "Primero escribe un mensaje corto — una oración está bien.")
+        T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien.")
       );
     }
     setView("done");

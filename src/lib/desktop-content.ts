@@ -2,7 +2,7 @@ import type { Lang, Localized } from "./task-types";
 
 export type { Lang };
 
-// Desktop app icons — kept to what a learner would actually find on a work
+// Desktop app icons - kept to what a learner would actually find on a work
 // Chromebook: a browser (which hosts webmail, the HR portal, forms, the
 // handbook as tabs/bookmarks) and a PDF reader for downloaded files.
 export type AppKey = "browser" | "pdf";
@@ -31,13 +31,13 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
     browser: {
       name: "Browser",
       kicker: "Your main workspace",
-      brief: "Almost everything for the job lives here — email, your schedule, pay stubs, and forms all open as tabs.",
-      points: ["Open a bookmarked site or a tab", "Read what it's asking you to do", "Reply, fill in, or submit — then check it off"],
+      brief: "Almost everything for the job lives here. Email, your schedule, pay stubs, and forms all open as tabs.",
+      points: ["Open a bookmarked site or a tab", "Read what it's asking you to do", "Reply, fill in, or submit. Then check it off"],
     },
     pdf: {
       name: "PDF Reader",
-      kicker: "Reference",
-      brief: "Opens downloaded files like reports and pay stubs so you can read or print them.",
+      kicker: "Your files",
+      brief: "Opens files you download, like reports and pay stubs, so you can read them.",
       points: ["Find the file in Downloads", "Open it to read", "Print or attach it to an email when asked"],
     },
   },
@@ -45,8 +45,8 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
     browser: {
       name: "Navegador",
       kicker: "Tu espacio principal",
-      brief: "Casi todo el trabajo pasa por aquí — correo, tu horario, recibos de pago y formularios se abren como pestañas.",
-      points: ["Abre un sitio guardado o una pestaña", "Lee lo que te pide", "Responde, llena o envía — y márcalo como hecho"],
+      brief: "Casi todo el trabajo pasa por aquí. Correo, tu horario, recibos de pago y formularios se abren como pestañas.",
+      points: ["Abre un sitio guardado o una pestaña", "Lee lo que te pide", "Responde, llena o envía. Luego márcalo como hecho"],
     },
     pdf: {
       name: "Lector de PDF",
@@ -84,11 +84,11 @@ export const DESKTOP_COPY: Record<Lang, {
   comingSoonBody: string;
 }> = {
   en: {
-    practiceBanner: "Practice space — nothing here is real",
+    practiceBanner: "Practice space. Nothing here is real.",
     langBtn: "Español",
     nextLabel: "Do this next",
     progressWord: "tasks done",
-    appsBtn: "Apps",
+    appsBtn: "Start",
     todayLabel: "Your work apps",
     continueLabel: "Continue where you left off",
     searchPlaceholder: "Search your apps and tasks…",
@@ -98,23 +98,23 @@ export const DESKTOP_COPY: Record<Lang, {
     done: "Done",
     ready: "Ready",
     locked: "Later",
-    allDoneHeadline: "You ran the whole cafe.",
-    allDoneBody: "Awards are in the case. Replay any level if you want another round.",
+    allDoneHeadline: "You finished every task we have.",
+    allDoneBody: "Your awards are in the case. Replay any level if you want another round.",
     allDoneCta: "See awards",
     replayLevel: "Replay a level",
     replayShort: "Replay",
-    replayConfirm: "Resets this level's checkmarks. Later levels stay.",
+    replayConfirm: "This clears the checkmarks for this level. Later levels stay done.",
     replayConfirmCta: "Reset it",
     replayCancel: "Never mind",
     comingSoonHeadline: "More coming soon",
-    comingSoonBody: "You're all caught up — the next task in this track isn't built yet. Check back later, or do any task again for more practice.",
+    comingSoonBody: "You're done with the tasks we have built so far. Come back later, or do any task again to practice.",
   },
   es: {
-    practiceBanner: "Espacio de práctica — nada aquí es real",
+    practiceBanner: "Espacio de práctica. Nada aquí es real.",
     langBtn: "English",
     nextLabel: "Haz esto ahora",
     progressWord: "tareas hechas",
-    appsBtn: "Apps",
+    appsBtn: "Inicio",
     todayLabel: "Tus apps de trabajo",
     continueLabel: "Continúa donde lo dejaste",
     searchPlaceholder: "Busca tus apps y tareas…",
@@ -133,7 +133,7 @@ export const DESKTOP_COPY: Record<Lang, {
     replayConfirmCta: "Reiniciar",
     replayCancel: "Mejor no",
     comingSoonHeadline: "Muy pronto más",
-    comingSoonBody: "Ya estás al día — la siguiente tarea de esta ruta todavía no está lista. Vuelve más tarde, o repite cualquier tarea para practicar más.",
+    comingSoonBody: "Ya estás al día. La siguiente tarea de esta ruta todavía no está lista. Vuelve más tarde, o repite cualquier tarea para practicar más.",
   },
 };
 
@@ -162,7 +162,7 @@ export const RECENT_ITEMS: RecentItem[] = [
   },
 ];
 
-// The underlying curriculum tasks — independent of how many desktop app
+// The underlying curriculum tasks - independent of how many desktop app
 // icons exist, since several tasks now live as tabs inside one Browser app.
 export const TASK_KEYS = [
   "mail",

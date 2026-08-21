@@ -39,8 +39,8 @@ export default function TimeclockTask() {
     if (!body.trim()) {
       return say(
         lang === "en"
-          ? "Write a short message first — even one sentence is fine."
-          : "Primero escribe un mensaje corto — una oración está bien."
+          ? "Write a short message first. Even one sentence is fine."
+          : "Primero escribe un mensaje corto. Una oración está bien."
       );
     }
     setView("done");

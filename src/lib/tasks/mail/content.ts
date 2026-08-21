@@ -3,14 +3,14 @@ import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized, Pickabl
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📬",
-    kicker: "Day 1 — 8:14 AM",
+    kicker: "Day 1, 8:14 AM",
     headline: "Your first message from your boss.",
     body: "You just got to Harborside Cafe for your very first shift. Maria Delgado, the cafe manager, already needs something from you. Let's see what she wants.",
     cta: "Open my inbox",
   },
   es: {
     emoji: "📬",
-    kicker: "Día 1 — 8:14 AM",
+    kicker: "Día 1, 8:14 AM",
     headline: "Tu primer mensaje de tu jefa.",
     body: "Acabas de llegar a Harborside Cafe para tu primer turno. Maria Delgado, la gerente del café, ya necesita algo de ti. Vamos a ver qué quiere.",
     cta: "Abrir mi bandeja",
@@ -60,7 +60,7 @@ export const MAIL_COPY: Record<Lang, {
   colDate: string;
 }> = {
   en: {
-    practiceBanner: "Practice space — nothing here is real",
+    practiceBanner: "Practice space. Nothing here is real.",
     inbox: "Inbox",
     starred: "Starred",
     sent: "Sent",
@@ -73,7 +73,7 @@ export const MAIL_COPY: Record<Lang, {
     reply: "Reply",
     forward: "Forward",
     supervisor: "Your supervisor",
-    emailSubject: "Safety report for July — need today",
+    emailSubject: "Safety report for July. Need today",
     to: "To",
     subjectLabel: "Subject",
     reSubject: "Re: Safety report for July",
@@ -84,7 +84,7 @@ export const MAIL_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You answered your supervisor.",
-    doneBody: "Maria got your reply and the file. In a real job, this is how most requests from a manager are handled — a short answer with the file attached.",
+    doneBody: "Maria got your reply and the file. In a real job, most asks from a manager look like this. A short answer, with the file attached.",
     badgeName: "Reply with an attachment",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     confidenceQ: "How do you feel about doing this at work tomorrow?",
@@ -92,7 +92,7 @@ export const MAIL_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
     pickerTitle: "Choose a file to attach",
     downloads: "Downloads",
@@ -102,7 +102,7 @@ export const MAIL_COPY: Record<Lang, {
     colDate: "Date modified",
   },
   es: {
-    practiceBanner: "Espacio de práctica — nada aquí es real",
+    practiceBanner: "Espacio de práctica. Nada aquí es real.",
     inbox: "Recibidos",
     starred: "Destacados",
     sent: "Enviados",
@@ -115,7 +115,7 @@ export const MAIL_COPY: Record<Lang, {
     reply: "Responder",
     forward: "Reenviar",
     supervisor: "Tu supervisora",
-    emailSubject: "Reporte de seguridad de julio — para hoy",
+    emailSubject: "Reporte de seguridad de julio. Para hoy",
     to: "Para",
     subjectLabel: "Asunto",
     reSubject: "Re: Reporte de seguridad de julio",
@@ -134,7 +134,7 @@ export const MAIL_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
     pickerTitle: "Elige un archivo para adjuntar",
     downloads: "Descargas",
@@ -163,18 +163,18 @@ export const STARTERS: Record<Lang, string[]> = {
 
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
-    { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row — that's who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado — she's your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
+    { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row. That is who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado. She is your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
     { t: "Reading a work email", s: ["Look for what the person is asking you to DO.", "Look for WHEN they need it.", "Here: send the July safety report, today."], tip: "You can read it twice. Nobody sees how long you take." },
     { t: "Reply vs. Forward", s: ["Reply sends your message back to the person who wrote to you.", "Forward sends their email to somebody else.", "Maria wrote to you, so click Reply."], tip: "If you're answering the person who emailed you, it's always Reply." },
-    { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens showing your files. Downloaded files are usually in Downloads.", "Click the file name — safety-report-july.pdf — to attach it."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
-    { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached — do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
+    { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens showing your files. Downloaded files are usually in Downloads.", "Click the file name safety-report-july.pdf to attach it."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
+    { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached? Do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
   ],
   es: [
-    { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila — esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado — ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
+    { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila. Esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado. Ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
     { t: "Leer un correo del trabajo", s: ["Busca qué te pide HACER la persona.", "Busca CUÁNDO lo necesita.", "Aquí: enviar el reporte de seguridad de julio, hoy."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
     { t: "Responder o Reenviar", s: ["Responder envía tu mensaje a la persona que te escribió.", "Reenviar manda su correo a otra persona.", "Maria te escribió a ti, así que haz clic en Responder."], tip: "Si contestas a quien te escribió, siempre es Responder." },
     { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus archivos. Lo descargado suele estar en Descargas.", "Haz clic en safety-report-july.pdf para adjuntarlo."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
-    { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto — ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
+    { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto? ¿Ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
   ],
 };
 
@@ -185,14 +185,14 @@ export const FILES: PickableItem[] = [
     wrongHint: wrongHint("That's a photo, not the report. Look for the file with 'safety-report' in the name.", "Esa es una foto, no el reporte. Busca el archivo que dice 'safety-report'.") },
   { key: "safety-report-july.pdf", label: "safety-report-july.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Aug 1"], isTarget: true, wrongHint: null },
   { key: "shift-swap-form.pdf", label: "shift-swap-form.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 22"], isTarget: false,
-    wrongHint: wrongHint("Close — but that's the shift swap form. You need the safety report.", "Casi — ese es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
+    wrongHint: wrongHint("Close, but that is the shift swap form. You need the safety report.", "Casi, pero ese es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
   { key: "safety-report-june.pdf", label: "safety-report-june.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 1"], isTarget: false,
     wrongHint: wrongHint("That one is June. Maria asked for July.", "Ese es de junio. Maria pidió el de julio.") },
 ];
 
 export const EMAILS = [
   { key: "maria", from: "Maria Delgado", initials: "MD", color: "#1a73e8", time: "8:14 AM", isTarget: true, unread: true,
-    subject: { en: "Safety report for July — need today", es: "Reporte de seguridad de julio — para hoy" },
+    subject: { en: "Safety report for July. Need today", es: "Reporte de seguridad de julio. Para hoy" },
     preview: { en: "Hi, can you send me the July safety…", es: "Hola, ¿puedes enviarme el reporte…" } },
   { key: "luis", from: "Luis Ortiz", initials: "LO", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
@@ -209,7 +209,7 @@ export const EMAILS = [
   { key: "it", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Yesterday", isTarget: false,
     subject: { en: "Reminder: update your password", es: "Recordatorio: cambia tu contraseña" },
     preview: { en: "Your password expires in 12 days.", es: "Tu contraseña vence en 12 días." },
-    wrongHint: wrongHint("That's from IT. You can ignore it for now — find Maria Delgado.", "Eso es de sistemas. Puedes ignorarlo por ahora — busca a Maria Delgado.") },
+    wrongHint: wrongHint("That's from IT. You can skip it for now. Find Maria Delgado.", "Eso es de sistemas. Puedes ignorarlo por ahora. Busca a Maria Delgado.") },
   { key: "team", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Mon", isTarget: false,
     subject: { en: "Break room fridge cleaning", es: "Limpieza del refrigerador" },
     preview: { en: "Please remove your food by Friday.", es: "Saca tu comida antes del viernes." },
@@ -217,7 +217,7 @@ export const EMAILS = [
   { key: "vendor", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "Aug 18", isTarget: false,
     subject: { en: "Friday delivery window changed", es: "Cambió la entrega del viernes" },
     preview: { en: "Trucks will arrive after 10 AM.", es: "Los camiones llegarán después de las 10 AM." },
-    wrongHint: wrongHint("That's a vendor — not your manager. Look for Maria Delgado.", "Eso es un proveedor — no tu gerente. Busca a Maria Delgado.") },
+    wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
   { key: "promo", from: "Uniform Outlet", initials: "UO", color: "#c5221f", time: "Aug 12", isTarget: false,
     subject: { en: "15% off fall uniforms", es: "15% de descuento en uniformes" },
     preview: { en: "Sale ends Sunday. Use code FALL15.", es: "La oferta termina el domingo. Usa el código FALL15." },
@@ -226,13 +226,13 @@ export const EMAILS = [
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
     { label: "I can do this", reply: "You just did it with no help on the last two steps. Move on to the next task on your desktop." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
     { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda en los últimos dos pasos. Sigue con la siguiente tarea en tu escritorio." },
   ],
 };

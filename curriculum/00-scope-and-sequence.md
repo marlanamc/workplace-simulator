@@ -165,9 +165,11 @@ naturally with multi-person calendar scheduling.)
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `status-report` | Author a `=SUM()` formula yourself (not just verify one), cc a second recipient on a status email | Browser → Sheets + Mail |
+| 1 | `make-a-copy` | Open a view-only / read-only template, understand viewer vs editor, File → Make a copy so you don't overwrite the master | Browser → Sheets (same menu as Docs) |
+| 2 | `status-report` | Author a `=SUM()` formula yourself (not just verify one) on *your* copy, cc a second recipient on a status email | Browser → Sheets + Mail |
 
-See `level-4-reporting-in/01-lesson-status-report.md`.
+See `level-4-reporting-in/`. (Lesson 1 is the flip side of Level 3's
+`files` lesson: there you *gave* view access; here you *are* the viewer.)
 
 ### Level 5: Covering More Ground
 
@@ -183,12 +185,20 @@ See `level-5-covering-more-ground/01-lesson-triage.md`. This is the first
   same "notice a conflict, say something" shape, new tool.
 - `files` extends the file-picker pattern already built for `mail`'s
   attachment step (`PickerModal`) — same component, a folder layer added on
-  top, plus a new "who can see this" permission choice.
+  top, plus a new "who can see this" permission choice. The *receiving*
+  side of that permission (a locked template, then **Make a copy**) is
+  Level 4 Lesson 1, not extra content here.
 - `spreadsheet` is the first task that isn't itself the point — the *point*
   is still judgment (a formula-looking total can be wrong; do you just copy
   it, or check it?), the spreadsheet is the setting.
+- `make-a-copy` is the everyday office move students miss: a shared Doc or
+  Sheet that won't let them type is usually *supposed* to be locked.
+  **View only** and **read only** are the same idea; **Can edit** changes
+  the real file. File → Make a copy is how you work without touching the
+  master. Same menu in Docs and Sheets.
 - `status-report` is the first task where the student *authors* a formula
-  instead of just reading/verifying one.
+  instead of just reading/verifying one — and it runs on the copy from
+  `make-a-copy`, not on Maria's template.
 - `triage` deliberately caps at exactly two competing items — more would
   turn it into an overwhelm exercise instead of a divided-attention one.
 

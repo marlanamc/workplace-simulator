@@ -14,7 +14,7 @@ export const TIP_ROWS: TipRow[] = [
   { key: "fri", day: "Friday", given: 63.0 },
 ];
 
-/** The sum of every row — the sheet's total updates live as each cell is filled in. */
+/** The sum of every row - the sheet's total updates live as each cell is filled in. */
 export const REAL_TOTAL = TIP_ROWS.reduce((sum, r) => sum + r.given, 0);
 
 const money = (n: number) => `$${n.toFixed(2)}`;
@@ -62,7 +62,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     scenarioKicker: "Today's situation",
-    scenario: "Maria asked you to enter this week's tip amounts into the shared tracking sheet, then email her the total so she can include it in payroll.",
+    scenario: "Maria asked you to enter this week's tip amounts into the shared tracking sheet, then email her the total so she can add it to this week's pay.",
     appName: "Sheets",
     sheetName: "Weekly Tip Tracker",
     startNewHeading: "Start a new spreadsheet",
@@ -83,7 +83,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You entered the numbers and sent the total.",
-    doneBody: "You matched each amount to the right day, let the sheet add them up, and sent that total to Maria — that's how a shared sheet is supposed to work.",
+    doneBody: "You matched each amount to the right day. The sheet added them up. You sent that total to Maria. That is how a shared sheet should work.",
     badgeName: "Enter data and share a total",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     confidenceQ: "How do you feel about entering numbers into a shared sheet?",
@@ -91,7 +91,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
@@ -120,7 +120,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Ingresaste los números y enviaste el total.",
-    doneBody: "Relacionaste cada cantidad con el día correcto, dejaste que la hoja los sumara, y le enviaste ese total a Maria — así es como debe funcionar una hoja compartida.",
+    doneBody: "Relacionaste cada cantidad con el día correcto, dejaste que la hoja los sumara, y le enviaste ese total a Maria. Así es como debe funcionar una hoja compartida.",
     badgeName: "Ingresar datos y compartir un total",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     confidenceQ: "¿Cómo te sientes de ingresar números en una hoja compartida?",
@@ -128,26 +128,26 @@ export const SPREADSHEET_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
   },
 };
 
 export const WRONG_ENTRY_HINT: Record<Lang, string> = {
-  en: "That doesn't match the slip for that day — check the amount again.",
-  es: "Eso no coincide con el recibo de ese día — revisa la cantidad de nuevo.",
+  en: "That doesn't match the slip for that day. Check the amount again.",
+  es: "Eso no coincide con el recibo de ese día. Revisa la cantidad de nuevo.",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "Hi Maria, here's this week's tip total.",
     `The sheet's total comes to ${REAL_TOTAL_LABEL}.`,
-    "Let me know if you need anything else — thank you.",
+    "Let me know if you need anything else. Thank you.",
   ],
   es: [
     "Hola Maria, aquí está el total de propinas de esta semana.",
     `El total de la hoja es ${REAL_TOTAL_LABEL}.`,
-    "Avísame si necesitas algo más — gracias.",
+    "Avísame si necesitas algo más. Gracias.",
   ],
 };
 
@@ -156,17 +156,17 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Entering numbers into a shared sheet",
       s: [
-        "Match each amount to the day it belongs to — a shared sheet is only useful if the numbers are right.",
+        "Match each amount to the right day. A shared sheet only helps if the numbers are right.",
         "Type carefully. A typo in a number is easy to miss later.",
         "Once everything's entered, the sheet adds it up for you automatically.",
       ],
-      tip: "Take your time on the numbers themselves — that's the part that actually matters here.",
+      tip: "Take your time on the numbers. That is the part that matters here.",
     },
     {
       t: "Sharing a total by email",
       s: [
         "Say what the number is and what it's for, in one short sentence.",
-        "You don't need to explain how you got it — just the total is enough.",
+        "You don't need to explain how you got it. Just the total is enough.",
         "Send it the same day you're asked, while the numbers are still fresh.",
       ],
       tip: "A short, clear message is easier for your lead to act on than a long one.",
@@ -176,17 +176,17 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Ingresar números en una hoja compartida",
       s: [
-        "Relaciona cada cantidad con el día al que pertenece — una hoja compartida solo sirve si los números son correctos.",
+        "Relaciona cada cantidad con el día al que pertenece. Una hoja compartida solo sirve si los números son correctos.",
         "Escribe con cuidado. Un error de tecleo en un número es fácil de pasar por alto después.",
         "Una vez que todo está ingresado, la hoja los suma automáticamente por ti.",
       ],
-      tip: "Tómate tu tiempo con los números mismos — eso es lo que realmente importa aquí.",
+      tip: "Tómate tu tiempo con los números. Eso es lo que realmente importa aquí.",
     },
     {
       t: "Compartir un total por correo",
       s: [
         "Di cuál es el número y para qué es, en una oración corta.",
-        "No necesitas explicar cómo lo obtuviste — el total es suficiente.",
+        "No necesitas explicar cómo lo obtuviste. El total es suficiente.",
         "Envíalo el mismo día que te lo pidan, mientras los números aún están frescos.",
       ],
       tip: "Un mensaje corto y claro es más fácil de usar para tu líder que uno largo.",
@@ -196,13 +196,13 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
     { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
     { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
   ],
 };

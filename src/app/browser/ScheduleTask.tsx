@@ -44,8 +44,8 @@ export default function ScheduleTask() {
     if (!body.trim()) {
       return say(
         lang === "en"
-          ? "Write a short message first — even one sentence is fine."
-          : "Primero escribe un mensaje corto — una oración está bien."
+          ? "Write a short message first. Even one sentence is fine."
+          : "Primero escribe un mensaje corto. Una oración está bien."
       );
     }
     setView("done");
@@ -106,7 +106,7 @@ export default function ScheduleTask() {
                   </div>
                   {d.conflict && (
                     <div className="mt-0.5 text-[12px] font-medium text-[var(--danger)]">
-                      ⚠ {c.conflictTag} — {d.conflict[lang]}
+                      ⚠ {c.conflictTag}: {d.conflict[lang]}
                     </div>
                   )}
                 </div>

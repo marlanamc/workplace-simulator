@@ -4,8 +4,8 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Uh oh",
-    headline: "Something on next week's schedule doesn't add up.",
-    body: "You just pulled up next week's shifts... and one of them collides with something you already can't miss. Time to sort it out before it becomes a bigger problem.",
+    headline: "Something on next week's schedule doesn't look right.",
+    body: "You just opened next week's shifts. One of them overlaps something you already can't miss. Fix it before it gets worse.",
     cta: "Check my schedule",
   },
   es: {
@@ -72,7 +72,7 @@ export const SCHEDULE_COPY: Record<Lang, {
   askPerson: string;
 }> = {
   en: {
-    heading: "Your schedule — next week",
+    heading: "Your schedule. Next week",
     subhead: "Times are shown in your local time.",
     helpBtn: "Help me with this step",
     langBtn: "Español",
@@ -80,7 +80,7 @@ export const SCHEDULE_COPY: Record<Lang, {
     conflictTag: "Conflicts with your schedule",
     to: "To",
     subjectLabel: "Subject",
-    subjectPrefix: "Shift swap request —",
+    subjectPrefix: "Shift swap request:",
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
@@ -96,11 +96,11 @@ export const SCHEDULE_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
-    heading: "Tu horario — próxima semana",
+    heading: "Tu horario. Próxima semana",
     subhead: "Las horas se muestran en tu hora local.",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
@@ -108,7 +108,7 @@ export const SCHEDULE_COPY: Record<Lang, {
     conflictTag: "No coincide con tu horario",
     to: "Para",
     subjectLabel: "Asunto",
-    subjectPrefix: "Solicitud de cambio de turno —",
+    subjectPrefix: "Solicitud de cambio de turno:",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
@@ -124,7 +124,7 @@ export const SCHEDULE_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
   },
 };
@@ -139,13 +139,13 @@ export const STARTERS: Record<Lang, string[]> = {
     "Hi Maria, I have a conflict with my shift on Thursday.",
     "I have a doctor's appointment that day.",
     "Could we swap that shift, or could someone cover it?",
-    "Let me know what works — thank you.",
+    "Let me know what works. Thank you.",
   ],
   es: [
     "Hola Maria, tengo un conflicto con mi turno del jueves.",
     "Tengo una cita con el doctor ese día.",
     "¿Podríamos cambiar ese turno, o alguien podría cubrirlo?",
-    "Avísame qué funciona — gracias.",
+    "Avísame qué funciona. Gracias.",
   ],
 };
 
@@ -154,53 +154,53 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Reading your schedule",
       s: [
-        "Each row is one day — the time on the right is your shift.",
+        "Each row is one day. The time on the right is your shift.",
         "\"Off\" means you're not scheduled that day.",
         "Check every day against anything else you already have planned.",
       ],
-      tip: "Do this as soon as a new schedule is posted — the earlier you catch a conflict, the easier it is to fix.",
+      tip: "Do this as soon as a new schedule is posted. The sooner you catch a conflict, the easier it is to fix.",
     },
     {
       t: "Asking for a swap",
       s: [
         "Say which day, and why it's a problem.",
-        "Ask directly — \"could we swap\" or \"could someone cover it\" both work.",
+        "Ask in a clear way. \"Could we swap\" or \"could someone cover it\" both work.",
         "Send it as soon as you notice the conflict, not the night before.",
       ],
-      tip: "You don't need the perfect wording — clear and polite is enough.",
+      tip: "You don't need perfect words. Clear and polite is enough.",
     },
   ],
   es: [
     {
       t: "Leer tu horario",
       s: [
-        "Cada fila es un día — la hora a la derecha es tu turno.",
+        "Cada fila es un día. La hora a la derecha es tu turno.",
         "\"Off\" significa que no trabajas ese día.",
         "Revisa cada día contra cualquier otra cosa que ya tengas planeada.",
       ],
-      tip: "Hazlo en cuanto se publique un horario nuevo — mientras antes veas el conflicto, más fácil es resolverlo.",
+      tip: "Hazlo en cuanto se publique un horario nuevo. Mientras antes veas el conflicto, más fácil es resolverlo.",
     },
     {
       t: "Pedir un cambio",
       s: [
         "Di qué día es y por qué es un problema.",
-        "Pide directamente — \"podríamos cambiar\" o \"alguien podría cubrirlo\" funcionan.",
+        "Pide de forma clara. \"Podríamos cambiar\" o \"alguien podría cubrirlo\" funcionan.",
         "Envíalo en cuanto notes el conflicto, no la noche anterior.",
       ],
-      tip: "No necesitas la redacción perfecta — con que sea claro y amable basta.",
+      tip: "No necesitas la redacción perfecta. Con que sea claro y amable basta.",
     },
   ],
 };
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
     { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
     { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
   ],
 };

@@ -7,7 +7,7 @@ export const SKILLS: Record<TaskKey, string> = {
   timeclock: "Check your hours and speak up",
   paystub: "Read a pay stub",
   incident: "Write an incident report",
-  handbook: "Look something up under pressure",
+  handbook: "Look something up when you feel rushed",
   calendar: "Handle a meeting invite the right way",
   files: "Share a file with the right access",
   spreadsheet: "Read and trust a spreadsheet total",

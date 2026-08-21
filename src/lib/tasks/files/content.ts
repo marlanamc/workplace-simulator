@@ -106,10 +106,10 @@ export const FILES_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     scenarioKicker: "Today's situation",
-    scenario: "Maria asked you to share this week's schedule with Jordan Diaz, a new hire — view only, Jordan doesn't need to edit it. She also asked you to rename it to match the convention: schedule-week-of-[date].",
+    scenario: "Maria asked you to share this week's schedule with Jordan Diaz, a new hire. Give view only. Jordan does not need to edit it. She also asked you to rename it like this: schedule-week-of-[date].",
     searchPlaceholder: "Search files…",
     allFolders: "All folders",
-    renameLabel: "Rename this file to match the convention",
+    renameLabel: "Rename this file to match the naming rule",
     renameHint: "Format: schedule-week-of-aug-24",
     renamePlaceholder: "Type the new file name…",
     renameContinue: "Continue",
@@ -127,7 +127,7 @@ export const FILES_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
@@ -143,7 +143,7 @@ export const FILES_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     scenarioKicker: "La situación de hoy",
-    scenario: "Maria te pidió compartir el horario de esta semana con Jordan Diaz, un nuevo empleado — solo para ver, Jordan no necesita editarlo. También te pidió renombrarlo según la convención: schedule-week-of-[fecha].",
+    scenario: "Maria te pidió compartir el horario de esta semana con Jordan Diaz, un nuevo empleado. Solo para ver. Jordan no necesita editarlo. También te pidió renombrarlo así: schedule-week-of-[fecha].",
     searchPlaceholder: "Buscar archivos…",
     allFolders: "Todas las carpetas",
     renameLabel: "Renombra este archivo según la convención",
@@ -164,14 +164,14 @@ export const FILES_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
   },
 };
 
 export const WRONG_RENAME_HINT: Record<Lang, string> = {
-  en: "Not quite the right format — try: schedule-week-of-aug-24",
-  es: "No es el formato correcto — intenta: schedule-week-of-aug-24",
+  en: "Not quite the right name. Try: schedule-week-of-aug-24",
+  es: "No es el formato correcto. Intenta: schedule-week-of-aug-24",
 };
 
 export const WRONG_EDIT_HINT: Record<Lang, string> = {
@@ -185,7 +185,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Finding the right file",
       s: [
         "Use the folder tabs to narrow things down, or search by name.",
-        "Match the file to the scenario — the date matters as much as the name.",
+        "Match the file to the task. The date matters as much as the name.",
         "A similar-looking file from a different week or a different topic is a common mix-up.",
       ],
       tip: "When in doubt, the date column is the fastest way to tell files apart.",
@@ -194,10 +194,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "View access vs. edit access",
       s: [
         "\"Can view\" means the person can look, but not change anything.",
-        "\"Can edit\" means they can change the file — only give this when someone actually needs to.",
+        "\"Can edit\" means they can change the file. Only give this when someone really needs it.",
         "When you're not sure which one to give, view is almost always the safer default.",
       ],
-      tip: "Giving edit access by accident is one of the easiest real mistakes to make — always double check.",
+      tip: "Giving edit access by accident is an easy real-world mistake. Always check twice.",
     },
   ],
   es: [
@@ -205,7 +205,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Encontrar el archivo correcto",
       s: [
         "Usa las pestañas de carpetas para reducir opciones, o busca por nombre.",
-        "Relaciona el archivo con la situación — la fecha importa tanto como el nombre.",
+        "Relaciona el archivo con la situación. La fecha importa tanto como el nombre.",
         "Un archivo parecido de otra semana o de otro tema es un error común.",
       ],
       tip: "Si tienes duda, la columna de fecha es la forma más rápida de distinguir archivos.",
@@ -214,23 +214,23 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Acceso de ver vs. editar",
       s: [
         "\"Puede ver\" significa que la persona puede mirar, pero no cambiar nada.",
-        "\"Puede editar\" significa que puede cambiar el archivo — dalo solo cuando alguien realmente lo necesite.",
+        "\"Puede editar\" significa que puede cambiar el archivo. Dalo solo cuando alguien realmente lo necesite.",
         "Cuando no estés seguro, \"puede ver\" casi siempre es la opción más segura.",
       ],
-      tip: "Dar acceso de edición por accidente es uno de los errores reales más fáciles de cometer — siempre revisa dos veces.",
+      tip: "Dar acceso de edición por accidente es uno de los errores reales más fáciles de cometer. Siempre revisa dos veces.",
     },
   ],
 };
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
     { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
     { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
   ],
 };

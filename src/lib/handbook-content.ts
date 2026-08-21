@@ -23,7 +23,7 @@ export const HANDBOOK_ARTICLES: HandbookArticle[] = [
     body: [
       "Shifts of 6 hours or more get one paid 10-minute break and one unpaid 30-minute meal break.",
       "Clock out for your meal break, even if you're eating in the break room.",
-      "Breaks can't be skipped to leave earlier — they're required by law.",
+      "Breaks can't be skipped to leave earlier. They are required by law.",
     ],
   },
   {
@@ -31,7 +31,7 @@ export const HANDBOOK_ARTICLES: HandbookArticle[] = [
     title: "Dress code",
     section: "General",
     body: [
-      "Closed-toe shoes at all times — no sandals or open-back shoes.",
+      "Closed-toe shoes at all times. No sandals or open-back shoes.",
       "Your Harborside apron and name tag should be worn during your whole shift.",
       "Hair longer than shoulder length should be tied back near food prep areas.",
     ],

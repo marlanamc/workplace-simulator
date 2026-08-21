@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import Link from "next/link";
 import { type TaskKey } from "@/lib/desktop-content";
 import { DesktopClock } from "@/components/LiveClock";
 import { levelForTrack, sceneForLevel } from "@/lib/tracks-content";
@@ -20,7 +21,15 @@ import PdfReaderClient from "./pdf-reader/PdfReaderClient";
 /** Wraps a window's content so it replays a subtle "open" animation each time
  *  it becomes the active window (first open or restore from minimize), while
  *  staying mounted (and its state intact) whenever it's minimized in the background. */
-function AppWindow({ active, children }: { active: boolean; children: ReactNode }) {
+function AppWindow({
+  active,
+  topOffset,
+  children,
+}: {
+  active: boolean;
+  topOffset: number;
+  children: ReactNode;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const wasActive = useRef(false);
 
@@ -40,7 +49,7 @@ function AppWindow({ active, children }: { active: boolean; children: ReactNode 
       className={active ? "fixed flex flex-col overflow-hidden rounded-[12px] shadow-[0_12px_40px_rgba(0,0,0,0.28)]" : "hidden"}
       style={
         active
-          ? { top: 8, left: SHELF_INSET, right: SHELF_INSET, bottom: SHELF_RESERVE + 8 }
+          ? { top: topOffset, left: SHELF_INSET, right: SHELF_INSET, bottom: SHELF_RESERVE + 8 }
           : undefined
       }
     >
@@ -49,7 +58,29 @@ function AppWindow({ active, children }: { active: boolean; children: ReactNode 
   );
 }
 
-function DesktopShell({ displayName }: { displayName: string }) {
+function DesignerJumpBanner() {
+  return (
+    <div className="fixed inset-x-0 top-0 z-[60] flex h-9 items-center justify-between gap-3 bg-[#202124] px-4 text-[13px] text-white">
+      <p className="min-w-0 truncate text-white/80">
+        Studio jump. Learner locks are off for this session.
+      </p>
+      <Link
+        href="/studio"
+        className="shrink-0 rounded-full bg-white/12 px-2.5 py-1 font-medium text-white hover:bg-white/20"
+      >
+        Back to studio
+      </Link>
+    </div>
+  );
+}
+
+function DesktopShell({
+  displayName,
+  fromStudio,
+}: {
+  displayName: string;
+  fromStudio: boolean;
+}) {
   const { lang, currentTrack, dismissCelebration, progressEpoch } = useProgress();
   const [objectivesOpen, setObjectivesOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
@@ -58,6 +89,7 @@ function DesktopShell({ displayName }: { displayName: string }) {
   const anyAppActive = active !== null;
   const currentLevel = levelForTrack(currentTrack.key);
   const scene = sceneForLevel(currentLevel);
+  const windowTop = fromStudio ? 44 : 8;
 
   // Wallpaper follows the act (the room), not the individual level. The
   // outgoing scene stays mounted just long enough to fade out over the new
@@ -76,7 +108,7 @@ function DesktopShell({ displayName }: { displayName: string }) {
       className="relative min-h-screen overflow-hidden text-[15px]"
       style={{ color: "var(--text-primary)" }}
     >
-      {/* wallpaper — the room of the current act, so New Hire is the cafe floor */}
+      {/* wallpaper - the room of the current act, so New Hire is the cafe floor */}
       <div className="fixed inset-0 -z-10">
         <DesktopWallpaper scene={scene} />
       </div>
@@ -90,11 +122,11 @@ function DesktopShell({ displayName }: { displayName: string }) {
         </div>
       )}
 
-      {/* desktop content — hidden while an app window is active, but never unmounted */}
+      {/* desktop content - hidden while an app window is active, but never unmounted */}
       <div
         className={anyAppActive ? "hidden" : "flex min-h-screen flex-col"}
         aria-hidden={anyAppActive}
-        style={{ paddingBottom: SHELF_RESERVE }}
+        style={{ paddingBottom: SHELF_RESERVE, paddingTop: fromStudio ? 36 : 0 }}
       >
         <div className="flex flex-1 items-start px-10 pt-10">
           <div className="flex w-full max-w-[400px] flex-col gap-10">
@@ -111,15 +143,15 @@ function DesktopShell({ displayName }: { displayName: string }) {
         </div>
       </div>
 
-      {/* app windows — mounted once opened, visible only while active, so
+      {/* app windows - mounted once opened, visible only while active, so
           minimizing preserves state (e.g. which mail step you're on) */}
       {apps.browser && (
-        <AppWindow active={active === "browser"}>
+        <AppWindow active={active === "browser"} topOffset={windowTop}>
           <BrowserClient key={progressEpoch} />
         </AppWindow>
       )}
       {apps.pdf && (
-        <AppWindow active={active === "pdf"}>
+        <AppWindow active={active === "pdf"} topOffset={windowTop}>
           <PdfReaderClient />
         </AppWindow>
       )}
@@ -158,6 +190,7 @@ function DesktopShell({ displayName }: { displayName: string }) {
         }}
       />
       <MobileNudge />
+      {fromStudio && <DesignerJumpBanner />}
     </div>
   );
 }
@@ -167,15 +200,17 @@ export default function DesktopClient(props: {
   displayName: string;
   completedTaskKeys: TaskKey[];
   certificateTrackKeys: string[];
+  jumpTab?: string;
+  fromStudio?: boolean;
 }) {
   return (
-    <WindowManagerProvider>
+    <WindowManagerProvider jumpTab={props.jumpTab}>
       <ProgressProvider
         learnerId={props.learnerId}
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
       >
-        <DesktopShell displayName={props.displayName} />
+        <DesktopShell displayName={props.displayName} fromStudio={!!props.fromStudio} />
       </ProgressProvider>
     </WindowManagerProvider>
   );

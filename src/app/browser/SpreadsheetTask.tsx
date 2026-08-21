@@ -52,7 +52,7 @@ export default function SpreadsheetTask() {
 
   const c = SPREADSHEET_COPY[lang];
 
-  // The sheet's live total — it recalculates every time a cell changes,
+  // The sheet's live total - it recalculates every time a cell changes,
   // same as a real spreadsheet formula would.
   const liveSheetTotal = TIP_ROWS.reduce((sum, r) => {
     const typed = parseFloat(entries[r.key] ?? "");
@@ -81,8 +81,8 @@ export default function SpreadsheetTask() {
     if (!body.trim()) {
       return say(
         lang === "en"
-          ? "Write a short message first — even one sentence is fine."
-          : "Primero escribe un mensaje corto — una oración está bien."
+          ? "Write a short message first. Even one sentence is fine."
+          : "Primero escribe un mensaje corto. Una oración está bien."
       );
     }
     setView("done");
@@ -104,8 +104,8 @@ export default function SpreadsheetTask() {
   const notYet = () =>
     say(
       lang === "en"
-        ? "That's not part of today's task — open the Weekly Tip Tracker instead."
-        : "Eso no es parte de la tarea de hoy — abre el Registro semanal de propinas en su lugar."
+        ? "That's not part of today's task. Open the Weekly Tip Tracker instead."
+        : "Eso no es parte de la tarea de hoy. Abre el Registro semanal de propinas en su lugar."
     );
 
   // What the formula bar shows for whichever cell is selected.

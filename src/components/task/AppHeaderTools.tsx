@@ -1,6 +1,6 @@
 "use client";
 
-/** Quiet header tools — Google apps put Help up here, not a yellow chip. Language lives in the shelf. */
+/** Quiet header tools - Google apps put Help up here, not a yellow chip. Language lives in the shelf. */
 export default function AppHeaderTools({
   helpLabel,
   onHelp,

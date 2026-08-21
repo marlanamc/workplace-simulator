@@ -161,7 +161,7 @@ export default function PdfReaderClient() {
   const [zoom, setZoom] = useState(100);
   const { nudge, say } = useNudge();
 
-  // A deep link (e.g. "open this pay stub" from the Portal) requests a doc —
+  // A deep link (e.g. "open this pay stub" from the Portal) requests a doc -
   // jump to it even if the reader is already open on a different file.
   // Adjusted during render (React's recommended pattern), not in an effect.
   const [lastToken, setLastToken] = useState(pdfDocToken);
@@ -174,7 +174,7 @@ export default function PdfReaderClient() {
 
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
   const scale = zoom / 100;
-  const notAvailable = () => say("That's not available in this practice space — just look and read here.");
+  const notAvailable = () => say("That's not available in this practice space. Just look and read here.");
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-[var(--surface-muted)]">

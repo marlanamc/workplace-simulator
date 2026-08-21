@@ -20,7 +20,7 @@ export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => voi
         <div className="animate-pop-in mb-4 text-[48px] leading-none">{celebrateTrack.awardEmoji}</div>
         <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title}</h2>
         <p className="mb-6 text-[15px] leading-relaxed text-[var(--text-secondary)]">
-          Award unlocked — it&rsquo;s in your trophy case.
+          Award unlocked. It&rsquo;s in your trophy case.
         </p>
         <button
           onClick={onSeeAward}

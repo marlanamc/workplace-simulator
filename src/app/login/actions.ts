@@ -31,5 +31,6 @@ export async function loginOrSignup(_prev: LoginResult, formData: FormData): Pro
     await setSessionCookie(learner.id);
   }
 
-  redirect("/");
+  const nextRaw = String(formData.get("next") ?? "/");
+  redirect(nextRaw === "/studio" ? "/studio" : "/");
 }

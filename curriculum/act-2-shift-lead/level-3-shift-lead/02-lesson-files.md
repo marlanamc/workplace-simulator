@@ -41,3 +41,7 @@ requires renaming it to match a naming convention first, then choosing
   folder/search mechanics are the easy part for most students. Don't rush
   past the "why view and not edit" question even if a student finds the file
   quickly.
+- The other half of this skill is Level 4 Lesson 1: Maria shares a template
+  with *you* as view-only, and you **Make a copy** instead of trying to
+  type in her file.
+

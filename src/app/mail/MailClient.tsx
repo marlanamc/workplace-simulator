@@ -67,7 +67,7 @@ export default function MailClient() {
     say(T("Compose starts a brand-new email. To answer Maria, open her email and click Reply.", "Redactar empieza un correo nuevo. Para contestarle a Maria, abre su correo y haz clic en Responder."));
 
   const trySend = () => {
-    if (!body.trim()) return say(T("Write a short message first — even one sentence is fine.", "Primero escribe un mensaje corto — una oración está bien."));
+    if (!body.trim()) return say(T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien."));
     if (!attached) return say(T("Maria asked for the file. Click Attach file before you send.", "Maria pidió el archivo. Haz clic en Adjuntar archivo antes de enviar."));
     setView("done");
     setStep(5);
@@ -85,7 +85,7 @@ export default function MailClient() {
   };
 
   const notThisFolder = () =>
-    say(T("Today's mail is in Inbox — open that instead.", "El correo de hoy está en Recibidos — ábrelo ahí."));
+    say(T("Today's mail is in Inbox. Open that instead.", "El correo de hoy está en Recibidos. Ábrelo ahí."));
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>

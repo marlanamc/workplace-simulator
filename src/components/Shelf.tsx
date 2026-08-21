@@ -17,15 +17,27 @@ import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { APP_ICONS, TAB_ICONS, Flag, Lock, Target, Languages, Trophy } from "@/lib/icons";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import { logout } from "@/app/actions";
 import { LEVELS, ACTS, isLevelComplete, levelForTrack, furthestLevelIndex, taskKeysForLevel } from "@/lib/tracks-content";
 
-/** Height of the shelf bar itself. */
-export const SHELF_HEIGHT = 56;
-/** Gap between the floating shelf and the screen edges. */
-export const SHELF_INSET = 12;
-/** Space reserved at the bottom of the screen for the floating shelf. */
-export const SHELF_RESERVE = SHELF_HEIGHT + SHELF_INSET;
+/** Height of the taskbar. */
+export const SHELF_HEIGHT = 48;
+/** Inset used by app windows and side panels - the taskbar itself is full-width. */
+export const SHELF_INSET = 8;
+/** Space reserved at the bottom of the screen for the taskbar. */
+export const SHELF_RESERVE = SHELF_HEIGHT;
+
+function StartIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
+      <rect x="0.5" y="0.5" width="7.6" height="7.6" rx="1.4" fill="currentColor" />
+      <rect x="9.9" y="0.5" width="7.6" height="7.6" rx="1.4" fill="currentColor" />
+      <rect x="0.5" y="9.9" width="7.6" height="7.6" rx="1.4" fill="currentColor" />
+      <rect x="9.9" y="9.9" width="7.6" height="7.6" rx="1.4" fill="currentColor" />
+    </svg>
+  );
+}
 
 function badgeStyle(state: AppState) {
   if (state === "done") return "bg-[var(--success-tint)] text-[var(--success)]";
@@ -101,7 +113,7 @@ function ShelfPin({
       aria-label={label}
       aria-pressed={active}
       onClick={onClick}
-      className="relative flex h-12 w-12 items-center justify-center rounded-[14px] text-white cursor-pointer hover:bg-white/10"
+      className="relative flex h-10 w-10 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
       style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
     >
       {children}
@@ -181,36 +193,34 @@ export default function Shelf({
 
   return (
     <>
-      {/* shelf — floating ChromeOS pill: apps left, status right */}
+      {/* taskbar - Windows-style: icons centered, tray on the right */}
       <div
-        className="fixed z-40 flex items-center gap-0.5 px-1.5 backdrop-blur-2xl"
+        className="fixed inset-x-0 bottom-0 z-40 backdrop-blur-2xl"
         style={{
-          left: SHELF_INSET,
-          right: SHELF_INSET,
-          bottom: SHELF_INSET,
           height: SHELF_HEIGHT,
-          borderRadius: SHELF_HEIGHT / 2,
-          background: "rgba(32, 33, 36, 0.72)",
-          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.08), 0 8px 28px rgba(0,0,0,0.28)",
+          background: "rgba(32, 32, 32, 0.88)",
+          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
         }}
       >
-        <button
-          onClick={() => {
-            setAccountOpen(false);
-            setLevelsOpen(false);
-            onObjectivesOpenChange(false);
-            onAwardsOpenChange(false);
-            if (launcherOpen) closeLauncher();
-            else setLauncherOpen(true);
-          }}
-          aria-label={c.appsBtn}
-          aria-expanded={launcherOpen}
-          className="ml-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full cursor-pointer"
-          style={{
-            background: "radial-gradient(circle at 34% 32%, #fff 0%, #dbe6f4 55%, #a9c0d2 100%)",
-            boxShadow: launcherOpen ? "0 0 0 2px #fff, 0 0 0 4px rgba(255,255,255,0.35)" : "inset 0 0 0 1px rgba(0,0,0,0.08)",
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div className="pointer-events-auto flex items-center gap-0.5">
+            <button
+              onClick={() => {
+                setAccountOpen(false);
+                setLevelsOpen(false);
+                onObjectivesOpenChange(false);
+                onAwardsOpenChange(false);
+                if (launcherOpen) closeLauncher();
+                else setLauncherOpen(true);
+              }}
+              aria-label={c.appsBtn}
+              aria-expanded={launcherOpen}
+              title={c.appsBtn}
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
+              style={launcherOpen ? { background: "rgba(255,255,255,0.12)" } : undefined}
+            >
+              <StartIcon />
+            </button>
 
         {APP_DEFS.map((a) => (
           <ShelfPin
@@ -226,7 +236,7 @@ export default function Shelf({
           </ShelfPin>
         ))}
 
-        {/* level navigator — jump back to any level you've already reached */}
+        {/* level navigator - jump back to any level you've already reached */}
         <div className="relative" ref={levelsBoxRef}>
           <ShelfPin
             label={lang === "en" ? "Levels" : "Niveles"}
@@ -243,7 +253,7 @@ export default function Shelf({
           </ShelfPin>
 
           {levelsOpen && (
-            <div className="absolute left-0 bottom-[52px] z-40 max-h-[70vh] w-[300px] overflow-y-auto rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
+            <div className="absolute left-1/2 bottom-[calc(100%+8px)] z-40 max-h-[70vh] w-[300px] -translate-x-1/2 overflow-y-auto rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
               {ACTS.map((act) => {
                 const actLevels = act.levelKeys
                   .map((key) => LEVELS.findIndex((l) => l.key === key))
@@ -356,11 +366,11 @@ export default function Shelf({
         >
           <AppIcon icon={<Trophy size={16} strokeWidth={2.25} />} color="#e8a317" size={32} />
         </ShelfPin>
+          </div>
+        </div>
 
-        <div className="flex-1" />
-
-        {/* status area — one pill, like ChromeOS Quick Settings */}
-        <div className="relative mr-1" ref={accountBoxRef}>
+        {/* system tray - stays on the right, like Windows */}
+        <div className="absolute right-1.5 top-0 bottom-0 flex items-center" ref={accountBoxRef}>
           <button
             onClick={() => {
               closeLauncher();
@@ -371,7 +381,7 @@ export default function Shelf({
             }}
             aria-label={lang === "en" ? "Status area" : "Área de estado"}
             aria-expanded={accountOpen}
-            className="flex items-center gap-2.5 rounded-full px-3 py-1 text-white/90 cursor-pointer hover:bg-white/10"
+            className="flex items-center gap-2.5 rounded-md px-3 py-1 text-white/90 cursor-pointer hover:bg-white/10"
             style={accountOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
           >
             <span
@@ -396,7 +406,7 @@ export default function Shelf({
 
           {accountOpen && (
               <div
-                className="absolute right-0 bottom-[52px] z-40 w-[336px] rounded-2xl bg-[#202124] p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] animate-fade-up"
+                className="absolute right-0 bottom-[calc(100%+8px)] z-40 w-[336px] rounded-2xl bg-[#202124] p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] animate-fade-up"
               >
                 <div className="mb-3 rounded-xl bg-white/8 px-3 py-2.5 text-[12px] leading-snug text-white/70">
                   {c.practiceBanner}
@@ -462,7 +472,7 @@ export default function Shelf({
                   </button>
                 </div>
 
-                {/* brightness slider — the one real control here */}
+                {/* brightness slider - the one real control here */}
                 <div className="mb-3 flex items-center gap-2.5">
                   <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-[13px]">☀</span>
                   <input
@@ -479,14 +489,19 @@ export default function Shelf({
                 {/* footer */}
                 <div className="flex items-center justify-between border-t border-white/10 pt-2.5 text-[12px] text-white/70">
                   <span><QuickSettingsClock lang={lang} /></span>
-                  <span>{lang === "en" ? "Practice device" : "Dispositivo de práctica"}</span>
+                  <Link
+                    href="/studio"
+                    className="rounded-full px-2 py-0.5 text-white/70 hover:bg-white/10 hover:text-white"
+                  >
+                    Studio
+                  </Link>
                 </div>
               </div>
           )}
         </div>
       </div>
 
-      {/* screen dimming tied to the brightness slider — a genuine control, not a decoration */}
+      {/* screen dimming tied to the brightness slider - a genuine control, not a decoration */}
       <div
         className="pointer-events-none fixed inset-0 z-[35] bg-black transition-opacity"
         style={{ opacity: (100 - brightness) / 220 }}
@@ -497,7 +512,7 @@ export default function Shelf({
           <div
             ref={launcherPanelRef}
             className="fixed z-40 flex w-[560px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
-            style={{ bottom: SHELF_RESERVE + 8, left: SHELF_INSET }}
+            style={{ bottom: SHELF_HEIGHT + 12, left: "50%", transform: "translateX(-50%)" }}
           >
             {/* search bar */}
             <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3.5">
@@ -635,7 +650,7 @@ export default function Shelf({
                 <button
                   onClick={() => {
                     setInfoApp(null);
-                    say(lang === "en" ? "Coming soon in the full build." : "Próximamente en la versión completa.");
+                    say(lang === "en" ? "Coming soon." : "Próximamente.");
                   }}
                   className="inline-flex min-h-[48px] cursor-not-allowed items-center justify-center rounded-full bg-[var(--surface-muted)] px-5 text-[15px] font-medium text-[var(--text-tertiary)]"
                 >

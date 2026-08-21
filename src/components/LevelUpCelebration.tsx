@@ -4,7 +4,7 @@ import { useProgress } from "@/lib/progress-context";
 import Confetti from "@/components/task/Confetti";
 import { PartyPopper } from "@/lib/icons";
 
-/** The big "you leveled up" moment — bigger than a single track's award popup, since a whole level (and often a promotion) just finished. */
+/** The big "you leveled up" moment - bigger than a single track's award popup, since a whole level (and often a promotion) just finished. */
 export default function LevelUpCelebration() {
   const { celebrateLevel, dismissLevelCelebration } = useProgress();
   if (!celebrateLevel?.levelUp) return null;

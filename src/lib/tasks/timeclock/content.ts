@@ -4,14 +4,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "⏰",
     kicker: "End of shift",
-    headline: "Time to clock out — but check your math first.",
-    body: "Your shift's done. Before you head home, clock out and make sure the hours actually match what you worked. A quick look now saves a headache on payday.",
+    headline: "Time to clock out. Check the hours first.",
+    body: "Your shift is done. Before you go home, clock out and make sure the hours match what you worked. A quick look now can save a problem on payday.",
     cta: "Clock out",
   },
   es: {
     emoji: "⏰",
     kicker: "Fin del turno",
-    headline: "Hora de marcar salida — pero revisa las cuentas primero.",
+    headline: "Hora de marcar salida. Revisa las horas primero.",
     body: "Tu turno terminó. Antes de irte a casa, marca tu salida y asegúrate de que las horas coincidan con lo que trabajaste. Un vistazo rápido ahora te ahorra un dolor de cabeza el día de pago.",
     cta: "Marcar salida",
   },
@@ -78,7 +78,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     scheduledLabel: "Your scheduled shift",
     reviewQuestion: "Does this look right?",
     looksRight: "Looks right",
-    somethingOff: "Something's off — message my lead",
+    somethingOff: "Something looks wrong. Message my lead",
     recentHeading: "Recent shifts",
     to: "To",
     subjectLabel: "Subject",
@@ -89,7 +89,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You caught a mismatch and said something.",
-    doneBody: "Your total didn't match your scheduled shift, so you flagged it for Maria instead of letting it go — that's exactly what to do before a paycheck is affected.",
+    doneBody: "Your total did not match your scheduled shift, so you told Maria. That is the right move before payday.",
     badgeName: "Check your hours and speak up",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     confidenceQ: "How do you feel about checking your hours after a real shift?",
@@ -97,7 +97,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it — back to my task",
+    gotIt: "Got it. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
@@ -112,7 +112,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     scheduledLabel: "Tu turno programado",
     reviewQuestion: "¿Esto se ve correcto?",
     looksRight: "Se ve bien",
-    somethingOff: "Algo no cuadra — avisar a mi líder",
+    somethingOff: "Algo no cuadra. Avisar a mi líder",
     recentHeading: "Turnos recientes",
     to: "Para",
     subjectLabel: "Asunto",
@@ -123,7 +123,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Notaste un error y lo dijiste.",
-    doneBody: "Tu total no coincidía con tu turno programado, así que se lo dijiste a Maria en vez de dejarlo pasar — eso es justo lo que hay que hacer antes de que afecte un pago.",
+    doneBody: "Tu total no coincidía con tu turno programado, así que se lo dijiste a Maria en vez de dejarlo pasar. Eso es lo que hay que hacer antes de que afecte un pago.",
     badgeName: "Revisar tus horas y avisar",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     confidenceQ: "¿Cómo te sientes de revisar tus horas después de un turno real?",
@@ -131,14 +131,14 @@ export const TIMECLOCK_COPY: Record<Lang, {
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Entendido — volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",
   },
 };
 
 export const WRONG_LOOKS_RIGHT_HINT: Record<Lang, string> = {
-  en: "Look again — you clocked in later than your scheduled start, so today's total is short. What would you want to check with your lead?",
-  es: "Mira otra vez — marcaste tu entrada más tarde que tu hora programada, así que el total de hoy es menor. ¿Qué querrías revisar con tu líder?",
+  en: "Look again. You clocked in later than your start time, so today's total is short. What would you ask your lead?",
+  es: "Mira otra vez. Marcaste tu entrada más tarde que tu hora programada, así que el total de hoy es menor. ¿Qué querrías revisar con tu líder?",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
@@ -146,13 +146,13 @@ export const STARTERS: Record<Lang, string[]> = {
     "Hi Maria, my hours today look short.",
     "I clocked in at 8:02 AM instead of 7:00 AM.",
     "Can you check that this is recorded correctly?",
-    "Let me know if you need anything else — thank you.",
+    "Let me know if you need anything else. Thank you.",
   ],
   es: [
     "Hola Maria, mis horas de hoy parecen menos de lo esperado.",
     "Marqué mi entrada a las 8:02 AM en vez de las 7:00 AM.",
     "¿Puedes revisar que esto esté registrado correctamente?",
-    "Avísame si necesitas algo más — gracias.",
+    "Avísame si necesitas algo más. Gracias.",
   ],
 };
 
@@ -165,12 +165,12 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Once you clock out, the app shows your total hours for today.",
         "Compare that total to the shift you were scheduled for.",
       ],
-      tip: "Do this every shift — it only takes a second, and it's the only way to catch a mistake early.",
+      tip: "Do this every shift. It only takes a second, and it is the way to catch a mistake early.",
     },
     {
       t: "When the hours don't match",
       s: [
-        "Say what you noticed — the total, and what you expected.",
+        "Say what you noticed. Say the total, and what you expected.",
         "You don't need to know why it's wrong. That's your lead's job to figure out.",
         "Send it the same day, while it's easy to check.",
       ],
@@ -185,12 +185,12 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Cuando marcas salida, la app muestra tu total de horas de hoy.",
         "Compara ese total con el turno que tenías programado.",
       ],
-      tip: "Hazlo cada turno — toma un segundo, y es la única forma de notar un error a tiempo.",
+      tip: "Hazlo cada turno. Toma un segundo, y es la forma de notar un error a tiempo.",
     },
     {
       t: "Cuando las horas no coinciden",
       s: [
-        "Di qué notaste — el total, y lo que esperabas.",
+        "Di qué notaste. Di el total, y lo que esperabas.",
         "No necesitas saber por qué está mal. Eso lo resuelve tu líder.",
         "Envíalo el mismo día, mientras es fácil de revisar.",
       ],
@@ -201,13 +201,13 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
-    { label: "Still unsure", reply: "That's honest — do the task once more, or bring it to Wednesday drop-in and we'll do it together." },
-    { label: "I could try", reply: "Good. Try it again without guided mode — that's how it will feel at work." },
+    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
+    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
     { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
   ],
   es: [
-    { label: "Todavía dudo", reply: "Eso es honesto — hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin el modo guiado — así se siente en el trabajo." },
+    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
+    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
     { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
   ],
 };

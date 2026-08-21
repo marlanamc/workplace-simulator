@@ -21,7 +21,7 @@ export default function MobileNudge() {
       try {
         if (sessionStorage.getItem(DISMISS_KEY) === "1") setDismissed(true);
       } catch {
-        // sessionStorage unavailable (e.g. private mode) — just show the nudge every time
+        // sessionStorage unavailable (e.g. private mode) - just show the nudge every time
       }
     };
     checkDismissed();
@@ -36,7 +36,7 @@ export default function MobileNudge() {
     try {
       sessionStorage.setItem(DISMISS_KEY, "1");
     } catch {
-      // ignore — worst case the nudge reappears next reload
+      // ignore - worst case the nudge reappears next reload
     }
   };
 
@@ -48,8 +48,8 @@ export default function MobileNudge() {
           Built for a computer
         </h2>
         <p className="mb-6 text-[15px] leading-relaxed text-[var(--text-secondary)]">
-          This simulator practices real computer skills — mouse clicks, right-click menus, windows.
-          You&rsquo;ll get more out of it on a laptop or desktop. Ask staff about a rental if you need one.
+          This practice space uses real computer skills: mouse clicks, right-click menus, and windows.
+          You will get more out of it on a laptop or desktop. Ask staff about a rental if you need one.
         </p>
         <div className="flex flex-col gap-2">
           <button
