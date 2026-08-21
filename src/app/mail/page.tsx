@@ -1,10 +1,6 @@
 import { redirect } from "next/navigation";
-import { getSessionLearnerId } from "@/lib/auth";
-import MailClient from "./MailClient";
 
-export default async function MailTaskPage() {
-  const learnerId = await getSessionLearnerId();
-  if (!learnerId) redirect("/login");
-
-  return <MailClient />;
+// The email task now lives inside the Browser app as a tab.
+export default function MailRedirect() {
+  redirect("/browser?tab=mail");
 }

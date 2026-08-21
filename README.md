@@ -1,23 +1,34 @@
 # Workplace Simulator
 
-A practice sandbox where adult learners rehearse everyday workplace technology tasks —
-reading a supervisor's email, replying, attaching a file — in a safe, simulated environment
-with no real accounts or data.
+A practice sandbox where adult learners rehearse everyday workplace technology — reading a
+supervisor's email, checking a schedule, reading a pay stub, looking something up in the
+handbook — in a safe, simulated environment with no real accounts or data.
 
 Built as a Next.js app with a light, Chromebook-flavored interface: flat surfaces, a single
-accent color, generous spacing, and one primary action visible at a time to keep cognitive
-load low for busy adult learners.
+accent color, generous spacing, and a persistent shelf/launcher — like the real work
+Chromebook a learner would actually use, since most workplace tools live inside one browser
+rather than as separate desktop apps.
 
 ## Structure
 
 - `/login` — sign in with a first name, a 4-digit PIN, and a class code. No email or
   password; first-time use creates the profile.
-- `/` — the simulated desktop: one focused "do this next" card plus a shelf of work apps.
-  Server component (`page.tsx`) checks the session and loads real progress; `DesktopClient.tsx`
-  is the interactive shell.
-- `/mail` — the email task: inbox, read/reply/compose, a file picker, a 2-minute help lesson,
-  and a confidence check-in at the end. Same server/client split (`page.tsx` /
-  `MailClient.tsx`); completing the task calls the `completeTask` server action.
+- `/` — the simulated desktop: one focused "do this next" card. Server component
+  (`page.tsx`) checks the session and loads real progress; `DesktopClient.tsx` is the
+  interactive shell.
+- `/browser` — the main workspace. Real tab strip, address bar, and bookmarks bar; hosts:
+  - **WorkMail** tab (`src/app/mail/MailClient.tsx`) — the email task: inbox,
+    read/reply/compose, a file picker, a help lesson, and a confidence check-in. Completing
+    it calls the `completeTask` server action.
+  - **Employee Portal** tab (`PortalPage.tsx`) — schedule, time clock, and pay stubs.
+    Currently read-only/explorable, not yet wired to graded completions.
+  - **Handbook** tab (`HandbookPage.tsx`) — searchable reference articles.
+- `/pdf-reader` — a real second app (not a browser tab, since PDFs open natively): a
+  Downloads-style file list plus a document viewer, seeded with a couple of sample PDFs
+  (`src/lib/pdf-content.ts`).
+- `src/components/Shelf.tsx` — the persistent bottom shelf/taskbar (app icons, launcher with
+  search, the ChromeOS-style account tray with sign-out/language/brightness) rendered by
+  every signed-in page, fixed above the page content (`SHELF_HEIGHT`).
 - `src/lib/auth.ts` — signed session cookie (HMAC, no external auth library) and PIN
   hashing (`scrypt`).
 - `src/lib/db/` — Postgres (Neon, via Vercel Marketplace) accessed with Drizzle ORM:
@@ -25,17 +36,18 @@ load low for busy adult learners.
   `queries.ts` (typed helpers).
 - `src/app/actions.ts`, `src/app/login/actions.ts` — server actions for login/signup,
   logout, and recording a task completion.
-- `src/lib/desktop-content.ts` — desktop-only bilingual copy and app definitions (`APP_DEFS`,
-  `APP_COPY`, `DESKTOP_COPY`, `RECENT_ITEMS`).
-- `src/lib/tasks/<task>/content.ts` — one file per task (starting with `mail/`) holding that
-  task's copy, lessons, coach steps, and pickable items.
+- `src/lib/desktop-content.ts` — desktop app definitions (`APP_DEFS`: Browser, PDF Reader)
+  and `TASK_KEYS` — the underlying curriculum tasks used for progress, independent of how
+  many desktop app icons exist (several tasks live as browser tabs, not separate apps).
+- `src/lib/tasks/<task>/content.ts` — one file per graded task (starting with `mail/`)
+  holding that task's copy, lessons, coach steps, and pickable items.
 - `src/lib/task-types.ts` — shared shapes (`Lesson`, `ConfidenceOption`, `PickableItem`) every
   task's content implements, so new tasks don't redefine them.
 - `src/components/task/` — task-agnostic UI reused across tasks: `HelpDrawer`,
   `ConfidenceCheck`, `CoachBanner`, `SettingsPopover`, `ProgressBar`, `PickerModal`,
   `NudgeToast`.
-- `src/lib/use-nudge.ts` — the "show a coaching toast for a few seconds" hook behind
-  `NudgeToast`.
+- `src/lib/use-nudge.ts` / `src/lib/use-click-outside.ts` — small shared hooks (coaching
+  toast auto-dismiss; closing a popover on an outside click).
 
 ## Getting started
 
@@ -50,11 +62,14 @@ Open [http://localhost:3000](http://localhost:3000). To change the DB schema, ed
 
 ## Design notes
 
-- Only one email task ("Answer your supervisor") is fully built out; the other desktop apps
-  show a preview sheet with a "Coming soon" state, matching the intended full build.
-- Language, "simple words," and "read aloud" toggles live in a single settings popover (mail
-  task) instead of as separate always-visible buttons, to reduce visual clutter.
+- Only the email task ("Answer your supervisor") is graded/wired to persistence right now.
+  Employee Portal, Handbook, and PDF Reader are built out to be real and explorable, but not
+  yet tied to badges/completions — that's the next layer to add, once the shell itself feels
+  solid.
 - Wrong actions (wrong email, Forward instead of Reply, wrong file) never break the task —
   they show a short coaching toast and let the learner keep trying.
 - Accounts are intentionally low-friction for a shared classroom device: first name + a
   self-chosen 4-digit PIN + a class code from the instructor. No email, no password rules.
+- The Shelf's own popovers (account tray, launcher) close on outside-click via
+  `useClickOutside`, not an invisible full-screen backdrop — a backdrop nested inside the
+  shelf's own stacking context ends up covering the shelf's own buttons.

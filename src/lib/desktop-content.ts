@@ -2,7 +2,10 @@ import type { Lang, Localized } from "./task-types";
 
 export type { Lang };
 
-export type AppKey = "mail" | "clock" | "sched" | "orders" | "form" | "book";
+// Desktop app icons — kept to what a learner would actually find on a work
+// Chromebook: a browser (which hosts webmail, the HR portal, forms, the
+// handbook as tabs/bookmarks) and a PDF reader for downloaded files.
+export type AppKey = "browser" | "pdf";
 export type AppState = "ready" | "done" | "locked";
 
 export interface AppDef {
@@ -14,12 +17,8 @@ export interface AppDef {
 }
 
 export const APP_DEFS: AppDef[] = [
-  { key: "mail", icon: "✉", color: "#1a73e8", href: "/mail", state: "ready" },
-  { key: "clock", icon: "⏱", color: "#1e8e3e", href: null, state: "done" },
-  { key: "sched", icon: "▦", color: "#8430ce", href: null, state: "ready" },
-  { key: "orders", icon: "☕", color: "#b06000", href: null, state: "ready" },
-  { key: "form", icon: "⚠", color: "#c5221f", href: null, state: "locked" },
-  { key: "book", icon: "▤", color: "#3c4043", href: null, state: "ready" },
+  { key: "browser", icon: "◧", color: "#1a73e8", href: "/browser", state: "ready" },
+  { key: "pdf", icon: "▤", color: "#c5221f", href: "/pdf-reader", state: "ready" },
 ];
 
 interface AppCopy {
@@ -31,79 +30,31 @@ interface AppCopy {
 
 export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
   en: {
-    mail: {
-      name: "WorkMail",
-      kicker: "Task 1 of 5 · Email",
-      brief: "Maria needs last month's safety report. Read her email, reply, and send the file.",
-      points: ["Open the email from Maria Delgado", "Click Reply and write a short answer", "Attach safety-report-july.pdf, then Send"],
+    browser: {
+      name: "Browser",
+      kicker: "Your main workspace",
+      brief: "Almost everything for the job lives here — email, your schedule, pay stubs, and forms all open as tabs.",
+      points: ["Open a bookmarked site or a tab", "Read what it's asking you to do", "Reply, fill in, or submit — then check it off"],
     },
-    clock: {
-      name: "Time Clock",
-      kicker: "Task 2 of 5 · Timekeeping",
-      brief: "You already clocked in this morning. At the end of the shift you'll clock out.",
-      points: ["Find your name on the clock screen", "Press Clock Out at 3:00 PM", "Check that today shows 8 hours"],
-    },
-    sched: {
-      name: "Schedule",
-      kicker: "Task 3 of 5 · Schedule",
-      brief: "Next week's schedule is up. Find your shifts and ask for a change the right way.",
-      points: ["Find the days you're working", "Notice the shift you can't work", "Send a shift-swap request to Maria"],
-    },
-    orders: {
-      name: "Order Terminal",
-      kicker: "Task 4 of 5 · Customer service",
-      brief: "Take a customer's order at the counter and ring it up.",
-      points: ["Greet the customer and take the order", "Ring up 2 drinks and 1 pastry", "Fix the order when they change their mind"],
-    },
-    form: {
-      name: "Incident Form",
-      kicker: "Task 5 of 5 · Reporting",
-      brief: "Someone spilled a box of syrup in the back room. Write it up.",
-      points: ["Say what happened, in order", "Say when and where it happened", "Send the form to your lead"],
-    },
-    book: {
-      name: "Handbook",
+    pdf: {
+      name: "PDF Reader",
       kicker: "Reference",
-      brief: "The employee handbook. You can open this any time.",
-      points: ["Look up how to call out sick", "Find the break rules", "Find who to ask when you're stuck"],
+      brief: "Opens downloaded files like reports and pay stubs so you can read or print them.",
+      points: ["Find the file in Downloads", "Open it to read", "Print or attach it to an email when asked"],
     },
   },
   es: {
-    mail: {
-      name: "WorkMail",
-      kicker: "Tarea 1 de 5 · Correo",
-      brief: "Maria necesita el reporte de seguridad del mes pasado. Lee su correo, responde y envía el archivo.",
-      points: ["Abre el correo de Maria Delgado", "Haz clic en Responder y escribe una respuesta corta", "Adjunta safety-report-july.pdf y envía"],
+    browser: {
+      name: "Navegador",
+      kicker: "Tu espacio principal",
+      brief: "Casi todo el trabajo pasa por aquí — correo, tu horario, recibos de pago y formularios se abren como pestañas.",
+      points: ["Abre un sitio guardado o una pestaña", "Lee lo que te pide", "Responde, llena o envía — y márcalo como hecho"],
     },
-    clock: {
-      name: "Reloj",
-      kicker: "Tarea 2 de 5 · Horas",
-      brief: "Ya marcaste entrada hoy. Al final del turno vas a marcar salida.",
-      points: ["Busca tu nombre en la pantalla", "Marca salida a las 3:00 PM", "Revisa que hoy muestre 8 horas"],
-    },
-    sched: {
-      name: "Horario",
-      kicker: "Tarea 3 de 5 · Horario",
-      brief: "Ya está el horario de la próxima semana. Busca tus turnos y pide un cambio.",
-      points: ["Busca los días que trabajas", "Fíjate en el turno que no puedes trabajar", "Pide un cambio de turno a Maria"],
-    },
-    orders: {
-      name: "Caja",
-      kicker: "Tarea 4 de 5 · Servicio",
-      brief: "Toma el pedido de un cliente en el mostrador y cóbralo.",
-      points: ["Saluda al cliente y toma el pedido", "Cobra 2 bebidas y 1 pan dulce", "Corrige el pedido cuando cambien de opinión"],
-    },
-    form: {
-      name: "Reporte",
-      kicker: "Tarea 5 de 5 · Reportes",
-      brief: "Alguien derramó una caja de jarabe en la bodega. Escríbelo.",
-      points: ["Di qué pasó, en orden", "Di cuándo y dónde pasó", "Envía el formulario a tu jefa"],
-    },
-    book: {
-      name: "Manual",
+    pdf: {
+      name: "Lector de PDF",
       kicker: "Referencia",
-      brief: "El manual del empleado. Puedes abrirlo cuando quieras.",
-      points: ["Busca cómo avisar que estás enfermo", "Busca las reglas de descanso", "Busca a quién preguntar si te atoras"],
+      brief: "Abre archivos descargados como reportes y recibos de pago para leerlos o imprimirlos.",
+      points: ["Busca el archivo en Descargas", "Ábrelo para leerlo", "Imprímelo o adjúntalo a un correo cuando lo pidan"],
     },
   },
 };
@@ -136,7 +87,7 @@ export const DESKTOP_COPY: Record<Lang, {
     continueLabel: "Continue where you left off",
     searchPlaceholder: "Search your apps and tasks…",
     back: "Not now",
-    start: "Start this task",
+    start: "Open",
     soon: "Coming soon",
     done: "Done",
     ready: "Ready",
@@ -154,7 +105,7 @@ export const DESKTOP_COPY: Record<Lang, {
     continueLabel: "Continúa donde lo dejaste",
     searchPlaceholder: "Busca tus apps y tareas…",
     back: "Ahora no",
-    start: "Empezar esta tarea",
+    start: "Abrir",
     soon: "Próximamente",
     done: "Hecho",
     ready: "Listo",
@@ -169,22 +120,27 @@ export interface RecentItem {
   color: string;
   title: Localized;
   subtitle: Localized;
-  appKey: AppKey;
+  href: string;
 }
 
 export const RECENT_ITEMS: RecentItem[] = [
   {
-    icon: "⏱",
-    color: "#1e8e3e",
-    title: { en: "Time Clock", es: "Reloj" },
-    subtitle: { en: "You clocked in this morning", es: "Marcaste entrada hoy" },
-    appKey: "clock",
+    icon: "▦",
+    color: "#8430ce",
+    title: { en: "Employee Portal", es: "Portal del empleado" },
+    subtitle: { en: "Check your schedule", es: "Revisa tu horario" },
+    href: "/browser?tab=portal",
   },
   {
     icon: "▤",
     color: "#3c4043",
-    title: { en: "Employee Handbook", es: "Manual del empleado" },
-    subtitle: { en: "You opened this last week", es: "Lo abriste la semana pasada" },
-    appKey: "book",
+    title: { en: "Handbook", es: "Manual" },
+    subtitle: { en: "Look something up", es: "Busca algo" },
+    href: "/browser?tab=handbook",
   },
 ];
+
+// The underlying curriculum tasks — independent of how many desktop app
+// icons exist, since several tasks now live as tabs inside one Browser app.
+export const TASK_KEYS = ["mail", "schedule", "timeclock", "paystub", "incident", "handbook"] as const;
+export type TaskKey = (typeof TASK_KEYS)[number];

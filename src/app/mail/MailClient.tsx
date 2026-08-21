@@ -84,16 +84,9 @@ export default function MailClient() {
   const stepLabel = T(`Step ${Math.min(step + 1, 5)} of 5`, `Paso ${Math.min(step + 1, 5)} de 5`);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
-      {/* top bar */}
+    <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
+      {/* task bar */}
       <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
-        <Link
-          href="/"
-          aria-label={c.backToDesk}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-[18px] text-[var(--text-secondary)] hover:bg-[var(--surface-muted)]"
-        >
-          ←
-        </Link>
         <div className="flex items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent)] text-[13px] text-white">
             ✉
