@@ -72,15 +72,19 @@ spreadsheet — Path B). Neither is a program simulation — both are framed to
 the student as "building the muscle for this kind of digital task," honest
 about not being a substitute for a real program.
 
-**File layout:** each level has its own folder — `level-1-new-hire/`,
-`level-2-settling-in/`, `level-3-shift-lead/`, `level-4-reporting-in/`, and
-so on — with lessons numbered `01`, `02`… *within that level* (not
-globally), plus its own `real-practice-assignment.md`. A lesson in one
-level referencing a lesson in another always says "Level 2's Lesson 1" or
-similar, since every level restarts its own lesson numbering. In Act V's
-two-path levels, the two lessons are numbered `01a`/`01b` instead of `01`/
-`02`, since they're alternatives, not a sequence — a student does one, not
-both.
+**File layout:** each act has its own folder — `act-1-new-hire/`,
+`act-2-shift-lead/`, and so on through `act-7-team-lead/` — and each level
+has its own folder inside its act's folder, e.g.
+`act-1-new-hire/level-1-new-hire/`, `act-2-shift-lead/level-4-reporting-in/`.
+Lessons are numbered `01`, `02`… *within that level* (not globally), plus
+each level folder has its own `real-practice-assignment.md`. A lesson in
+one level referencing a lesson in another always says "Level 2's Lesson 1"
+or similar, since every level restarts its own lesson numbering — level
+folder names are unique across the whole curriculum, so a bare reference
+like `level-4-reporting-in/` is enough to locate it without spelling out
+the act folder every time. In Act V's two-path levels, the two lessons are
+numbered `01a`/`01b` instead of `01`/`02`, since they're alternatives, not
+a sequence — a student does one, not both.
 
 ## Track 0: Foundations (prerequisite — skip if already comfortable)
 
