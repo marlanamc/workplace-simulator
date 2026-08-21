@@ -7,23 +7,25 @@ import {
   SCENARIO_CHECK,
   HANDBOOK_TASK_COPY,
   LESSONS,
+  EVENT_INTRO,
   CONFIDENCE_OPTIONS,
   type CheckOption,
 } from "@/lib/tasks/handbook/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import HandbookPage from "./HandbookPage";
 
-type View = "task" | "done";
+type View = "intro" | "task" | "done";
 
 export default function HandbookTask() {
   const [lang, setLang] = useState<Lang>("en");
   const { markComplete, completedTaskKeys } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("handbook") ? "done" : "task");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("handbook") ? "done" : "intro");
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
@@ -48,6 +50,12 @@ export default function HandbookTask() {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-white text-[15px] text-[var(--text-primary)]">
+      {view === "intro" && (
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+          <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("task")} />
+        </div>
+      )}
+
       {view === "task" && (
         <>
           <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--warning-tint)] px-4 py-3">

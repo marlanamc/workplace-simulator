@@ -36,6 +36,15 @@ export const TRACKS: Track[] = [
   },
 ];
 
+/** The celebratory "you leveled up" moment shown once, right when a learner steps into this level. */
+export interface LevelUpCopy {
+  emoji: string;
+  kicker: string;
+  title: string;
+  body: string;
+  cta: string;
+}
+
 export interface Level {
   key: string;
   title: string;
@@ -51,6 +60,13 @@ export interface Level {
    * learner directly on `firstTabKey` — no tab-hunting required yet.
    */
   freeTabbing?: boolean;
+  /**
+   * Copy for the level-up celebration shown when a learner finishes every
+   * track in the *previous* level. Optional — a level without this doesn't
+   * get a dedicated celebration moment (the wallpaper/environment still
+   * changes either way).
+   */
+  levelUp?: LevelUpCopy;
 }
 
 /**
@@ -73,6 +89,13 @@ export const LEVELS: Level[] = [
     trackKeys: ["schedules", "judgment"],
     wallpaper: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)",
     firstTabKey: "portal",
+    levelUp: {
+      emoji: "🎉",
+      kicker: "Day one: complete",
+      title: "You survived Day One!",
+      body: "Maria noticed. You've got a real rhythm going now — schedules, time clock, pay stubs, and knowing when to speak up. Let's keep it rolling.",
+      cta: "Let's keep going",
+    },
   },
   {
     key: "level3",
@@ -92,6 +115,20 @@ export function levelForTrack(trackKey: string): Level {
 export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
   const currentIndex = LEVELS.findIndex((l) => l.key === levelForTrack(activeTrack(completedTaskKeys).key).key);
   return LEVELS.slice(0, currentIndex + 1);
+}
+
+/** Whether every track in a level is fully done. */
+export function isLevelComplete(level: Level, completedTaskKeys: TaskKey[]): boolean {
+  return level.trackKeys.every((tk) => {
+    const track = TRACKS.find((t) => t.key === tk);
+    return track ? isTrackComplete(track, completedTaskKeys) : false;
+  });
+}
+
+/** The level right after this one, or null if this is the last level. */
+export function nextLevel(level: Level): Level | null {
+  const idx = LEVELS.findIndex((l) => l.key === level.key);
+  return idx >= 0 ? LEVELS[idx + 1] ?? null : null;
 }
 
 export interface TaskInfo {

@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "⚠️",
+    kicker: "10 minutes ago",
+    headline: "Oh no — a customer just slipped near the front door!",
+    body: "Nobody was hurt, but the floor was wet from a spill. Your shift lead needs a short written report on what happened, while it's still fresh.",
+    cta: "Write the report",
+  },
+  es: {
+    emoji: "⚠️",
+    kicker: "Hace 10 minutos",
+    headline: "Uy no — ¡un cliente se acaba de resbalar cerca de la puerta!",
+    body: "Nadie se lastimó, pero el piso estaba mojado por un derrame. Tu líder de turno necesita un reporte breve de lo que pasó, mientras lo recuerdas bien.",
+    cta: "Escribir el reporte",
+  },
+};
 
 export const INCIDENT_COPY: Record<Lang, {
   heading: string;

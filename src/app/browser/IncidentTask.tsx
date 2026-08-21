@@ -8,21 +8,23 @@ import {
   DEFAULTS,
   STARTERS,
   LESSONS,
+  EVENT_INTRO,
   CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/incident/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "form" | "done";
+type View = "intro" | "form" | "done";
 
 export default function IncidentTask() {
   const [lang, setLang] = useState<Lang>("en");
   const { markComplete, completedTaskKeys } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "form");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "intro");
   const [when, setWhen] = useState(DEFAULTS.en.when);
   const [where, setWhere] = useState(DEFAULTS.en.where);
   const [what, setWhat] = useState("");
@@ -83,6 +85,10 @@ export default function IncidentTask() {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-6">
+        {view === "intro" && (
+          <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("form")} />
+        )}
+
         {view === "form" && (
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <div className="rounded-xl border border-[var(--warning-tint)] bg-[var(--warning-tint)] p-4">

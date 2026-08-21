@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "📅",
+    kicker: "Uh oh",
+    headline: "Something on next week's schedule doesn't add up.",
+    body: "You just pulled up next week's shifts... and one of them collides with something you already can't miss. Time to sort it out before it becomes a bigger problem.",
+    cta: "Check my schedule",
+  },
+  es: {
+    emoji: "📅",
+    kicker: "Uy no",
+    headline: "Algo en el horario de la próxima semana no cuadra.",
+    body: "Acabas de ver los turnos de la próxima semana... y uno de ellos choca con algo que ya no puedes faltar. Hay que resolverlo antes de que sea un problema mayor.",
+    cta: "Revisar mi horario",
+  },
+};
 
 export interface ShiftDay {
   day: string;

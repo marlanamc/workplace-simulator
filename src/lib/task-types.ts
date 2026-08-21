@@ -15,6 +15,15 @@ export interface ConfidenceOption {
   reply: string;
 }
 
+/** The dramatic "here's what's happening" event card shown before a task starts. */
+export interface EventIntroCopy {
+  emoji: string;
+  kicker: string;
+  headline: string;
+  body: string;
+  cta: string;
+}
+
 /** One row in a generic "pick the right item from a list" modal (files, calendar slots, etc.). */
 export interface PickableItem {
   key: string;

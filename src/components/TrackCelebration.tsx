@@ -1,6 +1,7 @@
 "use client";
 
 import { useProgress } from "@/lib/progress-context";
+import Confetti from "@/components/task/Confetti";
 
 export default function TrackCelebration() {
   const { celebrateTrack, dismissCelebration } = useProgress();
@@ -12,10 +13,11 @@ export default function TrackCelebration() {
       onClick={dismissCelebration}
     >
       <div
-        className="w-full max-w-[420px] rounded-2xl bg-white p-7 text-center shadow-2xl animate-fade-up"
+        className="relative w-full max-w-[420px] overflow-hidden rounded-2xl bg-white p-7 text-center shadow-2xl animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-4 text-[40px]">🏆</div>
+        <Confetti count={26} />
+        <div className="animate-pop-in mb-4 text-[40px]">🏆</div>
         <div className="mb-1 text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
           Certificate earned
         </div>

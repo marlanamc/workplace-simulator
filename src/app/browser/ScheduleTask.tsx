@@ -8,22 +8,24 @@ import {
   SCHEDULE_COPY,
   STARTERS,
   LESSONS,
+  EVENT_INTRO,
   CONFIDENCE_OPTIONS,
   WRONG_SWAP_HINT,
 } from "@/lib/tasks/schedule/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "list" | "compose" | "done";
+type View = "intro" | "list" | "compose" | "done";
 
 export default function ScheduleTask() {
   const [lang, setLang] = useState<Lang>("en");
   const { markComplete, completedTaskKeys } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "list");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "intro");
   const [swapDay, setSwapDay] = useState<(typeof SCHEDULE)[number] | null>(null);
   const [body, setBody] = useState("");
   const [confidence, setConfidence] = useState<string | null>(null);
@@ -84,6 +86,10 @@ export default function ScheduleTask() {
         </div>
       </div>
       <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
+
+      {view === "intro" && (
+        <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("list")} />
+      )}
 
       {view === "list" && (
         <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">

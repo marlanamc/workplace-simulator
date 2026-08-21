@@ -16,7 +16,7 @@ import { useNudge } from "@/lib/use-nudge";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { logout } from "@/app/actions";
-import { TASK_INFO, TRACKS, LEVELS, isTrackComplete, levelForTrack } from "@/lib/tracks-content";
+import { TASK_INFO, LEVELS, isTrackComplete, isLevelComplete, levelForTrack } from "@/lib/tracks-content";
 
 export const SHELF_HEIGHT = 56;
 
@@ -73,11 +73,6 @@ export default function Shelf({ displayName }: { displayName: string }) {
   const currentLevel = levelForTrack(currentTrack.key);
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
   const trackComplete = isTrackComplete(currentTrack, completedTaskKeys);
-  const isLevelComplete = (level: (typeof LEVELS)[number]) =>
-    level.trackKeys.every((tk) => {
-      const track = TRACKS.find((t) => t.key === tk);
-      return track ? isTrackComplete(track, completedTaskKeys) : false;
-    });
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -159,7 +154,7 @@ export default function Shelf({ displayName }: { displayName: string }) {
               {LEVELS.map((level, i) => {
                 const locked = i > currentLevelIndex;
                 const isCurrent = i === currentLevelIndex;
-                const complete = !locked && isLevelComplete(level);
+                const complete = !locked && isLevelComplete(level, completedTaskKeys);
                 return (
                   <button
                     key={level.key}

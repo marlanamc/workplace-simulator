@@ -8,22 +8,24 @@ import {
   TIMECLOCK_COPY,
   STARTERS,
   LESSONS,
+  EVENT_INTRO,
   CONFIDENCE_OPTIONS,
   WRONG_LOOKS_RIGHT_HINT,
 } from "@/lib/tasks/timeclock/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "clocked_in" | "review" | "compose" | "done";
+type View = "intro" | "clocked_in" | "review" | "compose" | "done";
 
 export default function TimeclockTask() {
   const [lang, setLang] = useState<Lang>("en");
   const { markComplete, completedTaskKeys } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "clocked_in");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "intro");
   const [body, setBody] = useState("");
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
@@ -76,6 +78,10 @@ export default function TimeclockTask() {
           </button>
         </div>
       </div>
+
+      {view === "intro" && (
+        <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("clocked_in")} />
+      )}
 
       {view === "clocked_in" && (
         <div className="flex flex-col gap-5">

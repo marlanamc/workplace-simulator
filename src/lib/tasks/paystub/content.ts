@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "💵",
+    kicker: "Payday",
+    headline: "Your first paycheck just landed.",
+    body: "Your pay stub is ready in the portal. Before you trust the number, take a look — knowing how to read your own pay stub is a skill that pays off for the rest of your career.",
+    cta: "Open my pay stub",
+  },
+  es: {
+    emoji: "💵",
+    kicker: "Día de pago",
+    headline: "Tu primer cheque acaba de llegar.",
+    body: "Tu recibo de pago ya está en el portal. Antes de confiar en el número, échale un vistazo — saber leer tu propio recibo es una habilidad que te sirve para toda tu carrera.",
+    cta: "Abrir mi recibo",
+  },
+};
 
 export interface PayStub {
   id: string;

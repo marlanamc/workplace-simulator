@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "🤒",
+    kicker: "Uh oh",
+    headline: "You're feeling sick — and you're not sure what to do.",
+    body: "Tomorrow's shift is booked, but you don't think you can make it in. Before you guess, check the handbook for the real call-out policy.",
+    cta: "Check the handbook",
+  },
+  es: {
+    emoji: "🤒",
+    kicker: "Uy no",
+    headline: "Te sientes enferma/o — y no sabes qué hacer.",
+    body: "Tu turno de mañana ya está programado, pero no crees que puedas ir. Antes de adivinar, revisa el manual para conocer la política real de cómo avisar.",
+    cta: "Revisar el manual",
+  },
+};
 
 export interface CheckOption {
   label: string;

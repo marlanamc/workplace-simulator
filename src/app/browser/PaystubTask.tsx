@@ -9,22 +9,24 @@ import {
   NET_PAY_CHECK,
   HOURS_CHECK,
   LESSONS,
+  EVENT_INTRO,
   CONFIDENCE_OPTIONS,
   type CheckOption,
 } from "@/lib/tasks/paystub/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "list" | "check1" | "check2" | "done";
+type View = "intro" | "list" | "check1" | "check2" | "done";
 
 export default function PaystubTask() {
   const [lang, setLang] = useState<Lang>("en");
   const { markComplete, completedTaskKeys } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "intro");
   const [openStub, setOpenStub] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
@@ -70,6 +72,10 @@ export default function PaystubTask() {
           </button>
         </div>
       </div>
+
+      {view === "intro" && (
+        <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("list")} />
+      )}
 
       {view === "list" && (
         <div>

@@ -10,18 +10,20 @@ import {
   LESSONS,
   FILES,
   EMAILS,
+  EVENT_INTRO,
   CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/mail/content";
 import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
 import SettingsPopover from "@/components/task/SettingsPopover";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 
-type View = "empty" | "read" | "compose" | "done";
+type View = "intro" | "empty" | "read" | "compose" | "done";
 
 export default function MailClient() {
   const [lang, setLang] = useState<Lang>("en");
@@ -29,7 +31,7 @@ export default function MailClient() {
   const [speak, setSpeak] = useState(false);
   const [step, setStep] = useState(0);
   const { markComplete, completedTaskKeys } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("mail") ? "done" : "empty");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("mail") ? "done" : "intro");
   const [body, setBody] = useState("");
   const [attached, setAttached] = useState(false);
   const [confidence, setConfidence] = useState<string | null>(null);
@@ -171,6 +173,10 @@ export default function MailClient() {
 
         {/* content pane */}
         <div className="min-w-0 flex-1 overflow-y-auto">
+          {view === "intro" && (
+            <EventIntroCard {...EVENT_INTRO[lang]} onContinue={() => setView("empty")} />
+          )}
+
           {view === "empty" && (
             <div className="flex h-full flex-col items-center justify-center gap-3 p-10 text-center">
               <div className="h-10 w-14 rounded-lg border-2 border-[var(--border-strong)]" />

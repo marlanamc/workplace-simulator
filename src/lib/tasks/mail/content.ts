@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "📬",
+    kicker: "Day 1 — 8:14 AM",
+    headline: "Your first message from your boss.",
+    body: "You just got to Harborside Cafe for your very first shift. Maria Delgado, the cafe manager, already needs something from you. Let's see what she wants.",
+    cta: "Open my inbox",
+  },
+  es: {
+    emoji: "📬",
+    kicker: "Día 1 — 8:14 AM",
+    headline: "Tu primer mensaje de tu jefa.",
+    body: "Acabas de llegar a Harborside Cafe para tu primer turno. Maria Delgado, la gerente del café, ya necesita algo de ti. Vamos a ver qué quiere.",
+    cta: "Abrir mi bandeja",
+  },
+};
 
 export const MAIL_COPY: Record<Lang, {
   practiceBanner: string;

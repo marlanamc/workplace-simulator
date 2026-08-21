@@ -1,4 +1,21 @@
-import type { ConfidenceOption, Lang, Lesson } from "@/lib/task-types";
+import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+
+export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
+  en: {
+    emoji: "⏰",
+    kicker: "End of shift",
+    headline: "Time to clock out — but check your math first.",
+    body: "Your shift's done. Before you head home, clock out and make sure the hours actually match what you worked. A quick look now saves a headache on payday.",
+    cta: "Clock out",
+  },
+  es: {
+    emoji: "⏰",
+    kicker: "Fin del turno",
+    headline: "Hora de marcar salida — pero revisa las cuentas primero.",
+    body: "Tu turno terminó. Antes de irte a casa, marca tu salida y asegúrate de que las horas coincidan con lo que trabajaste. Un vistazo rápido ahora te ahorra un dolor de cabeza el día de pago.",
+    cta: "Marcar salida",
+  },
+};
 
 export const TIMECLOCK = {
   scheduledStart: "7:00 AM",
