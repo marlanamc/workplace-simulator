@@ -76,6 +76,8 @@ export const DESKTOP_COPY: Record<Lang, {
   allDoneHeadline: string;
   allDoneBody: string;
   allDoneCta: string;
+  comingSoonHeadline: string;
+  comingSoonBody: string;
 }> = {
   en: {
     practiceBanner: "Practice space — nothing here is real",
@@ -95,6 +97,8 @@ export const DESKTOP_COPY: Record<Lang, {
     allDoneHeadline: "You've completed every track!",
     allDoneBody: "Every task in the simulator is done. Check out your certificate, or do any task again for more practice.",
     allDoneCta: "View my certificate",
+    comingSoonHeadline: "More coming soon",
+    comingSoonBody: "You're all caught up — the next task in this track isn't built yet. Check back later, or do any task again for more practice.",
   },
   es: {
     practiceBanner: "Espacio de práctica — nada aquí es real",
@@ -114,6 +118,8 @@ export const DESKTOP_COPY: Record<Lang, {
     allDoneHeadline: "¡Completaste todas las rutas!",
     allDoneBody: "Ya terminaste todas las tareas del simulador. Mira tu certificado, o repite cualquier tarea para practicar más.",
     allDoneCta: "Ver mi certificado",
+    comingSoonHeadline: "Muy pronto más",
+    comingSoonBody: "Ya estás al día — la siguiente tarea de esta ruta todavía no está lista. Vuelve más tarde, o repite cualquier tarea para practicar más.",
   },
 };
 
@@ -147,5 +153,15 @@ export const RECENT_ITEMS: RecentItem[] = [
 
 // The underlying curriculum tasks — independent of how many desktop app
 // icons exist, since several tasks now live as tabs inside one Browser app.
-export const TASK_KEYS = ["mail", "schedule", "timeclock", "paystub", "incident", "handbook"] as const;
+export const TASK_KEYS = [
+  "mail",
+  "schedule",
+  "timeclock",
+  "paystub",
+  "incident",
+  "handbook",
+  "calendar",
+  "files",
+  "spreadsheet",
+] as const;
 export type TaskKey = (typeof TASK_KEYS)[number];

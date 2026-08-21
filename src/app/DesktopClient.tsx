@@ -44,21 +44,42 @@ function DesktopShell({ displayName }: { displayName: string }) {
   const focusApp = APP_DEFS[0];
   const totalTaskCount = TRACKS.reduce((n, t) => n + t.taskKeys.length, 0);
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
-  const nextTaskInfo = nextTaskKey ? TASK_INFO[nextTaskKey] : null;
   const nextTaskLocation = nextTaskKey ? TASK_LOCATIONS[nextTaskKey] : null;
+  // A next task only "counts" for the focus card once it's actually built —
+  // otherwise (a real state once Track 4/5 fill in over time) show a
+  // generic "more coming soon" card instead of a task with no way to start it.
+  const nextTaskInfo = nextTaskKey && nextTaskLocation ? TASK_INFO[nextTaskKey] : null;
+  const comingSoon = nextTaskKey !== null && nextTaskInfo === null;
 
   const anyAppActive = active !== null;
+
+  // Wallpaper shifts with the learner's current track. A gradient can't be
+  // CSS-transitioned directly, so the old one is kept mounted just long
+  // enough to fade out over the new one underneath. Adjusted during render
+  // (React's recommended pattern), not in an effect.
+  const [lastWallpaper, setLastWallpaper] = useState(currentTrack.wallpaper);
+  const [outgoingWallpaper, setOutgoingWallpaper] = useState<string | null>(null);
+  const [wallpaperFadeKey, setWallpaperFadeKey] = useState(0);
+  if (lastWallpaper !== currentTrack.wallpaper) {
+    setOutgoingWallpaper(lastWallpaper);
+    setWallpaperFadeKey((k) => k + 1);
+    setLastWallpaper(currentTrack.wallpaper);
+  }
 
   return (
     <div
       className="relative min-h-screen overflow-hidden text-[15px]"
       style={{ color: "var(--text-primary)" }}
     >
-      {/* wallpaper */}
-      <div
-        className="fixed inset-0 -z-10"
-        style={{ background: "linear-gradient(155deg, #3f6fd1 0%, #6b7fe0 45%, #a679d8 78%, #c98fd6 100%)" }}
-      />
+      {/* wallpaper — shifts with the learner's current track, so the workspace visibly grows with them */}
+      <div className="fixed inset-0 -z-10" style={{ background: currentTrack.wallpaper }} />
+      {outgoingWallpaper && (
+        <div
+          key={wallpaperFadeKey}
+          className="fixed inset-0 -z-10 animate-wallpaper-fade-out pointer-events-none"
+          style={{ background: outgoingWallpaper }}
+        />
+      )}
       <div
         className="pointer-events-none fixed inset-0 -z-10"
         style={{
@@ -85,26 +106,27 @@ function DesktopShell({ displayName }: { displayName: string }) {
               <AppIcon icon={focusApp.icon} color={focusApp.color} size={44} />
               <div>
                 <div className="flex items-center gap-2 text-[12px] font-medium uppercase tracking-wide text-[var(--accent)]">
-                  {nextTaskInfo ? c.nextLabel : "🎉"}
+                  {nextTaskInfo ? c.nextLabel : comingSoon ? "" : "🎉"}
                 </div>
                 <div className="text-[21px] font-medium leading-tight text-[var(--text-primary)]">
-                  {nextTaskInfo ? nextTaskInfo.label : c.allDoneHeadline}
+                  {nextTaskInfo ? nextTaskInfo.label : comingSoon ? c.comingSoonHeadline : c.allDoneHeadline}
                 </div>
               </div>
             </div>
 
             <p className="text-[15px] leading-relaxed text-[var(--text-secondary)]">
-              {nextTaskInfo ? nextTaskInfo.description : c.allDoneBody}
+              {nextTaskInfo ? nextTaskInfo.description : comingSoon ? c.comingSoonBody : c.allDoneBody}
             </p>
 
-            {nextTaskLocation ? (
+            {nextTaskLocation && (
               <button
                 onClick={() => openApp(nextTaskLocation.appKey, { tab: nextTaskLocation.tab })}
                 className="inline-flex min-h-[52px] items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
               >
                 {nextTaskLocation.ctaLabel}
               </button>
-            ) : (
+            )}
+            {!nextTaskKey && (
               <a
                 href={`/certificate/${learnerId}`}
                 target="_blank"

@@ -98,3 +98,16 @@ textarea:focus-visible,
 .animate-window-in {
   animation: window-in 0.18s ease-out;
 }
+
+@keyframes wallpaper-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-wallpaper-fade-out {
+  animation: wallpaper-fade-out 1.4s ease-out forwards;
+}

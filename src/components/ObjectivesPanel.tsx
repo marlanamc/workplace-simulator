@@ -73,64 +73,64 @@ export default function ObjectivesPanel() {
             </div>
           )}
 
-          <div className="flex flex-col gap-3">
-            {TRACKS.map((track) => {
-              const complete = isTrackComplete(track, completedTaskKeys);
-              const isCurrent = track.key === currentTrack.key && !complete;
-              return (
-                <div
-                  key={track.key}
-                  className={`rounded-xl border p-4 ${
-                    isCurrent ? "border-[var(--accent)] bg-[var(--accent-tint)]" : "border-[var(--border)]"
-                  }`}
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-[14px] font-semibold text-[var(--text-primary)]">{track.title}</span>
+          {(() => {
+            const trackComplete = isTrackComplete(currentTrack, completedTaskKeys);
+            return (
+              <div
+                className={`rounded-xl border p-4 ${
+                  trackComplete
+                    ? "border-[var(--success)] bg-[var(--success-tint)]"
+                    : "border-[var(--accent)] bg-[var(--accent-tint)]"
+                }`}
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="text-[14px] font-semibold text-[var(--text-primary)]">{currentTrack.title}</span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
+                      trackComplete ? "bg-[var(--success)] text-white" : "bg-[var(--accent)] text-white"
+                    }`}
+                  >
+                    {trackComplete ? "Complete" : "In progress"}
+                  </span>
+                </div>
+            <div className="flex flex-col gap-1.5">
+              {currentTrack.taskKeys.map((taskKey) => {
+                const info = TASK_INFO[taskKey];
+                const done = completedTaskKeys.includes(taskKey);
+                return (
+                  <div key={taskKey} className="flex items-start gap-2.5">
                     <span
-                      className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
-                        complete
-                          ? "bg-[var(--success-tint)] text-[var(--success)]"
-                          : isCurrent
-                            ? "bg-[var(--accent)] text-white"
-                            : "bg-[var(--surface-muted)] text-[var(--text-tertiary)]"
+                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
+                        done
+                          ? "bg-[var(--success)] text-white"
+                          : "bg-white text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
                       }`}
                     >
-                      {complete ? "Complete" : isCurrent ? "In progress" : "Up next"}
+                      {done ? "✓" : ""}
                     </span>
+                    <div className="min-w-0 flex-1">
+                      <div
+                        className={`text-[13px] font-medium ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
+                      >
+                        {info.label}
+                      </div>
+                      <div className="text-[12px] text-[var(--text-tertiary)]">
+                        {info.built ? info.description : `${info.description} (not built yet)`}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    {track.taskKeys.map((taskKey) => {
-                      const info = TASK_INFO[taskKey];
-                      const done = completedTaskKeys.includes(taskKey);
-                      return (
-                        <div key={taskKey} className="flex items-start gap-2.5">
-                          <span
-                            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[11px] font-semibold ${
-                              done
-                                ? "bg-[var(--success)] text-white"
-                                : "bg-white text-[var(--text-tertiary)] ring-1 ring-inset ring-[var(--border)]"
-                            }`}
-                          >
-                            {done ? "✓" : ""}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div
-                              className={`text-[13px] font-medium ${done ? "text-[var(--text-tertiary)] line-through" : "text-[var(--text-primary)]"}`}
-                            >
-                              {info.label}
-                            </div>
-                            <div className="text-[12px] text-[var(--text-tertiary)]">
-                              {info.built ? info.description : `${info.description} (not built yet)`}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
+                );
+              })}
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })()}
+
+          {certificateTrackKeys.length < TRACKS.length && (
+            <p className="text-[12px] text-[var(--text-tertiary)]">
+              {certificateTrackKeys.length} of {TRACKS.length} tracks complete so far.
+            </p>
+          )}
         </div>
       )}
     </>
