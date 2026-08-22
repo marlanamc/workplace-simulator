@@ -9,13 +9,15 @@ import {
   nextTaskInTrack,
   furthestLevelIndex,
   taskKeysForLevel,
+  levelForTrack,
   type Level,
 } from "@/lib/tracks-content";
 import { DESKTOP_COPY, type Lang } from "@/lib/desktop-content";
 import { useProgress } from "@/lib/progress-context";
 import { TASK_ICONS, Hourglass, Coffee } from "@/lib/icons";
 import { useWindowManager } from "@/lib/window-manager";
-import { SHIFT_MOMENT } from "@/lib/story-beats";
+import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
+import { jobTitle, sittingTitle } from "@/lib/shift-spine";
 
 const shadow = { textShadow: "0 2px 18px rgba(0,0,0,0.35)" };
 
@@ -40,6 +42,11 @@ export default function ShiftBriefing({
   const allDone = nextTaskKey === null;
 
   const furthest = furthestLevelIndex(completedTaskKeys);
+  const kicker =
+    completedTaskKeys.length > 0
+      ? `${c.welcomeBack} ${jobTitle(levelForTrack(currentTrack.key))}.`
+      : sittingTitle(levelForTrack(currentTrack.key));
+
   const replayable = LEVELS.filter((level, i) => {
     if (i > furthest) return false;
     return taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k));
@@ -64,8 +71,9 @@ export default function ShiftBriefing({
   return (
     <div className="text-white" style={shadow}>
       <BriefingIcon size={44} strokeWidth={1.75} className="text-white" aria-hidden />
+      <p className="mt-3 text-[13px] font-medium uppercase tracking-wide text-white/75">{kicker}</p>
       {moment ? (
-        <p className="mt-3 text-[15px] text-white/80">{moment}</p>
+        <p className="mt-2 text-[15px] text-white/80">{moment}</p>
       ) : null}
       <h1 className="mt-2 max-w-[28ch] text-[28px] font-medium leading-[1.15] tracking-[-0.02em]">
         {headline}
@@ -82,7 +90,9 @@ export default function ShiftBriefing({
           }
           className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-6 text-[16px] font-medium text-[#202124] hover:bg-white/90 cursor-pointer"
         >
-          {nextTaskLocation.ctaLabel}
+          {nextTaskKey && HANDOFF_CTA[nextTaskKey]
+            ? HANDOFF_CTA[nextTaskKey][lang]
+            : nextTaskLocation.ctaLabel}
         </button>
       )}
       {allDone && (

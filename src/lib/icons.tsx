@@ -2,21 +2,28 @@ import type { LucideIcon } from "lucide-react";
 import {
   Banknote,
   BookOpen,
+  Calculator,
   Calendar,
+  CalendarClock,
   CalendarDays,
   CircleHelp,
   ClipboardList,
   Clock,
   Coffee,
   Compass,
+  Copy,
   FileText,
   FolderOpen,
   Globe,
   HardDrive,
   LayoutGrid,
+  ListChecks,
   Mail,
+  Megaphone,
+  Send,
   StickyNote,
   Table2,
+  Users,
 } from "lucide-react";
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 
@@ -33,6 +40,13 @@ export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   calendar: Calendar,
   files: FolderOpen,
   spreadsheet: Table2,
+  "make-a-copy": Copy,
+  "status-report": Send,
+  triage: ListChecks,
+  "team-schedule": CalendarClock,
+  "formula-check": Calculator,
+  "team-meeting": Users,
+  "priority-call": Megaphone,
 };
 
 export const APP_ICONS: Record<AppKey, LucideIcon> = {
@@ -49,6 +63,13 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
   calendar: Calendar,
   files: HardDrive,
   spreadsheet: Table2,
+  "make-a-copy": Table2,
+  "status-report": Table2,
+  triage: ListChecks,
+  "team-schedule": Table2,
+  "formula-check": Table2,
+  "team-meeting": Calendar,
+  "priority-call": Megaphone,
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
@@ -59,6 +80,12 @@ export const TRACK_ICONS: Record<string, LucideIcon> = {
   calendar: Calendar,
   files: FolderOpen,
   spreadsheet: Table2,
+  reporting: Copy,
+  triage: ListChecks,
+  "team-schedule": CalendarClock,
+  "formula-check": Calculator,
+  "team-meeting": Users,
+  "priority-call": Megaphone,
 };
 
 export const FOLDER_ICONS: Record<string, LucideIcon> = {

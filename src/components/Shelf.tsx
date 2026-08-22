@@ -19,7 +19,8 @@ import { APP_ICONS, TAB_ICONS, Flag, Lock, Target, Languages, Trophy } from "@/l
 import { Check } from "lucide-react";
 import Link from "next/link";
 import { logout } from "@/app/actions";
-import { LEVELS, ACTS, isLevelComplete, levelForTrack, furthestLevelIndex, taskKeysForLevel } from "@/lib/tracks-content";
+import { LEVELS, ACTS, TASK_INFO, isLevelComplete, levelForTrack, furthestLevelIndex, taskKeysForLevel } from "@/lib/tracks-content";
+import { remainingTasksInLevel, sittingTitle } from "@/lib/shift-spine";
 
 /** Height of the taskbar. */
 export const SHELF_HEIGHT = 48;
@@ -99,11 +100,13 @@ function LucideAppIcon({
 function ShelfPin({
   label,
   active = false,
+  badge,
   onClick,
   children,
 }: {
   label: string;
   active?: boolean;
+  badge?: string;
   onClick: () => void;
   children: ReactNode;
 }) {
@@ -117,6 +120,14 @@ function ShelfPin({
       style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
     >
       {children}
+      {badge ? (
+        <span
+          className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#e37400] px-1 text-[9px] font-semibold leading-none text-white"
+          aria-hidden
+        >
+          {badge}
+        </span>
+      ) : null}
       {active && <span className="absolute bottom-1 h-[3px] w-4 rounded-full bg-white" aria-hidden />}
     </button>
   );
@@ -148,6 +159,9 @@ export default function Shelf({
   const currentLevel = levelForTrack(currentTrack.key);
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
   const reachedIndex = furthestLevelIndex(completedTaskKeys);
+  const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
+  const nextAsk = currentTrack.taskKeys.find((k) => !completedTaskKeys.includes(k));
+  const chipAsk = nextAsk && TASK_INFO[nextAsk]?.built ? TASK_INFO[nextAsk].dispatch : null;
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -202,6 +216,29 @@ export default function Shelf({
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
         }}
       >
+        <button
+          type="button"
+          onClick={() => {
+            closeLauncher();
+            setAccountOpen(false);
+            setLevelsOpen(false);
+            onAwardsOpenChange(false);
+            onObjectivesOpenChange(true);
+          }}
+          title={sittingTitle(currentLevel)}
+          className="absolute left-1.5 top-1 hidden max-w-[240px] items-center gap-2 rounded-md px-2.5 py-1 text-left text-white cursor-pointer hover:bg-white/10 min-[920px]:flex"
+        >
+          <span className="min-w-0">
+            <span className="block truncate text-[11px] font-medium leading-tight">{sittingTitle(currentLevel)}</span>
+            {chipAsk ? (
+              <span className="mt-0.5 block truncate text-[10px] leading-tight text-white/70">{chipAsk}</span>
+            ) : leftover === 0 ? (
+              <span className="mt-0.5 block truncate text-[10px] leading-tight text-white/70">
+                {lang === "en" ? "This shift is done" : "Este turno está hecho"}
+              </span>
+            ) : null}
+          </span>
+        </button>
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="pointer-events-auto flex items-center gap-0.5">
             <button
@@ -340,8 +377,17 @@ export default function Shelf({
         </div>
 
         <ShelfPin
-          label={lang === "en" ? "Objectives" : "Objetivos"}
+          label={
+            leftover > 0
+              ? `${lang === "en" ? "Objectives" : "Objetivos"} · ${
+                  leftover === 1 ? c.leftoverOne : c.leftoverMany.replace("{n}", String(leftover))
+                }`
+              : lang === "en"
+                ? "Objectives"
+                : "Objetivos"
+          }
           active={objectivesOpen}
+          badge={leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
             closeLauncher();
             setAccountOpen(false);

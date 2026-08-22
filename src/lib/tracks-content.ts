@@ -61,6 +61,48 @@ export const TRACKS: Track[] = [
     taskKeys: ["spreadsheet"],
     awardEmoji: "📊",
   },
+  {
+    key: "reporting",
+    title: "Reporting In",
+    subtitle: "Copy the template, then send the number",
+    taskKeys: ["make-a-copy", "status-report"],
+    awardEmoji: "📝",
+  },
+  {
+    key: "triage",
+    title: "Covering More Ground",
+    subtitle: "Two things open. Drop neither.",
+    taskKeys: ["triage"],
+    awardEmoji: "🔔",
+  },
+  {
+    key: "team-schedule",
+    title: "Scheduling the Team",
+    subtitle: "Write the week for the crew",
+    taskKeys: ["team-schedule"],
+    awardEmoji: "📋",
+  },
+  {
+    key: "formula-check",
+    title: "Weekly Numbers",
+    subtitle: "Open the formula, not just the total",
+    taskKeys: ["formula-check"],
+    awardEmoji: "🧮",
+  },
+  {
+    key: "team-meeting",
+    title: "First Team Meeting",
+    subtitle: "You call the huddle",
+    taskKeys: ["team-meeting"],
+    awardEmoji: "🗣️",
+  },
+  {
+    key: "priority-call",
+    title: "Under Pressure",
+    subtitle: "Three things. All of them.",
+    taskKeys: ["priority-call"],
+    awardEmoji: "🚨",
+  },
 ];
 
 /** The celebratory "you leveled up" moment shown once, right when a learner steps into this level. */
@@ -157,8 +199,8 @@ export const LEVELS: Level[] = [
       emoji: "⭐",
       kicker: "A new job",
       title: "You are a Shift Lead now!",
-      body: "Maria saw you handle the hard calls. These tools are what a lead uses in a cafe, a store, a job site, or a front desk.",
-      cta: "Let's go",
+      body: "Maria saw you handle the hard calls. From here on, you open your own apps from the bookmarks bar. Start with Calendar.",
+      cta: "Open Calendar from the bookmarks",
     },
   },
   {
@@ -189,6 +231,90 @@ export const LEVELS: Level[] = [
       cta: "Keep going",
     },
   },
+  {
+    key: "level7",
+    title: "Level 7: Reporting In",
+    trackKeys: ["reporting"],
+    firstTabKey: "make-a-copy",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📝",
+      kicker: "Next tool",
+      title: "Now: report up.",
+      body: "Maria shared a template. It is view only. Copy it. Then write the total yourself.",
+      cta: "Open Sheets",
+    },
+  },
+  {
+    key: "level8",
+    title: "Level 8: Covering More Ground",
+    trackKeys: ["triage"],
+    firstTabKey: "triage",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🔔",
+      kicker: "A new kind of day",
+      title: "Two things at once.",
+      body: "A meeting on your close. A file request from Sam. Handle both. Order is yours.",
+      cta: "See what's open",
+    },
+  },
+  {
+    key: "level9",
+    title: "Level 9: Scheduling the Team",
+    trackKeys: ["team-schedule"],
+    firstTabKey: "team-schedule",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "⭐",
+      kicker: "A new job",
+      title: "You are a Shift Supervisor now!",
+      body: "You decide for the crew now, not only for yourself. Saturday close has nobody on it.",
+      cta: "Open the schedule",
+    },
+  },
+  {
+    key: "level10",
+    title: "Level 10: Weekly Numbers",
+    trackKeys: ["formula-check"],
+    firstTabKey: "formula-check",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🧮",
+      kicker: "Next up",
+      title: "Now: check the week's numbers.",
+      body: "The hours total looks fine. Open the formula. One range is pointing at the wrong rows.",
+      cta: "Open Sheets",
+    },
+  },
+  {
+    key: "level11",
+    title: "Level 11: First Team Meeting",
+    trackKeys: ["team-meeting"],
+    firstTabKey: "team-meeting",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🗣️",
+      kicker: "You call it now",
+      title: "Lead your first huddle.",
+      body: "Create the invite. Pick a time nobody is on shift. Write two or three bullets so it has a point.",
+      cta: "Set it up",
+    },
+  },
+  {
+    key: "level12",
+    title: "Level 12: Under Pressure",
+    trackKeys: ["priority-call"],
+    firstTabKey: "priority-call",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🚨",
+      kicker: "The floor is loud",
+      title: "Three things at once.",
+      body: "A complaint. A hole in tonight's close. A meeting on your shift. Name the first move. Then finish all three.",
+      cta: "Look at all three",
+    },
+  },
 ];
 
 /** A group of levels sharing one job title, story arc, and desktop place. */
@@ -211,7 +337,8 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
  */
 export const ACTS: Act[] = [
   { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3"], scene: "harborside-open" },
-  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4", "level5", "level6"], scene: "harborside-shift" },
+  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
+  { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
@@ -237,6 +364,13 @@ export const TAB_LEVEL_KEYS: Record<string, string> = {
   calendar: "level4",
   files: "level5",
   spreadsheet: "level6",
+  "make-a-copy": "level7",
+  "status-report": "level7",
+  triage: "level8",
+  "team-schedule": "level9",
+  "formula-check": "level10",
+  "team-meeting": "level11",
+  "priority-call": "level12",
 };
 
 export function levelForTrack(trackKey: string): Level {
@@ -350,6 +484,48 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
     dispatch: "This week's numbers. Total them and send it up.",
     built: true,
   },
+  "make-a-copy": {
+    label: "Copy a view-only template",
+    description: "Make your own copy of Maria's status sheet so you do not change the master.",
+    dispatch: "The template is view only. Copy it before you type.",
+    built: true,
+  },
+  "status-report": {
+    label: "Send a status report",
+    description: "Write a SUM on your copy and cc a co-lead on the email.",
+    dispatch: "Your copy is waiting. Write the total. Cc Jordan.",
+    built: true,
+  },
+  triage: {
+    label: "Handle two things at once",
+    description: "A calendar conflict and a file request. Close both.",
+    dispatch: "Two things are already waiting. Drop neither.",
+    built: true,
+  },
+  "team-schedule": {
+    label: "Fill Saturday close",
+    description: "Build part of the week's crew schedule and cover the open shift.",
+    dispatch: "Saturday close has nobody on it. Pick someone with room.",
+    built: true,
+  },
+  "formula-check": {
+    label: "Fix the hours formula",
+    description: "Open the SUM, see which rows it adds, and fix the missing name.",
+    dispatch: "The hours total looks fine. The formula does not.",
+    built: true,
+  },
+  "team-meeting": {
+    label: "Lead your first huddle",
+    description: "Create a meeting invite and write a short agenda.",
+    dispatch: "The crew needs 15 minutes on next week's schedule.",
+    built: true,
+  },
+  "priority-call": {
+    label: "Three things at once",
+    description: "A complaint, a coverage gap, and a meeting on your close.",
+    dispatch: "Three things just landed. Name the first move.",
+    built: true,
+  },
 };
 
 export function findTrackForTask(taskKey: TaskKey): Track | undefined {
@@ -423,9 +599,9 @@ export type TaskHandoff = {
  * the right thing. Only built tasks get an entry - an unbuilt next task
  * shows a "coming soon" state instead of a button.
  *
- * From Track 4 on, the card stops naming the exact tab (no `tab`, and a
- * generic ctaLabel) - a deliberate step down in hand-holding. The bookmark
- * is still right there in the Browser's tab strip; finding it is the task.
+ * From Track 4 on, the card does not name a `tab` — the Browser opens on a
+ * New Tab so finding the bookmark stays the exercise. The CTA still names
+ * which bookmark to click.
  */
 export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
   tour: { appKey: "browser", tab: "tour", ctaLabel: "Open Welcome" },
@@ -435,9 +611,16 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
   paystub: { appKey: "browser", tab: "portal", section: "paystubs", ctaLabel: "Open Portal" },
   incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Forms" },
   handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Docs" },
-  calendar: { appKey: "browser", ctaLabel: "Open Browser" },
-  files: { appKey: "browser", ctaLabel: "Open Browser" },
-  spreadsheet: { appKey: "browser", ctaLabel: "Open Browser" },
+  calendar: { appKey: "browser", ctaLabel: "Open Calendar from the bookmarks" },
+  files: { appKey: "browser", ctaLabel: "Open Drive from the bookmarks" },
+  spreadsheet: { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
+  "make-a-copy": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
+  "status-report": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
+  triage: { appKey: "browser", ctaLabel: "Open Today from the bookmarks" },
+  "team-schedule": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
+  "formula-check": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
+  "team-meeting": { appKey: "browser", ctaLabel: "Open Huddle from the bookmarks" },
+  "priority-call": { appKey: "browser", ctaLabel: "Open Floor from the bookmarks" },
 };
 
 /** The next built task a learner should open, or null if none is ready. */

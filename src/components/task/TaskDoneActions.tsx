@@ -2,7 +2,8 @@
 
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
-import { nextHandoff } from "@/lib/tracks-content";
+import { TASK_INFO, levelForTrack, nextHandoff } from "@/lib/tracks-content";
+import { sittingTitle } from "@/lib/shift-spine";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 
@@ -21,14 +22,21 @@ export default function TaskDoneActions({
   backToDeskLabel: string;
   onTryAgain: () => void;
 }) {
-  const { completedTaskKeys, lang, celebrateLevel } = useProgress();
+  const { completedTaskKeys, lang, celebrateLevel, currentTrack } = useProgress();
   const { openApp, minimizeActive } = useWindowManager();
   const handoff = celebrateLevel ? null : nextHandoff(completedTaskKeys);
   const nextLabel = handoff
     ? (HANDOFF_CTA[handoff.taskKey][lang] ?? DESKTOP_COPY[lang].nextLabel)
     : null;
+  const sittingLine = handoff
+    ? `${sittingTitle(levelForTrack(currentTrack.key))} · ${TASK_INFO[handoff.taskKey].label}`
+    : null;
 
   return (
+    <div>
+      {sittingLine ? (
+        <p className="mb-3 text-[14px] leading-snug text-[var(--text-secondary)]">{sittingLine}</p>
+      ) : null}
     <div className="flex flex-wrap gap-2">
       {handoff && nextLabel ? (
         <button
@@ -50,6 +58,7 @@ export default function TaskDoneActions({
       <button type="button" onClick={minimizeActive} className={SECONDARY}>
         {backToDeskLabel}
       </button>
+    </div>
     </div>
   );
 }

@@ -7,18 +7,26 @@ import PortalPage from "./PortalPage";
 import CalendarTask from "./CalendarTask";
 import FilesTask from "./FilesTask";
 import SpreadsheetTask from "./SpreadsheetTask";
+import MakeACopyTask from "./MakeACopyTask";
+import StatusReportTask from "./StatusReportTask";
+import TriageTask from "./TriageTask";
+import TeamScheduleTask from "./TeamScheduleTask";
+import FormulaCheckTask from "./FormulaCheckTask";
+import TeamMeetingTask from "./TeamMeetingTask";
+import PriorityCallTask from "./PriorityCallTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
-import { LEVELS, TAB_LEVEL_KEYS, levelForTrack } from "@/lib/tracks-content";
+import { LEVELS, TAB_LEVEL_KEYS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
+import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS } from "@/lib/icons";
 
-type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "handbook" | "incident" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "handbook" | "incident" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));
@@ -43,6 +51,13 @@ const BASE_TABS: TabDef[] = [
   { key: "files",    label: "Drive", url: "drive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: TAB_LEVEL_KEYS.files },
   { key: "handbook", label: "Docs",  url: "docs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: TAB_LEVEL_KEYS.handbook },
   { key: "spreadsheet", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS.spreadsheet },
+  { key: "make-a-copy", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["make-a-copy"] },
+  { key: "status-report", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["status-report"] },
+  { key: "triage", label: "Today", url: "today.harborsidecafe.com", icon: "!", color: "#d93025", levelKey: TAB_LEVEL_KEYS.triage },
+  { key: "team-schedule", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["team-schedule"] },
+  { key: "formula-check", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["formula-check"] },
+  { key: "team-meeting", label: "Huddle", url: "calendar.harborsidecafe.com", icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS["team-meeting"] },
+  { key: "priority-call", label: "Floor", url: "today.harborsidecafe.com", icon: "!", color: "#d93025", levelKey: TAB_LEVEL_KEYS["priority-call"] },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
   { key: "portal",   label: "Portal",url: "portal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
 ];
@@ -125,6 +140,9 @@ function GoogleWordmark() {
 }
 
 function NewTabPage() {
+  const { lang, currentTrack, completedTaskKeys } = useProgress();
+  const nextKey = nextTaskInTrack(currentTrack, completedTaskKeys);
+  const hint = newTabHint(levelForTrack(currentTrack.key), nextKey, lang);
   return (
     <div className="flex h-full flex-col items-center bg-white pt-[12vh]">
       <GoogleWordmark />
@@ -134,16 +152,14 @@ function NewTabPage() {
         </svg>
         Search Google or type a URL
       </div>
-      <p className="mt-10 text-[13px] text-[#70757a]">
-        This is a practice browser. Use the bookmarks bar to open your apps.
-      </p>
+      <p className="mt-10 text-[13px] text-[#70757a]">{hint}</p>
     </div>
   );
 }
 
 export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
-  const { currentTrack } = useProgress();
+  const { currentTrack, completedTaskKeys } = useProgress();
   const { nudge, say } = useNudge(3500);
 
   const progressLevelKey = levelForTrack(currentTrack.key).key;
@@ -388,7 +404,22 @@ export default function BrowserClient() {
       </div>
 
       <div className="flex items-center gap-0.5 border-b border-[#dadce0] bg-white px-3 py-[3px]">
-        {BASE_TABS.map((t) => (
+        {BASE_TABS.filter((t) => {
+          const sheets: Record<string, string> = {
+            level6: "spreadsheet",
+            level7: completedTaskKeys.includes("make-a-copy") ? "status-report" : "make-a-copy",
+            level9: "team-schedule",
+            level10: "formula-check",
+          };
+          const sheetKeys = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check"];
+          if (sheetKeys.includes(t.key)) {
+            return t.key === (sheets[viewedLevelKey] ?? "spreadsheet");
+          }
+          if (t.key === "triage") return viewedLevelKey === "level8";
+          if (t.key === "team-meeting") return viewedLevelKey === "level11";
+          if (t.key === "priority-call") return viewedLevelKey === "level12";
+          return true;
+        }).map((t) => (
           <button
             key={t.key}
             onClick={() => goToBookmark(t)}
@@ -420,6 +451,13 @@ export default function BrowserClient() {
         {active?.key === "calendar" && <CalendarTask />}
         {active?.key === "files"    && <FilesTask />}
         {active?.key === "spreadsheet" && <SpreadsheetTask />}
+        {active?.key === "make-a-copy" && <MakeACopyTask />}
+        {active?.key === "status-report" && <StatusReportTask />}
+        {active?.key === "triage" && <TriageTask />}
+        {active?.key === "team-schedule" && <TeamScheduleTask />}
+        {active?.key === "formula-check" && <FormulaCheckTask />}
+        {active?.key === "team-meeting" && <TeamMeetingTask />}
+        {active?.key === "priority-call" && <PriorityCallTask />}
         {active?.key === "incident" && <IncidentTask />}
         {active?.key === "handbook" && <HandbookTask />}
         {showingNewTab && <NewTabPage />}

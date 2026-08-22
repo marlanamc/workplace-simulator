@@ -82,6 +82,12 @@ export const DESKTOP_COPY: Record<Lang, {
   replayCancel: string;
   comingSoonHeadline: string;
   comingSoonBody: string;
+  welcomeBack: string;
+  mariaNote: string;
+  someoneNote: string;
+  bookmarkOnramp: string;
+  leftoverOne: string;
+  leftoverMany: string;
 }> = {
   en: {
     practiceBanner: "Practice space. Nothing here is real.",
@@ -108,6 +114,12 @@ export const DESKTOP_COPY: Record<Lang, {
     replayCancel: "Never mind",
     comingSoonHeadline: "More coming soon",
     comingSoonBody: "You're done with the tasks we have built so far. Come back later, or do any task again to practice.",
+    welcomeBack: "Welcome back.",
+    mariaNote: "Maria left a note",
+    someoneNote: "A note just arrived",
+    bookmarkOnramp: "From here on, you open your own apps from the bookmarks bar. Start with the one named in the button.",
+    leftoverOne: "1 left",
+    leftoverMany: "{n} left",
   },
   es: {
     practiceBanner: "Espacio de práctica. Nada aquí es real.",
@@ -134,6 +146,12 @@ export const DESKTOP_COPY: Record<Lang, {
     replayCancel: "Mejor no",
     comingSoonHeadline: "Muy pronto más",
     comingSoonBody: "Ya estás al día. La siguiente tarea de esta ruta todavía no está lista. Vuelve más tarde, o repite cualquier tarea para practicar más.",
+    welcomeBack: "Bienvenido otra vez.",
+    mariaNote: "Maria dejó una nota",
+    someoneNote: "Llegó una nota",
+    bookmarkOnramp: "A partir de ahora, abres tus apps desde la barra de marcadores. Empieza por la del botón.",
+    leftoverOne: "1 queda",
+    leftoverMany: "{n} quedan",
   },
 };
 
@@ -175,5 +193,12 @@ export const TASK_KEYS = [
   "calendar",
   "files",
   "spreadsheet",
+  "make-a-copy",
+  "status-report",
+  "triage",
+  "team-schedule",
+  "formula-check",
+  "team-meeting",
+  "priority-call",
 ] as const;
 export type TaskKey = (typeof TASK_KEYS)[number];

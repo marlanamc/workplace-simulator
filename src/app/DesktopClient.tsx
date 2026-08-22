@@ -13,6 +13,7 @@ import ShiftBriefing from "@/components/ShiftBriefing";
 import TrackCelebration from "@/components/TrackCelebration";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import MobileNudge from "@/components/MobileNudge";
+import MariaNoteToast from "@/components/MariaNoteToast";
 import { WindowManagerProvider, useWindowManager } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import BrowserClient from "./browser/BrowserClient";
@@ -189,6 +190,7 @@ function DesktopShell({
           if (open) setObjectivesOpen(false);
         }}
       />
+      <MariaNoteToast />
       <MobileNudge />
       {fromStudio && <DesignerJumpBanner />}
     </div>
@@ -203,8 +205,11 @@ export default function DesktopClient(props: {
   jumpTab?: string;
   fromStudio?: boolean;
 }) {
+  const firstSitting =
+    props.completedTaskKeys.length === 0 && !props.jumpTab && !props.fromStudio;
+
   return (
-    <WindowManagerProvider jumpTab={props.jumpTab}>
+    <WindowManagerProvider jumpTab={props.jumpTab ?? (firstSitting ? "tour" : undefined)}>
       <ProgressProvider
         learnerId={props.learnerId}
         initialCompletedTaskKeys={props.completedTaskKeys}

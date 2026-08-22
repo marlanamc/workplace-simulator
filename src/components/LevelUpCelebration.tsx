@@ -3,15 +3,22 @@
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { nextHandoff } from "@/lib/tracks-content";
+import { DESKTOP_COPY } from "@/lib/desktop-content";
+import { HANDOFF_CTA } from "@/lib/story-beats";
 import Confetti from "@/components/task/Confetti";
 import { PartyPopper } from "@/lib/icons";
 
 /** The big "you leveled up" moment - bigger than a single track's award popup, since a whole level (and often a promotion) just finished. */
 export default function LevelUpCelebration() {
-  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys } = useProgress();
+  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp) return null;
-  const { kicker, title, body, cta } = celebrateLevel.levelUp;
+  const { kicker, title, body } = celebrateLevel.levelUp;
+  const handoff = nextHandoff(completedTaskKeys);
+  const cta =
+    celebrateLevel.freeTabbing && handoff
+      ? HANDOFF_CTA[handoff.taskKey][lang]
+      : celebrateLevel.levelUp.cta;
 
   const keepGoing = () => {
     const handoff = nextHandoff(completedTaskKeys);
@@ -37,6 +44,11 @@ export default function LevelUpCelebration() {
         <div className="mt-3 text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">{kicker}</div>
         <h2 className="mt-2 text-[26px] font-medium leading-tight">{title}</h2>
         <p className="mt-3 text-[16px] leading-relaxed text-[var(--text-secondary)]">{body}</p>
+        {celebrateLevel.freeTabbing ? (
+          <p className="mt-4 rounded-xl bg-[var(--surface-muted)] px-4 py-3 text-[14px] leading-snug text-[var(--text-primary)]">
+            {DESKTOP_COPY[lang].bookmarkOnramp}
+          </p>
+        ) : null}
         <button
           onClick={keepGoing}
           className="mt-7 inline-flex min-h-[50px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"

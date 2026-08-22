@@ -16,7 +16,7 @@ import {
   type Level,
 } from "@/lib/tracks-content";
 import { completeTask, awardCertificate, restartLevelProgress } from "@/app/actions";
-import { storyFlagKeysForTasks, type StoryFlags } from "@/lib/story-beats";
+import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
 
 function flagsStorageKey(learnerId: string) {
   return `ws-story-flags:${learnerId}`;
@@ -59,6 +59,8 @@ interface ProgressValue {
   restartLevel: (level: Level) => void;
   dismissCelebration: () => void;
   dismissLevelCelebration: () => void;
+  mariaNoteTaskKey: TaskKey | null;
+  dismissMariaNote: () => void;
   lang: Lang;
   setLang: (lang: Lang) => void;
 }
@@ -84,6 +86,7 @@ export function ProgressProvider({
   const [progressEpoch, setProgressEpoch] = useState(0);
   const [storyFlags, setStoryFlags] = useState<StoryFlags>(() => loadStoryFlags(learnerId));
   const [lang, setLang] = useState<Lang>("en");
+  const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setStoryFlag = useCallback((key: string, value: string) => {
@@ -119,6 +122,8 @@ export function ProgressProvider({
       return next;
     });
 
+    if (storyMailAfter(taskKey)) setMariaNoteTaskKey(taskKey);
+
     setJustEarnedPoints(POINTS_PER_TASK);
     if (pointsTimer.current) clearTimeout(pointsTimer.current);
     pointsTimer.current = setTimeout(() => setJustEarnedPoints(null), 2200);
@@ -139,12 +144,14 @@ export function ProgressProvider({
     });
     setCelebrateTrack(null);
     setCelebrateLevel(null);
+    setMariaNoteTaskKey(null);
     setProgressEpoch((n) => n + 1);
     restartLevelProgress(level.key);
   }, [learnerId]);
 
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
   const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
+  const dismissMariaNote = useCallback(() => setMariaNoteTaskKey(null), []);
 
   return (
     <ProgressContext.Provider
@@ -164,6 +171,8 @@ export function ProgressProvider({
         restartLevel,
         dismissCelebration,
         dismissLevelCelebration,
+        mariaNoteTaskKey,
+        dismissMariaNote,
         lang,
         setLang,
       }}
