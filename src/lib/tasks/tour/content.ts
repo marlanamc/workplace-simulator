@@ -5,14 +5,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "💻",
     kicker: "Before you clock in",
     headline: "This is a practice computer.",
-    body: "Nothing here is real. You cannot get in trouble. You cannot break it. Take one minute to find the lights, then the job starts.",
+    body: "Nothing here is real. You cannot break it. Take one minute to find the lights, then the job starts.",
     cta: "Show me around",
   },
   es: {
     emoji: "💻",
     kicker: "Antes de marcar entrada",
     headline: "Esta es una computadora de práctica.",
-    body: "Nada aquí es real. No te puedes meter en problemas. No la puedes romper. Tómate un minuto para encontrar las luces. Luego empieza el trabajo.",
+    body: "Nada aquí es real. No la puedes romper. Tómate un minuto para encontrar las luces. Luego empieza el trabajo.",
     cta: "Enséñame",
   },
 };

@@ -25,7 +25,7 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
-import { storyMailsFor, type InboxRow } from "@/lib/story-beats";
+import { sortInboxByTime, storyMailsFor, type InboxRow } from "@/lib/story-beats";
 
 type View = "intro" | "empty" | "read" | "compose" | "done" | "story";
 
@@ -50,7 +50,7 @@ export default function MailClient() {
 
   const c = MAIL_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
-  const inbox = [...storyMailsFor(completedTaskKeys, storyFlags), ...EMAILS];
+  const inbox = sortInboxByTime([...storyMailsFor(completedTaskKeys, storyFlags), ...EMAILS]);
   const mailDone = completedTaskKeys.includes("mail");
   const unreadCount = inbox.filter((m) => {
     if ("story" in m && m.story) {

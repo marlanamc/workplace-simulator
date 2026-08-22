@@ -469,6 +469,45 @@ export function noteIsFromMaria(taskKey: TaskKey): boolean {
   return storyMailAfter(taskKey)?.from === MARIA.from;
 }
 
+const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+const MONTHS: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+};
+
+/** Higher = newer. Clock times count as today; dated labels sit further back. */
+export function inboxTimeRank(time: string): number {
+  const t = time.trim();
+  const clock = t.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (clock) {
+    let hours = Number(clock[1]);
+    const minutes = Number(clock[2]);
+    const ap = clock[3].toUpperCase();
+    if (ap === "PM" && hours !== 12) hours += 12;
+    if (ap === "AM" && hours === 12) hours = 0;
+    return 4_000_000 + hours * 60 + minutes;
+  }
+  if (/^yesterday$/i.test(t)) return 3_000_000;
+  const weekday = WEEKDAYS.indexOf(t.toLowerCase());
+  if (weekday >= 0) return 2_000_000 + weekday;
+  const dated = t.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})$/i);
+  if (dated) {
+    const month = MONTHS[dated[1].slice(0, 3).toLowerCase()] ?? 0;
+    return 1_000_000 + month * 32 + Number(dated[2]);
+  }
+  return 0;
+}
+
+export function sortInboxByTime<T extends { time: string }>(rows: T[]): T[] {
+  return rows
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => {
+      const diff = inboxTimeRank(b.row.time) - inboxTimeRank(a.row.time);
+      return diff !== 0 ? diff : a.index - b.index;
+    })
+    .map(({ row }) => row);
+}
+
 /** Newest completed beat first, so the inbox feels like time is moving. */
 export function storyMailsFor(completedTaskKeys: TaskKey[], flags: StoryFlags): InboxRow[] {
   const unlocked = STORY_MAILS.filter((m) => completedTaskKeys.includes(m.unlockAfter));
