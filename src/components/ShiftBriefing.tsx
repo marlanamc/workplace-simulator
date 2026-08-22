@@ -74,7 +74,12 @@ export default function ShiftBriefing({
 
       {nextTaskLocation && (
         <button
-          onClick={() => openApp(nextTaskLocation.appKey, { tab: nextTaskLocation.tab })}
+          onClick={() =>
+            openApp(nextTaskLocation.appKey, {
+              tab: nextTaskLocation.tab,
+              section: nextTaskLocation.section,
+            })
+          }
           className="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-6 text-[16px] font-medium text-[#202124] hover:bg-white/90 cursor-pointer"
         >
           {nextTaskLocation.ctaLabel}

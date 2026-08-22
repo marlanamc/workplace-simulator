@@ -8,7 +8,7 @@ found the right numbers.
 **Prerequisite:** Lesson 2 (comfortable checking that hours match)
 
 ## We will learn...
-- find your net pay on a pay stub and confirm the hours match what you worked.
+- find the right person's pay stub, then find net pay and confirm the hours.
 
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the most recent pay stub always opens
@@ -20,9 +20,11 @@ found the right numbers.
 
 ## Simulator practice (~5 min)
 1. Open the **Browser** → **Employee Portal** → **Pay Stubs**.
-2. Click the most recent one — it opens as a real document in **PDF Reader**.
-3. Read the net pay and the hours listed, then switch back to the **Browser**.
-4. Answer both quick questions (net pay, then total hours) — a wrong pick
+2. The list is other people's stubs from this pay period — the student's
+   first check is not out yet. Click **Alex Chen**, not Sam or Priya.
+3. The stub opens as a real document in **PDF Reader**.
+4. Read the net pay and the hours, then switch back to the **Browser**.
+5. Answer both quick questions (net pay, then total hours) — a wrong pick
    just gets a friendly reminder to look again.
 
 ## Confidence check-in

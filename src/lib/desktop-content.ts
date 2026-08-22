@@ -165,6 +165,7 @@ export const RECENT_ITEMS: RecentItem[] = [
 // The underlying curriculum tasks - independent of how many desktop app
 // icons exist, since several tasks now live as tabs inside one Browser app.
 export const TASK_KEYS = [
+  "tour",
   "mail",
   "schedule",
   "timeclock",

@@ -21,12 +21,31 @@ export type InboxRow = {
   unlockAfter: TaskKey;
 };
 
+/**
+ * Done-screen "Next" button, keyed by the task it opens. Act I names the
+ * place. Act II+ reuses the generic "Open Browser" label so finding the
+ * bookmark stays the exercise.
+ */
+export const HANDOFF_CTA: Record<TaskKey, Localized> = {
+  tour: { en: "Open Welcome", es: "Abrir Bienvenida" },
+  mail: { en: "Open Mail", es: "Abrir correo" },
+  schedule: { en: "Next: Open Portal", es: "Siguiente: Abrir Portal" },
+  timeclock: { en: "Next: Clock out", es: "Siguiente: Marcar salida" },
+  paystub: { en: "Next: Check a pay stub", es: "Siguiente: Revisar un recibo" },
+  incident: { en: "Next: Open Forms", es: "Siguiente: Abrir Formularios" },
+  handbook: { en: "Next: Open Docs", es: "Siguiente: Abrir Docs" },
+  calendar: { en: "Open Browser", es: "Abrir navegador" },
+  files: { en: "Open Browser", es: "Abrir navegador" },
+  spreadsheet: { en: "Open Browser", es: "Abrir navegador" },
+};
+
 /** One line of clock time for the desktop briefing. The story, not the skill name. */
 export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
+  tour: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
   mail: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
   schedule: { en: "Tuesday morning.", es: "Martes por la mañana." },
   timeclock: { en: "Tuesday, end of shift.", es: "Martes, fin del turno." },
-  paystub: { en: "Friday. Payday.", es: "Viernes. Día de pago." },
+  paystub: { en: "Friday. Payday for the crew.", es: "Viernes. Día de pago del equipo." },
   incident: { en: "Wednesday. The floor is busy.", es: "Miércoles. El piso está lleno." },
   handbook: { en: "Thursday night.", es: "Jueves por la noche." },
   calendar: { en: "Next week. You are a lead now.", es: "La semana que viene. Ya eres líder." },
@@ -68,6 +87,20 @@ function huddleReply(flags: StoryFlags): Pick<InboxRow, "subject" | "preview" | 
 
 const STORY_MAILS: InboxRow[] = [
   {
+    key: "story-tour",
+    ...MARIA,
+    time: "8:05 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "tour",
+    subject: { en: "See you on the floor", es: "Nos vemos en el piso" },
+    preview: { en: "Your computer is set. I sent you something.", es: "Tu computadora está lista. Te envié algo." },
+    body: {
+      en: ["Your computer is set.", "I sent you something. Open Mail when you are ready."],
+      es: ["Tu computadora está lista.", "Te envié algo. Abre Correo cuando estés listo."],
+    },
+  },
+  {
     key: "story-mail",
     ...MARIA,
     time: "8:22 AM",
@@ -89,10 +122,10 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "schedule",
     subject: { en: "Thursday swap", es: "Cambio del jueves" },
-    preview: { en: "I moved you off the overlap.", es: "Te quité del cruce de turnos." },
+    preview: { en: "You're on the later shift Thursday.", es: "El jueves estás en el turno de tarde." },
     body: {
-      en: ["I moved you off the overlap on Thursday. You are on the later shift now.", "Thanks for flagging it."],
-      es: ["Te quité del cruce de turnos del jueves. Ahora estás en el turno más tarde.", "Gracias por avisar."],
+      en: ["I swapped you off Thursday morning. You're on the later shift now.", "Thanks for flagging it."],
+      es: ["Te cambié del turno de la mañana del jueves. Ahora estás en el de tarde.", "Gracias por avisar."],
     },
   },
   {
@@ -118,11 +151,17 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "paystub",
-    subject: { en: "We logged your pay check", es: "Registramos tu revisión de pago" },
-    preview: { en: "Your hours match this week's stub.", es: "Tus horas coinciden con el recibo de esta semana." },
+    subject: { en: "Alex's numbers check out", es: "Los números de Alex cuadran" },
+    preview: { en: "You opened the right stub.", es: "Abriste el recibo correcto." },
     body: {
-      en: ["Thanks for checking your stub. The hours match this week.", "If something looks off next time, write Maria the same way."],
-      es: ["Gracias por revisar tu recibo. Las horas coinciden esta semana.", "Si algo se ve mal la próxima vez, escríbele a Maria igual."],
+      en: [
+        "You opened Alex Chen's stub, not the first name on the list.",
+        "When yours lands in two weeks, read it the same way. If something looks off, write Maria.",
+      ],
+      es: [
+        "Abriste el recibo de Alex Chen, no el primer nombre de la lista.",
+        "Cuando llegue el tuyo en dos semanas, léelo igual. Si algo se ve mal, escríbele a Maria.",
+      ],
     },
   },
   {

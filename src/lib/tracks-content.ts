@@ -13,6 +13,13 @@ export interface Track {
 
 export const TRACKS: Track[] = [
   {
+    key: "orientation",
+    title: "How this works",
+    subtitle: "Find the lights before the shift",
+    taskKeys: ["tour"],
+    awardEmoji: "💡",
+  },
+  {
     key: "starter",
     title: "Getting Started",
     subtitle: "Your first jobs on shift",
@@ -96,10 +103,23 @@ export interface Level {
  */
 export const LEVELS: Level[] = [
   {
+    key: "level0",
+    title: "Level 0: How this works",
+    trackKeys: ["orientation"],
+    firstTabKey: "tour",
+  },
+  {
     key: "level1",
     title: "Level 1: New Hire, Day One",
     trackKeys: ["starter"],
     firstTabKey: "mail",
+    levelUp: {
+      emoji: "👋",
+      kicker: "Ready for the floor",
+      title: "You know how this computer works.",
+      body: "Nothing here is real. Help is the question mark. Next is the blue button. Maria already emailed you.",
+      cta: "Open my first job",
+    },
   },
   {
     key: "level2",
@@ -181,7 +201,7 @@ export interface Act {
 }
 
 /** Places the learner's desktop looks out on. Built acts get a full scene; later acts reuse the closest room until they're painted. */
-export type DesktopScene = "harborside-open" | "harborside-shift";
+export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-floor";
 
 /**
  * Only lists acts that have at least one level actually built in `LEVELS` -
@@ -190,7 +210,7 @@ export type DesktopScene = "harborside-open" | "harborside-shift";
  * `curriculum/00-scope-and-sequence.md`.
  */
 export const ACTS: Act[] = [
-  { key: "act1", title: "Act I: New Hire", levelKeys: ["level1", "level2", "level3"], scene: "harborside-open" },
+  { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3"], scene: "harborside-open" },
   { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4", "level5", "level6"], scene: "harborside-shift" },
 ];
 
@@ -209,6 +229,7 @@ export function sceneForLevel(level: Level): DesktopScene {
  * currently open.
  */
 export const TAB_LEVEL_KEYS: Record<string, string> = {
+  tour: "level0",
   mail: "level1",
   portal: "level2",
   incident: "level3",
@@ -269,6 +290,12 @@ export interface TaskInfo {
 }
 
 export const TASK_INFO: Record<TaskKey, TaskInfo> = {
+  tour: {
+    label: "Learn how this computer works",
+    description: "Find Help, your shift list, and the Next button before the first real job.",
+    dispatch: "This is a practice computer. Let's see how it works.",
+    built: true,
+  },
   mail: {
     label: "Answer your supervisor",
     description: "Reply to Maria's email and attach the safety report.",
@@ -289,8 +316,8 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   },
   paystub: {
     label: "Read a pay stub",
-    description: "Find your net pay and confirm the hours match.",
-    dispatch: "Payday. Make sure the numbers actually match.",
+    description: "Find the right person's stub, then confirm net pay and hours.",
+    dispatch: "Yours takes two weeks. Practice on Alex Chen's stub.",
     built: true,
   },
   incident: {
@@ -351,9 +378,20 @@ export function normalizeCertificateTrackKeys(
   return [...next];
 }
 
+const ORIENTATION_TRACK = "orientation";
+
+/** True once the learner has started the actual job (not only the how-this-works tour). */
+function hasStartedJob(completedTaskKeys: TaskKey[]): boolean {
+  return completedTaskKeys.some((k) => k !== "tour");
+}
+
 /** The first track that isn't fully complete yet - where a learner should focus. */
 export function activeTrack(completedTaskKeys: TaskKey[]): Track {
-  return TRACKS.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? TRACKS[TRACKS.length - 1];
+  // People who already have job progress should not be pulled back to Level 0.
+  const tracks = hasStartedJob(completedTaskKeys)
+    ? TRACKS.filter((t) => t.key !== ORIENTATION_TRACK)
+    : TRACKS;
+  return tracks.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? TRACKS[TRACKS.length - 1];
 }
 
 /** The first not-yet-done task in a track, or null if the track is fully complete. */
@@ -365,6 +403,21 @@ export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
   return TRACKS.every((t) => isTrackComplete(t, completedTaskKeys));
 }
 
+/** Employee Portal sub-page. Schedule, Time Clock, and Pay Stubs share one Browser tab. */
+export type PortalSection = "schedule" | "timeclock" | "paystubs";
+
+export type TaskLocation = {
+  appKey: AppKey;
+  tab?: string;
+  section?: PortalSection;
+  ctaLabel: string;
+};
+
+export type TaskHandoff = {
+  taskKey: TaskKey;
+  location: TaskLocation;
+};
+
 /**
  * Where a task actually lives, so the desktop's "do this next" card can open
  * the right thing. Only built tasks get an entry - an unbuilt next task
@@ -374,14 +427,24 @@ export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
  * generic ctaLabel) - a deliberate step down in hand-holding. The bookmark
  * is still right there in the Browser's tab strip; finding it is the task.
  */
-export const TASK_LOCATIONS: Partial<Record<TaskKey, { appKey: AppKey; tab?: string; ctaLabel: string }>> = {
+export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
+  tour: { appKey: "browser", tab: "tour", ctaLabel: "Open Welcome" },
   mail: { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  schedule: { appKey: "browser", tab: "portal", ctaLabel: "Open Portal" },
-  timeclock: { appKey: "browser", tab: "portal", ctaLabel: "Open Portal" },
-  paystub: { appKey: "browser", tab: "portal", ctaLabel: "Open Portal" },
+  schedule: { appKey: "browser", tab: "portal", section: "schedule", ctaLabel: "Open Portal" },
+  timeclock: { appKey: "browser", tab: "portal", section: "timeclock", ctaLabel: "Open Portal" },
+  paystub: { appKey: "browser", tab: "portal", section: "paystubs", ctaLabel: "Open Portal" },
   incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Forms" },
   handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Docs" },
   calendar: { appKey: "browser", ctaLabel: "Open Browser" },
   files: { appKey: "browser", ctaLabel: "Open Browser" },
   spreadsheet: { appKey: "browser", ctaLabel: "Open Browser" },
 };
+
+/** The next built task a learner should open, or null if none is ready. */
+export function nextHandoff(completedTaskKeys: TaskKey[]): TaskHandoff | null {
+  const next = nextTaskInTrack(activeTrack(completedTaskKeys), completedTaskKeys);
+  if (!next) return null;
+  const location = TASK_LOCATIONS[next];
+  if (!location) return null;
+  return { taskKey: next, location };
+}

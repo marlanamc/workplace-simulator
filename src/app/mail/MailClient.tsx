@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
   MAIL_COPY,
@@ -22,6 +21,7 @@ import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
 import SettingsPopover from "@/components/task/SettingsPopover";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
@@ -47,7 +47,6 @@ export default function MailClient() {
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
   const { nudge, say } = useNudge();
-  const { minimizeActive } = useWindowManager();
 
   const c = MAIL_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
@@ -400,20 +399,11 @@ export default function MailClient() {
                   selected={confidence}
                   onSelect={setConfidence}
                 />
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={restart}
-                    className="inline-flex min-h-[40px] items-center rounded-full bg-[#0b57d0] px-5 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
-                  >
-                    {c.tryAgain}
-                  </button>
-                  <button
-                    onClick={minimizeActive}
-                    className="inline-flex min-h-[40px] items-center rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#1f1f1f] hover:bg-[#f2f6fc] cursor-pointer"
-                  >
-                    {c.backToDesk}
-                  </button>
-                </div>
+                <TaskDoneActions
+                  tryAgainLabel={c.tryAgain}
+                  backToDeskLabel={c.backToDesk}
+                  onTryAgain={restart}
+                />
               </div>
             )}
           </div>

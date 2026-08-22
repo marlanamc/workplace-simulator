@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
   MEETING,
@@ -19,6 +18,7 @@ import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
@@ -67,7 +67,6 @@ export default function CalendarTask() {
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
-  const { minimizeActive } = useWindowManager();
 
   const c = CALENDAR_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
@@ -163,20 +162,11 @@ export default function CalendarTask() {
               selected={confidence}
               onSelect={setConfidence}
             />
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={restart}
-                className="inline-flex min-h-[40px] items-center rounded-full bg-[#0b57d0] px-5 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
-              >
-                {c.tryAgain}
-              </button>
-              <button
-                onClick={minimizeActive}
-                className="inline-flex min-h-[40px] items-center rounded-full border border-[#747775] px-5 text-[14px] font-medium hover:bg-[#f8f9fa] cursor-pointer"
-              >
-                {c.backToDesk}
-              </button>
-            </div>
+            <TaskDoneActions
+              tryAgainLabel={c.tryAgain}
+              backToDeskLabel={c.backToDesk}
+              onTryAgain={restart}
+            />
           </div>
         </div>
       ) : (

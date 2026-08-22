@@ -3,34 +3,69 @@ import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized } from "
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "💵",
-    kicker: "Payday",
-    headline: "Your first paycheck is here.",
-    body: "Your pay stub is ready in the portal. Before you trust the number, take a look. Knowing how to read your own pay stub helps you for a long time.",
-    cta: "Open my pay stub",
+    kicker: "Friday. Payday for the crew.",
+    headline: "Yours is not here yet.",
+    body: "First check takes two weeks. Maria still wants you to know how to read one. Open last period's stub for Alex Chen — not Sam, not Priya. At a real job you usually only see your own. This list is practice.",
+    cta: "Open the pay list",
   },
   es: {
     emoji: "💵",
-    kicker: "Día de pago",
-    headline: "Tu primer cheque acaba de llegar.",
-    body: "Tu recibo de pago ya está en el portal. Antes de confiar en el número, échale un vistazo. Saber leer tu propio recibo te sirve por mucho tiempo.",
-    cta: "Abrir mi recibo",
+    kicker: "Viernes. Día de pago del equipo.",
+    headline: "El tuyo todavía no está.",
+    body: "El primer cheque tarda dos semanas. Maria igual quiere que sepas leer uno. Abre el recibo del último período de Alex Chen — no el de Sam, no el de Priya. En un trabajo real casi siempre solo ves el tuyo. Esta lista es práctica.",
+    cta: "Abrir la lista de pagos",
   },
 };
 
 export interface PayStub {
   id: string;
+  employee: string;
+  role: string;
   period: string;
   payDate: string;
   gross: string;
   net: string;
-  /** Only the most recent stub opens as a real PDF and drives the graded check. */
+  /** Only the assigned stub opens as a real PDF and drives the graded check. */
   pdfDocId?: string;
+  wrongHint?: Localized;
 }
 
+const WRONG_PERSON: Localized = {
+  en: "That's not Alex Chen. Maria asked you to open Alex's stub.",
+  es: "Ese no es Alex Chen. Maria te pidió abrir el recibo de Alex.",
+};
+
 export const PAY_STUBS: PayStub[] = [
-  { id: "aug-1", period: "Aug 1 – Aug 15", payDate: "Aug 16, 2026", gross: "$1,005.00", net: "$863.30", pdfDocId: "paystub-aug-1" },
-  { id: "jul-2", period: "Jul 16 – Jul 31", payDate: "Aug 1, 2026", gross: "$1,024.43", net: "$880.24" },
-  { id: "jul-1", period: "Jul 1 – Jul 15", payDate: "Jul 16, 2026", gross: "$945.45", net: "$812.49" },
+  {
+    id: "alex",
+    employee: "Alex Chen",
+    role: "Closer",
+    period: "Aug 1 – Aug 15",
+    payDate: "Aug 16, 2026",
+    gross: "$1,005.00",
+    net: "$863.30",
+    pdfDocId: "paystub-aug-1",
+  },
+  {
+    id: "sam",
+    employee: "Sam Ortiz",
+    role: "Barista",
+    period: "Aug 1 – Aug 15",
+    payDate: "Aug 16, 2026",
+    gross: "$720.00",
+    net: "$618.40",
+    wrongHint: WRONG_PERSON,
+  },
+  {
+    id: "priya",
+    employee: "Priya Shah",
+    role: "Opener",
+    period: "Aug 1 – Aug 15",
+    payDate: "Aug 16, 2026",
+    gross: "$840.00",
+    net: "$721.80",
+    wrongHint: WRONG_PERSON,
+  },
 ];
 
 export interface CheckOption {
@@ -41,26 +76,26 @@ export interface CheckOption {
 
 export const NET_PAY_CHECK: Record<Lang, { question: string; options: CheckOption[] }> = {
   en: {
-    question: "What was the net pay on your most recent pay stub?",
+    question: "What was the net pay on Alex Chen's stub?",
     options: [
       { label: "$1,005.00", isTarget: false, wrongHint: { en: "That's the gross pay, before taxes come out. Look for Net pay.", es: "Ese es el pago bruto, antes de impuestos y deducciones. Busca el pago neto." } },
       { label: "$863.30", isTarget: true },
-      { label: "$1,024.43", isTarget: false, wrongHint: { en: "That's from a different pay period. Make sure you're reading the Aug 1–15 stub.", es: "Ese es de otro período de pago. Asegúrate de leer el recibo del 1 al 15 de agosto." } },
+      { label: "$618.40", isTarget: false, wrongHint: { en: "That's Sam's net pay. Stay on Alex Chen's stub.", es: "Ese es el pago neto de Sam. Quédate en el recibo de Alex Chen." } },
     ],
   },
   es: {
-    question: "¿Cuál fue el pago neto en tu recibo de pago más reciente?",
+    question: "¿Cuál fue el pago neto en el recibo de Alex Chen?",
     options: [
       { label: "$1,005.00", isTarget: false, wrongHint: { en: "That's the gross pay, before taxes come out. Look for Net pay.", es: "Ese es el pago bruto, antes de impuestos y deducciones. Busca el pago neto." } },
       { label: "$863.30", isTarget: true },
-      { label: "$1,024.43", isTarget: false, wrongHint: { en: "That's from a different pay period. Make sure you're reading the Aug 1–15 stub.", es: "Ese es de otro período de pago. Asegúrate de leer el recibo del 1 al 15 de agosto." } },
+      { label: "$618.40", isTarget: false, wrongHint: { en: "That's Sam's net pay. Stay on Alex Chen's stub.", es: "Ese es el pago neto de Sam. Quédate en el recibo de Alex Chen." } },
     ],
   },
 };
 
 export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[] }> = {
   en: {
-    question: "How many total hours were paid (regular + overtime)?",
+    question: "How many total hours were paid on Alex Chen's stub (regular + overtime)?",
     options: [
       { label: "62.5 hours", isTarget: false, wrongHint: { en: "That's just the regular hours. Don't forget to add the overtime hours too.", es: "Esas son solo las horas regulares. No olvides sumar las horas extra." } },
       { label: "65.5 hours", isTarget: true },
@@ -68,7 +103,7 @@ export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[
     ],
   },
   es: {
-    question: "¿Cuántas horas totales se pagaron (regulares + extra)?",
+    question: "¿Cuántas horas totales se pagaron en el recibo de Alex Chen (regulares + extra)?",
     options: [
       { label: "62.5 horas", isTarget: false, wrongHint: { en: "That's just the regular hours. Don't forget to add the overtime hours too.", es: "Esas son solo las horas regulares. No olvides sumar las horas extra." } },
       { label: "65.5 horas", isTarget: true },
@@ -79,6 +114,7 @@ export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[
 
 export const PAYSTUB_COPY: Record<Lang, {
   heading: string;
+  listLead: string;
   helpBtn: string;
   langBtn: string;
   netLabel: string;
@@ -102,7 +138,8 @@ export const PAYSTUB_COPY: Record<Lang, {
   askPerson: string;
 }> = {
   en: {
-    heading: "Pay stubs",
+    heading: "Team pay stubs — this period",
+    listLead: "Open Alex Chen's stub. The others are the same week, different people.",
     helpBtn: "Help me with this step",
     langBtn: "Español",
     netLabel: "net pay",
@@ -113,8 +150,8 @@ export const PAYSTUB_COPY: Record<Lang, {
     grossPay: "Gross pay",
     netPay: "Net pay",
     sentKicker: "Checked",
-    doneTitle: "You found your net pay and confirmed your hours.",
-    doneBody: "Reading your own pay stub before you question it is how you catch a real pay mistake early.",
+    doneTitle: "You found Alex's net pay and confirmed the hours.",
+    doneBody: "You opened the right person's stub, not the first name on the list. When yours lands in two weeks, read it the same way.",
     badgeName: "Read a pay stub",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     confidenceQ: "How do you feel about checking a real pay stub?",
@@ -126,7 +163,8 @@ export const PAYSTUB_COPY: Record<Lang, {
     askPerson: "Ask a person instead",
   },
   es: {
-    heading: "Recibos de pago",
+    heading: "Recibos del equipo — este período",
+    listLead: "Abre el recibo de Alex Chen. Los otros son de la misma semana, otras personas.",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     netLabel: "pago neto",
@@ -137,8 +175,8 @@ export const PAYSTUB_COPY: Record<Lang, {
     grossPay: "Pago bruto",
     netPay: "Pago neto",
     sentKicker: "Revisado",
-    doneTitle: "Encontraste tu pago neto y confirmaste tus horas.",
-    doneBody: "Revisar tu propio recibo de pago antes de cuestionarlo es el hábito que detecta un error de nómina real a tiempo.",
+    doneTitle: "Encontraste el pago neto de Alex y confirmaste las horas.",
+    doneBody: "Abriste el recibo de la persona correcta, no el primer nombre de la lista. Cuando llegue el tuyo en dos semanas, léelo igual.",
     badgeName: "Leer un recibo de pago",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     confidenceQ: "¿Cómo te sientes de revisar un recibo de pago real?",
@@ -156,7 +194,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Opening a pay stub",
       s: [
-        "Click your most recent pay stub to open the real document.",
+        "Find Alex Chen's name. Click that stub to open the real document.",
         "It opens in PDF Reader, just like any downloaded file.",
         "Read from top to bottom. First earnings, then money taken out, then net pay at the bottom.",
       ],
@@ -176,7 +214,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Abrir un recibo de pago",
       s: [
-        "Haz clic en tu recibo más reciente para abrir el documento real.",
+        "Busca el nombre de Alex Chen. Haz clic en ese recibo para abrir el documento real.",
         "Se abre en el Lector de PDF, como cualquier archivo descargado.",
         "Lee de arriba a abajo. Ingresos, luego deducciones, y el pago neto al final.",
       ],
@@ -198,11 +236,11 @@ export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
     { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
     { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
+    { label: "I can do this", reply: "You just did it with no help. Use the Next button below to keep going." },
   ],
   es: [
     { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
     { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
+    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Usa el botón de Siguiente abajo para seguir." },
   ],
 };

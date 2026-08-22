@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
   INCIDENT_COPY,
@@ -18,6 +17,7 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import NeedAStart from "@/components/task/NeedAStart";
 
@@ -34,7 +34,6 @@ export default function IncidentTask() {
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
-  const { minimizeActive } = useWindowManager();
 
   const c = INCIDENT_COPY[lang];
 
@@ -172,21 +171,11 @@ export default function IncidentTask() {
               selected={confidence}
               onSelect={setConfidence}
             />
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={restart}
-                className="inline-flex min-h-[40px] items-center rounded px-5 text-[14px] font-medium text-white cursor-pointer"
-                style={{ background: PURPLE }}
-              >
-                {c.tryAgain}
-              </button>
-              <button
-                onClick={minimizeActive}
-                className="inline-flex min-h-[40px] items-center rounded border border-[#747775] bg-white px-5 text-[14px] font-medium hover:bg-[#f8f9fa] cursor-pointer"
-              >
-                {c.backToDesk}
-              </button>
-            </div>
+            <TaskDoneActions
+              tryAgainLabel={c.tryAgain}
+              backToDeskLabel={c.backToDesk}
+              onTryAgain={restart}
+            />
           </div>
         )}
       </div>

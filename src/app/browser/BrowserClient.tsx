@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import MailClient from "../mail/MailClient";
+import TourTask from "./TourTask";
 import PortalPage from "./PortalPage";
 import CalendarTask from "./CalendarTask";
 import FilesTask from "./FilesTask";
@@ -17,7 +18,7 @@ import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS } from "@/lib/icons";
 
-type TabKey = "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "handbook" | "incident" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "handbook" | "incident" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));
@@ -36,6 +37,7 @@ interface TabDef {
 }
 
 const BASE_TABS: TabDef[] = [
+  { key: "tour",     label: "Welcome", url: "welcome.harborsidecafe.com", icon: "?", color: "#c45c26", levelKey: TAB_LEVEL_KEYS.tour },
   { key: "mail",     label: "Mail",  url: "mail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: TAB_LEVEL_KEYS.mail },
   { key: "calendar", label: "Calendar", url: "calendar.harborsidecafe.com", icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS.calendar },
   { key: "files",    label: "Drive", url: "drive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: TAB_LEVEL_KEYS.files },
@@ -211,8 +213,13 @@ export default function BrowserClient() {
       const newLevelDef = LEVELS.find((l) => l.key === newLevelKey);
       const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
       if (activeLevelKey !== newLevelKey) {
-        setOpenTabs(BASE_TABS.filter((t) => t.levelKey === newLevelKey));
-        setActiveTab((newLevelDef?.firstTabKey as TabKey | undefined) ?? "mail");
+        if (newLevelDef?.freeTabbing) {
+          setOpenTabs([makeNewTabStub(newLevelKey)]);
+          setActiveTab("newtab");
+        } else {
+          setOpenTabs(BASE_TABS.filter((t) => t.levelKey === newLevelKey));
+          setActiveTab((newLevelDef?.firstTabKey as TabKey | undefined) ?? "mail");
+        }
       }
     }
   }
@@ -407,6 +414,7 @@ export default function BrowserClient() {
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div className="min-h-0 flex-1 overflow-hidden bg-white">
+        {active?.key === "tour"     && <TourTask />}
         {active?.key === "mail"     && <MailClient />}
         {active?.key === "portal"   && <PortalPage />}
         {active?.key === "calendar" && <CalendarTask />}

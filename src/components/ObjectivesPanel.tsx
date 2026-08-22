@@ -41,7 +41,7 @@ export default function ObjectivesPanel({
     const loc = TASK_LOCATIONS[taskKey];
     if (!loc) return;
     onOpenChange(false);
-    openApp(loc.appKey, { tab: loc.tab });
+    openApp(loc.appKey, { tab: loc.tab, section: loc.section });
   };
 
   if (!open) return null;

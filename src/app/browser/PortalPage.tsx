@@ -5,8 +5,10 @@ import ScheduleTask from "./ScheduleTask";
 import TimeclockTask from "./TimeclockTask";
 import PaystubTask from "./PaystubTask";
 import { TAB_ICONS, CircleGlyph } from "@/lib/icons";
+import { useWindowManager } from "@/lib/window-manager";
+import type { PortalSection } from "@/lib/tracks-content";
 
-type Section = "schedule" | "timeclock" | "paystubs";
+type Section = PortalSection;
 
 const SECTIONS: { key: Section; label: string }[] = [
   { key: "schedule", label: "Schedule" },
@@ -14,8 +16,20 @@ const SECTIONS: { key: Section; label: string }[] = [
   { key: "paystubs", label: "Pay Stubs" },
 ];
 
+function isPortalSection(value: string | null): value is Section {
+  return value === "schedule" || value === "timeclock" || value === "paystubs";
+}
+
 export default function PortalPage() {
-  const [section, setSection] = useState<Section>("schedule");
+  const { portalSection, portalSectionToken } = useWindowManager();
+  const [section, setSection] = useState<Section>(() =>
+    isPortalSection(portalSection) ? portalSection : "schedule",
+  );
+  const [lastToken, setLastToken] = useState(portalSectionToken);
+  if (portalSectionToken !== lastToken) {
+    setLastToken(portalSectionToken);
+    if (isPortalSection(portalSection)) setSection(portalSection);
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">

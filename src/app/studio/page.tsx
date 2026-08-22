@@ -71,8 +71,9 @@ export default async function StudioPage() {
         <section className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
           <h2 className="text-[15px] font-medium">Track 0: Foundations</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-[#9aa0a6]">
-            Real Chromebook, before Level 1. Skip any skill they already have. Lesson
-            0.5 is login safety: passwords, PIN, and a fake email.
+            Real Chromebook, before the simulator. Skip any skill they already have.
+            Lesson 0.5 is login safety: passwords, PIN, and a fake email. How the
+            app itself works is Level 0 in Act I, not Track 0.
           </p>
           <ul className="mt-3 flex flex-col divide-y divide-white/6">
             {TRACK0_LESSONS.map((lesson) => (

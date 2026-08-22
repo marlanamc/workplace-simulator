@@ -3,6 +3,7 @@ import { TASK_INFO } from "./tracks-content";
 
 /** Browser tabs the simulator can actually open today. */
 export const JUMP_TABS = [
+  "tour",
   "mail",
   "portal",
   "incident",
@@ -163,6 +164,21 @@ export const CATALOG_ACTS: CatalogAct[] = [
     blurb: "Shared start. The story is a cafe, but the moves are any hourly job: email, schedule, hours, pay, speak up.",
     levels: [
       {
+        key: "level0",
+        n: 0,
+        title: "How this works",
+        folder: "act-1-new-hire/level-0-how-this-works",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "tour",
+            skill: "Find Help, your shift list, and the Next button before the first real job",
+            app: "Welcome",
+            tab: "tour",
+          },
+        ],
+      },
+      {
         key: "level1",
         n: 1,
         title: "New Hire, Day One",
@@ -200,7 +216,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
           {
             n: "3",
             taskKey: "paystub",
-            skill: "Read a pay stub and confirm net pay against hours worked",
+            skill: "Find the right person's stub, then confirm net pay and hours",
             app: "Portal + PDF",
             tab: "portal",
           },

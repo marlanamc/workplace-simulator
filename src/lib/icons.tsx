@@ -4,6 +4,7 @@ import {
   BookOpen,
   Calendar,
   CalendarDays,
+  CircleHelp,
   ClipboardList,
   Clock,
   Coffee,
@@ -22,6 +23,7 @@ import type { AppKey, TaskKey } from "@/lib/desktop-content";
 export type { LucideIcon };
 
 export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
+  tour: CircleHelp,
   mail: Mail,
   schedule: CalendarDays,
   timeclock: Clock,
@@ -39,6 +41,7 @@ export const APP_ICONS: Record<AppKey, LucideIcon> = {
 };
 
 export const TAB_ICONS: Record<string, LucideIcon> = {
+  tour: CircleHelp,
   mail: Mail,
   portal: LayoutGrid,
   incident: ClipboardList,
@@ -49,6 +52,7 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
+  orientation: CircleHelp,
   starter: Coffee,
   schedules: CalendarDays,
   judgment: Compass,

@@ -20,6 +20,7 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 
 type View = "intro" | "list" | "check1" | "check2" | "done";
@@ -27,17 +28,20 @@ type View = "intro" | "list" | "check1" | "check2" | "done";
 export default function PaystubTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "intro");
-  const [openStub, setOpenStub] = useState<string | null>(null);
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
-  const { openApp, minimizeActive } = useWindowManager();
+  const { openApp } = useWindowManager();
 
   const c = PAYSTUB_COPY[lang];
 
-  const openTarget = (docId: string) => {
-    openApp("pdf", { docId });
-    setView("check1");
+  const openStub = (p: (typeof PAY_STUBS)[number]) => {
+    if (p.pdfDocId) {
+      openApp("pdf", { docId: p.pdfDocId });
+      setView("check1");
+      return;
+    }
+    if (p.wrongHint) say(p.wrongHint[lang]);
   };
 
   const answer = (opt: CheckOption, onCorrect: () => void) => {
@@ -69,18 +73,18 @@ export default function PaystubTask() {
 
       {view === "list" && (
         <div>
+          <p className="mb-3 max-w-[52ch] text-[14px] leading-relaxed text-[var(--text-secondary)]">{c.listLead}</p>
           <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
             {PAY_STUBS.map((p, i) => (
               <button
                 key={p.id}
-                onClick={() => (p.pdfDocId ? openTarget(p.pdfDocId) : setOpenStub(p.id))}
+                onClick={() => openStub(p)}
                 className={`flex w-full items-center justify-between px-4 py-3.5 text-left hover:bg-[var(--surface-muted)] cursor-pointer ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
               >
                 <div>
-                  <div className="text-[14px] font-medium text-[var(--text-primary)]">{p.period}</div>
+                  <div className="text-[14px] font-medium text-[var(--text-primary)]">{p.employee}</div>
                   <div className="text-[13px] text-[var(--text-tertiary)]">
-                    {c.paidLabel} {p.payDate}
-                    {p.pdfDocId && <span className="ml-2 text-[var(--accent)]">· {c.openInPdfHint}</span>}
+                    {p.role} · {p.period}
                   </div>
                 </div>
                 <div className="text-right">
@@ -90,47 +94,6 @@ export default function PaystubTask() {
               </button>
             ))}
           </div>
-
-          {openStub && (
-            <div
-              className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 p-6"
-              onClick={() => setOpenStub(null)}
-            >
-              <div
-                className="w-full max-w-[420px] rounded-2xl bg-white p-6 shadow-2xl animate-fade-up"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {(() => {
-                  const stub = PAY_STUBS.find((p) => p.id === openStub)!;
-                  return (
-                    <>
-                      <h3 className="mb-4 text-[18px] font-medium">{stub.period}</h3>
-                      <div className="flex flex-col gap-2 text-[14px]">
-                        <div className="flex justify-between">
-                          <span className="text-[var(--text-secondary)]">{c.payDate}</span>
-                          <span className="font-medium">{stub.payDate}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-[var(--text-secondary)]">{c.grossPay}</span>
-                          <span className="font-medium">{stub.gross}</span>
-                        </div>
-                        <div className="flex justify-between border-t border-[var(--border)] pt-2">
-                          <span className="text-[var(--text-secondary)]">{c.netPay}</span>
-                          <span className="font-semibold">{stub.net}</span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => setOpenStub(null)}
-                        className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center rounded-full border border-[var(--border)] text-[14px] font-medium text-[var(--text-primary)] cursor-pointer"
-                      >
-                        {c.close}
-                      </button>
-                    </>
-                  );
-                })()}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
@@ -180,20 +143,11 @@ export default function PaystubTask() {
             onSelect={setConfidence}
           />
 
-          <div className="flex flex-wrap gap-2">
-            <button
-              onClick={restart}
-              className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
-            >
-              {c.tryAgain}
-            </button>
-            <button
-              onClick={minimizeActive}
-              className="inline-flex min-h-[46px] items-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
-            >
-              {c.backToDesk}
-            </button>
-          </div>
+          <TaskDoneActions
+            tryAgainLabel={c.tryAgain}
+            backToDeskLabel={c.backToDesk}
+            onTryAgain={restart}
+          />
         </div>
       )}
 

@@ -215,11 +215,11 @@ export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
   en: [
     { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
     { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help. Move on to the next task on your desktop." },
+    { label: "I can do this", reply: "You just did it with no help. Use the Next button below to keep going." },
   ],
   es: [
     { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
     { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Sigue con la siguiente tarea en tu escritorio." },
+    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Usa el botón de Siguiente abajo para seguir." },
   ],
 };

@@ -51,10 +51,10 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
   {
     kind: "paystub",
     id: "paystub-aug-1",
-    name: "paystub-aug-1-15.pdf",
+    name: "paystub-alex-chen-aug-1-15.pdf",
     size: "96 KB",
     date: "Aug 16, 2026",
-    employee: "Jordan R.",
+    employee: "Alex Chen",
     payPeriod: "Aug 1 – Aug 15, 2026",
     payDate: "Aug 16, 2026",
     earnings: [

@@ -116,6 +116,20 @@ See `track-0/05-lesson-login-safety.md`. Do 0.5 before Level 1 if the
 student is new to a work login. Skip if they already treat passwords as
 private and can say why they would not click a “reset your hours” email.
 
+## Level 0: How this works (everyone, in the simulator)
+
+Track 0 is the physical Chromebook. **Level 0 is a short sitting inside the
+app**, before the first job. Everyone does it once — including students who
+already know computers — so the first real task is not also “how does this
+program work?”
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `tour` | Practice computer; Help; Next; the shift list | Browser → Welcome |
+
+See `act-1-new-hire/level-0-how-this-works/01-lesson-tour.md`. People who
+already have later progress are not pulled back here.
+
 ---
 
 ## Act I: Levels 1-3 — New Hire (shared trunk)
@@ -155,7 +169,7 @@ schedule, and pay stay together because they are the same tool.
 |---|---|---|---|
 | 1 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Portal |
 | 2 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
-| 3 | `paystub` | Read a pay stub and confirm net pay against hours worked | Browser → Portal + PDF Reader |
+| 3 | `paystub` | Find the right person's stub, then confirm net pay and hours | Browser → Portal + PDF Reader |
 
 See `level-2-settling-in/01-lesson-schedule.md` through
 `03-lesson-paystub.md`. Finishing `paystub` completes Level 2.

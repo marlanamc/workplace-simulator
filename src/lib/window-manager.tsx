@@ -2,6 +2,9 @@
 
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 import type { AppKey } from "@/lib/desktop-content";
+import type { PortalSection } from "@/lib/tracks-content";
+
+export type OpenAppOpts = { tab?: string; section?: PortalSection; docId?: string };
 
 interface AppWindowState {
   minimized: boolean;
@@ -20,12 +23,15 @@ interface WindowManagerState {
    */
   browserTabExplicit: boolean;
   browserTabToken: number;
+  /** Employee Portal sub-page (Schedule / Time Clock / Pay Stubs). */
+  portalSection: PortalSection | null;
+  portalSectionToken: number;
   pdfDocId: string | null;
   pdfDocToken: number;
 }
 
 interface WindowManagerValue extends WindowManagerState {
-  openApp: (key: AppKey, opts?: { tab?: string; docId?: string }) => void;
+  openApp: (key: AppKey, opts?: OpenAppOpts) => void;
   toggleFromShelf: (key: AppKey) => void;
   closeApp: (key: AppKey) => void;
   minimizeActive: () => void;
@@ -50,25 +56,43 @@ export function WindowManagerProvider({
     browserTab: jumpTab ?? "mail",
     browserTabExplicit: !!jumpTab,
     browserTabToken: jumpTab ? 1 : 0,
+    portalSection: jumpTab === "portal" ? "schedule" : null,
+    portalSectionToken: jumpTab === "portal" ? 1 : 0,
     pdfDocId: null,
     pdfDocToken: 0,
   }));
 
-  const openApp = useCallback((key: AppKey, opts?: { tab?: string; docId?: string }) => {
+  const openApp = useCallback((key: AppKey, opts?: OpenAppOpts) => {
     setState((s) => {
       // A "fresh open" (the Browser wasn't already the visible app) is when the
       // Browser should re-check which tab it's showing against current progress -
       // not on every render while it stays open and mounted through a task's own
       // completion screen.
       const isFreshBrowserOpen = key === "browser" && s.active !== "browser";
+      const namedTab = key === "browser" && !!opts?.tab;
+      const namedSection = key === "browser" && !!opts?.section;
+      const handoffResync = key === "browser" && opts !== undefined && !namedTab;
+      const nextPortalSection: PortalSection | null =
+        key !== "browser"
+          ? s.portalSection
+          : opts?.section
+            ? opts.section
+            : opts?.tab === "portal"
+              ? "schedule"
+              : s.portalSection;
+      const portalTouched = namedSection || (key === "browser" && opts?.tab === "portal");
       return {
         ...s,
         apps: { ...s.apps, [key]: { minimized: false } },
         active: key,
-        browserTab: key === "browser" && opts?.tab ? opts.tab : s.browserTab,
-        browserTabExplicit: key === "browser" ? !!opts?.tab : s.browserTabExplicit,
+        browserTab: namedTab ? opts!.tab! : s.browserTab,
+        browserTabExplicit: key === "browser" ? namedTab : s.browserTabExplicit,
         browserTabToken:
-          key === "browser" && (opts?.tab || isFreshBrowserOpen) ? s.browserTabToken + 1 : s.browserTabToken,
+          key === "browser" && (namedTab || isFreshBrowserOpen || handoffResync)
+            ? s.browserTabToken + 1
+            : s.browserTabToken,
+        portalSection: nextPortalSection,
+        portalSectionToken: portalTouched ? s.portalSectionToken + 1 : s.portalSectionToken,
         pdfDocId: key === "pdf" && opts?.docId ? opts.docId : s.pdfDocId,
         pdfDocToken: key === "pdf" && opts?.docId ? s.pdfDocToken + 1 : s.pdfDocToken,
       };

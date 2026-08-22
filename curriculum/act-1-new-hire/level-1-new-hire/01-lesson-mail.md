@@ -2,7 +2,8 @@
 
 **Time:** ~5 minutes · **Level:** 1 — New Hire · **Track:** 1 — Getting Started
 **Task key:** `mail` · **Status:** built and playable today
-**Prerequisite:** Track 0, including 0.5 login safety if they are new to a
+**Prerequisite:** Level 0 (`tour`) so they have seen Help, Next, and the
+shift list. Track 0, including 0.5 login safety, if they are new to a
 work login (or teacher confirms they can open a browser tab, type, and
 will not share a password)
 
