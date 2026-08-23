@@ -24,7 +24,10 @@ import { LEVELS, TAB_LEVEL_KEYS, levelForTrack, nextTaskInTrack } from "@/lib/tr
 import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
+import TaskDispatchStrip from "@/components/task/TaskDispatchStrip";
 import { TAB_ICONS } from "@/lib/icons";
+import TourWalkthrough from "@/components/task/TourWalkthrough";
+import { TOUR_STEPS } from "@/lib/tasks/tour/content";
 
 type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "handbook" | "incident" | "newtab";
 
@@ -61,6 +64,8 @@ const BASE_TABS: TabDef[] = [
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
   { key: "portal",   label: "Portal",url: "portal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
 ];
+
+const TAB_COLORS: Record<string, string> = Object.fromEntries(BASE_TABS.map((t) => [t.key, t.color]));
 
 /** Chrome-style tab - active tab is the same white as the toolbar, so they read as one piece. */
 function ChromeTab({
@@ -159,8 +164,10 @@ function NewTabPage() {
 
 export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
-  const { currentTrack, completedTaskKeys } = useProgress();
+  const { lang, currentTrack, completedTaskKeys } = useProgress();
   const { nudge, say } = useNudge(3500);
+  const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
+  const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
 
   const progressLevelKey = levelForTrack(currentTrack.key).key;
   const jumpDef =
@@ -443,9 +450,19 @@ export default function BrowserClient() {
         ))}
       </div>
 
+      {active?.key && <TaskDispatchStrip taskKey={active.key} lang={lang} />}
+
       {/* ── Page content ─────────────────────────────────────────── */}
       <div className="min-h-0 flex-1 overflow-hidden bg-white">
-        {active?.key === "tour"     && <TourTask />}
+        {active?.key === "tour"     && (
+          <TourTask
+            startAtHelp={tourWalkthroughDone}
+            onStartWalkthrough={() => {
+              setTourWalkthroughDone(false);
+              setTourWalkthroughStep(0);
+            }}
+          />
+        )}
         {active?.key === "mail"     && <MailClient />}
         {active?.key === "portal"   && <PortalPage />}
         {active?.key === "calendar" && <CalendarTask />}
@@ -462,6 +479,30 @@ export default function BrowserClient() {
         {active?.key === "handbook" && <HandbookTask />}
         {showingNewTab && <NewTabPage />}
       </div>
+
+      {tourWalkthroughStep !== null && (
+        <TourWalkthrough
+          steps={TOUR_STEPS[lang]}
+          stepIndex={tourWalkthroughStep}
+          tabColors={TAB_COLORS}
+          onAdvance={() => {
+            const steps = TOUR_STEPS[lang];
+            if (tourWalkthroughStep + 1 >= steps.length) {
+              setTourWalkthroughStep(null);
+              setTourWalkthroughDone(true);
+              // Each walkthrough step replaces the previously active bookmark
+              // tab (goToBookmark) - by the last step the tab strip holds
+              // whatever was clicked, not "tour". Reset to just the tour tab
+              // rather than append, so no duplicate/leftover tabs remain.
+              const tourDef = BASE_TABS.find((t) => t.key === "tour")!;
+              setOpenTabs([tourDef]);
+              setActiveTab("tour");
+            } else {
+              setTourWalkthroughStep(tourWalkthroughStep + 1);
+            }
+          }}
+        />
+      )}
 
       <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
     </div>

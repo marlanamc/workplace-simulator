@@ -160,6 +160,9 @@ export default function Shelf({
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
   const reachedIndex = furthestLevelIndex(completedTaskKeys);
   const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
+  // Level 0's walkthrough is the one thing on screen for a brand-new learner -
+  // the Objectives panel would just repeat what the walkthrough already says.
+  const objectivesLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
   const nextAsk = currentTrack.taskKeys.find((k) => !completedTaskKeys.includes(k));
   const chipAsk = nextAsk && TASK_INFO[nextAsk]?.built ? TASK_INFO[nextAsk].dispatch : null;
 
@@ -219,6 +222,7 @@ export default function Shelf({
         <button
           type="button"
           onClick={() => {
+            if (objectivesLocked) return;
             closeLauncher();
             setAccountOpen(false);
             setLevelsOpen(false);
@@ -378,17 +382,22 @@ export default function Shelf({
 
         <ShelfPin
           label={
-            leftover > 0
-              ? `${lang === "en" ? "Objectives" : "Objetivos"} · ${
-                  leftover === 1 ? c.leftoverOne : c.leftoverMany.replace("{n}", String(leftover))
-                }`
-              : lang === "en"
-                ? "Objectives"
-                : "Objetivos"
+            objectivesLocked
+              ? lang === "en"
+                ? "Objectives · finish the walkthrough first"
+                : "Objetivos · termina la guía primero"
+              : leftover > 0
+                ? `${lang === "en" ? "Objectives" : "Objetivos"} · ${
+                    leftover === 1 ? c.leftoverOne : c.leftoverMany.replace("{n}", String(leftover))
+                  }`
+                : lang === "en"
+                  ? "Objectives"
+                  : "Objetivos"
           }
           active={objectivesOpen}
-          badge={leftover > 0 ? String(leftover) : undefined}
+          badge={!objectivesLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
+            if (objectivesLocked) return;
             closeLauncher();
             setAccountOpen(false);
             setLevelsOpen(false);
@@ -396,7 +405,7 @@ export default function Shelf({
             onObjectivesOpenChange(!objectivesOpen);
           }}
         >
-            <AppIcon icon={<Target size={16} strokeWidth={2.25} />} color="#e37400" size={32} />
+            <AppIcon icon={<Target size={16} strokeWidth={2.25} />} color={objectivesLocked ? "#9aa0a6" : "#e37400"} size={32} />
         </ShelfPin>
 
         <ShelfPin

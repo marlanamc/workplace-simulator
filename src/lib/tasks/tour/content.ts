@@ -20,12 +20,9 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 export const TOUR_COPY: Record<Lang, {
   packetKicker: string;
   packetTitle: string;
-  packetFrom: string;
   helpBtn: string;
-  factsLead: string;
-  factsCta: string;
   helpLead: string;
-  helpNeed: string;
+  helpInvite: string;
   helpOpened: string;
   helpReady: string;
   sentKicker: string;
@@ -44,12 +41,9 @@ export const TOUR_COPY: Record<Lang, {
   en: {
     packetKicker: "Harborside Cafe · New hire",
     packetTitle: "Welcome. How this computer works.",
-    packetFrom: "From Maria Delgado, manager",
     helpBtn: "Help me with this step",
-    factsLead: "Tap each one so you know where to look.",
-    factsCta: "I have these",
     helpLead: "Now try Help. Click the ? at the top right.",
-    helpNeed: "Click the ? first. It will not count against you.",
+    helpInvite: "Try it if you want. It will not count against you. Use it any time you feel stuck.",
     helpOpened: "Good. That is Help. Use it any time you feel stuck.",
     helpReady: "I'm ready for the job",
     sentKicker: "You're set",
@@ -68,12 +62,9 @@ export const TOUR_COPY: Record<Lang, {
   es: {
     packetKicker: "Harborside Cafe · Personal nuevo",
     packetTitle: "Bienvenida. Cómo funciona esta computadora.",
-    packetFrom: "De Maria Delgado, gerente",
     helpBtn: "Ayúdame con este paso",
-    factsLead: "Toca cada uno para saber dónde mirar.",
-    factsCta: "Ya los tengo",
     helpLead: "Ahora prueba Ayuda. Haz clic en el ? de arriba a la derecha.",
-    helpNeed: "Haz clic en el ? primero. No cuenta en tu contra.",
+    helpInvite: "Pruébalo si quieres. No cuenta en tu contra. Úsala cada vez que te trabes.",
     helpOpened: "Bien. Eso es Ayuda. Úsala cada vez que te trabes.",
     helpReady: "Estoy listo para el trabajo",
     sentKicker: "Listo",
@@ -91,34 +82,14 @@ export const TOUR_COPY: Record<Lang, {
   },
 };
 
-export const TOUR_FACTS: Record<Lang, { title: string; body: string }[]> = {
+export const TOUR_STEPS: Record<Lang, { instruction: string; targetTabKey: string }[]> = {
   en: [
-    {
-      title: "Nothing is real",
-      body: "This is practice. Wrong clicks get a friendly note, not trouble at work.",
-    },
-    {
-      title: "The white button is next",
-      body: "On your desktop, the big white button opens the next job. After a task, the blue button does the same.",
-    },
-    {
-      title: "Help and your list",
-      body: "The ? at the top is Help. The target on the bottom bar is your shift list. Neither counts against you.",
-    },
+    { instruction: "Click Mail.", targetTabKey: "mail" },
+    { instruction: "Now click Calendar.", targetTabKey: "calendar" },
   ],
   es: [
-    {
-      title: "Nada es real",
-      body: "Esto es práctica. Un clic incorrecto da una nota amable, no un problema en el trabajo.",
-    },
-    {
-      title: "El botón blanco es lo siguiente",
-      body: "En tu escritorio, el botón blanco grande abre el siguiente trabajo. Después de una tarea, el botón azul hace lo mismo.",
-    },
-    {
-      title: "Ayuda y tu lista",
-      body: "El ? de arriba es Ayuda. La diana en la barra de abajo es tu lista del turno. Ninguno cuenta en tu contra.",
-    },
+    { instruction: "Haz clic en Correo.", targetTabKey: "mail" },
+    { instruction: "Ahora haz clic en Calendario.", targetTabKey: "calendar" },
   ],
 };
 
