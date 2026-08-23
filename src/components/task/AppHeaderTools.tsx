@@ -12,6 +12,7 @@ export default function AppHeaderTools({
     <div className="flex shrink-0 items-center">
       <button
         type="button"
+        data-testid="tour-help"
         onClick={onHelp}
         title={helpLabel}
         aria-label={helpLabel}

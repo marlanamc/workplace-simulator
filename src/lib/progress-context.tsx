@@ -103,6 +103,7 @@ function saveRungMap(learnerId: string, map: RungMap) {
 
 interface ProgressValue {
   learnerId: string;
+  displayName: string;
   completedTaskKeys: TaskKey[];
   points: number;
   justEarnedPoints: number | null;
@@ -136,11 +137,13 @@ const ProgressContext = createContext<ProgressValue | null>(null);
 
 export function ProgressProvider({
   learnerId,
+  displayName,
   initialCompletedTaskKeys,
   initialCertificateTrackKeys,
   children,
 }: {
   learnerId: string;
+  displayName: string;
   initialCompletedTaskKeys: TaskKey[];
   initialCertificateTrackKeys: string[];
   children: ReactNode;
@@ -264,6 +267,7 @@ export function ProgressProvider({
     <ProgressContext.Provider
       value={{
         learnerId,
+        displayName,
         completedTaskKeys,
         points: completedTaskKeys.length * POINTS_PER_TASK,
         justEarnedPoints,

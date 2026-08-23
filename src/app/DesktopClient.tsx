@@ -207,6 +207,7 @@ export default function DesktopClient(props: {
     <WindowManagerProvider jumpTab={props.jumpTab ?? (firstSitting ? "tour" : undefined)}>
       <ProgressProvider
         learnerId={props.learnerId}
+        displayName={props.displayName}
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
       >

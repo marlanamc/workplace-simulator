@@ -18,7 +18,6 @@ export default function ShiftReviewTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("shift-review") ? "done" : "intro");
   const [beatIndex, setBeatIndex] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
-  const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("shift-review");
 
   const c = REVIEW_COPY[lang];
@@ -39,7 +38,6 @@ export default function ShiftReviewTask() {
       return;
     }
     const cleanRun = wrongCount === 0;
-    setNoHelp(cleanRun);
     if (cleanRun) {
       recordClean();
     } else {
@@ -53,7 +51,6 @@ export default function ShiftReviewTask() {
     setView("beats");
     setBeatIndex(0);
     setPicked(null);
-    setNoHelp(false);
   };
 
   return (
@@ -115,8 +112,6 @@ export default function ShiftReviewTask() {
             badgeNumber="09"
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
-            noHelp={noHelp}
-            noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>

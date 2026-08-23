@@ -24,7 +24,6 @@ export default function AccountRecoveryTask() {
   const [picker, setPicker] = useState(false);
   const [codeInput, setCodeInput] = useState("");
   const [help, setHelp] = useState(false);
-  const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("account-recovery");
 
   const c = RECOVERY_COPY[lang];
@@ -49,7 +48,6 @@ export default function AccountRecoveryTask() {
       return;
     }
     const cleanRun = wrongCount === 0;
-    setNoHelp(cleanRun);
     if (cleanRun) {
       recordClean();
     } else {
@@ -63,7 +61,6 @@ export default function AccountRecoveryTask() {
     setView("signin");
     setPassword("");
     setCodeInput("");
-    setNoHelp(false);
   };
 
   return (
@@ -160,8 +157,6 @@ export default function AccountRecoveryTask() {
             badgeNumber="10"
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
-            noHelp={noHelp}
-            noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>

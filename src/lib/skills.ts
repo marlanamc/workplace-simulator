@@ -5,7 +5,7 @@ export const SKILLS: Record<TaskKey, string> = {
   tour: "Find Help, your shift list, and Next",
   mail: "Reply with an attachment",
   "mail-read": "Find and read a message from a manager",
-  "mail-reply": "Answer my boss in my own words",
+  "mail-reply": "Write a short thank-you to my manager",
   "mail-attach": "Send a reply with a file attached",
   schedule: "Find my shift on a schedule",
   "swap-request": "Ask for a shift swap in writing",

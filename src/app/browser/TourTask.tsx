@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   TOUR_COPY,
   LESSONS,
-  EVENT_INTRO,
+  tourEventIntro,
 } from "@/lib/tasks/tour/content";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
@@ -20,17 +20,22 @@ export default function TourTask({
   startAtHelp,
   onStartWalkthrough,
 }: {
-  /** True once the step-by-step walkthrough (driven by BrowserClient) has finished. */
+  /** True once Mail + Calendar walkthrough is done and Help is next. */
   startAtHelp: boolean;
   /** Tell BrowserClient to begin the one-instruction-at-a-time walkthrough overlay. */
   onStartWalkthrough: () => void;
 }) {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
   const [view, setView] = useState<View>(
-    completedTaskKeys.includes("tour") ? "done" : startAtHelp ? "help" : "intro"
+    completedTaskKeys.includes("tour") ? "done" : startAtHelp ? "help" : "intro",
   );
   const [openedHelp, setOpenedHelp] = useState(false);
   const [help, setHelp] = useState(false);
+
+  // Walkthrough returns here for the Help beat after Mail + Calendar.
+  useEffect(() => {
+    if (startAtHelp && view === "intro") setView("help");
+  }, [startAtHelp, view]);
 
   const c = TOUR_COPY[lang];
 
@@ -46,6 +51,7 @@ export default function TourTask({
 
   const restart = () => {
     setOpenedHelp(false);
+    setView("intro");
     onStartWalkthrough();
   };
 
@@ -68,8 +74,18 @@ export default function TourTask({
       )}
 
       {view === "intro" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-white p-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.tour} onContinue={onStartWalkthrough} />
+        <div
+          className="relative min-h-0 flex-1 overflow-y-auto p-6 sm:p-10"
+          style={{
+            background:
+              "radial-gradient(900px 480px at 50% 18%, #fff8ef 0%, #f6f1e8 55%, #ebe2d4 100%)",
+          }}
+        >
+          <EventIntroCard
+            {...tourEventIntro(lang, displayName)}
+            icon={TASK_ICONS.tour}
+            onContinue={onStartWalkthrough}
+          />
         </div>
       )}
 

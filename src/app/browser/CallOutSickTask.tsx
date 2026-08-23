@@ -21,7 +21,6 @@ export default function CallOutSickTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("call-out-sick") ? "done" : "intro");
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
-  const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("call-out-sick");
 
   const c = CALL_OUT_COPY[lang];
@@ -37,7 +36,6 @@ export default function CallOutSickTask() {
       return;
     }
     const cleanRun = wrongCount === 0;
-    setNoHelp(cleanRun);
     if (cleanRun) {
       recordClean();
     } else {
@@ -50,7 +48,6 @@ export default function CallOutSickTask() {
   const restart = () => {
     setView("compose");
     setBody("");
-    setNoHelp(false);
   };
 
   return (
@@ -108,8 +105,6 @@ export default function CallOutSickTask() {
             badgeNumber="06"
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
-            noHelp={noHelp}
-            noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>

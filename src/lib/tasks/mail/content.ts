@@ -1,66 +1,51 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 
-export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
-  en: {
-    emoji: "📬",
-    kicker: "Day 1, 8:14 AM",
-    headline: "Your first message from your boss.",
-    body: "You just got to Harborside Cafe for your very first shift. Maria Delgado, the cafe manager, already needs something from you. Let's see what she wants.",
-    cta: "Open my inbox",
-  },
-  es: {
-    emoji: "📬",
-    kicker: "Día 1, 8:14 AM",
-    headline: "Tu primer mensaje de tu jefa.",
-    body: "Acabas de llegar a Harborside Cafe para tu primer turno. Maria Delgado, la gerente del café, ya necesita algo de ti. Vamos a ver qué quiere.",
-    cta: "Abrir mi bandeja",
-  },
-};
+/** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
+export type PlayableMailTask = "mail-reply" | "mail-attach";
 
-/** Day One is 3 short jobs in the same inbox: read, then reply, then attach. Each gets its own framing. */
-export const EVENT_INTRO_BY_TASK: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lang, EventIntroCopy>> = {
-  "mail-read": EVENT_INTRO,
+export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventIntroCopy>> = {
   "mail-reply": {
     en: {
-      emoji: "✍️",
-      kicker: "Job 2 of 3",
-      headline: "Now write her back.",
-      body: "You know what Maria needs. This time, answer her in your own words.",
+      emoji: "📬",
+      kicker: "Day 1, 8:14 AM · Job 1 of 2",
+      headline: "Your manager says welcome.",
+      body: "Maria Delgado runs Harborside Cafe. She sent a short hello and said to call if you need anything. Write her a thank-you back.",
       cta: "Open my inbox",
     },
     es: {
-      emoji: "✍️",
-      kicker: "Trabajo 2 de 3",
-      headline: "Ahora respóndele.",
-      body: "Ya sabes qué necesita Maria. Esta vez, contéstale con tus propias palabras.",
+      emoji: "📬",
+      kicker: "Día 1, 8:14 AM · Trabajo 1 de 2",
+      headline: "Tu gerente te da la bienvenida.",
+      body: "Maria Delgado dirige Harborside Cafe. Te envió un saludo corto y dijo que la llames si necesitas algo. Escríbele un agradecimiento.",
       cta: "Abrir mi bandeja",
     },
   },
   "mail-attach": {
     en: {
       emoji: "📎",
-      kicker: "Job 3 of 3",
-      headline: "Same reply. Now put the file in.",
-      body: "You can already answer Maria. This time, send the same kind of reply again - but attach the file before you send.",
+      kicker: "Day 1, 8:20 AM · Job 2 of 2",
+      headline: "Maria needs a file.",
+      body: "She asked for the July safety report today. First make sure you know what she needs. Then reply and attach the file.",
       cta: "Open my inbox",
     },
     es: {
       emoji: "📎",
-      kicker: "Trabajo 3 de 3",
-      headline: "Misma respuesta. Ahora agrega el archivo.",
-      body: "Ya sabes contestarle a Maria. Esta vez, envía otra respuesta parecida, pero adjunta el archivo antes de enviar.",
+      kicker: "Día 1, 8:20 AM · Trabajo 2 de 2",
+      headline: "Maria necesita un archivo.",
+      body: "Pidió el reporte de seguridad de julio para hoy. Primero confirma qué necesita. Luego responde y adjunta el archivo.",
       cta: "Abrir mi bandeja",
     },
   },
 };
 
-/** The mail-read comprehension check - no writing, just "what does she need?" */
+/** Comprehension check before the attach reply — "what does she need?" */
 export const CONFIRM_COPY: Record<Lang, {
   question: string;
   options: { label: string; correct: boolean }[];
   correctReply: string;
   wrongReply: string;
   continueLabel: string;
+  replyAfterLabel: string;
 }> = {
   en: {
     question: "What does Maria need?",
@@ -72,6 +57,7 @@ export const CONFIRM_COPY: Record<Lang, {
     correctReply: "That's it. She needs the July safety report, today.",
     wrongReply: "Read it again. Look for what she's asking for and when.",
     continueLabel: "Continue",
+    replyAfterLabel: "Reply with the file",
   },
   es: {
     question: "¿Qué necesita Maria?",
@@ -83,41 +69,28 @@ export const CONFIRM_COPY: Record<Lang, {
     correctReply: "Así es. Necesita el reporte de seguridad de julio, hoy.",
     wrongReply: "Léelo otra vez. Busca qué pide y cuándo lo necesita.",
     continueLabel: "Continuar",
+    replyAfterLabel: "Responder con el archivo",
   },
 };
 
-/** Per-variant done-screen copy - same inbox, three different finish lines. */
-export const DONE_COPY: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lang, {
+/** Per-job done-screen copy. */
+export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
   kicker: string;
   body: string;
   badgeNumber: string;
   badgeWhere: string;
 }>> = {
-  "mail-read": {
-    en: {
-      kicker: "Understood",
-      body: "You found the right email and knew what Maria was asking for. That's the first move in almost every work message.",
-      badgeNumber: "01",
-      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    },
-    es: {
-      kicker: "Entendido",
-      body: "Encontraste el correo correcto y supiste qué pedía Maria. Ese es el primer paso en casi todo mensaje de trabajo.",
-      badgeNumber: "01",
-      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    },
-  },
   "mail-reply": {
     en: {
       kicker: "Message sent",
-      body: "Maria got your reply. Next job: send that same kind of answer again — this time with the file attached.",
-      badgeNumber: "02",
+      body: "You thanked Maria. Next she will ask for a file — read what she needs, then send it attached.",
+      badgeNumber: "01",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
     es: {
       kicker: "Mensaje enviado",
-      body: "Maria recibió tu respuesta. Siguiente trabajo: envía otra respuesta parecida, esta vez con el archivo adjunto.",
-      badgeNumber: "02",
+      body: "Le agradeciste a Maria. Después te pedirá un archivo: lee qué necesita y envíalo adjunto.",
+      badgeNumber: "01",
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
   },
@@ -125,14 +98,41 @@ export const DONE_COPY: Record<"mail-read" | "mail-reply" | "mail-attach", Recor
     en: {
       kicker: "Message sent",
       body: "Maria got your reply and the file. In a real job, most asks from a manager look like this. A short answer, with the file attached.",
-      badgeNumber: "03",
+      badgeNumber: "02",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
     es: {
       kicker: "Mensaje enviado",
-      body: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un jefe: una respuesta corta con el archivo adjunto.",
-      badgeNumber: "03",
+      body: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un gerente: una respuesta corta con el archivo adjunto.",
+      badgeNumber: "02",
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
+};
+
+export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: string; reSubject: string; preview: string }>> = {
+  "mail-reply": {
+    en: {
+      subject: "Welcome to Harborside Cafe",
+      reSubject: "Re: Welcome to Harborside Cafe",
+      preview: "Glad you're here. Call me if you need anything.",
+    },
+    es: {
+      subject: "Bienvenido a Harborside Cafe",
+      reSubject: "Re: Bienvenido a Harborside Cafe",
+      preview: "Me alegra que estés aquí. Llámame si necesitas algo.",
+    },
+  },
+  "mail-attach": {
+    en: {
+      subject: "Need the July safety report today",
+      reSubject: "Re: Need the July safety report today",
+      preview: "Hi, can you send me the July safety report today?",
+    },
+    es: {
+      subject: "Necesito el reporte de seguridad de julio hoy",
+      reSubject: "Re: Necesito el reporte de seguridad de julio hoy",
+      preview: "Hola, ¿me puedes enviar hoy el reporte de seguridad de julio?",
     },
   },
 };
@@ -151,10 +151,8 @@ export const MAIL_COPY: Record<Lang, {
   reply: string;
   forward: string;
   supervisor: string;
-  emailSubject: string;
   to: string;
   subjectLabel: string;
-  reSubject: string;
   writeHere: string;
   startersLabel: string;
   send: string;
@@ -192,10 +190,8 @@ export const MAIL_COPY: Record<Lang, {
     reply: "Reply",
     forward: "Forward",
     supervisor: "Your supervisor",
-    emailSubject: "Need the July safety report today",
     to: "To",
     subjectLabel: "Subject",
-    reSubject: "Re: Need the July safety report today",
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
@@ -233,10 +229,8 @@ export const MAIL_COPY: Record<Lang, {
     reply: "Responder",
     forward: "Reenviar",
     supervisor: "Tu supervisora",
-    emailSubject: "Necesito el reporte de seguridad de julio hoy",
     to: "Para",
     subjectLabel: "Asunto",
-    reSubject: "Re: Necesito el reporte de seguridad de julio hoy",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
@@ -244,7 +238,7 @@ export const MAIL_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Respondiste a tu supervisora.",
-    doneBody: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un jefe: una respuesta corta con el archivo adjunto.",
+    doneBody: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un gerente: una respuesta corta con el archivo adjunto.",
     badgeName: "Responder con un archivo adjunto",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -262,74 +256,45 @@ export const MAIL_COPY: Record<Lang, {
   },
 };
 
-export const BODY: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lang, { plain: string[]; full: string[] }>> = {
-  // Job 1: learn what she is asking for (the report, today).
-  "mail-read": {
-    en: {
-      plain: [
-        "Hi,",
-        "Can you send me the July safety report today? Please attach the file to your reply.",
-        "Thanks,",
-        "Maria",
-      ],
-      full: [
-        "Hi,",
-        "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
-        "Please attach the PDF to your reply so I can send it along.",
-        "Thanks,",
-        "Maria",
-      ],
-    },
-    es: {
-      plain: [
-        "Hola,",
-        "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
-        "Gracias,",
-        "Maria",
-      ],
-      full: [
-        "Hola,",
-        "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
-        "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
-        "Gracias,",
-        "Maria",
-      ],
-    },
-  },
-  // Job 2: practice Reply only. No file yet — that is the next job.
+export const BODY: Record<PlayableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
+  // Job 1: welcome note — thank-you reply, no file.
   "mail-reply": {
     en: {
       plain: [
         "Hi,",
-        "Can you reply and tell me if you can get me the July safety report today?",
-        "Thanks,",
+        "Welcome to Harborside Cafe. I'm glad you're here.",
+        "Call or email me if you need anything.",
+        "See you on the floor,",
         "Maria",
       ],
       full: [
         "Hi,",
-        "Quick check first: can you reply and tell me if you can get me the July safety report today?",
-        "I'll ask you to send the file in a follow-up.",
-        "Thanks,",
-        "Maria",
+        "Welcome to the Harborside Cafe team. I'm glad you're starting with us.",
+        "If you need anything — schedule, login, or just a question — call or email me. I'm here.",
+        "Looking forward to working with you.",
+        "Maria Delgado",
+        "Cafe Manager",
       ],
     },
     es: {
       plain: [
         "Hola,",
-        "¿Me puedes responder y decirme si puedes conseguirme hoy el reporte de seguridad de julio?",
-        "Gracias,",
+        "Bienvenido a Harborside Cafe. Me alegra que estés aquí.",
+        "Llámame o escríbeme si necesitas algo.",
+        "Nos vemos en el piso,",
         "Maria",
       ],
       full: [
         "Hola,",
-        "Primero una pregunta rápida: ¿me puedes responder y decirme si puedes conseguirme hoy el reporte de seguridad de julio?",
-        "Después te pediré que envíes el archivo.",
-        "Gracias,",
-        "Maria",
+        "Bienvenido al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
+        "Si necesitas algo — horario, acceso o solo una pregunta — llámame o escríbeme. Aquí estoy.",
+        "Espero trabajar contigo.",
+        "Maria Delgado",
+        "Gerente del café",
       ],
     },
   },
-  // Job 3: same ask, now the file must go in.
+  // Job 2: safety report — confirm what she needs, then attach.
   "mail-attach": {
     en: {
       plain: [
@@ -364,28 +329,48 @@ export const BODY: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lan
   },
 };
 
-export const STARTERS: Record<"mail-reply" | "mail-attach", Record<Lang, string[]>> = {
+export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
   "mail-reply": {
-    en: ["Hi Maria, yes — I can get you the July safety report today.", "Yes, I can send it today.", "I will get that to you today.", "Let me know if you need anything else."],
-    es: ["Hola Maria, sí — te puedo conseguir hoy el reporte de seguridad de julio.", "Sí, puedo enviarlo hoy.", "Te lo mando hoy.", "Avísame si necesitas algo más."],
+    en: [
+      "Hi Maria, thank you for the welcome.",
+      "Thanks so much. I'm glad to be here.",
+      "Thank you. I'll call if I need anything.",
+      "Looking forward to working with you too.",
+    ],
+    es: [
+      "Hola Maria, gracias por la bienvenida.",
+      "Muchas gracias. Me alegra estar aquí.",
+      "Gracias. Te llamo si necesito algo.",
+      "También espero trabajar contigo.",
+    ],
   },
   "mail-attach": {
-    en: ["Hi Maria, here is the July safety report.", "Yes, I can send it today.", "I attached the file to this email.", "Let me know if you need anything else."],
-    es: ["Hola Maria, aquí está el reporte de seguridad de julio.", "Sí, puedo enviarlo hoy.", "Adjunté el archivo a este correo.", "Avísame si necesitas algo más."],
+    en: [
+      "Hi Maria, here is the July safety report.",
+      "Yes, I can send it today.",
+      "I attached the file to this email.",
+      "Let me know if you need anything else.",
+    ],
+    es: [
+      "Hola Maria, aquí está el reporte de seguridad de julio.",
+      "Sí, puedo enviarlo hoy.",
+      "Adjunté el archivo a este correo.",
+      "Avísame si necesitas algo más.",
+    ],
   },
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row. That is who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado. She is your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
-    { t: "Reading a work email", s: ["Look for what the person is asking you to do.", "Look for when they need it.", "Here, Maria wants the July safety report today, attached to your reply."], tip: "You can read it twice. Nobody sees how long you take." },
+    { t: "Reading a work email", s: ["Look for what the person is asking you to do.", "Look for when they need it.", "Sometimes they just want a reply. Sometimes they want a file attached."], tip: "You can read it twice. Nobody sees how long you take." },
     { t: "Reply vs. Forward", s: ["Reply sends your message back to the person who wrote to you.", "Forward sends their email to somebody else.", "Maria wrote to you, so click Reply."], tip: "If you're answering the person who emailed you, it's always Reply." },
     { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens showing your files. Downloaded files are usually in Downloads.", "Click the file name safety-report-july.pdf to attach it."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
     { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached? Do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
   ],
   es: [
     { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila. Esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado. Ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
-    { t: "Leer un correo del trabajo", s: ["Busca qué te pide hacer la persona.", "Busca cuándo lo necesita.", "Aquí, Maria quiere el reporte de seguridad de julio hoy, adjunto en tu respuesta."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
+    { t: "Leer un correo del trabajo", s: ["Busca qué te pide hacer la persona.", "Busca cuándo lo necesita.", "A veces solo quiere una respuesta. A veces quiere un archivo adjunto."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
     { t: "Responder o Reenviar", s: ["Responder envía tu mensaje a la persona que te escribió.", "Reenviar manda su correo a otra persona.", "Maria te escribió a ti, así que haz clic en Responder."], tip: "Si contestas a quien te escribió, siempre es Responder." },
     { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus archivos. Lo descargado suele estar en Descargas.", "Haz clic en safety-report-july.pdf para adjuntarlo."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
     { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto? ¿Ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
@@ -404,10 +389,7 @@ export const FILES: PickableItem[] = [
     wrongHint: wrongHint("That one is June. Maria asked for July.", "Ese es de junio. Maria pidió el de julio.") },
 ];
 
-export const EMAILS = [
-  { key: "maria", from: "Maria Delgado", initials: "MD", color: "#1a73e8", time: "8:14 AM", isTarget: true, unread: true,
-    subject: { en: "Need the July safety report today", es: "Necesito el reporte de seguridad de julio hoy" },
-    preview: { en: "Hi, can you send me the July safety report today?", es: "Hola, ¿me puedes enviar hoy el reporte de seguridad de julio?" } },
+const DECOY_EMAILS = [
   { key: "darnell", from: "Darnell Washington", initials: "DW", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
     preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
@@ -438,3 +420,52 @@ export const EMAILS = [
     wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
 
+type InboxEmail = (typeof DECOY_EMAILS)[number] | {
+  key: string;
+  from: string;
+  initials: string;
+  color: string;
+  time: string;
+  isTarget: boolean;
+  unread: boolean;
+  subject: Localized;
+  preview: Localized;
+  wrongHint?: Localized;
+};
+
+/** Inbox rows for the active Day One job. Job 2 keeps the welcome mail as a non-target. */
+export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
+  const welcomeMeta = SUBJECT_BY_TASK["mail-reply"];
+  const safetyMeta = SUBJECT_BY_TASK["mail-attach"];
+  const welcome: InboxEmail = {
+    key: "maria-welcome",
+    from: "Maria Delgado",
+    initials: "MD",
+    color: "#1a73e8",
+    time: "8:14 AM",
+    isTarget: task === "mail-reply",
+    unread: task === "mail-reply",
+    subject: { en: welcomeMeta.en.subject, es: welcomeMeta.es.subject },
+    preview: { en: welcomeMeta.en.preview, es: welcomeMeta.es.preview },
+    wrongHint:
+      task === "mail-attach"
+        ? wrongHint(
+            "That's Maria's welcome note. Open the newer email about the July safety report.",
+            "Esa es la bienvenida de Maria. Abre el correo más reciente sobre el reporte de seguridad de julio.",
+          )
+        : undefined,
+  };
+  const safety: InboxEmail = {
+    key: "maria-safety",
+    from: "Maria Delgado",
+    initials: "MD",
+    color: "#1a73e8",
+    time: "8:20 AM",
+    isTarget: true,
+    unread: true,
+    subject: { en: safetyMeta.en.subject, es: safetyMeta.es.subject },
+    preview: { en: safetyMeta.en.preview, es: safetyMeta.es.preview },
+  };
+  if (task === "mail-reply") return [welcome, ...DECOY_EMAILS];
+  return [safety, welcome, ...DECOY_EMAILS];
+}

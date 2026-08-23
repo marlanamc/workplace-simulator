@@ -508,19 +508,21 @@ export default function BrowserClient() {
           tabColors={TAB_COLORS}
           onAdvance={() => {
             const steps = TOUR_STEPS[lang];
-            if (tourWalkthroughStep + 1 >= steps.length) {
+            const next = tourWalkthroughStep + 1;
+            if (next >= steps.length) {
               setTourWalkthroughStep(null);
               setTourWalkthroughDone(true);
-              // Each walkthrough step replaces the previously active bookmark
-              // tab (goToBookmark) - by the last step the tab strip holds
-              // whatever was clicked, not "tour". Reset to just the tour tab
-              // rather than append, so no duplicate/leftover tabs remain.
+              return;
+            }
+            const nextStep = steps[next];
+            // Help lives on the Welcome packet — open that tab before spotlighting ?.
+            if (nextStep.targetTestId === "tour-help") {
               const tourDef = BASE_TABS.find((t) => t.key === "tour")!;
               setOpenTabs([tourDef]);
               setActiveTab("tour");
-            } else {
-              setTourWalkthroughStep(tourWalkthroughStep + 1);
+              setTourWalkthroughDone(true);
             }
+            setTourWalkthroughStep(next);
           }}
         />
       )}

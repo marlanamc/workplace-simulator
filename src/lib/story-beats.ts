@@ -30,8 +30,8 @@ export const HANDOFF_CTA: Record<TaskKey, Localized> = {
   tour: { en: "Open Welcome", es: "Abrir Bienvenida" },
   mail: { en: "Open Mail", es: "Abrir correo" },
   "mail-read": { en: "Open Mail", es: "Abrir correo" },
-  "mail-reply": { en: "Next: Write her back", es: "Siguiente: Contéstale" },
-  "mail-attach": { en: "Next: Attach the file", es: "Siguiente: Adjunta el archivo" },
+  "mail-reply": { en: "Open Mail", es: "Abrir correo" },
+  "mail-attach": { en: "Next: Send the report", es: "Siguiente: Envía el reporte" },
   schedule: { en: "Next: Open Portal", es: "Siguiente: Abrir Portal" },
   "swap-request": { en: "Next: Ask for a swap", es: "Siguiente: Pide un cambio" },
   "call-out-sick": { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
@@ -58,8 +58,8 @@ export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
   tour: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
   mail: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
   "mail-read": { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
-  "mail-reply": { en: "Tuesday, 8:15 AM. You know what she needs.", es: "Martes, 8:15 AM. Ya sabes qué necesita." },
-  "mail-attach": { en: "Tuesday, 8:16 AM. Same reply, one more step.", es: "Martes, 8:16 AM. Misma respuesta, un paso más." },
+  "mail-reply": { en: "Tuesday, 8:14 AM. Maria says welcome.", es: "Martes, 8:14 AM. Maria te da la bienvenida." },
+  "mail-attach": { en: "Tuesday, 8:20 AM. She needs a file.", es: "Martes, 8:20 AM. Necesita un archivo." },
   schedule: { en: "Tuesday morning.", es: "Martes por la mañana." },
   "swap-request": { en: "Wednesday. Two shifts overlap.", es: "Miércoles. Dos turnos se cruzan." },
   "call-out-sick": { en: "Thursday morning. You feel sick.", es: "Jueves por la mañana. Te sientes mal." },
@@ -150,9 +150,7 @@ const STORY_MAILS: InboxRow[] = [
     time: "8:22 AM",
     unread: true,
     story: true,
-    // Was "mail" (the old bundled task) - now fires after the last of the
-    // 3 split Day-One jobs, so the reply still lands once the full arc
-    // (read -> reply -> attach) is actually done.
+    // Fires after the last Day One mail job (welcome thank-you + safety attach).
     unlockAfter: "mail-attach",
     subject: { en: "Got it. Thank you", es: "Lo tengo. Gracias" },
     preview: { en: "Thanks for sending this so fast.", es: "Gracias por enviarlo tan rápido." },

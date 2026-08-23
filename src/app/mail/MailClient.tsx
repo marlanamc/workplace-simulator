@@ -8,10 +8,12 @@ import {
   STARTERS,
   LESSONS,
   FILES,
-  EMAILS,
+  emailsForTask,
+  SUBJECT_BY_TASK,
   EVENT_INTRO_BY_TASK,
   CONFIRM_COPY,
   DONE_COPY,
+  type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
@@ -30,7 +32,7 @@ import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import { sortInboxByTime, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
 import { speakFromClick, speakText, stopSpeaking } from "@/lib/read-aloud";
-import { firstPersonSkill } from "@/lib/skills";
+import { firstPersonSkill, SKILLS } from "@/lib/skills";
 import type { Localized } from "@/lib/task-types";
 import { useWindowManager } from "@/lib/window-manager";
 import BridgeOutCard from "@/components/task/BridgeOutCard";
@@ -40,24 +42,20 @@ const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" 
 const SHOW_ME_LABEL: Localized<string> = { en: "This one. Click it.", es: "Este. Haz clic aquí." };
 
 type View = "intro" | "empty" | "read" | "confirm" | "compose" | "done" | "story";
-type MailTask = "mail-read" | "mail-reply" | "mail-attach";
-const MAIL_TASK_ORDER: MailTask[] = ["mail-read", "mail-reply", "mail-attach"];
+type MailTask = PlayableMailTask;
+const MAIL_TASK_ORDER: MailTask[] = ["mail-reply", "mail-attach"];
 
 const RIGHT_NOW_BY_TASK: Record<MailTask, Localized<string>[]> = {
-  "mail-read": [
-    { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
-    { en: "Read Maria's email, then click Continue.", es: "Lee el correo de Maria y haz clic en Continuar." },
-  ],
   "mail-reply": [
     { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
-    { en: "Read Maria's email, then click Reply.", es: "Lee el correo de Maria y haz clic en Responder." },
-    { en: "Write your reply, then click Send.", es: "Escribe tu respuesta y haz clic en Enviar." },
+    { en: "Read Maria's welcome, then click Reply.", es: "Lee la bienvenida de Maria y haz clic en Responder." },
+    { en: "Write a short thank-you, then click Send.", es: "Escribe un agradecimiento corto y haz clic en Enviar." },
   ],
   "mail-attach": [
-    { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
-    { en: "Read Maria's email, then click Reply.", es: "Lee el correo de Maria y haz clic en Responder." },
-    { en: "Write your reply, then click Attach file.", es: "Escribe tu respuesta y haz clic en Adjuntar archivo." },
-    { en: "Click Send to finish.", es: "Haz clic en Enviar para terminar." },
+    { en: "Find Maria's email about the safety report. Click it.", es: "Busca el correo de Maria sobre el reporte. Haz clic en él." },
+    { en: "Read Maria's email, then click Continue.", es: "Lee el correo de Maria y haz clic en Continuar." },
+    { en: "What does she need? Pick the right answer.", es: "¿Qué necesita? Elige la respuesta correcta." },
+    { en: "Write your reply, attach the file, then click Send.", es: "Escribe tu respuesta, adjunta el archivo y haz clic en Enviar." },
   ],
 };
 
@@ -65,7 +63,7 @@ function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
 }
 
-/** Day One's 3 jobs share one inbox - whichever of the 3 isn't done yet is the one running now. */
+/** Day One's 2 jobs share one inbox - whichever isn't done yet is the one running now. */
 function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
   return MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
 }
@@ -77,7 +75,7 @@ export default function MailClient() {
   // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
   // not unmounted) across desktop navigation, so a reactive lookup here would
   // yank the done screen out from under whichever job just finished. The
-  // learner moves to the next of Day One's 3 jobs by explicitly reopening
+  // learner moves to the next of Day One's 2 jobs by explicitly reopening
   // Mail (the "Next job" button on the done screen, same as any other task) -
   // that's the `browserTabToken` bump below, mirroring PortalPage's own
   // `portalSectionToken` re-open pattern.
@@ -90,7 +88,6 @@ export default function MailClient() {
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
-  const [noHelp, setNoHelp] = useState(false);
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
@@ -106,19 +103,19 @@ export default function MailClient() {
     setBody("");
     setAttached(false);
     setConfirmPick(null);
-    setNoHelp(false);
     setBridgeOutEligible(false);
   }
 
   const c = MAIL_COPY[lang];
   const cc = CONFIRM_COPY[lang];
+  const subjectMeta = SUBJECT_BY_TASK[activeMailTask][lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
   const mailDone = completedTaskKeys.includes(activeMailTask);
   // While a Day One job is running (first time OR a replay), the inbox shows
   // the story as it stood at that moment — no future Maria mails flooding in.
   const inbox = sortInboxByTime([
     ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
-    ...EMAILS,
+    ...emailsForTask(activeMailTask),
   ]);
   const unreadCount = inbox.filter((m) => {
     if ("story" in m && m.story) {
@@ -146,7 +143,7 @@ export default function MailClient() {
     });
 
   const startReply = () => {
-    if (activeMailTask === "mail-read") {
+    if (activeMailTask === "mail-attach") {
       setView("confirm");
       advance(2);
       return;
@@ -174,7 +171,6 @@ export default function MailClient() {
     const justReachedRungFour = rung === 3;
     setView("done");
     setStep(5);
-    setNoHelp(cleanRun);
     setBridgeOutEligible(justReachedRungFour);
     if (cleanRun) {
       recordClean();
@@ -190,7 +186,12 @@ export default function MailClient() {
       recordWrong({ title: T("Not quite.", "No es así."), body: cc.wrongReply });
       return;
     }
-    finish("read_managers_email");
+    advance(3);
+  };
+
+  const startAttachReply = () => {
+    setView("compose");
+    advance(3);
   };
 
   const trySend = () => {
@@ -216,7 +217,6 @@ export default function MailClient() {
     setHelp(false);
     setPicker(false);
     setOpenStory(null);
-    setNoHelp(false);
     setBridgeOutEligible(false);
   };
 
@@ -366,21 +366,25 @@ export default function MailClient() {
               const rightNowIndex =
                 view === "empty"
                   ? 0
-                  : view === "read" || view === "confirm"
+                  : view === "read"
                     ? 1
-                    : needsAttach
-                      ? attached
+                    : view === "confirm"
+                      ? 2
+                      : needsAttach
                         ? Math.min(3, steps.length - 1)
-                        : 2
-                      : Math.min(2, steps.length - 1);
+                        : Math.min(2, steps.length - 1);
               const showMeId =
                 view === "empty"
                   ? "maria-row"
-                  : view === "read" || view === "confirm"
+                  : view === "read"
                     ? "reply-button"
-                    : needsAttach && !attached
-                      ? "attach-button"
-                      : "send-button";
+                    : view === "confirm"
+                      ? confirmPick && cc.options.some((o) => o.correct && o.label === confirmPick)
+                        ? "reply-after-confirm"
+                        : "confirm-correct"
+                      : needsAttach && !attached
+                        ? "attach-button"
+                        : "send-button";
               return (
                 <RightNowBar
                   icon={TASK_ICONS.mail}
@@ -413,7 +417,7 @@ export default function MailClient() {
 
             {(view === "read" || view === "confirm" || view === "compose") && (
               <div className="px-6 py-4 sm:px-8">
-                <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{c.emailSubject}</h2>
+                <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{subjectMeta.subject}</h2>
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a73e8] text-[14px] font-medium text-white">
                     MD
@@ -424,7 +428,9 @@ export default function MailClient() {
                         <span className="text-[14px] font-medium">Maria Delgado</span>
                         <span className="ml-1 text-[12px] text-[#5f6368]">&lt;maria.delgado@harborsidecafe.com&gt;</span>
                       </div>
-                      <div className="text-[12px] text-[#5f6368]">8:14 AM</div>
+                      <div className="text-[12px] text-[#5f6368]">
+                        {activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM"}
+                      </div>
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
@@ -442,9 +448,9 @@ export default function MailClient() {
                       onClick={startReply}
                       className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
                     >
-                      {activeMailTask === "mail-read" ? cc.continueLabel : c.reply}
+                      {activeMailTask === "mail-attach" ? cc.continueLabel : c.reply}
                     </button>
-                    {activeMailTask !== "mail-read" && (
+                    {activeMailTask === "mail-reply" && (
                       <button
                         onClick={wrongForward}
                         className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
@@ -462,6 +468,7 @@ export default function MailClient() {
                       {cc.options.map((opt) => (
                         <button
                           key={opt.label}
+                          data-showme={opt.correct ? "confirm-correct" : undefined}
                           onClick={() => pickConfirm(opt)}
                           className={`rounded-xl border px-4 py-3 text-left text-[14px] font-medium cursor-pointer ${
                             confirmPick === opt.label
@@ -475,6 +482,18 @@ export default function MailClient() {
                         </button>
                       ))}
                     </div>
+                    {confirmPick && cc.options.some((o) => o.correct && o.label === confirmPick) && (
+                      <div className="mt-4 flex flex-col gap-3">
+                        <p className="text-[14px] text-[#1e8e3e]">{cc.correctReply}</p>
+                        <button
+                          data-showme="reply-after-confirm"
+                          onClick={startAttachReply}
+                          className="inline-flex min-h-[40px] w-fit items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
+                        >
+                          {cc.replyAfterLabel}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -486,7 +505,7 @@ export default function MailClient() {
                     </div>
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>
-                      <span>{c.reSubject}</span>
+                      <span>{subjectMeta.reSubject}</span>
                     </div>
                     <textarea
                       value={body}
@@ -500,7 +519,7 @@ export default function MailClient() {
                     <div className="flex flex-wrap items-center gap-2 px-4 pb-2">
                       <NeedAStart
                         lang={lang}
-                        starters={STARTERS[activeMailTask === "mail-attach" ? "mail-attach" : "mail-reply"][lang]}
+                        starters={STARTERS[activeMailTask][lang]}
                         onPick={(s) => {
                           setBody((b) => (b ? b + " " : "") + s);
                           advance(3);
@@ -599,10 +618,8 @@ export default function MailClient() {
                   title={firstPersonSkill(activeMailTask)}
                   body={dc.body}
                   badgeNumber={dc.badgeNumber}
-                  badgeName={c.badgeName}
+                  badgeName={SKILLS[activeMailTask]}
                   badgeWhere={dc.badgeWhere}
-                  noHelp={noHelp}
-                  noHelpLabel={T("You did this with no help", "Lo hiciste sin ayuda")}
                 />
                 {showBridgeOut && (
                   <BridgeOutCard

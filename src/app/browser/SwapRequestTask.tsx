@@ -25,7 +25,6 @@ export default function SwapRequestTask() {
   const [newDate, setNewDate] = useState("");
   const [reason, setReason] = useState("");
   const [help, setHelp] = useState(false);
-  const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
 
   const c = SWAP_COPY[lang];
@@ -46,7 +45,6 @@ export default function SwapRequestTask() {
       return;
     }
     const cleanRun = wrongCount === 0;
-    setNoHelp(cleanRun);
     if (cleanRun) {
       recordClean();
     } else {
@@ -61,7 +59,6 @@ export default function SwapRequestTask() {
     setShift("");
     setNewDate("");
     setReason("");
-    setNoHelp(false);
   };
 
   return (
@@ -147,8 +144,6 @@ export default function SwapRequestTask() {
             badgeNumber="05"
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
-            noHelp={noHelp}
-            noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>

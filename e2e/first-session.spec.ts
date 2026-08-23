@@ -20,23 +20,37 @@ async function signUp(page: Page, name: string) {
 }
 
 test("first session: sign up, finish the walkthrough, see the next job", async ({ page }) => {
-  await signUp(page, `E2e ${Date.now()}`);
+  const name = `E2e ${Date.now()}`;
+  await signUp(page, name);
 
   // A brand-new learner never sees a bare desktop — the story welcomes them.
-  await expect(
-    page.getByRole("heading", { name: "Welcome to Harborside Cafe!", exact: true }),
-  ).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole("heading", { name: new RegExp(`Welcome ${name}`) })).toBeVisible({
+    timeout: 20_000,
+  });
+  await expect(page.getByText("Congrats on your new role at Harborside Cafe!")).toBeVisible();
   await page.getByRole("button", { name: "Show me around" }).click();
 
   // One instruction at a time; it advances only on the real click.
   await expect(page.getByText("Click Mail.")).toBeVisible();
   await page.getByTestId("bookmark-mail").click();
 
+  // Pause on Mail so they notice it is their work email.
+  await expect(page.getByText("This is your work email.", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Got it" }).click();
+
   await expect(page.getByText("Now click Calendar.")).toBeVisible();
   await page.getByTestId("bookmark-calendar").click();
 
-  // Help phase: finishing is allowed without opening Help.
-  await expect(page.getByText("Now try Help.", { exact: false })).toBeVisible();
+  // Pause on Calendar so they actually see it.
+  await expect(page.getByText("This is your work calendar.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Open Calendar").or(page.getByText("Maria put a meeting"))).toBeVisible();
+  await page.getByRole("button", { name: "Got it" }).click();
+
+  // Spotlight the real Help control (not "top right" prose).
+  await expect(page.getByText("Click the ? for Help.", { exact: false })).toBeVisible();
+  await page.getByTestId("tour-help").click();
+  await expect(page.getByText("That is Help.", { exact: false })).toBeVisible();
+
   await page.getByRole("button", { name: "I'm ready for the job" }).click();
 
   // Level 0 done — the level-up celebration takes over, and its one button
@@ -49,10 +63,11 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 });
 
 test("studio time machine teleports one account to a later level", async ({ page }) => {
-  await signUp(page, `E2e Tm ${Date.now()}`);
-  await expect(
-    page.getByRole("heading", { name: "Welcome to Harborside Cafe!", exact: true }),
-  ).toBeVisible({ timeout: 20_000 });
+  const name = `E2e Tm ${Date.now()}`;
+  await signUp(page, name);
+  await expect(page.getByRole("heading", { name: new RegExp(`Welcome ${name}`) })).toBeVisible({
+    timeout: 20_000,
+  });
 
   await page.goto("/studio");
   await page.getByRole("button", { name: "Start of Payday & Trouble" }).click();

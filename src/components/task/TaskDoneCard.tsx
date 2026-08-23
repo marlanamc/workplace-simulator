@@ -1,9 +1,6 @@
-import { Sparkles } from "lucide-react";
-
 /**
- * Per-task completion is a quiet, 2-second moment - a check icon, not
- * confetti. Confetti is reserved for the bigger certificate/promotion
- * moments (TrackCelebration, LevelUpCelebration).
+ * Per-task completion is a quiet moment - a check, a skill name, and Next.
+ * Confetti stays reserved for bigger certificate/promotion celebrations.
  */
 export default function TaskDoneCard({
   kicker,
@@ -12,8 +9,6 @@ export default function TaskDoneCard({
   badgeNumber,
   badgeName,
   badgeWhere,
-  noHelp,
-  noHelpLabel = "You did this with no help",
 }: {
   kicker: string;
   title: string;
@@ -21,8 +16,6 @@ export default function TaskDoneCard({
   badgeNumber: string;
   badgeName: string;
   badgeWhere: string;
-  noHelp?: boolean;
-  noHelpLabel?: string;
 }) {
   return (
     <div>
@@ -50,13 +43,6 @@ export default function TaskDoneCard({
           <div className="mt-0.5 text-[13px] text-[var(--text-secondary)]">{badgeWhere}</div>
         </div>
       </div>
-
-      {noHelp && (
-        <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-[var(--surface-muted)] px-3.5 py-2 text-[14px] font-medium text-[var(--text-secondary)]">
-          <Sparkles size={16} strokeWidth={2.25} aria-hidden />
-          {noHelpLabel}
-        </div>
-      )}
     </div>
   );
 }

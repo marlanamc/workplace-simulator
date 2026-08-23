@@ -14,6 +14,8 @@ export interface EventIntroCopy {
   emoji: string;
   kicker: string;
   headline: string;
+  /** Optional second headline line under the main welcome. */
+  subheadline?: string;
   body: string;
   cta: string;
 }

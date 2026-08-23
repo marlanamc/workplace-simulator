@@ -24,7 +24,7 @@ export const TRACKS: Track[] = [
     key: "starter",
     title: "Getting Started",
     subtitle: "Your first jobs on shift",
-    taskKeys: ["mail-read", "mail-reply", "mail-attach"],
+    taskKeys: ["mail-reply", "mail-attach"],
     awardEmoji: "☕",
   },
   {
@@ -192,8 +192,8 @@ export const LEVELS: Level[] = [
     key: "level1",
     title: "Level 1: Day One",
     trackKeys: ["starter"],
-    // Still the Mail app - the split into 3 granular jobs (mail-read,
-    // mail-reply, mail-attach) all happen inside it. If a future build
+    // Still the Mail app - Day One is 2 jobs in the same inbox (welcome
+    // thank-you, then safety report with attach). If a future build
     // splits mail into separate simulated moments, revisit this.
     firstTabKey: "mail",
     levelUp: {
@@ -584,18 +584,18 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
     built: true,
   },
   "mail-reply": {
-    label: { en: "Answer your supervisor", es: "Contesta a tu supervisora" },
+    label: { en: "Thank your manager", es: "Agradece a tu gerente" },
     dispatch: {
-      en: "You know what she needs. Write her back.",
-      es: "Ya sabes qué necesita. Escríbele.",
+      en: "Maria says welcome. Write her a short thank-you.",
+      es: "Maria te da la bienvenida. Escríbele un agradecimiento corto.",
     },
     built: true,
   },
   "mail-attach": {
-    label: { en: "Send the reply with the file", es: "Envía la respuesta con el archivo" },
+    label: { en: "Send the report with the file", es: "Envía el reporte con el archivo" },
     dispatch: {
-      en: "Same reply. Now put the file in before you send.",
-      es: "La misma respuesta. Ahora adjunta el archivo antes de enviar.",
+      en: "Maria needs the July safety report. Read what she asks, then attach it.",
+      es: "Maria necesita el reporte de julio. Lee qué pide y adjúntalo.",
     },
     built: true,
   },

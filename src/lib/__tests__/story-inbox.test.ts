@@ -17,8 +17,8 @@ const FAR_ALONG: TaskKey[] = LEVELS.flatMap(taskKeysForLevel).slice(
 );
 
 describe("storyMailsUpTo", () => {
-  it("replaying mail-read shows only the tour mail, not the future", () => {
-    const mails = storyMailsUpTo("mail-read", FAR_ALONG, {});
+  it("replaying mail-reply shows only the tour mail, not the future", () => {
+    const mails = storyMailsUpTo("mail-reply", FAR_ALONG, {});
     expect(mails.map((m) => m.key)).toEqual(["story-tour"]);
   });
 
@@ -29,8 +29,8 @@ describe("storyMailsUpTo", () => {
   });
 
   it("a first-time learner mid-Day-One sees the same thing as a replayer", () => {
-    const firstTimer = storyMailsUpTo("mail-read", ["tour"], {});
-    const replayer = storyMailsUpTo("mail-read", FAR_ALONG, {});
+    const firstTimer = storyMailsUpTo("mail-reply", ["tour"], {});
+    const replayer = storyMailsUpTo("mail-reply", FAR_ALONG, {});
     expect(replayer.map((m) => m.key)).toEqual(firstTimer.map((m) => m.key));
   });
 

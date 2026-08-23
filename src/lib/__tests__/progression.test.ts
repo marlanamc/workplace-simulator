@@ -47,7 +47,7 @@ describe("the whole game can be walked start to finish", () => {
 
   it("a learner with job progress is never pulled back to Level 0", () => {
     // Historical accounts may have job tasks done but not the tour.
-    const midGame: TaskKey[] = ["mail-read", "mail-reply"];
+    const midGame: TaskKey[] = ["mail-reply"];
     expect(activeTrack(midGame).key).not.toBe("orientation");
     expect(nextHandoff(midGame)?.taskKey).toBe("mail-attach");
   });
@@ -114,8 +114,8 @@ describe("level progression", () => {
 
   it("nextTaskInTrack walks a track in order", () => {
     const starter = TRACKS.find((t) => t.key === "starter")!;
-    expect(nextTaskInTrack(starter, [])).toBe("mail-read");
-    expect(nextTaskInTrack(starter, ["mail-read"])).toBe("mail-reply");
+    expect(nextTaskInTrack(starter, [])).toBe("mail-reply");
+    expect(nextTaskInTrack(starter, ["mail-reply"])).toBe("mail-attach");
     expect(nextTaskInTrack(starter, [...starter.taskKeys])).toBeNull();
   });
 });
