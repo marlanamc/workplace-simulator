@@ -319,7 +319,7 @@ export default function LoginForm({ next }: { next: string }) {
   return (
     <div className="relative min-h-screen overflow-hidden text-white">
       <div className="fixed inset-0 -z-10">
-        <LoginWallpaper dimmed={unlocking || adding} />
+        <LoginWallpaper dimmed={Boolean(unlocking || adding)} />
       </div>
 
       <div className="relative flex min-h-screen flex-col px-10 pt-10" style={{ paddingBottom: 132 }}>

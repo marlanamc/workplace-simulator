@@ -13,7 +13,6 @@ import {
   WRONG_RENAME_HINT,
   WRONG_EDIT_HINT,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   EVENT_INTRO,
   type DriveFile,
 } from "@/lib/tasks/files/content";
@@ -22,7 +21,6 @@ import SettingsPopover from "@/components/task/SettingsPopover";
 import { speakFromClick } from "@/lib/read-aloud";
 import { levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -53,7 +51,6 @@ export default function FilesTask() {
   const [folder, setFolder] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [permission, setPermission] = useState<"view" | "edit" | null>(null);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   // A plain ref, not state: this only gates whether a toast fires, so it
   // doesn't need to trigger a re-render on its own.
@@ -136,7 +133,6 @@ export default function FilesTask() {
     setFolder(null);
     setRenameValue("");
     setPermission(null);
-    setConfidence(null);
     messyWrongCount.current = 0;
   };
 
@@ -217,12 +213,6 @@ export default function FilesTask() {
               badgeNumber="08"
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
-            />
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
             />
             <TaskDoneActions
               tryAgainLabel={c.tryAgain}
@@ -396,7 +386,7 @@ export default function FilesTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

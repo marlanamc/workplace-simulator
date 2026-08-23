@@ -9,11 +9,9 @@ import {
   MAIL_STARTERS,
   HINTS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   replyIsSafe,
 } from "@/lib/tasks/priority-call/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -37,7 +35,6 @@ export default function PriorityCallTask() {
   const [calDone, setCalDone] = useState(false);
   const [reply, setReply] = useState("");
   const [coverKey, setCoverKey] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const c = PRIORITY_COPY[lang];
@@ -88,7 +85,6 @@ export default function PriorityCallTask() {
     setCalDone(false);
     setReply("");
     setCoverKey(null);
-    setConfidence(null);
   };
 
   return (
@@ -235,7 +231,6 @@ export default function PriorityCallTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck question={c.confidenceQ} options={CONFIDENCE_OPTIONS[lang]} selected={confidence} onSelect={setConfidence} />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -249,7 +244,7 @@ export default function PriorityCallTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

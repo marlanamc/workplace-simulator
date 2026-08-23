@@ -4,8 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { SCHEDULE } from "@/lib/tasks/schedule/content";
-import { EVENT_INTRO, SWAP_COPY, CONFIDENCE_OPTIONS } from "@/lib/tasks/swap-request/content";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import { EVENT_INTRO, SWAP_COPY } from "@/lib/tasks/swap-request/content";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -25,7 +24,6 @@ export default function SwapRequestTask() {
   const [shift, setShift] = useState("");
   const [newDate, setNewDate] = useState("");
   const [reason, setReason] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
@@ -63,7 +61,6 @@ export default function SwapRequestTask() {
     setShift("");
     setNewDate("");
     setReason("");
-    setConfidence(null);
     setNoHelp(false);
   };
 
@@ -153,12 +150,6 @@ export default function SwapRequestTask() {
             noHelp={noHelp}
             noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
-          <ConfidenceCheck
-            question={c.confidenceQ}
-            options={CONFIDENCE_OPTIONS[lang]}
-            selected={confidence}
-            onSelect={setConfidence}
-          />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
@@ -178,7 +169,7 @@ export default function SwapRequestTask() {
         gotItLabel={lang === "en" ? "Got it. Back to my task" : "Entendido. Volver a mi tarea"}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

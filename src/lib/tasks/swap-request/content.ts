@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang } from "@/lib/task-types";
+import type { EventIntroCopy, Lang } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -31,7 +31,6 @@ export const SWAP_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
 }> = {
@@ -49,7 +48,6 @@ export const SWAP_COPY: Record<Lang, {
     doneBody: "Maria will see this on her end and approve or suggest another day. You don't have to wait by the computer.",
     badgeName: "Request a shift swap",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about doing this at work tomorrow?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
   },
@@ -67,21 +65,8 @@ export const SWAP_COPY: Record<Lang, {
     doneBody: "Maria verá esto y lo aprobará o sugerirá otro día. No tienes que esperar frente a la computadora.",
     badgeName: "Pedir un cambio de turno",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes de hacer esto mañana en el trabajo?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
   },
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help. Use the Next button below to keep going." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Usa el botón de Siguiente abajo para seguir." },
-  ],
-};

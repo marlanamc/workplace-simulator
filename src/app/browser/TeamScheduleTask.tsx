@@ -6,7 +6,6 @@ import {
   TEAM_SCHEDULE_COPY,
   STARTERS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   EVENT_INTRO,
   WRONG_EMAIL_HINT,
   EMPTY_EMAIL_HINT,
@@ -24,7 +23,6 @@ import {
   type DayKey,
 } from "@/lib/tasks/crew-week";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -73,7 +71,6 @@ export default function TeamScheduleTask() {
   const [coverKey, setCoverKey] = useState<string | null>(null);
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "G" });
   const [body, setBody] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
 
@@ -100,7 +97,6 @@ export default function TeamScheduleTask() {
     setView("home");
     setCoverKey(null);
     setBody("");
-    setConfidence(null);
   };
 
   const notYet = () =>
@@ -425,12 +421,6 @@ export default function TeamScheduleTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
-            />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -444,7 +434,7 @@ export default function TeamScheduleTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

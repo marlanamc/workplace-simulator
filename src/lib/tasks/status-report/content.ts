@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -49,7 +49,6 @@ export const STATUS_REPORT_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -85,7 +84,6 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     doneBody: `The sheet did not hand you a total. You typed =SUM and got ${STATUS_TOTAL}. Maria is To. Jordan is Cc. That is a status report.`,
     badgeName: "Write a SUM and cc a co-lead",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about writing a simple total yourself?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -121,7 +119,6 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     doneBody: `La hoja no te dio el total. Escribiste =SUM y salió ${STATUS_TOTAL}. Maria es Para. Jordan es Cc. Eso es un reporte de estado.`,
     badgeName: "Escribir un SUM y poner en copia a un co-líder",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes de escribir un total simple tú?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -208,18 +205,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Open the copy again. Type =SUM(B2:B6). Then add Jordan on Cc." },
-    { label: "I could try", reply: "Good. Do it once more without Help." },
-    { label: "I can do this", reply: "You wrote the formula and you knew who else needed it. Use Next." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Abre la copia otra vez. Escribe =SUM(B2:B6). Luego agrega a Jordan en Cc." },
-    { label: "Podría intentarlo", reply: "Bien. Hazlo otra vez sin Ayuda." },
-    { label: "Puedo hacerlo", reply: "Escribiste la fórmula y supiste quién más lo necesitaba. Usa Siguiente." },
-  ],
-};
 
 export function emailMentionsTotal(body: string) {
   return body.includes(String(STATUS_TOTAL));

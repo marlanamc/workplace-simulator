@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -88,7 +88,6 @@ export const HANDBOOK_TASK_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -106,7 +105,6 @@ export const HANDBOOK_TASK_COPY: Record<Lang, {
     doneBody: "The handbook had the real rule. Checking it was faster than guessing wrong.",
     badgeName: "Look something up when you feel rushed",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about looking something up instead of guessing?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -124,7 +122,6 @@ export const HANDBOOK_TASK_COPY: Record<Lang, {
     doneBody: "El manual tenía la política exacta. Revisarlo tomó menos tiempo que adivinar mal.",
     badgeName: "Buscar algo bajo presión",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes de buscar algo en vez de adivinar?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -159,15 +156,3 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help. You have now used every app in this practice space. Nice work." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Ya usaste todas las apps del espacio de práctica. Buen trabajo." },
-  ],
-};

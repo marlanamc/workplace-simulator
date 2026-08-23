@@ -7,13 +7,11 @@ import {
   CALENDAR_COPY,
   STARTERS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   WRONG_ACCEPT_HINT,
   EVENT_INTRO,
   HUDDLE_TIMES,
 } from "@/lib/tasks/calendar/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -64,7 +62,6 @@ export default function CalendarTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "intro");
   const [body, setBody] = useState("");
   const [chosenTime, setChosenTime] = useState<"10am" | "2pm" | null>(null);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
 
@@ -121,7 +118,6 @@ export default function CalendarTask() {
     setView("home");
     setBody("");
     setChosenTime(null);
-    setConfidence(null);
   };
 
   const showingCal = view !== "done";
@@ -155,12 +151,6 @@ export default function CalendarTask() {
               badgeNumber="07"
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
-            />
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
             />
             <TaskDoneActions
               tryAgainLabel={c.tryAgain}
@@ -449,7 +439,7 @@ export default function CalendarTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

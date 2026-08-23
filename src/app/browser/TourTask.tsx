@@ -6,9 +6,7 @@ import {
   TOUR_COPY,
   LESSONS,
   EVENT_INTRO,
-  CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/tour/content";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -33,7 +31,6 @@ export default function TourTask({
   );
   const [openedHelp, setOpenedHelp] = useState(false);
   const [help, setHelp] = useState(false);
-  const [confidence, setConfidence] = useState<string | null>(null);
 
   const c = TOUR_COPY[lang];
 
@@ -49,7 +46,6 @@ export default function TourTask({
 
   const restart = () => {
     setOpenedHelp(false);
-    setConfidence(null);
     onStartWalkthrough();
   };
 
@@ -105,12 +101,6 @@ export default function TourTask({
               badgeNumber="00"
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
-            />
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
             />
             <TaskDoneActions
               tryAgainLabel={c.tryAgain}

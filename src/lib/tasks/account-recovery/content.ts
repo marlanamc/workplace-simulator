@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Localized, PickableItem } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Localized, PickableItem } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -74,7 +74,6 @@ export const RECOVERY_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
 }> = {
@@ -101,7 +100,6 @@ export const RECOVERY_COPY: Record<Lang, {
     doneBody: "Getting locked out happens to everyone. Now you know the steps: sign in, find the real code, type it in.",
     badgeName: "Get back into a locked account",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about doing this on your own phone?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
   },
@@ -128,21 +126,8 @@ export const RECOVERY_COPY: Record<Lang, {
     doneBody: "Quedarse fuera le pasa a cualquiera. Ahora conoces los pasos: iniciar sesión, buscar el código real, escribirlo.",
     badgeName: "Volver a entrar a una cuenta bloqueada",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes de hacer esto en tu propio teléfono?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
   },
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help. Use the Next button below to keep going." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Usa el botón de Siguiente abajo para seguir." },
-  ],
-};

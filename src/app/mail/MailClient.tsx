@@ -12,11 +12,9 @@ import {
   EVENT_INTRO_BY_TASK,
   CONFIRM_COPY,
   DONE_COPY,
-  CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/mail/content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -40,16 +38,28 @@ import { bridgeOutCopyFor } from "@/lib/bridge-out-content";
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
 const SHOW_ME_LABEL: Localized<string> = { en: "This one. Click it.", es: "Este. Haz clic aquí." };
-const RIGHT_NOW_STEPS: Localized<string>[] = [
-  { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
-  { en: "Read Maria's email, then click Reply.", es: "Lee el correo de Maria y haz clic en Responder." },
-  { en: "Write your reply, then click Attach file.", es: "Escribe tu respuesta y haz clic en Adjuntar archivo." },
-  { en: "Click Send to finish.", es: "Haz clic en Enviar para terminar." },
-];
 
 type View = "intro" | "empty" | "read" | "confirm" | "compose" | "done" | "story";
 type MailTask = "mail-read" | "mail-reply" | "mail-attach";
 const MAIL_TASK_ORDER: MailTask[] = ["mail-read", "mail-reply", "mail-attach"];
+
+const RIGHT_NOW_BY_TASK: Record<MailTask, Localized<string>[]> = {
+  "mail-read": [
+    { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
+    { en: "Read Maria's email, then click Continue.", es: "Lee el correo de Maria y haz clic en Continuar." },
+  ],
+  "mail-reply": [
+    { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
+    { en: "Read Maria's email, then click Reply.", es: "Lee el correo de Maria y haz clic en Responder." },
+    { en: "Write your reply, then click Send.", es: "Escribe tu respuesta y haz clic en Enviar." },
+  ],
+  "mail-attach": [
+    { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
+    { en: "Read Maria's email, then click Reply.", es: "Lee el correo de Maria y haz clic en Responder." },
+    { en: "Write your reply, then click Attach file.", es: "Escribe tu respuesta y haz clic en Adjuntar archivo." },
+    { en: "Click Send to finish.", es: "Haz clic en Enviar para terminar." },
+  ],
+};
 
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
@@ -77,7 +87,6 @@ export default function MailClient() {
   const [view, setView] = useState<View>(completedTaskKeys.includes(activeMailTask) ? "done" : "intro");
   const [body, setBody] = useState("");
   const [attached, setAttached] = useState(false);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
@@ -203,7 +212,6 @@ export default function MailClient() {
     setView("empty");
     setBody("");
     setAttached(false);
-    setConfidence(null);
     setConfirmPick(null);
     setHelp(false);
     setPicker(false);
@@ -353,19 +361,41 @@ export default function MailClient() {
 
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
             {(view === "empty" || view === "read" || view === "confirm" || view === "compose") && (() => {
+              const steps = RIGHT_NOW_BY_TASK[activeMailTask];
+              const needsAttach = activeMailTask === "mail-attach";
               const rightNowIndex =
-                view === "empty" ? 0 : view === "read" || view === "confirm" ? 1 : attached ? 3 : 2;
-              const showMeId = view === "empty" ? "maria-row" : view === "read" || view === "confirm" ? "reply-button" : "attach-button";
+                view === "empty"
+                  ? 0
+                  : view === "read" || view === "confirm"
+                    ? 1
+                    : needsAttach
+                      ? attached
+                        ? Math.min(3, steps.length - 1)
+                        : 2
+                      : Math.min(2, steps.length - 1);
+              const showMeId =
+                view === "empty"
+                  ? "maria-row"
+                  : view === "read" || view === "confirm"
+                    ? "reply-button"
+                    : needsAttach && !attached
+                      ? "attach-button"
+                      : "send-button";
               return (
                 <RightNowBar
                   icon={TASK_ICONS.mail}
                   stepIndex={rightNowIndex}
-                  stepCount={RIGHT_NOW_STEPS.length}
-                  instruction={RIGHT_NOW_STEPS[rightNowIndex]}
+                  stepCount={steps.length}
+                  instruction={steps[rightNowIndex]}
                   lang={lang}
                   rightNowLabel={RIGHT_NOW_LABEL}
-                  onShowMe={() => setShowMeTarget(showMeId)}
+                  onShowMe={() => setShowMeTarget(showMeTargetId === showMeId ? null : showMeId)}
                   showMeActive={showMeTargetId === showMeId}
+                  showMeLabel={
+                    showMeTargetId === showMeId
+                      ? { en: "Hide", es: "Ocultar" }
+                      : undefined
+                  }
                   onHelp={() => setHelp(true)}
                 />
               );
@@ -398,7 +428,7 @@ export default function MailClient() {
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {(plain ? BODY[lang].plain : BODY[lang].full).map((p, i) => (
+                      {(plain ? BODY[activeMailTask][lang].plain : BODY[activeMailTask][lang].full).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
@@ -470,7 +500,7 @@ export default function MailClient() {
                     <div className="flex flex-wrap items-center gap-2 px-4 pb-2">
                       <NeedAStart
                         lang={lang}
-                        starters={STARTERS[lang]}
+                        starters={STARTERS[activeMailTask === "mail-attach" ? "mail-attach" : "mail-reply"][lang]}
                         onPick={(s) => {
                           setBody((b) => (b ? b + " " : "") + s);
                           advance(3);
@@ -495,19 +525,22 @@ export default function MailClient() {
                     )}
                     <div className="flex flex-wrap items-center gap-1 px-3 py-2">
                       <button
+                        data-showme="send-button"
                         onClick={trySend}
                         className="inline-flex min-h-[36px] items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
                       >
                         {c.send}
                       </button>
-                      <button
-                        data-showme="attach-button"
-                        onClick={() => setPicker(true)}
-                        className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
-                      >
-                        <Paperclip size={18} strokeWidth={2} />
-                        {c.attach}
-                      </button>
+                      {activeMailTask === "mail-attach" && (
+                        <button
+                          data-showme="attach-button"
+                          onClick={() => setPicker(true)}
+                          className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
+                        >
+                          <Paperclip size={18} strokeWidth={2} />
+                          {c.attach}
+                        </button>
+                      )}
                       <div className="flex-1" />
                       <button
                         onClick={() => {
@@ -582,12 +615,6 @@ export default function MailClient() {
                     onNotYet={dismissBridgeOut}
                   />
                 )}
-                <ConfidenceCheck
-                  question={c.confidenceQ}
-                  options={CONFIDENCE_OPTIONS[lang]}
-                  selected={confidence}
-                  onSelect={setConfidence}
-                />
                 <TaskDoneActions
                   tryAgainLabel={c.tryAgain}
                   backToDeskLabel={c.backToDesk}
@@ -629,8 +656,12 @@ export default function MailClient() {
         />
       )}
 
-      <NudgeToast text={nudge} bottom={32} />
-      <ShowMeHighlight targetId={showMeTargetId} label={SHOW_ME_LABEL[lang]} />
+      <NudgeToast text={nudge} />
+      <ShowMeHighlight
+        targetId={showMeTargetId}
+        label={SHOW_ME_LABEL[lang]}
+        onDismiss={() => setShowMeTarget(null)}
+      />
     </div>
   );
 }

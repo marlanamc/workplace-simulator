@@ -26,7 +26,7 @@ intact, and the shelf can show a "running" indicator for open apps.
 - **Browser** (`src/app/browser/BrowserClient.tsx`) — the main workspace. Real tab strip,
   address bar, and bookmarks bar; hosts:
   - **WorkMail** tab (`src/app/mail/MailClient.tsx`) — the email task: inbox,
-    read/reply/compose, a file picker, a help lesson, and a confidence check-in. Completing
+    read/reply/compose, a file picker, and a help lesson. Completing
     it calls the `completeTask` server action.
   - **Employee Portal** tab (`PortalPage.tsx`) — schedule, time clock, and pay stubs.
     Currently read-only/explorable, not yet wired to graded completions.
@@ -54,10 +54,10 @@ intact, and the shelf can show a "running" indicator for open apps.
   many desktop app icons exist (several tasks live as browser tabs, not separate apps).
 - `src/lib/tasks/<task>/content.ts` — one file per graded task (starting with `mail/`)
   holding that task's copy, lessons, and pickable items.
-- `src/lib/task-types.ts` — shared shapes (`Lesson`, `ConfidenceOption`, `PickableItem`) every
+- `src/lib/task-types.ts` — shared shapes (`Lesson`, `PickableItem`) every
   task's content implements, so new tasks don't redefine them.
 - `src/components/task/` — task-agnostic UI reused across tasks: `HelpDrawer`,
-  `ConfidenceCheck`, `SettingsPopover`, `PickerModal`, `NudgeToast`. Deliberately does **not**
+  `SettingsPopover`, `PickerModal`, `NudgeToast`. Deliberately does **not**
   include a step counter or an inline "do this next" banner — see Tracks below.
 - `src/lib/use-nudge.ts` / `src/lib/use-click-outside.ts` — small shared hooks (coaching
   toast auto-dismiss; closing a popover on an outside click).

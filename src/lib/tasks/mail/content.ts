@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -110,13 +110,13 @@ export const DONE_COPY: Record<"mail-read" | "mail-reply" | "mail-attach", Recor
   "mail-reply": {
     en: {
       kicker: "Message sent",
-      body: "Maria got your reply. Most manager asks just need a short answer back, in your own words.",
+      body: "Maria got your reply. Next job: send that same kind of answer again — this time with the file attached.",
       badgeNumber: "02",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
     es: {
       kicker: "Mensaje enviado",
-      body: "Maria recibió tu respuesta. La mayoría de las peticiones de un jefe solo necesitan una respuesta corta, con tus propias palabras.",
+      body: "Maria recibió tu respuesta. Siguiente trabajo: envía otra respuesta parecida, esta vez con el archivo adjunto.",
       badgeNumber: "02",
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
@@ -165,7 +165,6 @@ export const MAIL_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -207,7 +206,6 @@ export const MAIL_COPY: Record<Lang, {
     doneBody: "Maria got your reply and the file. In a real job, most asks from a manager look like this. A short answer, with the file attached.",
     badgeName: "Reply with an attachment",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about doing this at work tomorrow?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -249,7 +247,6 @@ export const MAIL_COPY: Record<Lang, {
     doneBody: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un jefe: una respuesta corta con el archivo adjunto.",
     badgeName: "Responder con un archivo adjunto",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes de hacer esto mañana en el trabajo?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -265,42 +262,117 @@ export const MAIL_COPY: Record<Lang, {
   },
 };
 
-export const BODY: Record<Lang, { plain: string[]; full: string[] }> = {
-  en: {
-    plain: [
-      "Hi,",
-      "Can you send me the July safety report today? Please attach the file to your reply.",
-      "Thanks,",
-      "Maria",
-    ],
-    full: [
-      "Hi,",
-      "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
-      "Please attach the PDF to your reply so I can send it along.",
-      "Thanks,",
-      "Maria",
-    ],
+export const BODY: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lang, { plain: string[]; full: string[] }>> = {
+  // Job 1: learn what she is asking for (the report, today).
+  "mail-read": {
+    en: {
+      plain: [
+        "Hi,",
+        "Can you send me the July safety report today? Please attach the file to your reply.",
+        "Thanks,",
+        "Maria",
+      ],
+      full: [
+        "Hi,",
+        "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
+        "Please attach the PDF to your reply so I can send it along.",
+        "Thanks,",
+        "Maria",
+      ],
+    },
+    es: {
+      plain: [
+        "Hola,",
+        "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
+        "Gracias,",
+        "Maria",
+      ],
+      full: [
+        "Hola,",
+        "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
+        "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
+        "Gracias,",
+        "Maria",
+      ],
+    },
   },
-  es: {
-    plain: [
-      "Hola,",
-      "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
-      "Gracias,",
-      "Maria",
-    ],
-    full: [
-      "Hola,",
-      "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
-      "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
-      "Gracias,",
-      "Maria",
-    ],
+  // Job 2: practice Reply only. No file yet — that is the next job.
+  "mail-reply": {
+    en: {
+      plain: [
+        "Hi,",
+        "Can you reply and tell me if you can get me the July safety report today?",
+        "Thanks,",
+        "Maria",
+      ],
+      full: [
+        "Hi,",
+        "Quick check first: can you reply and tell me if you can get me the July safety report today?",
+        "I'll ask you to send the file in a follow-up.",
+        "Thanks,",
+        "Maria",
+      ],
+    },
+    es: {
+      plain: [
+        "Hola,",
+        "¿Me puedes responder y decirme si puedes conseguirme hoy el reporte de seguridad de julio?",
+        "Gracias,",
+        "Maria",
+      ],
+      full: [
+        "Hola,",
+        "Primero una pregunta rápida: ¿me puedes responder y decirme si puedes conseguirme hoy el reporte de seguridad de julio?",
+        "Después te pediré que envíes el archivo.",
+        "Gracias,",
+        "Maria",
+      ],
+    },
+  },
+  // Job 3: same ask, now the file must go in.
+  "mail-attach": {
+    en: {
+      plain: [
+        "Hi,",
+        "Can you send me the July safety report today? Please attach the file to your reply.",
+        "Thanks,",
+        "Maria",
+      ],
+      full: [
+        "Hi,",
+        "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
+        "Please attach the PDF to your reply so I can send it along.",
+        "Thanks,",
+        "Maria",
+      ],
+    },
+    es: {
+      plain: [
+        "Hola,",
+        "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
+        "Gracias,",
+        "Maria",
+      ],
+      full: [
+        "Hola,",
+        "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
+        "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
+        "Gracias,",
+        "Maria",
+      ],
+    },
   },
 };
 
-export const STARTERS: Record<Lang, string[]> = {
-  en: ["Hi Maria, here is the July safety report.", "Yes, I can send it today.", "I attached the file to this email.", "Let me know if you need anything else."],
-  es: ["Hola Maria, aquí está el reporte de seguridad de julio.", "Sí, puedo enviarlo hoy.", "Adjunté el archivo a este correo.", "Avísame si necesitas algo más."],
+export const STARTERS: Record<"mail-reply" | "mail-attach", Record<Lang, string[]>> = {
+  "mail-reply": {
+    en: ["Hi Maria, yes — I can get you the July safety report today.", "Yes, I can send it today.", "I will get that to you today.", "Let me know if you need anything else."],
+    es: ["Hola Maria, sí — te puedo conseguir hoy el reporte de seguridad de julio.", "Sí, puedo enviarlo hoy.", "Te lo mando hoy.", "Avísame si necesitas algo más."],
+  },
+  "mail-attach": {
+    en: ["Hi Maria, here is the July safety report.", "Yes, I can send it today.", "I attached the file to this email.", "Let me know if you need anything else."],
+    es: ["Hola Maria, aquí está el reporte de seguridad de julio.", "Sí, puedo enviarlo hoy.", "Adjunté el archivo a este correo.", "Avísame si necesitas algo más."],
+  },
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -366,15 +438,3 @@ export const EMAILS = [
     wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help on the last two steps. Use the Next button below to keep going." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda en los últimos dos pasos. Usa el botón de Siguiente abajo para seguir." },
-  ],
-};

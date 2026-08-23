@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -80,7 +80,6 @@ export const CALENDAR_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -123,7 +122,6 @@ export const CALENDAR_COPY: Record<Lang, {
     doneBody: "Maria got your note about the huddle landing on your day off. Checking your calendar against your schedule, every time, is what keeps this from turning into a surprise trip in on a day you didn't plan for.",
     badgeName: "Handle a meeting invite the right way",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about handling a meeting invite that conflicts with your schedule?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -166,7 +164,6 @@ export const CALENDAR_COPY: Record<Lang, {
     doneBody: "Maria recibió tu nota sobre la reunión en tu día libre. Revisar tu calendario contra tu horario, siempre, es lo que evita que esto se convierta en una sorpresa un día que no planeabas venir.",
     badgeName: "Manejar una invitación a una reunión correctamente",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes de manejar una invitación que choca con tu horario?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -239,15 +236,3 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did it with no help. Use the Next button below to keep going." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Lo hiciste sin ayuda. Usa el botón de Siguiente abajo para seguir." },
-  ],
-};

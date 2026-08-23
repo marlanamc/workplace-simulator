@@ -6,7 +6,6 @@ import {
   FORMULA_CHECK_COPY,
   STARTERS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   EVENT_INTRO,
   WRONG_SUM_FORMULA,
   AVERAGE_FORMULA,
@@ -27,7 +26,6 @@ import {
   type DayKey,
 } from "@/lib/tasks/crew-week";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -92,7 +90,6 @@ export default function FormulaCheckTask() {
   const [averageFormula, setAverageFormula] = useState(AVERAGE_FORMULA);
   const [selected, setSelected] = useState<Cell>({ row: TOTAL_ROW, col: "H" });
   const [body, setBody] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
 
@@ -128,7 +125,6 @@ export default function FormulaCheckTask() {
     setSumFormula(WRONG_SUM_FORMULA);
     setAverageFormula(AVERAGE_FORMULA);
     setBody("");
-    setConfidence(null);
     setSelected({ row: TOTAL_ROW, col: "H" });
   };
 
@@ -443,12 +439,6 @@ export default function FormulaCheckTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
-            />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -462,7 +452,7 @@ export default function FormulaCheckTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

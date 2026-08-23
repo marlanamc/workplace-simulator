@@ -7,10 +7,8 @@ import {
   EVENT_INTRO,
   HINTS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/triage/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -29,7 +27,6 @@ export default function TriageTask() {
   const [calDone, setCalDone] = useState(false);
   const [fileDone, setFileDone] = useState(false);
   const [permission, setPermission] = useState<"view" | "edit" | null>(null);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const c = TRIAGE_COPY[lang];
@@ -63,7 +60,6 @@ export default function TriageTask() {
     setCalDone(false);
     setFileDone(false);
     setPermission(null);
-    setConfidence(null);
   };
 
   return (
@@ -198,7 +194,6 @@ export default function TriageTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck question={c.confidenceQ} options={CONFIDENCE_OPTIONS[lang]} selected={confidence} onSelect={setConfidence} />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -212,7 +207,7 @@ export default function TriageTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

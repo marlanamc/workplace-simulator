@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -53,7 +53,6 @@ export const PRIORITY_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -101,7 +100,6 @@ export const PRIORITY_COPY: Record<Lang, {
     doneBody: "The customer was heard. Thursday close has a name. Maria's huddle moved. That is the Shift Supervisor job. Maria has a note for you about what comes next.",
     badgeName: "Handle three asks at once",
     badgeWhere: "Counts toward: Shift Supervisor",
-    confidenceQ: "When three things pile up at once at a real job, my instinct is to…",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -149,7 +147,6 @@ export const PRIORITY_COPY: Record<Lang, {
     doneBody: "El cliente fue escuchado. El cierre del jueves tiene nombre. La reunión de Maria se movió. Ese es el trabajo de supervisor. Maria te dejó una nota sobre lo que sigue.",
     badgeName: "Atender tres pedidos a la vez",
     badgeWhere: "Cuenta para: Supervisor de turno",
-    confidenceQ: "Cuando se juntan tres cosas a la vez en un trabajo real, mi instinto es…",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -224,18 +221,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "I freeze", reply: "That's a real instinct. Write the first move next time, then take the smallest of the three." },
-    { label: "I pick one and forget the rest", reply: "That's why the list stays up. Do it once more and close the other two before you leave." },
-    { label: "I make a list and work it", reply: "That's the supervisor habit. You just did it. Maria's next note is waiting." },
-  ],
-  es: [
-    { label: "Me quedo quieto", reply: "Eso es un instinto real. La próxima vez escribe el primer paso, luego toma la más chica de las tres." },
-    { label: "Elijo una y olvido las otras", reply: "Por eso la lista se queda. Hazlo otra vez y cierra las otras dos antes de irte." },
-    { label: "Hago una lista y la recorro", reply: "Ese es el hábito de supervisor. Ya lo hiciste. La nota de Maria ya está." },
-  ],
-};
 
 export function replyIsSafe(body: string) {
   const t = body.toLowerCase();

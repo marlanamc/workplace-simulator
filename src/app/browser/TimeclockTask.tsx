@@ -8,11 +8,9 @@ import {
   STARTERS,
   LESSONS,
   EVENT_INTRO,
-  CONFIDENCE_OPTIONS,
   WRONG_LOOKS_RIGHT_HINT,
 } from "@/lib/tasks/timeclock/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -28,7 +26,6 @@ export default function TimeclockTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "intro");
   const [body, setBody] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
 
@@ -56,7 +53,6 @@ export default function TimeclockTask() {
   const restart = () => {
     setView("clocked_in");
     setBody("");
-    setConfidence(null);
   };
 
   return (
@@ -202,13 +198,6 @@ export default function TimeclockTask() {
             badgeWhere={c.badgeWhere}
           />
 
-          <ConfidenceCheck
-            question={c.confidenceQ}
-            options={CONFIDENCE_OPTIONS[lang]}
-            selected={confidence}
-            onSelect={setConfidence}
-          />
-
           <TaskDoneActions
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
@@ -226,7 +215,7 @@ export default function TimeclockTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

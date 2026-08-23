@@ -14,7 +14,7 @@ export async function logout() {
 export async function completeTask(taskKey: string, badgeKey?: string) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) return { ok: false as const };
-  await recordCompletion(learnerId, taskKey, null);
+  await recordCompletion(learnerId, taskKey);
   if (badgeKey) await awardBadge(learnerId, badgeKey);
   return { ok: true as const };
 }

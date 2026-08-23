@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -47,7 +47,6 @@ export const TEAM_MEETING_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -79,7 +78,6 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     doneBody: "Thursday 10 AM. The crew is on the invite. The agenda is two or three bullets, not a speech. That is a huddle a lead can run.",
     badgeName: "Create a meeting with an agenda",
     badgeWhere: "Counts toward: Shift Supervisor",
-    confidenceQ: "How do you feel about setting up a short meeting, not just attending one?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -111,7 +109,6 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     doneBody: "Jueves 10 AM. El equipo está en la invitación. La agenda es de dos o tres puntos, no un discurso. Así se arma una reunión que un líder puede dirigir.",
     badgeName: "Crear una reunión con agenda",
     badgeWhere: "Cuenta para: Supervisor de turno",
-    confidenceQ: "¿Cómo te sientes de armar una reunión corta, no solo asistir?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -174,18 +171,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Write the three bullets first this time. Then pick Thursday 10 AM." },
-    { label: "I could try", reply: "Good. The nervous part is calling it. You just did." },
-    { label: "I can do this", reply: "You set the time and you gave it a point. Use Next." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Esta vez escribe primero los tres puntos. Luego elige el jueves a las 10 AM." },
-    { label: "Podría intentarlo", reply: "Bien. Lo que pone nervioso es convocarlo. Ya lo hiciste." },
-    { label: "Puedo hacerlo", reply: "Fijaste la hora y le diste un propósito. Usa Siguiente." },
-  ],
-};
 
 export function titleIsAboutSchedule(title: string) {
   const t = title.toLowerCase();

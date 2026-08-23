@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { EVENT_INTRO, BEATS, REVIEW_COPY, CONFIDENCE_OPTIONS } from "@/lib/tasks/shift-review/content";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import { EVENT_INTRO, BEATS, REVIEW_COPY } from "@/lib/tasks/shift-review/content";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -19,7 +18,6 @@ export default function ShiftReviewTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("shift-review") ? "done" : "intro");
   const [beatIndex, setBeatIndex] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("shift-review");
 
@@ -55,7 +53,6 @@ export default function ShiftReviewTask() {
     setView("beats");
     setBeatIndex(0);
     setPicked(null);
-    setConfidence(null);
     setNoHelp(false);
   };
 
@@ -121,17 +118,11 @@ export default function ShiftReviewTask() {
             noHelp={noHelp}
             noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
-          <ConfidenceCheck
-            question={c.confidenceQ}
-            options={CONFIDENCE_OPTIONS[lang]}
-            selected={confidence}
-            onSelect={setConfidence}
-          />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

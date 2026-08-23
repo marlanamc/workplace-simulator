@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -44,7 +44,6 @@ export const TRIAGE_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -79,7 +78,6 @@ export const TRIAGE_COPY: Record<Lang, {
     doneBody: "The huddle moved off your close. Sam has the allergen list, view only. Two open things. Both closed.",
     badgeName: "Handle two requests at once",
     badgeWhere: "Counts toward: Shift Lead",
-    confidenceQ: "How do you feel about keeping two open things in your head?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -114,7 +112,6 @@ export const TRIAGE_COPY: Record<Lang, {
     doneBody: "La reunión salió de tu cierre. Sam tiene la lista de alérgenos, solo ver. Dos cosas abiertas. Las dos cerradas.",
     badgeName: "Atender dos pedidos a la vez",
     badgeWhere: "Cuenta para: Líder de turno",
-    confidenceQ: "¿Cómo te sientes de tener dos cosas abiertas en la cabeza?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -164,15 +161,3 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Open the list again. Do the other item first this time." },
-    { label: "I could try", reply: "Good. Two things is the new normal for a lead. Do it once more." },
-    { label: "I can do this", reply: "You closed both. That is the whole skill. Use Next." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Abre la lista otra vez. Esta vez haz primero la otra." },
-    { label: "Podría intentarlo", reply: "Bien. Dos cosas a la vez es lo normal para un líder. Hazlo otra vez." },
-    { label: "Puedo hacerlo", reply: "Cerraste las dos. Esa es toda la destreza. Usa Siguiente." },
-  ],
-};

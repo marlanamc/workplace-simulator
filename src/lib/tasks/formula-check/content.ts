@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 import { CORRECT_WEEK_TOTAL } from "../crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -51,7 +51,6 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -88,7 +87,6 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     doneBody: "The total looked fine. The formula skipped Casey. You opened it, fixed the rows, and sent Maria the real total.",
     badgeName: "Fix a formula range",
     badgeWhere: "Counts toward: Shift Supervisor",
-    confidenceQ: "How do you feel about checking a formula, not just the number it shows?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -125,7 +123,6 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     doneBody: "El total se veía bien. La fórmula se saltó a Casey. La abriste, corregiste las filas y le enviaste a Maria el total real.",
     badgeName: "Corregir el rango de una fórmula",
     badgeWhere: "Cuenta para: Supervisor de turno",
-    confidenceQ: "¿Cómo te sientes de revisar una fórmula, no solo el número que muestra?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -201,18 +198,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Click the total again and say the range out loud: H2 to H6, five names." },
-    { label: "I could try", reply: "Good. Do it once more without Help. Change the range yourself." },
-    { label: "I can do this", reply: "You opened the formula and caught the missing row. Use Next to keep going." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Haz clic en el total otra vez y di el rango en voz alta: H2 a H6, cinco nombres." },
-    { label: "Podría intentarlo", reply: "Bien. Hazlo otra vez sin Ayuda. Cambia el rango tú." },
-    { label: "Puedo hacerlo", reply: "Abriste la fórmula y viste la fila que faltaba. Usa Siguiente para seguir." },
-  ],
-};
 
 /** Accept SUM/AVERAGE ranges that include every crew row (2 through 6). */
 export function rangeCoversCrew(formula: string, fn: "sum" | "average"): boolean {

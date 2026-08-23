@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { EVENT_INTRO, RECOVERY_COPY, TEXTS, CODE, CONFIDENCE_OPTIONS } from "@/lib/tasks/account-recovery/content";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
+import { EVENT_INTRO, RECOVERY_COPY, TEXTS, CODE } from "@/lib/tasks/account-recovery/content";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -24,7 +23,6 @@ export default function AccountRecoveryTask() {
   const [password, setPassword] = useState("");
   const [picker, setPicker] = useState(false);
   const [codeInput, setCodeInput] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [noHelp, setNoHelp] = useState(false);
   const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("account-recovery");
@@ -65,7 +63,6 @@ export default function AccountRecoveryTask() {
     setView("signin");
     setPassword("");
     setCodeInput("");
-    setConfidence(null);
     setNoHelp(false);
   };
 
@@ -166,12 +163,6 @@ export default function AccountRecoveryTask() {
             noHelp={noHelp}
             noHelpLabel={lang === "en" ? "You did this with no help" : "Lo hiciste sin ayuda"}
           />
-          <ConfidenceCheck
-            question={c.confidenceQ}
-            options={CONFIDENCE_OPTIONS[lang]}
-            selected={confidence}
-            onSelect={setConfidence}
-          />
           <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
@@ -210,7 +201,7 @@ export default function AccountRecoveryTask() {
         gotItLabel={lang === "en" ? "Got it. Back to my task" : "Entendido. Volver a mi tarea"}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

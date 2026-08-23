@@ -8,10 +8,8 @@ import {
   STARTERS,
   LESSONS,
   EVENT_INTRO,
-  CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/incident/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -31,7 +29,6 @@ export default function IncidentTask() {
   const [when, setWhen] = useState(DEFAULTS.en.when);
   const [where, setWhere] = useState(DEFAULTS.en.where);
   const [what, setWhat] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
 
@@ -61,7 +58,6 @@ export default function IncidentTask() {
     setWhen(DEFAULTS[lang].when);
     setWhere(DEFAULTS[lang].where);
     setWhat("");
-    setConfidence(null);
   };
 
   return (
@@ -165,12 +161,6 @@ export default function IncidentTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
-            />
             <TaskDoneActions
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
@@ -189,7 +179,7 @@ export default function IncidentTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

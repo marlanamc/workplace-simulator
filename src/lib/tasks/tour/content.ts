@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -30,7 +30,6 @@ export const TOUR_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -51,7 +50,6 @@ export const TOUR_COPY: Record<Lang, {
     doneBody: "White button on the desktop: next job. Question mark: Help. The briefcase on the bottom bar: your list for this shift. Next is always the blue button.",
     badgeName: "Find your way around",
     badgeWhere: "Counts toward: getting started",
-    confidenceQ: "Do you know where to look if you get stuck?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -72,7 +70,6 @@ export const TOUR_COPY: Record<Lang, {
     doneBody: "Botón blanco en el escritorio: el siguiente trabajo. Signo de interrogación: Ayuda. El maletín en la barra de abajo: tu lista de este turno. Siguiente siempre es el botón azul.",
     badgeName: "Orientarte",
     badgeWhere: "Cuenta para: empezar",
-    confidenceQ: "¿Sabes dónde mirar si te trabas?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -120,15 +117,3 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Open Help with the ? any time. Or do this page one more time." },
-    { label: "I could try", reply: "Good. If you get stuck, click the ?. Then use the blue Next button." },
-    { label: "I can do this", reply: "You just did it. Use the Next button below. Maria already emailed you." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Abre Ayuda con el ? cuando quieras. O haz esta página otra vez." },
-    { label: "Podría intentarlo", reply: "Bien. Si te trabas, haz clic en el ?. Luego usa el botón azul de Siguiente." },
-    { label: "Puedo hacerlo", reply: "Lo acabas de hacer. Usa el botón de Siguiente abajo. Maria ya te envió un correo." },
-  ],
-};

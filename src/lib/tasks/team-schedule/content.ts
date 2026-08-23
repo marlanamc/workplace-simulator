@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 import { GAP_SHIFT_LABEL } from "../crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -46,7 +46,6 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -82,7 +81,6 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
     doneBody: "You did not pick the first name. You checked the hours. You wrote the day and the time. That is how a supervisor builds a week.",
     badgeName: "Build a crew schedule",
     badgeWhere: "Counts toward: Shift Supervisor",
-    confidenceQ: "How do you feel about scheduling someone else, not just yourself?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -118,7 +116,6 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
     doneBody: "No elegiste el primer nombre. Revisaste las horas. Escribiste el día y la hora. Así arma una semana un supervisor.",
     badgeName: "Armar el horario del equipo",
     badgeWhere: "Cuenta para: Supervisor de turno",
-    confidenceQ: "¿Cómo te sientes de programar a otra persona, no solo a ti?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -194,18 +191,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do it once more and say out loud why you picked Jordan, not Alex." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You picked the person with room and told them the time. Use Next to keep going." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez y di en voz alta por qué elegiste a Jordan, no a Alex." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Elegiste a la persona con espacio y le dijiste la hora. Usa Siguiente para seguir." },
-  ],
-};
 
 export function emailMentionsShift(body: string): boolean {
   const t = body.toLowerCase();

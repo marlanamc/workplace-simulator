@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
 import { COPY_NAME } from "../status-sheet";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -46,7 +46,6 @@ export const MAKE_COPY_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
   lessonKicker: string;
@@ -82,7 +81,6 @@ export const MAKE_COPY_COPY: Record<Lang, {
     doneBody: "View only means look, not type. File → Make a copy is how you work without overwriting the master. Docs uses the same menu.",
     badgeName: "Make a copy of a view-only file",
     badgeWhere: "Counts toward: Office Ready",
-    confidenceQ: "How do you feel about view only vs. can edit?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -118,7 +116,6 @@ export const MAKE_COPY_COPY: Record<Lang, {
     doneBody: "Solo ver significa mirar, no escribir. Archivo → Hacer una copia es cómo trabajas sin pisar el original. Docs usa el mismo menú.",
     badgeName: "Hacer una copia de un archivo de solo ver",
     badgeWhere: "Cuenta para: Oficina",
-    confidenceQ: "¿Cómo te sientes con solo ver frente a poder editar?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -190,15 +187,3 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Open the template again. Try to type. Then use File → Make a copy." },
-    { label: "I could try", reply: "Good. Do it once more without Help. The lock is the point." },
-    { label: "I can do this", reply: "You left Maria's file alone and worked in your copy. Use Next." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Abre la plantilla otra vez. Intenta escribir. Luego usa Archivo → Hacer una copia." },
-    { label: "Podría intentarlo", reply: "Bien. Hazlo otra vez sin Ayuda. El candado es el punto." },
-    { label: "Puedo hacerlo", reply: "Dejaste el archivo de Maria en paz y trabajaste en tu copia. Usa Siguiente." },
-  ],
-};

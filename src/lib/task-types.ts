@@ -9,12 +9,6 @@ export interface Lesson {
   tip: string;
 }
 
-/** One option in an end-of-task confidence check-in, with the coach's reply if picked. */
-export interface ConfidenceOption {
-  label: string;
-  reply: string;
-}
-
 /** The dramatic "here's what's happening" event card shown before a task starts. */
 export interface EventIntroCopy {
   emoji: string;

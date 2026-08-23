@@ -26,11 +26,11 @@ export async function createLearner(displayName: string, pinHash: string, classC
   return rows[0];
 }
 
-export async function recordCompletion(learnerId: string, taskKey: string, confidence: string | null) {
+export async function recordCompletion(learnerId: string, taskKey: string) {
   const db = getDb();
   const rows = await db
     .insert(taskCompletions)
-    .values({ learnerId, taskKey, confidence })
+    .values({ learnerId, taskKey, confidence: null })
     .returning();
   return rows[0];
 }

@@ -10,11 +10,9 @@ import {
   HOURS_CHECK,
   LESSONS,
   EVENT_INTRO,
-  CONFIDENCE_OPTIONS,
   type CheckOption,
 } from "@/lib/tasks/paystub/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -28,7 +26,6 @@ type View = "intro" | "list" | "check1" | "check2" | "done";
 export default function PaystubTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "intro");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const { openApp } = useWindowManager();
@@ -51,7 +48,6 @@ export default function PaystubTask() {
 
   const restart = () => {
     setView("list");
-    setConfidence(null);
   };
 
   const netCheck = NET_PAY_CHECK[lang];
@@ -136,13 +132,6 @@ export default function PaystubTask() {
             badgeWhere={c.badgeWhere}
           />
 
-          <ConfidenceCheck
-            question={c.confidenceQ}
-            options={CONFIDENCE_OPTIONS[lang]}
-            selected={confidence}
-            onSelect={setConfidence}
-          />
-
           <TaskDoneActions
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
@@ -160,7 +149,7 @@ export default function PaystubTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

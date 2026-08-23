@@ -8,11 +8,9 @@ import {
   WRONG_ENTRY_HINT,
   STARTERS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   EVENT_INTRO,
 } from "@/lib/tasks/spreadsheet/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -49,7 +47,6 @@ export default function SpreadsheetTask() {
   const [entries, setEntries] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "B" });
   const [body, setBody] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
 
@@ -101,7 +98,6 @@ export default function SpreadsheetTask() {
     setView("home");
     setEntries({});
     setBody("");
-    setConfidence(null);
   };
 
   const notYet = () =>
@@ -433,13 +429,6 @@ export default function SpreadsheetTask() {
               badgeWhere={c.badgeWhere}
             />
 
-            <ConfidenceCheck
-              question={c.confidenceQ}
-              options={CONFIDENCE_OPTIONS[lang]}
-              selected={confidence}
-              onSelect={setConfidence}
-            />
-
             <TaskDoneActions
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
@@ -458,7 +447,7 @@ export default function SpreadsheetTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

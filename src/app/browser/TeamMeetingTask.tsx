@@ -10,12 +10,10 @@ import {
   AGENDA_STARTERS,
   HINTS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   titleIsAboutSchedule,
   agendaBulletCount,
 } from "@/lib/tasks/team-meeting/content";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -36,7 +34,6 @@ export default function TeamMeetingTask() {
   const [slot, setSlot] = useState<string | null>(null);
   const [eventSaved, setEventSaved] = useState(false);
   const [agenda, setAgenda] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const c = TEAM_MEETING_COPY[lang];
@@ -69,7 +66,6 @@ export default function TeamMeetingTask() {
     setSlot(null);
     setEventSaved(false);
     setAgenda("");
-    setConfidence(null);
   };
 
   return (
@@ -210,7 +206,6 @@ export default function TeamMeetingTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck question={c.confidenceQ} options={CONFIDENCE_OPTIONS[lang]} selected={confidence} onSelect={setConfidence} />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -224,7 +219,7 @@ export default function TeamMeetingTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

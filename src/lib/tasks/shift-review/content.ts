@@ -1,4 +1,4 @@
-import type { ConfidenceOption, EventIntroCopy, Lang } from "@/lib/task-types";
+import type { EventIntroCopy, Lang } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -102,7 +102,6 @@ export const REVIEW_COPY: Record<Lang, {
   doneBody: string;
   badgeName: string;
   badgeWhere: string;
-  confidenceQ: string;
   tryAgain: string;
   backToDesk: string;
 }> = {
@@ -114,7 +113,6 @@ export const REVIEW_COPY: Record<Lang, {
     doneBody: "Three things you already knew how to do, all in one shift. No new tools, no coaching needed - that's what a normal day looks like now.",
     badgeName: "A normal shift, start to finish",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
-    confidenceQ: "How do you feel about a normal shift like this one?",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
   },
@@ -126,21 +124,8 @@ export const REVIEW_COPY: Record<Lang, {
     doneBody: "Tres cosas que ya sabías hacer, todas en un turno. Sin herramientas nuevas, sin necesitar ayuda: así se ve un día normal ahora.",
     badgeName: "Un turno normal, de principio a fin",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
-    confidenceQ: "¿Cómo te sientes con un turno normal como este?",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
   },
 };
 
-export const CONFIDENCE_OPTIONS: Record<Lang, ConfidenceOption[]> = {
-  en: [
-    { label: "Still unsure", reply: "That's honest. Do the task one more time, or come on Wednesday and we can do it together." },
-    { label: "I could try", reply: "Good. Try it again without Help. That is how it will feel at work." },
-    { label: "I can do this", reply: "You just did three jobs in a row with no help. That's what a real normal shift feels like." },
-  ],
-  es: [
-    { label: "Todavía dudo", reply: "Eso es honesto. Hazlo otra vez, o ven el miércoles y lo hacemos juntos." },
-    { label: "Podría intentarlo", reply: "Bien. Inténtalo otra vez sin Ayuda. Así se siente en el trabajo." },
-    { label: "Puedo hacerlo", reply: "Acabas de hacer tres trabajos seguidos sin ayuda. Así se siente un turno normal de verdad." },
-  ],
-};

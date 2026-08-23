@@ -11,12 +11,10 @@ import {
   CC_EMAIL,
   CC_NAME,
   LESSONS,
-  CONFIDENCE_OPTIONS,
   emailMentionsTotal,
 } from "@/lib/tasks/status-report/content";
 import { STATUS_ROWS, STATUS_TOTAL, isValidSumFormula } from "@/lib/tasks/status-sheet";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -36,7 +34,6 @@ export default function StatusReportTask() {
   const [body, setBody] = useState("");
   const [ccOpen, setCcOpen] = useState(false);
   const [cc, setCc] = useState<string | null>(null);
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const c = STATUS_REPORT_COPY[lang];
@@ -61,7 +58,6 @@ export default function StatusReportTask() {
     setBody("");
     setCc(null);
     setCcOpen(false);
-    setConfidence(null);
   };
 
   const notYet = () =>
@@ -247,7 +243,6 @@ export default function StatusReportTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck question={c.confidenceQ} options={CONFIDENCE_OPTIONS[lang]} selected={confidence} onSelect={setConfidence} />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -261,7 +256,7 @@ export default function StatusReportTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

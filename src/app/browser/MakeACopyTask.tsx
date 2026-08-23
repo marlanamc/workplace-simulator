@@ -7,11 +7,9 @@ import {
   EVENT_INTRO,
   HINTS,
   LESSONS,
-  CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/make-a-copy/content";
 import { COPY_NAME, STATUS_ROWS, normalizeCopyName } from "@/lib/tasks/status-sheet";
 import { useNudge } from "@/lib/use-nudge";
-import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -29,7 +27,6 @@ export default function MakeACopyTask() {
   const [dialog, setDialog] = useState(false);
   const [copyName, setCopyName] = useState("Copy of Weekly Status Template");
   const [typed, setTyped] = useState("");
-  const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say } = useNudge();
   const c = MAKE_COPY_COPY[lang];
@@ -57,7 +54,6 @@ export default function MakeACopyTask() {
     setDialog(false);
     setCopyName("Copy of Weekly Status Template");
     setTyped("");
-    setConfidence(null);
   };
 
   const notYet = () =>
@@ -229,7 +225,6 @@ export default function MakeACopyTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <ConfidenceCheck question={c.confidenceQ} options={CONFIDENCE_OPTIONS[lang]} selected={confidence} onSelect={setConfidence} />
             <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
@@ -243,7 +238,7 @@ export default function MakeACopyTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} bottom={32} />
+      <NudgeToast text={nudge} />
     </div>
   );
 }

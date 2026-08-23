@@ -9,7 +9,10 @@ function isCard(msg: NudgeMessage): msg is Exclude<NudgeMessage, string> {
   return typeof msg !== "string";
 }
 
-export default function NudgeToast({ text, bottom = 32 }: { text: NudgeMessage; bottom?: number }) {
+/** Shelf is 48px; leave 16px of air above it (avoid importing Shelf — circular). */
+const DEFAULT_BOTTOM = 64;
+
+export default function NudgeToast({ text, bottom = DEFAULT_BOTTOM }: { text: NudgeMessage; bottom?: number }) {
   const { speakAloud, lang } = useProgress();
 
   // Nudges are the app's main teaching channel — with Read aloud on they are
