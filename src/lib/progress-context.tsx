@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import {
@@ -17,6 +17,7 @@ import {
 } from "@/lib/tracks-content";
 import { completeTask, awardCertificate, restartLevelProgress } from "@/app/actions";
 import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
+import { applyGapDecay, recordCleanRun, recordMissedRun, rungFor, type Rung, type RungMap } from "@/lib/release-ladder";
 
 function flagsStorageKey(learnerId: string) {
   return `ws-story-flags:${learnerId}`;
@@ -43,6 +44,63 @@ function saveStoryFlags(learnerId: string, flags: StoryFlags) {
   }
 }
 
+// Device-level settings (not per learner): a shared classroom computer set to
+// Spanish or read-aloud should stay that way for the next person who needs it.
+const LANG_STORAGE_KEY = "ws-lang";
+const SPEAK_STORAGE_KEY = "ws-read-aloud";
+const BIG_TEXT_STORAGE_KEY = "ws-big-text";
+
+function loadStoredLang(): Lang {
+  if (typeof window === "undefined") return "en";
+  try {
+    return window.localStorage.getItem(LANG_STORAGE_KEY) === "es" ? "es" : "en";
+  } catch {
+    return "en";
+  }
+}
+
+function loadStoredFlag(key: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.localStorage.getItem(key) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function saveSetting(key: string, value: string) {
+  try {
+    window.localStorage.setItem(key, value);
+  } catch {
+    // Private browsing can block localStorage. The setting still lives in memory this session.
+  }
+}
+
+function rungMapStorageKey(learnerId: string) {
+  return `ws-rungs:${learnerId}`;
+}
+
+function loadRungMap(learnerId: string): RungMap {
+  if (typeof window === "undefined") return {};
+  try {
+    const raw = window.localStorage.getItem(rungMapStorageKey(learnerId));
+    if (!raw) return {};
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object") return {};
+    return parsed as RungMap;
+  } catch {
+    return {};
+  }
+}
+
+function saveRungMap(learnerId: string, map: RungMap) {
+  try {
+    window.localStorage.setItem(rungMapStorageKey(learnerId), JSON.stringify(map));
+  } catch {
+    // Private browsing can block localStorage. The rung still lives in memory this session.
+  }
+}
+
 interface ProgressValue {
   learnerId: string;
   completedTaskKeys: TaskKey[];
@@ -63,6 +121,15 @@ interface ProgressValue {
   dismissMariaNote: () => void;
   lang: Lang;
   setLang: (lang: Lang) => void;
+  /** "Read aloud" mode: tapped text is spoken with the browser's built-in voice. */
+  speakAloud: boolean;
+  setSpeakAloud: (on: boolean) => void;
+  /** "Bigger text" mode: task windows render ~15% larger. */
+  bigText: boolean;
+  setBigText: (on: boolean) => void;
+  rungMap: RungMap;
+  getRung: (skillKey: string) => Rung;
+  recordSkillRun: (skillKey: string, opts: { clean: boolean }) => void;
 }
 
 const ProgressContext = createContext<ProgressValue | null>(null);
@@ -85,9 +152,38 @@ export function ProgressProvider({
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
   const [progressEpoch, setProgressEpoch] = useState(0);
   const [storyFlags, setStoryFlags] = useState<StoryFlags>(() => loadStoryFlags(learnerId));
-  const [lang, setLang] = useState<Lang>("en");
+  const [rungMap, setRungMap] = useState<RungMap>(() => {
+    const loaded = loadRungMap(learnerId);
+    const decayed = applyGapDecay(loaded, new Date().toISOString());
+    if (decayed !== loaded) saveRungMap(learnerId, decayed);
+    return decayed;
+  });
+  const [lang, setLangState] = useState<Lang>(() => loadStoredLang());
+  const [speakAloud, setSpeakAloudState] = useState<boolean>(() => loadStoredFlag(SPEAK_STORAGE_KEY));
+  const [bigText, setBigTextState] = useState<boolean>(() => loadStoredFlag(BIG_TEXT_STORAGE_KEY));
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const setLang = useCallback((next: Lang) => {
+    setLangState(next);
+    saveSetting(LANG_STORAGE_KEY, next);
+  }, []);
+
+  const setSpeakAloud = useCallback((on: boolean) => {
+    setSpeakAloudState(on);
+    saveSetting(SPEAK_STORAGE_KEY, String(on));
+  }, []);
+
+  const setBigText = useCallback((on: boolean) => {
+    setBigTextState(on);
+    saveSetting(BIG_TEXT_STORAGE_KEY, String(on));
+  }, []);
+
+  // Keep the document language in sync so screen readers pick the right voice
+  // for Spanish content (the server layout can only ever render lang="en").
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const setStoryFlag = useCallback((key: string, value: string) => {
     setStoryFlags((prev) => {
@@ -149,6 +245,17 @@ export function ProgressProvider({
     restartLevelProgress(level.key);
   }, [learnerId]);
 
+  const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
+
+  const recordSkillRun = useCallback((skillKey: string, opts: { clean: boolean }) => {
+    const now = new Date().toISOString();
+    setRungMap((prev) => {
+      const next = opts.clean ? recordCleanRun(prev, skillKey, now) : recordMissedRun(prev, skillKey, now);
+      saveRungMap(learnerId, next);
+      return next;
+    });
+  }, [learnerId]);
+
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
   const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
   const dismissMariaNote = useCallback(() => setMariaNoteTaskKey(null), []);
@@ -175,6 +282,13 @@ export function ProgressProvider({
         dismissMariaNote,
         lang,
         setLang,
+        speakAloud,
+        setSpeakAloud,
+        bigText,
+        setBigText,
+        rungMap,
+        getRung,
+        recordSkillRun,
       }}
     >
       {children}

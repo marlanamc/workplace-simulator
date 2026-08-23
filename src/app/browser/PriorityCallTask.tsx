@@ -248,7 +248,6 @@ export default function PriorityCallTask() {
         lesson={LESSONS[lang][0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
       <NudgeToast text={nudge} bottom={32} />
     </div>

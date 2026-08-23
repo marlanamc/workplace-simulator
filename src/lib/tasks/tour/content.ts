@@ -2,17 +2,17 @@ import type { ConfidenceOption, EventIntroCopy, Lang, Lesson } from "@/lib/task-
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
-    emoji: "💻",
-    kicker: "Before you clock in",
-    headline: "This is a practice computer.",
-    body: "Nothing here is real. You cannot break it. Take one minute to find the lights, then the job starts.",
+    emoji: "☕",
+    kicker: "Your first day",
+    headline: "Welcome to Harborside Cafe!",
+    body: "You got the job. This is your work computer — a practice one. Nothing here is real. You cannot break it. Let's find the lights before your shift starts.",
     cta: "Show me around",
   },
   es: {
-    emoji: "💻",
-    kicker: "Antes de marcar entrada",
-    headline: "Esta es una computadora de práctica.",
-    body: "Nada aquí es real. No la puedes romper. Tómate un minuto para encontrar las luces. Luego empieza el trabajo.",
+    emoji: "☕",
+    kicker: "Tu primer día",
+    headline: "Te damos la bienvenida a Harborside Cafe.",
+    body: "Conseguiste el trabajo. Esta es tu computadora de trabajo — una de práctica. Nada aquí es real. No la puedes romper. Vamos a encontrar las luces antes de que empiece tu turno.",
     cta: "Enséñame",
   },
 };
@@ -48,7 +48,7 @@ export const TOUR_COPY: Record<Lang, {
     helpReady: "I'm ready for the job",
     sentKicker: "You're set",
     doneTitle: "You found the lights.",
-    doneBody: "White button on the desktop: next job. Question mark: Help. Target on the bottom bar: your list for this shift. Next is always the blue button.",
+    doneBody: "White button on the desktop: next job. Question mark: Help. The briefcase on the bottom bar: your list for this shift. Next is always the blue button.",
     badgeName: "Find your way around",
     badgeWhere: "Counts toward: getting started",
     confidenceQ: "Do you know where to look if you get stuck?",
@@ -69,7 +69,7 @@ export const TOUR_COPY: Record<Lang, {
     helpReady: "Estoy listo para el trabajo",
     sentKicker: "Listo",
     doneTitle: "Encontraste las luces.",
-    doneBody: "Botón blanco en el escritorio: el siguiente trabajo. Signo de interrogación: Ayuda. Diana en la barra de abajo: tu lista de este turno. Siguiente siempre es el botón azul.",
+    doneBody: "Botón blanco en el escritorio: el siguiente trabajo. Signo de interrogación: Ayuda. El maletín en la barra de abajo: tu lista de este turno. Siguiente siempre es el botón azul.",
     badgeName: "Orientarte",
     badgeWhere: "Cuenta para: empezar",
     confidenceQ: "¿Sabes dónde mirar si te trabas?",
@@ -100,7 +100,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "The big white button on your desktop opens the next job.",
         "Inside a job, the ? at the top right is Help. Use it any time.",
-        "The target on the bottom bar is your list for this shift. Open it if you forget what to do.",
+        "The briefcase on the bottom bar is My job — your list for this shift. Open it if you forget what to do.",
         "When you finish, the blue button is Next. It takes you to the right place.",
       ],
       tip: "If you get lost, go back to the desktop. The briefing always names the next job.",
@@ -112,7 +112,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "El botón blanco grande en tu escritorio abre el siguiente trabajo.",
         "Dentro de un trabajo, el ? de arriba a la derecha es Ayuda. Úsalo cuando quieras.",
-        "La diana en la barra de abajo es tu lista de este turno. Ábrela si se te olvida qué hacer.",
+        "El maletín en la barra de abajo es Mi trabajo: tu lista de este turno. Ábrelo si se te olvida qué hacer.",
         "Cuando termines, el botón azul es Siguiente. Te lleva al lugar correcto.",
       ],
       tip: "Si te pierdes, vuelve al escritorio. El aviso siempre nombra el siguiente trabajo.",

@@ -187,7 +187,6 @@ export default function IncidentTask() {
         lesson={LESSONS[lang][0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       <NudgeToast text={nudge} bottom={32} />

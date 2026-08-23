@@ -29,7 +29,7 @@ export default function TaskDoneActions({
     ? (HANDOFF_CTA[handoff.taskKey][lang] ?? DESKTOP_COPY[lang].nextLabel)
     : null;
   const sittingLine = handoff
-    ? `${sittingTitle(levelForTrack(currentTrack.key))} · ${TASK_INFO[handoff.taskKey].label}`
+    ? `${sittingTitle(levelForTrack(currentTrack.key))} · ${TASK_INFO[handoff.taskKey].label[lang]}`
     : null;
 
   return (

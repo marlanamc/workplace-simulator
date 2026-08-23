@@ -11,7 +11,7 @@ import {
 
 /** Level title without the "Level N:" prefix — the sitting's name. */
 export function sittingTitle(level: Level): string {
-  return level.title.replace(/^Level \d+:\s*/, "");
+  return level.title.replace(/^Level \d+[a-z]?:\s*/, "");
 }
 
 /** Act title without the "Act I:" prefix — the job they hold. */
@@ -35,9 +35,16 @@ export function nextBuiltTask(track: Track, completedTaskKeys: TaskKey[]): TaskK
 export const BOOKMARK_LABEL: Record<TaskKey, string> = {
   tour: "Welcome",
   mail: "Mail",
+  "mail-read": "Mail",
+  "mail-reply": "Mail",
+  "mail-attach": "Mail",
   schedule: "Portal",
+  "swap-request": "Portal",
+  "call-out-sick": "Portal",
   timeclock: "Portal",
   paystub: "Portal",
+  "shift-review": "Portal",
+  "account-recovery": "Sign In",
   incident: "Forms",
   handbook: "Docs",
   calendar: "Calendar",

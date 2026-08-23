@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import type { PickableItem } from "@/lib/task-types";
 
 export default function PickerModal({
@@ -17,12 +20,23 @@ export default function PickerModal({
   onCancel: () => void;
   cancelLabel: string;
 }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+
   return (
     <div
       className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-6"
       onClick={onCancel}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         className="flex w-full max-w-[560px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >

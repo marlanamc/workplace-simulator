@@ -214,7 +214,7 @@ export default function CalendarTask() {
 
             <div>
               <div className="mb-1 px-2 text-[12px] font-medium text-[#5f6368]">{c.myCalendars}</div>
-              <CalCheck color="#1a73e8" label={T("Jordan Diaz", "Jordan Diaz")} />
+              <CalCheck color="#1a73e8" label={T("Jordan Kim", "Jordan Kim")} />
               <CalCheck color="#0b8043" label={c.workShifts} />
               <CalCheck color="#8e24aa" label={c.cafeCalendar} />
             </div>
@@ -447,7 +447,6 @@ export default function CalendarTask() {
         lesson={LESSONS[lang][view === "compose" || view === "done" ? 1 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       <NudgeToast text={nudge} bottom={32} />

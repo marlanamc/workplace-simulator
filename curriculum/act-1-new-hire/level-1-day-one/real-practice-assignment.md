@@ -1,16 +1,17 @@
-# Level 1 Real-World Practice: New Hire Wrap-Up
+# Level 1 Real-World Practice: Day One Wrap-Up
 
-**When to offer:** after a student has finished the `mail` task in the
-simulator (Lesson 1 — the whole of Level 1). This is **optional and
-supplementary**, never a gate — a student who skips it still moves on to
-Level 2 exactly the same way. Offer it if you're holding office hours the
-week a student reaches this point, or post it to Google Classroom for
-anyone who wants the extra practice.
+**When to offer:** after a student has finished all 3 Day One jobs in the
+simulator (`mail-read`, `mail-reply`, `mail-attach` — Lessons 1-3). This is
+**optional and supplementary**, never a gate — a student who skips it still
+moves on to Level 2 exactly the same way. Offer it if you're holding office
+hours the week a student reaches this point, or post it to Google Classroom
+for anyone who wants the extra practice.
 
-**Why bundled here, not per-lesson:** Level 1 is intentionally just one
-lesson (answering a supervisor's email), so there's only one real-world
-task to offer — but it stays a separate, clearly-optional wrap-up rather
-than folded into the lesson itself, matching every other level's pattern.
+**Why bundled here, not per-lesson:** Day One is 3 short jobs on the same
+skill (reading, then replying, then attaching), so there's only one
+real-world task worth offering once all three are done — but it stays a
+separate, clearly-optional wrap-up rather than folded into a lesson itself,
+matching every other level's pattern.
 
 ## Before class (teacher prep, only if offering this)
 - [ ] Google Classroom (optional): post one short assignment — "Level 1
@@ -36,5 +37,5 @@ time") is plenty.
 - This is the smallest wrap-up in the whole curriculum by design — Level 1
   is a single lesson, so there's no reflection round-up needed yet. The
   first real end-of-level reflection happens at the end of Level 3.
-- A student is ready for Level 2 as soon as `mail` shows complete in their
-  Objectives panel, whether or not they did this optional practice.
+- A student is ready for Level 2 as soon as all 3 Day One jobs show complete
+  in their My Job panel, whether or not they did this optional practice.

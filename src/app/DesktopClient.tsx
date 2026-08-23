@@ -7,7 +7,7 @@ import { DesktopClock } from "@/components/LiveClock";
 import { levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
 import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
-import ObjectivesPanel from "@/components/ObjectivesPanel";
+import MyJobPanel from "@/components/MyJobPanel";
 import AwardsCase from "@/components/AwardsCase";
 import ShiftBriefing from "@/components/ShiftBriefing";
 import TrackCelebration from "@/components/TrackCelebration";
@@ -83,7 +83,7 @@ function DesktopShell({
   fromStudio: boolean;
 }) {
   const { lang, currentTrack, dismissCelebration, progressEpoch } = useProgress();
-  const [objectivesOpen, setObjectivesOpen] = useState(false);
+  const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const { apps, active } = useWindowManager();
 
@@ -136,7 +136,7 @@ function DesktopShell({
             <ShiftBriefing
               lang={lang}
               onSeeAwards={() => {
-                setObjectivesOpen(false);
+                setMyJobOpen(false);
                 setAwardsOpen(true);
               }}
             />
@@ -157,11 +157,11 @@ function DesktopShell({
         </AppWindow>
       )}
 
-      <ObjectivesPanel
-        open={objectivesOpen}
-        onOpenChange={setObjectivesOpen}
+      <MyJobPanel
+        open={myJobOpen}
+        onOpenChange={setMyJobOpen}
         onOpenAwards={() => {
-          setObjectivesOpen(false);
+          setMyJobOpen(false);
           setAwardsOpen(true);
         }}
       />
@@ -172,22 +172,17 @@ function DesktopShell({
       <TrackCelebration
         onSeeAward={() => {
           dismissCelebration();
-          setObjectivesOpen(false);
+          setMyJobOpen(false);
           setAwardsOpen(true);
         }}
       />
       <LevelUpCelebration />
       <Shelf
         displayName={displayName}
-        objectivesOpen={objectivesOpen}
-        onObjectivesOpenChange={(open) => {
-          setObjectivesOpen(open);
+        myJobOpen={myJobOpen}
+        onMyJobOpenChange={(open) => {
+          setMyJobOpen(open);
           if (open) setAwardsOpen(false);
-        }}
-        awardsOpen={awardsOpen}
-        onAwardsOpenChange={(open) => {
-          setAwardsOpen(open);
-          if (open) setObjectivesOpen(false);
         }}
       />
       <MariaNoteToast />

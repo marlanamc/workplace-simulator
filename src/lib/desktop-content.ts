@@ -184,10 +184,21 @@ export const RECENT_ITEMS: RecentItem[] = [
 // icons exist, since several tasks now live as tabs inside one Browser app.
 export const TASK_KEYS = [
   "tour",
+  // "mail" is the old bundled Day-One task (find + reply + attach in one
+  // job). Kept in the union so a learner's historical completion stays a
+  // valid DB row, but no Level/Track requires it anymore - Day One now
+  // asks for the 3 granular jobs below instead.
   "mail",
+  "mail-read",
+  "mail-reply",
+  "mail-attach",
   "schedule",
+  "swap-request",
+  "call-out-sick",
   "timeclock",
   "paystub",
+  "shift-review",
+  "account-recovery",
   "incident",
   "handbook",
   "calendar",

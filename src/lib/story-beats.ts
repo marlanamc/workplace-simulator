@@ -1,5 +1,6 @@
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang, Localized } from "@/lib/task-types";
+import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 
 export const HUDDLE_TIME_FLAG = "huddleTime";
 
@@ -28,9 +29,16 @@ export type InboxRow = {
 export const HANDOFF_CTA: Record<TaskKey, Localized> = {
   tour: { en: "Open Welcome", es: "Abrir Bienvenida" },
   mail: { en: "Open Mail", es: "Abrir correo" },
+  "mail-read": { en: "Open Mail", es: "Abrir correo" },
+  "mail-reply": { en: "Next: Write her back", es: "Siguiente: Contéstale" },
+  "mail-attach": { en: "Next: Attach the file", es: "Siguiente: Adjunta el archivo" },
   schedule: { en: "Next: Open Portal", es: "Siguiente: Abrir Portal" },
+  "swap-request": { en: "Next: Ask for a swap", es: "Siguiente: Pide un cambio" },
+  "call-out-sick": { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
   timeclock: { en: "Next: Clock out", es: "Siguiente: Marcar salida" },
   paystub: { en: "Next: Check a pay stub", es: "Siguiente: Revisar un recibo" },
+  "shift-review": { en: "Next: A normal shift", es: "Siguiente: Un turno normal" },
+  "account-recovery": { en: "Next: Sign back in", es: "Siguiente: Vuelve a entrar" },
   incident: { en: "Next: Open Forms", es: "Siguiente: Abrir Formularios" },
   handbook: { en: "Next: Open Docs", es: "Siguiente: Abrir Docs" },
   calendar: { en: "Open Calendar from the bookmarks", es: "Abre Calendar en los marcadores" },
@@ -49,9 +57,16 @@ export const HANDOFF_CTA: Record<TaskKey, Localized> = {
 export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
   tour: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
   mail: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
+  "mail-read": { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
+  "mail-reply": { en: "Tuesday, 8:15 AM. You know what she needs.", es: "Martes, 8:15 AM. Ya sabes qué necesita." },
+  "mail-attach": { en: "Tuesday, 8:16 AM. Same reply, one more step.", es: "Martes, 8:16 AM. Misma respuesta, un paso más." },
   schedule: { en: "Tuesday morning.", es: "Martes por la mañana." },
+  "swap-request": { en: "Wednesday. Two shifts overlap.", es: "Miércoles. Dos turnos se cruzan." },
+  "call-out-sick": { en: "Thursday morning. You feel sick.", es: "Jueves por la mañana. Te sientes mal." },
   timeclock: { en: "Tuesday, end of shift.", es: "Martes, fin del turno." },
   paystub: { en: "Friday. Payday for the crew.", es: "Viernes. Día de pago del equipo." },
+  "shift-review": { en: "Monday. A normal shift, start to finish.", es: "Lunes. Un turno normal, de principio a fin." },
+  "account-recovery": { en: "Monday morning. You're signed out.", es: "Lunes por la mañana. Cerraste sesión." },
   incident: { en: "Wednesday. The floor is busy.", es: "Miércoles. El piso está lleno." },
   handbook: { en: "Thursday night.", es: "Jueves por la noche." },
   calendar: { en: "Next week. You are a lead now.", es: "La semana que viene. Ya eres líder." },
@@ -135,7 +150,10 @@ const STORY_MAILS: InboxRow[] = [
     time: "8:22 AM",
     unread: true,
     story: true,
-    unlockAfter: "mail",
+    // Was "mail" (the old bundled task) - now fires after the last of the
+    // 3 split Day-One jobs, so the reply still lands once the full arc
+    // (read -> reply -> attach) is actually done.
+    unlockAfter: "mail-attach",
     subject: { en: "Got it. Thank you", es: "Lo tengo. Gracias" },
     preview: { en: "Thanks for sending this so fast.", es: "Gracias por enviarlo tan rápido." },
     body: {
@@ -518,6 +536,32 @@ export function storyMailsFor(completedTaskKeys: TaskKey[], flags: StoryFlags): 
     if (mail.key !== "story-calendar") return mail;
     const reply = huddleReply(flags);
     return { ...mail, ...reply };
+  });
+}
+
+/** Every task in the order the game hands them out. */
+const CURRICULUM_ORDER: TaskKey[] = LEVELS.flatMap(taskKeysForLevel);
+
+/**
+ * The inbox as it looked at a moment in the story. While a mail task is
+ * being done — including a REPLAY of an early level — only story mails
+ * unlocked by tasks that come BEFORE it in the curriculum appear. Without
+ * this, a learner replaying Day One faces a dozen future Maria emails and
+ * "find Maria's email" stops making sense. Pass null when no mail task is
+ * active (just browsing) to get everything unlocked so far.
+ */
+export function storyMailsUpTo(
+  activeTaskKey: TaskKey | null,
+  completedTaskKeys: TaskKey[],
+  flags: StoryFlags,
+): InboxRow[] {
+  const unlocked = storyMailsFor(completedTaskKeys, flags);
+  if (!activeTaskKey) return unlocked;
+  const cutoff = CURRICULUM_ORDER.indexOf(activeTaskKey);
+  if (cutoff === -1) return unlocked;
+  return unlocked.filter((m) => {
+    const i = CURRICULUM_ORDER.indexOf(m.unlockAfter);
+    return i !== -1 && i < cutoff;
   });
 }
 

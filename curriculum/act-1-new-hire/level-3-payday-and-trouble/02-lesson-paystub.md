@@ -1,11 +1,11 @@
-# Lesson 3: Read a Pay Stub
+# Lesson 2: Read a Pay Stub
 
-**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 2 — Schedules & Documents
+**Time:** ~5 minutes · **Level:** 3 — Payday & Trouble · **Track:** 3 — Payday & Trouble
 **Task key:** `paystub` · **Status:** built — opening the most recent pay
 stub from the Employee Portal opens the real PDF in PDF Reader, then two
 quick multiple-choice checks (net pay, then total hours) confirm the student
 found the right numbers.
-**Prerequisite:** Lesson 2 (comfortable checking that hours match)
+**Prerequisite:** Lesson 1 (comfortable checking that hours match)
 
 ## We will learn...
 - find the right person's pay stub, then find net pay and confirm the hours.

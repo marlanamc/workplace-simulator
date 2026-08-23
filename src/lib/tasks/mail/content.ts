@@ -17,6 +17,126 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   },
 };
 
+/** Day One is 3 short jobs in the same inbox: read, then reply, then attach. Each gets its own framing. */
+export const EVENT_INTRO_BY_TASK: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lang, EventIntroCopy>> = {
+  "mail-read": EVENT_INTRO,
+  "mail-reply": {
+    en: {
+      emoji: "✍️",
+      kicker: "Job 2 of 3",
+      headline: "Now write her back.",
+      body: "You know what Maria needs. This time, answer her in your own words.",
+      cta: "Open my inbox",
+    },
+    es: {
+      emoji: "✍️",
+      kicker: "Trabajo 2 de 3",
+      headline: "Ahora respóndele.",
+      body: "Ya sabes qué necesita Maria. Esta vez, contéstale con tus propias palabras.",
+      cta: "Abrir mi bandeja",
+    },
+  },
+  "mail-attach": {
+    en: {
+      emoji: "📎",
+      kicker: "Job 3 of 3",
+      headline: "Same reply. Now put the file in.",
+      body: "You can already answer Maria. This time, send the same kind of reply again - but attach the file before you send.",
+      cta: "Open my inbox",
+    },
+    es: {
+      emoji: "📎",
+      kicker: "Trabajo 3 de 3",
+      headline: "Misma respuesta. Ahora agrega el archivo.",
+      body: "Ya sabes contestarle a Maria. Esta vez, envía otra respuesta parecida, pero adjunta el archivo antes de enviar.",
+      cta: "Abrir mi bandeja",
+    },
+  },
+};
+
+/** The mail-read comprehension check - no writing, just "what does she need?" */
+export const CONFIRM_COPY: Record<Lang, {
+  question: string;
+  options: { label: string; correct: boolean }[];
+  correctReply: string;
+  wrongReply: string;
+  continueLabel: string;
+}> = {
+  en: {
+    question: "What does Maria need?",
+    options: [
+      { label: "The July safety report, today", correct: true },
+      { label: "Help closing the cafe tonight", correct: false },
+      { label: "A new work schedule", correct: false },
+    ],
+    correctReply: "That's it. She needs the July safety report, today.",
+    wrongReply: "Read it again. Look for what she's asking for and when.",
+    continueLabel: "Continue",
+  },
+  es: {
+    question: "¿Qué necesita Maria?",
+    options: [
+      { label: "El reporte de seguridad de julio, hoy", correct: true },
+      { label: "Ayuda para cerrar el café esta noche", correct: false },
+      { label: "Un nuevo horario de trabajo", correct: false },
+    ],
+    correctReply: "Así es. Necesita el reporte de seguridad de julio, hoy.",
+    wrongReply: "Léelo otra vez. Busca qué pide y cuándo lo necesita.",
+    continueLabel: "Continuar",
+  },
+};
+
+/** Per-variant done-screen copy - same inbox, three different finish lines. */
+export const DONE_COPY: Record<"mail-read" | "mail-reply" | "mail-attach", Record<Lang, {
+  kicker: string;
+  body: string;
+  badgeNumber: string;
+  badgeWhere: string;
+}>> = {
+  "mail-read": {
+    en: {
+      kicker: "Understood",
+      body: "You found the right email and knew what Maria was asking for. That's the first move in almost every work message.",
+      badgeNumber: "01",
+      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
+    },
+    es: {
+      kicker: "Entendido",
+      body: "Encontraste el correo correcto y supiste qué pedía Maria. Ese es el primer paso en casi todo mensaje de trabajo.",
+      badgeNumber: "01",
+      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
+  "mail-reply": {
+    en: {
+      kicker: "Message sent",
+      body: "Maria got your reply. Most manager asks just need a short answer back, in your own words.",
+      badgeNumber: "02",
+      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
+    },
+    es: {
+      kicker: "Mensaje enviado",
+      body: "Maria recibió tu respuesta. La mayoría de las peticiones de un jefe solo necesitan una respuesta corta, con tus propias palabras.",
+      badgeNumber: "02",
+      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
+  "mail-attach": {
+    en: {
+      kicker: "Message sent",
+      body: "Maria got your reply and the file. In a real job, most asks from a manager look like this. A short answer, with the file attached.",
+      badgeNumber: "03",
+      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
+    },
+    es: {
+      kicker: "Mensaje enviado",
+      body: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un jefe: una respuesta corta con el archivo adjunto.",
+      badgeNumber: "03",
+      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
+};
+
 export const MAIL_COPY: Record<Lang, {
   practiceBanner: string;
   inbox: string;
@@ -216,10 +336,10 @@ export const EMAILS = [
   { key: "maria", from: "Maria Delgado", initials: "MD", color: "#1a73e8", time: "8:14 AM", isTarget: true, unread: true,
     subject: { en: "Need the July safety report today", es: "Necesito el reporte de seguridad de julio hoy" },
     preview: { en: "Hi, can you send me the July safety report today?", es: "Hola, ¿me puedes enviar hoy el reporte de seguridad de julio?" } },
-  { key: "luis", from: "Luis Ortiz", initials: "LO", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
+  { key: "darnell", from: "Darnell Washington", initials: "DW", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
     preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
-    wrongHint: wrongHint("Luis is a coworker, not your manager. Look for the email from Maria Delgado.", "Luis es un compañero, no tu gerente. Busca el correo de Maria Delgado.") },
+    wrongHint: wrongHint("Darnell is a coworker, not your manager. Look for the email from Maria Delgado.", "Darnell es un compañero, no tu gerente. Busca el correo de Maria Delgado.") },
   { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
     subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
     preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },

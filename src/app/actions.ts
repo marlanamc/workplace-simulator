@@ -2,8 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { clearSessionCookie, getSessionLearnerId } from "@/lib/auth";
-import { awardBadge, recordCompletion, deleteCompletions, deleteBadges } from "@/lib/db/queries";
-import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
+import { awardBadge, recordCompletion, deleteCompletions, deleteBadges, replaceProgress } from "@/lib/db/queries";
+import { LEVELS, TRACKS, taskKeysForLevel, taskKeysBeforeLevel, trackKeysBeforeLevel } from "@/lib/tracks-content";
 
 export async function logout() {
   await clearSessionCookie();
@@ -24,6 +24,33 @@ export async function awardCertificate(trackKey: string) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) return { ok: false as const };
   await awardBadge(learnerId, `track:${trackKey}`);
+  return { ok: true as const };
+}
+
+/**
+ * Studio-only time machine: sets the signed-in account's progress to exactly
+ * the start of the given level ("all" = everything finished). One test
+ * account can teleport to any moment in the game instead of replaying —
+ * or making — a pile of accounts.
+ */
+export async function setProgressPreset(levelKey: string | "all") {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) return { ok: false as const };
+
+  if (levelKey !== "all" && !LEVELS.some((l) => l.key === levelKey)) {
+    return { ok: false as const };
+  }
+
+  const taskKeys =
+    levelKey === "all" ? LEVELS.flatMap(taskKeysForLevel) : taskKeysBeforeLevel(levelKey);
+  const trackKeys =
+    levelKey === "all" ? TRACKS.map((t) => t.key) : trackKeysBeforeLevel(levelKey);
+
+  await replaceProgress(
+    learnerId,
+    taskKeys,
+    trackKeys.map((k) => `track:${k}`),
+  );
   return { ok: true as const };
 }
 

@@ -1,10 +1,10 @@
 # Lesson 1: File an Incident Report
 
-**Time:** ~5 minutes · **Level:** 3 — When Something Happens · **Track:** 3 — Think It Through
+**Time:** ~5 minutes · **Level:** Act II, Level 0 — When Something Happens · **Track:** 3 — Think It Through
 **Task key:** `incident` · **Status:** built — a "Incident Report" Browser
 tab holds a planted scenario (a customer slip near the front door) and a
 what/when/where form that submits to Maria.
-**Prerequisite:** Level 2 complete (schedule, time clock, and pay stub)
+**Prerequisite:** Act I complete (all 9 Day One / First Week / Payday & Trouble jobs)
 
 ## We will learn...
 - write up what happened, in order, in a tone that's clear and professional.

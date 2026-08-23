@@ -128,7 +128,6 @@ export default function TourTask({
         lesson={LESSONS[lang][0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
     </div>
   );

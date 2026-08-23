@@ -1,4 +1,5 @@
 import type { AppKey, TaskKey } from "./desktop-content";
+import type { Localized } from "./task-types";
 
 export const POINTS_PER_TASK = 100;
 
@@ -23,15 +24,22 @@ export const TRACKS: Track[] = [
     key: "starter",
     title: "Getting Started",
     subtitle: "Your first jobs on shift",
-    taskKeys: ["mail"],
+    taskKeys: ["mail-read", "mail-reply", "mail-attach"],
     awardEmoji: "☕",
   },
   {
-    key: "schedules",
-    title: "Schedules & Documents",
-    subtitle: "Keep the shift running well",
-    taskKeys: ["schedule", "timeclock", "paystub"],
+    key: "first-week",
+    title: "The First Week",
+    subtitle: "Life happens on a schedule too",
+    taskKeys: ["schedule", "swap-request", "call-out-sick"],
     awardEmoji: "🗓️",
+  },
+  {
+    key: "payday-trouble",
+    title: "Payday & Trouble",
+    subtitle: "Money, hours, and a normal shift",
+    taskKeys: ["timeclock", "paystub", "shift-review"],
+    awardEmoji: "💳",
   },
   {
     key: "judgment",
@@ -39,6 +47,13 @@ export const TRACKS: Track[] = [
     subtitle: "Handle it like a team lead",
     taskKeys: ["incident", "handbook"],
     awardEmoji: "🧭",
+  },
+  {
+    key: "account-security",
+    title: "Locked Out",
+    subtitle: "Get back in, the right way",
+    taskKeys: ["account-recovery"],
+    awardEmoji: "🔐",
   },
   {
     key: "calendar",
@@ -105,13 +120,18 @@ export const TRACKS: Track[] = [
   },
 ];
 
-/** The celebratory "you leveled up" moment shown once, right when a learner steps into this level. */
+/**
+ * The celebratory "you leveled up" moment shown once, right when a learner
+ * steps into this level. These are the story's chapter cards: read in order
+ * they tell one arc — hired, trusted, promoted — with Maria as the
+ * through-line, so no level ever feels like clicking buttons for no reason.
+ */
 export interface LevelUpCopy {
   emoji: string;
-  kicker: string;
-  title: string;
-  body: string;
-  cta: string;
+  kicker: Localized<string>;
+  title: Localized<string>;
+  body: Localized<string>;
+  cta: Localized<string>;
 }
 
 export interface Level {
@@ -135,6 +155,24 @@ export interface Level {
    * changes either way).
    */
   levelUp?: LevelUpCopy;
+  /**
+   * Marks this level as deliberately harder-mode: real-world friction added
+   * on purpose (a signed-out interstitial, several plausible-looking files
+   * with no highlight, softer/less-frequent coaching) rather than a new
+   * skill. A task component checks its own current level for this flag (the
+   * same `levelForTrack(currentTrack.key)` lookup `MyJobPanel`/`ShiftBriefing`
+   * already use) and swaps in its messier content variant when true - see
+   * `FilesTask.tsx` for the reference implementation. Additive: a task with
+   * no messy variant built yet just ignores the flag.
+   */
+  messy?: boolean;
+  /**
+   * This level introduces no new skill - it's a fresh consolidation pass
+   * over these already-taught task keys (spaced practice, not a new lesson).
+   * Primarily documentation for now; `level3`'s `shift-review` job is the
+   * template future review levels should follow.
+   */
+  reviewOf?: TaskKey[];
 }
 
 /**
@@ -152,41 +190,88 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level1",
-    title: "Level 1: New Hire, Day One",
+    title: "Level 1: Day One",
     trackKeys: ["starter"],
+    // Still the Mail app - the split into 3 granular jobs (mail-read,
+    // mail-reply, mail-attach) all happen inside it. If a future build
+    // splits mail into separate simulated moments, revisit this.
     firstTabKey: "mail",
     levelUp: {
       emoji: "👋",
-      kicker: "Ready for the floor",
-      title: "You know how this computer works.",
-      body: "Nothing here is real. Help is the question mark. Next is the blue button. Maria already emailed you.",
-      cta: "Open my first job",
+      kicker: { en: "Ready for the floor", es: "Listo para el piso" },
+      title: { en: "You know how this computer works.", es: "Ya sabes cómo funciona esta computadora." },
+      body: {
+        en: "Your manager is Maria Delgado — she runs the cafe, and she already emailed you your first job. Remember: the ? is Help, and next is always the blue button.",
+        es: "Tu gerente es Maria Delgado — ella dirige el café, y ya te envió tu primer trabajo por correo. Recuerda: el ? es Ayuda, y lo siguiente siempre es el botón azul.",
+      },
+      cta: { en: "Open my first job", es: "Abrir mi primer trabajo" },
     },
   },
   {
     key: "level2",
-    title: "Level 2: Settling In",
-    trackKeys: ["schedules"],
+    title: "Level 2: The First Week",
+    trackKeys: ["first-week"],
     firstTabKey: "portal",
     levelUp: {
       emoji: "🎉",
-      kicker: "Day one: complete",
-      title: "You survived Day One!",
-      body: "Maria noticed. Your first email is done. Next up: your schedule, your hours, and your pay.",
-      cta: "Let's keep going",
+      kicker: { en: "Day one: complete", es: "Primer día: completo" },
+      title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
+      body: {
+        en: "Your first email went out fast, and Maria told the team you're quick. Week one starts now: your schedule is posted — and life is already happening on it.",
+        es: "Tu primer correo salió rápido, y Maria le dijo al equipo que eres veloz. Empieza la primera semana: tu horario ya está publicado — y la vida ya está pasando encima de él.",
+      },
+      cta: { en: "See my schedule", es: "Ver mi horario" },
     },
   },
   {
     key: "level3",
-    title: "Level 3: When Something Happens",
+    title: "Level 3: Payday & Trouble",
+    trackKeys: ["payday-trouble"],
+    firstTabKey: "portal",
+    // shift-review deliberately teaches nothing new - it's a fresh pass over
+    // these three already-taught jobs. Template for future review levels.
+    reviewOf: ["schedule", "timeclock", "paystub"],
+    levelUp: {
+      emoji: "✅",
+      kicker: { en: "The first week: done", es: "La primera semana: hecha" },
+      title: { en: "You made it through week one.", es: "Sobreviviste la primera semana." },
+      body: {
+        en: "You read the schedule, fixed a swap, and spoke up when you couldn't come in. Today is payday — time to check your hours and your money. Nobody checks them for you.",
+        es: "Leíste el horario, arreglaste un cambio, y avisaste cuando no podías ir. Hoy es día de pago — toca revisar tus horas y tu dinero. Nadie los revisa por ti.",
+      },
+      cta: { en: "Check my pay", es: "Revisar mi pago" },
+    },
+  },
+  {
+    key: "level3b",
+    title: "Level 3b: When Something Happens",
     trackKeys: ["judgment"],
     firstTabKey: "incident",
     levelUp: {
-      emoji: "✅",
-      kicker: "The portal: done",
-      title: "You can run the basics now.",
-      body: "You can read a schedule, clock out, and check your pay. Next, something goes wrong on the floor.",
-      cta: "Keep going",
+      emoji: "⭐",
+      kicker: { en: "A promotion", es: "Un ascenso" },
+      title: { en: "You are a Shift Lead now!", es: "¡Ahora eres líder de turno!" },
+      body: {
+        en: "Maria saw how you handled your first weeks — new title, new pay. And the job changes right away: someone slipped on the floor this morning, and the lead writes it up.",
+        es: "Maria vio cómo manejaste tus primeras semanas — nuevo puesto, nueva paga. Y el trabajo cambia de inmediato: alguien se resbaló esta mañana, y el líder lo escribe.",
+      },
+      cta: { en: "Handle it", es: "Encargarme" },
+    },
+  },
+  {
+    key: "level3c",
+    title: "Level 3c: Locked Out",
+    trackKeys: ["account-security"],
+    firstTabKey: "account-recovery",
+    levelUp: {
+      emoji: "🔐",
+      kicker: { en: "Monday morning", es: "Lunes por la mañana" },
+      title: { en: "You're locked out.", es: "Tu cuenta está bloqueada." },
+      body: {
+        en: "It happens to every lead eventually. Stay calm, sign back in — and be careful: not every email with a \"code\" in it is real.",
+        es: "Le pasa a todo líder tarde o temprano. Con calma, vuelve a entrar — y ojo: no todo correo con un \"código\" es real.",
+      },
+      cta: { en: "Get back in", es: "Volver a entrar" },
     },
   },
   {
@@ -196,11 +281,14 @@ export const LEVELS: Level[] = [
     firstTabKey: "calendar",
     freeTabbing: true,
     levelUp: {
-      emoji: "⭐",
-      kicker: "A new job",
-      title: "You are a Shift Lead now!",
-      body: "Maria saw you handle the hard calls. From here on, you open your own apps from the bookmarks bar. Start with Calendar.",
-      cta: "Open Calendar from the bookmarks",
+      emoji: "📅",
+      kicker: { en: "A lead plans ahead", es: "Un líder planea" },
+      title: { en: "Maria put you on the calendar.", es: "Maria te puso en el calendario." },
+      body: {
+        en: "Leads plan their week instead of just working it. A meeting invite just landed — right on top of your shift. From now on, you open your own apps from the bookmarks bar.",
+        es: "Los líderes planean su semana, no solo la trabajan. Acaba de llegar una invitación a reunión — justo encima de tu turno. Desde ahora, abres tus propias apps desde la barra de marcadores.",
+      },
+      cta: { en: "Open Calendar from the bookmarks", es: "Abrir Calendar desde los marcadores" },
     },
   },
   {
@@ -209,12 +297,19 @@ export const LEVELS: Level[] = [
     trackKeys: ["files"],
     firstTabKey: "files",
     freeTabbing: true,
+    // Messy mode's proof-of-concept lands here rather than waiting for "after
+    // Act II" (the doc's looser framing) - Files is the one already-built
+    // task the doc names outright ("four files look right, no highlight").
+    messy: true,
     levelUp: {
       emoji: "📁",
-      kicker: "Next tool",
-      title: "Now: shared files.",
-      body: "A lead sends the right file, with the right access. Same move at a cafe, a store, or a job site.",
-      cta: "Keep going",
+      kicker: { en: "Monday", es: "Lunes" },
+      title: { en: "Jordan starts today.", es: "Jordan empieza hoy." },
+      body: {
+        en: "A new hire — and this time, you're the one helping them land. Maria asked you to send Jordan this week's schedule. The right file, with the right access.",
+        es: "Alguien nuevo — y esta vez, tú eres quien lo recibe. Maria te pidió enviarle a Jordan el horario de esta semana. El archivo correcto, con el acceso correcto.",
+      },
+      cta: { en: "Find the file", es: "Buscar el archivo" },
     },
   },
   {
@@ -225,10 +320,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "📊",
-      kicker: "Next tool",
-      title: "Now: the numbers.",
-      body: "Enter them. Then check the total. Do not just copy it. Leads catch mistakes.",
-      cta: "Keep going",
+      kicker: { en: "Closing time", es: "Hora de cierre" },
+      title: { en: "Maria trusts you with the numbers.", es: "Maria te confía los números." },
+      body: {
+        en: "This week's totals are yours now. Enter them, then check the total yourself — don't just trust the machine. Leads catch mistakes before they travel.",
+        es: "Los totales de esta semana son tuyos. Escríbelos y revisa el total tú mismo — no le creas todo a la máquina. Los líderes atrapan errores antes de que viajen.",
+      },
+      cta: { en: "Open the numbers", es: "Abrir los números" },
     },
   },
   {
@@ -239,10 +337,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "📝",
-      kicker: "Next tool",
-      title: "Now: report up.",
-      body: "Maria shared a template. It is view only. Copy it. Then write the total yourself.",
-      cta: "Open Sheets",
+      kicker: { en: "Reporting up", es: "Reportar hacia arriba" },
+      title: { en: "Your first report to Maria.", es: "Tu primer reporte para Maria." },
+      body: {
+        en: "Maria shared her status template with you. It's view only on purpose — make your own copy first, then write the total yourself and send it up.",
+        es: "Maria compartió su plantilla de reporte contigo. Es de solo ver a propósito — primero haz tu propia copia, luego escribe el total tú mismo y envíalo.",
+      },
+      cta: { en: "Open the template", es: "Abrir la plantilla" },
     },
   },
   {
@@ -253,10 +354,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🔔",
-      kicker: "A new kind of day",
-      title: "Two things at once.",
-      body: "A meeting on your close. A file request from Sam. Handle both. Order is yours.",
-      cta: "See what's open",
+      kicker: { en: "A real shift", es: "Un turno de verdad" },
+      title: { en: "Two things at once.", es: "Dos cosas a la vez." },
+      body: {
+        en: "A meeting landed on your close, and Sam needs a file. Nobody tells you which to do first — deciding the order is the job now.",
+        es: "Una reunión cayó sobre tu cierre, y Sam necesita un archivo. Nadie te dice cuál va primero — decidir el orden ya es parte del trabajo.",
+      },
+      cta: { en: "See what's open", es: "Ver qué hay pendiente" },
     },
   },
   {
@@ -267,10 +371,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "⭐",
-      kicker: "A new job",
-      title: "You are a Shift Supervisor now!",
-      body: "You decide for the crew now, not only for yourself. Saturday close has nobody on it.",
-      cta: "Open the schedule",
+      kicker: { en: "A promotion", es: "Un ascenso" },
+      title: { en: "You are a Shift Supervisor now!", es: "¡Ahora eres supervisor de turno!" },
+      body: {
+        en: "Maria moved up to run two cafes — and she picked you to run this floor's crew. You decide for the team now, not only for yourself. First problem: Saturday close has nobody on it.",
+        es: "Maria subió a dirigir dos cafés — y te eligió a ti para dirigir el equipo de este piso. Ahora decides por el equipo, no solo por ti. Primer problema: el cierre del sábado no tiene a nadie.",
+      },
+      cta: { en: "Open the schedule", es: "Abrir el horario" },
     },
   },
   {
@@ -281,10 +388,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🧮",
-      kicker: "Next up",
-      title: "Now: check the week's numbers.",
-      body: "The hours total looks fine. Open the formula. One range is pointing at the wrong rows.",
-      cta: "Open Sheets",
+      kicker: { en: "Trust, then check", es: "Confía, luego revisa" },
+      title: { en: "The total looks fine. It isn't.", es: "El total se ve bien. No lo está." },
+      body: {
+        en: "A supervisor reads the formula, not just the number. Someone's hours got left out of the week's total — open the formula and find who.",
+        es: "Un supervisor lee la fórmula, no solo el número. Las horas de alguien quedaron fuera del total de la semana — abre la fórmula y descubre de quién.",
+      },
+      cta: { en: "Open the sheet", es: "Abrir la hoja" },
     },
   },
   {
@@ -295,10 +405,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🗣️",
-      kicker: "You call it now",
-      title: "Lead your first huddle.",
-      body: "Create the invite. Pick a time nobody is on shift. Write two or three bullets so it has a point.",
-      cta: "Set it up",
+      kicker: { en: "Your meeting now", es: "Ahora es tu reunión" },
+      title: { en: "You call the huddle.", es: "Tú convocas la reunión." },
+      body: {
+        en: "The crew needs 15 minutes on next week's schedule — and calling that meeting is your job now. Pick a time nobody is on shift, and give it a point.",
+        es: "El equipo necesita 15 minutos para el horario de la próxima semana — y convocar esa reunión ahora te toca a ti. Elige una hora en que nadie esté en turno, y dale un propósito.",
+      },
+      cta: { en: "Set it up", es: "Organizarla" },
     },
   },
   {
@@ -309,10 +422,13 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🚨",
-      kicker: "The floor is loud",
-      title: "Three things at once.",
-      body: "A complaint. A hole in tonight's close. A meeting on your shift. Name the first move. Then finish all three.",
-      cta: "Look at all three",
+      kicker: { en: "The floor is loud", es: "El piso está a tope" },
+      title: { en: "Three things at once.", es: "Tres cosas a la vez." },
+      body: {
+        en: "A customer complaint. A hole in tonight's close. A meeting on your shift. Breathe, name the first move — then finish all three. This is the day the job was building toward.",
+        es: "Una queja de un cliente. Un hueco en el cierre de hoy. Una reunión sobre tu turno. Respira, decide el primer paso — y termina las tres. Este es el día para el que el trabajo te preparaba.",
+      },
+      cta: { en: "Look at all three", es: "Ver las tres" },
     },
   },
 ];
@@ -337,7 +453,7 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
  */
 export const ACTS: Act[] = [
   { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3"], scene: "harborside-open" },
-  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
+  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
 ];
 
@@ -359,8 +475,9 @@ export const TAB_LEVEL_KEYS: Record<string, string> = {
   tour: "level0",
   mail: "level1",
   portal: "level2",
-  incident: "level3",
-  handbook: "level3",
+  incident: "level3b",
+  handbook: "level3b",
+  "account-recovery": "level3c",
   calendar: "level4",
   files: "level5",
   spreadsheet: "level6",
@@ -400,6 +517,25 @@ export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
   return LEVELS.slice(0, furthestLevelIndex(completedTaskKeys) + 1);
 }
 
+/**
+ * The completions a learner would have at the MOMENT a level begins: every
+ * task from every earlier level, none from this one or later. Powers the
+ * Studio progress presets — one test account teleporting to any point in
+ * the game. Returns [] for an unknown level key (a fresh account).
+ */
+export function taskKeysBeforeLevel(levelKey: string): TaskKey[] {
+  const idx = LEVELS.findIndex((l) => l.key === levelKey);
+  if (idx <= 0) return [];
+  return LEVELS.slice(0, idx).flatMap(taskKeysForLevel);
+}
+
+/** Track keys fully finished before a level begins — the certificates that preset should hold. */
+export function trackKeysBeforeLevel(levelKey: string): string[] {
+  const idx = LEVELS.findIndex((l) => l.key === levelKey);
+  if (idx <= 0) return [];
+  return LEVELS.slice(0, idx).flatMap((l) => l.trackKeys);
+}
+
 /** Whether every track in a level is fully done. */
 export function isLevelComplete(level: Level, completedTaskKeys: TaskKey[]): boolean {
   return level.trackKeys.every((tk) => {
@@ -415,115 +551,204 @@ export function nextLevel(level: Level): Level | null {
 }
 
 export interface TaskInfo {
-  label: string;
-  description: string;
+  label: Localized<string>;
   /** One-line dispatch for the desktop briefing - what just happened, not a tutorial. */
-  dispatch: string;
+  dispatch: Localized<string>;
   /** False for tasks the app doesn't grade yet - shown as "not built yet," not "locked." */
   built: boolean;
 }
 
 export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   tour: {
-    label: "Learn how this computer works",
-    description: "Find Help, your shift list, and the Next button before the first real job.",
-    dispatch: "This is a practice computer. Let's see how it works.",
+    label: { en: "Learn how this computer works", es: "Aprende cómo funciona esta computadora" },
+    dispatch: {
+      en: "This is a practice computer. Let's see how it works.",
+      es: "Esta es una computadora de práctica. Veamos cómo funciona.",
+    },
     built: true,
   },
   mail: {
-    label: "Answer your supervisor",
-    description: "Reply to Maria's email and attach the safety report.",
-    dispatch: "Maria already needs something. First shift, first email.",
+    label: { en: "Answer your supervisor", es: "Contesta a tu supervisora" },
+    dispatch: {
+      en: "Maria already needs something. First shift, first email.",
+      es: "Maria ya necesita algo. Primer turno, primer correo.",
+    },
+    built: true,
+  },
+  "mail-read": {
+    label: { en: "Read your supervisor's email", es: "Lee el correo de tu supervisora" },
+    dispatch: {
+      en: "Maria already needs something. Find it and read it.",
+      es: "Maria ya necesita algo. Encuéntralo y léelo.",
+    },
+    built: true,
+  },
+  "mail-reply": {
+    label: { en: "Answer your supervisor", es: "Contesta a tu supervisora" },
+    dispatch: {
+      en: "You know what she needs. Write her back.",
+      es: "Ya sabes qué necesita. Escríbele.",
+    },
+    built: true,
+  },
+  "mail-attach": {
+    label: { en: "Send the reply with the file", es: "Envía la respuesta con el archivo" },
+    dispatch: {
+      en: "Same reply. Now put the file in before you send.",
+      es: "La misma respuesta. Ahora adjunta el archivo antes de enviar.",
+    },
     built: true,
   },
   schedule: {
-    label: "Request a shift swap",
-    description: "Find a scheduling conflict and ask for a change the right way.",
-    dispatch: "Two shifts overlap. Somebody has to swap.",
+    label: { en: "Find your shift", es: "Encuentra tu turno" },
+    dispatch: {
+      en: "New week. Find where you're on the schedule.",
+      es: "Semana nueva. Encuentra dónde estás en el horario.",
+    },
+    built: true,
+  },
+  "swap-request": {
+    label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
+    dispatch: {
+      en: "Two shifts overlap. Somebody has to swap.",
+      es: "Dos turnos chocan. Alguien tiene que cambiar.",
+    },
+    built: true,
+  },
+  "call-out-sick": {
+    label: { en: "Tell Maria you can't come in", es: "Dile a Maria que no puedes ir" },
+    dispatch: {
+      en: "You're sick tomorrow. Tell Maria before your shift.",
+      es: "Estás enfermo mañana. Avísale a Maria antes de tu turno.",
+    },
     built: true,
   },
   timeclock: {
-    label: "Clock out for the day",
-    description: "Clock out and check that your hours look right.",
-    dispatch: "End of day. Clock out, then check the hours.",
+    label: { en: "Clock out for the day", es: "Marca tu salida del día" },
+    dispatch: {
+      en: "End of day. Clock out, then check the hours.",
+      es: "Fin del día. Marca la salida y revisa las horas.",
+    },
     built: true,
   },
   paystub: {
-    label: "Read a pay stub",
-    description: "Find the right person's stub, then confirm net pay and hours.",
-    dispatch: "Yours takes two weeks. Practice on Alex Chen's stub.",
+    label: { en: "Read a pay stub", es: "Lee un talón de pago" },
+    dispatch: {
+      en: "Yours takes two weeks. Practice on Alex Chen's stub.",
+      es: "El tuyo tarda dos semanas. Practica con el de Alex Chen.",
+    },
+    built: true,
+  },
+  "shift-review": {
+    label: { en: "A normal shift", es: "Un turno normal" },
+    dispatch: {
+      en: "A normal shift. Nothing new - just do the job.",
+      es: "Un turno normal. Nada nuevo: solo haz el trabajo.",
+    },
+    built: true,
+  },
+  "account-recovery": {
+    label: { en: "Get back into a locked account", es: "Recupera una cuenta bloqueada" },
+    dispatch: {
+      en: "You're signed out. Get back in before your shift.",
+      es: "Tu sesión se cerró. Vuelve a entrar antes de tu turno.",
+    },
     built: true,
   },
   incident: {
-    label: "File an incident report",
-    description: "Write up what happened, in order, for your lead.",
-    dispatch: "Someone slipped. Write it up before you forget.",
+    label: { en: "File an incident report", es: "Llena un reporte de incidente" },
+    dispatch: {
+      en: "Someone slipped. Write it up before you forget.",
+      es: "Alguien se resbaló. Escríbelo antes de que se te olvide.",
+    },
     built: true,
   },
   handbook: {
-    label: "Look something up",
-    description: "Find an answer in the employee handbook, even when you feel rushed.",
-    dispatch: "They need an answer. The handbook is on your desk.",
+    label: { en: "Look something up", es: "Busca una respuesta" },
+    dispatch: {
+      en: "They need an answer. The handbook is on your desk.",
+      es: "Necesitan una respuesta. El manual está en tu escritorio.",
+    },
     built: true,
   },
   calendar: {
-    label: "Handle a meeting invite",
-    description: "Spot a conflict with your schedule and propose a different time.",
-    dispatch: "The meeting is at the same time as your shift. Pick a time that works.",
+    label: { en: "Handle a meeting invite", es: "Maneja una invitación a reunión" },
+    dispatch: {
+      en: "The meeting is at the same time as your shift. Pick a time that works.",
+      es: "La reunión es a la misma hora que tu turno. Elige una hora que funcione.",
+    },
     built: true,
   },
   files: {
-    label: "Share a file the right way",
-    description: "Find the right file in a shared drive and share it with the right access.",
-    dispatch: "They need the file. Share the file, not the whole folder.",
+    label: { en: "Share a file the right way", es: "Comparte un archivo de la forma correcta" },
+    dispatch: {
+      en: "They need the file. Share the file, not the whole folder.",
+      es: "Necesitan el archivo. Comparte el archivo, no toda la carpeta.",
+    },
     built: true,
   },
   spreadsheet: {
-    label: "Enter data and share a total",
-    description: "Enter this week's numbers into a shared sheet and email the total to your lead.",
-    dispatch: "This week's numbers. Total them and send it up.",
+    label: { en: "Enter data and share a total", es: "Escribe los números y envía el total" },
+    dispatch: {
+      en: "This week's numbers. Total them and send it up.",
+      es: "Los números de esta semana. Súmalos y envía el total.",
+    },
     built: true,
   },
   "make-a-copy": {
-    label: "Copy a view-only template",
-    description: "Make your own copy of Maria's status sheet so you do not change the master.",
-    dispatch: "The template is view only. Copy it before you type.",
+    label: { en: "Copy a view-only template", es: "Copia una plantilla de solo ver" },
+    dispatch: {
+      en: "The template is view only. Copy it before you type.",
+      es: "La plantilla es de solo ver. Cópiala antes de escribir.",
+    },
     built: true,
   },
   "status-report": {
-    label: "Send a status report",
-    description: "Write a SUM on your copy and cc a co-lead on the email.",
-    dispatch: "Your copy is waiting. Write the total. Cc Jordan.",
+    label: { en: "Send a status report", es: "Envía un reporte de avance" },
+    dispatch: {
+      en: "Your copy is waiting. Write the total. Cc Jordan.",
+      es: "Tu copia está lista. Escribe el total. Pon a Jordan en Cc.",
+    },
     built: true,
   },
   triage: {
-    label: "Handle two things at once",
-    description: "A calendar conflict and a file request. Close both.",
-    dispatch: "Two things are already waiting. Drop neither.",
+    label: { en: "Handle two things at once", es: "Maneja dos cosas a la vez" },
+    dispatch: {
+      en: "Two things are already waiting. Drop neither.",
+      es: "Dos cosas ya están esperando. No dejes caer ninguna.",
+    },
     built: true,
   },
   "team-schedule": {
-    label: "Fill Saturday close",
-    description: "Build part of the week's crew schedule and cover the open shift.",
-    dispatch: "Saturday close has nobody on it. Pick someone with room.",
+    label: { en: "Fill Saturday close", es: "Cubre el cierre del sábado" },
+    dispatch: {
+      en: "Saturday close has nobody on it. Pick someone with room.",
+      es: "El cierre del sábado no tiene a nadie. Elige a alguien con espacio.",
+    },
     built: true,
   },
   "formula-check": {
-    label: "Fix the hours formula",
-    description: "Open the SUM, see which rows it adds, and fix the missing name.",
-    dispatch: "The hours total looks fine. The formula does not.",
+    label: { en: "Fix the hours formula", es: "Arregla la fórmula de horas" },
+    dispatch: {
+      en: "The hours total looks fine. The formula does not.",
+      es: "El total de horas se ve bien. La fórmula no.",
+    },
     built: true,
   },
   "team-meeting": {
-    label: "Lead your first huddle",
-    description: "Create a meeting invite and write a short agenda.",
-    dispatch: "The crew needs 15 minutes on next week's schedule.",
+    label: { en: "Lead your first huddle", es: "Dirige tu primera reunión de equipo" },
+    dispatch: {
+      en: "The crew needs 15 minutes on next week's schedule.",
+      es: "El equipo necesita 15 minutos para el horario de la próxima semana.",
+    },
     built: true,
   },
   "priority-call": {
-    label: "Three things at once",
-    description: "A complaint, a coverage gap, and a meeting on your close.",
-    dispatch: "Three things just landed. Name the first move.",
+    label: { en: "Three things at once", es: "Tres cosas a la vez" },
+    dispatch: {
+      en: "Three things just landed. Name the first move.",
+      es: "Tres cosas acaban de llegar. Decide el primer paso.",
+    },
     built: true,
   },
 };
@@ -579,8 +804,32 @@ export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
   return TRACKS.every((t) => isTrackComplete(t, completedTaskKeys));
 }
 
+/** One "stop" per task, in curriculum order - the path bar the home screen and My Job panel both show. */
+export interface PathStop {
+  taskKey: TaskKey;
+  color: string;
+}
+
+/**
+ * Colors a stop by where the learner stands relative to it: done (green),
+ * the very next task (amber - "in progress"), everything else (muted).
+ * Shared by ShiftBriefing and MyJobPanel so the path bar is drawn once.
+ */
+export function pathStops(completedTaskKeys: TaskKey[]): PathStop[] {
+  const allTaskKeys = LEVELS.flatMap(taskKeysForLevel);
+  const nextKey = allTaskKeys.find((k) => !completedTaskKeys.includes(k));
+  return allTaskKeys.map((taskKey) => ({
+    taskKey,
+    color: completedTaskKeys.includes(taskKey)
+      ? "var(--success)"
+      : taskKey === nextKey
+        ? "var(--warning)"
+        : "var(--border)",
+  }));
+}
+
 /** Employee Portal sub-page. Schedule, Time Clock, and Pay Stubs share one Browser tab. */
-export type PortalSection = "schedule" | "timeclock" | "paystubs";
+export type PortalSection = "schedule" | "timeclock" | "paystubs" | "swap-request" | "call-out-sick" | "shift-review";
 
 export type TaskLocation = {
   appKey: AppKey;
@@ -606,9 +855,16 @@ export type TaskHandoff = {
 export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
   tour: { appKey: "browser", tab: "tour", ctaLabel: "Open Welcome" },
   mail: { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
+  "mail-read": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
+  "mail-reply": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
+  "mail-attach": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   schedule: { appKey: "browser", tab: "portal", section: "schedule", ctaLabel: "Open Portal" },
+  "swap-request": { appKey: "browser", tab: "portal", section: "swap-request", ctaLabel: "Open Portal" },
+  "call-out-sick": { appKey: "browser", tab: "portal", section: "call-out-sick", ctaLabel: "Open Portal" },
   timeclock: { appKey: "browser", tab: "portal", section: "timeclock", ctaLabel: "Open Portal" },
   paystub: { appKey: "browser", tab: "portal", section: "paystubs", ctaLabel: "Open Portal" },
+  "shift-review": { appKey: "browser", tab: "portal", section: "shift-review", ctaLabel: "Open Portal" },
+  "account-recovery": { appKey: "browser", tab: "account-recovery", ctaLabel: "Open Sign In" },
   incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Forms" },
   handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Docs" },
   calendar: { appKey: "browser", ctaLabel: "Open Calendar from the bookmarks" },

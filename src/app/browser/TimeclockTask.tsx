@@ -224,7 +224,6 @@ export default function TimeclockTask() {
         lesson={LESSONS[lang][view === "clocked_in" ? 0 : 1]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       <NudgeToast text={nudge} bottom={32} />

@@ -15,11 +15,10 @@ import { useNudge } from "@/lib/use-nudge";
 import { QuickSettingsClock, ShelfClock } from "@/components/LiveClock";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
-import { APP_ICONS, TAB_ICONS, Flag, Lock, Target, Languages, Trophy } from "@/lib/icons";
-import { Check } from "lucide-react";
+import { APP_ICONS, TAB_ICONS, Briefcase, Languages } from "@/lib/icons";
 import Link from "next/link";
 import { logout } from "@/app/actions";
-import { LEVELS, ACTS, TASK_INFO, isLevelComplete, levelForTrack, furthestLevelIndex, taskKeysForLevel } from "@/lib/tracks-content";
+import { levelForTrack } from "@/lib/tracks-content";
 import { remainingTasksInLevel, sittingTitle } from "@/lib/shift-spine";
 
 /** Height of the taskbar. */
@@ -135,36 +134,26 @@ function ShelfPin({
 
 export default function Shelf({
   displayName,
-  objectivesOpen,
-  onObjectivesOpenChange,
-  awardsOpen,
-  onAwardsOpenChange,
+  myJobOpen,
+  onMyJobOpenChange,
 }: {
   displayName: string;
-  objectivesOpen: boolean;
-  onObjectivesOpenChange: (open: boolean) => void;
-  awardsOpen: boolean;
-  onAwardsOpenChange: (open: boolean) => void;
+  myJobOpen: boolean;
+  onMyJobOpenChange: (open: boolean) => void;
 }) {
-  const { points, justEarnedPoints, completedTaskKeys, currentTrack, restartLevel, lang, setLang } = useProgress();
+  const { completedTaskKeys, currentTrack, lang, setLang } = useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [levelsOpen, setLevelsOpen] = useState(false);
-  const [pendingReplay, setPendingReplay] = useState<string | null>(null);
   const [brightness, setBrightness] = useState(80);
-  const { nudge, say } = useNudge(4200);
+  const { nudge, say } = useNudge();
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
   const currentLevel = levelForTrack(currentTrack.key);
-  const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
-  const reachedIndex = furthestLevelIndex(completedTaskKeys);
   const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
   // Level 0's walkthrough is the one thing on screen for a brand-new learner -
-  // the Objectives panel would just repeat what the walkthrough already says.
-  const objectivesLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
-  const nextAsk = currentTrack.taskKeys.find((k) => !completedTaskKeys.includes(k));
-  const chipAsk = nextAsk && TASK_INFO[nextAsk]?.built ? TASK_INFO[nextAsk].dispatch : null;
+  // the My Job panel would just repeat what the walkthrough already says.
+  const myJobLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -188,24 +177,13 @@ export default function Shelf({
 
   const accountBoxRef = useRef<HTMLDivElement>(null);
   const launcherPanelRef = useRef<HTMLDivElement>(null);
-  const levelsBoxRef = useRef<HTMLDivElement>(null);
   useClickOutside(accountBoxRef, accountOpen, () => setAccountOpen(false));
   useClickOutside(launcherPanelRef, launcherOpen, closeLauncher);
-  useClickOutside(levelsBoxRef, levelsOpen, () => setLevelsOpen(false));
 
   const closeOverlays = () => {
     closeLauncher();
     setAccountOpen(false);
-    setLevelsOpen(false);
-    onObjectivesOpenChange(false);
-    onAwardsOpenChange(false);
-  };
-
-  const goToLevel = (level: (typeof LEVELS)[number], index: number) => {
-    if (index > reachedIndex) return;
-    openApp("browser", { tab: level.firstTabKey });
-    setLevelsOpen(false);
-    setPendingReplay(null);
+    onMyJobOpenChange(false);
   };
 
   return (
@@ -222,25 +200,21 @@ export default function Shelf({
         <button
           type="button"
           onClick={() => {
-            if (objectivesLocked) return;
+            if (myJobLocked) return;
             closeLauncher();
             setAccountOpen(false);
-            setLevelsOpen(false);
-            onAwardsOpenChange(false);
-            onObjectivesOpenChange(true);
+            onMyJobOpenChange(true);
           }}
           title={sittingTitle(currentLevel)}
           className="absolute left-1.5 top-1 hidden max-w-[240px] items-center gap-2 rounded-md px-2.5 py-1 text-left text-white cursor-pointer hover:bg-white/10 min-[920px]:flex"
         >
           <span className="min-w-0">
             <span className="block truncate text-[11px] font-medium leading-tight">{sittingTitle(currentLevel)}</span>
-            {chipAsk ? (
-              <span className="mt-0.5 block truncate text-[10px] leading-tight text-white/70">{chipAsk}</span>
-            ) : leftover === 0 ? (
+            {leftover === 0 && (
               <span className="mt-0.5 block truncate text-[10px] leading-tight text-white/70">
                 {lang === "en" ? "This shift is done" : "Este turno está hecho"}
               </span>
-            ) : null}
+            )}
           </span>
         </button>
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -248,9 +222,7 @@ export default function Shelf({
             <button
               onClick={() => {
                 setAccountOpen(false);
-                setLevelsOpen(false);
-                onObjectivesOpenChange(false);
-                onAwardsOpenChange(false);
+                onMyJobOpenChange(false);
                 if (launcherOpen) closeLauncher();
                 else setLauncherOpen(true);
               }}
@@ -277,149 +249,30 @@ export default function Shelf({
           </ShelfPin>
         ))}
 
-        {/* level navigator - jump back to any level you've already reached */}
-        <div className="relative" ref={levelsBoxRef}>
-          <ShelfPin
-            label={lang === "en" ? "Levels" : "Niveles"}
-            active={levelsOpen}
-            onClick={() => {
-              closeLauncher();
-              setAccountOpen(false);
-              onObjectivesOpenChange(false);
-              onAwardsOpenChange(false);
-              setLevelsOpen((v) => !v);
-            }}
-          >
-            <AppIcon icon={<Flag size={16} strokeWidth={2.25} />} color="#1e8e3e" size={32} />
-          </ShelfPin>
-
-          {levelsOpen && (
-            <div className="absolute left-1/2 bottom-[calc(100%+8px)] z-40 max-h-[70vh] w-[300px] -translate-x-1/2 overflow-y-auto rounded-2xl bg-white p-2 text-[var(--text-primary)] shadow-[0_20px_50px_rgba(0,0,0,0.3)] animate-fade-up">
-              {ACTS.map((act) => {
-                const actLevels = act.levelKeys
-                  .map((key) => LEVELS.findIndex((l) => l.key === key))
-                  .filter((i) => i !== -1);
-                if (actLevels.length === 0) return null;
-                return (
-                  <div key={act.key} className="mb-1 last:mb-0">
-                    <div className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">
-                      {act.title}
-                    </div>
-                    {actLevels.map((i) => {
-                      const level = LEVELS[i];
-                      const locked = i > reachedIndex;
-                      const isCurrent = i === currentLevelIndex;
-                      const complete = !locked && isLevelComplete(level, completedTaskKeys);
-                      const canReplay =
-                        !locked && taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k));
-                      return (
-                        <div
-                          key={level.key}
-                          className={`rounded-xl ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}
-                        >
-                          <div className="flex items-center">
-                            <button
-                              onClick={() => goToLevel(level, i)}
-                              disabled={locked}
-                              className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] ${
-                                locked
-                                  ? "cursor-not-allowed text-[var(--text-tertiary)]"
-                                  : "cursor-pointer hover:bg-[var(--surface-muted)]"
-                              }`}
-                            >
-                              <span aria-hidden className="flex h-4 w-4 items-center justify-center text-[var(--text-secondary)]">
-                                {locked ? <Lock size={14} /> : complete ? <Check size={16} strokeWidth={2.5} /> : <Flag size={14} />}
-                              </span>
-                              <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
-                              {isCurrent && (
-                                <span className="shrink-0 rounded-full bg-[var(--accent)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">
-                                  Here
-                                </span>
-                              )}
-                            </button>
-                            {canReplay && pendingReplay !== level.key && (
-                              <button
-                                onClick={() => setPendingReplay(level.key)}
-                                className="mr-2 shrink-0 rounded-full px-2 py-1 text-[12px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
-                              >
-                                {c.replayShort}
-                              </button>
-                            )}
-                          </div>
-                          {pendingReplay === level.key && (
-                            <div className="px-3 pb-2.5">
-                              <p className="text-[12px] leading-snug text-[var(--text-secondary)]">{c.replayConfirm}</p>
-                              <div className="mt-1.5 flex gap-3">
-                                <button
-                                  onClick={() => {
-                                    restartLevel(level);
-                                    setPendingReplay(null);
-                                    setLevelsOpen(false);
-                                    openApp("browser", { tab: level.firstTabKey });
-                                  }}
-                                  className="text-[12px] font-medium text-[var(--accent)] cursor-pointer"
-                                >
-                                  {c.replayConfirmCta}
-                                </button>
-                                <button
-                                  onClick={() => setPendingReplay(null)}
-                                  className="text-[12px] text-[var(--text-tertiary)] cursor-pointer"
-                                >
-                                  {c.replayCancel}
-                                </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         <ShelfPin
           label={
-            objectivesLocked
+            myJobLocked
               ? lang === "en"
-                ? "Objectives · finish the walkthrough first"
-                : "Objetivos · termina la guía primero"
+                ? "My job · finish the walkthrough first"
+                : "Mi trabajo · termina la guía primero"
               : leftover > 0
-                ? `${lang === "en" ? "Objectives" : "Objetivos"} · ${
+                ? `${lang === "en" ? "My job" : "Mi trabajo"} · ${
                     leftover === 1 ? c.leftoverOne : c.leftoverMany.replace("{n}", String(leftover))
                   }`
                 : lang === "en"
-                  ? "Objectives"
-                  : "Objetivos"
+                  ? "My job"
+                  : "Mi trabajo"
           }
-          active={objectivesOpen}
-          badge={!objectivesLocked && leftover > 0 ? String(leftover) : undefined}
+          active={myJobOpen}
+          badge={!myJobLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
-            if (objectivesLocked) return;
+            if (myJobLocked) return;
             closeLauncher();
             setAccountOpen(false);
-            setLevelsOpen(false);
-            onAwardsOpenChange(false);
-            onObjectivesOpenChange(!objectivesOpen);
+            onMyJobOpenChange(!myJobOpen);
           }}
         >
-            <AppIcon icon={<Target size={16} strokeWidth={2.25} />} color={objectivesLocked ? "#9aa0a6" : "#e37400"} size={32} />
-        </ShelfPin>
-
-        <ShelfPin
-          label={lang === "en" ? "Awards" : "Premios"}
-          active={awardsOpen}
-          onClick={() => {
-            closeLauncher();
-            setAccountOpen(false);
-            setLevelsOpen(false);
-            onObjectivesOpenChange(false);
-            onAwardsOpenChange(!awardsOpen);
-          }}
-        >
-          <AppIcon icon={<Trophy size={16} strokeWidth={2.25} />} color="#e8a317" size={32} />
+          <AppIcon icon={<Briefcase size={16} strokeWidth={2.25} />} color={myJobLocked ? "#9aa0a6" : "#e37400"} size={32} />
         </ShelfPin>
           </div>
         </div>
@@ -427,30 +280,29 @@ export default function Shelf({
         {/* system tray - stays on the right, like Windows */}
         <div className="absolute right-1.5 top-0 bottom-0 flex items-center" ref={accountBoxRef}>
           <button
+            onClick={() => setLang(lang === "en" ? "es" : "en")}
+            title={lang === "en" ? "Cambiar a español" : "Switch to English"}
+            className="mr-1 flex h-7 items-center rounded-md px-2 text-[12px] font-semibold text-white/85 cursor-pointer hover:bg-white/10"
+          >
+            {lang === "en" ? "ES" : "EN"}
+          </button>
+          <button
             onClick={() => {
               closeLauncher();
-              setLevelsOpen(false);
-              onObjectivesOpenChange(false);
-              onAwardsOpenChange(false);
+              onMyJobOpenChange(false);
               setAccountOpen((v) => !v);
             }}
-            aria-label={lang === "en" ? "Status area" : "Área de estado"}
+            aria-label={lang === "en" ? "Me" : "Yo"}
             aria-expanded={accountOpen}
             className="flex items-center gap-2.5 rounded-md px-3 py-1 text-white/90 cursor-pointer hover:bg-white/10"
             style={accountOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
           >
             <span
-              className={`flex items-center gap-1 text-[13px] font-medium tabular-nums transition-transform ${
-                justEarnedPoints ? "scale-110" : ""
-              }`}
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)] text-[12px] font-semibold text-white"
+              aria-hidden
             >
-              <span aria-hidden>★</span>
-              {points}
-              {justEarnedPoints && (
-                <span className="text-[11px] font-semibold text-[#81c995]">+{justEarnedPoints}</span>
-              )}
+              {displayName.slice(0, 1).toUpperCase()}
             </span>
-            <span className="h-4 w-px shrink-0 bg-white/20" aria-hidden />
             <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
             <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-semibold text-white">

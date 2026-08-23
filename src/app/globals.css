@@ -146,3 +146,36 @@ textarea:focus-visible,
   animation-timing-function: ease-in;
   animation-fill-mode: forwards;
 }
+
+@keyframes showme-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 4px rgba(232, 116, 0, 0.9), 0 0 0 12px rgba(232, 116, 0, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(232, 116, 0, 0.9), 0 0 0 20px rgba(232, 116, 0, 0.08);
+  }
+}
+
+.animate-showme-pulse {
+  animation: showme-pulse 1.6s ease-in-out infinite;
+}
+
+/* Respect the OS "reduce motion" setting: keep every animation's end state,
+   skip the movement — including the infinitely looping Show-me pulse. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-slide-in,
+  .animate-window-in,
+  .animate-wallpaper-fade-out,
+  .animate-pop-in,
+  .animate-confetti-fall,
+  .animate-showme-pulse {
+    animation: none;
+  }
+
+  /* The Show-me ring must still be visible without its pulse. */
+  .animate-showme-pulse {
+    box-shadow: 0 0 0 4px rgba(232, 116, 0, 0.9), 0 0 0 12px rgba(232, 116, 0, 0.25);
+  }
+}

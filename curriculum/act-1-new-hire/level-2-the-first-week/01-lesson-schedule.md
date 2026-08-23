@@ -1,10 +1,10 @@
-# Lesson 1: Request a Shift Swap
+# Lesson 1: Find Your Shift (and Ask for a Change by Email)
 
-**Time:** ~5 minutes · **Level:** 2 — Settling In · **Track:** 2 — Schedules & Documents
+**Time:** ~5 minutes · **Level:** 2 — The First Week · **Track:** 2 — The First Week
 **Task key:** `schedule` · **Status:** built — the Employee Portal's Schedule
 tab flags a planted conflict; requesting a swap opens a short message to
 Maria, right there in the portal.
-**Prerequisite:** Level 1 complete
+**Prerequisite:** Level 1 complete (all 3 Day One jobs)
 
 ## We will learn...
 - read a work schedule, spot a conflict, and ask for a change the right way.

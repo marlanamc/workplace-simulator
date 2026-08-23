@@ -16,6 +16,7 @@ import TeamMeetingTask from "./TeamMeetingTask";
 import PriorityCallTask from "./PriorityCallTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
+import AccountRecoveryTask from "./AccountRecoveryTask";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
@@ -29,7 +30,7 @@ import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS } from "@/lib/tasks/tour/content";
 
-type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "handbook" | "incident" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "handbook" | "incident" | "account-recovery" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));
@@ -62,6 +63,7 @@ const BASE_TABS: TabDef[] = [
   { key: "team-meeting", label: "Huddle", url: "calendar.harborsidecafe.com", icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS["team-meeting"] },
   { key: "priority-call", label: "Floor", url: "today.harborsidecafe.com", icon: "!", color: "#d93025", levelKey: TAB_LEVEL_KEYS["priority-call"] },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
+  { key: "account-recovery", label: "Sign In", url: "accounts.harborsidecafe.com", icon: "🔑", color: "#5f6368", levelKey: TAB_LEVEL_KEYS["account-recovery"] },
   { key: "portal",   label: "Portal",url: "portal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
 ];
 
@@ -83,11 +85,11 @@ function ChromeTab({
 }) {
   const newTab = isNewTabKey(tab.key);
   const Icon = TAB_ICONS[tab.key];
+  // The close control is a real sibling <button>, never nested inside the
+  // tab's button (invalid HTML and unreachable by keyboard).
   return (
-    <button
-      onClick={onClick}
-      title={tab.label}
-      className={`group relative flex h-[34px] min-w-[72px] max-w-[240px] flex-1 items-center gap-2 px-3 cursor-pointer ${
+    <div
+      className={`group relative flex h-[34px] min-w-[72px] max-w-[240px] flex-1 items-center ${
         isActive ? "z-10" : "z-0"
       }`}
     >
@@ -96,35 +98,37 @@ function ChromeTab({
       ) : (
         <span className="absolute inset-[3px_2px] rounded-lg group-hover:bg-black/[0.08]" />
       )}
-      <span
-        className="relative z-10 flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] text-white"
-        style={{ background: newTab ? "#dadce0" : tab.color }}
+      <button
+        onClick={onClick}
+        title={tab.label}
+        className="relative z-10 flex h-full min-w-0 flex-1 items-center gap-2 pl-3 pr-1 cursor-pointer"
       >
-        {!newTab && Icon && <Icon size={11} strokeWidth={2.5} />}
-      </span>
-      <span
-        className={`relative z-10 min-w-0 flex-1 truncate text-left text-[13px] ${
-          isActive ? "text-[#202124]" : "text-[#474747]"
-        }`}
-      >
-        {tab.label}
-      </span>
-      {canClose && (
         <span
-          role="button"
+          className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[3px] text-white"
+          style={{ background: newTab ? "#dadce0" : tab.color }}
+        >
+          {!newTab && Icon && <Icon size={11} strokeWidth={2.5} />}
+        </span>
+        <span
+          className={`min-w-0 flex-1 truncate text-left text-[13px] ${
+            isActive ? "text-[#202124]" : "text-[#474747]"
+          }`}
+        >
+          {tab.label}
+        </span>
+      </button>
+      {canClose && (
+        <button
           aria-label={`Close ${tab.label}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onClose();
-          }}
-          className={`relative z-10 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] text-[#5f6368] cursor-pointer hover:bg-black/10 ${
+          onClick={onClose}
+          className={`relative z-10 mr-2 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] text-[#5f6368] cursor-pointer hover:bg-black/10 ${
             isActive ? "opacity-70" : "opacity-0 group-hover:opacity-70"
           }`}
         >
           ✕
-        </span>
+        </button>
       )}
-    </button>
+    </div>
   );
 }
 
@@ -165,7 +169,7 @@ function NewTabPage() {
 export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { lang, currentTrack, completedTaskKeys } = useProgress();
-  const { nudge, say } = useNudge(3500);
+  const { nudge, say } = useNudge();
   const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
   const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
 
@@ -193,11 +197,24 @@ export default function BrowserClient() {
     levelKey,
     closeable: true,
   });
+  // A level's firstTabKey is sometimes a tab shared with an earlier level
+  // (e.g. Portal now hosts both the First Week and Payday & Trouble levels'
+  // tasks) - TAB_LEVEL_KEYS only records one owning level per tab, so a
+  // plain levelKey match can miss it. Always include the level's own
+  // firstTabKey tab even when its recorded levelKey points elsewhere.
+  const tabsForLevel = (levelKey: string, firstTabKey?: string): TabDef[] => {
+    const matched = BASE_TABS.filter((t) => t.levelKey === levelKey);
+    if (firstTabKey && !matched.some((t) => t.key === firstTabKey)) {
+      const shared = BASE_TABS.find((t) => t.key === firstTabKey);
+      if (shared) return [...matched, shared];
+    }
+    return matched;
+  };
   const [openTabs, setOpenTabs] = useState<TabDef[]>(() => {
     if (jumpDef) return [jumpDef];
     return initialFreeTabbing
       ? [makeNewTabStub(initialLevelKey)]
-      : BASE_TABS.filter((t) => t.levelKey === initialLevelKey);
+      : tabsForLevel(initialLevelKey, initialLevelDef?.firstTabKey);
   });
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
     if (jumpDef) return jumpDef.key;
@@ -240,7 +257,7 @@ export default function BrowserClient() {
           setOpenTabs([makeNewTabStub(newLevelKey)]);
           setActiveTab("newtab");
         } else {
-          setOpenTabs(BASE_TABS.filter((t) => t.levelKey === newLevelKey));
+          setOpenTabs(tabsForLevel(newLevelKey, newLevelDef?.firstTabKey));
           setActiveTab((newLevelDef?.firstTabKey as TabKey | undefined) ?? "mail");
         }
       }
@@ -263,11 +280,13 @@ export default function BrowserClient() {
   const newTabCounter = useRef(0);
   const nextNewTabId = () => `newtab-${++newTabCounter.current}` as TabKey;
 
-  const freeTabbingLevelTitle = LEVELS.find((l) => l.freeTabbing)?.title ?? "a later level";
-
   const openNewTab = () => {
     if (!freeTabbing) {
-      say(`Opening new tabs is a ${freeTabbingLevelTitle} skill. You will unlock it once you get there!`);
+      say(
+        lang === "en"
+          ? "New tabs unlock a little later. For now, everything you need is already open."
+          : "Las pestañas nuevas se desbloquean un poco más adelante. Por ahora, todo lo que necesitas ya está abierto.",
+      );
       return;
     }
     // Add a new-tab placeholder if not already open
@@ -351,7 +370,7 @@ export default function BrowserClient() {
                 : "text-[#3c4043]/40 cursor-default"
             }`}
             aria-label="New tab"
-            title={freeTabbing ? "New tab" : `Unlock in ${freeTabbingLevelTitle}`}
+            title="New tab"
             onClick={openNewTab}
           >
             +
@@ -429,6 +448,7 @@ export default function BrowserClient() {
         }).map((t) => (
           <button
             key={t.key}
+            data-testid={`bookmark-${t.key}`}
             onClick={() => goToBookmark(t)}
             className={`flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer ${
               active?.key === t.key
@@ -477,6 +497,7 @@ export default function BrowserClient() {
         {active?.key === "priority-call" && <PriorityCallTask />}
         {active?.key === "incident" && <IncidentTask />}
         {active?.key === "handbook" && <HandbookTask />}
+        {active?.key === "account-recovery" && <AccountRecoveryTask />}
         {showingNewTab && <NewTabPage />}
       </div>
 

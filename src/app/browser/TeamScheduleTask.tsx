@@ -443,7 +443,6 @@ export default function TeamScheduleTask() {
         lesson={LESSONS[lang][view === "compose" ? 1 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
       <NudgeToast text={nudge} bottom={32} />
     </div>

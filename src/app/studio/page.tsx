@@ -13,6 +13,7 @@ import {
   lessonNeedsTeacher,
   playHref,
 } from "@/lib/curriculum-catalog";
+import ProgressPresets from "./ProgressPresets";
 
 export const metadata: Metadata = {
   title: "Studio · Workplace Simulator",
@@ -68,6 +69,8 @@ export default async function StudioPage() {
       </header>
 
       <main className="mx-auto flex max-w-[920px] flex-col gap-10 px-5 py-8">
+        <ProgressPresets learnerId={learnerId} />
+
         <section className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
           <h2 className="text-[15px] font-medium">Track 0: Foundations</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-[#9aa0a6]">

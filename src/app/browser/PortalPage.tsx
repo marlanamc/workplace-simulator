@@ -4,6 +4,9 @@ import { useState } from "react";
 import ScheduleTask from "./ScheduleTask";
 import TimeclockTask from "./TimeclockTask";
 import PaystubTask from "./PaystubTask";
+import SwapRequestTask from "./SwapRequestTask";
+import CallOutSickTask from "./CallOutSickTask";
+import ShiftReviewTask from "./ShiftReviewTask";
 import { TAB_ICONS, CircleGlyph } from "@/lib/icons";
 import { useWindowManager } from "@/lib/window-manager";
 import type { PortalSection } from "@/lib/tracks-content";
@@ -12,12 +15,17 @@ type Section = PortalSection;
 
 const SECTIONS: { key: Section; label: string }[] = [
   { key: "schedule", label: "Schedule" },
+  { key: "swap-request", label: "Shift Swap" },
+  { key: "call-out-sick", label: "Message Manager" },
   { key: "timeclock", label: "Time Clock" },
   { key: "paystubs", label: "Pay Stubs" },
+  { key: "shift-review", label: "Shift Review" },
 ];
 
+const PORTAL_SECTIONS = new Set<string>(SECTIONS.map((s) => s.key));
+
 function isPortalSection(value: string | null): value is Section {
-  return value === "schedule" || value === "timeclock" || value === "paystubs";
+  return !!value && PORTAL_SECTIONS.has(value);
 }
 
 export default function PortalPage() {
@@ -56,8 +64,11 @@ export default function PortalPage() {
 
       <div className="min-h-0 flex-1 overflow-y-auto p-6">
         {section === "schedule" && <ScheduleTask />}
+        {section === "swap-request" && <SwapRequestTask />}
+        {section === "call-out-sick" && <CallOutSickTask />}
         {section === "timeclock" && <TimeclockTask />}
         {section === "paystubs" && <PaystubTask />}
+        {section === "shift-review" && <ShiftReviewTask />}
       </div>
     </div>
   );

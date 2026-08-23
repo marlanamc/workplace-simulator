@@ -63,8 +63,9 @@ course** for busy students. After Act II, the three paths are equal. Studio
 numbers are the learner-facing numbers. Folder names in Act II and later
 still use older numbers (`level-3-shift-lead/`, and so on).
 
-Only Act I and Levels 4–6 are built in the app today. Everything after
-Level 6 is curriculum, ready to build later.
+Only Act I (now 9 jobs across 3 levels), Act II's `incident`/`handbook`
+level, and Levels 4-6 are built in the app today. Everything after that is
+curriculum, ready to build later.
 
 | Act | Levels | Path | For whom | Status |
 |---|---|---|---|---|
@@ -88,7 +89,7 @@ digital task.
 **File layout:** each act has its own folder — `act-1-new-hire/`,
 `act-2-shift-lead/`, and so on through `act-7-team-lead/` — and each level
 has its own folder inside its act's folder, e.g.
-`act-1-new-hire/level-1-new-hire/`, `act-2-shift-lead/level-4-reporting-in/`.
+`act-1-new-hire/level-1-day-one/`, `act-2-shift-lead/level-4-reporting-in/`.
 Lessons are numbered `01`, `02`… *within that level* (not globally), plus
 each level folder has its own `real-practice-assignment.md`. A lesson in
 one level referencing a lesson in another always says "Level 2's Lesson 1"
@@ -134,71 +135,109 @@ already have later progress are not pulled back here.
 
 ## Act I: Levels 1-3 — New Hire (shared trunk)
 
-Three short levels. The story is Harborside Cafe. Name out loud that the
-same moves show up in a store, a cleaning job, a job site, or a front
-desk: email a lead, check hours and pay, write up what happened, look up
-the rule.
-
-Level 1 is one lesson, so the first sitting is small. After Level 3, offer
-the **Act I real Gmail beat** (`level-3-when-something-happens/real-practice-assignment.md`).
-Still not a gate. That one real email is the transfer.
-
-Three short levels, so each stays a 15-20 minute session. Level 1 is a
-single lesson, deliberately tiny, so the very first session in the app is
-low-stakes. Level 2 is the portal week (schedule, hours, pay). Level 3 is
-the first judgment calls, on their own, after the mechanics are in place.
-
-### Level 1: New Hire, Day One
-
-One task — the first thing a new hire actually has to do: answer a message
-from a supervisor. Single tab, auto-opened — no tab-hunting yet.
-
-| Lesson | Task key | Skill focus | Simulator app |
-|---|---|---|---|
-| 1 | `mail` | Read a supervisor's email, reply, and attach the right file | Browser → Mail |
-
-See `level-1-new-hire/01-lesson-mail.md`.
-
-### Level 2: Settling In
-
-One app, three short tasks — the Employee Portal. First small step up in
-independence (tabs are there, not auto-opened as the only option). Hours,
-schedule, and pay stay together because they are the same tool.
-
-| Lesson | Task key | Skill focus | Simulator app |
-|---|---|---|---|
-| 1 | `schedule` | Spot a scheduling conflict and request a change the right way | Browser → Portal |
-| 2 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
-| 3 | `paystub` | Find the right person's stub, then confirm net pay and hours | Browser → Portal + PDF Reader |
-
-See `level-2-settling-in/01-lesson-schedule.md` through
-`03-lesson-paystub.md`. Finishing `paystub` completes Level 2.
-
-### Level 3: When Something Happens
-
-New tabs (Forms, Docs). Two judgment tasks, after the student already
-knows the portal. This is the last New Hire level; finishing it earns the
+**Restructured** (was 3 levels / 6 lessons bundling 2-3 skills each; now 3
+levels / 9 short jobs, one skill each, ~4-5 minutes apiece — matching how
+short Act I's lessons actually already ran in practice, just with more
+stops along the way). `incident` and `handbook` moved to Act II
+(`act-2-shift-lead/level-0-when-something-happens/`) — writing up an
+incident in professional English is a lead's task, not week one. Two tasks
+are genuinely new curriculum ground: `swap-request` (the same shift-swap
+skill, through a real web form instead of an email) and `call-out-sick`
+(composing a call-out message — `handbook`'s old call-out scenario was only
+ever a policy *lookup*, never a message the student actually wrote). A
+ninth job, `shift-review`, closes the act with no new tool — three
+already-known skills, mixed together, the level that actually earns the
 Shift Lead promotion.
+
+> **Downstream numbering note:** this pass renumbered Act I's own lessons
+> and levels, but did **not** renumber the learner-facing Level 4-27
+> figures used everywhere below and in later acts' folder names — those
+> still assume Act I's old 3-level shape. Reconciling that global count is
+> a follow-up pass, not done here.
+
+The story is Harborside Cafe. Name out loud that the same moves show up in
+a store, a cleaning job, a job site, or a front desk: email a lead, check
+hours and pay, ask for help, look up the rule.
+
+Nine short jobs, three levels, so each level stays a 12-15 minute sitting.
+Level 1 (Day One) is deliberately tiny so the very first session in the
+app is low-stakes. Level 2 (The First Week) adds "life happening on the
+schedule" — a swap, a sick day — not just mechanics. Level 3 (Payday &
+Trouble) closes with the no-new-tools review.
+
+### Level 1: Day One
+
+One inbox, three short jobs — reading, then replying, then attaching.
+Splitting them means a wrong answer tells you *which* of the three is
+missing, not just "mail didn't work." Single tab, auto-opened — no
+tab-hunting yet.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `mail-read` | Find and read a message from a manager, no writing yet | Browser → Mail |
+| 2 | `mail-reply` | Answer a manager in your own words | Browser → Mail |
+| 3 | `mail-attach` | Send the same reply again, this time with the file in it | Browser → Mail |
+
+See `level-1-day-one/01-lesson-mail-read.md` through
+`03-lesson-mail-attach.md`. Finishing `mail-attach` completes Level 1.
+
+### Level 2: The First Week
+
+One app, three short jobs — the Employee Portal, now covering "life
+happening on a schedule," not just reading it.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `schedule` | Find your shift and spot a conflict, ask for a change by email | Browser → Portal |
+| 2 | `swap-request` | The same ask, through a real web form (dropdown + date picker) | Browser → Portal |
+| 3 | `call-out-sick` | Tell your manager you can't come in, before your shift starts | Browser → Portal |
+
+See `level-2-the-first-week/01-lesson-schedule.md` through
+`03-lesson-call-out-sick.md`. Finishing `call-out-sick` completes Level 2.
+
+### Level 3: Payday & Trouble
+
+Two familiar tasks, then a no-new-tools review that closes Act I and earns
+the Shift Lead promotion.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
+| 2 | `paystub` | Find the right person's stub, then confirm net pay and hours | Browser → Portal + PDF Reader |
+| 3 | `shift-review` | No new tool — three earlier skills, mixed, back to back | Browser → Portal |
+
+See `level-3-payday-and-trouble/01-lesson-timeclock.md` through
+`03-lesson-shift-review.md`. Finishing `shift-review` completes Level 3
+and Act I, and triggers the Shift Lead promotion.
+
+---
+
+## Act II: Levels 4-8 — Shift Lead tools (shared trunk)
+
+**Story bridge:** finishing Act I's `shift-review` earns the promotion.
+Act II opens with one more shared-trunk level before the tool levels
+begin — `incident`/`handbook`, moved here from the old Act I (see the Act
+I section's restructuring note above) — then the environment refreshes.
+These tools are what a lead uses in a cafe, a store, cleaning, or a
+job-site office. One app per sitting for Calendar, Drive, and Sheets.
+
+### Level 0 (of Act II): When Something Happens
+
+New tabs (Forms, Docs). Two judgment tasks, moved here from the old Act I
+Level 3 — writing up an incident in professional English, and looking
+something up under pressure, are lead's-desk tasks, not week one.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `incident` | Write up what happened, in order, in a professional tone | Browser → Forms |
 | 2 | `handbook` | Find an answer in the employee handbook, even when you feel rushed | Browser → Docs |
 
-See `level-3-when-something-happens/01-lesson-incident.md` and
-`02-lesson-handbook.md`. Finishing `handbook` completes Level 3 and Act I.
+See `level-0-when-something-happens/01-lesson-incident.md` and
+`02-lesson-handbook.md`.
 
----
-
-## Act II: Levels 4-8 — Shift Lead tools (shared trunk)
-
-**Story bridge:** finishing Level 3 earns the promotion. The environment
-refreshes. These tools are what a lead uses in a cafe, a store, cleaning,
-or a job-site office. One app per sitting for Calendar, Drive, and Sheets.
-
-Also starting with Level 4: the desktop's "do this next" button stops
-naming the exact tab (a generic "Open Browser"). Free tab management
-unlocks here too.
+Also starting with the tool levels below: the desktop's "do this next"
+button stops naming the exact tab (a generic "Open Browser"). Free tab
+management unlocks here too.
 
 ### Level 4: The Calendar
 

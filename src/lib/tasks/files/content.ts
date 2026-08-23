@@ -71,7 +71,75 @@ export const FILES: DriveFile[] = [
   },
 ];
 
+/**
+ * "Messy mode" variant (Level.messy) - the same task, more real-world
+ * friction: three more plausible-looking near-duplicates of the actual
+ * target, so reading the date carefully is the only way through, not a
+ * highlight. Selected by `FilesTask.tsx` when its current level is `messy`.
+ */
+export const MESSY_FILES: DriveFile[] = [
+  ...FILES,
+  {
+    key: "sched-aug24-draft",
+    name: "sched_82426_draft.pdf",
+    folder: "Schedules",
+    date: "Aug 21",
+    isTarget: false,
+    wrongHint: wrongHint(
+      "That's an earlier draft - it says so right in the name. Look for the one without \"draft.\"",
+      "Ese es un borrador anterior - lo dice en el nombre. Busca el que no diga \"draft.\""
+    ),
+  },
+  {
+    key: "sched-aug24-copy",
+    name: "sched_82426_copy.pdf",
+    folder: "Schedules",
+    date: "Aug 24",
+    isTarget: false,
+    wrongHint: wrongHint(
+      "Same date, but it's a copy someone made - not the original. Open the one without \"copy\" in the name.",
+      "Misma fecha, pero es una copia que alguien hizo, no el original. Abre el que no diga \"copy\" en el nombre."
+    ),
+  },
+  {
+    key: "sched-sept",
+    name: "sched_090107.pdf",
+    folder: "Schedules",
+    date: "Sep 1",
+    isTarget: false,
+    wrongHint: wrongHint(
+      "That's next week's schedule. Jordan starts today, on this week's.",
+      "Ese es el horario de la próxima semana. Jordan empieza hoy, con el de esta semana."
+    ),
+  },
+];
+
 export const RENAME_TARGET = "schedule-week-of-aug-24";
+
+/**
+ * How FilesTask forgives a rename: case, extra spaces, space-vs-hyphen, and
+ * a kept ".pdf" all normalize away before comparing to RENAME_TARGET.
+ */
+export function normalizeRename(value: string) {
+  return value.trim().toLowerCase().replace(/\s+/g, "-").replace(/\.pdf$/, "");
+}
+
+/** The single in-window instruction voice (RightNowBar), one step at a time. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Find this week's schedule (Aug 24). Click it.",
+    es: "Busca el horario de esta semana (24 de agosto). Haz clic en él.",
+  },
+  {
+    en: "Type the new name: schedule-week-of-aug-24",
+    es: "Escribe el nombre nuevo: schedule-week-of-aug-24",
+  },
+  {
+    en: "Choose \"Can view\", then click Share.",
+    es: "Elige \"Puede ver\" y luego haz clic en Compartir.",
+  },
+];
 
 export const FILES_COPY: Record<Lang, {
   heading: string;
@@ -123,7 +191,7 @@ export const FILES_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     scenarioKicker: "Today's situation",
-    scenario: "Maria asked you to share this week's schedule with Jordan Diaz, a new hire. Give view only. Jordan does not need to edit it. She also asked you to rename it like this: schedule-week-of-[date].",
+    scenario: "Maria asked you to share this week's schedule with Jordan Kim, a new hire. Give view only. Jordan does not need to edit it. She also asked you to rename it like this: schedule-week-of-[date].",
     searchPlaceholder: "Search files…",
     allFolders: "All folders",
     renameLabel: "Rename this file to match the naming rule",
@@ -160,7 +228,7 @@ export const FILES_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     scenarioKicker: "La situación de hoy",
-    scenario: "Maria te pidió compartir el horario de esta semana con Jordan Diaz, un nuevo empleado. Solo para ver. Jordan no necesita editarlo. También te pidió renombrarlo así: schedule-week-of-[fecha].",
+    scenario: "Maria te pidió compartir el horario de esta semana con Jordan Kim, un nuevo empleado. Solo para ver. Jordan no necesita editarlo. También te pidió renombrarlo así: schedule-week-of-[fecha].",
     searchPlaceholder: "Buscar archivos…",
     allFolders: "Todas las carpetas",
     renameLabel: "Renombra este archivo según la convención",

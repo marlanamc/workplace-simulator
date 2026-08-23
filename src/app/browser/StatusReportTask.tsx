@@ -260,7 +260,6 @@ export default function StatusReportTask() {
         lesson={LESSONS[lang][view === "compose" || view === "done" ? 1 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
       <NudgeToast text={nudge} bottom={32} />
     </div>

@@ -1,6 +1,6 @@
 # Lesson 2: Look Something Up Under Pressure
 
-**Time:** ~5 minutes · **Level:** 3 — When Something Happens · **Track:** 3 — Think It Through
+**Time:** ~5 minutes · **Level:** Act II, Level 0 — When Something Happens · **Track:** 3 — Think It Through
 **Task key:** `handbook` · **Status:** built — the Handbook tab opens straight
 into a planted scenario ("you're sick tomorrow — what's the call-out
 policy?") with a multiple-choice check pinned below the same search/browse

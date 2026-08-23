@@ -72,6 +72,23 @@ export async function deleteCompletions(learnerId: string, taskKeys: string[]) {
     .where(and(eq(taskCompletions.learnerId, learnerId), inArray(taskCompletions.taskKey, taskKeys)));
 }
 
+/**
+ * Wipes a learner's progress and installs an exact new state — completions
+ * and badges become precisely the given lists. Studio-only (progress
+ * presets); learner-facing flows only ever add or clear one level.
+ */
+export async function replaceProgress(learnerId: string, taskKeys: string[], badgeKeys: string[]) {
+  const db = getDb();
+  await db.delete(taskCompletions).where(eq(taskCompletions.learnerId, learnerId));
+  await db.delete(badges).where(eq(badges.learnerId, learnerId));
+  if (taskKeys.length) {
+    await db.insert(taskCompletions).values(taskKeys.map((taskKey) => ({ learnerId, taskKey, confidence: null })));
+  }
+  if (badgeKeys.length) {
+    await db.insert(badges).values(badgeKeys.map((badgeKey) => ({ learnerId, badgeKey })));
+  }
+}
+
 export async function deleteBadges(learnerId: string, badgeKeys: string[]) {
   if (badgeKeys.length === 0) return;
   const db = getDb();

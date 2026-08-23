@@ -9,49 +9,108 @@ import {
   LESSONS,
   FILES,
   EMAILS,
-  EVENT_INTRO,
+  EVENT_INTRO_BY_TASK,
+  CONFIRM_COPY,
+  DONE_COPY,
   CONFIDENCE_OPTIONS,
 } from "@/lib/tasks/mail/content";
-import { useNudge } from "@/lib/use-nudge";
+import type { TaskKey } from "@/lib/desktop-content";
+import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
+import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import SettingsPopover from "@/components/task/SettingsPopover";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
-import { sortInboxByTime, storyMailsFor, type InboxRow } from "@/lib/story-beats";
+import { sortInboxByTime, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
+import { speakFromClick, speakText, stopSpeaking } from "@/lib/read-aloud";
+import { firstPersonSkill } from "@/lib/skills";
+import type { Localized } from "@/lib/task-types";
+import { useWindowManager } from "@/lib/window-manager";
+import BridgeOutCard from "@/components/task/BridgeOutCard";
+import { bridgeOutCopyFor } from "@/lib/bridge-out-content";
 
-type View = "intro" | "empty" | "read" | "compose" | "done" | "story";
+const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
+const SHOW_ME_LABEL: Localized<string> = { en: "This one. Click it.", es: "Este. Haz clic aquí." };
+const RIGHT_NOW_STEPS: Localized<string>[] = [
+  { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
+  { en: "Read Maria's email, then click Reply.", es: "Lee el correo de Maria y haz clic en Responder." },
+  { en: "Write your reply, then click Attach file.", es: "Escribe tu respuesta y haz clic en Adjuntar archivo." },
+  { en: "Click Send to finish.", es: "Haz clic en Enviar para terminar." },
+];
+
+type View = "intro" | "empty" | "read" | "confirm" | "compose" | "done" | "story";
+type MailTask = "mail-read" | "mail-reply" | "mail-attach";
+const MAIL_TASK_ORDER: MailTask[] = ["mail-read", "mail-reply", "mail-attach"];
 
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
 }
 
+/** Day One's 3 jobs share one inbox - whichever of the 3 isn't done yet is the one running now. */
+function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
+  return MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
+}
+
 export default function MailClient() {
-  const { markComplete, completedTaskKeys, lang, storyFlags } = useProgress();
+  const { markComplete, completedTaskKeys, lang, storyFlags, setStoryFlag, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
+  const { browserTabToken } = useWindowManager();
+  // Fixed for this mount, not recomputed every render: markComplete() updates
+  // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
+  // not unmounted) across desktop navigation, so a reactive lookup here would
+  // yank the done screen out from under whichever job just finished. The
+  // learner moves to the next of Day One's 3 jobs by explicitly reopening
+  // Mail (the "Next job" button on the done screen, same as any other task) -
+  // that's the `browserTabToken` bump below, mirroring PortalPage's own
+  // `portalSectionToken` re-open pattern.
+  const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys));
   const [plain, setPlain] = useState(true);
-  const [speak, setSpeak] = useState(false);
   const [step, setStep] = useState(0);
-  const [view, setView] = useState<View>(completedTaskKeys.includes("mail") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes(activeMailTask) ? "done" : "intro");
   const [body, setBody] = useState("");
   const [attached, setAttached] = useState(false);
   const [confidence, setConfidence] = useState<string | null>(null);
+  const [confirmPick, setConfirmPick] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
+  const [noHelp, setNoHelp] = useState(false);
+  const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
-  const { nudge, say } = useNudge();
+  const { nudge, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } = useSkillGuidance(activeMailTask);
+
+  const [lastTabToken, setLastTabToken] = useState(browserTabToken);
+  if (browserTabToken !== lastTabToken) {
+    setLastTabToken(browserTabToken);
+    const next = activeMailTaskFor(completedTaskKeys);
+    setActiveMailTask(next);
+    setView(completedTaskKeys.includes(next) ? "done" : "intro");
+    setStep(0);
+    setBody("");
+    setAttached(false);
+    setConfirmPick(null);
+    setNoHelp(false);
+    setBridgeOutEligible(false);
+  }
 
   const c = MAIL_COPY[lang];
+  const cc = CONFIRM_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
-  const inbox = sortInboxByTime([...storyMailsFor(completedTaskKeys, storyFlags), ...EMAILS]);
-  const mailDone = completedTaskKeys.includes("mail");
+  const mailDone = completedTaskKeys.includes(activeMailTask);
+  // While a Day One job is running (first time OR a replay), the inbox shows
+  // the story as it stood at that moment — no future Maria mails flooding in.
+  const inbox = sortInboxByTime([
+    ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
+    ...EMAILS,
+  ]);
   const unreadCount = inbox.filter((m) => {
     if ("story" in m && m.story) {
       return Boolean(m.unread) && !readStoryKeys.includes(m.key) && !(view === "story" && openStory?.key === m.key);
@@ -72,24 +131,71 @@ export default function MailClient() {
     advance(1);
   };
   const wrongMail = (hint?: { en: string; es: string }) =>
-    say(hint?.[lang] ?? T("That one isn't from your manager. Look for the email from Maria Delgado.", "Ese no es de tu gerente. Busca el correo de Maria Delgado."));
+    recordWrong({
+      title: T("Not that one.", "Ese no es."),
+      body: hint?.[lang] ?? T("That one isn't from your manager. Look for the email from Maria Delgado.", "Ese no es de tu gerente. Busca el correo de Maria Delgado."),
+    });
 
   const startReply = () => {
+    if (activeMailTask === "mail-read") {
+      setView("confirm");
+      advance(2);
+      return;
+    }
     setView("compose");
     advance(2);
   };
   const wrongForward = () =>
-    say(T("Forward sends Maria's email to someone else. To answer her, click Reply.", "Reenviar manda el correo de Maria a otra persona. Para contestarle, haz clic en Responder."));
+    recordWrong({
+      title: T("Not that one. That is Forward.", "Ese no es. Es Reenviar."),
+      body: T("Forward sends Maria's email to someone else. To answer her, click Reply.", "Reenviar manda el correo de Maria a otra persona. Para contestarle, haz clic en Responder."),
+    });
 
   const wrongCompose = () =>
-    say(T("Compose starts a brand-new email. To answer Maria, open her email and click Reply.", "Redactar empieza un correo nuevo. Para contestarle a Maria, abre su correo y haz clic en Responder."));
+    recordWrong({
+      title: T("Not that one. That is Compose.", "Ese no es. Es Redactar."),
+      body: T("Compose starts a brand-new email. To answer Maria, open her email and click Reply.", "Redactar empieza un correo nuevo. Para contestarle a Maria, abre su correo y haz clic en Responder."),
+    });
 
-  const trySend = () => {
-    if (!body.trim()) return say(T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien."));
-    if (!attached) return say(T("Maria asked for the file. Click Attach file before you send.", "Maria pidió el archivo. Haz clic en Adjuntar archivo antes de enviar."));
+  const finish = (badgeKey: string) => {
+    const cleanRun = wrongCount === 0;
+    // Rung 3 -> 4 always happens on the very next clean run (release-ladder's
+    // rule is exactly one), so "currently at rung 3" IS "this completion is
+    // the transition" - captured now, before recordClean() moves the rung.
+    const justReachedRungFour = rung === 3;
     setView("done");
     setStep(5);
-    markComplete("mail", "reply_with_attachment");
+    setNoHelp(cleanRun);
+    setBridgeOutEligible(justReachedRungFour);
+    if (cleanRun) {
+      recordClean();
+    } else {
+      recordMissed();
+    }
+    markComplete(activeMailTask, badgeKey);
+  };
+
+  const pickConfirm = (option: { label: string; correct: boolean }) => {
+    setConfirmPick(option.label);
+    if (!option.correct) {
+      recordWrong({ title: T("Not quite.", "No es así."), body: cc.wrongReply });
+      return;
+    }
+    finish("read_managers_email");
+  };
+
+  const trySend = () => {
+    if (!body.trim())
+      return recordWrong({
+        title: T("Almost.", "Casi."),
+        body: T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien."),
+      });
+    if (activeMailTask === "mail-attach" && !attached)
+      return recordWrong({
+        title: T("Not yet.", "Todavía no."),
+        body: T("Maria asked for the file. Click Attach file before you send.", "Maria pidió el archivo. Haz clic en Adjuntar archivo antes de enviar."),
+      });
+    finish(activeMailTask === "mail-attach" ? "reply_with_attachment" : "answer_own_words");
   };
 
   const restart = () => {
@@ -98,16 +204,28 @@ export default function MailClient() {
     setBody("");
     setAttached(false);
     setConfidence(null);
+    setConfirmPick(null);
     setHelp(false);
     setPicker(false);
     setOpenStory(null);
+    setNoHelp(false);
+    setBridgeOutEligible(false);
   };
 
   const notThisFolder = () =>
-    say(T("Today's mail is in Inbox. Open that instead.", "El correo de hoy está en Recibidos. Ábrelo ahí."));
+    recordWrong({
+      title: T("Not there.", "No está ahí."),
+      body: T("Today's mail is in Inbox. Open that instead.", "El correo de hoy está en Recibidos. Ábrelo ahí."),
+    });
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+    <div
+      className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]"
+      style={{ fontFamily: "Roboto, Arial, sans-serif", zoom: bigText ? 1.15 : undefined }}
+      onClick={(e) => {
+        if (speakAloud) speakFromClick(e.target, lang);
+      }}
+    >
       <div className="flex items-center gap-3 px-3 py-2">
         <div className="flex w-[200px] shrink-0 items-center gap-2 px-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#ea4335] text-[15px] font-bold text-white">M</span>
@@ -126,14 +244,21 @@ export default function MailClient() {
         <SettingsPopover
           plain={plain}
           onTogglePlain={() => setPlain((v) => !v)}
-          speak={speak}
+          speak={speakAloud}
           onToggleSpeak={() => {
-            setSpeak((v) => !v);
-            if (!speak) say(T("Read aloud is on. Click any text to hear it.", "Lectura en voz alta activada."));
+            if (!speakAloud) {
+              speakText(T("Read aloud is on. Click any text to hear it.", "Lectura en voz alta activada. Haz clic en un texto para escucharlo."), lang);
+            } else {
+              stopSpeaking();
+            }
+            setSpeakAloud(!speakAloud);
           }}
+          bigText={bigText}
+          onToggleBigText={() => setBigText(!bigText)}
           labels={{
             simpleWords: T("Simple words", "Palabras simples"),
             readAloud: T("Read aloud", "Leer en voz alta"),
+            biggerText: T("Bigger text", "Letra más grande"),
           }}
         />
       </div>
@@ -177,14 +302,15 @@ export default function MailClient() {
             </div>
             <div className="flex-1 overflow-y-auto">
               {inbox.map((m) => {
-                const mariaOpen = view === "read" || view === "compose" || view === "done";
+                const mariaOpen = view === "read" || view === "confirm" || view === "compose" || view === "done";
                 const storyOpen = view === "story" && openStory?.key === m.key;
                 const storyRead = Boolean("story" in m && m.story) && (storyOpen || readStoryKeys.includes(m.key));
                 const unread = Boolean(m.unread) && !(m.isTarget && (mariaOpen || mailDone)) && !storyRead;
-                const selected = (m.isTarget && (view === "read" || view === "compose")) || storyOpen;
+                const selected = (m.isTarget && (view === "read" || view === "confirm" || view === "compose")) || storyOpen;
                 return (
                   <button
                     key={m.key}
+                    data-showme={m.isTarget ? "maria-row" : undefined}
                     onClick={() => {
                       if (isStoryMail(m)) {
                         setOpenStory(m);
@@ -214,10 +340,10 @@ export default function MailClient() {
                         <span className={`truncate text-[14px] ${unread ? "font-bold" : "font-medium"}`}>{m.from}</span>
                         <span className="shrink-0 text-[12px] text-[#444746]">{m.time}</span>
                       </div>
-                      <div className={`truncate text-[13px] ${unread ? "font-bold text-[#001d35]" : "text-[#444746]"}`}>
+                      <div className={`truncate text-[14px] ${unread ? "font-bold text-[#001d35]" : "text-[#444746]"}`}>
                         {m.subject[lang]}
                       </div>
-                      <div className="truncate text-[12px] text-[#767676]">{m.preview[lang]}</div>
+                      <div className="truncate text-[13px] text-[#5f6368]">{m.preview[lang]}</div>
                     </div>
                   </button>
                 );
@@ -225,9 +351,27 @@ export default function MailClient() {
             </div>
           </div>
 
-          <div className="min-w-0 flex-1 overflow-y-auto">
+          <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+            {(view === "empty" || view === "read" || view === "confirm" || view === "compose") && (() => {
+              const rightNowIndex =
+                view === "empty" ? 0 : view === "read" || view === "confirm" ? 1 : attached ? 3 : 2;
+              const showMeId = view === "empty" ? "maria-row" : view === "read" || view === "confirm" ? "reply-button" : "attach-button";
+              return (
+                <RightNowBar
+                  icon={TASK_ICONS.mail}
+                  stepIndex={rightNowIndex}
+                  stepCount={RIGHT_NOW_STEPS.length}
+                  instruction={RIGHT_NOW_STEPS[rightNowIndex]}
+                  lang={lang}
+                  rightNowLabel={RIGHT_NOW_LABEL}
+                  onShowMe={() => setShowMeTarget(showMeId)}
+                  showMeActive={showMeTargetId === showMeId}
+                  onHelp={() => setHelp(true)}
+                />
+              );
+            })()}
             {view === "intro" && (
-              <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.mail} onContinue={() => setView("empty")} />
+              <EventIntroCard {...EVENT_INTRO_BY_TASK[activeMailTask][lang]} icon={TASK_ICONS.mail} onContinue={() => setView("empty")} />
             )}
 
             {view === "empty" && (
@@ -237,7 +381,7 @@ export default function MailClient() {
               </div>
             )}
 
-            {(view === "read" || view === "compose") && (
+            {(view === "read" || view === "confirm" || view === "compose") && (
               <div className="px-6 py-4 sm:px-8">
                 <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{c.emailSubject}</h2>
                 <div className="flex items-start gap-3">
@@ -264,17 +408,43 @@ export default function MailClient() {
                 {view === "read" && (
                   <div className="mt-6 flex flex-wrap gap-2 pl-[52px]">
                     <button
+                      data-showme="reply-button"
                       onClick={startReply}
                       className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
                     >
-                      {c.reply}
+                      {activeMailTask === "mail-read" ? cc.continueLabel : c.reply}
                     </button>
-                    <button
-                      onClick={wrongForward}
-                      className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
-                    >
-                      {c.forward}
-                    </button>
+                    {activeMailTask !== "mail-read" && (
+                      <button
+                        onClick={wrongForward}
+                        className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
+                      >
+                        {c.forward}
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {view === "confirm" && (
+                  <div className="mt-6 max-w-[62ch] pl-[52px]">
+                    <p className="mb-3 text-[15px] font-medium text-[#1f1f1f]">{cc.question}</p>
+                    <div className="flex flex-col gap-2">
+                      {cc.options.map((opt) => (
+                        <button
+                          key={opt.label}
+                          onClick={() => pickConfirm(opt)}
+                          className={`rounded-xl border px-4 py-3 text-left text-[14px] font-medium cursor-pointer ${
+                            confirmPick === opt.label
+                              ? opt.correct
+                                ? "border-[#1e8e3e] bg-[#e6f4ea] text-[#1e8e3e]"
+                                : "border-[#c5221f] bg-[#fce8e6] text-[#c5221f]"
+                              : "border-[#dadce0] hover:bg-[#f2f6fc]"
+                          }`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -331,6 +501,7 @@ export default function MailClient() {
                         {c.send}
                       </button>
                       <button
+                        data-showme="attach-button"
                         onClick={() => setPicker(true)}
                         className="inline-flex h-9 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
                       >
@@ -383,16 +554,34 @@ export default function MailClient() {
               </div>
             )}
 
-            {view === "done" && (
+            {view === "done" && (() => {
+              const dc = DONE_COPY[activeMailTask][lang];
+              const bridgeOutFlag = `bridge-out-shown:${activeMailTask}`;
+              const showBridgeOut = bridgeOutEligible && storyFlags[bridgeOutFlag] !== "true";
+              const dismissBridgeOut = () => setStoryFlag(bridgeOutFlag, "true");
+              return (
               <div className="flex flex-col gap-5 p-6 sm:p-8">
                 <TaskDoneCard
-                  kicker={c.sentKicker}
-                  title={c.doneTitle}
-                  body={c.doneBody}
-                  badgeNumber="01"
+                  kicker={dc.kicker}
+                  title={firstPersonSkill(activeMailTask)}
+                  body={dc.body}
+                  badgeNumber={dc.badgeNumber}
                   badgeName={c.badgeName}
-                  badgeWhere={c.badgeWhere}
+                  badgeWhere={dc.badgeWhere}
+                  noHelp={noHelp}
+                  noHelpLabel={T("You did this with no help", "Lo hiciste sin ayuda")}
                 />
+                {showBridgeOut && (
+                  <BridgeOutCard
+                    copy={bridgeOutCopyFor(activeMailTask)}
+                    lang={lang}
+                    onDidItForReal={() => {
+                      setStoryFlag(`bridge-out-done:${activeMailTask}`, "true");
+                      dismissBridgeOut();
+                    }}
+                    onNotYet={dismissBridgeOut}
+                  />
+                )}
                 <ConfidenceCheck
                   question={c.confidenceQ}
                   options={CONFIDENCE_OPTIONS[lang]}
@@ -405,7 +594,8 @@ export default function MailClient() {
                   onTryAgain={restart}
                 />
               </div>
-            )}
+              );
+            })()}
           </div>
         </div>
       </div>
@@ -417,7 +607,6 @@ export default function MailClient() {
         lesson={lesson}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       {picker && (
@@ -434,13 +623,14 @@ export default function MailClient() {
               setPicker(false);
               advance(4);
             } else if (item.wrongHint) {
-              say(item.wrongHint[lang]);
+              recordWrong({ title: T("Not that one.", "Ese no es."), body: item.wrongHint[lang] });
             }
           }}
         />
       )}
 
       <NudgeToast text={nudge} bottom={32} />
+      <ShowMeHighlight targetId={showMeTargetId} label={SHOW_ME_LABEL[lang]} />
     </div>
   );
 }

@@ -48,7 +48,7 @@ export const PAY_STUBS: PayStub[] = [
   },
   {
     id: "sam",
-    employee: "Sam Ortiz",
+    employee: "Sam Rivera",
     role: "Barista",
     period: "Aug 1 – Aug 15",
     payDate: "Aug 16, 2026",

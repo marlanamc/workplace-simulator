@@ -220,7 +220,6 @@ export default function ScheduleTask() {
         lesson={LESSONS[lang][view === "list" ? 0 : 1]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       <NudgeToast text={nudge} bottom={32} />

@@ -13,12 +13,15 @@ export default function LevelUpCelebration() {
   const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp) return null;
-  const { kicker, title, body } = celebrateLevel.levelUp;
+  const { levelUp } = celebrateLevel;
+  const kicker = levelUp.kicker[lang];
+  const title = levelUp.title[lang];
+  const body = levelUp.body[lang];
   const handoff = nextHandoff(completedTaskKeys);
   const cta =
     celebrateLevel.freeTabbing && handoff
       ? HANDOFF_CTA[handoff.taskKey][lang]
-      : celebrateLevel.levelUp.cta;
+      : levelUp.cta[lang];
 
   const keepGoing = () => {
     const handoff = nextHandoff(completedTaskKeys);

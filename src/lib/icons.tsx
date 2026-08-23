@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  ArrowLeftRight,
   Banknote,
   BookOpen,
   Calculator,
@@ -16,13 +17,18 @@ import {
   FolderOpen,
   Globe,
   HardDrive,
+  KeyRound,
   LayoutGrid,
   ListChecks,
   Mail,
+  MailOpen,
   Megaphone,
+  Paperclip,
+  RotateCcw,
   Send,
   StickyNote,
   Table2,
+  Thermometer,
   Users,
 } from "lucide-react";
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
@@ -32,9 +38,16 @@ export type { LucideIcon };
 export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   tour: CircleHelp,
   mail: Mail,
+  "mail-read": MailOpen,
+  "mail-reply": Mail,
+  "mail-attach": Paperclip,
   schedule: CalendarDays,
+  "swap-request": ArrowLeftRight,
+  "call-out-sick": Thermometer,
   timeclock: Clock,
   paystub: Banknote,
+  "shift-review": RotateCcw,
+  "account-recovery": KeyRound,
   incident: ClipboardList,
   handbook: BookOpen,
   calendar: Calendar,
@@ -58,6 +71,7 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
   tour: CircleHelp,
   mail: Mail,
   portal: LayoutGrid,
+  "account-recovery": KeyRound,
   incident: ClipboardList,
   handbook: FileText,
   calendar: Calendar,
@@ -94,7 +108,19 @@ export const FOLDER_ICONS: Record<string, LucideIcon> = {
   "Manager Memos": StickyNote,
 };
 
-export { Flag, Lock, Target, FileText, PartyPopper, Hourglass, Coffee, Languages, Check, Trophy } from "lucide-react";
+export {
+  Flag,
+  Lock,
+  Target,
+  FileText,
+  PartyPopper,
+  Hourglass,
+  Coffee,
+  Languages,
+  Check,
+  Trophy,
+  Briefcase,
+} from "lucide-react";
 
 export function CircleGlyph({
   icon: Icon,

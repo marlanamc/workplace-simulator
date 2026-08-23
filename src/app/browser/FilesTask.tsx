@@ -1,11 +1,15 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   FILES,
+  MESSY_FILES,
   FILES_COPY,
   RENAME_TARGET,
+  normalizeRename,
+  RIGHT_NOW_LABEL,
+  RIGHT_NOW_STEPS,
   WRONG_RENAME_HINT,
   WRONG_EDIT_HINT,
   LESSONS,
@@ -13,6 +17,10 @@ import {
   EVENT_INTRO,
   type DriveFile,
 } from "@/lib/tasks/files/content";
+import RightNowBar from "@/components/task/RightNowBar";
+import SettingsPopover from "@/components/task/SettingsPopover";
+import { speakFromClick } from "@/lib/read-aloud";
+import { levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import ConfidenceCheck from "@/components/task/ConfidenceCheck";
 import EventIntroCard from "@/components/task/EventIntroCard";
@@ -28,10 +36,6 @@ type View = "intro" | "home" | "browse" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
 
-function normalize(value: string) {
-  return value.trim().toLowerCase().replace(/\s+/g, "-").replace(/\.pdf$/, "");
-}
-
 function DriveMark() {
   return (
     <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden>
@@ -43,7 +47,7 @@ function DriveMark() {
 }
 
 export default function FilesTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, currentTrack, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "intro");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
@@ -51,23 +55,41 @@ export default function FilesTask() {
   const [permission, setPermission] = useState<"view" | "edit" | null>(null);
   const [confidence, setConfidence] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
+  // A plain ref, not state: this only gates whether a toast fires, so it
+  // doesn't need to trigger a re-render on its own.
+  const messyWrongCount = useRef(0);
   const { nudge, say } = useNudge();
+
+  // Messy mode (Level.messy): more near-duplicate decoys, and coaching that
+  // speaks up less often - real-world friction added on purpose, not a new
+  // mechanic. See MESSY_FILES for the extra decoys.
+  const messy = levelForTrack(currentTrack.key).messy ?? false;
+  const fileList = messy ? MESSY_FILES : FILES;
 
   const c = FILES_COPY[lang];
   const listOpen = view === "browse" || view === "rename" || view === "share";
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return FILES.filter((f) => {
+    return fileList.filter((f) => {
       if (folder && f.folder !== folder) return false;
       if (q && !f.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [query, folder]);
+  }, [fileList, query, folder]);
 
   const pickFile = (f: DriveFile) => {
     if (!f.isTarget) {
-      if (f.wrongHint) say(f.wrongHint[lang]);
+      if (!f.wrongHint) return;
+      if (!messy) {
+        say(f.wrongHint[lang]);
+        return;
+      }
+      // Only every other wrong pick gets a coaching toast - a wrong click
+      // just does the wrong thing the rest of the time, same as it would
+      // on a real work account.
+      messyWrongCount.current += 1;
+      if (messyWrongCount.current % 2 === 0) say(f.wrongHint[lang]);
       return;
     }
     setRenameValue(f.name.replace(/\.pdf$/, ""));
@@ -75,7 +97,7 @@ export default function FilesTask() {
   };
 
   const tryRename = () => {
-    if (normalize(renameValue) !== RENAME_TARGET) {
+    if (normalizeRename(renameValue) !== RENAME_TARGET) {
       return say(WRONG_RENAME_HINT[lang]);
     }
     setView("share");
@@ -115,6 +137,7 @@ export default function FilesTask() {
     setRenameValue("");
     setPermission(null);
     setConfidence(null);
+    messyWrongCount.current = 0;
   };
 
   const navItem = (active: boolean, onClick: () => void, icon: ReactNode, label: string) => (
@@ -130,7 +153,13 @@ export default function FilesTask() {
   );
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#1f1f1f]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+    <div
+      className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#1f1f1f]"
+      style={{ fontFamily: "Roboto, Arial, sans-serif", zoom: bigText ? 1.15 : undefined }}
+      onClick={(e) => {
+        if (speakAloud) speakFromClick(e.target, lang);
+      }}
+    >
       <div className="flex items-center gap-3 px-3 py-2">
         <div className="flex w-[220px] shrink-0 items-center gap-2 px-2">
           <DriveMark />
@@ -154,7 +183,29 @@ export default function FilesTask() {
           helpLabel={c.helpBtn}
           onHelp={() => setHelp(true)}
         />
+        <SettingsPopover
+          speak={speakAloud}
+          onToggleSpeak={() => setSpeakAloud(!speakAloud)}
+          bigText={bigText}
+          onToggleBigText={() => setBigText(!bigText)}
+          labels={{
+            readAloud: lang === "en" ? "Read aloud" : "Leer en voz alta",
+            biggerText: lang === "en" ? "Bigger text" : "Letra más grande",
+          }}
+        />
       </div>
+
+      {view !== "intro" && view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS.files}
+          stepIndex={view === "rename" ? 1 : view === "share" ? 2 : 0}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "rename" ? 1 : view === "share" ? 2 : 0]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
+      )}
 
       {view === "done" ? (
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -308,7 +359,7 @@ export default function FilesTask() {
                 onConfirm={tryShare}
               >
                 <p className="mb-3 text-[13px] text-[#444746]">
-                  {c.shareWith} <span className="font-medium">Jordan Diaz</span>
+                  {c.shareWith} <span className="font-medium">Jordan Kim</span>
                 </p>
                 <div className="flex flex-col gap-1">
                   <button
@@ -343,7 +394,6 @@ export default function FilesTask() {
         lesson={LESSONS[lang][view === "share" ? 1 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       <NudgeToast text={nudge} bottom={32} />

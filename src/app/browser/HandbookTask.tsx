@@ -162,7 +162,6 @@ export default function HandbookTask() {
         lesson={LESSONS[lang][0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
-        askPersonLabel={c.askPerson}
       />
 
       <NudgeToast text={nudge} bottom={32} />
