@@ -101,16 +101,20 @@ function ShelfPin({
   active = false,
   badge,
   onClick,
+  testId,
   children,
 }: {
   label: string;
   active?: boolean;
   badge?: string;
   onClick: () => void;
+  /** Lets the walkthrough spotlight this pin. */
+  testId?: string;
   children: ReactNode;
 }) {
   return (
     <button
+      data-testid={testId}
       title={label}
       aria-label={label}
       aria-pressed={active}
@@ -147,7 +151,7 @@ export default function Shelf({
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
   const [accountOpen, setAccountOpen] = useState(false);
   const [brightness, setBrightness] = useState(80);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
   const currentLevel = levelForTrack(currentTrack.key);
   const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
@@ -197,26 +201,16 @@ export default function Shelf({
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
         }}
       >
-        <button
-          type="button"
-          onClick={() => {
-            if (myJobLocked) return;
-            closeLauncher();
-            setAccountOpen(false);
-            onMyJobOpenChange(true);
-          }}
-          title={sittingTitle(currentLevel)}
-          className="absolute left-1.5 top-1 hidden max-w-[240px] items-center gap-2 rounded-md px-2.5 py-1 text-left text-white cursor-pointer hover:bg-white/10 min-[920px]:flex"
-        >
-          <span className="min-w-0">
-            <span className="block truncate text-[11px] font-medium leading-tight">{sittingTitle(currentLevel)}</span>
-            {leftover === 0 && (
-              <span className="mt-0.5 block truncate text-[10px] leading-tight text-white/70">
-                {lang === "en" ? "This shift is done" : "Este turno está hecho"}
-              </span>
-            )}
-          </span>
-        </button>
+        <div className="absolute left-3 top-1/2 hidden max-w-[240px] -translate-y-1/2 min-[920px]:block">
+          <p className="truncate text-[13px] font-medium leading-tight tracking-[-0.01em] text-white/85">
+            {sittingTitle(currentLevel)}
+          </p>
+          {leftover === 0 && (
+            <p className="mt-0.5 truncate text-[11px] leading-tight text-white/55">
+              {lang === "en" ? "This shift is done" : "Este turno está hecho"}
+            </p>
+          )}
+        </div>
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="pointer-events-auto flex items-center gap-0.5">
             <button
@@ -264,6 +258,7 @@ export default function Shelf({
                   : "Mi trabajo"
           }
           active={myJobOpen}
+          testId="shelf-my-job"
           badge={!myJobLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
             if (myJobLocked) return;
@@ -575,7 +570,7 @@ export default function Shelf({
         </div>
       )}
 
-      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} onDismiss={dismiss} />
     </>
   );
 }

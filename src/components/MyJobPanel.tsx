@@ -17,7 +17,7 @@ import {
 } from "@/lib/tracks-content";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
-import { TASK_ICONS, Flag, Lock, Trophy } from "@/lib/icons";
+import { Flag, Lock, Trophy } from "@/lib/icons";
 import { Check } from "lucide-react";
 import { sittingTitle, jobTitle } from "@/lib/shift-spine";
 import { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
@@ -124,8 +124,9 @@ export default function MyJobPanel({
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-y-auto px-5 pb-5 pt-4">
-          {/* One quest list: done gets a check, the current job is the one
-              highlighted (and clickable) card, later jobs wait quietly. */}
+          {/* One quest list: done gets a check, the current job is a highlighted
+              row (backup open), later jobs wait quietly. Dispatch copy lives
+              only on the desktop briefing. */}
           <ul className="flex flex-col gap-1">
             {levelTracks.flatMap((track) => track.taskKeys).map((taskKey) => {
               const info = TASK_INFO[taskKey];
@@ -133,21 +134,26 @@ export default function MyJobPanel({
               const isCurrent = taskKey === nextTaskKey && Boolean(nextTaskLocation);
 
               if (isCurrent && nextTaskLocation) {
-                const Icon = TASK_ICONS[taskKey];
                 return (
                   <li key={taskKey}>
                     <button
                       onClick={() => {
                         onOpenChange(false);
-                        openApp(nextTaskLocation.appKey, { tab: nextTaskLocation.tab, section: nextTaskLocation.section });
+                        openApp(nextTaskLocation.appKey, {
+                          tab: nextTaskLocation.tab,
+                          section: nextTaskLocation.section,
+                        });
                       }}
-                      className="flex w-full items-start gap-3.5 rounded-xl bg-[var(--accent-tint)] p-4 text-left hover:brightness-[0.98] cursor-pointer"
+                      className="flex w-full items-start gap-2.5 rounded-lg px-1 py-1.5 text-left cursor-pointer hover:bg-[var(--accent-tint)]"
                     >
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-white">
-                        <Icon size={18} strokeWidth={2.25} aria-hidden />
+                      <span
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]"
+                        aria-hidden
+                      >
+                        <span className="h-2 w-2 rounded-full bg-white" />
                       </span>
-                      <span className="min-w-0 text-[16px] font-medium leading-snug text-[var(--text-primary)]">
-                        {info.dispatch[lang]}
+                      <span className="min-w-0 text-[15px] font-medium leading-snug text-[var(--text-primary)]">
+                        {info.label[lang]}
                       </span>
                     </button>
                   </li>

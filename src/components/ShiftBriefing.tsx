@@ -11,15 +11,14 @@ import { DESKTOP_COPY, type Lang } from "@/lib/desktop-content";
 import { useProgress } from "@/lib/progress-context";
 import { TASK_ICONS, Hourglass, Coffee } from "@/lib/icons";
 import { useWindowManager } from "@/lib/window-manager";
-import { HANDOFF_CTA } from "@/lib/story-beats";
-
-const shadow = { textShadow: "0 2px 18px rgba(0,0,0,0.35)" };
+import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
+import { TASK_INTRO } from "@/lib/task-intros";
 
 /**
- * Deliberately minimal, like a game's mission card: one headline, one
- * button, and one dot per job in THIS level (1-4 dots, never the whole
- * curriculum). Everything else — story flavor, global progress, replay —
- * lives in the My Job panel for whoever goes looking.
+ * Lock-screen widget: one headline, one button, and one dot per job in
+ * THIS level (1-4 dots, never the whole curriculum). Everything else —
+ * story flavor, global progress, replay — lives in the My Job panel for
+ * whoever goes looking.
  */
 export default function ShiftBriefing({
   lang = "en",
@@ -46,12 +45,36 @@ export default function ShiftBriefing({
     : comingSoon
       ? c.comingSoonHeadline
       : c.allDoneHeadline;
-  const body = comingSoon ? c.comingSoonBody : allDone ? c.allDoneBody : null;
+  // The story beat that used to open each task as a full-screen card inside
+  // the app. It belongs here: this is the one screen whose button really does
+  // open the thing it names.
+  const moment = nextTaskKey && nextTaskInfo ? SHIFT_MOMENT[nextTaskKey][lang] : null;
+  const body = comingSoon
+    ? c.comingSoonBody
+    : allDone
+      ? c.allDoneBody
+      : nextTaskKey && nextTaskInfo
+        ? TASK_INTRO[nextTaskKey][lang].body
+        : null;
 
   return (
-    <div className="text-white" style={shadow}>
-      <BriefingIcon size={44} strokeWidth={1.75} className="text-white" aria-hidden />
-      <h1 className="mt-4 max-w-[28ch] text-[28px] font-medium leading-[1.15] tracking-[-0.02em]">
+    <div
+      className="rounded-[28px] px-6 py-6 text-white backdrop-blur-2xl"
+      style={{
+        background: "rgba(32, 32, 32, 0.76)",
+        border: "1px solid rgba(255,255,255,0.10)",
+        boxShadow:
+          "inset 0 1px 0 rgba(255,255,255,0.08), 0 16px 40px rgba(0,0,0,0.28)",
+      }}
+      data-testid="shift-briefing"
+    >
+      <BriefingIcon size={36} strokeWidth={1.75} className="text-white" aria-hidden />
+      {moment ? (
+        <p className="mt-3 text-[13px] font-bold uppercase tracking-[0.16em] text-white/80">
+          {moment}
+        </p>
+      ) : null}
+      <h1 className="mt-1.5 max-w-[28ch] text-[28px] font-medium leading-[1.15] tracking-[-0.02em]">
         {headline}
       </h1>
       {body ? <p className="mt-2 max-w-[36ch] text-[16px] leading-relaxed text-white/90">{body}</p> : null}
