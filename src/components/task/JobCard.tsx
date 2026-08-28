@@ -64,7 +64,8 @@ interface Script {
  * its own; only its corner.
  */
 export default function JobCard() {
-  const { lang, completedTaskKeys, currentTrack, speakAloud, displayName } = useProgress();
+  const { lang, completedTaskKeys, currentTrack, speakAloud, displayName, celebrateLevel, celebrateTrack } =
+    useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
   const {
     step,
@@ -270,6 +271,11 @@ export default function JobCard() {
   }
 
   const tone = TONE[script.tone];
+
+  // A celebration owns the whole screen for a moment. The card stepping back
+  // is the same rule as everywhere else: one voice at a time, and right now
+  // the level screen is the one talking.
+  if (celebrateLevel?.levelUp || celebrateTrack) return null;
 
   const position: React.CSSProperties = drag
     ? {

@@ -21,8 +21,11 @@ export default function Confetti({ count = 32 }: { count?: number }) {
     };
   });
 
+  // Behind the content, not over it: falling pieces crossing a headline make
+  // the one sentence on the screen harder to read, which is the opposite of
+  // what a celebration is for.
   return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
       {pieces.map((p, i) => (
         <span
           key={i}

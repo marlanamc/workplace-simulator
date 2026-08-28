@@ -88,6 +88,8 @@ export const DESKTOP_COPY: Record<Lang, {
   bookmarkOnramp: string;
   leftoverOne: string;
   leftoverMany: string;
+  /** The second way out of a finished level: stop here for today. */
+  clockOut: string;
 }> = {
   en: {
     practiceBanner: "Practice space. Nothing here is real.",
@@ -120,6 +122,7 @@ export const DESKTOP_COPY: Record<Lang, {
     bookmarkOnramp: "From here on, you open your own apps from the bookmarks bar. Start with the one named in the button.",
     leftoverOne: "1 left",
     leftoverMany: "{n} left",
+    clockOut: "Clock out for today",
   },
   es: {
     practiceBanner: "Espacio de práctica. Nada aquí es real.",
@@ -152,6 +155,7 @@ export const DESKTOP_COPY: Record<Lang, {
     bookmarkOnramp: "A partir de ahora, abres tus apps desde la barra de marcadores. Empieza por la del botón.",
     leftoverOne: "1 queda",
     leftoverMany: "{n} quedan",
+    clockOut: "Terminar por hoy",
   },
 };
 
