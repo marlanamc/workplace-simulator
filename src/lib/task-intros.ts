@@ -3,7 +3,6 @@ import type { TaskKey } from "@/lib/desktop-content";
 
 import { EVENT_INTRO as accountRecovery } from "@/lib/tasks/account-recovery/content";
 import { EVENT_INTRO as calendar } from "@/lib/tasks/calendar/content";
-import { EVENT_INTRO as callOutSick } from "@/lib/tasks/call-out-sick/content";
 import { EVENT_INTRO as files } from "@/lib/tasks/files/content";
 import { EVENT_INTRO as formulaCheck } from "@/lib/tasks/formula-check/content";
 import { EVENT_INTRO as handbook } from "@/lib/tasks/handbook/content";
@@ -47,7 +46,8 @@ export const TASK_INTRO: Record<TaskKey, Record<Lang, EventIntroCopy>> = {
   "mail-attach": mailIntros["mail-attach"],
   schedule,
   "swap-request": swapRequest,
-  "call-out-sick": callOutSick,
+  // Written from scratch in Mail, so its beat lives with the other mail jobs.
+  "call-out-sick": mailIntros["call-out-sick"],
   timeclock,
   paystub,
   "shift-review": shiftReview,

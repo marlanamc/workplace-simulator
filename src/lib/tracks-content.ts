@@ -31,14 +31,14 @@ export const TRACKS: Track[] = [
     key: "first-week",
     title: "The First Week",
     subtitle: "Life happens on a schedule too",
-    taskKeys: ["schedule", "swap-request", "call-out-sick"],
+    taskKeys: ["schedule", "swap-request"],
     awardEmoji: "🗓️",
   },
   {
     key: "payday-trouble",
     title: "Payday & Trouble",
     subtitle: "Money, hours, and a normal shift",
-    taskKeys: ["timeclock", "paystub", "shift-review"],
+    taskKeys: ["timeclock", "paystub", "shift-review", "call-out-sick"],
     awardEmoji: "💳",
   },
   {
@@ -631,8 +631,8 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
   "call-out-sick": {
     label: { en: "Tell Maria you can't come in", es: "Dile a Maria que no puedes ir" },
     dispatch: {
-      en: "You're sick tomorrow. Tell Maria before your shift.",
-      es: "Estás enfermo mañana. Avísale a Maria antes de tu turno.",
+      en: "You're sick and you're on at 10. Write Maria now.",
+      es: "Estás enfermo y entras a las 10. Escríbele a Maria ya.",
     },
     built: true,
   },
@@ -842,7 +842,7 @@ export function pathStops(completedTaskKeys: TaskKey[]): PathStop[] {
 }
 
 /** Employee Portal sub-page. Schedule, Time Clock, and Pay Stubs share one Browser tab. */
-export type PortalSection = "schedule" | "timeclock" | "paystubs" | "swap-request" | "call-out-sick" | "shift-review";
+export type PortalSection = "schedule" | "timeclock" | "paystubs" | "swap-request" | "shift-review";
 
 export type TaskLocation = {
   appKey: AppKey;
@@ -873,7 +873,7 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
   "mail-attach": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   schedule: { appKey: "browser", tab: "portal", section: "schedule", ctaLabel: "Open Portal" },
   "swap-request": { appKey: "browser", tab: "portal", section: "swap-request", ctaLabel: "Open Portal" },
-  "call-out-sick": { appKey: "browser", tab: "portal", section: "call-out-sick", ctaLabel: "Open Portal" },
+  "call-out-sick": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   timeclock: { appKey: "browser", tab: "portal", section: "timeclock", ctaLabel: "Open Portal" },
   paystub: { appKey: "browser", tab: "portal", section: "paystubs", ctaLabel: "Open Portal" },
   "shift-review": { appKey: "browser", tab: "portal", section: "shift-review", ctaLabel: "Open Portal" },

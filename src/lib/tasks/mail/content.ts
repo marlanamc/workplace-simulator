@@ -5,7 +5,18 @@ import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/li
 const GREETING = "__GREETING__";
 
 /** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
-export type PlayableMailTask = "mail-reply" | "mail-attach";
+export type PlayableMailTask = "mail-reply" | "mail-attach" | "call-out-sick";
+
+/**
+ * Tasks where the learner writes to Maria from scratch rather than replying to
+ * something in the inbox. There is no email to open first, so Mail starts on
+ * the compose window instead of the message list.
+ */
+export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["call-out-sick"];
+
+export function isComposeOnly(task: PlayableMailTask): boolean {
+  return COMPOSE_ONLY_TASKS.includes(task);
+}
 
 export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventIntroCopy>> = {
   "mail-reply": {
@@ -22,6 +33,22 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       headline: "Tu gerente te da la bienvenida.",
       body: "Maria Delgado dirige Harborside Cafe. Te envió un saludo corto y dijo que la llames si necesitas algo. Escríbele un agradecimiento.",
       cta: "Abrir mi bandeja",
+    },
+  },
+  "call-out-sick": {
+    en: {
+      emoji: "🤒",
+      kicker: "Thursday, 6:12 AM",
+      headline: "You're sick. You're on at 10.",
+      body: "You woke up sick and you're on the schedule this morning. Write Maria now, before your shift — not after it starts.",
+      cta: "Write to Maria",
+    },
+    es: {
+      emoji: "🤒",
+      kicker: "Jueves, 6:12 AM",
+      headline: "Estás enfermo. Entras a las 10.",
+      body: "Te despertaste enfermo y hoy tienes turno. Escríbele a Maria ahora, antes de tu turno, no después de que empiece.",
+      cta: "Escribirle a Maria",
     },
   },
   "mail-attach": {
@@ -98,6 +125,20 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
   },
+  "call-out-sick": {
+    en: {
+      kicker: "Message sent",
+      body: "Maria has time to find coverage now, instead of finding out when your shift starts. That is the whole point of writing early.",
+      badgeNumber: "09",
+      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
+    },
+    es: {
+      kicker: "Mensaje enviado",
+      body: "Maria ahora tiene tiempo de buscar quién te cubra, en vez de enterarse cuando empiece tu turno. Ese es el punto de avisar temprano.",
+      badgeNumber: "09",
+      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
   "mail-attach": {
     en: {
       kicker: "Message sent",
@@ -125,6 +166,18 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
       subject: "Bienvenido a Harborside Cafe",
       reSubject: "Re: Bienvenido a Harborside Cafe",
       preview: "Me alegra que estés aquí. Llámame si necesitas algo.",
+    },
+  },
+  "call-out-sick": {
+    en: {
+      subject: "Can't come in today",
+      reSubject: "Can't come in today",
+      preview: "Telling Maria before the shift starts.",
+    },
+    es: {
+      subject: "No puedo ir hoy",
+      reSubject: "No puedo ir hoy",
+      preview: "Avisarle a Maria antes de que empiece el turno.",
     },
   },
   "mail-attach": {
@@ -269,7 +322,9 @@ export const MAIL_COPY: Record<Lang, {
  * SIGNATURES so every email Maria sends ends the same way — which is the point
  * of a signature, and is not something to retype into each body.
  */
-const BODY_TEMPLATE: Record<PlayableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
+type ReadableMailTask = Exclude<PlayableMailTask, "call-out-sick">;
+
+const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
   // Job 1: welcome note — thank-you reply, no file.
   "mail-reply": {
     en: {
@@ -339,7 +394,7 @@ const BODY_TEMPLATE: Record<PlayableMailTask, Record<Lang, { plain: string[]; fu
  * name. Both the plain and full versions get the greeting.
  */
 export function bodyForTask(
-  task: PlayableMailTask,
+  task: ReadableMailTask,
   lang: Lang,
   displayName: string,
 ): { plain: string[]; full: string[] } {
@@ -362,6 +417,20 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
       "Muchas gracias. Me alegra estar aquí.",
       "Gracias. Te llamo si necesito algo.",
       "También espero trabajar contigo.",
+    ],
+  },
+  "call-out-sick": {
+    en: [
+      "Hi Maria, I'm sick and can't come in today.",
+      "I'm sorry for the short notice.",
+      "I can work my next shift as scheduled.",
+      "Let me know if you need anything from me.",
+    ],
+    es: [
+      "Hola Maria, estoy enfermo y no puedo ir hoy.",
+      "Perdón por avisar con tan poco tiempo.",
+      "Puedo trabajar mi siguiente turno como estaba planeado.",
+      "Avísame si necesitas algo de mí.",
     ],
   },
   "mail-attach": {

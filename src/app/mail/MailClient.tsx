@@ -12,6 +12,7 @@ import {
   SUBJECT_BY_TASK,
   CONFIRM_COPY,
   DONE_COPY,
+  isComposeOnly,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import type { TaskKey } from "@/lib/desktop-content";
@@ -51,6 +52,8 @@ const STEP_LINE = {
   openMail: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
+    // Compose-only: there is no email to open, so this line is never shown.
+    "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
   } as Record<MailTask, Localized<string>>,
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
   attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
@@ -75,7 +78,7 @@ const BUTTON_LABEL = {
 } as const;
 
 /** Steps per job, for the card's progress bars. */
-const STEP_COUNT: Record<MailTask, number> = { "mail-reply": 3, "mail-attach": 4 };
+const STEP_COUNT: Record<MailTask, number> = { "mail-reply": 3, "mail-attach": 4, "call-out-sick": 2 };
 
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
@@ -99,7 +102,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // `portalSectionToken` re-open pattern.
   const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys));
   const [step, setStep] = useState(0);
-  const [view, setView] = useState<View>(completedTaskKeys.includes(activeMailTask) ? "done" : "empty");
+  const [view, setView] = useState<View>(
+    completedTaskKeys.includes(activeMailTask) ? "done" : isComposeOnly(activeMailTask) ? "compose" : "empty",
+  );
   const [body, setBody] = useState("");
   const [attached, setAttached] = useState(false);
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
@@ -115,7 +120,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setLastTabToken(browserTabToken);
     const next = activeMailTaskFor(completedTaskKeys);
     setActiveMailTask(next);
-    setView(completedTaskKeys.includes(next) ? "done" : "empty");
+    setView(completedTaskKeys.includes(next) ? "done" : isComposeOnly(next) ? "compose" : "empty");
     setStep(0);
     setBody("");
     setAttached(false);
@@ -126,6 +131,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const c = MAIL_COPY[lang];
   const cc = CONFIRM_COPY[lang];
   const subjectMeta = SUBJECT_BY_TASK[activeMailTask][lang];
+  // Writing to Maria from scratch: no email to find, no Reply button to press.
+  // Mail opens straight into the compose window.
+  const composeOnly = isComposeOnly(activeMailTask);
   // Day One's two emails are both from Maria, so her signature is fixed here
   // rather than looked up per row the way the story mails do it.
   const mariaSignature = signatureFor("Maria Delgado");
@@ -426,6 +434,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
             {(view === "read" || view === "confirm" || view === "compose") && (
               <div className="px-6 py-4 sm:px-8">
                 <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{subjectMeta.subject}</h2>
+                {/* A compose-only task has no email to quote above the reply -
+                    the learner is starting this thread, not answering one. */}
+                {!composeOnly && (
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a73e8] text-[14px] font-medium text-white">
                     MD
@@ -442,13 +453,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {bodyForTask(activeMailTask, lang, displayName).plain.map((p, i) => (
+                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick">, lang, displayName).plain.map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
                     {mariaSignature && <MailSignature sig={mariaSignature} lang={lang} />}
                   </div>
                 </div>
+                )}
 
                 {view === "read" && (
                   <div className="mt-6 flex flex-wrap gap-2 pl-[52px]">

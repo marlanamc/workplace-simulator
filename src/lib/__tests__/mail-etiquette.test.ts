@@ -8,7 +8,7 @@ import {
   signatureLines,
   SIGNATURES,
 } from "@/lib/mail-greeting";
-import { bodyForTask, type PlayableMailTask } from "@/lib/tasks/mail/content";
+import { bodyForTask } from "@/lib/tasks/mail/content";
 import type { Lang } from "@/lib/task-types";
 
 /**
@@ -19,7 +19,8 @@ import type { Lang } from "@/lib/task-types";
  */
 
 const LANGS: Lang[] = ["en", "es"];
-const MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach"];
+// Only tasks that HAVE an email to read; call-out-sick is composed from scratch.
+const MAIL_TASKS = ["mail-reply", "mail-attach"] as const;
 const ALL_TASKS = LEVELS.flatMap(taskKeysForLevel);
 
 describe("mailGreeting", () => {

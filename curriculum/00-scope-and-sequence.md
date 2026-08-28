@@ -144,7 +144,11 @@ incident in professional English is a lead's task, not week one. Two tasks
 are genuinely new curriculum ground: `swap-request` (the same shift-swap
 skill, through a real web form instead of an email) and `call-out-sick`
 (composing a call-out message — `handbook`'s old call-out scenario was only
-ever a policy *lookup*, never a message the student actually wrote). A
+ever a policy *lookup*, never a message the student actually wrote).
+`call-out-sick` sits in Level 3 rather than Level 2: calling out is normal,
+but it reads badly from a brand-new hire, and it lands better once the
+student has run a full shift and been paid. It is written in Mail, like
+every other message to Maria. A
 ninth job, `shift-review`, closes the act with no new tool — three
 already-known skills, mixed together, the level that actually earns the
 Shift Lead promotion.
@@ -162,8 +166,9 @@ hours and pay, ask for help, look up the rule.
 Nine short jobs, three levels, so each level stays a 12-15 minute sitting.
 Level 1 (Day One) is deliberately tiny so the very first session in the
 app is low-stakes. Level 2 (The First Week) adds "life happening on the
-schedule" — a swap, a sick day — not just mechanics. Level 3 (Payday &
-Trouble) closes with the no-new-tools review.
+schedule" — spotting a clash, then asking for the swap — not just mechanics.
+Level 3 (Payday & Trouble) covers hours and pay, adds the sick-day call-out,
+and closes with the no-new-tools review.
 
 ### Level 1: Day One
 
@@ -183,31 +188,39 @@ See `level-1-day-one/01-lesson-mail-read.md` through
 
 ### Level 2: The First Week
 
-One app, three short jobs — the Employee Portal, now covering "life
-happening on a schedule," not just reading it.
+One app, two short jobs — the Employee Portal, now covering "life happening
+on a schedule," not just reading it.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `schedule` | Find your shift and spot a conflict, ask for a change by email | Browser → Portal |
-| 2 | `swap-request` | The same ask, through a real web form (dropdown + date picker) | Browser → Portal |
-| 3 | `call-out-sick` | Tell your manager you can't come in, before your shift starts | Browser → Portal |
+| 1 | `schedule` | Read a work schedule against your own calendar and spot the clash | Browser → Portal |
+| 2 | `swap-request` | Ask for the fix, through Harborside's real swap form | Browser → Portal |
 
-See `level-2-the-first-week/01-lesson-schedule.md` through
-`03-lesson-call-out-sick.md`. Finishing `call-out-sick` completes Level 2.
+See `level-2-the-first-week/01-lesson-schedule.md` and
+`02-lesson-swap-request.md`. Finishing `swap-request` completes Level 2.
+
+Two jobs, one cause and one effect: Lesson 1 is only noticing (the schedule
+never flags the clash — the student compares it against their own phone),
+and Lesson 2 is the ask. The schedule screen deliberately does **not**
+compose an email, because Harborside uses a form for this and Lesson 2 says
+so; teaching the email first and contradicting it one screen later was the
+old shape.
 
 ### Level 3: Payday & Trouble
 
-Two familiar tasks, then a no-new-tools review that closes Act I and earns
-the Shift Lead promotion.
+Hours and pay, a no-new-tools review, then the call-out that only makes
+sense once the student has a track record. Closes Act I and earns the Shift
+Lead promotion.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
 | 2 | `paystub` | Find the right person's stub, then confirm net pay and hours | Browser → Portal + PDF Reader |
 | 3 | `shift-review` | No new tool — three earlier skills, mixed, back to back | Browser → Portal |
+| 4 | `call-out-sick` | Tell your manager you can't come in, before your shift starts | Browser → Mail |
 
 See `level-3-payday-and-trouble/01-lesson-timeclock.md` through
-`03-lesson-shift-review.md`. Finishing `shift-review` completes Level 3
+`04-lesson-call-out-sick.md`. Finishing `call-out-sick` completes Level 3
 and Act I, and triggers the Shift Lead promotion.
 
 ---
