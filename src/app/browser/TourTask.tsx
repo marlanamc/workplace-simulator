@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { TOUR_COPY, LESSONS, tourEventIntro } from "@/lib/tasks/tour/content";
 import { TASK_ICONS } from "@/lib/icons";
@@ -29,16 +29,16 @@ export default function TourTask({
   onStartWalkthrough: () => void;
 }) {
   const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
-  const [view, setView] = useState<View>(
+  const [ownView, setView] = useState<View>(
     completedTaskKeys.includes("tour") ? "done" : startAtHelp ? "help" : "intro",
   );
   const [openedHelp, setOpenedHelp] = useState(false);
   const [help, setHelp] = useState(false);
 
-  // Walkthrough returns here for the Help beat after Mail + Calendar.
-  useEffect(() => {
-    if (startAtHelp && view === "intro") setView("help");
-  }, [startAtHelp, view]);
+  // The walkthrough returns here for the Help beat after Mail + Calendar.
+  // Derived rather than synced in an effect; "restart" clears startAtHelp via
+  // onStartWalkthrough, so it can still send the learner back to the intro.
+  const view: View = startAtHelp && ownView === "intro" ? "help" : ownView;
 
   const c = TOUR_COPY[lang];
   const intro = tourEventIntro(lang, displayName);

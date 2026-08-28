@@ -85,11 +85,9 @@ export default function TourWalkthrough({
   }, [stepIndex, step?.targetTestId]);
 
   useEffect(() => {
-    if (!step) {
-      setRect(null);
-      return;
-    }
-    const sel = targetSelector(step);
+    // No step means nothing is spotlit; measure() clears the hole for us, and
+    // the component renders null below either way.
+    const sel = step ? targetSelector(step) : null;
     const measure = () => {
       if (!sel) {
         setRect(null);

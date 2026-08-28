@@ -30,7 +30,9 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
     } catch {
       // Private browsing: nothing stored, nothing to clear.
     }
-    // Full navigation (not client routing) so the server re-reads completions.
+    // Full navigation on purpose: router.push() would keep the cached RSC
+    // payload and the desktop would render the pre-rewind progress.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
     window.location.assign("/?from=studio");
   };
 

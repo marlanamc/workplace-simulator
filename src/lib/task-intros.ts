@@ -31,6 +31,11 @@ import { EVENT_INTRO as triage } from "@/lib/tasks/triage/content";
  * "Open Calendar" while the learner was already sitting on Calendar. The copy
  * is unchanged; only where it is shown moved. The desktop is the one screen
  * where that button can honestly open something.
+ *
+ * NOTE: nothing imports this today — the Job Card's own INTRO_BEATS took over
+ * the "set the scene" job. Kept because the per-task bilingual copy it
+ * aggregates is still written and still accurate; delete it (and the
+ * EVENT_INTRO exports it pulls) if per-task intros are settled as gone.
  */
 export const TASK_INTRO: Record<TaskKey, Record<Lang, EventIntroCopy>> = {
   tour,

@@ -2,7 +2,6 @@
 
 import {
   useActionState,
-  useEffect,
   useRef,
   useState,
   useSyncExternalStore,
@@ -328,7 +327,11 @@ export default function LoginForm({ next }: { next: string }) {
   const storedLang = isClient ? readStoredLang() : "en";
   const [langOverride, setLangOverride] = useState<Lang | null>(null);
   const lang = langOverride ?? storedLang;
-  const [recents, setRecents] = useState<RecentUser[]>([]);
+  // Overrides the stored list only once the learner edits it; until then the
+  // stored value below is read through isClient so hydration stays clean.
+  const [recentsOverride, setRecentsOverride] = useState<RecentUser[] | null>(null);
+  const recents = recentsOverride ?? (isClient ? loadRecents() : []);
+  const setRecents = setRecentsOverride;
   const [mode, setMode] = useState<Mode>("picker");
   const [selected, setSelected] = useState<RecentUser | null>(null);
   const [pin, setPin] = useState("");
@@ -338,10 +341,6 @@ export default function LoginForm({ next }: { next: string }) {
   const statusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const pinRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (isClient) setRecents(loadRecents());
-  }, [isClient]);
 
   const flashStatus = (msg: string) => {
     setStatusNote(msg);

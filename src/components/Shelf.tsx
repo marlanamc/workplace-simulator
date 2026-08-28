@@ -83,23 +83,12 @@ export function AppIcon({ icon, color, size = 44 }: { icon: ReactNode; color: st
   );
 }
 
-function LucideAppIcon({
-  appKey,
-  color,
-  size,
-}: {
-  appKey: AppKey;
-  color: string;
-  size: number;
-}) {
+/** Both apps get their real-world logo, so this covers every `AppKey`. */
+function LucideAppIcon({ appKey, size }: { appKey: AppKey; size: number }) {
   if (appKey === "browser") {
     return <ChromeIcon size={size} />;
   }
-  if (appKey === "pdf") {
-    return <PdfIcon size={size} />;
-  }
-  const Icon = APP_ICONS[appKey];
-  return <AppIcon icon={<Icon size={Math.round(size * 0.5)} strokeWidth={2.25} />} color={color} size={size} />;
+  return <PdfIcon size={size} />;
 }
 
 function ShelfPin({
@@ -250,7 +239,7 @@ export default function Shelf({
               toggleFromShelf(a.key);
             }}
           >
-            <LucideAppIcon appKey={a.key} color={a.color} size={32} />
+            <LucideAppIcon appKey={a.key} size={32} />
           </ShelfPin>
         ))}
 
@@ -508,7 +497,7 @@ export default function Shelf({
                         onClick={() => openFromLauncher(a.key)}
                         className="flex flex-col items-center gap-2 rounded-xl px-2 py-3.5 hover:bg-[var(--surface-muted)] cursor-pointer"
                       >
-                        <LucideAppIcon appKey={a.key} color={a.color} size={48} />
+                        <LucideAppIcon appKey={a.key} size={48} />
                         <span className="text-center text-[13px] leading-tight text-[var(--text-primary)]">
                           {cp.name}
                         </span>
@@ -535,7 +524,7 @@ export default function Shelf({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-start gap-3">
-              <LucideAppIcon appKey={activeApp.key} color={activeApp.color} size={44} />
+              <LucideAppIcon appKey={activeApp.key} size={44} />
               <div className="flex-1">
                 <div className="text-[12px] font-medium uppercase tracking-wide text-[var(--accent)]">
                   {appCopy[activeApp.key].kicker}

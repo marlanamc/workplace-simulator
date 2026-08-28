@@ -44,3 +44,10 @@ next-env.d.ts
 
 # local tool cache
 .impeccable/
+
+# Design-canvas scratch bundles: throwaway prototypes that get recreated in
+# React once a direction is chosen. Keep handoffs out of the repo root - once
+# a design ships, the code is the record. (Old ones live in git history.)
+*.dc.html
+/design_*/
+/*handoff*/
