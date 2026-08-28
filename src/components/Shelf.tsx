@@ -247,15 +247,15 @@ export default function Shelf({
           label={
             myJobLocked
               ? lang === "en"
-                ? "My job · finish the walkthrough first"
-                : "Mi trabajo · termina la guía primero"
+                ? "My tasks · finish the walkthrough first"
+                : "Mis tareas · termina la guía primero"
               : leftover > 0
-                ? `${lang === "en" ? "My job" : "Mi trabajo"} · ${
+                ? `${lang === "en" ? "My tasks" : "Mis tareas"} · ${
                     leftover === 1 ? c.leftoverOne : c.leftoverMany.replace("{n}", String(leftover))
                   }`
                 : lang === "en"
-                  ? "My job"
-                  : "Mi trabajo"
+                  ? "My tasks"
+                  : "Mis tareas"
           }
           active={myJobOpen}
           testId="shelf-my-job"

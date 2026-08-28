@@ -11,14 +11,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
   "mail-reply": {
     en: {
       emoji: "📬",
-      kicker: "Day 1, 8:14 AM · Job 1 of 2",
+      kicker: "Day 1, 8:14 AM · Task 1 of 2",
       headline: "Your manager says welcome.",
       body: "Maria Delgado runs Harborside Cafe. She sent a short hello and said to call if you need anything. Write her a thank-you back.",
       cta: "Open my inbox",
     },
     es: {
       emoji: "📬",
-      kicker: "Día 1, 8:14 AM · Trabajo 1 de 2",
+      kicker: "Día 1, 8:14 AM · Tarea 1 de 2",
       headline: "Tu gerente te da la bienvenida.",
       body: "Maria Delgado dirige Harborside Cafe. Te envió un saludo corto y dijo que la llames si necesitas algo. Escríbele un agradecimiento.",
       cta: "Abrir mi bandeja",
@@ -27,14 +27,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
   "mail-attach": {
     en: {
       emoji: "📎",
-      kicker: "Day 1, 8:20 AM · Job 2 of 2",
+      kicker: "Day 1, 8:20 AM · Task 2 of 2",
       headline: "Maria needs a file.",
       body: "She asked for the July safety report today. First make sure you know what she needs. Then reply and attach the file.",
       cta: "Open my inbox",
     },
     es: {
       emoji: "📎",
-      kicker: "Día 1, 8:20 AM · Trabajo 2 de 2",
+      kicker: "Día 1, 8:20 AM · Tarea 2 de 2",
       headline: "Maria necesita un archivo.",
       body: "Pidió el reporte de seguridad de julio para hoy. Primero confirma qué necesita. Luego responde y adjunta el archivo.",
       cta: "Abrir mi bandeja",

@@ -45,9 +45,8 @@ function saveStoryFlags(learnerId: string, flags: StoryFlags) {
 }
 
 // Device-level settings (not per learner): a shared classroom computer set to
-// Spanish or read-aloud should stay that way for the next person who needs it.
+// Spanish or bigger text should stay that way for the next person who needs it.
 const LANG_STORAGE_KEY = "ws-lang";
-const SPEAK_STORAGE_KEY = "ws-read-aloud";
 const BIG_TEXT_STORAGE_KEY = "ws-big-text";
 
 function loadStoredLang(): Lang {
@@ -122,9 +121,6 @@ interface ProgressValue {
   dismissMariaNote: () => void;
   lang: Lang;
   setLang: (lang: Lang) => void;
-  /** "Read aloud" mode: tapped text is spoken with the browser's built-in voice. */
-  speakAloud: boolean;
-  setSpeakAloud: (on: boolean) => void;
   /** "Bigger text" mode: task windows render ~15% larger. */
   bigText: boolean;
   setBigText: (on: boolean) => void;
@@ -162,7 +158,6 @@ export function ProgressProvider({
     return decayed;
   });
   const [lang, setLangState] = useState<Lang>(() => loadStoredLang());
-  const [speakAloud, setSpeakAloudState] = useState<boolean>(() => loadStoredFlag(SPEAK_STORAGE_KEY));
   const [bigText, setBigTextState] = useState<boolean>(() => loadStoredFlag(BIG_TEXT_STORAGE_KEY));
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -170,11 +165,6 @@ export function ProgressProvider({
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
     saveSetting(LANG_STORAGE_KEY, next);
-  }, []);
-
-  const setSpeakAloud = useCallback((on: boolean) => {
-    setSpeakAloudState(on);
-    saveSetting(SPEAK_STORAGE_KEY, String(on));
   }, []);
 
   const setBigText = useCallback((on: boolean) => {
@@ -286,8 +276,6 @@ export function ProgressProvider({
         dismissMariaNote,
         lang,
         setLang,
-        speakAloud,
-        setSpeakAloud,
         bigText,
         setBigText,
         rungMap,

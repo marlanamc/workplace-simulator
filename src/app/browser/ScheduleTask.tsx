@@ -12,6 +12,7 @@ import {
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/schedule/content";
+import type { Lang } from "@/lib/task-types";
 import { useNudge } from "@/lib/use-nudge";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -130,29 +131,7 @@ export default function ScheduleTask() {
           </div>
 
           <aside className="w-full shrink-0 lg:w-[260px]">
-            <div className="overflow-hidden rounded-[28px] bg-[#1c1c1e] p-3 text-white shadow-[0_8px_24px_rgba(0,0,0,0.18)]">
-              <div className="px-2 pb-2 pt-1">
-                <div className="text-[11px] text-white/55">{c.phoneLabel}</div>
-                <div className="text-[17px] font-medium">{c.phoneHeading}</div>
-              </div>
-              <div className="overflow-hidden rounded-2xl bg-[#2c2c2e]">
-                {PERSONAL_CALENDAR.map((event, i) => (
-                  <div
-                    key={event.date}
-                    className={`flex items-start gap-3 px-3 py-2.5 ${i !== 0 ? "border-t border-white/10" : ""}`}
-                  >
-                    <div className="w-[4.5rem] shrink-0">
-                      <div className="text-[11px] text-white/55">{event.day}</div>
-                      <div className="text-[13px] font-medium">{event.date}</div>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="text-[14px] font-medium">{event.title[lang]}</div>
-                      <div className="text-[12px] text-white/65">{event.time}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <PhoneCalendar label={c.phoneLabel} heading={c.phoneHeading} lang={lang} />
           </aside>
         </div>
       )}
@@ -234,5 +213,186 @@ export default function ScheduleTask() {
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
+  );
+}
+
+const PHONE_TYPE =
+  '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif';
+
+function PhoneCalendar({
+  label,
+  heading,
+  lang,
+}: {
+  label: string;
+  heading: string;
+  lang: Lang;
+}) {
+  const eventDates = new Set(PERSONAL_CALENDAR.map((event) => event.date));
+
+  return (
+    <figure className="mx-auto w-[236px]">
+      <div className="relative">
+        <div
+          aria-hidden
+          className="absolute -left-[3px] top-[58px] h-[16px] w-[3px] rounded-l-[2px] bg-[#5c5c60]"
+        />
+        <div
+          aria-hidden
+          className="absolute -left-[3px] top-[86px] h-[32px] w-[3px] rounded-l-[2px] bg-[#5c5c60]"
+        />
+        <div
+          aria-hidden
+          className="absolute -left-[3px] top-[124px] h-[32px] w-[3px] rounded-l-[2px] bg-[#5c5c60]"
+        />
+        <div
+          aria-hidden
+          className="absolute -right-[3px] top-[100px] h-[56px] w-[3px] rounded-r-[2px] bg-[#5c5c60]"
+        />
+
+        <div
+          className="rounded-[42px] p-[8px] shadow-[0_18px_40px_rgba(0,0,0,0.28),0_4px_10px_rgba(0,0,0,0.16),inset_0_1px_0_rgba(255,255,255,0.28),inset_0_-1px_0_rgba(0,0,0,0.55)]"
+          style={{
+            background:
+              "linear-gradient(160deg, #4a4a4e 0%, #1c1c1e 22%, #111113 100%)",
+          }}
+        >
+          <div
+            className="relative overflow-hidden rounded-[34px] bg-[#f2f2f7] text-[#1d1d1f] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.45)]"
+            style={{ fontFamily: PHONE_TYPE }}
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[8px] z-10 h-[24px] w-[78px] -translate-x-1/2 rounded-full bg-black"
+            />
+
+            <div
+              aria-hidden
+              className="flex h-[40px] items-end justify-between px-[16px] pb-[5px] text-[11px] font-semibold tracking-tight"
+            >
+              <span>8:14</span>
+              <span className="flex items-center gap-[5px]">
+                <SignalIcon />
+                <WifiIcon />
+                <BatteryIcon />
+              </span>
+            </div>
+
+            <h3 className="px-[16px] pt-[4px] text-[22px] font-bold leading-none tracking-tight">
+              {heading}
+            </h3>
+
+            <div
+              aria-hidden
+              className="mt-[12px] grid grid-cols-7 px-[8px]"
+            >
+              {SCHEDULE.map((d) => {
+                const hasEvent = eventDates.has(d.date);
+                const num = d.date.split(" ").pop();
+                return (
+                  <div key={d.day} className="flex flex-col items-center gap-[3px]">
+                    <span className="text-[10px] font-medium text-[#6e6e73]">
+                      {d.day.charAt(0)}
+                    </span>
+                    <span className="text-[13px] font-semibold tabular-nums">{num}</span>
+                    <span
+                      className={`h-[4px] w-[4px] rounded-full ${
+                        hasEvent ? "bg-[#ff3b30]" : "bg-transparent"
+                      }`}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            <ul className="mt-[4px] pb-[2px]">
+              {PERSONAL_CALENDAR.map((event) => (
+                <li
+                  key={event.date}
+                  className="flex items-start gap-[10px] border-t border-black/10 px-[14px] py-[10px]"
+                >
+                  <div className="w-[36px] shrink-0 pt-[1px] text-center">
+                    <div className="text-[18px] font-semibold leading-none tabular-nums">
+                      {event.date.split(" ").pop()}
+                    </div>
+                    <div className="mt-[3px] text-[10px] font-medium uppercase tracking-wide text-[#6e6e73]">
+                      {event.day}
+                    </div>
+                  </div>
+                  <span
+                    aria-hidden
+                    className="mt-[3px] h-[30px] w-[3px] shrink-0 rounded-full bg-[#ff3b30]"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="truncate text-[13px] font-semibold leading-tight">
+                      {event.title[lang]}
+                    </div>
+                    <div className="mt-[2px] text-[12px] tabular-nums text-[#3a3a3c]">
+                      {event.time}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div aria-hidden className="flex justify-center pb-[8px] pt-[2px]">
+              <div className="h-[4px] w-[96px] rounded-full bg-[#1d1d1f]/25" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption className="mt-2 text-center text-[12px] text-[var(--text-secondary)]">
+        {label}
+      </figcaption>
+    </figure>
+  );
+}
+
+function SignalIcon() {
+  return (
+    <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor">
+      <rect x="0" y="7" width="3" height="4" rx="0.6" />
+      <rect x="4.2" y="5" width="3" height="6" rx="0.6" />
+      <rect x="8.4" y="2.5" width="3" height="8.5" rx="0.6" />
+      <rect x="12.6" y="0" width="3" height="11" rx="0.6" opacity="0.28" />
+    </svg>
+  );
+}
+
+function WifiIcon() {
+  return (
+    <svg width="14" height="11" viewBox="0 0 14 11" fill="none">
+      <path
+        d="M1.2 4.4c3.2-3.1 8.4-3.1 11.6 0"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+      <path
+        d="M3.2 6.6c2.1-2 5.5-2 7.6 0"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+      />
+      <circle cx="7" cy="9.3" r="1.15" fill="currentColor" />
+    </svg>
+  );
+}
+
+function BatteryIcon() {
+  return (
+    <svg width="24" height="11" viewBox="0 0 24 11" fill="none">
+      <rect
+        x="0.6"
+        y="0.6"
+        width="20"
+        height="9.8"
+        rx="2.2"
+        stroke="currentColor"
+        strokeWidth="1.2"
+      />
+      <rect x="2.2" y="2.2" width="13.5" height="6.6" rx="1.2" fill="currentColor" />
+      <path d="M22 3.4v4.2a1.6 1.6 0 0 0 0-4.2Z" fill="currentColor" opacity="0.45" />
+    </svg>
   );
 }

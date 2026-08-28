@@ -7,7 +7,7 @@ progress to the start of any level (or fresh, or everything done), clears
 the device-side story flags, and opens the learner desktop. One test
 account can stand at any moment in the game — no pile of accounts. Combine
 with: **Replay a level** (rewind one level, keeping the rest), an
-**incognito window** (simulates a brand-new device: language, read-aloud,
+**incognito window** (simulates a brand-new device: language, bigger text,
 story flags reset), and throwaway sign-ups under class code `TEST` when you
 truly need two learners at once.
 

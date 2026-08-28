@@ -145,7 +145,7 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Got it. Thank you for sending the July report so fast.",
         "See you on the floor.",
-        "Next I need you on the schedule. Two shifts overlap.",
+        "Next I need you to check your schedule.",
       ],
       es: [
         "Lo tengo. Gracias por enviar el reporte de julio tan rápido.",

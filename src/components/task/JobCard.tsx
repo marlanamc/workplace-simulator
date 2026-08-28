@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { AlertCircle, Check, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -64,7 +64,7 @@ interface Script {
  * its own; only its corner.
  */
 export default function JobCard() {
-  const { lang, completedTaskKeys, currentTrack, speakAloud, displayName, celebrateLevel, celebrateTrack } =
+  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack } =
     useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
   const {
@@ -106,12 +106,6 @@ export default function JobCard() {
   }
 
   const script = buildScript();
-
-  // ─── announce + read aloud ───────────────────────────────────────────────
-  const line = script.line;
-  useEffect(() => {
-    if (speakAloud) speakText(line, lang);
-  }, [line, speakAloud, lang]);
 
   // ─── dragging ────────────────────────────────────────────────────────────
   const startDrag = useCallback((e: React.PointerEvent) => {
@@ -377,8 +371,7 @@ export default function JobCard() {
         )}
 
         {/* Only ever appears alongside Show me. A lone read-aloud button is
-            clutter on a card whose whole job is one sentence, and the global
-            Read aloud setting already speaks the line when it changes. */}
+            clutter on a card whose whole job is one sentence. */}
         {script.help && (
           <div className="mt-3.5 flex gap-2.5">
             <button

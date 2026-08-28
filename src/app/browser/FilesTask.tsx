@@ -17,7 +17,7 @@ import {
 } from "@/lib/tasks/files/content";
 import RightNowBar from "@/components/task/RightNowBar";
 import SettingsPopover from "@/components/task/SettingsPopover";
-import { speakFromClick } from "@/lib/read-aloud";
+import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -25,7 +25,6 @@ import NudgeToast from "@/components/task/NudgeToast";
 import { FOLDER_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Folder, Home, Plus, Users } from "lucide-react";
 
 type View = "home" | "browse" | "rename" | "share" | "done";
@@ -43,7 +42,7 @@ function DriveMark() {
 }
 
 export default function FilesTask() {
-  const { markComplete, completedTaskKeys, lang, currentTrack, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
+  const { markComplete, completedTaskKeys, lang, currentTrack, bigText, setBigText } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
@@ -150,9 +149,6 @@ export default function FilesTask() {
     <div
       className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#1f1f1f]"
       style={{ fontFamily: "Roboto, Arial, sans-serif", zoom: bigText ? 1.15 : undefined }}
-      onClick={(e) => {
-        if (speakAloud) speakFromClick(e.target, lang);
-      }}
     >
       <div className="flex items-center gap-3 px-3 py-2">
         <div className="flex w-[220px] shrink-0 items-center gap-2 px-2">
@@ -178,14 +174,9 @@ export default function FilesTask() {
           onHelp={() => setHelp(true)}
         />
         <SettingsPopover
-          speak={speakAloud}
-          onToggleSpeak={() => setSpeakAloud(!speakAloud)}
           bigText={bigText}
           onToggleBigText={() => setBigText(!bigText)}
-          labels={{
-            readAloud: lang === "en" ? "Read aloud" : "Leer en voz alta",
-            biggerText: lang === "en" ? "Bigger text" : "Letra más grande",
-          }}
+          label={lang === "en" ? "Bigger text" : "Letra más grande"}
         />
       </div>
 

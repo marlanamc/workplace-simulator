@@ -29,7 +29,6 @@ import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import MailSignature from "@/components/task/MailSignature";
-import { speakFromClick, speakText, stopSpeaking } from "@/lib/read-aloud";
 import { signatureFor } from "@/lib/mail-greeting";
 import { sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
 import type { Localized } from "@/lib/task-types";
@@ -88,7 +87,7 @@ function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
 }
 
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
-  const { markComplete, completedTaskKeys, displayName, lang, storyFlags, setStoryFlag, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
+  const { markComplete, completedTaskKeys, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
   const { browserTabToken } = useWindowManager();
   // Fixed for this mount, not recomputed every render: markComplete() updates
   // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
@@ -99,7 +98,6 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // that's the `browserTabToken` bump below, mirroring PortalPage's own
   // `portalSectionToken` re-open pattern.
   const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys));
-  const [plain, setPlain] = useState(true);
   const [step, setStep] = useState(0);
   const [view, setView] = useState<View>(completedTaskKeys.includes(activeMailTask) ? "done" : "empty");
   const [body, setBody] = useState("");
@@ -255,9 +253,6 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     <div
       className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]"
       style={{ fontFamily: "Roboto, Arial, sans-serif", zoom: bigText ? 1.15 : undefined }}
-      onClick={(e) => {
-        if (speakAloud) speakFromClick(e.target, lang);
-      }}
     >
       <div className="flex items-center gap-3 px-3 py-2">
         <div className="flex w-[200px] shrink-0 items-center gap-2 px-2">
@@ -275,24 +270,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           onHelp={() => setHelp(true)}
         />
         <SettingsPopover
-          plain={plain}
-          onTogglePlain={() => setPlain((v) => !v)}
-          speak={speakAloud}
-          onToggleSpeak={() => {
-            if (!speakAloud) {
-              speakText(T("Read aloud is on. Click any text to hear it.", "Lectura en voz alta activada. Haz clic en un texto para escucharlo."), lang);
-            } else {
-              stopSpeaking();
-            }
-            setSpeakAloud(!speakAloud);
-          }}
           bigText={bigText}
           onToggleBigText={() => setBigText(!bigText)}
-          labels={{
-            simpleWords: T("Simple words", "Palabras simples"),
-            readAloud: T("Read aloud", "Leer en voz alta"),
-            biggerText: T("Bigger text", "Letra más grande"),
-          }}
+          label={T("Bigger text", "Letra más grande")}
         />
       </div>
 
@@ -462,10 +442,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {(() => {
-                        const b = bodyForTask(activeMailTask, lang, displayName);
-                        return plain ? b.plain : b.full;
-                      })().map((p, i) => (
+                      {bodyForTask(activeMailTask, lang, displayName).plain.map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>

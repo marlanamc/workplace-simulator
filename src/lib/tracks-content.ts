@@ -217,7 +217,7 @@ export const LEVELS: Level[] = [
         en: "Maria Delgado runs the cafe, and she already emailed you.",
         es: "Maria Delgado dirige el café, y ya te envió un correo.",
       },
-      cta: { en: "Open my first job", es: "Abrir mi primer trabajo" },
+      cta: { en: "Open my first task", es: "Abrir mi primera tarea" },
     },
   },
   {

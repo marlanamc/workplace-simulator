@@ -77,12 +77,12 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 
   // Close the Help drawer the tour just opened before moving on.
   await page.keyboard.press("Escape");
-  await page.getByRole("button", { name: "I'm ready for the job" }).click();
+  await page.getByRole("button", { name: "I'm ready for the task" }).click();
 
   // Level 0 done — the level-up celebration takes over, and its one button
   // hands off to the first real job.
   await expect(page.getByText("You know how this computer works.")).toBeVisible();
-  await page.getByRole("button", { name: "Open my first job" }).click();
+  await page.getByRole("button", { name: "Open my first task" }).click();
 
   // Mail is open: Maria's email is findable in the inbox. Scope to the inbox —
   // "Maria Delgado" also appears in the desktop briefing behind the window.
@@ -101,7 +101,7 @@ test("the job card introduces itself on an empty desktop, then names the job", a
   await clearIntroBeats(page, "E2e");
 
   // Past the beats it becomes the job card and names the next job.
-  await expect(jobCard(page).getByText("Job 1 of", { exact: false })).toBeVisible();
+  await expect(jobCard(page).getByText("Task 1 of", { exact: false })).toBeVisible();
 });
 
 test("the job card follows the learner into the app and drives the job", async ({ page }) => {
@@ -115,7 +115,7 @@ test("the job card follows the learner into the app and drives the job", async (
   // point of it: the surface that sets up the job does not vanish.
   const card = jobCard(page);
   await expect(card).toBeVisible({ timeout: 20_000 });
-  await expect(card.getByText("Job ", { exact: false })).toBeVisible();
+  await expect(card.getByText("Task ", { exact: false })).toBeVisible();
 });
 
 test("studio time machine teleports one account to a later level", async ({ page }) => {

@@ -40,7 +40,7 @@ export const INTRO_BEATS: IntroBeat[] = [
     cta: { en: "OK", es: "OK" },
   },
   {
-    kicker: { en: "Your job card", es: "Tu tarjeta de trabajo" },
+    kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
     // Teaching the drag here is the only reliable moment: the grip dots are a
     // quiet affordance, and a learner who feels stuck behind the card needs to
     // already know it moves rather than discover it under pressure.
@@ -72,7 +72,7 @@ export const JOB_CARD_LINE: Partial<Record<TaskKey, Localized<string>>> = {
 
 /** The green finish line for a job. Falls back to the generic lines below. */
 export const JOB_CARD_DONE_LINE: Partial<Record<TaskKey, Localized<string>>> = {
-  "mail-reply": { en: "Sent. One job left.", es: "Enviado. Queda un trabajo." },
+  "mail-reply": { en: "Sent. One task left.", es: "Enviado. Queda una tarea." },
   "mail-attach": { en: "Sent, with the file.", es: "Enviado, con el archivo." },
 };
 
@@ -99,14 +99,14 @@ export const JOB_CARD_COPY: Record<
   }
 > = {
   en: {
-    jobOf: (n, total) => `Job ${n} of ${total}`,
+    jobOf: (n, total) => `Task ${n} of ${total}`,
     doneKicker: "Done",
     dayDoneKicker: "Day finished",
     dayDoneLine: "That's today done.",
     startTomorrow: "Start tomorrow",
-    nextJob: "Next job",
-    oneJobLeft: "Done. One job left.",
-    jobsLeft: (n) => `Done. ${n} jobs left.`,
+    nextJob: "Next task",
+    oneJobLeft: "Done. One task left.",
+    jobsLeft: (n) => `Done. ${n} tasks left.`,
     doItAgain: "Do it again",
     showMe: "Show me",
     hide: "Hide",
@@ -118,14 +118,14 @@ export const JOB_CARD_COPY: Record<
     comingSoonLine: "Nothing new yet. Check back soon.",
   },
   es: {
-    jobOf: (n, total) => `Trabajo ${n} de ${total}`,
+    jobOf: (n, total) => `Tarea ${n} de ${total}`,
     doneKicker: "Listo",
     dayDoneKicker: "Día terminado",
     dayDoneLine: "El día de hoy está listo.",
     startTomorrow: "Empezar mañana",
-    nextJob: "Siguiente trabajo",
-    oneJobLeft: "Listo. Queda un trabajo.",
-    jobsLeft: (n) => `Listo. Quedan ${n} trabajos.`,
+    nextJob: "Siguiente tarea",
+    oneJobLeft: "Listo. Queda una tarea.",
+    jobsLeft: (n) => `Listo. Quedan ${n} tareas.`,
     doItAgain: "Hazlo otra vez",
     showMe: "Muéstrame",
     hide: "Ocultar",
