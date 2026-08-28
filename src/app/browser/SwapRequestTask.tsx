@@ -4,28 +4,28 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { SCHEDULE } from "@/lib/tasks/schedule/content";
-import { EVENT_INTRO, SWAP_COPY } from "@/lib/tasks/swap-request/content";
-import EventIntroCard from "@/components/task/EventIntroCard";
+import { SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import { firstPersonSkill } from "@/lib/skills";
 
-type View = "intro" | "form" | "done";
+type View = "form" | "done";
 
 const SHIFTS = SCHEDULE.filter((d) => d.shift);
 
 export default function SwapRequestTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("swap-request") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("swap-request") ? "done" : "form");
   const [shift, setShift] = useState("");
   const [newDate, setNewDate] = useState("");
   const [reason, setReason] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
+  const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
 
   const c = SWAP_COPY[lang];
 
@@ -69,8 +69,16 @@ export default function SwapRequestTask() {
       </div>
       <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
 
-      {view === "intro" && (
-        <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS["swap-request"]} onContinue={() => setView("form")} />
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS["swap-request"]}
+          stepIndex={0}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[0]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "form" && (
@@ -164,7 +172,7 @@ export default function SwapRequestTask() {
         gotItLabel={lang === "en" ? "Got it. Back to my task" : "Entendido. Volver a mi tarea"}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

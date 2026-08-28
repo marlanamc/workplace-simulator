@@ -10,7 +10,7 @@ import { useNudge, type NudgeMessage } from "@/lib/use-nudge";
  */
 export function useSkillGuidance(skillKey: string) {
   const { getRung, recordSkillRun } = useProgress();
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const rung = getRung(skillKey);
 
   const [wrongCount, setWrongCount] = useState(0);
@@ -39,6 +39,7 @@ export function useSkillGuidance(skillKey: string) {
     rung,
     nudge,
     say,
+    dismiss,
     recordWrong,
     recordClean,
     recordMissed,

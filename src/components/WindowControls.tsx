@@ -33,7 +33,7 @@ function CloseIcon() {
 /** The minimize/maximize/close trio real app windows have, for visual realism. */
 export default function WindowControls({ appKey, dark = false }: { appKey: AppKey; dark?: boolean }) {
   const { minimizeActive, closeApp } = useWindowManager();
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const iconColor = dark ? "text-white/70" : "text-[#5f6368]";
 
   return (
@@ -61,7 +61,7 @@ export default function WindowControls({ appKey, dark = false }: { appKey: AppKe
           <CloseIcon />
         </button>
       </div>
-      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} onDismiss={dismiss} />
     </>
   );
 }

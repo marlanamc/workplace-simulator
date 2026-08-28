@@ -229,3 +229,19 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Open Alex Chen's stub from last period — not Sam's, not Priya's.",
+    es: "Abre el recibo de Alex Chen del último período, no el de Sam ni el de Priya.",
+  },
+  {
+    en: "Find the net pay: the amount that actually reaches the bank.",
+    es: "Busca el pago neto: la cantidad que de verdad llega al banco.",
+  },
+  {
+    en: "Now find the hours this stub was paid for.",
+    es: "Ahora busca las horas por las que pagaron este recibo.",
+  },
+];

@@ -3,22 +3,27 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { EVENT_INTRO, BEATS, REVIEW_COPY } from "@/lib/tasks/shift-review/content";
-import EventIntroCard from "@/components/task/EventIntroCard";
+import {
+  BEATS,
+  REVIEW_COPY,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
+} from "@/lib/tasks/shift-review/content";
 import { TASK_ICONS } from "@/lib/icons";
 import NudgeToast from "@/components/task/NudgeToast";
+import RightNowBar from "@/components/task/RightNowBar";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import { firstPersonSkill } from "@/lib/skills";
 
-type View = "intro" | "beats" | "done";
+type View = "beats" | "done";
 
 export default function ShiftReviewTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("shift-review") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("shift-review") ? "done" : "beats");
   const [beatIndex, setBeatIndex] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
-  const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("shift-review");
+  const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("shift-review");
 
   const c = REVIEW_COPY[lang];
   const beat = BEATS[beatIndex];
@@ -60,8 +65,15 @@ export default function ShiftReviewTask() {
       </div>
       <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
 
-      {view === "intro" && (
-        <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS["shift-review"]} onContinue={() => setView("beats")} />
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS["shift-review"]}
+          stepIndex={0}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[0]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+        />
       )}
 
       {view === "beats" && (
@@ -117,7 +129,7 @@ export default function ShiftReviewTask() {
         </div>
       )}
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

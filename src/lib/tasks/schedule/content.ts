@@ -198,3 +198,15 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Compare next week's shifts to your own calendar. Find the day that clashes.",
+    es: "Compara los turnos de la próxima semana con tu calendario. Busca el día que choca.",
+  },
+  {
+    en: "Write Maria a short message asking to swap that shift.",
+    es: "Escríbele a Maria un mensaje corto pidiendo cambiar ese turno.",
+  },
+];

@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -209,3 +209,20 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export function emailMentionsTotal(body: string) {
   return body.includes(String(STATUS_TOTAL));
 }
+
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Open your copy of the status report.",
+    es: "Abre tu copia del reporte de estado.",
+  },
+  {
+    en: "The total cell is empty. Type =SUM and check the number.",
+    es: "La celda del total está vacía. Escribe =SUM y revisa el número.",
+  },
+  {
+    en: "Email Maria the report, and cc Jordan.",
+    es: "Envíale el reporte a Maria, con copia a Jordan.",
+  },
+];

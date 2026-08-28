@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { GAP_SHIFT_LABEL } from "../crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -198,3 +198,20 @@ export function emailMentionsShift(body: string): boolean {
   const hasTime = /\b4\b/.test(t) || /\b16:00\b/.test(t) || /4\s*[–-]\s*10/.test(t);
   return hasDay && hasTime;
 }
+
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Open the crew schedule.",
+    es: "Abre el horario del equipo.",
+  },
+  {
+    en: "Find Saturday's gap, then pick someone who has room.",
+    es: "Busca el hueco del sábado y elige a alguien con espacio.",
+  },
+  {
+    en: "Tell the person you put on that shift.",
+    es: "Avísale a la persona que pusiste en ese turno.",
+  },
+];

@@ -9,25 +9,26 @@ import {
   NET_PAY_CHECK,
   HOURS_CHECK,
   LESSONS,
-  EVENT_INTRO,
   type CheckOption,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/paystub/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 
-type View = "intro" | "list" | "check1" | "check2" | "done";
+type View = "list" | "check1" | "check2" | "done";
 
 export default function PaystubTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const { openApp } = useWindowManager();
 
   const c = PAYSTUB_COPY[lang];
@@ -63,8 +64,16 @@ export default function PaystubTask() {
         />
       </div>
 
-      {view === "intro" && (
-        <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.paystub} onContinue={() => setView("list")} />
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS.paystub}
+          stepIndex={view === "list" ? 0 : view === "check1" ? 1 : 2}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "list" ? 0 : view === "check1" ? 1 : 2]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "list" && (
@@ -149,7 +158,7 @@ export default function PaystubTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

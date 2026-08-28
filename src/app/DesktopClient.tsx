@@ -9,13 +9,14 @@ import DesktopWallpaper from "@/components/DesktopWallpaper";
 import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 import MyJobPanel from "@/components/MyJobPanel";
 import AwardsCase from "@/components/AwardsCase";
-import ShiftBriefing from "@/components/ShiftBriefing";
 import TrackCelebration from "@/components/TrackCelebration";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import MobileNudge from "@/components/MobileNudge";
 import MariaNoteToast from "@/components/MariaNoteToast";
+import JobCard from "@/components/task/JobCard";
 import { WindowManagerProvider, useWindowManager } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
+import { JobCardProvider } from "@/lib/job-card-context";
 import BrowserClient from "./browser/BrowserClient";
 import PdfReaderClient from "./pdf-reader/PdfReaderClient";
 
@@ -75,6 +76,23 @@ function DesignerJumpBanner() {
   );
 }
 
+/** Remembers, per learner, that the two first-run Job Card beats have played. */
+const INTRO_FLAG = "job-card-intro-seen";
+
+function JobCardHost({ children }: { children: ReactNode }) {
+  const { storyFlags, setStoryFlag, completedTaskKeys } = useProgress();
+  return (
+    <JobCardProvider
+      // A returning learner has already met the card; only a genuinely fresh
+      // start gets the two beats.
+      introSeen={storyFlags[INTRO_FLAG] === "true" || completedTaskKeys.length > 0}
+      onIntroDone={() => setStoryFlag(INTRO_FLAG, "true")}
+    >
+      {children}
+    </JobCardProvider>
+  );
+}
+
 function DesktopShell({
   displayName,
   fromStudio,
@@ -88,6 +106,7 @@ function DesktopShell({
   const { apps, active } = useWindowManager();
 
   const anyAppActive = active !== null;
+
   const currentLevel = levelForTrack(currentTrack.key);
   const scene = sceneForLevel(currentLevel);
   const windowTop = fromStudio ? 44 : 8;
@@ -129,17 +148,12 @@ function DesktopShell({
         aria-hidden={anyAppActive}
         style={{ paddingBottom: SHELF_RESERVE, paddingTop: fromStudio ? 36 : 0 }}
       >
+        {/* The desktop no longer briefs the learner - the Job Card does, from
+            its corner, and it is still there once an app opens. All that is
+            left here is the lock-screen clock. */}
         <div className="flex flex-1 items-start px-10 pt-10">
           <div className="flex w-full max-w-[400px] flex-col gap-10">
             <DesktopClock lang={lang} />
-
-            <ShiftBriefing
-              lang={lang}
-              onSeeAwards={() => {
-                setMyJobOpen(false);
-                setAwardsOpen(true);
-              }}
-            />
           </div>
         </div>
       </div>
@@ -185,6 +199,9 @@ function DesktopShell({
           if (open) setAwardsOpen(false);
         }}
       />
+      {/* The one instruction voice. Above the app windows, below the Help
+          drawer and pickers, present on every screen. */}
+      <JobCard />
       <MariaNoteToast />
       <MobileNudge />
       {fromStudio && <DesignerJumpBanner />}
@@ -200,18 +217,22 @@ export default function DesktopClient(props: {
   jumpTab?: string;
   fromStudio?: boolean;
 }) {
-  const firstSitting =
-    props.completedTaskKeys.length === 0 && !props.jumpTab && !props.fromStudio;
-
+  // A brand-new learner lands on the desktop, not inside a browser window.
+  // The Job Card introduces itself on an empty screen, and *its* button opens
+  // the Browser - so the first thing they ever do is the loop the rest of the
+  // product runs on. Auto-opening the tour used to put a full browser window,
+  // a bookmark bar, and a welcome modal on screen one, all talking at once.
   return (
-    <WindowManagerProvider jumpTab={props.jumpTab ?? (firstSitting ? "tour" : undefined)}>
+    <WindowManagerProvider jumpTab={props.jumpTab}>
       <ProgressProvider
         learnerId={props.learnerId}
         displayName={props.displayName}
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
       >
-        <DesktopShell displayName={props.displayName} fromStudio={!!props.fromStudio} />
+        <JobCardHost>
+          <DesktopShell displayName={props.displayName} fromStudio={!!props.fromStudio} />
+        </JobCardHost>
       </ProgressProvider>
     </WindowManagerProvider>
   );

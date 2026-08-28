@@ -3,25 +3,30 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { EVENT_INTRO, CALL_OUT_COPY, STARTERS } from "@/lib/tasks/call-out-sick/content";
-import EventIntroCard from "@/components/task/EventIntroCard";
+import {
+  CALL_OUT_COPY,
+  STARTERS,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
+} from "@/lib/tasks/call-out-sick/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import { firstPersonSkill } from "@/lib/skills";
 
-type View = "intro" | "compose" | "done";
+type View = "compose" | "done";
 
 export default function CallOutSickTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("call-out-sick") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("call-out-sick") ? "done" : "compose");
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("call-out-sick");
+  const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("call-out-sick");
 
   const c = CALL_OUT_COPY[lang];
 
@@ -58,8 +63,16 @@ export default function CallOutSickTask() {
       </div>
       <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
 
-      {view === "intro" && (
-        <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS["call-out-sick"]} onContinue={() => setView("compose")} />
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS["call-out-sick"]}
+          stepIndex={0}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[0]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "compose" && (
@@ -125,7 +138,7 @@ export default function CallOutSickTask() {
         gotItLabel={lang === "en" ? "Got it. Back to my task" : "Entendido. Volver a mi tarea"}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

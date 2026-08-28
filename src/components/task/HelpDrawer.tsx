@@ -33,7 +33,7 @@ export default function HelpDrawer({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[70] flex justify-end bg-black/40" onClick={onClose}>
+    <div className="fixed inset-0 z-[75] flex justify-end bg-black/40" onClick={onClose}>
       <div
         role="dialog"
         aria-modal="true"

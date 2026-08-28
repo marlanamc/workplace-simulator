@@ -13,7 +13,6 @@ import {
   WRONG_RENAME_HINT,
   WRONG_EDIT_HINT,
   LESSONS,
-  EVENT_INTRO,
   type DriveFile,
 } from "@/lib/tasks/files/content";
 import RightNowBar from "@/components/task/RightNowBar";
@@ -21,7 +20,6 @@ import SettingsPopover from "@/components/task/SettingsPopover";
 import { speakFromClick } from "@/lib/read-aloud";
 import { levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import { FOLDER_ICONS, TASK_ICONS } from "@/lib/icons";
@@ -30,7 +28,7 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Folder, Home, Plus, Users } from "lucide-react";
 
-type View = "intro" | "home" | "browse" | "rename" | "share" | "done";
+type View = "home" | "browse" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
 
@@ -46,7 +44,7 @@ function DriveMark() {
 
 export default function FilesTask() {
   const { markComplete, completedTaskKeys, lang, currentTrack, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
@@ -55,7 +53,7 @@ export default function FilesTask() {
   // A plain ref, not state: this only gates whether a toast fires, so it
   // doesn't need to trigger a re-render on its own.
   const messyWrongCount = useRef(0);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   // Messy mode (Level.messy): more near-duplicate decoys, and coaching that
   // speaks up less often - real-world friction added on purpose, not a new
@@ -191,7 +189,7 @@ export default function FilesTask() {
         />
       </div>
 
-      {view !== "intro" && view !== "done" && (
+      {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS.files}
           stepIndex={view === "rename" ? 1 : view === "share" ? 2 : 0}
@@ -237,10 +235,6 @@ export default function FilesTask() {
           </div>
 
           <div className="relative min-w-0 flex-1 overflow-y-auto px-4 pb-6 pt-2">
-            {view === "intro" && (
-              <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.files} onContinue={() => setView("home")} />
-            )}
-
             {view === "home" && (
               <>
                 <h2 className="mb-3 mt-2 text-[16px] font-medium">{c.foldersHeading}</h2>
@@ -386,7 +380,7 @@ export default function FilesTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

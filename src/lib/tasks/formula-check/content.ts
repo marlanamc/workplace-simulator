@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { CORRECT_WEEK_TOTAL } from "../crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -224,3 +224,20 @@ export function emailMentionsFix(body: string): boolean {
   const hasMiss = /casey|missing|faltaba|faltaba|omit|range|rango|sum/.test(t);
   return hasTotal || hasMiss;
 }
+
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Open the hours sheet.",
+    es: "Abre la hoja de horas.",
+  },
+  {
+    en: "Click the Hours total and read which rows it adds.",
+    es: "Haz clic en el total de Horas y mira qué filas suma.",
+  },
+  {
+    en: "Someone is missing. Fix the formula, then tell Maria.",
+    es: "Falta alguien. Arregla la fórmula y avísale a Maria.",
+  },
+];

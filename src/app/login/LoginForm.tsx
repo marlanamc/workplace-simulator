@@ -4,6 +4,7 @@ import { useActionState, useRef, useState, useSyncExternalStore, type FormEvent,
 import { loginOrSignup, type LoginResult } from "./actions";
 import type { Lang } from "@/lib/task-types";
 import { DesktopClock } from "@/components/LiveClock";
+import { Anchor } from "lucide-react";
 import { Languages } from "@/lib/icons";
 
 const initialState: LoginResult = { error: null };
@@ -109,7 +110,55 @@ function rememberUser(user: RecentUser) {
   }
 }
 
-function LoginWallpaper({ dimmed }: { dimmed?: boolean }) {
+function LoginHarborMark({ school, title }: { school: string; title: string }) {
+  return (
+    <div
+      className="relative z-10 flex flex-col items-center text-center select-none"
+      style={{ textShadow: "0 8px 40px rgba(0,0,0,0.35)" }}
+    >
+      <div
+        className="relative flex h-[88px] w-[88px] items-center justify-center rounded-full"
+        style={{
+          background: "radial-gradient(circle at 50% 38%, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0.08) 72%)",
+          boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.22), 0 16px 48px rgba(0,0,0,0.28)",
+        }}
+        aria-hidden
+      >
+        <Anchor size={40} strokeWidth={1.65} className="text-white/90" />
+      </div>
+      <p
+        className="mt-5 font-medium uppercase text-white/60"
+        style={{ fontSize: 14, letterSpacing: "0.34em" }}
+      >
+        {school}
+      </p>
+      <h1
+        className="mt-3 font-medium text-white/90"
+        style={{ fontSize: 44, lineHeight: 1.08, letterSpacing: "-0.03em", maxWidth: "11em" }}
+      >
+        {title}
+      </h1>
+      <div className="relative mt-8 h-10 w-[min(340px,72vw)] overflow-hidden" aria-hidden>
+        <svg
+          viewBox="0 0 680 40"
+          preserveAspectRatio="none"
+          className="absolute inset-0 h-full w-[200%] animate-harbor-wave"
+        >
+          <path
+            d="M0 22 C40 10, 80 30, 120 22 S200 10, 240 22 S320 30, 360 22 S440 10, 480 22 S560 30, 600 22 S640 10, 680 22 L680 40 L0 40 Z"
+            fill="rgba(255,255,255,0.14)"
+          />
+          <path
+            d="M0 28 C50 18, 100 34, 150 28 S250 18, 300 28 S400 34, 450 28 S550 18, 600 28 S650 34, 680 28 L680 40 L0 40 Z"
+            fill="rgba(255,255,255,0.08)"
+          />
+        </svg>
+      </div>
+    </div>
+  );
+}
+
+function LoginWallpaper({ dimmed, hideCenterTitle }: { dimmed?: boolean; hideCenterTitle?: boolean }) {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <div
@@ -120,6 +169,7 @@ function LoginWallpaper({ dimmed }: { dimmed?: boolean }) {
             "radial-gradient(1200px 700px at 50% 42%, #24344c 0%, #152033 58%, #101826 100%)",
         }}
       />
+      {!hideCenterTitle && (
       <div
         className="absolute inset-0 flex items-center justify-center px-8 pb-24 pt-16 transition-opacity duration-200"
         style={{ opacity: dimmed ? 0.18 : 1 }}
@@ -149,6 +199,7 @@ function LoginWallpaper({ dimmed }: { dimmed?: boolean }) {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }
@@ -319,7 +370,7 @@ export default function LoginForm({ next }: { next: string }) {
   return (
     <div className="relative min-h-screen overflow-hidden text-white">
       <div className="fixed inset-0 -z-10">
-        <LoginWallpaper dimmed={Boolean(unlocking || adding)} />
+        <LoginWallpaper dimmed={Boolean(unlocking || adding)} hideCenterTitle={mode === "picker"} />
       </div>
 
       <div className="relative flex min-h-screen flex-col px-10 pt-10" style={{ paddingBottom: 132 }}>
@@ -329,10 +380,15 @@ export default function LoginForm({ next }: { next: string }) {
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-5 py-6">
-          {mode === "picker" && recents.length === 0 && (
-            <p className="mt-auto mb-2 max-w-[28ch] text-center text-[16px] text-white/80">
-              {c.pickerHint}
-            </p>
+          {mode === "picker" && (
+            <>
+              <LoginHarborMark school="EBHCS" title="Workplace Simulator Game" />
+              {recents.length === 0 && (
+                <p className="mt-auto mb-2 max-w-[28ch] text-center text-[16px] text-white/80">
+                  {c.pickerHint}
+                </p>
+              )}
+            </>
           )}
           {unlocking && (
             <form

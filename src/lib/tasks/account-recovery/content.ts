@@ -131,3 +131,19 @@ export const RECOVERY_COPY: Record<Lang, {
   },
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Sign in with your work email and password.",
+    es: "Entra con tu correo del trabajo y tu contraseña.",
+  },
+  {
+    en: "Check your phone for the code it just texted you.",
+    es: "Revisa tu teléfono para ver el código que te acaba de llegar.",
+  },
+  {
+    en: "Type the code to finish signing in.",
+    es: "Escribe el código para terminar de entrar.",
+  },
+];

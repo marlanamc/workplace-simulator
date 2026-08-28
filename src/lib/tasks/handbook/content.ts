@@ -156,3 +156,11 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Read the handbook and find the rule for calling out sick.",
+    es: "Lee el manual y busca la regla para avisar que estás enfermo.",
+  },
+];

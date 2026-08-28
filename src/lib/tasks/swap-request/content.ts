@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -70,3 +70,11 @@ export const SWAP_COPY: Record<Lang, {
   },
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Fill in the swap form: the shift, the reason, and who can cover.",
+    es: "Llena el formulario: el turno, el motivo, y quién puede cubrirlo.",
+  },
+];

@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MoveUp } from "lucide-react";
 import { useWindowManager } from "@/lib/window-manager";
-import { TAB_ICONS } from "@/lib/icons";
+import { useJobCardOptional, useReporterId } from "@/lib/job-card-context";
 import type { TourStep } from "@/lib/tasks/tour/content";
 
 function targetSelector(step: TourStep) {
@@ -13,26 +12,59 @@ function targetSelector(step: TourStep) {
 }
 
 /**
- * One instruction, one real control. Spotlight it so learners can still see
- * it through the dim. Click steps advance on the real click; look beats wait
- * for Got it so they don't scan past Mail or Calendar.
+ * The spotlight half of the tour. It dims the screen, rings the one real
+ * control, and reports the step's sentence to the Job Card - which is what
+ * actually says it. Same division of labour as everywhere else in the
+ * product: the card speaks, the highlight points.
+ *
+ * Click steps still advance on the real click. "Look" beats have nothing to
+ * click, so they advance from the card's own primary button instead.
  */
 export default function TourWalkthrough({
   steps,
   stepIndex,
   onAdvance,
-  tabColors,
 }: {
   steps: TourStep[];
   stepIndex: number;
   onAdvance: () => void;
-  tabColors: Record<string, string>;
+  /** Kept for call-site compatibility; the card carries the step's identity now. */
+  tabColors?: Record<string, string>;
 }) {
   const { browserTab } = useWindowManager();
+  const card = useJobCardOptional();
+  const id = useReporterId();
   const step = steps[stepIndex];
   const [rect, setRect] = useState<DOMRect | null>(null);
   const isLookBeat = Boolean(step?.continueLabel);
-  const isTargetClick = Boolean(step?.targetTestId) && !step?.continueLabel;
+
+  const reportStep = card?.reportStep;
+  const registerPrimary = card?.registerPrimary;
+  const instruction = step?.instruction ?? "";
+  const continueLabel = step?.continueLabel;
+
+  // Handed over fresh every render; see RightNowBar for why this is a ref.
+  useEffect(() => {
+    registerPrimary?.(continueLabel ? onAdvance : null);
+  });
+
+  useEffect(() => {
+    if (!reportStep || !instruction) return;
+    reportStep({
+      id,
+      stepIndex,
+      stepCount: steps.length,
+      // Tour steps are picked out of `TOUR_STEPS[lang]`, so they are already
+      // in the learner's language by the time they get here.
+      line: { en: instruction, es: instruction },
+      showMeActive: false,
+      // The spotlight is already lit on every step - a Show me button would
+      // be a no-op, so the card shows only the speaker.
+      canShowMe: false,
+      primaryLabel: continueLabel,
+    });
+    return () => reportStep(null, id);
+  }, [reportStep, id, stepIndex, steps.length, instruction, continueLabel]);
 
   useEffect(() => {
     if (!step || step.continueLabel || step.targetTestId) return;
@@ -81,9 +113,6 @@ export default function TourWalkthrough({
 
   if (!step) return null;
 
-  const iconKey = step.targetTabKey;
-  const Icon = iconKey ? TAB_ICONS[iconKey] : undefined;
-  const color = iconKey ? (tabColors[iconKey] ?? "var(--accent)") : "#c45c26";
   const dim = isLookBeat ? "rgba(28, 20, 16, 0.22)" : "rgba(28, 20, 16, 0.38)";
 
   const hole = rect
@@ -95,89 +124,28 @@ export default function TourWalkthrough({
       }
     : null;
 
-  const bubbleAbove = rect ? rect.top > 140 : false;
-  const bubbleTop = rect ? (bubbleAbove ? rect.top - 14 : rect.bottom + 14) : 92;
-  const bubbleLeft = rect
-    ? Math.min(Math.max(16, rect.left + rect.width / 2 - 160), window.innerWidth - 340)
-    : undefined;
-
   return (
-    <div className="pointer-events-none fixed inset-0 z-[70]">
+    <div className="pointer-events-none fixed inset-0 z-[70]" aria-hidden>
       {hole ? (
         <>
           <div
             className="absolute rounded-xl"
-            style={{
-              ...hole,
-              boxShadow: `0 0 0 9999px ${dim}`,
-            }}
-            aria-hidden
+            style={{ ...hole, boxShadow: `0 0 0 9999px ${dim}` }}
           />
+          {/* A look beat is a steady ring - nothing to click, so nothing
+              should be pulsing at them. A click beat pulses. */}
           {isLookBeat ? (
             <div
               className="absolute rounded-xl"
-              style={{
-                ...hole,
-                boxShadow: "0 0 0 3px rgba(196, 92, 38, 0.85)",
-              }}
-              aria-hidden
+              style={{ ...hole, boxShadow: "0 0 0 3px rgba(196, 92, 38, 0.85)" }}
             />
           ) : (
-            <div className="animate-showme-pulse absolute rounded-xl" style={hole} aria-hidden />
+            <div className="animate-showme-pulse absolute rounded-xl" style={hole} />
           )}
         </>
       ) : (
-        <div className="absolute inset-0 bg-[#1c1410]/30" aria-hidden />
+        <div className="absolute inset-0 bg-[#1c1410]/45" />
       )}
-
-      <div
-        className={`absolute flex max-w-[min(360px,calc(100vw-32px))] flex-col gap-3 rounded-2xl bg-white px-4 py-3.5 shadow-[0_16px_40px_rgba(28,20,16,0.28)] animate-fade-up ${
-          bubbleAbove ? "-translate-y-full" : ""
-        } ${isLookBeat ? "pointer-events-auto" : "pointer-events-none"}`}
-        style={{
-          left: bubbleLeft ?? "50%",
-          top: bubbleTop,
-          transform: bubbleLeft == null ? "translateX(-50%)" : undefined,
-        }}
-        role={isLookBeat ? "dialog" : undefined}
-        aria-label={isLookBeat ? step.instruction : undefined}
-      >
-        <div className="flex items-start gap-3">
-          {Icon ? (
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white"
-              style={{ background: color }}
-            >
-              <Icon size={18} strokeWidth={2.25} aria-hidden />
-            </span>
-          ) : isTargetClick ? (
-            <span
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-[#747775] text-[18px] font-medium text-[#3c4043]"
-              aria-hidden
-            >
-              ?
-            </span>
-          ) : null}
-          <p className="text-[16px] font-medium leading-snug text-[#1c1410]">{step.instruction}</p>
-          {!isLookBeat && rect ? (
-            <MoveUp
-              size={18}
-              strokeWidth={2.25}
-              aria-hidden
-              className={`mt-1 shrink-0 text-[#c45c26] ${bubbleAbove ? "rotate-180" : ""}`}
-            />
-          ) : null}
-        </div>
-        {step.continueLabel ? (
-          <button
-            type="button"
-            onClick={onAdvance}
-            className="inline-flex min-h-[44px] items-center justify-center self-end rounded-full bg-[#c45c26] px-5 text-[15px] font-medium text-white hover:bg-[#a34c1f] cursor-pointer"
-          >
-            {step.continueLabel}
-          </button>
-        ) : null}
-      </div>
     </div>
   );
 }

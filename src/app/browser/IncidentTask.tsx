@@ -7,30 +7,31 @@ import {
   DEFAULTS,
   STARTERS,
   LESSONS,
-  EVENT_INTRO,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/incident/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 
-type View = "intro" | "form" | "done";
+type View = "form" | "done";
 
 const PURPLE = "#673ab7";
 
 export default function IncidentTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "form");
   const [when, setWhen] = useState(DEFAULTS.en.when);
   const [where, setWhere] = useState(DEFAULTS.en.where);
   const [what, setWhat] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   const c = INCIDENT_COPY[lang];
 
@@ -79,10 +80,16 @@ export default function IncidentTask() {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">
-        {view === "intro" && (
-          <div className="p-6">
-            <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.incident} onContinue={() => setView("form")} />
-          </div>
+        {view !== "done" && (
+          <RightNowBar
+            icon={TASK_ICONS.incident}
+            stepIndex={0}
+            stepCount={RIGHT_NOW_STEPS.length}
+            instruction={RIGHT_NOW_STEPS[0]}
+            lang={lang}
+            rightNowLabel={RIGHT_NOW_LABEL}
+            onHelp={() => setHelp(true)}
+          />
         )}
 
         {view === "form" && (
@@ -179,7 +186,7 @@ export default function IncidentTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

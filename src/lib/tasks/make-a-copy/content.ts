@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { COPY_NAME } from "../status-sheet";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -187,3 +187,19 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Open the status template Maria shared.",
+    es: "Abre la plantilla de estado que Maria compartió.",
+  },
+  {
+    en: "It is view only. Make your own copy.",
+    es: "Es solo para ver. Haz tu propia copia.",
+  },
+  {
+    en: "Name your copy so you can find it later.",
+    es: "Ponle nombre a tu copia para encontrarla después.",
+  },
+];

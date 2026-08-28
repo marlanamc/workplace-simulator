@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   PRIORITY_COPY,
-  EVENT_INTRO,
   COVER,
   MAIL_STARTERS,
   HINTS,
   LESSONS,
   replyIsSafe,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/priority-call/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskHub from "@/components/task/TaskHub";
@@ -21,13 +21,14 @@ import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import { Calendar, Mail, Table2 } from "lucide-react";
 
-type View = "intro" | "urgency" | "hub" | "mail" | "cover" | "calendar" | "done";
+type View = "urgency" | "hub" | "mail" | "cover" | "calendar" | "done";
 
 export default function PriorityCallTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("priority-call") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("priority-call") ? "done" : "urgency");
   const [urgency, setUrgency] = useState("");
   const [named, setNamed] = useState(false);
   const [mailDone, setMailDone] = useState(false);
@@ -36,7 +37,7 @@ export default function PriorityCallTask() {
   const [reply, setReply] = useState("");
   const [coverKey, setCoverKey] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const c = PRIORITY_COPY[lang];
   const h = HINTS[lang];
 
@@ -97,10 +98,16 @@ export default function PriorityCallTask() {
         <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
 
-      {view === "intro" && (
-        <div className="min-h-0 flex-1 overflow-auto px-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS["priority-call"]} onContinue={() => setView("urgency")} />
-        </div>
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS["priority-call"]}
+          stepIndex={view === "urgency" ? 0 : view === "hub" ? 1 : view === "mail" ? 2 : view === "cover" ? 3 : 4}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "urgency" ? 0 : view === "hub" ? 1 : view === "mail" ? 2 : view === "cover" ? 3 : 4]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "urgency" && (
@@ -244,7 +251,7 @@ export default function PriorityCallTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

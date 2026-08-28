@@ -25,7 +25,6 @@ import { LEVELS, TAB_LEVEL_KEYS, levelForTrack, nextTaskInTrack } from "@/lib/tr
 import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
-import TaskDispatchStrip from "@/components/task/TaskDispatchStrip";
 import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS } from "@/lib/tasks/tour/content";
@@ -169,7 +168,7 @@ function NewTabPage() {
 export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { lang, currentTrack, completedTaskKeys } = useProgress();
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
   const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
 
@@ -273,6 +272,20 @@ export default function BrowserClient() {
 
   const active = [...openTabs].find((t) => t.key === activeTab)
     ?? openTabs[0];
+
+  // The walkthrough starts when the Welcome tab opens, not when a modal's
+  // button is pressed - the Job Card already sent the learner here, and a
+  // second "start" button on arrival is a second voice.
+  const [walkthroughOffered, setWalkthroughOffered] = useState(false);
+  if (
+    active?.key === "tour" &&
+    !completedTaskKeys.includes("tour") &&
+    !walkthroughOffered &&
+    tourWalkthroughStep === null
+  ) {
+    setWalkthroughOffered(true);
+    setTourWalkthroughStep(0);
+  }
 
   // ── Tab actions ────────────────────────────────────────────
   // A stable counter (not Date.now()) for unique new-tab keys - several can
@@ -470,20 +483,19 @@ export default function BrowserClient() {
         ))}
       </div>
 
-      {active?.key && <TaskDispatchStrip taskKey={active.key} lang={lang} />}
-
       {/* ── Page content ─────────────────────────────────────────── */}
       <div className="min-h-0 flex-1 overflow-hidden bg-white">
         {active?.key === "tour"     && (
           <TourTask
             startAtHelp={tourWalkthroughDone}
+            walkthroughRunning={tourWalkthroughStep !== null}
             onStartWalkthrough={() => {
               setTourWalkthroughDone(false);
               setTourWalkthroughStep(0);
             }}
           />
         )}
-        {active?.key === "mail"     && <MailClient />}
+        {active?.key === "mail"     && <MailClient welcomeWalkthroughActive={tourWalkthroughStep !== null} />}
         {active?.key === "portal"   && <PortalPage />}
         {active?.key === "calendar" && <CalendarTask />}
         {active?.key === "files"    && <FilesTask />}
@@ -527,7 +539,7 @@ export default function BrowserClient() {
         />
       )}
 
-      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} onDismiss={dismiss} />
     </div>
   );
 }

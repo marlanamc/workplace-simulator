@@ -147,6 +147,19 @@ textarea:focus-visible,
   animation-fill-mode: forwards;
 }
 
+@keyframes harbor-wave {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-harbor-wave {
+  animation: harbor-wave 14s linear infinite;
+}
+
 @keyframes showme-pulse {
   0%,
   100% {
@@ -161,6 +174,23 @@ textarea:focus-visible,
   animation: showme-pulse 1.6s ease-in-out infinite;
 }
 
+/* The Job Card arriving — it lifts into its corner rather than blinking in,
+   so the learner's eye follows it to where it will always live. */
+@keyframes card-pop {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-card-pop {
+  animation: card-pop 0.24s ease-out;
+}
+
 /* Respect the OS "reduce motion" setting: keep every animation's end state,
    skip the movement — including the infinitely looping Show-me pulse. */
 @media (prefers-reduced-motion: reduce) {
@@ -170,6 +200,8 @@ textarea:focus-visible,
   .animate-wallpaper-fade-out,
   .animate-pop-in,
   .animate-confetti-fall,
+  .animate-harbor-wave,
+  .animate-card-pop,
   .animate-showme-pulse {
     animation: none;
   }

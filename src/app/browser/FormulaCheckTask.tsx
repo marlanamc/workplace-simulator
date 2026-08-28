@@ -6,7 +6,6 @@ import {
   FORMULA_CHECK_COPY,
   STARTERS,
   LESSONS,
-  EVENT_INTRO,
   WRONG_SUM_FORMULA,
   AVERAGE_FORMULA,
   WRONG_EMAIL_HINT,
@@ -14,6 +13,8 @@ import {
   rangeCoversCrew,
   parseRange,
   emailMentionsFix,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/formula-check/content";
 import {
   CREW,
@@ -26,16 +27,16 @@ import {
   type DayKey,
 } from "@/lib/tasks/crew-week";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 
-type View = "intro" | "home" | "sheet" | "compose" | "done";
+type View = "home" | "sheet" | "compose" | "done";
 type CellCol = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H";
 type Cell = { row: number; col: CellCol };
 
@@ -85,13 +86,13 @@ function evalHoursFormula(formula: string, hours: number[]): number | null {
 
 export default function FormulaCheckTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("formula-check") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("formula-check") ? "done" : "home");
   const [sumFormula, setSumFormula] = useState(WRONG_SUM_FORMULA);
   const [averageFormula, setAverageFormula] = useState(AVERAGE_FORMULA);
   const [selected, setSelected] = useState<Cell>({ row: TOTAL_ROW, col: "H" });
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   const c = FORMULA_CHECK_COPY[lang];
   const days = DAY_LABELS[lang];
@@ -180,10 +181,22 @@ export default function FormulaCheckTask() {
         <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-[#0f9d58] text-white">
           <SheetsIcon />
         </span>
-        <span className="text-[18px] text-[#3c4043]">{view === "home" || view === "intro" ? c.appName : c.sheetName}</span>
+        <span className="text-[18px] text-[#3c4043]">{view === "home" ? c.appName : c.sheetName}</span>
         <div className="flex-1" />
         <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
+
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS["formula-check"]}
+          stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "home" ? 0 : view === "sheet" ? 1 : 2]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
+      )}
 
       {view === "sheet" && (
         <>
@@ -219,12 +232,6 @@ export default function FormulaCheckTask() {
             )}
           </div>
         </>
-      )}
-
-      {view === "intro" && (
-        <div className="min-h-0 flex-1 overflow-auto px-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS["formula-check"]} onContinue={() => setView("home")} />
-        </div>
       )}
 
       {view === "home" && (
@@ -452,7 +459,7 @@ export default function FormulaCheckTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

@@ -8,21 +8,22 @@ import {
   STARTERS,
   LESSONS,
   WRONG_ACCEPT_HINT,
-  EVENT_INTRO,
   HUDDLE_TIMES,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/calendar/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import { extractHuddleTime, HUDDLE_TIME_FLAG } from "@/lib/story-beats";
 
-type View = "intro" | "home" | "invite" | "compose" | "done";
+type View = "home" | "invite" | "compose" | "done";
 
 type Cell = { day: number; other: boolean };
 
@@ -59,11 +60,11 @@ function CalendarMark() {
 
 export default function CalendarTask() {
   const { markComplete, completedTaskKeys, lang, setStoryFlag } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "home");
   const [body, setBody] = useState("");
   const [chosenTime, setChosenTime] = useState<"10am" | "2pm" | null>(null);
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   const c = CALENDAR_COPY[lang];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
@@ -140,6 +141,18 @@ export default function CalendarTask() {
           onHelp={() => setHelp(true)}
         />
       </div>
+
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS.calendar}
+          stepIndex={view === "home" ? 0 : view === "invite" ? 1 : 2}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "home" ? 0 : view === "invite" ? 1 : 2]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
+      )}
 
       {view === "done" ? (
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
@@ -239,12 +252,6 @@ export default function CalendarTask() {
               </div>
             </div>
 
-            {view === "intro" ? (
-              <div className="flex min-h-0 flex-1 items-start overflow-y-auto px-6">
-                <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.calendar} onContinue={() => setView("home")} />
-              </div>
-            ) : (
-              <>
             <div className="grid grid-cols-7 border-t border-[#dadce0] text-center text-[11px] font-medium text-[#70757a]">
               {c.weekdayLabels.map((d) => (
                 <div key={d} className="py-2">{d}</div>
@@ -294,8 +301,6 @@ export default function CalendarTask() {
                 );
               })}
             </div>
-              </>
-            )}
           </div>
 
           {showingCal && (view === "invite" || view === "compose") && (
@@ -439,7 +444,7 @@ export default function CalendarTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

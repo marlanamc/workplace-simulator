@@ -4,31 +4,32 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   MAKE_COPY_COPY,
-  EVENT_INTRO,
   HINTS,
   LESSONS,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/make-a-copy/content";
 import { COPY_NAME, STATUS_ROWS, normalizeCopyName } from "@/lib/tasks/status-sheet";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 
-type View = "intro" | "home" | "template" | "copy" | "done";
+type View = "home" | "template" | "copy" | "done";
 
 export default function MakeACopyTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("make-a-copy") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("make-a-copy") ? "done" : "home");
   const [fileOpen, setFileOpen] = useState(false);
   const [dialog, setDialog] = useState(false);
   const [copyName, setCopyName] = useState("Copy of Weekly Status Template");
   const [typed, setTyped] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const c = MAKE_COPY_COPY[lang];
 
   const tryCopy = () => {
@@ -71,6 +72,18 @@ export default function MakeACopyTask() {
           })()}
         </span>
         <span className="min-w-0 flex-1 truncate text-[18px] text-[#3c4043]">{sheetName}</span>
+        {view !== "done" && (
+          <RightNowBar
+            icon={TASK_ICONS["make-a-copy"]}
+            stepIndex={view === "home" ? 0 : view === "template" ? 1 : 2}
+            stepCount={RIGHT_NOW_STEPS.length}
+            instruction={RIGHT_NOW_STEPS[view === "home" ? 0 : view === "template" ? 1 : 2]}
+            lang={lang}
+            rightNowLabel={RIGHT_NOW_LABEL}
+            onHelp={() => setHelp(true)}
+          />
+        )}
+
         {(view === "template" || view === "copy") && (
           <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${view === "template" ? "bg-[#fef7e0] text-[#b06000]" : "bg-[#e6f4ea] text-[#137333]"}`}>
             {view === "template" ? c.viewOnly : lang === "en" ? "Can edit" : "Puede editar"}
@@ -103,12 +116,6 @@ export default function MakeACopyTask() {
               </button>
             </div>
           )}
-        </div>
-      )}
-
-      {view === "intro" && (
-        <div className="min-h-0 flex-1 overflow-auto px-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS["make-a-copy"]} onContinue={() => setView("home")} />
         </div>
       )}
 
@@ -238,7 +245,7 @@ export default function MakeACopyTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

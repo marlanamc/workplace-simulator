@@ -386,14 +386,14 @@ export const FILES: PickableItem[] = [
   { key: "shift-swap-form.pdf", label: "shift-swap-form.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 22"], isTarget: false,
     wrongHint: wrongHint("Close, but that is the shift swap form. You need the safety report.", "Casi, pero ese es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
   { key: "safety-report-june.pdf", label: "safety-report-june.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 1"], isTarget: false,
-    wrongHint: wrongHint("That one is June. Maria asked for July.", "Ese es de junio. Maria pidió el de julio.") },
+    wrongHint: wrongHint("That one is June. She asked for July.", "Ese es de junio. Ella pidió el de julio.") },
 ];
 
 const DECOY_EMAILS = [
   { key: "darnell", from: "Darnell Washington", initials: "DW", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
     preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
-    wrongHint: wrongHint("Darnell is a coworker, not your manager. Look for the email from Maria Delgado.", "Darnell es un compañero, no tu gerente. Busca el correo de Maria Delgado.") },
+    wrongHint: wrongHint("Darnell is a coworker. Look for Maria Delgado.", "Darnell es un compañero. Busca a Maria Delgado.") },
   { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
     subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
     preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },
@@ -450,8 +450,8 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     wrongHint:
       task === "mail-attach"
         ? wrongHint(
-            "That's Maria's welcome note. Open the newer email about the July safety report.",
-            "Esa es la bienvenida de Maria. Abre el correo más reciente sobre el reporte de seguridad de julio.",
+            "That is her older welcome note. Open the newer one about the safety report.",
+            "Esa es su nota de bienvenida anterior. Abre la más nueva sobre el reporte de seguridad.",
           )
         : undefined,
   };

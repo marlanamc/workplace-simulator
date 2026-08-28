@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -236,3 +236,19 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Open the Weekly Lead Huddle on Aug 26. Check it against your shifts.",
+    es: "Abre la reunión del 26 de agosto. Compárala con tus turnos.",
+  },
+  {
+    en: "That day is yours. Reply and suggest a time that works.",
+    es: "Ese día es tuyo. Responde y propón una hora que sí funcione.",
+  },
+  {
+    en: "Write your message, then send it.",
+    es: "Escribe tu mensaje y envíalo.",
+  },
+];

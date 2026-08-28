@@ -159,7 +159,7 @@ export default function PdfReaderClient() {
     pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
   );
   const [zoom, setZoom] = useState(100);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   // A deep link (e.g. "open this pay stub" from the Portal) requests a doc -
   // jump to it even if the reader is already open on a different file.
@@ -283,7 +283,7 @@ export default function PdfReaderClient() {
         </div>
       </div>
 
-      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} />
+      <NudgeToast text={nudge} bottom={SHELF_RESERVE + 16} onDismiss={dismiss} />
     </div>
   );
 }

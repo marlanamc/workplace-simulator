@@ -7,27 +7,28 @@ import {
   TIMECLOCK_COPY,
   STARTERS,
   LESSONS,
-  EVENT_INTRO,
   WRONG_LOOKS_RIGHT_HINT,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/timeclock/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 
-type View = "intro" | "clocked_in" | "review" | "compose" | "done";
+type View = "clocked_in" | "review" | "compose" | "done";
 
 export default function TimeclockTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "clocked_in");
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   const c = TIMECLOCK_COPY[lang];
 
@@ -65,8 +66,16 @@ export default function TimeclockTask() {
         />
       </div>
 
-      {view === "intro" && (
-        <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.timeclock} onContinue={() => setView("clocked_in")} />
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS.timeclock}
+          stepIndex={view === "clocked_in" ? 0 : view === "review" ? 1 : 2}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "clocked_in" ? 0 : view === "review" ? 1 : 2]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "clocked_in" && (
@@ -215,7 +224,7 @@ export default function TimeclockTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

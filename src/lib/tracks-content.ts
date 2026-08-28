@@ -181,6 +181,19 @@ export interface Level {
  * moves a learner into the next one (new emails, new schedule). The
  * desktop room stays put across every level in the same act.
  */
+/**
+ * Levels where the learner is still being taught the loop: desktop briefs you,
+ * you do the job, you come back to the desktop. Finishing a job in one of
+ * these returns to the desktop rather than jumping straight into the next app,
+ * so the desktop stays a place they recognize. From level4 on — the same point
+ * TASK_LOCATIONS stops naming a `tab` — we trust them and jump directly.
+ */
+const EARLY_LEVEL_KEYS = new Set(["level0", "level1", "level2", "level3", "level3b", "level3c"]);
+
+export function isEarlyLevel(level: Level): boolean {
+  return EARLY_LEVEL_KEYS.has(level.key);
+}
+
 export const LEVELS: Level[] = [
   {
     key: "level0",
@@ -217,8 +230,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Day one: complete", es: "Primer día: completo" },
       title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
       body: {
-        en: "Your first email went out fast, and Maria told the team you're quick. Week one starts now: your schedule is posted — and life is already happening on it.",
-        es: "Tu primer correo salió rápido, y Maria le dijo al equipo que eres veloz. Empieza la primera semana: tu horario ya está publicado — y la vida ya está pasando encima de él.",
+        en: "You thanked Maria and sent the file she needed. Your schedule is posted now. This week, things come up on it: a swap to ask for, and a day you can't come in.",
+        es: "Le agradeciste a Maria y le enviaste el archivo que necesitaba. Tu horario ya está publicado. Esta semana pasan cosas en él: un cambio que pedir, y un día en que no puedes ir.",
       },
       cta: { en: "See my schedule", es: "Ver mi horario" },
     },

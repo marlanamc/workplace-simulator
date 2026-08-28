@@ -10,14 +10,12 @@ import {
   FILES,
   emailsForTask,
   SUBJECT_BY_TASK,
-  EVENT_INTRO_BY_TASK,
   CONFIRM_COPY,
   DONE_COPY,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -32,7 +30,6 @@ import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import { sortInboxByTime, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
 import { speakFromClick, speakText, stopSpeaking } from "@/lib/read-aloud";
-import { firstPersonSkill, SKILLS } from "@/lib/skills";
 import type { Localized } from "@/lib/task-types";
 import { useWindowManager } from "@/lib/window-manager";
 import BridgeOutCard from "@/components/task/BridgeOutCard";
@@ -41,23 +38,28 @@ import { bridgeOutCopyFor } from "@/lib/bridge-out-content";
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
 const SHOW_ME_LABEL: Localized<string> = { en: "This one. Click it.", es: "Este. Haz clic aquí." };
 
-type View = "intro" | "empty" | "read" | "confirm" | "compose" | "done" | "story";
+type View = "empty" | "read" | "confirm" | "compose" | "done" | "story";
 type MailTask = PlayableMailTask;
 const MAIL_TASK_ORDER: MailTask[] = ["mail-reply", "mail-attach"];
 
-const RIGHT_NOW_BY_TASK: Record<MailTask, Localized<string>[]> = {
-  "mail-reply": [
-    { en: "Find the email from Maria Delgado. Click it.", es: "Busca el correo de Maria Delgado. Haz clic en él." },
-    { en: "Read Maria's welcome, then click Reply.", es: "Lee la bienvenida de Maria y haz clic en Responder." },
-    { en: "Write a short thank-you, then click Send.", es: "Escribe un agradecimiento corto y haz clic en Enviar." },
-  ],
-  "mail-attach": [
-    { en: "Find Maria's email about the safety report. Click it.", es: "Busca el correo de Maria sobre el reporte. Haz clic en él." },
-    { en: "Read Maria's email, then click Continue.", es: "Lee el correo de Maria y haz clic en Continuar." },
-    { en: "What does she need? Pick the right answer.", es: "¿Qué necesita? Elige la respuesta correcta." },
-    { en: "Write your reply, attach the file, then click Send.", es: "Escribe tu respuesta, adjunta el archivo y haz clic en Enviar." },
-  ],
-};
+/**
+ * One short sentence per step - the Job Card's hard rule. Anything longer is
+ * a lesson, and lessons live in the Help drawer.
+ */
+const STEP_LINE = {
+  openMail: {
+    "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
+    "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
+  } as Record<MailTask, Localized<string>>,
+  reply: { en: "Click Reply.", es: "Haz clic en Responder." },
+  confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
+  attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
+  write: { en: "Write one short line.", es: "Escribe una línea corta." },
+  send: { en: "Click Send.", es: "Haz clic en Enviar." },
+} as const;
+
+/** Steps per job, for the card's progress bars. */
+const STEP_COUNT: Record<MailTask, number> = { "mail-reply": 3, "mail-attach": 4 };
 
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
@@ -68,7 +70,7 @@ function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
   return MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
 }
 
-export default function MailClient() {
+export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
   const { markComplete, completedTaskKeys, lang, storyFlags, setStoryFlag, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
   const { browserTabToken } = useWindowManager();
   // Fixed for this mount, not recomputed every render: markComplete() updates
@@ -82,7 +84,7 @@ export default function MailClient() {
   const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys));
   const [plain, setPlain] = useState(true);
   const [step, setStep] = useState(0);
-  const [view, setView] = useState<View>(completedTaskKeys.includes(activeMailTask) ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes(activeMailTask) ? "done" : "empty");
   const [body, setBody] = useState("");
   const [attached, setAttached] = useState(false);
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
@@ -91,14 +93,14 @@ export default function MailClient() {
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
-  const { nudge, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } = useSkillGuidance(activeMailTask);
+  const { nudge, dismiss, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } = useSkillGuidance(activeMailTask);
 
   const [lastTabToken, setLastTabToken] = useState(browserTabToken);
   if (browserTabToken !== lastTabToken) {
     setLastTabToken(browserTabToken);
     const next = activeMailTaskFor(completedTaskKeys);
     setActiveMailTask(next);
-    setView(completedTaskKeys.includes(next) ? "done" : "intro");
+    setView(completedTaskKeys.includes(next) ? "done" : "empty");
     setStep(0);
     setBody("");
     setAttached(false);
@@ -113,10 +115,13 @@ export default function MailClient() {
   const mailDone = completedTaskKeys.includes(activeMailTask);
   // While a Day One job is running (first time OR a replay), the inbox shows
   // the story as it stood at that moment — no future Maria mails flooding in.
-  const inbox = sortInboxByTime([
+  const rawInbox = sortInboxByTime([
     ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
     ...emailsForTask(activeMailTask),
   ]);
+  // During the Welcome walkthrough the tour is doing the talking, so keep the
+  // bold unread row from pulling focus. Otherwise finding it is the job.
+  const inbox = welcomeWalkthroughActive ? rawInbox.filter((m) => !m.isTarget) : rawInbox;
   const unreadCount = inbox.filter((m) => {
     if ("story" in m && m.story) {
       return Boolean(m.unread) && !readStoryKeys.includes(m.key) && !(view === "story" && openStory?.key === m.key);
@@ -154,13 +159,13 @@ export default function MailClient() {
   const wrongForward = () =>
     recordWrong({
       title: T("Not that one. That is Forward.", "Ese no es. Es Reenviar."),
-      body: T("Forward sends Maria's email to someone else. To answer her, click Reply.", "Reenviar manda el correo de Maria a otra persona. Para contestarle, haz clic en Responder."),
+      body: T("That is Forward. It sends her email to someone else. Click Reply.", "Eso es Reenviar. Manda su correo a otra persona. Haz clic en Responder."),
     });
 
   const wrongCompose = () =>
     recordWrong({
       title: T("Not that one. That is Compose.", "Ese no es. Es Redactar."),
-      body: T("Compose starts a brand-new email. To answer Maria, open her email and click Reply.", "Redactar empieza un correo nuevo. Para contestarle a Maria, abre su correo y haz clic en Responder."),
+      body: T("That is Compose. It starts a new email. Open Maria's and click Reply.", "Eso es Redactar. Empieza un correo nuevo. Abre el de Maria y haz clic en Responder."),
     });
 
   const finish = (badgeKey: string) => {
@@ -198,12 +203,12 @@ export default function MailClient() {
     if (!body.trim())
       return recordWrong({
         title: T("Almost.", "Casi."),
-        body: T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien."),
+        body: T("Write one short line first.", "Primero escribe una línea corta."),
       });
     if (activeMailTask === "mail-attach" && !attached)
       return recordWrong({
         title: T("Not yet.", "Todavía no."),
-        body: T("Maria asked for the file. Click Attach file before you send.", "Maria pidió el archivo. Haz clic en Adjuntar archivo antes de enviar."),
+        body: T("She asked for the file. Click Attach file.", "Ella pidió el archivo. Haz clic en Adjuntar archivo."),
       });
     finish(activeMailTask === "mail-attach" ? "reply_with_attachment" : "answer_own_words");
   };
@@ -223,7 +228,7 @@ export default function MailClient() {
   const notThisFolder = () =>
     recordWrong({
       title: T("Not there.", "No está ahí."),
-      body: T("Today's mail is in Inbox. Open that instead.", "El correo de hoy está en Recibidos. Ábrelo ahí."),
+      body: T("Today's mail is in Inbox.", "El correo de hoy está en Recibidos."),
     });
 
   return (
@@ -361,18 +366,25 @@ export default function MailClient() {
 
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
             {(view === "empty" || view === "read" || view === "confirm" || view === "compose") && (() => {
-              const steps = RIGHT_NOW_BY_TASK[activeMailTask];
+              const stepCount = STEP_COUNT[activeMailTask];
               const needsAttach = activeMailTask === "mail-attach";
-              const rightNowIndex =
+              // The compose step is really three moments in one pane, and the
+              // card names whichever one the learner is actually on.
+              const composeLine = needsAttach && !attached
+                ? STEP_LINE.attach
+                : !body.trim()
+                  ? STEP_LINE.write
+                  : STEP_LINE.send;
+              const instruction =
                 view === "empty"
-                  ? 0
+                  ? STEP_LINE.openMail[activeMailTask]
                   : view === "read"
-                    ? 1
+                    ? STEP_LINE.reply
                     : view === "confirm"
-                      ? 2
-                      : needsAttach
-                        ? Math.min(3, steps.length - 1)
-                        : Math.min(2, steps.length - 1);
+                      ? STEP_LINE.confirm
+                      : composeLine;
+              const stepIndex =
+                view === "empty" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
               const showMeId =
                 view === "empty"
                   ? "maria-row"
@@ -388,26 +400,16 @@ export default function MailClient() {
               return (
                 <RightNowBar
                   icon={TASK_ICONS.mail}
-                  stepIndex={rightNowIndex}
-                  stepCount={steps.length}
-                  instruction={steps[rightNowIndex]}
+                  stepIndex={stepIndex}
+                  stepCount={stepCount}
+                  instruction={instruction}
                   lang={lang}
                   rightNowLabel={RIGHT_NOW_LABEL}
                   onShowMe={() => setShowMeTarget(showMeTargetId === showMeId ? null : showMeId)}
                   showMeActive={showMeTargetId === showMeId}
-                  showMeLabel={
-                    showMeTargetId === showMeId
-                      ? { en: "Hide", es: "Ocultar" }
-                      : undefined
-                  }
-                  onHelp={() => setHelp(true)}
                 />
               );
             })()}
-            {view === "intro" && (
-              <EventIntroCard {...EVENT_INTRO_BY_TASK[activeMailTask][lang]} icon={TASK_ICONS.mail} onContinue={() => setView("empty")} />
-            )}
-
             {view === "empty" && (
               <div className="flex h-full flex-col items-center justify-center gap-2 p-10 text-center">
                 <Inbox size={40} strokeWidth={1.25} className="text-[#dadce0]" />
@@ -613,14 +615,7 @@ export default function MailClient() {
               const dismissBridgeOut = () => setStoryFlag(bridgeOutFlag, "true");
               return (
               <div className="flex flex-col gap-5 p-6 sm:p-8">
-                <TaskDoneCard
-                  kicker={dc.kicker}
-                  title={firstPersonSkill(activeMailTask)}
-                  body={dc.body}
-                  badgeNumber={dc.badgeNumber}
-                  badgeName={SKILLS[activeMailTask]}
-                  badgeWhere={dc.badgeWhere}
-                />
+                <TaskDoneCard kicker={dc.kicker} compact />
                 {showBridgeOut && (
                   <BridgeOutCard
                     copy={bridgeOutCopyFor(activeMailTask)}
@@ -632,11 +627,7 @@ export default function MailClient() {
                     onNotYet={dismissBridgeOut}
                   />
                 )}
-                <TaskDoneActions
-                  tryAgainLabel={c.tryAgain}
-                  backToDeskLabel={c.backToDesk}
-                  onTryAgain={restart}
-                />
+                <TaskDoneActions kicker={dc.kicker} onTryAgain={restart} />
               </div>
               );
             })()}
@@ -673,7 +664,7 @@ export default function MailClient() {
         />
       )}
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight
         targetId={showMeTargetId}
         label={SHOW_ME_LABEL[lang]}

@@ -6,28 +6,29 @@ import {
   SCENARIO_CHECK,
   HANDBOOK_TASK_COPY,
   LESSONS,
-  EVENT_INTRO,
   type CheckOption,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/handbook/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import HandbookPage from "./HandbookPage";
 
-type View = "intro" | "task" | "done";
+type View = "task" | "done";
 
 const MENU = ["File", "Edit", "View", "Insert", "Format", "Tools"];
 
 export default function HandbookTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("handbook") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("handbook") ? "done" : "task");
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
 
   const c = HANDBOOK_TASK_COPY[lang];
   const check = SCENARIO_CHECK[lang];
@@ -47,10 +48,16 @@ export default function HandbookTask() {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
-      {view === "intro" && (
-        <div className="min-h-0 flex-1 overflow-y-auto p-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.handbook} onContinue={() => setView("task")} />
-        </div>
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS.handbook}
+          stepIndex={0}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[0]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "task" && (
@@ -154,7 +161,7 @@ export default function HandbookTask() {
         gotItLabel={c.gotIt}
       />
 
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

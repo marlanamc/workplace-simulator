@@ -54,12 +54,12 @@ export const TOUR_COPY: Record<Lang, {
     packetTitle: "Welcome. How this computer works.",
     helpBtn: "Help me with this step",
     helpLead: "Now try Help.",
-    helpInvite: "Follow the tip above, or skip ahead if you already know. Help will not count against you.",
+    helpInvite: "Open it if you want a look, or move on if you already know. Help never counts against you.",
     helpOpened: "Good. That is Help. Use it any time you feel stuck.",
     helpReady: "I'm ready for the job",
     sentKicker: "You're set",
     doneTitle: "You found the lights.",
-    doneBody: "White button on the desktop: next job. Question mark: Help. The briefcase on the bottom bar: your list for this shift. Next is always the blue button.",
+    doneBody: "Head back to the desktop and we will finish the tour there.",
     badgeName: "Find your way around",
     badgeWhere: "Counts toward: getting started",
     tryAgain: "Do it again",
@@ -74,7 +74,7 @@ export const TOUR_COPY: Record<Lang, {
     packetTitle: "Bienvenida. Cómo funciona esta computadora.",
     helpBtn: "Ayúdame con este paso",
     helpLead: "Ahora prueba Ayuda.",
-    helpInvite: "Sigue la pista de arriba, o sigue adelante si ya sabes. Ayuda no cuenta en tu contra.",
+    helpInvite: "Ábrela si quieres verla, o sigue adelante si ya sabes. Ayuda nunca cuenta en tu contra.",
     helpOpened: "Bien. Eso es Ayuda. Úsala cada vez que te trabes.",
     helpReady: "Estoy listo para el trabajo",
     sentKicker: "Listo",
@@ -103,6 +103,7 @@ export type TourStep = {
    */
   continueLabel?: string;
 };
+
 
 export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   en: [
@@ -148,24 +149,22 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Where to look",
       s: [
-        "The big white button on your desktop opens the next job.",
-        "Inside a job, the ? at the top right is Help. Use it any time.",
-        "The briefcase on the bottom bar is My job: your list for this shift. Open it if you forget what to do.",
-        "When you finish, the blue button is Next. It takes you to the right place.",
+        "The blue card in the corner says what to do next.",
+        "Stuck? Press Show me. It points at what to click.",
+        "Card in the way? Drag it to another corner.",
       ],
-      tip: "If you get lost, go back to the desktop. The briefing always names the next job.",
+      tip: "The card is always current. When in doubt, read it.",
     },
   ],
   es: [
     {
       t: "Dónde mirar",
       s: [
-        "El botón blanco grande en tu escritorio abre el siguiente trabajo.",
-        "Dentro de un trabajo, el ? de arriba a la derecha es Ayuda. Úsalo cuando quieras.",
-        "El maletín en la barra de abajo es Mi trabajo: tu lista de este turno. Ábrelo si se te olvida qué hacer.",
-        "Cuando termines, el botón azul es Siguiente. Te lleva al lugar correcto.",
+        "La tarjeta azul de la esquina dice qué hacer.",
+        "¿Atorada? Toca Muéstrame. Señala dónde hacer clic.",
+        "¿Te estorba? Arrástrala a otra esquina.",
       ],
-      tip: "Si te pierdes, vuelve al escritorio. El aviso siempre nombra el siguiente trabajo.",
+      tip: "La tarjeta siempre está al día. Si dudas, léela.",
     },
   ],
 };

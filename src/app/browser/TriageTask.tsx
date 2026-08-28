@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   TRIAGE_COPY,
-  EVENT_INTRO,
   HINTS,
   LESSONS,
+  RIGHT_NOW_STEPS,
+  RIGHT_NOW_LABEL,
 } from "@/lib/tasks/triage/content";
 import { useNudge } from "@/lib/use-nudge";
-import EventIntroCard from "@/components/task/EventIntroCard";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskHub from "@/components/task/TaskHub";
@@ -17,18 +17,19 @@ import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
+import RightNowBar from "@/components/task/RightNowBar";
 import { Calendar, FolderOpen } from "lucide-react";
 
-type View = "intro" | "hub" | "calendar" | "files" | "done";
+type View = "hub" | "calendar" | "files" | "done";
 
 export default function TriageTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("triage") ? "done" : "intro");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("triage") ? "done" : "hub");
   const [calDone, setCalDone] = useState(false);
   const [fileDone, setFileDone] = useState(false);
   const [permission, setPermission] = useState<"view" | "edit" | null>(null);
   const [help, setHelp] = useState(false);
-  const { nudge, say } = useNudge();
+  const { nudge, say, dismiss } = useNudge();
   const c = TRIAGE_COPY[lang];
   const h = HINTS[lang];
 
@@ -72,10 +73,16 @@ export default function TriageTask() {
         <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
 
-      {view === "intro" && (
-        <div className="min-h-0 flex-1 overflow-auto px-6">
-          <EventIntroCard {...EVENT_INTRO[lang]} icon={TASK_ICONS.triage} onContinue={() => setView("hub")} />
-        </div>
+      {view !== "done" && (
+        <RightNowBar
+          icon={TASK_ICONS.triage}
+          stepIndex={view === "hub" ? 0 : view === "calendar" ? 1 : 2}
+          stepCount={RIGHT_NOW_STEPS.length}
+          instruction={RIGHT_NOW_STEPS[view === "hub" ? 0 : view === "calendar" ? 1 : 2]}
+          lang={lang}
+          rightNowLabel={RIGHT_NOW_LABEL}
+          onHelp={() => setHelp(true)}
+        />
       )}
 
       {view === "hub" && (
@@ -207,7 +214,7 @@ export default function TriageTask() {
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
-      <NudgeToast text={nudge} />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

@@ -1,64 +1,43 @@
 "use client";
 
-import { DESKTOP_COPY } from "@/lib/desktop-content";
-import { HANDOFF_CTA } from "@/lib/story-beats";
-import { TASK_INFO, levelForTrack, nextHandoff } from "@/lib/tracks-content";
-import { sittingTitle } from "@/lib/shift-spine";
-import { useProgress } from "@/lib/progress-context";
-import { useWindowManager } from "@/lib/window-manager";
+import { useEffect, useRef } from "react";
+import { useJobCardOptional, useReporterId } from "@/lib/job-card-context";
 
-const PRIMARY =
-  "inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer";
-const SECONDARY =
-  "inline-flex min-h-[46px] items-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer";
-
-/** Primary = next task. Try again and back-to-desktop stay as quieter options. */
+/**
+ * The finish is now one green Job Card header and one button, so there is no
+ * three-way choice to render here any more. This reports the finish to the
+ * card and renders nothing.
+ *
+ * "Do it again" survives as the card's quiet secondary; "back to desktop" is
+ * what the card's own primary button already does.
+ */
 export default function TaskDoneActions({
-  tryAgainLabel,
-  backToDeskLabel,
+  kicker,
   onTryAgain,
 }: {
-  tryAgainLabel: string;
-  backToDeskLabel: string;
+  /** Kept for call-site compatibility. */
+  tryAgainLabel?: string;
+  backToDeskLabel?: string;
+  /** Short past-tense line for the card header, e.g. "Thank-you sent". */
+  kicker?: string;
   onTryAgain: () => void;
 }) {
-  const { completedTaskKeys, lang, celebrateLevel, currentTrack } = useProgress();
-  const { openApp, minimizeActive } = useWindowManager();
-  const handoff = celebrateLevel ? null : nextHandoff(completedTaskKeys);
-  const nextLabel = handoff
-    ? (HANDOFF_CTA[handoff.taskKey][lang] ?? DESKTOP_COPY[lang].nextLabel)
-    : null;
-  const sittingLine = handoff
-    ? `${sittingTitle(levelForTrack(currentTrack.key))} · ${TASK_INFO[handoff.taskKey].label[lang]}`
-    : null;
+  const card = useJobCardOptional();
+  const id = useReporterId();
+  const reportFinish = card?.reportFinish;
 
-  return (
-    <div>
-      {sittingLine ? (
-        <p className="mb-3 text-[14px] leading-snug text-[var(--text-secondary)]">{sittingLine}</p>
-      ) : null}
-    <div className="flex flex-wrap gap-2">
-      {handoff && nextLabel ? (
-        <button
-          type="button"
-          onClick={() =>
-            openApp(handoff.location.appKey, {
-              tab: handoff.location.tab,
-              section: handoff.location.section,
-            })
-          }
-          className={PRIMARY}
-        >
-          {nextLabel}
-        </button>
-      ) : null}
-      <button type="button" onClick={onTryAgain} className={handoff ? SECONDARY : PRIMARY}>
-        {tryAgainLabel}
-      </button>
-      <button type="button" onClick={minimizeActive} className={SECONDARY}>
-        {backToDeskLabel}
-      </button>
-    </div>
-    </div>
-  );
+  // Tasks rebuild `onTryAgain` every render. Reporting through a ref keeps the
+  // card pointed at the latest one without re-reporting the finish each time.
+  const tryAgain = useRef(onTryAgain);
+  useEffect(() => {
+    tryAgain.current = onTryAgain;
+  });
+
+  useEffect(() => {
+    if (!reportFinish) return;
+    reportFinish({ id, kicker: kicker ?? "Done", onTryAgain: () => tryAgain.current() });
+    return () => reportFinish(null, id);
+  }, [reportFinish, id, kicker]);
+
+  return null;
 }

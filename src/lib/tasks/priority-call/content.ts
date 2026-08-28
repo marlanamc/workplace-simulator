@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -227,3 +227,28 @@ export function replyIsSafe(body: string) {
   if (/\bfree\b|\brefund\b|\bcomp(ed)?\b|\bgratis\b|\breembolso\b/.test(t)) return false;
   return /sorry|thank|look|check|sorry|perdón|siento|gracias|revis/.test(t);
 }
+
+/** The persistent "what to do right now" line, one per step of this job. */
+export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+export const RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: "Three things landed at once. Choose what goes first.",
+    es: "Cayeron tres cosas a la vez. Elige cuál va primero.",
+  },
+  {
+    en: "Now work through all three. None of them gets dropped.",
+    es: "Ahora resuelve las tres. Ninguna se queda sin hacer.",
+  },
+  {
+    en: "Handle the unhappy customer.",
+    es: "Atiende al cliente molesto.",
+  },
+  {
+    en: "Cover tonight's short close.",
+    es: "Cubre el cierre corto de esta noche.",
+  },
+  {
+    en: "Deal with the meeting on your close shift.",
+    es: "Resuelve la reunión en tu turno de cierre.",
+  },
+];
