@@ -1,33 +1,35 @@
-# Level 2 — The First Week (3 jobs, all in the Portal)
+# Level 2 — The First Week (2 jobs, both in the Portal)
 
-**Job 1 — Find your shift**
+**Job 1 — Find the day that clashes**
 1. Click the white button: **Open Portal**.
-2. Find your name on the schedule. Find your days and times.
+2. Find your days and times on the schedule.
+3. Look at your own phone calendar next to it.
+4. One work day lands on top of something you already have. Click **That's the one**.
 
 **Job 2 — Ask for a swap**
-1. Two of your shifts overlap. Open the swap form.
-2. Fill it in and send it. Short answers are fine.
-
-**Job 3 — You're sick tomorrow**
-1. Tell Maria in writing, before your shift.
-2. Say you are sick, name the day, and send it.
+1. Open the swap form.
+2. Pick the shift that clashes: **Thursday**.
+3. Pick a shift you *could* work instead. Your doctor is at 11:00 AM, so
+   choose a Thursday shift that starts after that.
+4. Send it. Short answers are fine.
 
 Wrong click? Nothing breaks. Read the little card and try again.
 
 ---
 
-# Nivel 2 — La primera semana (3 trabajos, todos en el Portal)
+# Nivel 2 — La primera semana (2 trabajos, los dos en el Portal)
 
-**Trabajo 1 — Encuentra tu turno**
+**Trabajo 1 — Encuentra el día que choca**
 1. Haz clic en el botón blanco: **Abrir Portal**.
-2. Busca tu nombre en el horario. Mira tus días y horas.
+2. Busca tus días y horas en el horario.
+3. Mira tu propio calendario del teléfono al lado.
+4. Un día de trabajo cae encima de algo que ya tienes. Haz clic en **Ese es**.
 
 **Trabajo 2 — Pide un cambio**
-1. Dos de tus turnos chocan. Abre el formulario de cambio.
-2. Llénalo y envíalo. Respuestas cortas están bien.
-
-**Trabajo 3 — Estás enfermo mañana**
-1. Avísale a Maria por escrito, antes de tu turno.
-2. Di que estás enfermo, di el día, y envíalo.
+1. Abre el formulario de cambio.
+2. Elige el turno que choca: **jueves**.
+3. Elige un turno que sí puedas trabajar. Tu doctor es a las 11:00 AM, así
+   que elige un turno del jueves que empiece después.
+4. Envíalo. Respuestas cortas están bien.
 
 ¿Clic equivocado? Nada se rompe. Lee la tarjeta y prueba otra vez.

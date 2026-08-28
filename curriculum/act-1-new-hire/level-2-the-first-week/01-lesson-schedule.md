@@ -1,13 +1,13 @@
-# Lesson 1: Find Your Shift (and Ask for a Change by Email)
+# Lesson 1: Find Your Shift and Spot the Conflict
 
 **Time:** ~5 minutes · **Level:** 2 — The First Week · **Track:** 2 — The First Week
 **Task key:** `schedule` · **Status:** built — the Employee Portal's Schedule
-tab flags a planted conflict; requesting a swap opens a short message to
-Maria, right there in the portal.
+tab shows next week's shifts beside the student's own phone calendar. Finding
+the clash is the whole task; asking for the change is Lesson 2.
 **Prerequisite:** Level 1 complete (all 3 Day One jobs)
 
 ## We will learn...
-- read a work schedule, spot a conflict, and ask for a change the right way.
+- read a work schedule against your own calendar and spot a conflict before it becomes a problem.
 
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Schedule tab always shows next week's
@@ -24,17 +24,17 @@ Maria, right there in the portal.
 2. Read your work shifts for the week.
 3. Look at **Your phone** / **Calendar** next to the schedule.
 4. Find the day where work and your own calendar land at the same time.
-5. Click **Request a swap** on that shift (clicking any other shift's button
+5. Click **That's the one** on that shift (clicking any other shift's button
    just gets a friendly reminder to keep looking).
-6. Write a short message to Maria explaining the conflict and asking for a
-   swap — sentence starters are there if you want them.
-7. Click **Send**.
+6. That finishes the task. Asking for the swap is the next lesson — it uses
+   Harborside's swap form, not an email.
 
 ## Confidence check-in
-- "I could ask for a schedule change at a real job without feeling awkward
-  about it." 🙂 😐 🙁
+- "I could look at a new schedule and tell whether it works with my life."
+  🙂 😐 🙁
 - "The part that felt hardest was: ___________"
 
 ## Notes for next time
-- This is the first lesson in Track 2 where there usually isn't one "correct"
-  wording — coach for clarity and politeness, not a script.
+- The skill here is noticing, not writing. Students who scan only the work
+  schedule and never look at the phone beside it will miss the clash every
+  time — that habit is the thing worth naming out loud.

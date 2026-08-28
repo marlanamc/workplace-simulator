@@ -5,14 +5,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "📅",
     kicker: "Uh oh",
     headline: "Next week's shifts are up. Check them against your own calendar.",
-    body: "Work posts the schedule. You have to notice if it lands on something you already have. If it does, ask Maria for a swap.",
+    body: "Work posts the schedule. Nobody checks it against your life for you. Find the day that clashes with something you already have.",
     cta: "Check my schedule",
   },
   es: {
     emoji: "📅",
     kicker: "Uy no",
     headline: "Ya salieron los turnos de la próxima semana. Compáralos con tu propio calendario.",
-    body: "El trabajo publica el horario. Tú tienes que ver si cae en algo que ya tienes. Si es así, pídele un cambio a Maria.",
+    body: "El trabajo publica el horario. Nadie lo compara con tu vida por ti. Busca el día que choca con algo que ya tienes.",
     cta: "Revisar mi horario",
   },
 };
@@ -42,6 +42,55 @@ export interface PersonalEvent {
   title: Localized;
 }
 
+/**
+ * Cover options offered on the swap form for the clashing Thursday. The doctor
+ * is at 11 AM, so only the late shift clears it — an earlier start or a
+ * different day are both plausible-looking wrong answers, which is the point.
+ */
+export interface SwapOption {
+  key: string;
+  label: Localized;
+  /** The one that actually clears the 11 AM appointment. */
+  works: boolean;
+  /** Why this option fails, shown when the learner picks it. */
+  wrongHint?: Localized;
+}
+
+export const SWAP_OPTIONS: SwapOption[] = [
+  {
+    key: "thu-late",
+    label: { en: "Thu Aug 27 · 2:00 PM – 10:00 PM", es: "Jue 27 ago · 2:00 PM – 10:00 PM" },
+    works: true,
+  },
+  {
+    key: "thu-early",
+    label: { en: "Thu Aug 27 · 6:00 AM – 2:00 PM", es: "Jue 27 ago · 6:00 AM – 2:00 PM" },
+    works: false,
+    wrongHint: {
+      en: "That one still covers 11 AM, and that is when the doctor is. You need a shift that starts after your appointment.",
+      es: "Ese todavía cubre las 11 AM, que es cuando tienes al doctor. Necesitas un turno que empiece después de tu cita.",
+    },
+  },
+  {
+    key: "wed",
+    label: { en: "Wed Aug 26 · 10:00 AM – 6:00 PM", es: "Mié 26 ago · 10:00 AM – 6:00 PM" },
+    works: false,
+    wrongHint: {
+      en: "Wednesday is your day off, not the problem. Maria needs Thursday covered — ask for a different time that same day.",
+      es: "El miércoles es tu día libre, no el problema. Maria necesita cubrir el jueves — pide otra hora ese mismo día.",
+    },
+  },
+  {
+    key: "fri",
+    label: { en: "Fri Aug 28 · 10:00 AM – 6:00 PM", es: "Vie 28 ago · 10:00 AM – 6:00 PM" },
+    works: false,
+    wrongHint: {
+      en: "You already work Friday. Moving Thursday onto a day you're on would give you two shifts and still leave Thursday open.",
+      es: "El viernes ya trabajas. Mover el jueves a un día que ya tienes te daría dos turnos y el jueves seguiría sin cubrir.",
+    },
+  },
+];
+
 /** Sits next to the work schedule. The student has to match days and times. */
 export const PERSONAL_CALENDAR: PersonalEvent[] = [
   { day: "Tue", date: "Aug 25", time: "7:30 PM", title: { en: "Call the school", es: "Llamar a la escuela" } },
@@ -54,18 +103,9 @@ export const SCHEDULE_COPY: Record<Lang, {
   subhead: string;
   helpBtn: string;
   langBtn: string;
-  requestSwap: string;
+  pickConflict: string;
   phoneLabel: string;
   phoneHeading: string;
-  to: string;
-  subjectLabel: string;
-  subjectPrefix: string;
-  writeHere: string;
-  startersLabel: string;
-  send: string;
-  discard: string;
-  backToList: string;
-  sentKicker: string;
   doneTitle: string;
   doneBody: string;
   badgeName: string;
@@ -82,21 +122,12 @@ export const SCHEDULE_COPY: Record<Lang, {
     subhead: "Times are shown in your local time.",
     helpBtn: "Help me with this step",
     langBtn: "Español",
-    requestSwap: "Request a swap",
+    pickConflict: "That's the one",
     phoneLabel: "Your phone",
     phoneHeading: "Calendar",
-    to: "To",
-    subjectLabel: "Subject",
-    subjectPrefix: "Shift swap request:",
-    writeHere: "Write your message here…",
-    startersLabel: "Sentence starters",
-    send: "Send",
-    discard: "Discard",
-    backToList: "Back to schedule",
-    sentKicker: "Message sent",
-    doneTitle: "You asked for a shift swap.",
-    doneBody: "Maria got your message about the conflict. Asking early, in writing, is exactly how a real request like this should go.",
-    badgeName: "Request a schedule change",
+    doneTitle: "You found the conflict.",
+    doneBody: "Thursday's shift lands on your doctor's appointment. Catching that yourself, the day the schedule goes up, is the whole skill. Next you'll ask for the swap.",
+    badgeName: "Read a schedule against your own calendar",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -110,21 +141,12 @@ export const SCHEDULE_COPY: Record<Lang, {
     subhead: "Las horas se muestran en tu hora local.",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
-    requestSwap: "Pedir un cambio",
+    pickConflict: "Ese es",
     phoneLabel: "Tu teléfono",
     phoneHeading: "Calendario",
-    to: "Para",
-    subjectLabel: "Asunto",
-    subjectPrefix: "Solicitud de cambio de turno:",
-    writeHere: "Escribe tu mensaje aquí…",
-    startersLabel: "Frases de ayuda",
-    send: "Enviar",
-    discard: "Descartar",
-    backToList: "Volver al horario",
-    sentKicker: "Mensaje enviado",
-    doneTitle: "Pediste un cambio de turno.",
-    doneBody: "Maria recibió tu mensaje sobre el conflicto. Pedirlo temprano y por escrito es justo lo que se espera en una solicitud real como esta.",
-    badgeName: "Pedir un cambio de horario",
+    doneTitle: "Encontraste el conflicto.",
+    doneBody: "El turno del jueves cae en tu cita con el doctor. Notarlo tú, el día que sale el horario, es toda la habilidad. Después pedirás el cambio.",
+    badgeName: "Leer un horario contra tu propio calendario",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -140,21 +162,6 @@ export const WRONG_SWAP_HINT: Localized = {
   es: "Ese turno está bien. Mira tu calendario también. ¿Qué día de trabajo cae a la misma hora que algo que ya tienes?",
 };
 
-export const STARTERS: Record<Lang, string[]> = {
-  en: [
-    "Hi Maria, I have a conflict with my shift on Thursday.",
-    "I have a doctor's appointment that day.",
-    "Could we swap that shift, or could someone cover it?",
-    "Let me know what works. Thank you.",
-  ],
-  es: [
-    "Hola Maria, tengo un conflicto con mi turno del jueves.",
-    "Tengo una cita con el doctor ese día.",
-    "¿Podríamos cambiar ese turno, o alguien podría cubrirlo?",
-    "Avísame qué funciona. Gracias.",
-  ],
-};
-
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
@@ -165,15 +172,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Look at your own calendar too. If a shift is at the same time as something you already have, ask for a swap.",
       ],
       tip: "Do this as soon as a new schedule is posted. The sooner you catch a conflict, the easier it is to fix.",
-    },
-    {
-      t: "Asking for a swap",
-      s: [
-        "Say which day, and why it's a problem.",
-        "Ask in a clear way. \"Could we swap\" or \"could someone cover it\" both work.",
-        "Send it as soon as you notice the conflict, not the night before.",
-      ],
-      tip: "You don't need perfect words. Clear and polite is enough.",
     },
   ],
   es: [
@@ -186,15 +184,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       ],
       tip: "Hazlo en cuanto se publique un horario nuevo. Mientras antes veas el conflicto, más fácil es resolverlo.",
     },
-    {
-      t: "Pedir un cambio",
-      s: [
-        "Di qué día es y por qué es un problema.",
-        "Pide de forma clara. \"Podríamos cambiar\" o \"alguien podría cubrirlo\" funcionan.",
-        "Envíalo en cuanto notes el conflicto, no la noche anterior.",
-      ],
-      tip: "No necesitas la redacción perfecta. Con que sea claro y amable basta.",
-    },
   ],
 };
 
@@ -204,9 +193,5 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   {
     en: "Compare next week's shifts to your own calendar. Find the day that clashes.",
     es: "Compara los turnos de la próxima semana con tu calendario. Busca el día que choca.",
-  },
-  {
-    en: "Write Maria a short message asking to swap that shift.",
-    es: "Escríbele a Maria un mensaje corto pidiendo cambiar ese turno.",
   },
 ];

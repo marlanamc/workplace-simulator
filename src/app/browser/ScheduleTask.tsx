@@ -6,7 +6,6 @@ import {
   SCHEDULE,
   SCHEDULE_COPY,
   PERSONAL_CALENDAR,
-  STARTERS,
   LESSONS,
   WRONG_SWAP_HINT,
   RIGHT_NOW_STEPS,
@@ -23,53 +22,30 @@ import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
-import NeedAStart from "@/components/task/NeedAStart";
 
-type View = "list" | "compose" | "done";
+type View = "list" | "done";
 
 export default function ScheduleTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "list");
-  const [swapDay, setSwapDay] = useState<(typeof SCHEDULE)[number] | null>(null);
-  const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
-  // The one control this step is about: the clashing day's swap button,
-  // then Send once they are writing.
-  const showMeId = view === "list" ? "swap-button" : "send-button";
+  // One control this whole task: the clashing day. Picking any other day is
+  // the mistake worth catching, so it nudges instead of advancing.
+  const showMeId = "swap-button";
 
   const c = SCHEDULE_COPY[lang];
 
-  const requestSwap = (d: (typeof SCHEDULE)[number]) => {
+  // Finding the clash IS the task. Asking for the swap is the next one, in
+  // the form Harborside actually uses — this screen never composes mail.
+  const pickDay = (d: (typeof SCHEDULE)[number]) => {
     if (!d.conflict) return say(WRONG_SWAP_HINT[lang]);
-    setSwapDay(d);
-    setView("compose");
-  };
-
-  const trySend = () => {
-    if (!body.trim()) {
-      return say(
-        lang === "en"
-          ? "Write a short message first. Even one sentence is fine."
-          : "Primero escribe un mensaje corto. Una oración está bien."
-      );
-    }
     setView("done");
-    markComplete("schedule", "request_shift_swap");
+    markComplete("schedule", "read_schedule_against_calendar");
   };
 
-  const discard = () => {
-    setView("list");
-    setSwapDay(null);
-    setBody("");
-  };
-
-  const restart = () => {
-    setView("list");
-    setSwapDay(null);
-    setBody("");
-  };
+  const restart = () => setView("list");
 
   return (
     <div className="relative">
@@ -85,9 +61,9 @@ export default function ScheduleTask() {
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS.schedule}
-          stepIndex={view === "list" ? 0 : 1}
+          stepIndex={0}
           stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[view === "list" ? 0 : 1]}
+          instruction={RIGHT_NOW_STEPS[0]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(showMeId)}
@@ -120,10 +96,10 @@ export default function ScheduleTask() {
                 {d.shift && (
                   <button
                     data-showme={d.conflict ? "swap-button" : undefined}
-                    onClick={() => requestSwap(d)}
+                    onClick={() => pickDay(d)}
                     className="shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
                   >
-                    {c.requestSwap}
+                    {c.pickConflict}
                   </button>
                 )}
               </div>
@@ -136,55 +112,10 @@ export default function ScheduleTask() {
         </div>
       )}
 
-      {view === "compose" && swapDay && (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-          <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-            <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.to}</span>
-            <span>maria.delgado@harborsidecafe.com</span>
-          </div>
-          <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-            <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.subjectLabel}</span>
-            <span>
-              {c.subjectPrefix} {swapDay.day} {swapDay.date}
-            </span>
-          </div>
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={c.writeHere}
-            className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-[var(--text-tertiary)]"
-          />
-          <div className="mb-4">
-          <NeedAStart
-            lang={lang}
-            starters={STARTERS[lang]}
-            onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
-            chipClassName="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
-          />
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
-            <button
-              data-showme="send-button"
-              onClick={trySend}
-              className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
-            >
-              {c.send}
-            </button>
-            <button
-              onClick={discard}
-              className="min-h-[40px] px-2 text-[14px] text-[var(--text-tertiary)] cursor-pointer"
-            >
-              {c.discard}
-            </button>
-          </div>
-        </div>
-      )}
-
       {view === "done" && (
         <div className="flex flex-col gap-5">
           <TaskDoneCard
-            kicker={c.sentKicker}
+            kicker={c.doneTitle}
             title={c.doneTitle}
             body={c.doneBody}
             badgeNumber="02"
@@ -193,7 +124,7 @@ export default function ScheduleTask() {
           />
 
           <TaskDoneActions
-            kicker={c.sentKicker}
+            kicker={c.doneTitle}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
             onTryAgain={restart}
@@ -205,7 +136,7 @@ export default function ScheduleTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][view === "list" ? 0 : 1]}
+        lesson={LESSONS[lang][0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />

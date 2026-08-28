@@ -1,7 +1,7 @@
 # Level 2 Real-World Practice: The First Week Wrap-Up
 
 **When to offer:** after a student has finished every task in Level 2 in
-the simulator — schedule, swap request, and calling out sick (Lessons 1–3).
+the simulator — reading the schedule and requesting the swap (Lessons 1–2).
 Not after each individual lesson. This is **optional and supplementary** —
 a student who skips it still moves straight on to Level 3. Offer it during
 office hours, or post it to Google Classroom for anyone who wants the extra
@@ -22,17 +22,17 @@ real-world assignment covering the whole level at once.
 ## Student instructions (post as-is, or adapt — optional)
 You just finished Level 2 in the simulator — nice work. If you'd like extra
 practice, try these for real, in one sitting if you can:
-1. Look at the mock schedule, find the conflict, and write the message
-   you'd send to ask for a swap.
-2. Same conflict, but this time fill out a real-looking swap request form
-   (a paper or Google Form version works fine).
-3. Write the message you'd send a manager to call out sick before a shift.
+1. Look at the mock schedule and find the conflict — compare it against
+   your own calendar, the way you did in the app.
+2. Fill out a real-looking swap request form (a paper or Google Form
+   version works fine). Name the shift that clashes **and** the shift you
+   could work instead.
 
-Turn it all in together — one submission, not three.
+Turn both in together — one submission, not two.
 
 **Optional extra challenge** (for students who finish quickly or have prior
-office experience): on #1/#2, suggest a specific person or day to swap
-with, not just "I can't work this."
+office experience): write the same request as an email instead, and say
+which one you'd rather receive if you were the manager.
 
 ## Teacher review
 Skim for completion, not perfection — the simulator already did the graded

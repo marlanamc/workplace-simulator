@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { SCHEDULE } from "@/lib/tasks/schedule/content";
+import { SCHEDULE, SWAP_OPTIONS } from "@/lib/tasks/schedule/content";
 import { SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -24,7 +24,7 @@ export default function SwapRequestTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("swap-request") ? "done" : "form");
   const [shift, setShift] = useState("");
-  const [newDate, setNewDate] = useState("");
+  const [cover, setCover] = useState("");
   const [reason, setReason] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
@@ -42,10 +42,36 @@ export default function SwapRequestTask() {
       });
       return;
     }
-    if (!newDate) {
+    // The swap is only real if it is the shift that actually clashes. Asking
+    // to move a shift that was never a problem leaves Thursday untouched.
+    const clashing = SCHEDULE.find((d) => d.conflict);
+    if (shift !== clashing?.day) {
+      recordWrong({
+        title: lang === "en" ? "That shift is fine." : "Ese turno está bien.",
+        body:
+          lang === "en"
+            ? "Thursday is the one that lands on your doctor's appointment. Swap that one."
+            : "El jueves es el que cae en tu cita con el doctor. Cambia ese.",
+      });
+      return;
+    }
+    if (!cover) {
       recordWrong({
         title: lang === "en" ? "Almost." : "Casi.",
-        body: lang === "en" ? "Pick a date you can work instead." : "Elige una fecha en la que sí puedas trabajar.",
+        body:
+          lang === "en"
+            ? "Pick the shift you could work instead."
+            : "Elige el turno que sí podrías trabajar.",
+      });
+      return;
+    }
+    // Any Thursday shift starting after the 11 AM appointment works; an
+    // earlier one or a different day does not, and each says why.
+    const picked = SWAP_OPTIONS.find((o) => o.key === cover);
+    if (!picked?.works) {
+      recordWrong({
+        title: lang === "en" ? "Not that one." : "Ese no.",
+        body: picked?.wrongHint?.[lang] ?? "",
       });
       return;
     }
@@ -62,7 +88,7 @@ export default function SwapRequestTask() {
   const restart = () => {
     setView("form");
     setShift("");
-    setNewDate("");
+    setCover("");
     setReason("");
   };
 
@@ -121,13 +147,19 @@ export default function SwapRequestTask() {
           </label>
 
           <label className="mb-3 block text-[14px] font-medium text-[var(--text-primary)]">
-            {c.dateLabel}
-            <input
-              type="date"
-              value={newDate}
-              onChange={(e) => setNewDate(e.target.value)}
+            {c.coverLabel}
+            <select
+              value={cover}
+              onChange={(e) => setCover(e.target.value)}
               className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)]"
-            />
+            >
+              <option value="">{c.coverPlaceholder}</option>
+              {SWAP_OPTIONS.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.label[lang]}
+                </option>
+              ))}
+            </select>
           </label>
 
           <label className="mb-4 block text-[14px] font-medium text-[var(--text-primary)]">

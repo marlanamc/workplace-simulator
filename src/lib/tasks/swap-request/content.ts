@@ -23,7 +23,8 @@ export const SWAP_COPY: Record<Lang, {
   helpBtn: string;
   shiftLabel: string;
   shiftPlaceholder: string;
-  dateLabel: string;
+  coverLabel: string;
+  coverPlaceholder: string;
   reasonLabel: string;
   reasonPlaceholder: string;
   submit: string;
@@ -36,16 +37,17 @@ export const SWAP_COPY: Record<Lang, {
 }> = {
   en: {
     heading: "Shift Swap Request",
-    subhead: "Thursday's shift overlaps with something on your own calendar. Fill out the form to ask for a swap.",
+    subhead: "Your Thursday shift covers your 11 AM doctor's appointment. Ask for a shift that same day, after it.",
     helpBtn: "Help me with this step",
     shiftLabel: "Which shift?",
     shiftPlaceholder: "Choose a shift",
-    dateLabel: "New date you can work",
+    coverLabel: "Which shift could you work instead?",
+    coverPlaceholder: "Choose a shift",
     reasonLabel: "Reason (optional)",
     reasonPlaceholder: "A doctor's appointment that day",
     submit: "Submit request",
     sentKicker: "Request sent",
-    doneBody: "Maria will see this on her end and approve or suggest another day. You don't have to wait by the computer.",
+    doneBody: "You asked for the late shift the same day, so the cafe still has you Thursday and you still make your appointment. That is what makes a swap easy to say yes to.",
     badgeName: "Request a shift swap",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -53,16 +55,17 @@ export const SWAP_COPY: Record<Lang, {
   },
   es: {
     heading: "Solicitud de cambio de turno",
-    subhead: "El turno del jueves se cruza con algo en tu propio calendario. Llena el formulario para pedir un cambio.",
+    subhead: "Tu turno del jueves cubre tu cita con el doctor a las 11 AM. Pide un turno ese mismo día, después de la cita.",
     helpBtn: "Ayúdame con este paso",
     shiftLabel: "¿Qué turno?",
     shiftPlaceholder: "Elige un turno",
-    dateLabel: "Nueva fecha en la que puedes trabajar",
+    coverLabel: "¿Qué turno podrías trabajar en su lugar?",
+    coverPlaceholder: "Elige un turno",
     reasonLabel: "Motivo (opcional)",
     reasonPlaceholder: "Una cita con el doctor ese día",
     submit: "Enviar solicitud",
     sentKicker: "Solicitud enviada",
-    doneBody: "Maria verá esto y lo aprobará o sugerirá otro día. No tienes que esperar frente a la computadora.",
+    doneBody: "Pediste el turno de la tarde el mismo día, así el café todavía te tiene el jueves y tú llegas a tu cita. Eso es lo que hace fácil decir que sí a un cambio.",
     badgeName: "Pedir un cambio de turno",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -74,7 +77,7 @@ export const SWAP_COPY: Record<Lang, {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Fill in the swap form: the shift, the reason, and who can cover.",
-    es: "Llena el formulario: el turno, el motivo, y quién puede cubrirlo.",
+    en: "Pick the Thursday shift, then a shift that starts after your appointment.",
+    es: "Elige el turno del jueves, y luego uno que empiece después de tu cita.",
   },
 ];
