@@ -12,7 +12,6 @@ import {
 import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
 import { BOOKMARK_LABEL } from "@/lib/shift-spine";
 import { firstPersonSkill } from "@/lib/skills";
-import { RIGHT_NOW_STEPS as FILES_STEPS } from "@/lib/tasks/files/content";
 
 /**
  * The drift detector. Every task a learner can reach must be fully wired:
@@ -136,10 +135,47 @@ describe("the story arc has no missing chapters", () => {
   });
 });
 
+/**
+ * Globbed rather than imported one by one, so a task added next month is
+ * covered without anyone remembering to add it here. These are the lines the
+ * Job Card reads out as the learner works - an English string reaching a
+ * Spanish-speaking learner mid-task is exactly the silent failure this whole
+ * suite exists to prevent.
+ */
+// import.meta.glob is Vite's, and this repo's tsconfig is Next's - declaring it
+// here keeps Vite types out of the app build.
+declare global {
+  interface ImportMeta {
+    glob<T>(pattern: string, options: { eager: true }): Record<string, T>;
+  }
+}
+
+const taskContentModules = import.meta.glob<Record<string, unknown>>(
+  "../tasks/*/content.ts",
+  { eager: true },
+);
+
 describe("in-task step instructions are bilingual", () => {
-  it("Files RightNow steps", () => {
-    for (const [i, step] of FILES_STEPS.entries()) {
-      expectBilingual(step, `files RIGHT_NOW_STEPS[${i}]`);
+  const withSteps = Object.entries(taskContentModules)
+    .map(([path, mod]) => [path.match(/tasks\/([^/]+)\//)?.[1] ?? path, mod] as const)
+    .filter(([, mod]) => Array.isArray(mod.RIGHT_NOW_STEPS));
+
+  it("found the task content modules to check (the glob still resolves)", () => {
+    // Guards against a silent pass if the tasks folder ever moves: an empty
+    // glob would otherwise make every check below vacuously true.
+    expect(Object.keys(taskContentModules).length).toBeGreaterThan(15);
+    expect(withSteps.length).toBeGreaterThan(15);
+  });
+
+  it.each(withSteps)("%s RIGHT_NOW_STEPS are bilingual and non-empty", (task, mod) => {
+    const steps = mod.RIGHT_NOW_STEPS as { en: string; es: string }[];
+    expect(steps.length, `${task} has an empty RIGHT_NOW_STEPS`).toBeGreaterThan(0);
+    for (const [i, step] of steps.entries()) {
+      expectBilingual(step, `${task} RIGHT_NOW_STEPS[${i}]`);
     }
+  });
+
+  it.each(withSteps)("%s RIGHT_NOW_LABEL is bilingual", (task, mod) => {
+    expectBilingual(mod.RIGHT_NOW_LABEL as { en: string; es: string }, `${task} RIGHT_NOW_LABEL`);
   });
 });

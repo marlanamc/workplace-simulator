@@ -222,10 +222,23 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 };
 
 
+/** Promising something the learner cannot authorize. The one hard "no". */
+const OVERPROMISE =
+  /\bfree\b|\brefund\b|\bcomp(ed)?\b|\bon the house\b|\bgratis\b|\breembolso\b|\bdevoluci[oó]n\b/;
+
+/**
+ * Acknowledging the customer, in either language. Deliberately wide: the job
+ * is "say sorry and say you will look into it", and a learner who writes a
+ * perfectly good reply in words we did not think of must not be told they
+ * over-promised. Prefer letting a weak reply through over failing a real one.
+ */
+const ACKNOWLEDGES =
+  /sorry|apolog|regret|understand|thank|look into|looking into|look at|check|fix|make (it|this) right|speak|talk|follow up|right away|perd[oó]n|siento|lamento|disculp|gracias|revis|entiendo|comprend|arregl|corrig|hablar[eé]?|enseguida/;
+
 export function replyIsSafe(body: string) {
   const t = body.toLowerCase();
-  if (/\bfree\b|\brefund\b|\bcomp(ed)?\b|\bgratis\b|\breembolso\b/.test(t)) return false;
-  return /sorry|thank|look|check|sorry|perdón|siento|gracias|revis/.test(t);
+  if (OVERPROMISE.test(t)) return false;
+  return ACKNOWLEDGES.test(t);
 }
 
 /** The persistent "what to do right now" line, one per step of this job. */
