@@ -12,6 +12,8 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import { firstPersonSkill } from "@/lib/skills";
 
 type View = "form" | "done";
@@ -26,6 +28,9 @@ export default function SwapRequestTask() {
   const [reason, setReason] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
+  const showMe = useShowMe();
+  // One step, one control: the button that files the form.
+  const showMeId = "submit-button";
 
   const c = SWAP_COPY[lang];
 
@@ -77,6 +82,8 @@ export default function SwapRequestTask() {
           instruction={RIGHT_NOW_STEPS[0]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -135,6 +142,7 @@ export default function SwapRequestTask() {
           </label>
 
           <button
+            data-showme="submit-button"
             onClick={submit}
             className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
           >
@@ -153,7 +161,7 @@ export default function SwapRequestTask() {
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 
@@ -173,6 +181,7 @@ export default function SwapRequestTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

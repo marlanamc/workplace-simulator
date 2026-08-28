@@ -201,7 +201,7 @@ export default function TriageTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       )}

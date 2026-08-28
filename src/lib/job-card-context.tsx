@@ -52,8 +52,9 @@ export interface JobCardStep {
 /** What a finished task reports. The card supplies the button. */
 export interface JobCardFinish {
   id: string;
-  /** Short past-tense kicker, e.g. "Thank-you sent". */
-  kicker: string;
+  /** Short past-tense kicker, e.g. "Thank-you sent". The card falls back to
+   *  its own localized word when a task doesn't supply one. */
+  kicker?: string;
   /** Replay this same job. Offered quietly, never as a competing choice. */
   onTryAgain?: () => void;
 }

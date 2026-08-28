@@ -437,6 +437,7 @@ export default function SpreadsheetTask() {
             />
 
             <TaskDoneActions
+              kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
               onTryAgain={restart}

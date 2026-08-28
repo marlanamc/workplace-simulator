@@ -196,7 +196,7 @@ export default function JobCard() {
       const doneLine = justFinished ? JOB_CARD_DONE_LINE[justFinished]?.[lang] : undefined;
       return {
         badge: "✓",
-        kicker: finish.kicker,
+        kicker: finish.kicker ?? c.doneKicker,
         tone: "green",
         step: 4,
         line:

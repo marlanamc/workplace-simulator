@@ -169,6 +169,7 @@ export default function IncidentTask() {
               badgeWhere={c.badgeWhere}
             />
             <TaskDoneActions
+              kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
               onTryAgain={restart}

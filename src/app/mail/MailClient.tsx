@@ -32,11 +32,11 @@ import { sortInboxByTime, storyMailsUpTo, type InboxRow } from "@/lib/story-beat
 import { speakFromClick, speakText, stopSpeaking } from "@/lib/read-aloud";
 import type { Localized } from "@/lib/task-types";
 import { useWindowManager } from "@/lib/window-manager";
+import { SHOW_ME_POINTER } from "@/lib/use-show-me";
 import BridgeOutCard from "@/components/task/BridgeOutCard";
 import { bridgeOutCopyFor } from "@/lib/bridge-out-content";
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
-const SHOW_ME_LABEL: Localized<string> = { en: "This one. Click it.", es: "Este. Haz clic aquí." };
 
 type View = "empty" | "read" | "confirm" | "compose" | "done" | "story";
 type MailTask = PlayableMailTask;
@@ -688,7 +688,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight
         targetId={showMeTargetId}
-        label={SHOW_ME_LABEL[lang]}
+        label={SHOW_ME_POINTER[lang]}
         onDismiss={() => setShowMeTarget(null)}
       />
     </div>

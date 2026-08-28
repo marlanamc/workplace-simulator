@@ -21,14 +21,22 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
 type View = "list" | "check1" | "check2" | "done";
+
+/** The stub the card sends them to - "not Sam's, not Priya's" is the exercise. */
+const TARGET_EMPLOYEE = "Alex Chen";
 
 export default function PaystubTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
+  // Alex's stub, then the right answer to each check.
+  const showMeId = view === "list" ? "target-stub" : "correct-option";
   const { openApp } = useWindowManager();
 
   const c = PAYSTUB_COPY[lang];
@@ -72,6 +80,8 @@ export default function PaystubTask() {
           instruction={RIGHT_NOW_STEPS[view === "list" ? 0 : view === "check1" ? 1 : 2]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -83,6 +93,7 @@ export default function PaystubTask() {
             {PAY_STUBS.map((p, i) => (
               <button
                 key={p.id}
+                data-showme={p.employee === TARGET_EMPLOYEE ? "target-stub" : undefined}
                 onClick={() => openStub(p)}
                 className={`flex w-full items-center justify-between px-4 py-3.5 text-left hover:bg-[var(--surface-muted)] cursor-pointer ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
               >
@@ -111,6 +122,7 @@ export default function PaystubTask() {
             {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
               <button
                 key={opt.label}
+                data-showme={opt.isTarget ? "correct-option" : undefined}
                 onClick={() =>
                   answer(opt, () => {
                     if (view === "check1") {
@@ -142,6 +154,7 @@ export default function PaystubTask() {
           />
 
           <TaskDoneActions
+            kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
             onTryAgain={restart}
@@ -159,6 +172,7 @@ export default function PaystubTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

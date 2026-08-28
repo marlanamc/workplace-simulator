@@ -213,6 +213,7 @@ export default function FilesTask() {
               badgeWhere={c.badgeWhere}
             />
             <TaskDoneActions
+              kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
               onTryAgain={restart}

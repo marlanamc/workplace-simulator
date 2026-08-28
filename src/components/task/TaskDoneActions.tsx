@@ -35,7 +35,7 @@ export default function TaskDoneActions({
 
   useEffect(() => {
     if (!reportFinish) return;
-    reportFinish({ id, kicker: kicker ?? "Done", onTryAgain: () => tryAgain.current() });
+    reportFinish({ id, kicker, onTryAgain: () => tryAgain.current() });
     return () => reportFinish(null, id);
   }, [reportFinish, id, kicker]);
 

@@ -134,6 +134,7 @@ export default function TourTask({
               badgeWhere={c.badgeWhere}
             />
             <TaskDoneActions
+              kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
               onTryAgain={restart}

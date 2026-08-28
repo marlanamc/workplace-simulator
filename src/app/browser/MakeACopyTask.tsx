@@ -232,7 +232,7 @@ export default function MakeACopyTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions kicker={c.typedKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       )}

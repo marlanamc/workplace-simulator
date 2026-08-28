@@ -20,6 +20,8 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import NeedAStart from "@/components/task/NeedAStart";
 
 type View = "list" | "compose" | "done";
@@ -31,6 +33,10 @@ export default function ScheduleTask() {
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
+  // The one control this step is about: the clashing day's swap button,
+  // then Send once they are writing.
+  const showMeId = view === "list" ? "swap-button" : "send-button";
 
   const c = SCHEDULE_COPY[lang];
 
@@ -83,6 +89,8 @@ export default function ScheduleTask() {
           instruction={RIGHT_NOW_STEPS[view === "list" ? 0 : 1]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -110,6 +118,7 @@ export default function ScheduleTask() {
                 </div>
                 {d.shift && (
                   <button
+                    data-showme={d.conflict ? "swap-button" : undefined}
                     onClick={() => requestSwap(d)}
                     className="shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
                   >
@@ -177,6 +186,7 @@ export default function ScheduleTask() {
 
           <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
             <button
+              data-showme="send-button"
               onClick={trySend}
               className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
             >
@@ -204,6 +214,7 @@ export default function ScheduleTask() {
           />
 
           <TaskDoneActions
+            kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
             onTryAgain={restart}
@@ -221,6 +232,7 @@ export default function ScheduleTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

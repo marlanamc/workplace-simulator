@@ -16,6 +16,8 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import NeedAStart from "@/components/task/NeedAStart";
 import { firstPersonSkill } from "@/lib/skills";
 
@@ -27,6 +29,9 @@ export default function CallOutSickTask() {
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("call-out-sick");
+  const showMe = useShowMe();
+  // One step, one control: the button that sends the message.
+  const showMeId = "send-button";
 
   const c = CALL_OUT_COPY[lang];
 
@@ -71,6 +76,8 @@ export default function CallOutSickTask() {
           instruction={RIGHT_NOW_STEPS[0]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -100,6 +107,7 @@ export default function CallOutSickTask() {
           </div>
           <div className="flex items-center gap-1 border-t border-[var(--border)] px-3 py-2.5">
             <button
+              data-showme="send-button"
               onClick={trySend}
               className="inline-flex min-h-[40px] items-center rounded-full bg-[var(--accent)] px-6 text-[14px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
             >
@@ -119,7 +127,7 @@ export default function CallOutSickTask() {
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 
@@ -139,6 +147,7 @@ export default function CallOutSickTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

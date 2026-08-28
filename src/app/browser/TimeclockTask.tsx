@@ -19,6 +19,8 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import NeedAStart from "@/components/task/NeedAStart";
 
 type View = "clocked_in" | "review" | "compose" | "done";
@@ -29,6 +31,10 @@ export default function TimeclockTask() {
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
+  // Clock out, then say the hours are wrong, then send.
+  const showMeId =
+    view === "clocked_in" ? "clockout-button" : view === "review" ? "something-off-button" : "send-button";
 
   const c = TIMECLOCK_COPY[lang];
 
@@ -74,6 +80,8 @@ export default function TimeclockTask() {
           instruction={RIGHT_NOW_STEPS[view === "clocked_in" ? 0 : view === "review" ? 1 : 2]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -89,6 +97,7 @@ export default function TimeclockTask() {
             </div>
             <div className="mt-1 text-[14px] text-[var(--text-secondary)]">{TIMECLOCK.weekHours}</div>
             <button
+              data-showme="clockout-button"
               onClick={() => setView("review")}
               className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
             >
@@ -144,6 +153,7 @@ export default function TimeclockTask() {
                 {c.looksRight}
               </button>
               <button
+                data-showme="something-off-button"
                 onClick={() => setView("compose")}
                 className="min-h-[44px] rounded-full border border-[var(--border)] px-4 text-[14px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
               >
@@ -181,6 +191,7 @@ export default function TimeclockTask() {
 
           <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
             <button
+              data-showme="send-button"
               onClick={trySend}
               className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
             >
@@ -208,6 +219,7 @@ export default function TimeclockTask() {
           />
 
           <TaskDoneActions
+            kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
             onTryAgain={restart}
@@ -225,6 +237,7 @@ export default function TimeclockTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

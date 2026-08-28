@@ -12,6 +12,8 @@ import {
 import { TASK_ICONS } from "@/lib/icons";
 import NudgeToast from "@/components/task/NudgeToast";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import { firstPersonSkill } from "@/lib/skills";
@@ -24,6 +26,9 @@ export default function ShiftReviewTask() {
   const [beatIndex, setBeatIndex] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("shift-review");
+  const showMe = useShowMe();
+  // One step: the honest answer among the options.
+  const showMeId = "correct-option";
 
   const c = REVIEW_COPY[lang];
   const beat = BEATS[beatIndex];
@@ -73,6 +78,8 @@ export default function ShiftReviewTask() {
           instruction={RIGHT_NOW_STEPS[0]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
         />
       )}
 
@@ -98,6 +105,7 @@ export default function ShiftReviewTask() {
               {beat.options[lang].map((opt) => (
                 <button
                   key={opt.label}
+                  data-showme={opt.correct ? "correct-option" : undefined}
                   onClick={() => pick(opt)}
                   className={`rounded-xl border px-4 py-3 text-left text-[14px] font-medium cursor-pointer ${
                     picked === opt.label
@@ -125,11 +133,12 @@ export default function ShiftReviewTask() {
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

@@ -166,6 +166,7 @@ export default function CalendarTask() {
               badgeWhere={c.badgeWhere}
             />
             <TaskDoneActions
+              kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}
               onTryAgain={restart}
