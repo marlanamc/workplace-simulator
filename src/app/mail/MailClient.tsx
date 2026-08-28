@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   MAIL_COPY,
-  BODY,
+  bodyForTask,
   STARTERS,
   LESSONS,
   FILES,
@@ -28,8 +28,10 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
-import { sortInboxByTime, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
+import MailSignature from "@/components/task/MailSignature";
 import { speakFromClick, speakText, stopSpeaking } from "@/lib/read-aloud";
+import { signatureFor } from "@/lib/mail-greeting";
+import { sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
 import type { Localized } from "@/lib/task-types";
 import { useWindowManager } from "@/lib/window-manager";
 import { SHOW_ME_POINTER } from "@/lib/use-show-me";
@@ -86,7 +88,7 @@ function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
 }
 
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
-  const { markComplete, completedTaskKeys, lang, storyFlags, setStoryFlag, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
+  const { markComplete, completedTaskKeys, displayName, lang, storyFlags, setStoryFlag, speakAloud, setSpeakAloud, bigText, setBigText } = useProgress();
   const { browserTabToken } = useWindowManager();
   // Fixed for this mount, not recomputed every render: markComplete() updates
   // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
@@ -126,6 +128,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const c = MAIL_COPY[lang];
   const cc = CONFIRM_COPY[lang];
   const subjectMeta = SUBJECT_BY_TASK[activeMailTask][lang];
+  // Day One's two emails are both from Maria, so her signature is fixed here
+  // rather than looked up per row the way the story mails do it.
+  const mariaSignature = signatureFor("Maria Delgado");
   const T = (en: string, es: string) => (lang === "en" ? en : es);
   const mailDone = completedTaskKeys.includes(activeMailTask);
   // While a Day One job is running (first time OR a replay), the inbox shows
@@ -448,8 +453,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <div>
-                        <span className="text-[14px] font-medium">Maria Delgado</span>
-                        <span className="ml-1 text-[12px] text-[#5f6368]">&lt;maria.delgado@harborsidecafe.com&gt;</span>
+                        <span className="text-[14px] font-medium">{mariaSignature?.name}</span>
+                        <span className="ml-1 text-[12px] text-[#5f6368]">&lt;{mariaSignature?.email}&gt;</span>
                       </div>
                       <div className="text-[12px] text-[#5f6368]">
                         {activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM"}
@@ -457,10 +462,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {(plain ? BODY[activeMailTask][lang].plain : BODY[activeMailTask][lang].full).map((p, i) => (
+                      {(() => {
+                        const b = bodyForTask(activeMailTask, lang, displayName);
+                        return plain ? b.plain : b.full;
+                      })().map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
+                    {mariaSignature && <MailSignature sig={mariaSignature} lang={lang} />}
                   </div>
                 </div>
 
@@ -601,7 +610,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               </div>
             )}
 
-            {view === "story" && openStory?.body && (
+            {view === "story" && openStory?.body && (() => {
+              const storySig = signatureFor(openStory.from);
+              return (
               <div className="px-6 py-4 sm:px-8">
                 <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{openStory.subject[lang]}</h2>
                 <div className="flex items-start gap-3">
@@ -615,19 +626,24 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <div>
                         <span className="text-[14px] font-medium">{openStory.from}</span>
+                        {storySig && (
+                          <span className="ml-1 text-[12px] text-[#5f6368]">&lt;{storySig.email}&gt;</span>
+                        )}
                       </div>
                       <div className="text-[12px] text-[#5f6368]">{openStory.time}</div>
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {openStory.body[lang].map((p, i) => (
+                      {storyBodyFor(openStory, lang, displayName).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
+                    {storySig && <MailSignature sig={storySig} lang={lang} />}
                   </div>
                 </div>
               </div>
-            )}
+              );
+            })()}
 
             {view === "done" && (() => {
               const dc = DONE_COPY[activeMailTask][lang];

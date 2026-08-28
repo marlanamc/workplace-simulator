@@ -1,4 +1,5 @@
 import type { TaskKey } from "@/lib/desktop-content";
+import { firstName, mailGreeting, signatureFor } from "@/lib/mail-greeting";
 import type { Lang, Localized } from "@/lib/task-types";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 
@@ -284,13 +285,11 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "View only. That's what I wanted.", es: "Solo ver. Eso es lo que quería." },
     body: {
       en: [
-        "Jordan has this week's schedule, view only. That's what I wanted.",
-        "Thank you.",
+        "Jordan has this week's schedule, view only. That's exactly what I wanted.",
         "Friday the counts are due. Total them yourself.",
       ],
       es: [
-        "Jordan ya tiene el horario de esta semana, solo para ver. Eso es lo que quería.",
-        "Gracias.",
+        "Jordan ya tiene el horario de esta semana, solo para ver. Eso es justo lo que quería.",
         "El viernes hay que entregar las cuentas. Súmalas tú.",
       ],
     },
@@ -307,12 +306,10 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "Got the total. I'll add it to this week's pay.",
-        "Thank you.",
         "I shared a template. It is view only. Copy it first.",
       ],
       es: [
         "Tengo el total. Lo sumo al pago de esta semana.",
-        "Gracias.",
         "Compartí una plantilla. Es solo ver. Cópiala primero.",
       ],
     },
@@ -465,6 +462,24 @@ const STORY_MAILS: InboxRow[] = [
 
 export function storyMailAfter(taskKey: TaskKey): InboxRow | undefined {
   return STORY_MAILS.find((m) => m.unlockAfter === taskKey);
+}
+
+const CLOSING: Record<Lang, string> = { en: "Thanks,", es: "Gracias," };
+
+/**
+ * A story email as the learner reads it: greeted by name at the top, closed at
+ * the bottom. The middle lines are the beat itself and stay verbatim. Modeling
+ * the full greeting-body-closing shape is the point — a learner who only ever
+ * sees bare paragraphs never learns what a work email looks like.
+ *
+ * The typed name after the closing is left off for anyone who has a signature
+ * block, since that block already names them; a sender without one still types
+ * their first name, the way a quick note from a coworker actually arrives.
+ */
+export function storyBodyFor(row: InboxRow, lang: Lang, displayName: string): string[] {
+  if (!row.body) return [];
+  const signed = signatureFor(row.from) ? [] : [firstName(row.from)];
+  return [mailGreeting(lang, displayName), ...row.body[lang], CLOSING[lang], ...signed];
 }
 
 export function noteIsFromMaria(taskKey: TaskKey): boolean {

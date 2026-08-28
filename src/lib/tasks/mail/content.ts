@@ -1,4 +1,8 @@
+import { mailGreeting } from "@/lib/mail-greeting";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
+
+/** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
+const GREETING = "__GREETING__";
 
 /** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
 export type PlayableMailTask = "mail-reply" | "mail-attach";
@@ -127,12 +131,12 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
     en: {
       subject: "Need the July safety report today",
       reSubject: "Re: Need the July safety report today",
-      preview: "Hi, can you send me the July safety report today?",
+      preview: "Can you send me the July safety report today?",
     },
     es: {
       subject: "Necesito el reporte de seguridad de julio hoy",
       reSubject: "Re: Necesito el reporte de seguridad de julio hoy",
-      preview: "Hola, ¿me puedes enviar hoy el reporte de seguridad de julio?",
+      preview: "¿Me puedes enviar hoy el reporte de seguridad de julio?",
     },
   },
 };
@@ -256,41 +260,46 @@ export const MAIL_COPY: Record<Lang, {
   },
 };
 
-export const BODY: Record<PlayableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
+/**
+ * Day One mail bodies. The greeting line is filled in per learner by
+ * bodyForTask — Maria always opens by name, the way a real manager does.
+ *
+ * Bodies stop at the closing ("Thanks," / "See you on the floor,"). The name,
+ * title, and contact details underneath are the signature block, rendered from
+ * SIGNATURES so every email Maria sends ends the same way — which is the point
+ * of a signature, and is not something to retype into each body.
+ */
+const BODY_TEMPLATE: Record<PlayableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
   // Job 1: welcome note — thank-you reply, no file.
   "mail-reply": {
     en: {
       plain: [
-        "Hi,",
+        GREETING,
         "Welcome to Harborside Cafe. I'm glad you're here.",
         "Call or email me if you need anything.",
         "See you on the floor,",
-        "Maria",
       ],
       full: [
-        "Hi,",
+        GREETING,
         "Welcome to the Harborside Cafe team. I'm glad you're starting with us.",
         "If you need anything — schedule, login, or just a question — call or email me. I'm here.",
         "Looking forward to working with you.",
-        "Maria Delgado",
-        "Cafe Manager",
+        "Thanks,",
       ],
     },
     es: {
       plain: [
-        "Hola,",
+        GREETING,
         "Bienvenido a Harborside Cafe. Me alegra que estés aquí.",
         "Llámame o escríbeme si necesitas algo.",
         "Nos vemos en el piso,",
-        "Maria",
       ],
       full: [
-        "Hola,",
+        GREETING,
         "Bienvenido al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
         "Si necesitas algo — horario, acceso o solo una pregunta — llámame o escríbeme. Aquí estoy.",
         "Espero trabajar contigo.",
-        "Maria Delgado",
-        "Gerente del café",
+        "Gracias,",
       ],
     },
   },
@@ -298,36 +307,47 @@ export const BODY: Record<PlayableMailTask, Record<Lang, { plain: string[]; full
   "mail-attach": {
     en: {
       plain: [
-        "Hi,",
+        GREETING,
         "Can you send me the July safety report today? Please attach the file to your reply.",
         "Thanks,",
-        "Maria",
       ],
       full: [
-        "Hi,",
+        GREETING,
         "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
         "Please attach the PDF to your reply so I can send it along.",
         "Thanks,",
-        "Maria",
       ],
     },
     es: {
       plain: [
-        "Hola,",
+        GREETING,
         "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
         "Gracias,",
-        "Maria",
       ],
       full: [
-        "Hola,",
+        GREETING,
         "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
         "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
         "Gracias,",
-        "Maria",
       ],
     },
   },
 };
+
+/**
+ * The Day One email as this learner sees it: same words, addressed to them by
+ * name. Both the plain and full versions get the greeting.
+ */
+export function bodyForTask(
+  task: PlayableMailTask,
+  lang: Lang,
+  displayName: string,
+): { plain: string[]; full: string[] } {
+  const greeting = mailGreeting(lang, displayName);
+  const swap = (lines: string[]) => lines.map((line) => (line === GREETING ? greeting : line));
+  const template = BODY_TEMPLATE[task][lang];
+  return { plain: swap(template.plain), full: swap(template.full) };
+}
 
 export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
   "mail-reply": {
