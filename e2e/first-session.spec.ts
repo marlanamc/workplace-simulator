@@ -51,7 +51,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   // the desktop → job → desktop loop, learned on the very first tap.
   const card = jobCard(page);
   await expect(card.getByText("Look around this computer.")).toBeVisible();
-  await card.getByRole("button", { name: "Open Welcome" }).click();
+  await card.getByRole("button", { name: "Open the Web Browser" }).click();
 
   // One instruction at a time; it advances only on the real click.
   await expect(page.getByText("Click Mail.")).toBeVisible();
@@ -65,7 +65,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   await page.getByTestId("bookmark-calendar").click();
 
   // Pause on Calendar so they actually see it.
-  await expect(page.getByText("This is your work calendar.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Meetings and your work shifts show up here.", { exact: false })).toBeVisible();
   // No intro card here any more: the real calendar is what they see.
   await expect(page.getByText("August 2026").first()).toBeVisible();
   await page.getByRole("button", { name: "Got it" }).click();

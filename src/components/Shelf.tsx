@@ -15,7 +15,7 @@ import { useNudge } from "@/lib/use-nudge";
 import { QuickSettingsClock, ShelfClock } from "@/components/LiveClock";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
-import { APP_ICONS, TAB_ICONS, Briefcase, Languages } from "@/lib/icons";
+import { APP_ICONS, TAB_ICONS, Briefcase, ChromeIcon, Languages, Lock, PdfIcon } from "@/lib/icons";
 import Link from "next/link";
 import { logout } from "@/app/actions";
 import { levelForTrack } from "@/lib/tracks-content";
@@ -92,6 +92,12 @@ function LucideAppIcon({
   color: string;
   size: number;
 }) {
+  if (appKey === "browser") {
+    return <ChromeIcon size={size} />;
+  }
+  if (appKey === "pdf") {
+    return <PdfIcon size={size} />;
+  }
   const Icon = APP_ICONS[appKey];
   return <AppIcon icon={<Icon size={Math.round(size * 0.5)} strokeWidth={2.25} />} color={color} size={size} />;
 }
@@ -119,7 +125,7 @@ function ShelfPin({
       aria-label={label}
       aria-pressed={active}
       onClick={onClick}
-      className="relative flex h-10 w-10 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
+      className="relative flex h-12 w-10 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
       style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
     >
       {children}
@@ -131,7 +137,12 @@ function ShelfPin({
           {badge}
         </span>
       ) : null}
-      {active && <span className="absolute bottom-1 h-[3px] w-4 rounded-full bg-white" aria-hidden />}
+      {active && (
+        <span
+          className="absolute bottom-[3px] left-1/2 h-[3px] w-4 -translate-x-1/2 rounded-full bg-white"
+          aria-hidden
+        />
+      )}
     </button>
   );
 }
@@ -223,7 +234,7 @@ export default function Shelf({
               aria-label={c.appsBtn}
               aria-expanded={launcherOpen}
               title={c.appsBtn}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
+              className="flex h-12 w-10 shrink-0 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
               style={launcherOpen ? { background: "rgba(255,255,255,0.12)" } : undefined}
             >
               <StartIcon />
@@ -261,13 +272,30 @@ export default function Shelf({
           testId="shelf-my-job"
           badge={!myJobLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
-            if (myJobLocked) return;
+            if (myJobLocked) {
+              say(
+                lang === "en"
+                  ? "That list is part of this practice. It opens after you finish looking around."
+                  : "Esa lista es parte de esta práctica. Se abre cuando termines de mirar alrededor.",
+              );
+              return;
+            }
             closeLauncher();
             setAccountOpen(false);
             onMyJobOpenChange(!myJobOpen);
           }}
         >
-          <AppIcon icon={<Briefcase size={16} strokeWidth={2.25} />} color={myJobLocked ? "#9aa0a6" : "#e37400"} size={32} />
+          <span className="relative">
+            <AppIcon icon={<Briefcase size={16} strokeWidth={2.25} />} color="#e37400" size={32} />
+            {myJobLocked && (
+              <span
+                className="absolute -right-0.5 -bottom-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#202124] text-white"
+                aria-hidden
+              >
+                <Lock size={9} strokeWidth={2.75} />
+              </span>
+            )}
+          </span>
         </ShelfPin>
           </div>
         </div>

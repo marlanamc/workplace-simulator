@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+body { margin:0; background:#202124; font-family:Roboto, Arial, sans-serif; }
+a { color:#1a73e8; } a:hover { color:#1558b0; }
+@keyframes cardpop { from { opacity:0; transform:translateY(14px) } to { opacity:1; transform:none } }
+@keyframes ringpulse { 0%,100% { box-shadow:0 0 0 4px rgba(227,116,0,0.95), 0 0 0 12px rgba(227,116,0,0.25) } 50% { box-shadow:0 0 0 4px rgba(227,116,0,0.95), 0 0 0 20px rgba(227,116,0,0.08) } }
+@media (prefers-reduced-motion: reduce) { * { animation:none !important } }
+</style>
+</helmet>
+
+<div style="position:relative; width:1280px; height:800px; overflow:hidden; font-family:Roboto, Arial, sans-serif; color:#202124; background:#dee1e6">
+
+  <!-- ─────────── DESKTOP ─────────── -->
+  <sc-if value="{{ onDesktop }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute; inset:0">
+      <img src="public/wallpapers/latte.jpg" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover" />
+      <div style="position:absolute; inset:0; background:linear-gradient(90deg, rgba(28,16,10,0.45) 0%, rgba(28,16,10,0.18) 30%, transparent 55%)"></div>
+      <div style="position:absolute; left:40px; top:40px; color:#fff; text-shadow:0 2px 18px rgba(0,0,0,0.35)">
+        <div style="font-size:72px; font-weight:400; line-height:1; letter-spacing:-0.03em; font-variant-numeric:tabular-nums">8:20</div>
+        <div style="margin-top:8px; font-size:20px; color:rgba(255,255,255,0.9)">Monday, August 17</div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ─────────── BROWSER + MAIL ─────────── -->
+  <sc-if value="{{ inBrowser }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; inset:0; display:flex; flex-direction:column; background:#dee1e6">
+      <div style="display:flex; align-items:flex-end; background:#dee1e6; padding:6px 8px 0">
+        <div style="display:flex; height:34px; width:200px; align-items:center; gap:8px; border-radius:10px 10px 0 0; background:#fff; padding:0 12px">
+          <span style="display:flex; width:16px; height:16px; align-items:center; justify-content:center; border-radius:3px; background:#ea4335; color:#fff"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 5L2 7"></path></svg></span>
+          <span style="font-size:13px">Mail</span>
+        </div>
+        <div style="flex:1"></div>
+        <div style="display:flex; gap:2px; margin-bottom:2px; color:#5f6368">
+          <button onClick="{{ backToDesktop }}" aria-label="Minimize" style="display:flex; width:36px; height:32px; align-items:center; justify-content:center; border:none; background:none; color:inherit; cursor:pointer"><svg width="11" height="11" viewBox="0 0 11 11"><rect x="1.5" y="5.2" width="8" height="1.1" fill="currentColor"></rect></svg></button>
+          <span style="display:flex; width:36px; height:32px; align-items:center; justify-content:center"><svg width="11" height="11" viewBox="0 0 11 11"><rect x="1.5" y="1.5" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.1"></rect></svg></span>
+          <button onClick="{{ backToDesktop }}" aria-label="Close" style="display:flex; width:36px; height:32px; align-items:center; justify-content:center; border:none; background:none; color:inherit; cursor:pointer"><svg width="11" height="11" viewBox="0 0 11 11"><path d="M1.5 1.5 L9.5 9.5 M9.5 1.5 L1.5 9.5" stroke="currentColor" stroke-width="1.15" stroke-linecap="round"></path></svg></button>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:4px; background:#fff; padding:6px 8px">
+        <span style="display:flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:999px; color:#5f6368"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"></path></svg></span>
+        <span style="display:flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:999px; color:#c8cace"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z"></path></svg></span>
+        <div style="display:flex; height:36px; flex:1; align-items:center; gap:8px; border-radius:999px; background:#e9eef6; padding:0 12px; font-size:14px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#188038"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path></svg>
+          <span style="flex:1">mail.harborsidecafe.com</span>
+        </div>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:2px; border-bottom:1px solid #dadce0; background:#fff; padding:3px 12px">
+        <span style="display:flex; align-items:center; gap:6px; border-radius:6px; background:#e8eaed; padding:5px 8px; font-size:13px"><span style="display:flex; width:16px; height:16px; align-items:center; justify-content:center; border-radius:3px; background:#ea4335; color:#fff"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 5L2 7"></path></svg></span>Mail</span>
+        <span style="display:flex; align-items:center; gap:6px; border-radius:6px; padding:5px 8px; font-size:13px; color:#3c4043"><span style="display:flex; width:16px; height:16px; align-items:center; justify-content:center; border-radius:3px; background:#8430ce; color:#fff"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg></span>Portal</span>
+      </div>
+
+      <div style="display:flex; min-height:0; flex:1; background:#f6f8fc">
+        <div style="display:flex; width:200px; flex-shrink:0; flex-direction:column; gap:4px; padding:12px">
+          <div style="display:flex; height:52px; align-items:center; gap:12px; border-radius:16px; background:#fff; padding:0 16px; font-size:14px; font-weight:500; color:#001d35; box-shadow:0 1px 3px rgba(60,64,67,.3)"><span style="color:#0b57d0; font-size:20px">✎</span>Compose</div>
+          <div style="display:flex; height:32px; align-items:center; gap:12px; border-radius:0 999px 999px 0; background:#d3e3fd; padding:0 12px; font-size:14px; font-weight:500; color:#001d35">Inbox</div>
+          <div style="display:flex; height:32px; align-items:center; padding:0 12px; font-size:14px; color:#444746">Starred</div>
+          <div style="display:flex; height:32px; align-items:center; padding:0 12px; font-size:14px; color:#444746">Sent</div>
+        </div>
+
+        <div style="display:flex; min-width:0; flex:1; border-top-left-radius:16px; background:#fff; overflow:hidden">
+          <div style="display:flex; width:330px; flex-shrink:0; flex-direction:column; border-right:1px solid #e0e3e8">
+            <div style="padding:12px 16px; font-size:14px; font-weight:500">Inbox</div>
+            <div style="flex:1; overflow-y:auto">
+              <sc-for list="{{ inbox }}" as="row" hint-placeholder-count="4">
+                <button onClick="{{ row.onClick }}" style="{{ row.style }}">
+                  <span style="{{ row.avatarStyle }}">{{ row.initials }}</span>
+                  <span style="min-width:0; flex:1; display:block">
+                    <span style="display:flex; align-items:baseline; justify-content:space-between; gap:8px">
+                      <span style="{{ row.nameStyle }}">{{ row.from }}</span>
+                      <span style="flex-shrink:0; font-size:12px; color:#444746">{{ row.time }}</span>
+                    </span>
+                    <span style="{{ row.subjectStyle }}">{{ row.subject }}</span>
+                    <span style="display:block; font-size:13px; color:#5f6368; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ row.preview }}</span>
+                  </span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:flex; min-width:0; flex:1; flex-direction:column; overflow-y:auto">
+            <sc-if value="{{ viewEmpty }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex; height:100%; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:40px; text-align:center; color:#5f6368">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#dadce0" stroke-width="1.25"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path></svg>
+                <p style="margin:0; max-width:280px; font-size:14px">Click an email on the left to open it.</p>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ viewMail }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:20px 32px 32px">
+                <h2 style="margin:0 0 20px; font-size:22px; font-weight:400; line-height:1.2; color:#1f1f1f">{{ mailSubject }}</h2>
+                <div style="display:flex; align-items:flex-start; gap:12px">
+                  <div style="display:flex; width:40px; height:40px; flex-shrink:0; align-items:center; justify-content:center; border-radius:50%; background:#1a73e8; font-size:14px; font-weight:500; color:#fff">MD</div>
+                  <div style="min-width:0; flex:1">
+                    <div style="display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:8px">
+                      <div><span style="font-size:14px; font-weight:500">Maria Delgado</span><span style="margin-left:4px; font-size:12px; color:#5f6368">&lt;maria.delgado@harborsidecafe.com&gt;</span></div>
+                      <div style="font-size:12px; color:#5f6368">{{ mailTime }}</div>
+                    </div>
+                    <div style="font-size:12px; color:#5f6368">to me</div>
+                    <div style="margin-top:16px; display:flex; max-width:62ch; flex-direction:column; gap:12px; font-size:14px; line-height:1.6; color:#1f1f1f">
+                      <sc-for list="{{ mailBody }}" as="para" hint-placeholder-count="4">
+                        <p style="margin:0">{{ para.text }}</p>
+                      </sc-for>
+                    </div>
+
+                    <sc-if value="{{ showReplyRow }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:24px; display:flex; flex-wrap:wrap; gap:8px">
+                        <button onClick="{{ clickReply }}" style="{{ replyStyle }}">Reply</button>
+                        <button onClick="{{ clickForward }}" style="display:inline-flex; min-height:44px; align-items:center; border:1px solid #747775; border-radius:999px; background:#fff; padding:0 22px; font-family:inherit; font-size:15px; font-weight:500; color:#444746; cursor:pointer">Forward</button>
+                      </div>
+                    </sc-if>
+
+                    <sc-if value="{{ viewCompose }}" hint-placeholder-val="{{ false }}">
+                      <div style="margin-top:24px; overflow:hidden; border:1px solid #e0e3e8; border-radius:16px; box-shadow:0 1px 3px rgba(60,64,67,.15)">
+                        <div style="display:flex; gap:8px; border-bottom:1px solid #e0e3e8; padding:8px 16px; font-size:13px"><span style="width:52px; color:#5f6368">To</span><span>maria.delgado@harborsidecafe.com</span></div>
+                        <div style="display:flex; gap:8px; border-bottom:1px solid #e0e3e8; padding:8px 16px; font-size:13px"><span style="width:52px; color:#5f6368">Subject</span><span>{{ replySubject }}</span></div>
+                        <textarea value="{{ draft }}" onChange="{{ onDraft }}" placeholder="Write your message here…" style="min-height:96px; width:100%; resize:vertical; border:none; padding:12px 16px; font-family:inherit; font-size:14px; line-height:1.6; outline:none"></textarea>
+                        <div style="display:flex; flex-wrap:wrap; gap:8px; padding:0 16px 10px">
+                          <sc-for list="{{ starters }}" as="s" hint-placeholder-count="2">
+                            <button onClick="{{ s.onClick }}" style="display:inline-flex; min-height:36px; align-items:center; border:1px solid #dadce0; border-radius:999px; background:#fff; padding:0 14px; font-family:inherit; font-size:13px; color:#3c4043; cursor:pointer">{{ s.text }}</button>
+                          </sc-for>
+                        </div>
+                        <sc-if value="{{ attached }}" hint-placeholder-val="{{ false }}">
+                          <div style="margin:0 16px 10px; display:inline-flex; align-items:center; gap:8px; border:1px solid #d3e3fd; border-radius:8px; background:#f8fbff; padding:8px 12px">
+                            <span style="border-radius:4px; background:#ea4335; padding:2px 6px; font-size:10px; font-weight:700; color:#fff">PDF</span>
+                            <span style="font-size:13px; font-weight:500">safety-report-july.pdf</span>
+                            <span style="font-size:12px; color:#5f6368">248 KB</span>
+                          </div>
+                        </sc-if>
+                        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:8px 16px 14px">
+                          <button onClick="{{ clickSend }}" style="{{ sendStyle }}">Send</button>
+                          <sc-if value="{{ needsAttach }}" hint-placeholder-val="{{ false }}">
+                            <button onClick="{{ openPicker }}" style="{{ attachStyle }}">
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
+                              Attach file
+                            </button>
+                          </sc-if>
+                        </div>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ─────────── SHELF ─────────── -->
+  <div style="position:absolute; left:0; right:0; bottom:0; height:48px; background:rgba(32,32,32,0.88); box-shadow:inset 0 1px 0 rgba(255,255,255,0.08)">
+    <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:4px">
+      <span style="display:flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:6px; color:#fff"><svg width="18" height="18" viewBox="0 0 18 18"><rect x="0.5" y="0.5" width="7.6" height="7.6" rx="1.4" fill="currentColor"></rect><rect x="9.9" y="0.5" width="7.6" height="7.6" rx="1.4" fill="currentColor"></rect><rect x="0.5" y="9.9" width="7.6" height="7.6" rx="1.4" fill="currentColor"></rect><rect x="9.9" y="9.9" width="7.6" height="7.6" rx="1.4" fill="currentColor"></rect></svg></span>
+      <span style="{{ shelfBrowserStyle }}">
+        <span style="display:flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:8px; background:#1a73e8; color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>
+      </span>
+      <span style="display:flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:6px">
+        <span style="display:flex; width:32px; height:32px; align-items:center; justify-content:center; border-radius:8px; background:#ea4335; color:#fff"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"></path><path d="M14 2v5h6"></path></svg></span>
+      </span>
+    </div>
+    <div style="position:absolute; right:12px; top:0; bottom:0; display:flex; align-items:center; gap:10px; color:rgba(255,255,255,0.9)">
+      <span style="display:flex; width:24px; height:24px; align-items:center; justify-content:center; border-radius:50%; background:#1a73e8; font-size:12px; font-weight:600; color:#fff">M</span>
+      <span style="display:flex; flex-direction:column; align-items:flex-end; line-height:1"><span style="font-size:13px; font-weight:500; font-variant-numeric:tabular-nums">8:20</span><span style="margin-top:2px; font-size:10px; color:rgba(255,255,255,0.7)">Aug 17</span></span>
+    </div>
+  </div>
+
+  <!-- ─────────── THE JOB CARD ─────────── -->
+  <div data-job-card="true" style="{{ cardShellStyle }}">
+    <div onPointerDown="{{ startDrag }}" onKeyDown="{{ nudgeCard }}" tabindex="0" role="button" aria-label="Move this card to another corner. Drag it, or use the arrow keys." title="Drag to move it to another corner" style="{{ cardHeaderStyle }}">
+      <span style="{{ cardBadgeStyle }}">{{ cardBadge }}</span>
+      <span style="min-width:0; flex:1; font-size:15px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ cardKicker }}</span>
+      <sc-if value="{{ moved }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ resetPos }}" title="Put it back in the corner" aria-label="Put the card back in the corner" style="display:flex; width:28px; height:28px; flex-shrink:0; align-items:center; justify-content:center; border:none; border-radius:50%; background:rgba(255,255,255,0.18); color:#fff; cursor:pointer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15 3 21"></path><path d="M3 15h6v6"></path><path d="M21 3h-6v6"></path><path d="M15 9 21 3"></path></svg>
+        </button>
+      </sc-if>
+      <span aria-hidden="true" style="display:flex; flex-shrink:0; gap:3px; opacity:0.75">
+        <span style="display:flex; flex-direction:column; gap:3px"><span style="width:3px; height:3px; border-radius:50%; background:#fff"></span><span style="width:3px; height:3px; border-radius:50%; background:#fff"></span><span style="width:3px; height:3px; border-radius:50%; background:#fff"></span></span>
+        <span style="display:flex; flex-direction:column; gap:3px"><span style="width:3px; height:3px; border-radius:50%; background:#fff"></span><span style="width:3px; height:3px; border-radius:50%; background:#fff"></span><span style="width:3px; height:3px; border-radius:50%; background:#fff"></span></span>
+      </span>
+    </div>
+    <div style="padding:20px">
+      <p style="margin:0; font-size:27px; font-weight:500; line-height:1.2; letter-spacing:-0.01em; color:#202124">{{ cardLine }}</p>
+
+      <sc-if value="{{ hasCorrection }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px; display:flex; align-items:flex-start; gap:10px; border-radius:14px; background:#fef0dc; padding:12px 14px">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#b06000" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>
+          <p style="margin:0; font-size:17px; font-weight:500; line-height:1.3; color:#8a5000">{{ correction }}</p>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasPrimary }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ primaryAction }}" style="{{ primaryStyle }}">{{ primaryLabel }}</button>
+      </sc-if>
+
+      <sc-if value="{{ hasHelpRow }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:14px; display:flex; gap:10px">
+          <button onClick="{{ toggleShowMe }}" style="{{ showMeStyle }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            {{ showMeLabel }}
+          </button>
+          <button onClick="{{ speak }}" aria-label="Read this out loud" style="display:flex; width:56px; min-height:56px; flex-shrink:0; align-items:center; justify-content:center; border:2px solid #dadce0; border-radius:16px; background:#fff; color:#3c4043; cursor:pointer">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7"></path></svg>
+          </button>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showDots }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:16px; display:flex; align-items:center; gap:6px">
+          <sc-for list="{{ dots }}" as="dot" hint-placeholder-count="4">
+            <span style="{{ dot.style }}"></span>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- ─────────── FILE PICKER ─────────── -->
+  <sc-if value="{{ picker }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.4); padding:24px">
+      <div style="width:520px; overflow:hidden; border-radius:16px; background:#fff; box-shadow:0 20px 50px rgba(0,0,0,0.35)">
+        <div style="border-bottom:1px solid #dadce0; padding:16px 20px; font-size:18px; font-weight:500">Choose a file to attach</div>
+        <div style="padding:8px">
+          <sc-for list="{{ files }}" as="f" hint-placeholder-count="4">
+            <button onClick="{{ f.onClick }}" style="{{ f.style }}">
+              <span style="{{ f.tagStyle }}">{{ f.tag }}</span>
+              <span style="flex:1; text-align:left; font-size:15px">{{ f.name }}</span>
+              <span style="font-size:13px; color:#5f6368">{{ f.date }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <div style="display:flex; justify-content:flex-end; border-top:1px solid #dadce0; padding:12px 16px">
+          <button onClick="{{ closePicker }}" style="display:inline-flex; min-height:44px; align-items:center; border:1px solid #dadce0; border-radius:999px; background:#fff; padding:0 20px; font-family:inherit; font-size:15px; font-weight:500; color:#3c4043; cursor:pointer">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <button onClick="{{ restart }}" style="position:absolute; right:16px; top:16px; z-index:90; display:inline-flex; min-height:36px; align-items:center; gap:8px; border:none; border-radius:999px; background:rgba(32,32,32,0.7); padding:0 14px; font-family:inherit; font-size:13px; font-weight:500; color:#fff; cursor:pointer">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg>
+    Start over
+  </button>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:800}}">
+const DECOYS = [
+  { key:"darnell", from:"Darnell Washington", initials:"DW", color:"#e37400", time:"7:41 AM", unread:true,
+    subject:"Extra aprons?", preview:"Do we still have extras in the back?",
+    hint:"Darnell is a coworker. Look for Maria Delgado." },
+  { key:"sched", from:"Harborside Schedule", initials:"HS", color:"#5f6368", time:"6:15 AM", unread:true,
+    subject:"Your schedule for Aug 17–23", preview:"This week's shifts have been posted.",
+    hint:"That one is automatic. Look for Maria Delgado." },
+  { key:"hr", from:"Harborside HR", initials:"HR", color:"#9334e6", time:"Yesterday", unread:false,
+    subject:"Your paystub is ready", preview:"View your paystub in the portal.",
+    hint:"That is from HR. Look for Maria Delgado." },
+  { key:"it", from:"IT Helpdesk", initials:"IT", color:"#3c4043", time:"Yesterday", unread:false,
+    subject:"Reminder: update your password", preview:"Your password expires in 12 days.",
+    hint:"That is from IT. Look for Maria Delgado." },
+];
+
+const WELCOME = {
+  key:"maria-welcome", from:"Maria Delgado", initials:"MD", color:"#1a73e8", time:"8:14 AM", unread:true,
+  subject:"Welcome to Harborside Cafe", preview:"Glad you're here. Call me if you need anything.",
+  body:["Hi,","Welcome to Harborside Cafe. I'm glad you're here.","Call or email me if you need anything.","See you on the floor,","Maria"],
+  replySubject:"Re: Welcome to Harborside Cafe",
+  hint:"That is her older welcome note. Open the newer one about the safety report.",
+};
+
+const SAFETY = {
+  key:"maria-safety", from:"Maria Delgado", initials:"MD", color:"#1a73e8", time:"8:20 AM", unread:true,
+  subject:"Need the July safety report today", preview:"Hi, can you send me the July safety report today?",
+  body:["Hi,","Can you send me the July safety report today? Please attach the file to your reply.","Thanks,","Maria"],
+  replySubject:"Re: Need the July safety report today",
+};
+
+const STARTERS = {
+  1: ["Hi Maria, thank you for the welcome.", "Thanks so much. I'm glad to be here."],
+  2: ["Hi Maria, here is the July safety report.", "Yes, I can send it today."],
+};
+
+const FILES = [
+  { name:"photo-jobsite-0714.jpg", tag:"JPG", color:"#5f6368", date:"Jul 14", ok:false, hint:"That is a photo, not the report." },
+  { name:"safety-report-july.pdf", tag:"PDF", color:"#1e8e3e", date:"Aug 1", ok:true },
+  { name:"shift-swap-form.pdf", tag:"PDF", color:"#1e8e3e", date:"Jul 22", ok:false, hint:"That is the shift swap form." },
+  { name:"safety-report-june.pdf", tag:"PDF", color:"#1e8e3e", date:"Jul 1", ok:false, hint:"That one is June. She asked for July." },
+];
+
+const BTN = "margin-top:18px; display:flex; width:100%; min-height:64px; align-items:center; justify-content:center; gap:12px; border:none; border-radius:16px; font-family:inherit; font-size:20px; font-weight:500; white-space:nowrap; cursor:pointer;";
+
+class Component extends DCLogic {
+  state = {
+    intro: 0,          // 0,1 = first-run beats, 2 = past intro
+    job: 1,            // 1 = thank you, 2 = safety report
+    place: "desktop",  // desktop | mail
+    view: "list",      // list | read | compose
+    openKey: null,
+    draft: "",
+    attached: false,
+    picker: false,
+    showMe: false,
+    correction: "",
+    done: false,       // job finished
+    allDone: false,
+    corner: "bl",      // card parks in one of four corners — never half off-screen
+    drag: null,        // live {x,y} while a drag is in progress
+  };
+
+  set(patch) { this.setState(patch); }
+
+  startDrag(e) {
+    if (e.button != null && e.button !== 0) return;
+    const card = e.currentTarget.closest("[data-job-card]");
+    const stage = card && card.parentElement;
+    if (!card || !stage) return;
+    const cardBox = card.getBoundingClientRect();
+    const stageBox = stage.getBoundingClientRect();
+    const grabX = e.clientX - cardBox.left;
+    const grabY = e.clientY - cardBox.top;
+    const maxX = stageBox.width - cardBox.width;
+    const maxY = stageBox.height - cardBox.height;
+    const clamp = (v, hi) => Math.max(0, Math.min(hi, v));
+    let last = null;
+
+    const move = (ev) => {
+      last = {
+        x: clamp(ev.clientX - stageBox.left - grabX, maxX),
+        y: clamp(ev.clientY - stageBox.top - grabY, maxY),
+      };
+      this.setState({ drag: last });
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      // Let go anywhere: the card snaps to whichever corner it is closest to,
+      // so it can never end up half off-screen or covering the controls.
+      if (!last) return this.setState({ drag: null });
+      const cx = last.x + cardBox.width / 2;
+      const cy = last.y + cardBox.height / 2;
+      const corner = (cy < stageBox.height / 2 ? "t" : "b") + (cx < stageBox.width / 2 ? "l" : "r");
+      this.setState({ drag: null, corner });
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
+    e.preventDefault();
+  }
+
+  moveCorner(e) {
+    const c = this.state.corner;
+    const k = e.key;
+    const set = (next) => { e.preventDefault(); this.setState({ corner: next }); };
+    if (k === "ArrowLeft") set(c[0] + "l");
+    else if (k === "ArrowRight") set(c[0] + "r");
+    else if (k === "ArrowUp") set("t" + c[1]);
+    else if (k === "ArrowDown") set("b" + c[1]);
+  }
+
+  correct(msg) {
+    this.setState({ correction: msg, showMe: false });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => this.setState({ correction: "" }), 5000);
+  }
+
+  // ── the one instruction, derived from state ─────────────────
+  script() {
+    const s = this.state;
+    if (s.allDone) return { badge:"✓", kicker:"Day one finished", line:"That's today done.", primary:"Start tomorrow", act:() => this.restartDay(), tone:"green", step:4 };
+    if (s.done) return { badge:"✓", kicker: s.job === 1 ? "Thank-you sent" : "Report sent", line: s.job === 1 ? "Sent. One job left." : "Sent, with the file.", primary:"Next job", act:() => this.nextJob(), tone:"green", step:4 };
+    if (s.intro === 0) return { badge:"1", kicker:"Your job card", line:"This card always tells you the next thing to do.", primary:"OK", act:() => this.set({ intro:1 }), tone:"blue", step:0, noDots:true };
+    if (s.intro === 1) return { badge:"1", kicker:"Your job card", line:"It stays in this corner. Nothing else will tell you what to do.", primary:"Got it", act:() => this.set({ intro:2 }), tone:"blue", step:0, noDots:true };
+
+    const jobKicker = s.job === 1 ? "Job 1 of 2 · thank Maria" : "Job 2 of 2 · send the report";
+
+    if (s.place === "desktop")
+      return { badge:String(s.job), kicker:jobKicker, line: s.job === 1 ? "Maria said welcome. Write her back." : "Maria needs the July safety report.", primary:"Open Mail", act:() => this.set({ place:"mail" }), tone:"blue", step:0 };
+
+    if (s.view === "list")
+      return { badge:String(s.job), kicker:jobKicker, line: s.job === 1 ? "Open Maria's email." : "Open Maria's new email.", help:true, tone:"blue", step:1 };
+
+    if (s.view === "read")
+      return { badge:String(s.job), kicker:jobKicker, line:"Click Reply.", help:true, tone:"blue", step:2 };
+
+    if (s.job === 2 && !s.attached)
+      return { badge:"2", kicker:jobKicker, line:"Attach the July report.", help:true, tone:"blue", step:3 };
+
+    if (!s.draft.trim())
+      return { badge:String(s.job), kicker:jobKicker, line:"Write one short line.", help:true, tone:"blue", step:3 };
+
+    return { badge:String(s.job), kicker:jobKicker, line:"Click Send.", help:true, tone:"blue", step:3 };
+  }
+
+  target() {
+    const s = this.state;
+    if (s.place !== "mail" || s.done) return null;
+    if (s.view === "list") return "row";
+    if (s.view === "read") return "reply";
+    if (s.job === 2 && !s.attached) return "attach";
+    if (s.draft.trim()) return "send";
+    return null;
+  }
+
+  speak() {
+    const line = this.script().line;
+    if (typeof speechSynthesis === "undefined") return;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(line));
+  }
+
+  nextJob() { this.setState({ job:2, place:"desktop", view:"list", openKey:null, draft:"", attached:false, done:false, showMe:false, correction:"", corner:"bl" }); }
+  restartDay() { this.setState({ intro:2, job:1, place:"desktop", view:"list", openKey:null, draft:"", attached:false, done:false, allDone:false, showMe:false, correction:"", corner:"bl" }); }
+
+  openRow(row) {
+    const s = this.state;
+    const isTarget = (s.job === 1 && row.key === "maria-welcome") || (s.job === 2 && row.key === "maria-safety");
+    if (!isTarget) return this.correct(row.hint || "Not that one. Look for Maria Delgado.");
+    this.setState({ view:"read", openKey:row.key, showMe:false, correction:"" });
+  }
+
+  send() {
+    const s = this.state;
+    if (!s.draft.trim()) return this.correct("Write one short line first.");
+    if (s.job === 2 && !s.attached) return this.correct("She asked for the file. Click Attach file.");
+    this.setState({ done:true, allDone: s.job === 2, showMe:false, correction:"" });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const sc = this.script();
+    const tgt = this.target();
+    const ring = "box-shadow:0 0 0 4px rgba(227,116,0,0.95), 0 0 0 12px rgba(227,116,0,0.25); animation:ringpulse 1.6s ease-in-out infinite;";
+    const lit = (name) => (s.showMe && tgt === name ? ring : "");
+
+    const rows = (s.job === 1 ? [WELCOME, ...DECOYS] : [SAFETY, WELCOME, ...DECOYS]).map((r) => {
+      const isTarget = (s.job === 1 && r.key === "maria-welcome") || (s.job === 2 && r.key === "maria-safety");
+      const selected = s.openKey === r.key;
+      const unread = r.unread && !selected && !(isTarget && s.done);
+      return {
+        key: r.key, from: r.from, initials: r.initials, time: r.time, subject: r.subject, preview: r.preview,
+        onClick: () => this.openRow(r),
+        style: "display:flex; width:100%; align-items:flex-start; gap:12px; border:none; border-bottom:1px solid #f0f4f9; padding:12px 16px; text-align:left; font-family:inherit; cursor:pointer; background:" +
+          (selected ? "rgba(194,231,255,0.5)" : "#fff") + ";" + (isTarget ? lit("row") : ""),
+        avatarStyle: "display:flex; width:32px; height:32px; flex-shrink:0; align-items:center; justify-content:center; border-radius:50%; font-size:12px; font-weight:500; color:#fff; background:" + r.color,
+        nameStyle: "font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:" + (unread ? "700" : "500"),
+        subjectStyle: "display:block; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" + (unread ? "font-weight:700; color:#001d35;" : "color:#444746;"),
+      };
+    });
+
+    const open = s.openKey === "maria-safety" ? SAFETY : WELCOME;
+    const tone = sc.tone === "green" ? "#1e8e3e" : "#0b57d0";
+
+    return {
+      onDesktop: s.place === "desktop",
+      inBrowser: s.place === "mail",
+      shelfBrowserStyle: "display:flex; width:40px; height:40px; align-items:center; justify-content:center; border-radius:6px;" + (s.place === "mail" ? "background:rgba(255,255,255,0.12);" : ""),
+
+      inbox: rows,
+      viewEmpty: s.view === "list",
+      viewMail: s.view !== "list",
+      viewCompose: s.view === "compose",
+      showReplyRow: s.view === "read",
+      mailSubject: open.subject,
+      mailTime: open.time,
+      mailBody: open.body.map((text, i) => ({ key: i, text })),
+      replySubject: open.replySubject,
+
+      clickReply: () => this.setState({ view:"compose", showMe:false, correction:"" }),
+      clickForward: () => this.correct("That is Forward. It sends her email to someone else. Click Reply."),
+      replyStyle: "display:inline-flex; min-height:44px; align-items:center; border:1px solid #747775; border-radius:999px; background:#fff; padding:0 22px; font-family:inherit; font-size:15px; font-weight:500; color:#0b57d0; cursor:pointer;" + lit("reply"),
+
+      draft: s.draft,
+      onDraft: (e) => this.setState({ draft: e.target.value, correction:"" }),
+      starters: STARTERS[s.job].map((text, i) => ({ key:i, text, onClick: () => this.setState({ draft: (s.draft ? s.draft + " " : "") + text, correction:"" }) })),
+      attached: s.attached,
+      needsAttach: s.job === 2,
+      clickSend: () => this.send(),
+      sendStyle: "display:inline-flex; min-height:44px; align-items:center; border:none; border-radius:999px; background:#0b57d0; padding:0 28px; font-family:inherit; font-size:15px; font-weight:500; color:#fff; cursor:pointer;" + lit("send"),
+      attachStyle: "display:inline-flex; min-height:44px; align-items:center; gap:8px; border:none; border-radius:999px; background:#fff; padding:0 14px; font-family:inherit; font-size:14px; font-weight:500; color:#444746; cursor:pointer;" + lit("attach"),
+
+      picker: s.picker,
+      openPicker: () => this.setState({ picker:true, showMe:false }),
+      closePicker: () => this.setState({ picker:false }),
+      files: FILES.map((f) => ({
+        key: f.name, name: f.name, tag: f.tag, date: f.date,
+        onClick: () => f.ok
+          ? this.setState({ attached:true, picker:false, correction:"" })
+          : (this.setState({ picker:false }), this.correct(f.hint)),
+        style: "display:flex; width:100%; align-items:center; gap:12px; border:none; border-radius:10px; background:#fff; padding:12px; font-family:inherit; cursor:pointer",
+        tagStyle: "border-radius:4px; padding:2px 6px; font-size:10px; font-weight:700; color:#fff; background:" + f.color,
+      })),
+
+      // the card
+      cardShellStyle: "position:absolute; z-index:70; width:420px; overflow:hidden; border-radius:24px; background:#fff; touch-action:none;" +
+        (s.drag
+          ? "left:" + s.drag.x + "px; top:" + s.drag.y + "px; box-shadow:0 28px 64px rgba(0,0,0,0.42); transform:scale(1.01);"
+          : (s.corner[1] === "l" ? "left:24px;" : "right:24px;") +
+            (s.corner[0] === "t" ? "top:24px;" : "bottom:72px;") +
+            "transition:left 0.22s ease-out, right 0.22s ease-out, top 0.22s ease-out, bottom 0.22s ease-out; box-shadow:0 18px 48px rgba(0,0,0,0.34);"),
+      cardHeaderStyle: "display:flex; align-items:center; gap:10px; padding:12px 20px; color:#fff; cursor:" + (s.drag ? "grabbing" : "grab") + "; background:" + tone,
+      startDrag: (e) => this.startDrag(e),
+      nudgeCard: (e) => this.moveCorner(e),
+      moved: s.corner !== "bl",
+      resetPos: () => this.setState({ corner: "bl" }),
+      cardBadgeStyle: "display:flex; width:26px; height:26px; flex-shrink:0; align-items:center; justify-content:center; border-radius:50%; background:rgba(255,255,255,0.22); font-size:14px; font-weight:700",
+      cardBadge: sc.badge,
+      cardKicker: sc.kicker,
+      cardLine: sc.line,
+
+      hasCorrection: Boolean(s.correction),
+      correction: s.correction,
+
+      hasPrimary: Boolean(sc.primary),
+      primaryLabel: sc.primary || "",
+      primaryAction: sc.act || (() => {}),
+      primaryStyle: BTN + "background:" + tone + "; color:#fff;",
+
+      hasHelpRow: Boolean(sc.help),
+      toggleShowMe: () => this.setState({ showMe: !s.showMe, correction:"" }),
+      showMeLabel: s.showMe ? "Hide" : "Show me",
+      showMeStyle: "display:flex; flex:1; min-height:56px; align-items:center; justify-content:center; gap:10px; border-radius:16px; font-family:inherit; font-size:17px; font-weight:500; white-space:nowrap; cursor:pointer; border:2px solid #0b57d0;" +
+        (s.showMe ? "background:#0b57d0; color:#fff;" : "background:#fff; color:#0b57d0;"),
+      speak: () => this.speak(),
+
+      showDots: !sc.noDots,
+      dots: [0,1,2,3].map((i) => ({
+        key: i,
+        style: "height:8px; flex:1; border-radius:999px; background:" + (sc.step > i ? "#1e8e3e" : sc.step === i ? tone : "#e8eaed"),
+      })),
+
+      backToDesktop: () => this.setState({ place:"desktop", showMe:false }),
+      restart: () => this.setState({ intro:0, job:1, place:"desktop", view:"list", openKey:null, draft:"", attached:false, done:false, allDone:false, showMe:false, correction:"", corner:"bl" }),
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,6 +1,14 @@
 "use client";
 
-import { useActionState, useRef, useState, useSyncExternalStore, type FormEvent, type RefObject } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type FormEvent,
+  type RefObject,
+} from "react";
 import { loginOrSignup, type LoginResult } from "./actions";
 import type { Lang } from "@/lib/task-types";
 import { DesktopClock } from "@/components/LiveClock";
@@ -34,6 +42,7 @@ const COPY: Record<
     wifi: string;
     battery: string;
     switchLabel: string;
+    removeUser: string;
   }
 > = {
   en: {
@@ -53,6 +62,7 @@ const COPY: Record<
     wifi: "Wi-Fi is on",
     battery: "Battery is charged",
     switchLabel: "Español",
+    removeUser: "Remove {name}",
   },
   es: {
     banner: "Chromebook de práctica. Nada aquí es real.",
@@ -71,6 +81,7 @@ const COPY: Record<
     wifi: "El Wi-Fi está activo",
     battery: "La batería está cargada",
     switchLabel: "English",
+    removeUser: "Quitar a {name}",
   },
 };
 
@@ -105,8 +116,22 @@ function rememberUser(user: RecentUser) {
       ),
     ].slice(0, 4);
     window.localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
+    return next;
   } catch {
     // Private browsing can block localStorage.
+    return loadRecents();
+  }
+}
+
+function forgetUser(user: RecentUser) {
+  try {
+    const next = loadRecents().filter(
+      (u) => !(u.displayName === user.displayName && u.classCode === user.classCode),
+    );
+    window.localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
+    return next;
+  } catch {
+    return loadRecents();
   }
 }
 
@@ -303,7 +328,7 @@ export default function LoginForm({ next }: { next: string }) {
   const storedLang = isClient ? readStoredLang() : "en";
   const [langOverride, setLangOverride] = useState<Lang | null>(null);
   const lang = langOverride ?? storedLang;
-  const recents = isClient ? loadRecents() : [];
+  const [recents, setRecents] = useState<RecentUser[]>([]);
   const [mode, setMode] = useState<Mode>("picker");
   const [selected, setSelected] = useState<RecentUser | null>(null);
   const [pin, setPin] = useState("");
@@ -313,6 +338,10 @@ export default function LoginForm({ next }: { next: string }) {
   const statusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const pinRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isClient) setRecents(loadRecents());
+  }, [isClient]);
 
   const flashStatus = (msg: string) => {
     setStatusNote(msg);
@@ -359,7 +388,17 @@ export default function LoginForm({ next }: { next: string }) {
     const data = new FormData(event.currentTarget);
     const displayName = String(data.get("displayName") ?? "").trim();
     const code = String(data.get("classCode") ?? "").trim().toUpperCase();
-    if (displayName && code) rememberUser({ displayName, classCode: code });
+    if (displayName && code) setRecents(rememberUser({ displayName, classCode: code }));
+  };
+
+  const removeRecent = (user: RecentUser) => {
+    const next = forgetUser(user);
+    setRecents(next);
+    if (selected?.displayName === user.displayName && selected.classCode === user.classCode) {
+      setSelected(null);
+      setPin("");
+      setMode("picker");
+    }
   };
 
   const unlocking = mode === "unlock" && selected;
@@ -508,16 +547,26 @@ export default function LoginForm({ next }: { next: string }) {
             const active =
               unlocking && selected?.displayName === user.displayName && selected.classCode === user.classCode;
             return (
-              <button
-                key={`${user.displayName}:${user.classCode}`}
-                type="button"
-                onClick={() => openUnlock(user)}
-                className="flex w-[92px] flex-col items-center gap-2 rounded-2xl px-2 py-3 text-white cursor-pointer hover:bg-white/10"
-                style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
-              >
-                <Avatar name={user.displayName} size={56} />
-                <span className="w-full truncate text-center text-[13px] font-medium">{user.displayName}</span>
-              </button>
+              <div key={`${user.displayName}:${user.classCode}`} className="group relative w-[92px]">
+                <button
+                  type="button"
+                  onClick={() => openUnlock(user)}
+                  className="flex w-full flex-col items-center gap-2 rounded-2xl px-2 py-3 text-white cursor-pointer hover:bg-white/10"
+                  style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
+                >
+                  <Avatar name={user.displayName} size={56} />
+                  <span className="w-full truncate text-center text-[13px] font-medium">{user.displayName}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removeRecent(user)}
+                  aria-label={c.removeUser.replace("{name}", user.displayName)}
+                  style={{ top: 8, left: "calc(50% + 16px)" }}
+                  className="absolute z-10 flex h-6 w-6 items-center justify-center rounded-full bg-black/55 text-[13px] leading-none text-white opacity-0 pointer-events-none hover:bg-black/75 cursor-pointer group-hover:pointer-events-auto group-hover:opacity-100 focus-visible:pointer-events-auto focus-visible:opacity-100"
+                >
+                  ×
+                </button>
+              </div>
             );
           })}
           <button

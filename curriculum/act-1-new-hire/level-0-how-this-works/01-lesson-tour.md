@@ -14,13 +14,13 @@ works.
 
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up. A new sign-in lands on the desktop
-      briefing "This is a practice computer." Click **Open Welcome**.
+      briefing "This is a practice computer." Click **Open the Web Browser**.
 - [ ] People who already finished later levels are not pulled back here.
       They can still open Level 0 from the levels list if they want the boost.
 
 ## Simulator practice (~5 min)
 1. Sign in with name, PIN, and class code.
-2. Read the desktop briefing. Click **Open Welcome**.
+2. Read the desktop briefing. Click **Open the Web Browser**.
 3. Read the first card. Click **Show me around**.
 4. Tap all three facts (nothing is real; the white button is next; Help and
    your list). Click **I have these**.

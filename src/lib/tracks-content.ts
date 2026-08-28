@@ -866,7 +866,7 @@ export type TaskHandoff = {
  * which bookmark to click.
  */
 export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
-  tour: { appKey: "browser", tab: "tour", ctaLabel: "Open Welcome" },
+  tour: { appKey: "browser", tab: "tour", ctaLabel: "Open the Web Browser" },
   mail: { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   "mail-read": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   "mail-reply": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },

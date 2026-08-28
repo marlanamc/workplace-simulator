@@ -115,7 +115,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     },
     { instruction: "Now click Calendar.", targetTabKey: "calendar" },
     {
-      instruction: "This is your work calendar. Meetings show up here.",
+      instruction: "This is your work calendar. Meetings and your work shifts show up here.",
       targetTabKey: "calendar",
       continueLabel: "Got it",
     },
@@ -133,7 +133,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     },
     { instruction: "Ahora haz clic en Calendario.", targetTabKey: "calendar" },
     {
-      instruction: "Este es tu calendario del trabajo. Aquí aparecen las reuniones.",
+      instruction: "Este es tu calendario del trabajo. Aquí aparecen las reuniones y tus turnos de trabajo.",
       targetTabKey: "calendar",
       continueLabel: "Entendido",
     },

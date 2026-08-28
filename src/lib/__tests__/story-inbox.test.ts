@@ -17,9 +17,9 @@ const FAR_ALONG: TaskKey[] = LEVELS.flatMap(taskKeysForLevel).slice(
 );
 
 describe("storyMailsUpTo", () => {
-  it("replaying mail-reply shows only the tour mail, not the future", () => {
+  it("replaying mail-reply does not show later Maria story mails", () => {
     const mails = storyMailsUpTo("mail-reply", FAR_ALONG, {});
-    expect(mails.map((m) => m.key)).toEqual(["story-tour"]);
+    expect(mails.map((m) => m.key)).toEqual([]);
   });
 
   it("with no active mail task, everything unlocked so far still shows", () => {

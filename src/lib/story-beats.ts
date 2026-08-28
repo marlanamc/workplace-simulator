@@ -27,7 +27,7 @@ export type InboxRow = {
  * place. Act II+ names the bookmark — finding it on the bar stays the exercise.
  */
 export const HANDOFF_CTA: Record<TaskKey, Localized> = {
-  tour: { en: "Open Welcome", es: "Abrir Bienvenida" },
+  tour: { en: "Open the Web Browser", es: "Abrir el navegador web" },
   mail: { en: "Open Mail", es: "Abrir correo" },
   "mail-read": { en: "Open Mail", es: "Abrir correo" },
   "mail-reply": { en: "Open Mail", es: "Abrir correo" },
@@ -130,20 +130,6 @@ function huddleReply(flags: StoryFlags): Pick<InboxRow, "subject" | "preview" | 
 }
 
 const STORY_MAILS: InboxRow[] = [
-  {
-    key: "story-tour",
-    ...MARIA,
-    time: "8:05 AM",
-    unread: true,
-    story: true,
-    unlockAfter: "tour",
-    subject: { en: "See you on the floor", es: "Nos vemos en el piso" },
-    preview: { en: "Your computer is set. I sent you something.", es: "Tu computadora está lista. Te envié algo." },
-    body: {
-      en: ["Your computer is set.", "I sent you something. Open Mail when you are ready. That is your first job."],
-      es: ["Tu computadora está lista.", "Te envié algo. Abre Correo cuando estés listo. Ese es tu primer trabajo."],
-    },
-  },
   {
     key: "story-mail",
     ...MARIA,
