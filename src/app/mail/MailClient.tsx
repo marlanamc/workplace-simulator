@@ -51,11 +51,26 @@ const STEP_LINE = {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
   } as Record<MailTask, Localized<string>>,
-  reply: { en: "Click Reply.", es: "Haz clic en Responder." },
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
   attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
   write: { en: "Write one short line.", es: "Escribe una línea corta." },
   send: { en: "Click Send.", es: "Haz clic en Enviar." },
+} as const;
+
+/**
+ * "Click <the words actually on the button>." Built from the same copy the
+ * button renders, in both languages, so the card can never name a control
+ * that isn't there - job 2 reads Maria's mail behind a Continue button, not
+ * a Reply one, and the card has to say so.
+ */
+const clickLine = (label: Localized<string>): Localized<string> => ({
+  en: `Click ${label.en}.`,
+  es: `Haz clic en ${label.es}.`,
+});
+const BUTTON_LABEL = {
+  reply: { en: MAIL_COPY.en.reply, es: MAIL_COPY.es.reply },
+  continue: { en: CONFIRM_COPY.en.continueLabel, es: CONFIRM_COPY.es.continueLabel },
+  replyAfterConfirm: { en: CONFIRM_COPY.en.replyAfterLabel, es: CONFIRM_COPY.es.replyAfterLabel },
 } as const;
 
 /** Steps per job, for the card's progress bars. */
@@ -375,13 +390,19 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 : !body.trim()
                   ? STEP_LINE.write
                   : STEP_LINE.send;
+              const confirmAnswered =
+                Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
               const instruction =
                 view === "empty"
                   ? STEP_LINE.openMail[activeMailTask]
                   : view === "read"
-                    ? STEP_LINE.reply
+                    // Job 2 goes through a comprehension check first, so its
+                    // button here says Continue, not Reply.
+                    ? clickLine(needsAttach ? BUTTON_LABEL.continue : BUTTON_LABEL.reply)
                     : view === "confirm"
-                      ? STEP_LINE.confirm
+                      ? confirmAnswered
+                        ? clickLine(BUTTON_LABEL.replyAfterConfirm)
+                        : STEP_LINE.confirm
                       : composeLine;
               const stepIndex =
                 view === "empty" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
@@ -391,7 +412,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   : view === "read"
                     ? "reply-button"
                     : view === "confirm"
-                      ? confirmPick && cc.options.some((o) => o.correct && o.label === confirmPick)
+                      ? confirmAnswered
                         ? "reply-after-confirm"
                         : "confirm-correct"
                       : needsAttach && !attached
