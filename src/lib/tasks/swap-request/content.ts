@@ -23,6 +23,7 @@ export const SWAP_COPY: Record<Lang, {
   helpBtn: string;
   shiftLabel: string;
   shiftPlaceholder: string;
+  shiftPickedNote: string;
   coverLabel: string;
   coverPlaceholder: string;
   reasonLabel: string;
@@ -41,6 +42,7 @@ export const SWAP_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     shiftLabel: "Which shift?",
     shiftPlaceholder: "Choose a shift",
+    shiftPickedNote: "Picked from your schedule.",
     coverLabel: "Which shift could you work instead?",
     coverPlaceholder: "Choose a shift",
     reasonLabel: "Reason (optional)",
@@ -59,6 +61,7 @@ export const SWAP_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     shiftLabel: "¿Qué turno?",
     shiftPlaceholder: "Elige un turno",
+    shiftPickedNote: "Elegido desde tu horario.",
     coverLabel: "¿Qué turno podrías trabajar en su lugar?",
     coverPlaceholder: "Elige un turno",
     reasonLabel: "Motivo (opcional)",

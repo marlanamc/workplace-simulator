@@ -180,7 +180,7 @@ const STORY_MAILS: InboxRow[] = [
     time: "10:04 AM",
     unread: true,
     story: true,
-    unlockAfter: "swap-request",
+    unlockAfter: "schedule",
     subject: { en: "Thursday swap", es: "Cambio del jueves" },
     preview: { en: "You're on the later shift Thursday.", es: "El jueves estás en el turno de tarde." },
     body: {

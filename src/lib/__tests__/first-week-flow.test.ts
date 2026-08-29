@@ -13,7 +13,7 @@ import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 
 const ALL_TASKS = LEVELS.flatMap(taskKeysForLevel);
 
-describe("the schedule/swap split", () => {
+describe("the schedule/swap content", () => {
   it("exactly one shift clashes, and the personal calendar explains why", () => {
     const clashing = SCHEDULE.filter((d) => d.conflict);
     expect(clashing).toHaveLength(1);
@@ -60,8 +60,8 @@ describe("one voice for messaging the manager", () => {
 describe("Level 2 and Level 3 membership", () => {
   const track = (key: string) => TRACKS.find((t) => t.key === key)!;
 
-  it("the first week is just notice-it then ask", () => {
-    expect(track("first-week").taskKeys).toEqual(["schedule", "swap-request"]);
+  it("the first week is one task: notice it, then ask", () => {
+    expect(track("first-week").taskKeys).toEqual(["schedule"]);
   });
 
   it("the sick day waits until the learner has a track record", () => {
@@ -71,10 +71,10 @@ describe("Level 2 and Level 3 membership", () => {
 });
 
 describe("the story chain still connects", () => {
-  it("Maria answers the swap request, not the schedule read", () => {
+  it("Maria answers the swap request, which completes the schedule task", () => {
     const mails = storyMailsFor(ALL_TASKS, {});
     const swapReply = mails.find((m) => m.key === "story-schedule");
-    expect(swapReply?.unlockAfter).toBe("swap-request");
+    expect(swapReply?.unlockAfter).toBe("schedule");
   });
 
   it("nothing references being sick before the sick day happens", () => {

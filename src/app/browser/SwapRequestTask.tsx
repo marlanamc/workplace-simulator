@@ -20,14 +20,14 @@ type View = "form" | "done";
 
 const SHIFTS = SCHEDULE.filter((d) => d.shift);
 
-export default function SwapRequestTask() {
+export default function SwapRequestTask({ initialShift }: { initialShift?: string | null }) {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("swap-request") ? "done" : "form");
-  const [shift, setShift] = useState("");
+  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "form");
+  const [shift, setShift] = useState(initialShift ?? "");
   const [cover, setCover] = useState("");
   const [reason, setReason] = useState("");
   const [help, setHelp] = useState(false);
-  const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("swap-request");
+  const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("schedule");
   const showMe = useShowMe();
   // One step, one control: the button that files the form.
   const showMeId = "submit-button";
@@ -82,7 +82,7 @@ export default function SwapRequestTask() {
       recordMissed();
     }
     setView("done");
-    markComplete("swap-request", "request_shift_swap");
+    markComplete("schedule", "request_shift_swap");
   };
 
   const restart = () => {
@@ -135,7 +135,8 @@ export default function SwapRequestTask() {
             <select
               value={shift}
               onChange={(e) => setShift(e.target.value)}
-              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)]"
+              disabled={Boolean(initialShift)}
+              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)] disabled:bg-[var(--surface-muted)] disabled:text-[var(--text-secondary)]"
             >
               <option value="">{c.shiftPlaceholder}</option>
               {SHIFTS.map((d) => (
@@ -144,6 +145,9 @@ export default function SwapRequestTask() {
                 </option>
               ))}
             </select>
+            {initialShift && (
+              <span className="mt-1 block text-[12px] text-[var(--text-tertiary)]">{c.shiftPickedNote}</span>
+            )}
           </label>
 
           <label className="mb-3 block text-[14px] font-medium text-[var(--text-primary)]">
@@ -187,9 +191,9 @@ export default function SwapRequestTask() {
         <div className="flex flex-col gap-5">
           <TaskDoneCard
             kicker={c.sentKicker}
-            title={firstPersonSkill("swap-request")}
+            title={firstPersonSkill("schedule")}
             body={c.doneBody}
-            badgeNumber="05"
+            badgeNumber="02"
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />

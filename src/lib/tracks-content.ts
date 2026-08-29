@@ -31,7 +31,7 @@ export const TRACKS: Track[] = [
     key: "first-week",
     title: "The First Week",
     subtitle: "Life happens on a schedule too",
-    taskKeys: ["schedule", "swap-request"],
+    taskKeys: ["schedule"],
     awardEmoji: "🗓️",
   },
   {
@@ -615,13 +615,17 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
     built: true,
   },
   schedule: {
-    label: { en: "Find your shift", es: "Encuentra tu turno" },
+    label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
     dispatch: {
-      en: "New week. Find where you're on the schedule.",
-      es: "Semana nueva. Encuentra dónde estás en el horario.",
+      en: "New week. Check your shifts against your own calendar.",
+      es: "Semana nueva. Compara tus turnos con tu propio calendario.",
     },
     built: true,
   },
+  // @deprecated Folded into `schedule` — finding the clash and asking for
+  // the swap are one task now (see JobCard "Task 1 of 2 / 2 of 2" issue).
+  // Kept in the union so a learner's historical completion stays a valid
+  // row; nothing routes here any more.
   "swap-request": {
     label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
     dispatch: {

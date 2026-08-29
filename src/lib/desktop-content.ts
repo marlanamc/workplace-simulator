@@ -197,6 +197,10 @@ export const TASK_KEYS = [
   "mail-reply",
   "mail-attach",
   "schedule",
+  // "swap-request" used to be its own task after "schedule" - noticing a
+  // shift conflict and asking for the swap read as two disconnected jobs
+  // with their own badges. They're one task now, completed by "schedule".
+  // Kept here so a learner's historical completion stays a valid DB row.
   "swap-request",
   "call-out-sick",
   "timeclock",

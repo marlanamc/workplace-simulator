@@ -25,8 +25,8 @@ import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
 type View = "list" | "done";
 
-export default function ScheduleTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: string) => void }) {
+  const { completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "list");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
@@ -37,12 +37,13 @@ export default function ScheduleTask() {
 
   const c = SCHEDULE_COPY[lang];
 
-  // Finding the clash IS the task. Asking for the swap is the next one, in
-  // the form Harborside actually uses — this screen never composes mail.
+  // Finding the clash and asking for the swap are one task. Picking the
+  // clashing day hands the day off to the swap form on the other tab
+  // (pre-filled there); the task itself only completes when that form is
+  // submitted, in the form Harborside actually uses.
   const pickDay = (d: (typeof SCHEDULE)[number]) => {
     if (!d.conflict) return say(WRONG_SWAP_HINT[lang]);
-    setView("done");
-    markComplete("schedule", "read_schedule_against_calendar");
+    onRequestSwap(d.day);
   };
 
   const restart = () => setView("list");

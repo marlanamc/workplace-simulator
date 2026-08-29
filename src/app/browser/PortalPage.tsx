@@ -31,6 +31,9 @@ export default function PortalPage() {
   const [section, setSection] = useState<Section>(() =>
     isPortalSection(portalSection) ? portalSection : "schedule",
   );
+  // The day picked on the Schedule tab, carried over so Shift Swap opens
+  // with it already chosen instead of asking the learner to find it twice.
+  const [swapDay, setSwapDay] = useState<string | null>(null);
   const [lastToken, setLastToken] = useState(portalSectionToken);
   if (portalSectionToken !== lastToken) {
     setLastToken(portalSectionToken);
@@ -61,8 +64,15 @@ export default function PortalPage() {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto p-6">
-        {section === "schedule" && <ScheduleTask />}
-        {section === "swap-request" && <SwapRequestTask />}
+        {section === "schedule" && (
+          <ScheduleTask
+            onRequestSwap={(day) => {
+              setSwapDay(day);
+              setSection("swap-request");
+            }}
+          />
+        )}
+        {section === "swap-request" && <SwapRequestTask initialShift={swapDay} />}
         {section === "timeclock" && <TimeclockTask />}
         {section === "paystubs" && <PaystubTask />}
         {section === "shift-review" && <ShiftReviewTask />}
