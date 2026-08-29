@@ -1,6 +1,7 @@
 import type { TaskKey } from "./desktop-content";
 import type { Lang } from "./task-types";
 import {
+  LEVELS,
   TASK_INFO,
   actForLevel,
   nextTaskInTrack,
@@ -9,9 +10,49 @@ import {
   type Track,
 } from "./tracks-content";
 
-/** Level title without the "Level N:" prefix — the sitting's name. */
+/**
+ * The sitting's name on its own — "Payday & Trouble".
+ *
+ * `Level.title` holds the bare name and no number. Numbering is derived from
+ * `LEVELS` order by `dayNumber` instead of being written into the string,
+ * because the hand-written sequence had already drifted (a "Level 3" followed
+ * by "3b" and "3c") and a title that carries its own number drifts again the
+ * next time a level is inserted.
+ */
 export function sittingTitle(level: Level): string {
-  return level.title.replace(/^Level \d+[a-z]?:\s*/, "");
+  return level.title;
+}
+
+/**
+ * The learner-facing number for a level: its position in `LEVELS`, counting
+ * from Day 1 at the first level after orientation.
+ *
+ * Deliberately derived from array order rather than parsed out of
+ * `level.title`. The titles carry a stale hand-written sequence (Level 3 is
+ * followed by 3b and 3c, artifacts of inserting content without renumbering)
+ * and a learner reading "Day 3b" in the replay menu reads it as a bug. Order
+ * is the only thing that is actually true, so it is the only thing we count.
+ *
+ * Level 0 is the how-this-works tour, not a day on the job — it gets day 0,
+ * and callers show its name alone.
+ */
+export function dayNumber(level: Level): number {
+  return LEVELS.findIndex((l) => l.key === level.key);
+}
+
+/** "Day 4: Payday & Trouble" — the level's learner-facing title. */
+export function dayTitle(level: Level, lang: Lang): string {
+  const n = dayNumber(level);
+  const name = sittingTitle(level);
+  if (n <= 0) return name;
+  return lang === "en" ? `Day ${n}: ${name}` : `Día ${n}: ${name}`;
+}
+
+/** "Day 4" on its own, for tight spots like the Job Card kicker. */
+export function dayLabel(level: Level, lang: Lang): string {
+  const n = dayNumber(level);
+  if (n <= 0) return sittingTitle(level);
+  return lang === "en" ? `Day ${n}` : `Día ${n}`;
 }
 
 /** Act title without the "Act I:" prefix — the job they hold. */

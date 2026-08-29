@@ -38,7 +38,9 @@ export const TRACKS: Track[] = [
     key: "payday-trouble",
     title: "Payday & Trouble",
     subtitle: "Money, hours, and a normal shift",
-    taskKeys: ["timeclock", "paystub", "shift-review", "call-out-sick"],
+    // Play order is story order: Thursday's sick call comes before Friday's
+    // clock-out and pay. See SHIFT_MOMENT — time only moves forward.
+    taskKeys: ["call-out-sick", "timeclock", "paystub", "shift-review"],
     awardEmoji: "💳",
   },
   {
@@ -197,13 +199,13 @@ export function isEarlyLevel(level: Level): boolean {
 export const LEVELS: Level[] = [
   {
     key: "level0",
-    title: "Level 0: How this works",
+    title: "How this works",
     trackKeys: ["orientation"],
     firstTabKey: "tour",
   },
   {
     key: "level1",
-    title: "Level 1: Day One",
+    title: "Day One",
     trackKeys: ["starter"],
     // Still the Mail app - Day One is 2 jobs in the same inbox (welcome
     // thank-you, then safety report with attach). If a future build
@@ -222,7 +224,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level2",
-    title: "Level 2: The First Week",
+    title: "The First Week",
     trackKeys: ["first-week"],
     firstTabKey: "portal",
     levelUp: {
@@ -238,7 +240,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3",
-    title: "Level 3: Payday & Trouble",
+    title: "Payday & Trouble",
     trackKeys: ["payday-trouble"],
     firstTabKey: "portal",
     // shift-review deliberately teaches nothing new - it's a fresh pass over
@@ -257,7 +259,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3b",
-    title: "Level 3b: When Something Happens",
+    title: "When Something Happens",
     trackKeys: ["judgment"],
     firstTabKey: "incident",
     levelUp: {
@@ -273,7 +275,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3c",
-    title: "Level 3c: Locked Out",
+    title: "Locked Out",
     trackKeys: ["account-security"],
     firstTabKey: "account-recovery",
     levelUp: {
@@ -289,7 +291,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level4",
-    title: "Level 4: The Calendar",
+    title: "The Calendar",
     trackKeys: ["calendar"],
     firstTabKey: "calendar",
     freeTabbing: true,
@@ -306,7 +308,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level5",
-    title: "Level 5: Shared Files",
+    title: "Shared Files",
     trackKeys: ["files"],
     firstTabKey: "files",
     freeTabbing: true,
@@ -327,7 +329,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level6",
-    title: "Level 6: The Numbers",
+    title: "The Numbers",
     trackKeys: ["spreadsheet"],
     firstTabKey: "spreadsheet",
     freeTabbing: true,
@@ -344,7 +346,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level7",
-    title: "Level 7: Reporting In",
+    title: "Reporting In",
     trackKeys: ["reporting"],
     firstTabKey: "make-a-copy",
     freeTabbing: true,
@@ -361,7 +363,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level8",
-    title: "Level 8: Covering More Ground",
+    title: "Covering More Ground",
     trackKeys: ["triage"],
     firstTabKey: "triage",
     freeTabbing: true,
@@ -378,7 +380,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level9",
-    title: "Level 9: Scheduling the Team",
+    title: "Scheduling the Team",
     trackKeys: ["team-schedule"],
     firstTabKey: "team-schedule",
     freeTabbing: true,
@@ -395,7 +397,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level10",
-    title: "Level 10: Weekly Numbers",
+    title: "Weekly Numbers",
     trackKeys: ["formula-check"],
     firstTabKey: "formula-check",
     freeTabbing: true,
@@ -412,7 +414,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level11",
-    title: "Level 11: First Team Meeting",
+    title: "First Team Meeting",
     trackKeys: ["team-meeting"],
     firstTabKey: "team-meeting",
     freeTabbing: true,
@@ -429,7 +431,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level12",
-    title: "Level 12: Under Pressure",
+    title: "Under Pressure",
     trackKeys: ["priority-call"],
     firstTabKey: "priority-call",
     freeTabbing: true,

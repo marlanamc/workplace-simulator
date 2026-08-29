@@ -22,6 +22,7 @@ import {
 } from "@/lib/tracks-content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
+import { dayLabel } from "@/lib/shift-spine";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import { speakText } from "@/lib/read-aloud";
 
@@ -207,8 +208,14 @@ export default function JobCard() {
       };
     }
 
+    // "Day 4 · Task 2 of 4 · Find your shift". The day comes first because it
+    // is the part that stays put while the counter resets — without it, the
+    // counter restarting at 1 every day looks like the game losing its place.
+    // `jobOf` returns "" on a one-task day, and the empty segment drops out.
     const kicker = nextTaskKey
-      ? `${c.jobOf(jobNumber, levelTaskKeys.length)} · ${TASK_INFO[nextTaskKey].label[lang]}`
+      ? [dayLabel(level, lang), c.jobOf(jobNumber, levelTaskKeys.length), TASK_INFO[nextTaskKey].label[lang]]
+          .filter(Boolean)
+          .join(" · ")
       : c.dayDoneKicker;
     const badge = nextTaskKey ? String(jobNumber) : "✓";
 

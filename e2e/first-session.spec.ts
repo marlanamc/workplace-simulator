@@ -100,8 +100,13 @@ test("the job card introduces itself on an empty desktop, then names the job", a
   await expect(page.locator('[data-testid="bookmark-mail"]')).toHaveCount(0);
   await clearIntroBeats(page, "E2e");
 
-  // Past the beats it becomes the job card and names the next job.
-  await expect(jobCard(page).getByText("Task 1 of", { exact: false })).toBeVisible();
+  // Past the beats it becomes the job card and names the next job. The first
+  // day is the one-task tour, so there is deliberately no "Task 1 of 1"
+  // counter — the day's name carries the position on its own.
+  await expect(
+    jobCard(page).getByText("Learn how this computer works", { exact: false }),
+  ).toBeVisible();
+  await expect(jobCard(page).getByText("of 1", { exact: false })).toHaveCount(0);
 });
 
 test("the job card follows the learner into the app and drives the job", async ({ page }) => {
@@ -109,7 +114,7 @@ test("the job card follows the learner into the app and drives the job", async (
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Payday & Trouble" }).click();
+  await page.getByRole("button", { name: "Start of Day 3: Payday & Trouble" }).click();
 
   // The card is still there once an app window is open - that is the whole
   // point of it: the surface that sets up the job does not vanish.
@@ -124,13 +129,14 @@ test("studio time machine teleports one account to a later level", async ({ page
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Payday & Trouble" }).click();
+  await page.getByRole("button", { name: "Start of Day 3: Payday & Trouble" }).click();
 
-  // Lands on the learner desktop as a learner at that exact moment:
-  // the next job is Level 3's first task (clock out).
-  await expect(page.getByText("End of day. Clock out, then check the hours.").first()).toBeVisible({
-    timeout: 20_000,
-  });
+  // Lands on the learner desktop as a learner at that exact moment: the next
+  // job is Day 3's first task. That is the sick call, not the clock-out —
+  // Day 3 is ordered by story time, and Thursday morning comes before Friday.
+  await expect(
+    page.getByText("You're sick and you're on at 10. Write Maria now.").first(),
+  ).toBeVisible({ timeout: 20_000 });
 });
 
 test("language choice on the login page sticks after signing in and reloading", async ({ page }) => {

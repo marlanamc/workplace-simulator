@@ -19,7 +19,7 @@ import { APP_ICONS, TAB_ICONS, Briefcase, ChromeIcon, Languages, Lock, PdfIcon }
 import Link from "next/link";
 import { logout } from "@/app/actions";
 import { levelForTrack } from "@/lib/tracks-content";
-import { remainingTasksInLevel, sittingTitle } from "@/lib/shift-spine";
+import { dayTitle, remainingTasksInLevel } from "@/lib/shift-spine";
 
 /** Height of the taskbar. */
 export const SHELF_HEIGHT = 48;
@@ -203,11 +203,14 @@ export default function Shelf({
       >
         <div className="absolute left-3 top-1/2 hidden max-w-[240px] -translate-y-1/2 min-[920px]:block">
           <p className="truncate text-[13px] font-medium leading-tight tracking-[-0.01em] text-white/85">
-            {sittingTitle(currentLevel)}
+            {dayTitle(currentLevel, lang)}
           </p>
           {leftover === 0 && (
+            // "Day", not "shift" — the Job Card calls this same moment a day
+            // ("That's today done"), and two names for one thing is the
+            // confusion this pass exists to remove.
             <p className="mt-0.5 truncate text-[11px] leading-tight text-white/55">
-              {lang === "en" ? "This shift is done" : "Este turno está hecho"}
+              {lang === "en" ? "This day is done" : "Este día está hecho"}
             </p>
           )}
         </div>

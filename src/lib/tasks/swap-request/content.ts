@@ -3,14 +3,14 @@ import type { EventIntroCopy, Lang, Localized } from "@/lib/task-types";
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "🔁",
-    kicker: "Task 5 of 9",
+    kicker: "Wednesday. Two shifts overlap.",
     headline: "Two shifts overlap. Ask for a swap.",
     body: "Thursday's shift lands on something you already have. Harborside uses a real form for this - not an email.",
     cta: "Open the swap form",
   },
   es: {
     emoji: "🔁",
-    kicker: "Tarea 5 de 9",
+    kicker: "Miércoles. Dos turnos se cruzan.",
     headline: "Dos turnos se cruzan. Pide un cambio.",
     body: "El turno del jueves cae en algo que ya tienes. Harborside usa un formulario real para esto, no un correo.",
     cta: "Abrir el formulario",

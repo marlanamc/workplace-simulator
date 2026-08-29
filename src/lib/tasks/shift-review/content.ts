@@ -3,14 +3,14 @@ import type { EventIntroCopy, Lang, Localized } from "@/lib/task-types";
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "☀️",
-    kicker: "Task 9 of 9",
+    kicker: "Monday. A normal shift.",
     headline: "A normal shift. Nothing new.",
     body: "No new tools today - just three things you already know how to do, back to back.",
     cta: "Start the shift",
   },
   es: {
     emoji: "☀️",
-    kicker: "Tarea 9 de 9",
+    kicker: "Lunes. Un turno normal.",
     headline: "Un turno normal. Nada nuevo.",
     body: "Hoy no hay herramientas nuevas, solo tres cosas que ya sabes hacer, una tras otra.",
     cta: "Empezar el turno",

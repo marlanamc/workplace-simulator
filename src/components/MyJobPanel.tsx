@@ -19,7 +19,7 @@ import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { Flag, Lock, Trophy } from "@/lib/icons";
 import { Check } from "lucide-react";
-import { sittingTitle, jobTitle } from "@/lib/shift-spine";
+import { dayTitle, sittingTitle, jobTitle } from "@/lib/shift-spine";
 import { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 
 export default function MyJobPanel({
@@ -84,7 +84,7 @@ export default function MyJobPanel({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="truncate text-[22px] font-medium leading-tight tracking-[-0.01em]">
-                {jobTitle(currentLevel)} · {sittingTitle(currentLevel)}
+                {jobTitle(currentLevel)} · {dayTitle(currentLevel, lang)}
               </div>
               {upcoming && (
                 <div className="mt-1 text-[13px] text-white/70">
@@ -191,7 +191,7 @@ export default function MyJobPanel({
             >
               <span className="flex items-center gap-2">
                 <Flag size={15} strokeWidth={2.25} aria-hidden />
-                {lang === "en" ? "Jump to or replay a level" : "Ir a o repetir un nivel"}
+                {lang === "en" ? "Jump to or replay a day" : "Ir a o repetir un día"}
               </span>
               <span aria-hidden>{levelsOpen ? "▲" : "▼"}</span>
             </button>
@@ -230,7 +230,7 @@ export default function MyJobPanel({
                                 <span aria-hidden className="flex h-4 w-4 items-center justify-center text-[var(--text-secondary)]">
                                   {locked ? <Lock size={14} /> : complete ? <Check size={16} strokeWidth={2.5} /> : <Flag size={14} />}
                                 </span>
-                                <span className="min-w-0 flex-1 truncate font-medium">{level.title}</span>
+                                <span className="min-w-0 flex-1 truncate font-medium">{dayTitle(level, lang)}</span>
                               </button>
                               {canReplay && pendingReplay !== level.key && (
                                 <button
@@ -245,8 +245,8 @@ export default function MyJobPanel({
                               <div className="px-2 pb-2.5">
                                 <p className="text-[12px] leading-snug text-[var(--text-secondary)]">
                                   {lang === "en"
-                                    ? "This clears your progress for this level only."
-                                    : "Esto borra tu progreso solo de este nivel."}
+                                    ? "This clears your progress for this day only."
+                                    : "Esto borra tu progreso solo de este día."}
                                 </p>
                                 <div className="mt-1.5 flex gap-3">
                                   <button

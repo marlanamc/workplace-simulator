@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { LEVELS } from "@/lib/tracks-content";
-import { sittingTitle } from "@/lib/shift-spine";
+import { dayTitle } from "@/lib/shift-spine";
 import { setProgressPreset } from "@/app/actions";
 
 /**
@@ -63,7 +63,7 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
             disabled={busyKey !== null}
             className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
           >
-            {busyKey === level.key ? "…" : `Start of ${sittingTitle(level)}`}
+            {busyKey === level.key ? "…" : `Start of ${dayTitle(level, "en")}`}
           </button>
         ))}
         <button

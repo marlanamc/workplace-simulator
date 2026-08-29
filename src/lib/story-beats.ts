@@ -54,31 +54,51 @@ export const HANDOFF_CTA: Record<TaskKey, Localized> = {
   "priority-call": { en: "Open Floor from the bookmarks", es: "Abre Floor en los marcadores" },
 };
 
-/** One line of clock time for the desktop briefing. The story, not the skill name. */
+/**
+ * One line of clock time for the desktop briefing. The story, not the skill
+ * name.
+ *
+ * **Time only ever moves forward.** Read top to bottom, these are the days of
+ * the learner's employment in order, and each level (see `dayNumber`) is one
+ * workday. This list used to run Tuesday → Friday → Monday → Thursday inside a
+ * single level, which quietly told a learner that finishing a task could move
+ * the story backwards. When you add a task, give it a moment at or after the
+ * task above it, and never reuse a weekday for a different level.
+ *
+ * The weeks: week 1 is the first shift (days 1-3), week 2 settles in
+ * (days 4-5), and the lead job starts at `calendar` in week 3.
+ */
 export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
   tour: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
+  // Day 1 — Tuesday, the first shift.
   mail: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
   "mail-read": { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
   "mail-reply": { en: "Tuesday, 8:14 AM. Maria says welcome.", es: "Martes, 8:14 AM. Maria te da la bienvenida." },
   "mail-attach": { en: "Tuesday, 8:20 AM. She needs a file.", es: "Martes, 8:20 AM. Necesita un archivo." },
-  schedule: { en: "Tuesday morning.", es: "Martes por la mañana." },
-  "swap-request": { en: "Wednesday. Two shifts overlap.", es: "Miércoles. Dos turnos se cruzan." },
-  "call-out-sick": { en: "Thursday morning. You feel sick.", es: "Jueves por la mañana. Te sientes mal." },
-  timeclock: { en: "Tuesday, end of shift.", es: "Martes, fin del turno." },
-  paystub: { en: "Friday. Payday for the crew.", es: "Viernes. Día de pago del equipo." },
-  "shift-review": { en: "Monday. A normal shift, start to finish.", es: "Lunes. Un turno normal, de principio a fin." },
-  "account-recovery": { en: "Monday morning. You're signed out.", es: "Lunes por la mañana. Cerraste sesión." },
-  incident: { en: "Wednesday. The floor is busy.", es: "Miércoles. El piso está lleno." },
-  handbook: { en: "Thursday night.", es: "Jueves por la noche." },
+  // Day 2 — Wednesday. The next week's schedule is posted, and it clashes.
+  schedule: { en: "Wednesday morning. Next week is posted.", es: "Miércoles por la mañana. Ya está la próxima semana." },
+  "swap-request": { en: "Wednesday, 9:30 AM. Two shifts overlap.", es: "Miércoles, 9:30 AM. Dos turnos se cruzan." },
+  // Day 3 — Thursday into Friday, closing out week one: sick Thursday
+  // morning, then Friday's clock-out, pay, and a last walk-through.
+  "call-out-sick": { en: "Thursday, 6:12 AM. You feel sick.", es: "Jueves, 6:12 AM. Te sientes mal." },
+  timeclock: { en: "Friday, end of shift.", es: "Viernes, fin del turno." },
+  paystub: { en: "Friday, 5:40 PM. Payday for the crew.", es: "Viernes, 5:40 PM. Día de pago del equipo." },
+  "shift-review": { en: "Friday, 6 PM. One last walk-through.", es: "Viernes, 6 PM. Un último repaso." },
+  // Day 4 — Tuesday of week 2. Something happens on the floor.
+  incident: { en: "Tuesday. The floor is busy.", es: "Martes. El piso está lleno." },
+  handbook: { en: "Tuesday night.", es: "Martes por la noche." },
+  // Day 5 — Wednesday of week 2.
+  "account-recovery": { en: "Wednesday morning. You're signed out.", es: "Miércoles por la mañana. Cerraste sesión." },
+  // Day 6+ — week 3. The lead job starts here.
   calendar: { en: "Next week. You are a lead now.", es: "La semana que viene. Ya eres líder." },
   files: { en: "Monday morning. Jordan starts today.", es: "Lunes por la mañana. Jordan empieza hoy." },
   spreadsheet: { en: "Friday afternoon. Counts are due.", es: "Viernes por la tarde. Hay que entregar las cuentas." },
   "make-a-copy": { en: "Monday. Maria shared a template.", es: "Lunes. Maria compartió una plantilla." },
-  "status-report": { en: "Your copy is ready. The total is empty.", es: "Tu copia está lista. El total está vacío." },
+  "status-report": { en: "Monday, 11 AM. Your copy is ready.", es: "Lunes, 11 AM. Tu copia está lista." },
   triage: { en: "Tuesday, 9:04 AM. Two things waiting.", es: "Martes, 9:04 AM. Dos cosas esperando." },
   "team-schedule": { en: "Monday. You write the crew week now.", es: "Lunes. Ahora tú escribes la semana del equipo." },
   "formula-check": { en: "Friday. Hours are due for payroll.", es: "Viernes. Hay que entregar las horas para la nómina." },
-  "team-meeting": { en: "You call the huddle now.", es: "Ahora tú llamas a la reunión." },
+  "team-meeting": { en: "Tuesday. You call the huddle now.", es: "Martes. Ahora tú llamas a la reunión." },
   "priority-call": { en: "Thursday, 3:40 PM. The floor is loud.", es: "Jueves, 3:40 PM. El piso está fuerte." },
 };
 

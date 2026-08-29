@@ -99,7 +99,12 @@ export const JOB_CARD_COPY: Record<
   }
 > = {
   en: {
-    jobOf: (n, total) => `Task ${n} of ${total}`,
+    // The counter always names what it is counting. Unlabeled, "Task 1 of 4"
+    // reads as "this game has 4 tasks" — and then the day ends and a new one
+    // starts at 1 of 2, which is the single most confusing thing the old
+    // build did. A one-task day gets the day alone: "Task 1 of 1" is a
+    // counter that communicates nothing.
+    jobOf: (n, total) => (total <= 1 ? "" : `Task ${n} of ${total}`),
     doneKicker: "Done",
     dayDoneKicker: "Day finished",
     dayDoneLine: "That's today done.",
@@ -118,7 +123,7 @@ export const JOB_CARD_COPY: Record<
     comingSoonLine: "Nothing new yet. Check back soon.",
   },
   es: {
-    jobOf: (n, total) => `Tarea ${n} de ${total}`,
+    jobOf: (n, total) => (total <= 1 ? "" : `Tarea ${n} de ${total}`),
     doneKicker: "Listo",
     dayDoneKicker: "Día terminado",
     dayDoneLine: "El día de hoy está listo.",
