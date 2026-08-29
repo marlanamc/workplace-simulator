@@ -344,6 +344,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         openMail();
                         return;
                       }
+                      // During the tour's "this is your work email" look-beat,
+                      // Maria's row is filtered out (nothing here is "correct"
+                      // yet), so a decoy click shouldn't fire mail-task wrong
+                      // coaching onto a job card that's still on tour step 1.
+                      if (welcomeWalkthroughActive) return;
                       wrongMail(m.wrongHint);
                     }}
                     className={`flex w-full items-start gap-3 border-b border-[#f0f4f9] px-4 py-3 text-left cursor-pointer ${

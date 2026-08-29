@@ -45,7 +45,16 @@ const MONTH_CELLS: Cell[] = [
 const TODAY = 21;
 const EVENT_DAY = 26;
 
-const SHIFTS = [17, 18, 19, 20, 21, 22, 24, 25, 27, 28, 29, 31];
+/**
+ * Real start times per shift day, not a repeated "Opening" placeholder.
+ * Same two shift blocks Portal's own schedule uses (7–3 open, 10–6 mid,
+ * 8–4 Saturday), so a learner who has already read their schedule there
+ * recognizes the same shape here.
+ */
+const SHIFT_TIMES: Record<number, string> = {
+  17: "7:00 AM", 18: "7:00 AM", 19: "10:00 AM", 20: "10:00 AM", 21: "7:00 AM", 22: "8:00 AM",
+  24: "7:00 AM", 25: "7:00 AM", 27: "10:00 AM", 28: "10:00 AM", 29: "8:00 AM", 31: "7:00 AM",
+};
 
 function CalendarMark() {
   return (
@@ -263,7 +272,8 @@ export default function CalendarTask() {
                 const inMonth = !cell.other;
                 const isToday = inMonth && cell.day === TODAY;
                 const hasMeeting = inMonth && cell.day === EVENT_DAY;
-                const hasShift = inMonth && SHIFTS.includes(cell.day);
+                const shiftTime = inMonth ? SHIFT_TIMES[cell.day] : undefined;
+                const hasShift = Boolean(shiftTime);
                 return (
                   <div
                     key={i}
@@ -286,7 +296,7 @@ export default function CalendarTask() {
                         className="truncate rounded px-1 py-0.5 text-left text-[11px] font-medium text-white cursor-pointer"
                         style={{ background: "#0b8043" }}
                       >
-                        {T("Opening", "Apertura")}
+                        {shiftTime}
                       </button>
                     )}
                     {hasMeeting && (
