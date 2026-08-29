@@ -1,6 +1,6 @@
 # Lesson 3: A Normal Shift
 
-**Time:** ~4 minutes · **Level:** 3 — Payday & Trouble · **Track:** 3 — Payday & Trouble
+**Time:** ~4 minutes · **Level:** 3 — Payday · **Track:** Payday
 **Task key:** `shift-review` · **Status:** built — three quick recap
 questions covering schedule, timeclock, and pay stub, back to back, with no
 new tool introduced.

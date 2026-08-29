@@ -43,6 +43,7 @@ export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   "mail-attach": Paperclip,
   schedule: CalendarDays,
   "swap-request": ArrowLeftRight,
+  "mail-etiquette": Mail,
   "call-out-sick": Thermometer,
   timeclock: Clock,
   paystub: Banknote,

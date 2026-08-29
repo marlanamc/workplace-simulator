@@ -1,4 +1,4 @@
-# Level 3 Real-World Practice: Payday & Trouble Wrap-Up
+# Level 3 Real-World Practice: Payday Wrap-Up
 
 **When to offer:** after a student has finished every task in Level 3 in
 the simulator — timeclock, pay stub, and the normal-shift review
@@ -16,8 +16,8 @@ a round-trip after each short lesson.
       pay stub PDF attached together.
 
 ## Student instructions (post as-is, or adapt — optional)
-You just finished Level 3 in the simulator — that's all of Act I done.
-If you'd like extra practice, try these for real:
+You just finished Level 3 in the simulator — two short levels left before
+Act I is done. If you'd like extra practice, try these for real:
 1. Check the mock time card — does the total look right? Write what you'd
    say if not.
 2. Find the net pay on the mock pay stub.
@@ -36,6 +36,7 @@ practice. One or two specific notes back is plenty.
   student hasn't already sent a real email with a real attachment from
   Level 1's done screen, this is a natural nudge to do it before Act II
   starts.
-- A student is ready for Act II as soon as every Level 3 task shows
+- A student is ready for Level 3a as soon as every Level 3 task shows
   complete in their My Job panel, whether or not they did this optional
-  practice.
+  practice. Two short levels remain before Act II: `mail-etiquette`
+  (Level 3a), then `call-out-sick` (Level 3a2).

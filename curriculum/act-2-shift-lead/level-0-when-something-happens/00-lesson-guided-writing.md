@@ -3,7 +3,7 @@
 **Time:** ~5–8 minutes · **Act II, Level 0** — comes BEFORE the incident report
 **Task key:** `guided-writing` (not in code yet)
 **Status:** not built yet
-**Prerequisite:** Level 3 complete (has typed short replies and form answers)
+**Prerequisite:** Act I complete (has typed short replies and form answers, most recently the sick call)
 
 ## Why this lesson exists
 The incident report is the course's first open free-writing under a

@@ -9,6 +9,7 @@ export const SKILLS: Record<TaskKey, string> = {
   "mail-attach": "Send a reply with a file attached",
   schedule: "Find a shift conflict and ask for a swap",
   "swap-request": "Ask for a shift swap in writing",
+  "mail-etiquette": "Write a work email that gets straight to the point",
   "call-out-sick": "Tell my manager I can't come in",
   timeclock: "Check your hours and speak up",
   paystub: "Read a pay stub",

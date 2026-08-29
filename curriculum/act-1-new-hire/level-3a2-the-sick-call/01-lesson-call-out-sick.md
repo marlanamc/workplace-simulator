@@ -1,20 +1,25 @@
-# Lesson 4: Tell Maria You Can't Come In
+# Lesson 1: Tell Maria You Can't Come In
 
-**Time:** ~4 minutes · **Level:** 3 — Payday & Trouble · **Track:** 3 — Payday & Trouble
+**Time:** ~4 minutes · **Level:** 3a2 — The Sick Call · **Track:** Sick Day
 **Task key:** `call-out-sick` · **Status:** built — Mail opens straight into a
 compose window addressed to Maria, with a planted "you're sick and you're on
 at 10" scenario. Written in the real Mail app, not a separate portal form.
-**Prerequisite:** Lesson 3 (`shift-review`)
+**Prerequisite:** Level 3a (`mail-etiquette`)
 
-> **Why this sits in Level 3, not Level 1.** Calling out is a normal part of
-> any job, but it reads very differently in week one than it does from someone
-> who has already shown up, run a full shift, and been paid. By this point the
-> student has a track record in the story, so the lesson is about *how to give
-> notice well* rather than about a new hire already missing work.
+> **Why this sits here, not in Level 3.** Calling out is a normal part of
+> any job, but it reads very differently in week one than it does from
+> someone who has already shown up, run a full shift, been paid, and
+> written one email the "right" way already. This is the last thing that
+> happens before the Shift Lead promotion — dated the Monday of week 2, not
+> Thursday of week 1 — so the lesson is about *how to give notice well*
+> from someone with a track record, not about a new hire already missing
+> work.
 
 ## We will learn...
 - write a short message calling out sick, before a shift starts, in a way
   that gives your manager time to find coverage.
+- apply the email shape from `mail-etiquette` (subject states it, purpose
+  first, clean close) under real stakes.
 
 ## Before class (teacher prep)
 - [ ] Simulator: nothing to set up — the Job Card opens Mail directly into the
@@ -41,3 +46,4 @@ at 10" scenario. Written in the real Mail app, not a separate portal form.
   record.
 - Maria's reply names the two-hour rule. Worth pausing on: most workplaces
   have a number like this, and it is usually in the handbook.
+- Finishing this lesson closes Act I and triggers the Shift Lead promotion.

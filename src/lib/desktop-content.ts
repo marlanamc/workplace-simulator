@@ -202,10 +202,15 @@ export const TASK_KEYS = [
   // with their own badges. They're one task now, completed by "schedule".
   // Kept here so a learner's historical completion stays a valid DB row.
   "swap-request",
-  "call-out-sick",
   "timeclock",
   "paystub",
   "shift-review",
+  // Named lesson on the email shape every earlier reply modeled silently:
+  // subject states the ask, body opens with the purpose, closes clean.
+  // Sits right before call-out-sick on purpose - the payoff is using the
+  // shape under real stakes the very next scene.
+  "mail-etiquette",
+  "call-out-sick",
   "account-recovery",
   "incident",
   "handbook",

@@ -65,8 +65,15 @@ describe("Level 2 and Level 3 membership", () => {
   });
 
   it("the sick day waits until the learner has a track record", () => {
-    expect(track("payday-trouble").taskKeys).toContain("call-out-sick");
+    expect(track("payday-trouble").taskKeys).not.toContain("call-out-sick");
     expect(track("first-week").taskKeys).not.toContain("call-out-sick");
+    expect(track("sick-day").taskKeys).toEqual(["call-out-sick"]);
+  });
+
+  it("the email-shape lesson comes right before the sick call", () => {
+    expect(track("mail-etiquette").taskKeys).toEqual(["mail-etiquette"]);
+    const order = ALL_TASKS;
+    expect(order.indexOf("mail-etiquette")).toBeLessThan(order.indexOf("call-out-sick"));
   });
 });
 

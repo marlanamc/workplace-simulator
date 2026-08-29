@@ -35,6 +35,7 @@ export const HANDOFF_CTA: Record<TaskKey, Localized> = {
   "mail-attach": { en: "Next: Send the report", es: "Siguiente: Envía el reporte" },
   schedule: { en: "Next: Open Portal", es: "Siguiente: Abrir Portal" },
   "swap-request": { en: "Next: Ask for a swap", es: "Siguiente: Pide un cambio" },
+  "mail-etiquette": { en: "Next: Write to Darnell", es: "Siguiente: Escríbele a Darnell" },
   "call-out-sick": { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
   timeclock: { en: "Next: Clock out", es: "Siguiente: Marcar salida" },
   paystub: { en: "Next: Check a pay stub", es: "Siguiente: Revisar un recibo" },
@@ -65,8 +66,9 @@ export const HANDOFF_CTA: Record<TaskKey, Localized> = {
  * the story backwards. When you add a task, give it a moment at or after the
  * task above it, and never reuse a weekday for a different level.
  *
- * The weeks: week 1 is the first shift (days 1-3), week 2 settles in
- * (days 4-5), and the lead job starts at `calendar` in week 3.
+ * The weeks: week 1 is the first shift (days 1-3), the email lesson and the
+ * sick call bridge into week 2 (day 3b, Friday evening into Monday), and the
+ * lead job starts at `calendar` in week 3.
  */
 export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
   tour: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
@@ -78,12 +80,14 @@ export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
   // Day 2 — Wednesday. The next week's schedule is posted, and it clashes.
   schedule: { en: "Wednesday morning. Next week is posted.", es: "Miércoles por la mañana. Ya está la próxima semana." },
   "swap-request": { en: "Wednesday, 9:30 AM. Two shifts overlap.", es: "Miércoles, 9:30 AM. Dos turnos se cruzan." },
-  // Day 3 — Thursday into Friday, closing out week one: sick Thursday
-  // morning, then Friday's clock-out, pay, and a last walk-through.
-  "call-out-sick": { en: "Thursday, 6:12 AM. You feel sick.", es: "Jueves, 6:12 AM. Te sientes mal." },
+  // Day 3 — Friday, closing out week one: clock-out, pay, a last
+  // walk-through, then one more email lesson before the weekend.
   timeclock: { en: "Friday, end of shift.", es: "Viernes, fin del turno." },
   paystub: { en: "Friday, 5:40 PM. Payday for the crew.", es: "Viernes, 5:40 PM. Día de pago del equipo." },
   "shift-review": { en: "Friday, 6 PM. One last walk-through.", es: "Viernes, 6 PM. Un último repaso." },
+  "mail-etiquette": { en: "Friday, 6:20 PM. One more thing before you go.", es: "Viernes, 6:20 PM. Una cosa más antes de irte." },
+  // Day 3b — Monday, week 2. The sick call, then the promotion.
+  "call-out-sick": { en: "Monday, 6:12 AM. You feel sick.", es: "Lunes, 6:12 AM. Te sientes mal." },
   // Day 4 — Tuesday of week 2. Something happens on the floor.
   incident: { en: "Tuesday. The floor is busy.", es: "Martes. El piso está lleno." },
   handbook: { en: "Tuesday night.", es: "Martes por la noche." },

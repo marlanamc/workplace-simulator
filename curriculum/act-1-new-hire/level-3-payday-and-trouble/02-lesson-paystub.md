@@ -1,6 +1,6 @@
 # Lesson 2: Read a Pay Stub
 
-**Time:** ~5 minutes · **Level:** 3 — Payday & Trouble · **Track:** 3 — Payday & Trouble
+**Time:** ~5 minutes · **Level:** 3 — Payday · **Track:** Payday
 **Task key:** `paystub` · **Status:** built — opening the most recent pay
 stub from the Employee Portal opens the real PDF in PDF Reader, then two
 quick multiple-choice checks (net pay, then total hours) confirm the student

@@ -1,6 +1,6 @@
 # Lesson 1: Clock Out for the Day
 
-**Time:** ~5 minutes · **Level:** 3 — Payday & Trouble · **Track:** 3 — Payday & Trouble
+**Time:** ~5 minutes · **Level:** 3 — Payday · **Track:** Payday
 **Task key:** `timeclock` · **Status:** built — the Employee Portal's Time
 Clock tab clocks out into a planted hours mismatch; flagging it opens a short
 message to Maria, right there in the portal.

@@ -81,6 +81,7 @@ export const BOOKMARK_LABEL: Record<TaskKey, string> = {
   "mail-attach": "Mail",
   schedule: "Portal",
   "swap-request": "Portal",
+  "mail-etiquette": "Mail",
   "call-out-sick": "Mail",
   timeclock: "Portal",
   paystub: "Portal",

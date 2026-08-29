@@ -36,12 +36,24 @@ export const TRACKS: Track[] = [
   },
   {
     key: "payday-trouble",
-    title: "Payday & Trouble",
+    title: "Payday",
     subtitle: "Money, hours, and a normal shift",
-    // Play order is story order: Thursday's sick call comes before Friday's
-    // clock-out and pay. See SHIFT_MOMENT — time only moves forward.
-    taskKeys: ["call-out-sick", "timeclock", "paystub", "shift-review"],
+    taskKeys: ["timeclock", "paystub", "shift-review"],
     awardEmoji: "💳",
+  },
+  {
+    key: "mail-etiquette",
+    title: "One More Thing",
+    subtitle: "The shape every short work email follows",
+    taskKeys: ["mail-etiquette"],
+    awardEmoji: "📧",
+  },
+  {
+    key: "sick-day",
+    title: "The Sick Call",
+    subtitle: "Give notice well, not just on time",
+    taskKeys: ["call-out-sick"],
+    awardEmoji: "🤒",
   },
   {
     key: "judgment",
@@ -190,7 +202,7 @@ export interface Level {
  * so the desktop stays a place they recognize. From level4 on — the same point
  * TASK_LOCATIONS stops naming a `tab` — we trust them and jump directly.
  */
-const EARLY_LEVEL_KEYS = new Set(["level0", "level1", "level2", "level3", "level3b", "level3c"]);
+const EARLY_LEVEL_KEYS = new Set(["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3b", "level3c"]);
 
 export function isEarlyLevel(level: Level): boolean {
   return EARLY_LEVEL_KEYS.has(level.key);
@@ -240,7 +252,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3",
-    title: "Payday & Trouble",
+    title: "Payday",
     trackKeys: ["payday-trouble"],
     firstTabKey: "portal",
     // shift-review deliberately teaches nothing new - it's a fresh pass over
@@ -255,6 +267,38 @@ export const LEVELS: Level[] = [
         es: "Hoy es día de pago — toca revisar tus horas.",
       },
       cta: { en: "Check my pay", es: "Revisar mi pago" },
+    },
+  },
+  {
+    key: "level3a",
+    title: "One More Thing",
+    trackKeys: ["mail-etiquette"],
+    firstTabKey: "mail",
+    levelUp: {
+      emoji: "📧",
+      kicker: { en: "Friday afternoon", es: "Viernes por la tarde" },
+      title: { en: "One more thing before you go.", es: "Una cosa más antes de irte." },
+      body: {
+        en: "Darnell asked you something on Day One. Maria wants you to close the loop.",
+        es: "Darnell te preguntó algo el primer día. Maria quiere que le respondas.",
+      },
+      cta: { en: "Write to Darnell", es: "Escribirle a Darnell" },
+    },
+  },
+  {
+    key: "level3a2",
+    title: "The Sick Call",
+    trackKeys: ["sick-day"],
+    firstTabKey: "mail",
+    levelUp: {
+      emoji: "🤒",
+      kicker: { en: "Monday morning", es: "Lunes por la mañana" },
+      title: { en: "You woke up sick.", es: "Te despertaste enfermo." },
+      body: {
+        en: "You're on the schedule at 10. Write Maria before your shift, not after it starts.",
+        es: "Hoy tienes turno a las 10. Escríbele a Maria antes de tu turno, no después.",
+      },
+      cta: { en: "Write to Maria", es: "Escribirle a Maria" },
     },
   },
   {
@@ -467,7 +511,7 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
  * `curriculum/00-scope-and-sequence.md`.
  */
 export const ACTS: Act[] = [
-  { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3"], scene: "harborside-open" },
+  { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2"], scene: "harborside-open" },
   { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
 ];
@@ -631,6 +675,14 @@ export const TASK_INFO: Record<TaskKey, TaskInfo> = {
     dispatch: {
       en: "Two shifts overlap. Somebody has to swap.",
       es: "Dos turnos chocan. Alguien tiene que cambiar.",
+    },
+    built: true,
+  },
+  "mail-etiquette": {
+    label: { en: "Write to a coworker", es: "Escríbele a un compañero" },
+    dispatch: {
+      en: "Before you go, close the loop with Darnell.",
+      es: "Antes de irte, respóndele a Darnell.",
     },
     built: true,
   },
@@ -879,6 +931,7 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
   "mail-attach": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   schedule: { appKey: "browser", tab: "portal", section: "schedule", ctaLabel: "Open Portal" },
   "swap-request": { appKey: "browser", tab: "portal", section: "swap-request", ctaLabel: "Open Portal" },
+  "mail-etiquette": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   "call-out-sick": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
   timeclock: { appKey: "browser", tab: "portal", section: "timeclock", ctaLabel: "Open Portal" },
   paystub: { appKey: "browser", tab: "portal", section: "paystubs", ctaLabel: "Open Portal" },

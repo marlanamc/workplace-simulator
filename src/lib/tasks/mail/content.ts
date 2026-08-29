@@ -5,14 +5,28 @@ import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/li
 const GREETING = "__GREETING__";
 
 /** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
-export type PlayableMailTask = "mail-reply" | "mail-attach" | "call-out-sick";
+export type PlayableMailTask = "mail-reply" | "mail-attach" | "mail-etiquette" | "call-out-sick";
 
 /**
- * Tasks where the learner writes to Maria from scratch rather than replying to
- * something in the inbox. There is no email to open first, so Mail starts on
- * the compose window instead of the message list.
+ * Every task Mail can run, in the order they're introduced. MailClient
+ * derives which one is "next" from this list intersected with the curriculum
+ * order, rather than a separate hand-maintained list - a mail task that
+ * exists here but isn't reachable is a silent dead end, not a build error.
  */
-export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["call-out-sick"];
+export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach", "mail-etiquette", "call-out-sick"];
+
+/**
+ * Tasks where the learner writes to Maria (or a coworker) from scratch
+ * rather than replying to something in the inbox. There is no email to open
+ * first, so Mail starts on the compose window instead of the message list.
+ */
+export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-etiquette", "call-out-sick"];
+
+/** The "To" address for a compose-only task - who the learner is writing from scratch. */
+export const COMPOSE_RECIPIENT: Partial<Record<PlayableMailTask, string>> = {
+  "mail-etiquette": "darnell.washington@harborsidecafe.com",
+  "call-out-sick": "maria.delgado@harborsidecafe.com",
+};
 
 export function isComposeOnly(task: PlayableMailTask): boolean {
   return COMPOSE_ONLY_TASKS.includes(task);
@@ -35,17 +49,33 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       cta: "Abrir mi bandeja",
     },
   },
+  "mail-etiquette": {
+    en: {
+      emoji: "📧",
+      kicker: "Friday, 6:20 PM",
+      headline: "Before you go — answer Darnell.",
+      body: "Maria says you found extra aprons in the storage room. Darnell asked about them on your first day. Let him know before you leave, so he's not still wondering Monday.",
+      cta: "Write to Darnell",
+    },
+    es: {
+      emoji: "📧",
+      kicker: "Viernes, 6:20 PM",
+      headline: "Antes de irte, respóndele a Darnell.",
+      body: "Maria dice que encontraste delantales de más en el almacén. Darnell preguntó por ellos tu primer día. Avísale antes de irte, para que no siga esperando el lunes.",
+      cta: "Escribirle a Darnell",
+    },
+  },
   "call-out-sick": {
     en: {
       emoji: "🤒",
-      kicker: "Thursday, 6:12 AM",
+      kicker: "Monday, 6:12 AM",
       headline: "You're sick. You're on at 10.",
       body: "You woke up sick and you're on the schedule this morning. Write Maria now, before your shift — not after it starts.",
       cta: "Write to Maria",
     },
     es: {
       emoji: "🤒",
-      kicker: "Jueves, 6:12 AM",
+      kicker: "Lunes, 6:12 AM",
       headline: "Estás enfermo. Entras a las 10.",
       body: "Te despertaste enfermo y hoy tienes turno. Escríbele a Maria ahora, antes de tu turno, no después de que empiece.",
       cta: "Escribirle a Maria",
@@ -125,17 +155,31 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
   },
+  "mail-etiquette": {
+    en: {
+      kicker: "Message sent",
+      body: "Darnell got a clear answer to a question he'd been waiting on for days: the subject named it, the answer came first, then the detail he needed. That shape is most of what a short work email is.",
+      badgeNumber: "05",
+      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
+    },
+    es: {
+      kicker: "Mensaje enviado",
+      body: "Darnell recibió una respuesta clara a algo que llevaba días esperando: el asunto lo decía, la respuesta venía primero, y luego el detalle que necesitaba. Esa forma es casi todo lo que necesita un correo corto de trabajo.",
+      badgeNumber: "05",
+      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
   "call-out-sick": {
     en: {
       kicker: "Message sent",
       body: "Maria has time to find coverage now, instead of finding out when your shift starts. That is the whole point of writing early.",
-      badgeNumber: "09",
+      badgeNumber: "06",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
     es: {
       kicker: "Mensaje enviado",
       body: "Maria ahora tiene tiempo de buscar quién te cubra, en vez de enterarse cuando empiece tu turno. Ese es el punto de avisar temprano.",
-      badgeNumber: "09",
+      badgeNumber: "06",
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
   },
@@ -166,6 +210,18 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
       subject: "Bienvenido a Harborside Cafe",
       reSubject: "Re: Bienvenido a Harborside Cafe",
       preview: "Me alegra que estés aquí. Llámame si necesitas algo.",
+    },
+  },
+  "mail-etiquette": {
+    en: {
+      subject: "Extra aprons",
+      reSubject: "Extra aprons",
+      preview: "Answering Darnell's question from Day One.",
+    },
+    es: {
+      subject: "Delantales de más",
+      reSubject: "Delantales de más",
+      preview: "Respondiendo la pregunta de Darnell del primer día.",
     },
   },
   "call-out-sick": {
@@ -322,7 +378,7 @@ export const MAIL_COPY: Record<Lang, {
  * SIGNATURES so every email Maria sends ends the same way — which is the point
  * of a signature, and is not something to retype into each body.
  */
-type ReadableMailTask = Exclude<PlayableMailTask, "call-out-sick">;
+type ReadableMailTask = Exclude<PlayableMailTask, "call-out-sick" | "mail-etiquette">;
 
 const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
   // Job 1: welcome note — thank-you reply, no file.
@@ -417,6 +473,20 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
       "Muchas gracias. Me alegra estar aquí.",
       "Gracias. Te llamo si necesito algo.",
       "También espero trabajar contigo.",
+    ],
+  },
+  "mail-etiquette": {
+    en: [
+      "Hi Darnell, yes — we found extra aprons in the storage room.",
+      "They're on the second shelf, past the cleaning supplies.",
+      "Let me know if you need me to grab you one.",
+      "See you Monday.",
+    ],
+    es: [
+      "Hola Darnell, sí — encontramos delantales de más en el almacén.",
+      "Están en el segundo estante, después de los productos de limpieza.",
+      "Avísame si necesitas que te traiga uno.",
+      "Nos vemos el lunes.",
     ],
   },
   "call-out-sick": {
@@ -555,6 +625,15 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     subject: { en: safetyMeta.en.subject, es: safetyMeta.es.subject },
     preview: { en: safetyMeta.en.preview, es: safetyMeta.es.preview },
   };
+  // The decoy clutter teaches "find the right email among a messy inbox" -
+  // Day One's job. Later mail tasks open straight into compose (there's
+  // nothing to find), so showing this same frozen Day One backdrop days or
+  // weeks later just sits there getting more wrong: a decoy timestamped
+  // "7:41 AM" doesn't age, and mail-etiquette explicitly says Darnell's
+  // question is from days ago while its own row still claims this morning.
+  // Story mail (Maria's replies, correctly filtered by day) still shows via
+  // storyMailsUpTo regardless of what this function returns.
   if (task === "mail-reply") return [welcome, ...DECOY_EMAILS];
-  return [safety, welcome, ...DECOY_EMAILS];
+  if (task === "mail-attach") return [safety, welcome, ...DECOY_EMAILS];
+  return [];
 }

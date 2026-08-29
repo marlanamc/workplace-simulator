@@ -1,8 +1,8 @@
 # Level 2 Real-World Practice: The First Week Wrap-Up
 
-**When to offer:** after a student has finished every task in Level 2 in
-the simulator — reading the schedule and requesting the swap (Lessons 1–2).
-Not after each individual lesson. This is **optional and supplementary** —
+**When to offer:** after a student has finished Level 2's one job in the
+simulator — reading the schedule and requesting the swap (Lesson 1).
+This is **optional and supplementary** —
 a student who skips it still moves straight on to Level 3. Offer it during
 office hours, or post it to Google Classroom for anyone who wants the extra
 practice; it should never hold anyone back.

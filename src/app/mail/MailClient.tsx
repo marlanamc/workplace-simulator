@@ -13,8 +13,11 @@ import {
   CONFIRM_COPY,
   DONE_COPY,
   isComposeOnly,
+  PLAYABLE_MAIL_TASKS,
+  COMPOSE_RECIPIENT,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
+import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { TASK_ICONS } from "@/lib/icons";
@@ -42,7 +45,14 @@ const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" 
 
 type View = "empty" | "read" | "confirm" | "compose" | "done" | "story";
 type MailTask = PlayableMailTask;
-const MAIL_TASK_ORDER: MailTask[] = ["mail-reply", "mail-attach"];
+/**
+ * Every mail task, in curriculum order - derived from the level/track
+ * structure rather than hand-listed, so a mail task that exists in content
+ * but isn't wired into a level can never silently become unreachable here.
+ */
+const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap(taskKeysForLevel) as string[]).filter(
+  (k): k is MailTask => (PLAYABLE_MAIL_TASKS as string[]).includes(k),
+);
 
 /**
  * One short sentence per step - the Job Card's hard rule. Anything longer is
@@ -52,7 +62,8 @@ const STEP_LINE = {
   openMail: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
-    // Compose-only: there is no email to open, so this line is never shown.
+    // Compose-only: there is no email to open, so these lines are never shown.
+    "mail-etiquette": { en: "Write to Darnell.", es: "Escríbele a Darnell." },
     "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
   } as Record<MailTask, Localized<string>>,
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
@@ -78,13 +89,18 @@ const BUTTON_LABEL = {
 } as const;
 
 /** Steps per job, for the card's progress bars. */
-const STEP_COUNT: Record<MailTask, number> = { "mail-reply": 3, "mail-attach": 4, "call-out-sick": 2 };
+const STEP_COUNT: Record<MailTask, number> = {
+  "mail-reply": 3,
+  "mail-attach": 4,
+  "mail-etiquette": 2,
+  "call-out-sick": 2,
+};
 
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
 }
 
-/** Day One's 2 jobs share one inbox - whichever isn't done yet is the one running now. */
+/** Every mail job shares one Mail app - whichever isn't done yet is the one running now. */
 function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
   return MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
 }
@@ -458,7 +474,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick">, lang, displayName).plain.map((p, i) => (
+                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-etiquette">, lang, displayName).plain.map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
@@ -527,7 +543,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   <div className="mt-6 ml-[52px] overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.to}</span>
-                      <span>maria.delgado@harborsidecafe.com</span>
+                      <span>{COMPOSE_RECIPIENT[activeMailTask]}</span>
                     </div>
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>

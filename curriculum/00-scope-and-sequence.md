@@ -133,95 +133,115 @@ already have later progress are not pulled back here.
 
 ---
 
-## Act I: Levels 1-3 — New Hire (shared trunk)
+## Act I: Levels 1-3 (+2 coda levels) — New Hire (shared trunk)
 
-**Restructured** (was 3 levels / 6 lessons bundling 2-3 skills each; now 3
-levels / 9 short jobs, one skill each, ~4-5 minutes apiece — matching how
-short Act I's lessons actually already ran in practice, just with more
-stops along the way). `incident` and `handbook` moved to Act II
+**Restructured twice.** First pass: was 3 levels / 6 lessons bundling 2-3
+skills each; became 3 levels / 9 short jobs, one skill each, ~4-5 minutes
+apiece. `incident` and `handbook` moved to Act II
 (`act-2-shift-lead/level-0-when-something-happens/`) — writing up an
-incident in professional English is a lead's task, not week one. Two tasks
-are genuinely new curriculum ground: `swap-request` (the same shift-swap
-skill, through a real web form instead of an email) and `call-out-sick`
-(composing a call-out message — `handbook`'s old call-out scenario was only
-ever a policy *lookup*, never a message the student actually wrote).
-`call-out-sick` sits in Level 3 rather than Level 2: calling out is normal,
-but it reads badly from a brand-new hire, and it lands better once the
-student has run a full shift and been paid. It is written in Mail, like
-every other message to Maria. A
-ninth job, `shift-review`, closes the act with no new tool — three
-already-known skills, mixed together, the level that actually earns the
-Shift Lead promotion.
+incident in professional English is a lead's task, not week one.
+
+**Second pass (this one): the sick call moved again, and gained a lesson
+in front of it.** `schedule` and `swap-request` are one task now, not two —
+noticing the clash and asking for the fix, through the same real form, read
+as one cause-and-effect job rather than two disconnected badges. And
+`call-out-sick` moved a second time: Level 3 already argued it "reads badly
+from a brand-new hire," but Level 3 sits only three days into the story,
+and the very next level (`incident`/`handbook`) is the Shift Lead
+promotion — so a Level-3 call-out was still landing on someone who'd
+technically been on the job less than a week. It now sits in its own level,
+the last thing that happens before the promotion, dated the Monday of week
+2 instead of Thursday of week 1. A new lesson, `mail-etiquette`, sits the
+Friday before it: every earlier reply modeled a professional email's shape
+(subject states the ask, greeting by name, purpose first, clean close)
+without ever naming it. This is where it gets named, writing to a coworker
+instead of Maria for the first time — low stakes on purpose, so the shape
+is already a habit by Monday, when getting it right actually matters.
 
 > **Downstream numbering note:** this pass renumbered Act I's own lessons
 > and levels, but did **not** renumber the learner-facing Level 4-27
 > figures used everywhere below and in later acts' folder names — those
 > still assume Act I's old 3-level shape. Reconciling that global count is
-> a follow-up pass, not done here.
+> a follow-up pass, not done here. The two coda levels below (`level3a`,
+> `level3a2` in code) are new since that count was last taken too.
 
 The story is Harborside Cafe. Name out loud that the same moves show up in
 a store, a cleaning job, a job site, or a front desk: email a lead, check
 hours and pay, ask for help, look up the rule.
 
-Nine short jobs, three levels, so each level stays a 12-15 minute sitting.
 Level 1 (Day One) is deliberately tiny so the very first session in the
 app is low-stakes. Level 2 (The First Week) adds "life happening on the
-schedule" — spotting a clash, then asking for the swap — not just mechanics.
-Level 3 (Payday & Trouble) covers hours and pay, adds the sick-day call-out,
-and closes with the no-new-tools review.
+schedule" — spotting a clash, then asking for the swap — not just
+mechanics. Level 3 (Payday) covers hours and pay and closes with the
+no-new-tools review. Two short coda levels follow before the promotion: the
+named email lesson, then the sick call.
 
 ### Level 1: Day One
 
-One inbox, three short jobs — reading, then replying, then attaching.
-Splitting them means a wrong answer tells you *which* of the three is
-missing, not just "mail didn't work." Single tab, auto-opened — no
-tab-hunting yet.
+One inbox, two short jobs — reading comes first inside each one, then
+replying, then attaching. Splitting them means a wrong answer tells you
+*which* of the two is missing, not just "mail didn't work." Single tab,
+auto-opened — no tab-hunting yet.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `mail-read` | Find and read a message from a manager, no writing yet | Browser → Mail |
-| 2 | `mail-reply` | Answer a manager in your own words | Browser → Mail |
-| 3 | `mail-attach` | Send the same reply again, this time with the file in it | Browser → Mail |
+| 1 | `mail-reply` | Read a message from a manager, then answer in your own words | Browser → Mail |
+| 2 | `mail-attach` | Send the same reply again, this time with the file in it | Browser → Mail |
 
-See `level-1-day-one/01-lesson-mail-read.md` through
+See `level-1-day-one/02-lesson-mail-reply.md` and
 `03-lesson-mail-attach.md`. Finishing `mail-attach` completes Level 1.
 
 ### Level 2: The First Week
 
-One app, two short jobs — the Employee Portal, now covering "life happening
-on a schedule," not just reading it.
+One app, one job — the Employee Portal, now covering "life happening on a
+schedule," not just reading it.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `schedule` | Read a work schedule against your own calendar and spot the clash | Browser → Portal |
-| 2 | `swap-request` | Ask for the fix, through Harborside's real swap form | Browser → Portal |
+| 1 | `schedule` | Spot a schedule clash against your own calendar, then ask for the swap through Harborside's real form | Browser → Portal |
 
-See `level-2-the-first-week/01-lesson-schedule.md` and
-`02-lesson-swap-request.md`. Finishing `swap-request` completes Level 2.
+See `level-2-the-first-week/01-lesson-schedule.md`. Finishing `schedule`
+completes Level 2. Picking the clashing day hands it straight to the swap
+form, already filled in — noticing and asking are one motion, not two
+separate badges.
 
-Two jobs, one cause and one effect: Lesson 1 is only noticing (the schedule
-never flags the clash — the student compares it against their own phone),
-and Lesson 2 is the ask. The schedule screen deliberately does **not**
-compose an email, because Harborside uses a form for this and Lesson 2 says
-so; teaching the email first and contradicting it one screen later was the
-old shape.
+### Level 3: Payday
 
-### Level 3: Payday & Trouble
-
-Hours and pay, a no-new-tools review, then the call-out that only makes
-sense once the student has a track record. Closes Act I and earns the Shift
-Lead promotion.
+Hours and pay, then a no-new-tools review.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
 | 1 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
 | 2 | `paystub` | Find the right person's stub, then confirm net pay and hours | Browser → Portal + PDF Reader |
 | 3 | `shift-review` | No new tool — three earlier skills, mixed, back to back | Browser → Portal |
-| 4 | `call-out-sick` | Tell your manager you can't come in, before your shift starts | Browser → Mail |
 
 See `level-3-payday-and-trouble/01-lesson-timeclock.md` through
-`04-lesson-call-out-sick.md`. Finishing `call-out-sick` completes Level 3
-and Act I, and triggers the Shift Lead promotion.
+`03-lesson-shift-review.md`. Finishing `shift-review` completes Level 3.
+
+### Level 3a: One More Thing (coda)
+
+One lesson, Friday afternoon, before the weekend.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `mail-etiquette` | Write a short work email that gets straight to the point — named explicitly for the first time | Browser → Mail |
+
+New folder needed: `level-3a-one-more-thing/`. Finishing `mail-etiquette`
+completes this level.
+
+### Level 3a2: The Sick Call (coda)
+
+One lesson, Monday morning of week 2 — the last thing before the
+promotion.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `call-out-sick` | Tell your manager you can't come in, before your shift starts | Browser → Mail |
+
+New folder needed: `level-3a2-the-sick-call/` (renumber
+`04-lesson-call-out-sick.md` from `level-3-payday-and-trouble/` into it).
+Finishing `call-out-sick` completes Level 3a2 and Act I, and triggers the
+Shift Lead promotion.
 
 ---
 
