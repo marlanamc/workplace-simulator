@@ -196,7 +196,7 @@ export default function TeamScheduleTask() {
               ].map((t) => (
                 <button key={t.label} onClick={notYet} className="flex flex-col items-center gap-2 cursor-pointer">
                   <span
-                    className="flex h-[92px] w-[72px] items-center justify-center rounded border border-[var(--border)] shadow-sm hover:shadow-md"
+                    className="flex h-[92px] w-[72px] items-center justify-center rounded border border-border shadow-sm hover:shadow-md"
                     style={{ background: t.bg }}
                   >
                     <span className="text-[26px]" style={{ color: t.accent }}>
@@ -210,14 +210,14 @@ export default function TeamScheduleTask() {
             <h3 className="mb-3 text-[14px] font-medium text-[#3c4043]">{c.recentHeading}</h3>
             <button
               onClick={() => setView("sheet")}
-              className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+              className="flex w-full items-center gap-3 rounded-xl border border-border bg-white p-4 text-left hover:bg-surface-muted cursor-pointer"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-[#0f9d58] text-white">
                 <SheetsIcon />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14px] font-medium text-[#3c4043]">{c.sheetName}</span>
-                <span className="block text-[12px] text-[var(--text-tertiary)]">{c.openedLabel}</span>
+                <span className="block text-[12px] text-text-tertiary">{c.openedLabel}</span>
               </span>
             </button>
           </div>
@@ -368,7 +368,7 @@ export default function TeamScheduleTask() {
 
             <button
               onClick={tryEmail}
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.emailCta}
             </button>
@@ -379,36 +379,36 @@ export default function TeamScheduleTask() {
       {view === "compose" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-6">
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
-            <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-              <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.to}</span>
+            <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
+              <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
               <span>{jordan.email}</span>
             </div>
-            <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-              <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.subjectLabel}</span>
+            <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
+              <span className="w-14 shrink-0 text-text-tertiary">{c.subjectLabel}</span>
               <span>{c.subject}</span>
             </div>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder={c.writeHere}
-              className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-[var(--text-tertiary)]"
+              className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-text-tertiary"
             />
             <div className="mb-4">
               <NeedAStart
                 lang={lang}
                 starters={STARTERS[lang]}
                 onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)}
-                chipClassName="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+                chipClassName="min-h-[38px] rounded-full border border-border bg-surface-muted px-3 text-[13px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
               />
             </div>
-            <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
+            <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
               <button
                 onClick={trySend}
-                className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+                className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
               >
                 {c.send}
               </button>
-              <button onClick={() => { setView("sheet"); setBody(""); }} className="min-h-[40px] px-2 text-[14px] text-[var(--text-tertiary)] cursor-pointer">
+              <button onClick={() => { setView("sheet"); setBody(""); }} className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer">
                 {c.discard}
               </button>
             </div>
@@ -417,7 +417,7 @@ export default function TeamScheduleTask() {
       )}
 
       {view === "done" && (
-        <div className="absolute inset-0 overflow-y-auto bg-[var(--surface-muted)] p-6">
+        <div className="absolute inset-0 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.sentKicker}

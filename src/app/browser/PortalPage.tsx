@@ -41,13 +41,13 @@ export default function PortalPage() {
   }
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-[var(--surface-muted)] text-[15px] text-[var(--text-primary)]">
-      <div className="flex items-center gap-3 border-b border-[var(--border)] bg-white px-4 py-3">
+    <div className="flex h-full min-h-0 flex-col bg-surface-muted text-[15px] text-text-primary">
+      <div className="flex items-center gap-3 border-b border-border bg-white px-4 py-3">
         <CircleGlyph icon={TAB_ICONS.portal} color="#8430ce" size={28} />
         <span className="text-[15px] font-medium">Employee Portal</span>
       </div>
 
-      <div className="flex gap-1 border-b border-[var(--border)] bg-white px-4 pt-2">
+      <div className="flex gap-1 border-b border-border bg-white px-4 pt-2">
         {SECTIONS.map((s) => (
           <button
             key={s.key}
@@ -55,7 +55,7 @@ export default function PortalPage() {
             className={`rounded-t-lg px-4 py-2.5 text-[14px] font-medium cursor-pointer ${
               section === s.key
                 ? "border-b-2 border-[#8430ce] text-[#8430ce]"
-                : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                : "text-text-secondary hover:text-text-primary"
             }`}
           >
             {s.label}

@@ -98,7 +98,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
         <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
-      <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
+      <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 
       {view !== "done" && (
         <RightNowBar
@@ -115,28 +115,28 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       )}
 
       {view === "form" && (
-        <div className="max-w-[440px] rounded-xl border border-[var(--border)] bg-white p-5">
-          <div className="mb-4 overflow-hidden rounded-lg border border-[var(--border)]">
+        <div className="max-w-[440px] rounded-xl border border-border bg-white p-5">
+          <div className="mb-4 overflow-hidden rounded-lg border border-border">
             {SCHEDULE.map((d, i) => (
               <div
                 key={d.day}
-                className={`flex items-center justify-between px-3 py-2 text-[13px] ${i !== 0 ? "border-t border-[var(--border)]" : ""} ${
-                  d.conflict ? "bg-[var(--warning-tint)]" : ""
+                className={`flex items-center justify-between px-3 py-2 text-[13px] ${i !== 0 ? "border-t border-border" : ""} ${
+                  d.conflict ? "bg-warning-tint" : ""
                 }`}
               >
                 <span className="font-medium">{d.day} {d.date}</span>
-                <span className={d.shift ? "text-[var(--text-primary)]" : "text-[var(--text-tertiary)]"}>{d.shift ?? "Off"}</span>
+                <span className={d.shift ? "text-text-primary" : "text-text-tertiary"}>{d.shift ?? "Off"}</span>
               </div>
             ))}
           </div>
 
-          <label className="mb-3 block text-[14px] font-medium text-[var(--text-primary)]">
+          <label className="mb-3 block text-[14px] font-medium text-text-primary">
             {c.shiftLabel}
             <select
               value={shift}
               onChange={(e) => setShift(e.target.value)}
               disabled={Boolean(initialShift)}
-              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)] disabled:bg-[var(--surface-muted)] disabled:text-[var(--text-secondary)]"
+              className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[14px] outline-none focus:border-accent disabled:bg-surface-muted disabled:text-text-secondary"
             >
               <option value="">{c.shiftPlaceholder}</option>
               {SHIFTS.map((d) => (
@@ -146,16 +146,16 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
               ))}
             </select>
             {initialShift && (
-              <span className="mt-1 block text-[12px] text-[var(--text-tertiary)]">{c.shiftPickedNote}</span>
+              <span className="mt-1 block text-[12px] text-text-tertiary">{c.shiftPickedNote}</span>
             )}
           </label>
 
-          <label className="mb-3 block text-[14px] font-medium text-[var(--text-primary)]">
+          <label className="mb-3 block text-[14px] font-medium text-text-primary">
             {c.coverLabel}
             <select
               value={cover}
               onChange={(e) => setCover(e.target.value)}
-              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none focus:border-[var(--accent)]"
+              className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[14px] outline-none focus:border-accent"
             >
               <option value="">{c.coverPlaceholder}</option>
               {SWAP_OPTIONS.map((o) => (
@@ -166,21 +166,21 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             </select>
           </label>
 
-          <label className="mb-4 block text-[14px] font-medium text-[var(--text-primary)]">
+          <label className="mb-4 block text-[14px] font-medium text-text-primary">
             {c.reasonLabel}
             <input
               type="text"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               placeholder={c.reasonPlaceholder}
-              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+              className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[14px] outline-none placeholder:text-text-tertiary focus:border-accent"
             />
           </label>
 
           <button
             data-showme="submit-button"
             onClick={submit}
-            className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+            className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
           >
             {c.submit}
           </button>

@@ -89,18 +89,18 @@ export default function TimeclockTask() {
 
       {view === "clocked_in" && (
         <div className="flex flex-col gap-5">
-          <div className="rounded-xl border border-[var(--success-tint)] bg-[var(--success-tint)] p-5">
-            <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--success)]">
+          <div className="rounded-xl border border-success-tint bg-success-tint p-5">
+            <div className="text-[12px] font-semibold uppercase tracking-wide text-success">
               {c.clockedInStatus}
             </div>
             <div className="mt-1 text-[20px] font-medium">
               {c.sinceLabel} {TIMECLOCK.clockedInAt}
             </div>
-            <div className="mt-1 text-[14px] text-[var(--text-secondary)]">{TIMECLOCK.weekHours}</div>
+            <div className="mt-1 text-[14px] text-text-secondary">{TIMECLOCK.weekHours}</div>
             <button
               data-showme="clockout-button"
               onClick={() => setView("review")}
-              className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+              className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.clockOut}
             </button>
@@ -108,16 +108,16 @@ export default function TimeclockTask() {
 
           <div>
             <h3 className="mb-2 text-[15px] font-medium">{c.recentHeading}</h3>
-            <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+            <div className="overflow-hidden rounded-xl border border-border bg-white">
               {TIMECLOCK.recent.map((r, i) => (
                 <div
                   key={r.date}
-                  className={`grid grid-cols-4 gap-2 px-4 py-3 text-[13px] ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
+                  className={`grid grid-cols-4 gap-2 px-4 py-3 text-[13px] ${i !== 0 ? "border-t border-border" : ""}`}
                 >
-                  <span className="text-[var(--text-primary)]">{r.date}</span>
-                  <span className="text-[var(--text-secondary)]">In {r.in}</span>
-                  <span className="text-[var(--text-secondary)]">Out {r.out}</span>
-                  <span className="text-right font-medium text-[var(--text-primary)]">{r.total}</span>
+                  <span className="text-text-primary">{r.date}</span>
+                  <span className="text-text-secondary">In {r.in}</span>
+                  <span className="text-text-secondary">Out {r.out}</span>
+                  <span className="text-right font-medium text-text-primary">{r.total}</span>
                 </div>
               ))}
             </div>
@@ -126,37 +126,37 @@ export default function TimeclockTask() {
       )}
 
       {view === "review" && (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-          <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">
+        <div className="rounded-xl border border-border bg-white p-5">
+          <div className="text-[12px] font-semibold uppercase tracking-wide text-text-tertiary">
             {c.clockedOutStatus}
           </div>
           <div className="mt-3 flex flex-wrap gap-6">
             <div>
-              <div className="text-[13px] text-[var(--text-tertiary)]">{c.todayTotalLabel}</div>
+              <div className="text-[13px] text-text-tertiary">{c.todayTotalLabel}</div>
               <div className="mt-0.5 text-[22px] font-medium">{TIMECLOCK.todayTotal}</div>
             </div>
             <div>
-              <div className="text-[13px] text-[var(--text-tertiary)]">{c.scheduledLabel}</div>
+              <div className="text-[13px] text-text-tertiary">{c.scheduledLabel}</div>
               <div className="mt-0.5 text-[22px] font-medium">{TIMECLOCK.scheduledHours}</div>
-              <div className="text-[13px] text-[var(--text-tertiary)]">
+              <div className="text-[13px] text-text-tertiary">
                 {TIMECLOCK.scheduledStart} – {TIMECLOCK.scheduledEnd}
               </div>
             </div>
           </div>
 
-          <div className="mt-5 border-t border-[var(--border)] pt-4">
+          <div className="mt-5 border-t border-border pt-4">
             <div className="mb-2.5 text-[15px] font-medium">{c.reviewQuestion}</div>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={looksRight}
-                className="min-h-[44px] rounded-full border border-[var(--border)] px-4 text-[14px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+                className="min-h-[44px] rounded-full border border-border px-4 text-[14px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
               >
                 {c.looksRight}
               </button>
               <button
                 data-showme="something-off-button"
                 onClick={() => setView("compose")}
-                className="min-h-[44px] rounded-full border border-[var(--border)] px-4 text-[14px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+                className="min-h-[44px] rounded-full border border-border px-4 text-[14px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
               >
                 {c.somethingOff}
               </button>
@@ -166,41 +166,41 @@ export default function TimeclockTask() {
       )}
 
       {view === "compose" && (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-5">
-          <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-            <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.to}</span>
+        <div className="rounded-xl border border-border bg-white p-5">
+          <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
+            <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
             <span>{CAST.maria.email}</span>
           </div>
-          <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-            <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.subjectLabel}</span>
+          <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
+            <span className="w-14 shrink-0 text-text-tertiary">{c.subjectLabel}</span>
             <span>{c.subject}</span>
           </div>
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
             placeholder={c.writeHere}
-            className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-[var(--text-tertiary)]"
+            className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-text-tertiary"
           />
           <div className="mb-4">
           <NeedAStart
             lang={lang}
             starters={STARTERS[lang]}
             onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
-            chipClassName="min-h-[38px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-3 text-[13px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+            chipClassName="min-h-[38px] rounded-full border border-border bg-surface-muted px-3 text-[13px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
           />
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-t border-[var(--border)] pt-4">
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
             <button
               data-showme="send-button"
               onClick={trySend}
-              className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+              className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.send}
             </button>
             <button
               onClick={discard}
-              className="min-h-[40px] px-2 text-[14px] text-[var(--text-tertiary)] cursor-pointer"
+              className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer"
             >
               {c.discard}
             </button>

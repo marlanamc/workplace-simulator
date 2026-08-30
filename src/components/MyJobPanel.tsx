@@ -144,15 +144,15 @@ export default function MyJobPanel({
                           section: nextTaskLocation.section,
                         });
                       }}
-                      className="flex w-full items-start gap-2.5 rounded-lg px-1 py-1.5 text-left cursor-pointer hover:bg-[var(--accent-tint)]"
+                      className="flex w-full items-start gap-2.5 rounded-lg px-1 py-1.5 text-left cursor-pointer hover:bg-accent-tint"
                     >
                       <span
-                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--accent)]"
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent"
                         aria-hidden
                       >
                         <span className="h-2 w-2 rounded-full bg-white" />
                       </span>
-                      <span className="min-w-0 text-[15px] font-medium leading-snug text-[var(--text-primary)]">
+                      <span className="min-w-0 text-[15px] font-medium leading-snug text-text-primary">
                         {info.label[lang]}
                       </span>
                     </button>
@@ -174,7 +174,7 @@ export default function MyJobPanel({
                   </span>
                   <span
                     className={`text-[15px] leading-snug ${
-                      done ? "text-[var(--text-primary)]" : "text-[var(--text-tertiary)]"
+                      done ? "text-text-primary" : "text-text-tertiary"
                     }`}
                   >
                     {info.label[lang]}
@@ -184,10 +184,10 @@ export default function MyJobPanel({
             })}
           </ul>
 
-          <div className="mt-5 border-t border-[var(--border)] pt-4">
+          <div className="mt-5 border-t border-border pt-4">
             <button
               onClick={() => setLevelsOpen((v) => !v)}
-              className="flex w-full items-center justify-between text-[14px] font-medium text-[var(--text-secondary)] cursor-pointer"
+              className="flex w-full items-center justify-between text-[14px] font-medium text-text-secondary cursor-pointer"
             >
               <span className="flex items-center gap-2">
                 <Flag size={15} strokeWidth={2.25} aria-hidden />
@@ -205,7 +205,7 @@ export default function MyJobPanel({
                   if (actLevels.length === 0) return null;
                   return (
                     <div key={act.key} className="mb-1 last:mb-0">
-                      <div className="px-1 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-tertiary)]">
+                      <div className="px-1 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">
                         {act.title}
                       </div>
                       {actLevels.map((i) => {
@@ -216,18 +216,18 @@ export default function MyJobPanel({
                         const canReplay =
                           !locked && taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k));
                         return (
-                          <div key={level.key} className={`rounded-xl ${isCurrent ? "bg-[var(--accent-tint)]" : ""}`}>
+                          <div key={level.key} className={`rounded-xl ${isCurrent ? "bg-accent-tint" : ""}`}>
                             <div className="flex items-center">
                               <button
                                 onClick={() => goToLevel(level, i)}
                                 disabled={locked}
                                 className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-2 py-2 text-left text-[14px] ${
                                   locked
-                                    ? "cursor-not-allowed text-[var(--text-tertiary)]"
-                                    : "cursor-pointer hover:bg-[var(--surface-muted)]"
+                                    ? "cursor-not-allowed text-text-tertiary"
+                                    : "cursor-pointer hover:bg-surface-muted"
                                 }`}
                               >
-                                <span aria-hidden className="flex h-4 w-4 items-center justify-center text-[var(--text-secondary)]">
+                                <span aria-hidden className="flex h-4 w-4 items-center justify-center text-text-secondary">
                                   {locked ? <Lock size={14} /> : complete ? <Check size={16} strokeWidth={2.5} /> : <Flag size={14} />}
                                 </span>
                                 <span className="min-w-0 flex-1 truncate font-medium">{dayTitle(level, lang)}</span>
@@ -235,7 +235,7 @@ export default function MyJobPanel({
                               {canReplay && pendingReplay !== level.key && (
                                 <button
                                   onClick={() => setPendingReplay(level.key)}
-                                  className="mr-1 shrink-0 rounded-full px-2 py-1 text-[12px] font-medium text-[var(--accent)] hover:bg-[var(--accent-tint)] cursor-pointer"
+                                  className="mr-1 shrink-0 rounded-full px-2 py-1 text-[12px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
                                 >
                                   {lang === "en" ? "Replay" : "Repetir"}
                                 </button>
@@ -243,7 +243,7 @@ export default function MyJobPanel({
                             </div>
                             {pendingReplay === level.key && (
                               <div className="px-2 pb-2.5">
-                                <p className="text-[12px] leading-snug text-[var(--text-secondary)]">
+                                <p className="text-[12px] leading-snug text-text-secondary">
                                   {lang === "en"
                                     ? "This clears your progress for this day only."
                                     : "Esto borra tu progreso solo de este día."}
@@ -257,13 +257,13 @@ export default function MyJobPanel({
                                       onOpenChange(false);
                                       openApp("browser", { tab: level.firstTabKey });
                                     }}
-                                    className="text-[12px] font-medium text-[var(--accent)] cursor-pointer"
+                                    className="text-[12px] font-medium text-accent cursor-pointer"
                                   >
                                     {lang === "en" ? "Yes, replay" : "Sí, repetir"}
                                   </button>
                                   <button
                                     onClick={() => setPendingReplay(null)}
-                                    className="text-[12px] text-[var(--text-tertiary)] cursor-pointer"
+                                    className="text-[12px] text-text-tertiary cursor-pointer"
                                   >
                                     {lang === "en" ? "Cancel" : "Cancelar"}
                                   </button>

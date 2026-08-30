@@ -116,7 +116,7 @@ export default function StatusReportTask() {
             <h3 className="mb-3 text-[14px] font-medium">{c.recentHeading}</h3>
             <button
               onClick={() => setView("sheet")}
-              className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+              className="flex w-full items-center gap-3 rounded-xl border border-border bg-white p-4 text-left hover:bg-surface-muted cursor-pointer"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-[#0f9d58] text-white">
                 {(() => {
@@ -126,7 +126,7 @@ export default function StatusReportTask() {
               </span>
               <span>
                 <span className="block text-[14px] font-medium">{c.sheetName}</span>
-                <span className="block text-[12px] text-[var(--text-tertiary)]">{c.openedLabel}</span>
+                <span className="block text-[12px] text-text-tertiary">{c.openedLabel}</span>
               </span>
             </button>
             <button onClick={notYet} className="mt-3 text-[12px] text-[#5f6368] cursor-pointer">
@@ -174,7 +174,7 @@ export default function StatusReportTask() {
           <p className="mt-3 text-[13px] text-[#5f6368]">{c.writeFormula}</p>
           <button
             onClick={tryEmail}
-            className="mt-3 inline-flex min-h-[44px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white cursor-pointer"
+            className="mt-3 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer"
           >
             {c.emailCta}
           </button>
@@ -184,12 +184,12 @@ export default function StatusReportTask() {
       {view === "compose" && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-6">
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
-            <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-              <span className="w-10 shrink-0 text-[var(--text-tertiary)]">{c.to}</span>
+            <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
+              <span className="w-10 shrink-0 text-text-tertiary">{c.to}</span>
               <span>{CAST.maria.email}</span>
             </div>
-            <div className="mb-3 flex items-center gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-              <span className="w-10 shrink-0 text-[var(--text-tertiary)]">{c.cc}</span>
+            <div className="mb-3 flex items-center gap-3 border-b border-border pb-2.5 text-[14px]">
+              <span className="w-10 shrink-0 text-text-tertiary">{c.cc}</span>
               {cc ? (
                 <span className="rounded-full bg-[#e8f0fe] px-2 py-0.5 text-[13px] text-[#0b57d0]">{CC_NAME}</span>
               ) : (
@@ -216,8 +216,8 @@ export default function StatusReportTask() {
                 ))}
               </div>
             )}
-            <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
-              <span className="w-10 shrink-0 text-[var(--text-tertiary)]">{c.subjectLabel}</span>
+            <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
+              <span className="w-10 shrink-0 text-text-tertiary">{c.subjectLabel}</span>
               <span>{c.subject}</span>
             </div>
             <textarea
@@ -227,11 +227,11 @@ export default function StatusReportTask() {
               className="min-h-[130px] w-full resize-y py-3 text-[16px] leading-relaxed outline-none"
             />
             <NeedAStart lang={lang} starters={STARTERS[lang]} onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)} />
-            <div className="mt-4 flex gap-2 border-t border-[var(--border)] pt-4">
-              <button onClick={trySend} className="inline-flex min-h-[46px] items-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white cursor-pointer">
+            <div className="mt-4 flex gap-2 border-t border-border pt-4">
+              <button onClick={trySend} className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white cursor-pointer">
                 {c.send}
               </button>
-              <button onClick={() => { setView("sheet"); setBody(""); }} className="min-h-[40px] px-2 text-[14px] text-[var(--text-tertiary)] cursor-pointer">
+              <button onClick={() => { setView("sheet"); setBody(""); }} className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer">
                 {c.discard}
               </button>
             </div>
@@ -240,7 +240,7 @@ export default function StatusReportTask() {
       )}
 
       {view === "done" && (
-        <div className="absolute inset-0 overflow-y-auto bg-[var(--surface-muted)] p-6">
+        <div className="absolute inset-0 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.sentKicker}

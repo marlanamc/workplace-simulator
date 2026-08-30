@@ -30,6 +30,25 @@
   --color-background: var(--surface);
   --color-foreground: var(--text-primary);
   --font-sans: var(--font-roboto);
+
+  /* The design palette, exposed as Tailwind utilities so components write
+     `bg-accent` / `text-text-secondary` instead of `bg-[var(--accent)]`.
+     The CSS custom properties above stay the source of truth. */
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-tint: var(--accent-tint);
+  --color-success: var(--success);
+  --color-success-tint: var(--success-tint);
+  --color-warning: var(--warning);
+  --color-warning-tint: var(--warning-tint);
+  --color-danger: var(--danger);
 }
 
 body {

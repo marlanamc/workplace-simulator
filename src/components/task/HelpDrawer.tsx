@@ -43,7 +43,7 @@ export default function HelpDrawer({
       >
         <div className="flex items-start gap-3">
           <div>
-            <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">
+            <div className="text-[12px] font-semibold uppercase tracking-wide text-warning">
               {kicker}
             </div>
             <h3 className="mt-1.5 text-[20px] font-medium leading-tight">{lesson.t}</h3>
@@ -53,7 +53,7 @@ export default function HelpDrawer({
             ref={closeRef}
             onClick={onClose}
             aria-label="Close"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[16px] text-[var(--text-secondary)] cursor-pointer"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-[16px] text-text-secondary cursor-pointer"
           >
             ✕
           </button>
@@ -61,8 +61,8 @@ export default function HelpDrawer({
 
         <div className="flex flex-col gap-2.5">
           {lesson.s.map((text, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-lg border border-[var(--border)] bg-white p-3.5">
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--warning-tint)] text-[13px] font-semibold text-[var(--warning)]">
+            <div key={i} className="flex items-start gap-3 rounded-lg border border-border bg-white p-3.5">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-warning-tint text-[13px] font-semibold text-warning">
                 {i + 1}
               </span>
               <span className="text-[15px] leading-relaxed">{text}</span>
@@ -70,14 +70,14 @@ export default function HelpDrawer({
           ))}
         </div>
 
-        <div className="rounded-lg bg-[var(--surface-muted)] p-4 text-[14px] leading-relaxed text-[var(--text-secondary)]">
-          <span className="font-semibold text-[var(--text-primary)]">{tipLabel}: </span>
+        <div className="rounded-lg bg-surface-muted p-4 text-[14px] leading-relaxed text-text-secondary">
+          <span className="font-semibold text-text-primary">{tipLabel}: </span>
           {lesson.tip}
         </div>
 
         <button
           onClick={onClose}
-          className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--accent)] text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+          className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-accent text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
         >
           {gotItLabel}
         </button>

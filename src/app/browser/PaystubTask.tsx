@@ -88,24 +88,24 @@ export default function PaystubTask() {
 
       {view === "list" && (
         <div>
-          <p className="mb-3 max-w-[52ch] text-[14px] leading-relaxed text-[var(--text-secondary)]">{c.listLead}</p>
-          <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+          <p className="mb-3 max-w-[52ch] text-[14px] leading-relaxed text-text-secondary">{c.listLead}</p>
+          <div className="overflow-hidden rounded-xl border border-border bg-white">
             {PAY_STUBS.map((p, i) => (
               <button
                 key={p.id}
                 data-showme={p.employee === TARGET_EMPLOYEE ? "target-stub" : undefined}
                 onClick={() => openStub(p)}
-                className={`flex w-full items-center justify-between px-4 py-3.5 text-left hover:bg-[var(--surface-muted)] cursor-pointer ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
+                className={`flex w-full items-center justify-between px-4 py-3.5 text-left hover:bg-surface-muted cursor-pointer ${i !== 0 ? "border-t border-border" : ""}`}
               >
                 <div>
-                  <div className="text-[14px] font-medium text-[var(--text-primary)]">{p.employee}</div>
-                  <div className="text-[13px] text-[var(--text-tertiary)]">
+                  <div className="text-[14px] font-medium text-text-primary">{p.employee}</div>
+                  <div className="text-[13px] text-text-tertiary">
                     {p.role} · {p.period}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[14px] font-medium text-[var(--text-primary)]">{p.net}</div>
-                  <div className="text-[13px] text-[var(--text-tertiary)]">{c.netLabel}</div>
+                  <div className="text-[14px] font-medium text-text-primary">{p.net}</div>
+                  <div className="text-[13px] text-text-tertiary">{c.netLabel}</div>
                 </div>
               </button>
             ))}
@@ -114,7 +114,7 @@ export default function PaystubTask() {
       )}
 
       {(view === "check1" || view === "check2") && (
-        <div className="rounded-xl border border-[var(--border)] bg-white p-5">
+        <div className="rounded-xl border border-border bg-white p-5">
           <div className="mb-2.5 text-[15px] font-medium">
             {view === "check1" ? netCheck.question : hoursCheck.question}
           </div>
@@ -133,7 +133,7 @@ export default function PaystubTask() {
                     }
                   })
                 }
-                className="min-h-[44px] rounded-full border border-[var(--border)] bg-[var(--surface-muted)] px-4 text-[14px] font-medium text-[var(--text-primary)] hover:bg-white cursor-pointer"
+                className="min-h-[44px] rounded-full border border-border bg-surface-muted px-4 text-[14px] font-medium text-text-primary hover:bg-white cursor-pointer"
               >
                 {opt.label}
               </button>

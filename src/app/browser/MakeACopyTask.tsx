@@ -125,7 +125,7 @@ export default function MakeACopyTask() {
             <div className="mb-8 flex flex-wrap gap-4">
               {[c.blankLabel, c.templateBudget, c.templateSchedule].map((label) => (
                 <button key={label} onClick={notYet} className="flex flex-col items-center gap-2 cursor-pointer">
-                  <span className="flex h-[92px] w-[72px] items-center justify-center rounded border border-[var(--border)] bg-white text-[26px] text-[#0f9d58] shadow-sm">+</span>
+                  <span className="flex h-[92px] w-[72px] items-center justify-center rounded border border-border bg-white text-[26px] text-[#0f9d58] shadow-sm">+</span>
                   <span className="text-[12px] text-[#3c4043]">{label}</span>
                 </button>
               ))}
@@ -133,7 +133,7 @@ export default function MakeACopyTask() {
             <h3 className="mb-3 text-[14px] font-medium text-[#3c4043]">{c.recentHeading}</h3>
             <button
               onClick={() => setView("template")}
-              className="flex w-full items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-4 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+              className="flex w-full items-center gap-3 rounded-xl border border-border bg-white p-4 text-left hover:bg-surface-muted cursor-pointer"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-[#0f9d58] text-white">
                 {(() => {
@@ -143,7 +143,7 @@ export default function MakeACopyTask() {
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-[14px] font-medium">{c.templateName}</span>
-                <span className="block text-[12px] text-[var(--text-tertiary)]">{c.openedLabel}</span>
+                <span className="block text-[12px] text-text-tertiary">{c.openedLabel}</span>
               </span>
             </button>
           </div>
@@ -221,7 +221,7 @@ export default function MakeACopyTask() {
       )}
 
       {view === "done" && (
-        <div className="absolute inset-0 overflow-y-auto bg-[var(--surface-muted)] p-6">
+        <div className="absolute inset-0 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.typedKicker}

@@ -191,7 +191,7 @@ export default function TriageTask() {
       )}
 
       {view === "done" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-[var(--surface-muted)] p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.sentKicker}

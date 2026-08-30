@@ -68,7 +68,7 @@ export default function ShiftReviewTask() {
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
       </div>
-      <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
+      <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 
       {view !== "done" && (
         <RightNowBar
@@ -94,9 +94,9 @@ export default function ShiftReviewTask() {
               />
             ))}
           </div>
-          <div className="rounded-xl border border-[var(--border)] bg-white p-5">
+          <div className="rounded-xl border border-border bg-white p-5">
             <div className="mb-3 flex items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--surface-muted)] text-[20px]">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-muted text-[20px]">
                 {beat.emoji}
               </span>
               <p className="text-[16px] font-medium leading-snug">{beat.prompt[lang]}</p>
@@ -112,7 +112,7 @@ export default function ShiftReviewTask() {
                       ? opt.correct
                         ? "border-[#1e8e3e] bg-[#e6f4ea] text-[#1e8e3e]"
                         : "border-[#c5221f] bg-[#fce8e6] text-[#c5221f]"
-                      : "border-[var(--border)] hover:bg-[var(--surface-muted)]"
+                      : "border-border hover:bg-surface-muted"
                   }`}
                 >
                   {opt.label}
