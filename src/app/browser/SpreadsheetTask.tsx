@@ -148,8 +148,7 @@ export default function SpreadsheetTask() {
         <RightNowBar
           icon={TASK_ICONS.spreadsheet}
           stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
-          stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[view === "home" ? 0 : view === "sheet" ? 1 : 2]}
+          steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onHelp={() => setHelp(true)}

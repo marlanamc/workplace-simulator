@@ -19,6 +19,7 @@ export default function RightNowBar({
   stepIndex,
   stepCount,
   instruction,
+  steps,
   onShowMe,
   showMeActive,
   primaryLabel,
@@ -27,8 +28,16 @@ export default function RightNowBar({
   /** Kept for call-site compatibility; the card shows a job badge instead. */
   icon?: LucideIcon;
   stepIndex: number;
-  stepCount: number;
-  instruction: Localized<string>;
+  /**
+   * The task's full step list. When given, `instruction` and `stepCount` are
+   * read from it (`steps[stepIndex]`, `steps.length`) so the call site never
+   * has to compute the same step ternary twice.
+   */
+  steps?: Localized<string>[];
+  /** Explicit instruction, when a task doesn't pass `steps`. */
+  instruction?: Localized<string>;
+  /** Explicit step count, when a task doesn't pass `steps`. */
+  stepCount?: number;
   lang?: Lang;
   rightNowLabel?: Localized<string>;
   onShowMe?: () => void;
@@ -41,8 +50,10 @@ export default function RightNowBar({
 }) {
   const card = useJobCardOptional();
   const id = useReporterId();
-  const en = instruction.en;
-  const es = instruction.es;
+  const line = instruction ?? steps?.[stepIndex] ?? { en: "", es: "" };
+  const count = stepCount ?? steps?.length ?? 1;
+  const en = line.en;
+  const es = line.es;
   const canShowMe = Boolean(onShowMe);
   const lit = Boolean(showMeActive);
 
@@ -59,9 +70,9 @@ export default function RightNowBar({
 
   useEffect(() => {
     if (!reportStep) return;
-    reportStep({ id, stepIndex, stepCount, line: { en, es }, showMeActive: lit, canShowMe, primaryLabel });
+    reportStep({ id, stepIndex, stepCount: count, line: { en, es }, showMeActive: lit, canShowMe, primaryLabel });
     return () => reportStep(null, id);
-  }, [reportStep, id, stepIndex, stepCount, en, es, lit, canShowMe, primaryLabel]);
+  }, [reportStep, id, stepIndex, count, en, es, lit, canShowMe, primaryLabel]);
 
   return null;
 }
