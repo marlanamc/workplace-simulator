@@ -3,25 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import MailClient from "../mail/MailClient";
 import TourTask from "./TourTask";
-import PortalPage from "./PortalPage";
-import CalendarTask from "./CalendarTask";
-import FilesTask from "./FilesTask";
-import SpreadsheetTask from "./SpreadsheetTask";
-import MakeACopyTask from "./MakeACopyTask";
-import StatusReportTask from "./StatusReportTask";
-import TriageTask from "./TriageTask";
-import TeamScheduleTask from "./TeamScheduleTask";
-import FormulaCheckTask from "./FormulaCheckTask";
-import TeamMeetingTask from "./TeamMeetingTask";
-import PriorityCallTask from "./PriorityCallTask";
-import HandbookTask from "./HandbookTask";
-import IncidentTask from "./IncidentTask";
-import AccountRecoveryTask from "./AccountRecoveryTask";
+import { TAB_COMPONENTS } from "./tab-components";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
-import { LEVELS, TAB_LEVEL_KEYS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
+import { LEVELS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
+import { TAB_META, TAB_COLORS, bookmarkTabKeys } from "@/lib/tabs";
 import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -39,7 +27,6 @@ interface TabDef {
   key: TabKey;
   label: string;
   url: string;
-  icon: string;
   color: string;
   /** Which level this tab belongs to - only tabs matching the level currently being viewed show up. */
   levelKey: string;
@@ -47,26 +34,14 @@ interface TabDef {
   closeable?: boolean;
 }
 
-const BASE_TABS: TabDef[] = [
-  { key: "tour",     label: "Welcome", url: "welcome.harborsidecafe.com", icon: "?", color: "#c45c26", levelKey: TAB_LEVEL_KEYS.tour },
-  { key: "mail",     label: "Mail",  url: "mail.harborsidecafe.com",  icon: "M",  color: "#ea4335", levelKey: TAB_LEVEL_KEYS.mail },
-  { key: "calendar", label: "Calendar", url: "calendar.harborsidecafe.com", icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS.calendar },
-  { key: "files",    label: "Drive", url: "drive.harborsidecafe.com", icon: "△",  color: "#fbbc04", levelKey: TAB_LEVEL_KEYS.files },
-  { key: "handbook", label: "Docs",  url: "docs.harborsidecafe.com",  icon: "📄", color: "#4285f4", levelKey: TAB_LEVEL_KEYS.handbook },
-  { key: "spreadsheet", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS.spreadsheet },
-  { key: "make-a-copy", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["make-a-copy"] },
-  { key: "status-report", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["status-report"] },
-  { key: "triage", label: "Today", url: "today.harborsidecafe.com", icon: "!", color: "#d93025", levelKey: TAB_LEVEL_KEYS.triage },
-  { key: "team-schedule", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["team-schedule"] },
-  { key: "formula-check", label: "Sheets", url: "sheets.harborsidecafe.com", icon: "S", color: "#0f9d58", levelKey: TAB_LEVEL_KEYS["formula-check"] },
-  { key: "team-meeting", label: "Huddle", url: "calendar.harborsidecafe.com", icon: "📅", color: "#34a853", levelKey: TAB_LEVEL_KEYS["team-meeting"] },
-  { key: "priority-call", label: "Floor", url: "today.harborsidecafe.com", icon: "!", color: "#d93025", levelKey: TAB_LEVEL_KEYS["priority-call"] },
-  { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", icon: "📝", color: "#7248b9", levelKey: TAB_LEVEL_KEYS.incident },
-  { key: "account-recovery", label: "Sign In", url: "accounts.harborsidecafe.com", icon: "🔑", color: "#5f6368", levelKey: TAB_LEVEL_KEYS["account-recovery"] },
-  { key: "portal",   label: "Portal",url: "portal.harborsidecafe.com",icon: "▦",  color: "#8430ce", levelKey: TAB_LEVEL_KEYS.portal },
-];
-
-const TAB_COLORS: Record<string, string> = Object.fromEntries(BASE_TABS.map((t) => [t.key, t.color]));
+/** The openable tabs, from the shared tab registry (`@/lib/tabs`). */
+const BASE_TABS: TabDef[] = TAB_META.map((t) => ({
+  key: t.key as TabKey,
+  label: t.label,
+  url: t.url,
+  color: t.color,
+  levelKey: t.levelKey,
+}));
 
 /** Chrome-style tab - active tab is the same white as the toolbar, so they read as one piece. */
 function ChromeTab({
@@ -191,7 +166,6 @@ export default function BrowserClient() {
     key: "newtab" as TabKey,
     label: "New Tab",
     url: "newtab",
-    icon: "",
     color: "#e8eaed",
     levelKey,
     closeable: true,
@@ -226,6 +200,7 @@ export default function BrowserClient() {
     progressLevelKey;
   const viewedLevelDef = LEVELS.find((l) => l.key === viewedLevelKey);
   const freeTabbing = viewedLevelDef?.freeTabbing ?? false;
+  const visibleBookmarks = bookmarkTabKeys(viewedLevelKey, completedTaskKeys);
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.
   // `browserTabExplicit` (from window-manager) tells "go to this exact tab"
@@ -308,8 +283,7 @@ export default function BrowserClient() {
       key: "newtab",
       label: "New Tab",
       url: "newtab",
-      icon: "",
-      color: "#e8eaed",
+        color: "#e8eaed",
       levelKey: viewedLevelKey,
       closeable: true,
     };
@@ -327,8 +301,7 @@ export default function BrowserClient() {
         key: nextNewTabId(),
         label: "New Tab",
         url: "newtab",
-        icon: "",
-        color: "#e8eaed",
+            color: "#e8eaed",
         levelKey: viewedLevelKey,
         closeable: true,
       };
@@ -443,22 +416,7 @@ export default function BrowserClient() {
       </div>
 
       <div className="flex items-center gap-0.5 border-b border-[#dadce0] bg-white px-3 py-[3px]">
-        {BASE_TABS.filter((t) => {
-          const sheets: Record<string, string> = {
-            level6: "spreadsheet",
-            level7: completedTaskKeys.includes("make-a-copy") ? "status-report" : "make-a-copy",
-            level9: "team-schedule",
-            level10: "formula-check",
-          };
-          const sheetKeys = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check"];
-          if (sheetKeys.includes(t.key)) {
-            return t.key === (sheets[viewedLevelKey] ?? "spreadsheet");
-          }
-          if (t.key === "triage") return viewedLevelKey === "level8";
-          if (t.key === "team-meeting") return viewedLevelKey === "level11";
-          if (t.key === "priority-call") return viewedLevelKey === "level12";
-          return true;
-        }).map((t) => (
+        {BASE_TABS.filter((t) => visibleBookmarks.has(t.key)).map((t) => (
           <button
             key={t.key}
             data-testid={`bookmark-${t.key}`}
@@ -496,20 +454,11 @@ export default function BrowserClient() {
           />
         )}
         {active?.key === "mail"     && <MailClient welcomeWalkthroughActive={tourWalkthroughStep !== null} />}
-        {active?.key === "portal"   && <PortalPage />}
-        {active?.key === "calendar" && <CalendarTask />}
-        {active?.key === "files"    && <FilesTask />}
-        {active?.key === "spreadsheet" && <SpreadsheetTask />}
-        {active?.key === "make-a-copy" && <MakeACopyTask />}
-        {active?.key === "status-report" && <StatusReportTask />}
-        {active?.key === "triage" && <TriageTask />}
-        {active?.key === "team-schedule" && <TeamScheduleTask />}
-        {active?.key === "formula-check" && <FormulaCheckTask />}
-        {active?.key === "team-meeting" && <TeamMeetingTask />}
-        {active?.key === "priority-call" && <PriorityCallTask />}
-        {active?.key === "incident" && <IncidentTask />}
-        {active?.key === "handbook" && <HandbookTask />}
-        {active?.key === "account-recovery" && <AccountRecoveryTask />}
+        {(() => {
+          if (!active || active.key === "tour" || active.key === "mail") return null;
+          const TabComponent = TAB_COMPONENTS[active.key];
+          return TabComponent ? <TabComponent /> : null;
+        })()}
         {showingNewTab && <NewTabPage />}
       </div>
 

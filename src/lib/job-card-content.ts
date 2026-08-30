@@ -1,5 +1,6 @@
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
+import { TASK_LIST } from "@/lib/tasks/registry";
 
 /**
  * Copy for the Job Card — the one surface that tells a learner what to do.
@@ -53,28 +54,18 @@ export const INTRO_BEATS: IntroBeat[] = [
 ];
 
 /**
- * The desktop line for a job: what just happened, in one sentence, shorter
- * than the old briefing headline. Tasks without an entry fall back to their
- * existing `TASK_INFO.dispatch`, which is a full sentence and still true —
- * shortening the rest is a content pass, not a code change.
+ * The desktop line for a job: what just happened, in one short sentence.
+ * Tasks without a `jobCardLine` in the registry fall back to their
+ * `TASK_INFO.dispatch`. The green finish line (`jobCardDoneLine`) falls back
+ * to the generic done copy. Both derived from `src/lib/tasks/registry.ts`.
  */
-export const JOB_CARD_LINE: Partial<Record<TaskKey, Localized<string>>> = {
-  tour: { en: "Look around this computer.", es: "Conoce esta computadora." },
-  "mail-reply": {
-    en: "Maria said welcome. Write her back.",
-    es: "Maria te dio la bienvenida. Contéstale.",
-  },
-  "mail-attach": {
-    en: "Maria needs the July safety report.",
-    es: "Maria necesita el reporte de julio.",
-  },
-};
+export const JOB_CARD_LINE: Partial<Record<TaskKey, Localized<string>>> = Object.fromEntries(
+  TASK_LIST.flatMap((d) => (d.jobCardLine ? [[d.key, d.jobCardLine] as const] : [])),
+);
 
-/** The green finish line for a job. Falls back to the generic lines below. */
-export const JOB_CARD_DONE_LINE: Partial<Record<TaskKey, Localized<string>>> = {
-  "mail-reply": { en: "Sent. One task left.", es: "Enviado. Queda una tarea." },
-  "mail-attach": { en: "Sent, with the file.", es: "Enviado, con el archivo." },
-};
+export const JOB_CARD_DONE_LINE: Partial<Record<TaskKey, Localized<string>>> = Object.fromEntries(
+  TASK_LIST.flatMap((d) => (d.jobCardDoneLine ? [[d.key, d.jobCardDoneLine] as const] : [])),
+);
 
 export const JOB_CARD_COPY: Record<
   "en" | "es",

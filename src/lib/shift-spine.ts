@@ -9,6 +9,7 @@ import {
   type Level,
   type Track,
 } from "./tracks-content";
+import { TASK_LIST } from "./tasks/registry";
 
 /**
  * The sitting's name on its own — "Payday & Trouble".
@@ -72,34 +73,13 @@ export function nextBuiltTask(track: Track, completedTaskKeys: TaskKey[]): TaskK
   return key;
 }
 
-/** Bookmark bar label for a task's home — matches BrowserClient BASE_TABS. */
-export const BOOKMARK_LABEL: Record<TaskKey, string> = {
-  tour: "Welcome",
-  mail: "Mail",
-  "mail-read": "Mail",
-  "mail-reply": "Mail",
-  "mail-attach": "Mail",
-  schedule: "Portal",
-  "swap-request": "Portal",
-  "mail-etiquette": "Mail",
-  "call-out-sick": "Mail",
-  timeclock: "Portal",
-  paystub: "Portal",
-  "shift-review": "Portal",
-  "account-recovery": "Sign In",
-  incident: "Forms",
-  handbook: "Docs",
-  calendar: "Calendar",
-  files: "Drive",
-  spreadsheet: "Sheets",
-  "make-a-copy": "Sheets",
-  "status-report": "Sheets",
-  triage: "Today",
-  "team-schedule": "Sheets",
-  "formula-check": "Sheets",
-  "team-meeting": "Huddle",
-  "priority-call": "Floor",
-};
+/**
+ * Bookmark-bar label for a task's home, derived from the task registry
+ * (`src/lib/tasks/registry.ts`). Matches BrowserClient's tab definitions.
+ */
+export const BOOKMARK_LABEL: Record<TaskKey, string> = Object.fromEntries(
+  TASK_LIST.map((d) => [d.key, d.bookmarkLabel]),
+) as Record<TaskKey, string>;
 
 export function newTabHint(level: Level, taskKey: TaskKey | null, lang: Lang): string {
   const sitting = sittingTitle(level);
