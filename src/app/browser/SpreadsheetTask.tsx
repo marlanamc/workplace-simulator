@@ -2,6 +2,7 @@
 
 import { useState, type CSSProperties } from "react";
 import { useProgress } from "@/lib/progress-context";
+import { CAST } from "@/lib/cast";
 import {
   TIP_ROWS,
   SPREADSHEET_COPY,
@@ -385,7 +386,7 @@ export default function SpreadsheetTask() {
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.to}</span>
-              <span>maria.delgado@harborsidecafe.com</span>
+              <span>{CAST.maria.email}</span>
             </div>
             <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.subjectLabel}</span>

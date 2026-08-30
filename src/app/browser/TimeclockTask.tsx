@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
+import { CAST } from "@/lib/cast";
 import {
   TIMECLOCK,
   TIMECLOCK_COPY,
@@ -168,7 +169,7 @@ export default function TimeclockTask() {
         <div className="rounded-xl border border-[var(--border)] bg-white p-5">
           <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
             <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.to}</span>
-            <span>maria.delgado@harborsidecafe.com</span>
+            <span>{CAST.maria.email}</span>
           </div>
           <div className="mb-3 flex gap-3 border-b border-[var(--border)] pb-2.5 text-[14px]">
             <span className="w-14 shrink-0 text-[var(--text-tertiary)]">{c.subjectLabel}</span>

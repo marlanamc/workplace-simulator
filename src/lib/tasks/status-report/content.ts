@@ -1,3 +1,4 @@
+import { CAST } from "@/lib/cast";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
 
@@ -18,8 +19,8 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   },
 };
 
-export const CC_EMAIL = "jordan.kim@harborsidecafe.com";
-export const CC_NAME = "Jordan Kim";
+export const CC_EMAIL = CAST.jordan.email;
+export const CC_NAME = CAST.jordan.name;
 
 export const STATUS_REPORT_COPY: Record<Lang, {
   helpBtn: string;
@@ -157,8 +158,8 @@ export const STARTERS: Record<Lang, string[]> = {
 };
 
 export const CC_PICKS = [
-  { key: "jordan", name: "Jordan Kim", email: CC_EMAIL, ok: true },
-  { key: "alex", name: "Alex Chen", email: "alex.chen@harborsidecafe.com", ok: false },
+  { key: "jordan", name: CAST.jordan.name, email: CC_EMAIL, ok: true },
+  { key: "alex", name: CAST.alex.name, email: CAST.alex.email, ok: false },
   { key: "sam", name: "Sam Rivera", email: "sam.rivera@harborsidecafe.com", ok: false },
 ] as const;
 

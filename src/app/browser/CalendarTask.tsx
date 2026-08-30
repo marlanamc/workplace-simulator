@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
+import { CAST } from "@/lib/cast";
 import {
   MEETING,
   CALENDAR_COPY,
@@ -385,7 +386,7 @@ export default function CalendarTask() {
                   <div className="px-5 pt-3">
                     <div className="flex gap-3 border-b border-[#e0e3e8] py-2 text-[13px]">
                       <span className="w-14 shrink-0 text-[#5f6368]">{c.to}</span>
-                      <span>maria.delgado@harborsidecafe.com</span>
+                      <span>{CAST.maria.email}</span>
                     </div>
                     <div className="flex gap-3 border-b border-[#e0e3e8] py-2 text-[13px]">
                       <span className="w-14 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>

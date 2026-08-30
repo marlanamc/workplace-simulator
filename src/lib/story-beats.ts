@@ -1,4 +1,5 @@
 import type { TaskKey } from "@/lib/desktop-content";
+import { CAST, inboxSender } from "@/lib/cast";
 import { firstName, mailGreeting, signatureFor } from "@/lib/mail-greeting";
 import type { Lang, Localized } from "@/lib/task-types";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
@@ -43,11 +44,7 @@ export const SHIFT_MOMENT: Record<TaskKey, Localized> = Object.fromEntries(
   TASK_LIST.map((d) => [d.key, d.shiftMoment]),
 ) as Record<TaskKey, Localized>;
 
-const MARIA = {
-  from: "Maria Delgado",
-  initials: "MD",
-  color: "#1a73e8",
-};
+const MARIA = inboxSender(CAST.maria);
 
 export function extractHuddleTime(text: string): "10am" | "2pm" {
   if (/\b2\s*(p\.?m\.?|pm)\b/i.test(text) || /\b14:00\b/.test(text)) return "2pm";
@@ -159,9 +156,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-paystub",
-    from: "Harborside HR",
-    initials: "HR",
-    color: "#9334e6",
+    ...inboxSender(CAST.hr),
     time: "Fri",
     unread: true,
     story: true,
@@ -353,9 +348,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-team-schedule",
-    from: "Jordan Kim",
-    initials: "JK",
-    color: "#0f9d58",
+    ...inboxSender(CAST.jordan),
     time: "11:40 AM",
     unread: true,
     story: true,
