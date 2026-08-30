@@ -39,6 +39,20 @@ function StartIcon() {
   );
 }
 
+/** Corner lock on a shelf icon. Sits on the tile so it reads as locked, not floating. */
+function ShelfLockMark({ size = 11, iconSize = 8, margin = 2 }: { size?: number; iconSize?: number; margin?: number }) {
+  return (
+    <span className="pointer-events-none absolute inset-0 flex items-end justify-end" aria-hidden>
+      <span
+        className="flex items-center justify-center rounded-full bg-[#202124] text-white"
+        style={{ width: size, height: size, margin }}
+      >
+        <Lock size={iconSize} strokeWidth={2.5} className="block" />
+      </span>
+    </span>
+  );
+}
+
 function badgeStyle(state: AppState) {
   if (state === "done") return "bg-[var(--success-tint)] text-[var(--success)]";
   if (state === "locked") return "bg-[var(--surface-muted)] text-[var(--text-tertiary)]";
@@ -155,9 +169,9 @@ export default function Shelf({
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
   const currentLevel = levelForTrack(currentTrack.key);
   const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
-  // Level 0's walkthrough is the one thing on screen for a brand-new learner -
-  // the My Job panel would just repeat what the walkthrough already says.
-  const myJobLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
+  // Level 0's walkthrough is the one thing on screen for a brand-new learner —
+  // Start (the app list) and My Job would open a second map of the same computer.
+  const tourLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -217,19 +231,43 @@ export default function Shelf({
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="pointer-events-auto flex items-center gap-0.5">
             <button
+              data-testid="shelf-start"
               onClick={() => {
+                if (tourLocked) {
+                  say(
+                    lang === "en"
+                      ? "That menu opens after you finish looking around."
+                      : "Ese menú se abre cuando termines de mirar alrededor.",
+                  );
+                  return;
+                }
                 setAccountOpen(false);
                 onMyJobOpenChange(false);
                 if (launcherOpen) closeLauncher();
                 else setLauncherOpen(true);
               }}
-              aria-label={c.appsBtn}
-              aria-expanded={launcherOpen}
-              title={c.appsBtn}
+              aria-label={
+                tourLocked
+                  ? lang === "en"
+                    ? "Start · finish the walkthrough first"
+                    : "Inicio · termina la guía primero"
+                  : c.appsBtn
+              }
+              aria-expanded={launcherOpen && !tourLocked}
+              title={
+                tourLocked
+                  ? lang === "en"
+                    ? "Start · finish the walkthrough first"
+                    : "Inicio · termina la guía primero"
+                  : c.appsBtn
+              }
               className="flex h-12 w-10 shrink-0 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
-              style={launcherOpen ? { background: "rgba(255,255,255,0.12)" } : undefined}
+              style={launcherOpen && !tourLocked ? { background: "rgba(255,255,255,0.12)" } : undefined}
             >
-              <StartIcon />
+              <span className="relative inline-flex leading-none">
+                <StartIcon />
+                {tourLocked && <ShelfLockMark size={10} iconSize={7} margin={0} />}
+              </span>
             </button>
 
         {APP_DEFS.map((a) => (
@@ -248,7 +286,7 @@ export default function Shelf({
 
         <ShelfPin
           label={
-            myJobLocked
+            tourLocked
               ? lang === "en"
                 ? "My tasks · finish the walkthrough first"
                 : "Mis tareas · termina la guía primero"
@@ -262,9 +300,9 @@ export default function Shelf({
           }
           active={myJobOpen}
           testId="shelf-my-job"
-          badge={!myJobLocked && leftover > 0 ? String(leftover) : undefined}
+          badge={!tourLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
-            if (myJobLocked) {
+            if (tourLocked) {
               say(
                 lang === "en"
                   ? "That list is part of this practice. It opens after you finish looking around."
@@ -277,16 +315,9 @@ export default function Shelf({
             onMyJobOpenChange(!myJobOpen);
           }}
         >
-          <span className="relative">
+          <span className="relative inline-flex leading-none">
             <AppIcon icon={<Briefcase size={16} strokeWidth={2.25} />} color="#e37400" size={32} />
-            {myJobLocked && (
-              <span
-                className="absolute -right-0.5 -bottom-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#202124] text-white"
-                aria-hidden
-              >
-                <Lock size={9} strokeWidth={2.75} />
-              </span>
-            )}
+            {tourLocked && <ShelfLockMark />}
           </span>
         </ShelfPin>
           </div>
@@ -320,9 +351,6 @@ export default function Shelf({
             </span>
             <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-semibold text-white">
-              1
-            </span>
             <ShelfClock lang={lang} />
           </button>
 
@@ -430,7 +458,7 @@ export default function Shelf({
       />
 
       {/* launcher panel */}
-      {launcherOpen && (
+      {launcherOpen && !tourLocked && (
           <div
             ref={launcherPanelRef}
             className="fixed z-40 flex w-[560px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
