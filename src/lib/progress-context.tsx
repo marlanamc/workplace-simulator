@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import {
@@ -18,87 +18,23 @@ import {
 import { completeTask, awardCertificate, restartLevelProgress } from "@/app/actions";
 import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
 import { applyGapDecay, recordCleanRun, recordMissedRun, rungFor, type Rung, type RungMap } from "@/lib/release-ladder";
+import { DEVICE_KEY, learnerKey, storage } from "@/lib/storage";
 
-function flagsStorageKey(learnerId: string) {
-  return `ws-story-flags:${learnerId}`;
-}
+const loadStoryFlags = (learnerId: string): StoryFlags =>
+  storage.getJSON<StoryFlags>(learnerKey.storyFlags(learnerId), {});
 
-function loadStoryFlags(learnerId: string): StoryFlags {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(flagsStorageKey(learnerId));
-    if (!raw) return {};
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== "object") return {};
-    return parsed as StoryFlags;
-  } catch {
-    return {};
-  }
-}
+const saveStoryFlags = (learnerId: string, flags: StoryFlags) =>
+  storage.setJSON(learnerKey.storyFlags(learnerId), flags);
 
-function saveStoryFlags(learnerId: string, flags: StoryFlags) {
-  try {
-    window.localStorage.setItem(flagsStorageKey(learnerId), JSON.stringify(flags));
-  } catch {
-    // Private browsing can block localStorage. The flag still lives in memory this session.
-  }
-}
+const loadStoredLang = (): Lang => (storage.getString(DEVICE_KEY.lang) === "es" ? "es" : "en");
 
-// Device-level settings (not per learner): a shared classroom computer set to
-// Spanish or bigger text should stay that way for the next person who needs it.
-const LANG_STORAGE_KEY = "ws-lang";
-const BIG_TEXT_STORAGE_KEY = "ws-big-text";
+const loadStoredFlag = (key: string): boolean => storage.getString(key) === "true";
 
-function loadStoredLang(): Lang {
-  if (typeof window === "undefined") return "en";
-  try {
-    return window.localStorage.getItem(LANG_STORAGE_KEY) === "es" ? "es" : "en";
-  } catch {
-    return "en";
-  }
-}
+const loadRungMap = (learnerId: string): RungMap =>
+  storage.getJSON<RungMap>(learnerKey.rungs(learnerId), {});
 
-function loadStoredFlag(key: string): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    return window.localStorage.getItem(key) === "true";
-  } catch {
-    return false;
-  }
-}
-
-function saveSetting(key: string, value: string) {
-  try {
-    window.localStorage.setItem(key, value);
-  } catch {
-    // Private browsing can block localStorage. The setting still lives in memory this session.
-  }
-}
-
-function rungMapStorageKey(learnerId: string) {
-  return `ws-rungs:${learnerId}`;
-}
-
-function loadRungMap(learnerId: string): RungMap {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(rungMapStorageKey(learnerId));
-    if (!raw) return {};
-    const parsed = JSON.parse(raw) as unknown;
-    if (!parsed || typeof parsed !== "object") return {};
-    return parsed as RungMap;
-  } catch {
-    return {};
-  }
-}
-
-function saveRungMap(learnerId: string, map: RungMap) {
-  try {
-    window.localStorage.setItem(rungMapStorageKey(learnerId), JSON.stringify(map));
-  } catch {
-    // Private browsing can block localStorage. The rung still lives in memory this session.
-  }
-}
+const saveRungMap = (learnerId: string, map: RungMap) =>
+  storage.setJSON(learnerKey.rungs(learnerId), map);
 
 interface ProgressValue {
   learnerId: string;
@@ -158,18 +94,18 @@ export function ProgressProvider({
     return decayed;
   });
   const [lang, setLangState] = useState<Lang>(() => loadStoredLang());
-  const [bigText, setBigTextState] = useState<boolean>(() => loadStoredFlag(BIG_TEXT_STORAGE_KEY));
+  const [bigText, setBigTextState] = useState<boolean>(() => loadStoredFlag(DEVICE_KEY.bigText));
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
-    saveSetting(LANG_STORAGE_KEY, next);
+    storage.setString(DEVICE_KEY.lang, next);
   }, []);
 
   const setBigText = useCallback((on: boolean) => {
     setBigTextState(on);
-    saveSetting(BIG_TEXT_STORAGE_KEY, String(on));
+    storage.setString(DEVICE_KEY.bigText, String(on));
   }, []);
 
   // Keep the document language in sync so screen readers pick the right voice
@@ -186,30 +122,28 @@ export function ProgressProvider({
     });
   }, [learnerId]);
 
+  // Every state write and side effect here runs *outside* the state updaters —
+  // no server action or setState nested inside a setCompletedTaskKeys(prev =>)
+  // callback, which would double-fire under StrictMode. The `includes` guard
+  // makes a repeat call a no-op.
   const markComplete = useCallback((taskKey: TaskKey, badgeKey?: string) => {
-    setCompletedTaskKeys((prev) => {
-      if (prev.includes(taskKey)) return prev;
-      const next = [...prev, taskKey];
+    if (completedTaskKeys.includes(taskKey)) return;
+    const next = [...completedTaskKeys, taskKey];
+    setCompletedTaskKeys(next);
 
-      const track = findTrackForTask(taskKey);
-      if (track && isTrackComplete(track, next)) {
-        setCertificateTrackKeys((c) => (c.includes(track.key) ? c : [...c, track.key]));
-        awardCertificate(track.key);
+    const track = findTrackForTask(taskKey);
+    if (track && isTrackComplete(track, next)) {
+      setCertificateTrackKeys((c) => (c.includes(track.key) ? c : [...c, track.key]));
+      awardCertificate(track.key);
 
-        // A level-up moment (when this was the level's last track) takes
-        // priority over the smaller per-track celebration - only one
-        // modal shows for a task completion that finishes both at once.
-        const level = levelForTrack(track.key);
-        const upcoming = isLevelComplete(level, next) ? nextLevel(level) : null;
-        if (upcoming?.levelUp) {
-          setCelebrateLevel(upcoming);
-        } else {
-          setCelebrateTrack(track);
-        }
-      }
-
-      return next;
-    });
+      // A level-up moment (when this was the level's last track) takes
+      // priority over the smaller per-track celebration - only one modal
+      // shows for a task completion that finishes both at once.
+      const level = levelForTrack(track.key);
+      const upcoming = isLevelComplete(level, next) ? nextLevel(level) : null;
+      if (upcoming?.levelUp) setCelebrateLevel(upcoming);
+      else setCelebrateTrack(track);
+    }
 
     if (storyMailAfter(taskKey)) setMariaNoteTaskKey(taskKey);
 
@@ -218,74 +152,100 @@ export function ProgressProvider({
     pointsTimer.current = setTimeout(() => setJustEarnedPoints(null), 2200);
 
     completeTask(taskKey, badgeKey);
-  }, []);
+  }, [completedTaskKeys]);
 
   const restartLevel = useCallback((level: Level) => {
     const taskKeys = new Set(taskKeysForLevel(level));
     const trackKeys = new Set(level.trackKeys);
     setCompletedTaskKeys((prev) => prev.filter((k) => !taskKeys.has(k)));
     setCertificateTrackKeys((prev) => prev.filter((k) => !trackKeys.has(k)));
-    setStoryFlags((prev) => {
-      const next = { ...prev };
-      for (const flag of storyFlagKeysForTasks(taskKeys)) delete next[flag];
-      saveStoryFlags(learnerId, next);
-      return next;
-    });
+
+    const clearedFlags = { ...storyFlags };
+    for (const flag of storyFlagKeysForTasks(taskKeys)) delete clearedFlags[flag];
+    setStoryFlags(clearedFlags);
+    saveStoryFlags(learnerId, clearedFlags);
+
     setCelebrateTrack(null);
     setCelebrateLevel(null);
     setMariaNoteTaskKey(null);
     setProgressEpoch((n) => n + 1);
     restartLevelProgress(level.key);
-  }, [learnerId]);
+  }, [learnerId, storyFlags]);
 
   const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
 
   const recordSkillRun = useCallback((skillKey: string, opts: { clean: boolean }) => {
     const now = new Date().toISOString();
-    setRungMap((prev) => {
-      const next = opts.clean ? recordCleanRun(prev, skillKey, now) : recordMissedRun(prev, skillKey, now);
-      saveRungMap(learnerId, next);
-      return next;
-    });
-  }, [learnerId]);
+    const next = opts.clean
+      ? recordCleanRun(rungMap, skillKey, now)
+      : recordMissedRun(rungMap, skillKey, now);
+    setRungMap(next);
+    saveRungMap(learnerId, next);
+  }, [learnerId, rungMap]);
 
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
   const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
   const dismissMariaNote = useCallback(() => setMariaNoteTaskKey(null), []);
 
-  return (
-    <ProgressContext.Provider
-      value={{
-        learnerId,
-        displayName,
-        completedTaskKeys,
-        points: completedTaskKeys.length * POINTS_PER_TASK,
-        justEarnedPoints,
-        certificateTrackKeys,
-        celebrateTrack,
-        celebrateLevel,
-        currentTrack: activeTrack(completedTaskKeys),
-        progressEpoch,
-        storyFlags,
-        setStoryFlag,
-        markComplete,
-        restartLevel,
-        dismissCelebration,
-        dismissLevelCelebration,
-        mariaNoteTaskKey,
-        dismissMariaNote,
-        lang,
-        setLang,
-        bigText,
-        setBigText,
-        rungMap,
-        getRung,
-        recordSkillRun,
-      }}
-    >
-      {children}
-    </ProgressContext.Provider>
+  // One object identity per real state change. Without this every provider
+  // render (a points tick, a celebration) hands every `useProgress()` consumer
+  // a brand-new value and re-renders all of them.
+  const value = useMemo<ProgressValue>(
+    () => ({
+      learnerId,
+      displayName,
+      completedTaskKeys,
+      points: completedTaskKeys.length * POINTS_PER_TASK,
+      justEarnedPoints,
+      certificateTrackKeys,
+      celebrateTrack,
+      celebrateLevel,
+      currentTrack: activeTrack(completedTaskKeys),
+      progressEpoch,
+      storyFlags,
+      setStoryFlag,
+      markComplete,
+      restartLevel,
+      dismissCelebration,
+      dismissLevelCelebration,
+      mariaNoteTaskKey,
+      dismissMariaNote,
+      lang,
+      setLang,
+      bigText,
+      setBigText,
+      rungMap,
+      getRung,
+      recordSkillRun,
+    }),
+    [
+      learnerId,
+      displayName,
+      completedTaskKeys,
+      justEarnedPoints,
+      certificateTrackKeys,
+      celebrateTrack,
+      celebrateLevel,
+      progressEpoch,
+      storyFlags,
+      setStoryFlag,
+      markComplete,
+      restartLevel,
+      dismissCelebration,
+      dismissLevelCelebration,
+      mariaNoteTaskKey,
+      dismissMariaNote,
+      lang,
+      setLang,
+      bigText,
+      setBigText,
+      rungMap,
+      getRung,
+      recordSkillRun,
+    ],
   );
+
+  return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;
 }
 
 export function useProgress() {

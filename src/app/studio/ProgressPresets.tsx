@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { LEVELS } from "@/lib/tracks-content";
 import { dayTitle } from "@/lib/shift-spine";
+import { learnerKey, storage } from "@/lib/storage";
 import { setProgressPreset } from "@/app/actions";
 
 /**
@@ -24,12 +25,8 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
     }
     // Progress flags and help-ladder rungs live in localStorage per learner;
     // stale ones would leak "future" story into the rewound state.
-    try {
-      window.localStorage.removeItem(`ws-story-flags:${learnerId}`);
-      window.localStorage.removeItem(`ws-rungs:${learnerId}`);
-    } catch {
-      // Private browsing: nothing stored, nothing to clear.
-    }
+    storage.remove(learnerKey.storyFlags(learnerId));
+    storage.remove(learnerKey.rungs(learnerId));
     // Full navigation on purpose: router.push() would keep the cached RSC
     // payload and the desktop would render the pre-rewind progress.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
