@@ -75,7 +75,7 @@ export default function AccountRecoveryTask() {
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
         <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
-      <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
+      <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 
       {view !== "done" && (
         <RightNowBar
@@ -90,34 +90,34 @@ export default function AccountRecoveryTask() {
       )}
 
       {view === "signin" && (
-        <div className="max-w-[380px] rounded-xl border border-[var(--border)] bg-white p-6">
+        <div className="max-w-[380px] rounded-xl border border-border bg-white p-6">
           <div className="mb-5 flex justify-center">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--surface-muted)] text-[var(--text-secondary)]">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-muted text-text-secondary">
               <Lock size={22} strokeWidth={2} aria-hidden />
             </span>
           </div>
-          <label className="mb-3 block text-[14px] font-medium text-[var(--text-primary)]">
+          <label className="mb-3 block text-[14px] font-medium text-text-primary">
             {c.usernameLabel}
             <input
               type="text"
               readOnly
               value="you@harborsidecafe.com"
-              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2.5 text-[14px] text-[var(--text-secondary)] outline-none"
+              className="mt-1.5 block w-full rounded-lg border border-border bg-surface-muted px-3 py-2.5 text-[14px] text-text-secondary outline-none"
             />
           </label>
-          <label className="mb-4 block text-[14px] font-medium text-[var(--text-primary)]">
+          <label className="mb-4 block text-[14px] font-medium text-text-primary">
             {c.passwordLabel}
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder={c.passwordPlaceholder}
-              className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[14px] outline-none placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+              className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[14px] outline-none placeholder:text-text-tertiary focus:border-accent"
             />
           </label>
           <button
             onClick={trySignIn}
-            className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+            className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
           >
             {c.signIn}
           </button>
@@ -125,14 +125,14 @@ export default function AccountRecoveryTask() {
       )}
 
       {(view === "code-sent" || view === "code-entry") && (
-        <div className="max-w-[420px] rounded-xl border border-[var(--border)] bg-white p-6">
-          <div className="mb-1 text-[16px] font-medium text-[var(--text-primary)]">{c.codeSentTitle}</div>
-          <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.codeSentBody}</p>
+        <div className="max-w-[420px] rounded-xl border border-border bg-white p-6">
+          <div className="mb-1 text-[16px] font-medium text-text-primary">{c.codeSentTitle}</div>
+          <p className="mb-4 text-[14px] text-text-secondary">{c.codeSentBody}</p>
 
           {view === "code-sent" && (
             <button
               onClick={() => setPicker(true)}
-              className="inline-flex min-h-[44px] items-center rounded-full border border-[var(--border)] px-5 text-[14px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+              className="inline-flex min-h-[44px] items-center rounded-full border border-border px-5 text-[14px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
             >
               {c.findCodeBtn}
             </button>
@@ -140,7 +140,7 @@ export default function AccountRecoveryTask() {
 
           {view === "code-entry" && (
             <>
-              <label className="mb-4 block text-[14px] font-medium text-[var(--text-primary)]">
+              <label className="mb-4 block text-[14px] font-medium text-text-primary">
                 {c.codeLabel}
                 <input
                   type="text"
@@ -148,12 +148,12 @@ export default function AccountRecoveryTask() {
                   value={codeInput}
                   onChange={(e) => setCodeInput(e.target.value)}
                   placeholder={c.codePlaceholder}
-                  className="mt-1.5 block w-full rounded-lg border border-[var(--border)] px-3 py-2.5 text-[16px] tracking-[0.2em] outline-none placeholder:tracking-normal placeholder:text-[var(--text-tertiary)] focus:border-[var(--accent)]"
+                  className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[16px] tracking-[0.2em] outline-none placeholder:tracking-normal placeholder:text-text-tertiary focus:border-accent"
                 />
               </label>
               <button
                 onClick={trySubmitCode}
-                className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+                className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
               >
                 {c.submitCode}
               </button>

@@ -57,7 +57,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
           onHelp={() => setHelp(true)}
         />
       </div>
-      <p className="mb-4 text-[14px] text-[var(--text-secondary)]">{c.subhead}</p>
+      <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 
       {view !== "done" && (
         <RightNowBar
@@ -75,20 +75,20 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
 
       {view === "list" && (
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-          <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-[var(--border)] bg-white">
+          <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-white">
             {SCHEDULE.map((d, i) => (
               <div
                 key={d.day}
-                className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-[var(--border)]" : ""}`}
+                className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-border" : ""}`}
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <span className="w-11 shrink-0 text-[14px] font-semibold text-[var(--text-primary)]">{d.day}</span>
-                  <span className="shrink-0 text-[13px] text-[var(--text-tertiary)]">{d.date}</span>
+                  <span className="w-11 shrink-0 text-[14px] font-semibold text-text-primary">{d.day}</span>
+                  <span className="shrink-0 text-[13px] text-text-tertiary">{d.date}</span>
                   <div
                     className={
                       d.shift
-                        ? "text-[14px] font-medium text-[var(--text-primary)]"
-                        : "text-[14px] text-[var(--text-tertiary)]"
+                        ? "text-[14px] font-medium text-text-primary"
+                        : "text-[14px] text-text-tertiary"
                     }
                   >
                     {d.shift ?? "Off"}
@@ -98,7 +98,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
                   <button
                     data-showme={d.conflict ? "swap-button" : undefined}
                     onClick={() => pickDay(d)}
-                    className="shrink-0 rounded-full border border-[var(--border)] px-3 py-1.5 text-[13px] font-medium text-[var(--text-primary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+                    className="shrink-0 rounded-full border border-border px-3 py-1.5 text-[13px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
                   >
                     {c.pickConflict}
                   </button>
@@ -273,7 +273,7 @@ function PhoneCalendar({
           </div>
         </div>
       </div>
-      <figcaption className="mt-2 text-center text-[12px] text-[var(--text-secondary)]">
+      <figcaption className="mt-2 text-center text-[12px] text-text-secondary">
         {label}
       </figcaption>
     </figure>

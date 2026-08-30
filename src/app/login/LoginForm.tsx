@@ -10,12 +10,13 @@ import {
 } from "react";
 import { loginOrSignup, type LoginResult } from "./actions";
 import type { Lang } from "@/lib/task-types";
+import { DEVICE_KEY, storage } from "@/lib/storage";
 import { DesktopClock } from "@/components/LiveClock";
 import { Anchor } from "lucide-react";
 import { Languages } from "@/lib/icons";
 
 const initialState: LoginResult = { error: null };
-const RECENTS_KEY = "ws-login-recents";
+const RECENTS_KEY = DEVICE_KEY.loginRecents;
 const PIN_LEN = 4;
 const POD_COLORS = ["#1a73e8", "#d93025", "#188038", "#9334e6", "#e37400", "#00897b"];
 
@@ -91,47 +92,31 @@ function podColor(name: string) {
 }
 
 function loadRecents(): RecentUser[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(RECENTS_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter(
-      (u): u is RecentUser =>
-        !!u && typeof u === "object" && typeof u.displayName === "string" && typeof u.classCode === "string",
-    );
-  } catch {
-    return [];
-  }
+  const parsed = storage.getJSON<unknown>(RECENTS_KEY, []);
+  if (!Array.isArray(parsed)) return [];
+  return parsed.filter(
+    (u): u is RecentUser =>
+      !!u && typeof u === "object" && typeof u.displayName === "string" && typeof u.classCode === "string",
+  );
 }
 
 function rememberUser(user: RecentUser) {
-  try {
-    const next = [
-      user,
-      ...loadRecents().filter(
-        (u) => !(u.displayName === user.displayName && u.classCode === user.classCode),
-      ),
-    ].slice(0, 4);
-    window.localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
-    return next;
-  } catch {
-    // Private browsing can block localStorage.
-    return loadRecents();
-  }
+  const next = [
+    user,
+    ...loadRecents().filter(
+      (u) => !(u.displayName === user.displayName && u.classCode === user.classCode),
+    ),
+  ].slice(0, 4);
+  storage.setJSON(RECENTS_KEY, next);
+  return next;
 }
 
 function forgetUser(user: RecentUser) {
-  try {
-    const next = loadRecents().filter(
-      (u) => !(u.displayName === user.displayName && u.classCode === user.classCode),
-    );
-    window.localStorage.setItem(RECENTS_KEY, JSON.stringify(next));
-    return next;
-  } catch {
-    return loadRecents();
-  }
+  const next = loadRecents().filter(
+    (u) => !(u.displayName === user.displayName && u.classCode === user.classCode),
+  );
+  storage.setJSON(RECENTS_KEY, next);
+  return next;
 }
 
 function LoginHarborMark({ school, title }: { school: string; title: string }) {
@@ -310,11 +295,7 @@ function PinField({
 }
 
 function readStoredLang(): Lang {
-  try {
-    return window.localStorage.getItem("ws-lang") === "es" ? "es" : "en";
-  } catch {
-    return "en";
-  }
+  return storage.getString(DEVICE_KEY.lang) === "es" ? "es" : "en";
 }
 
 export default function LoginForm({ next }: { next: string }) {
@@ -349,11 +330,7 @@ export default function LoginForm({ next }: { next: string }) {
   };
 
   const pickLang = (nextLang: Lang) => {
-    try {
-      window.localStorage.setItem("ws-lang", nextLang);
-    } catch {
-      // The choice still applies for this page.
-    }
+    storage.setString(DEVICE_KEY.lang, nextLang);
     setLangOverride(nextLang);
     document.documentElement.lang = nextLang;
   };

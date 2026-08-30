@@ -113,7 +113,7 @@ export default function PriorityCallTask() {
       {view === "urgency" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
           <div className="mx-auto max-w-[520px]">
-            <div className="text-[12px] font-semibold uppercase tracking-wide text-[var(--warning)]">{c.urgencyKicker}</div>
+            <div className="text-[12px] font-semibold uppercase tracking-wide text-warning">{c.urgencyKicker}</div>
             <h2 className="mt-2 text-[22px] font-medium leading-tight">{c.urgencyQ}</h2>
             <textarea
               value={urgency}
@@ -123,7 +123,7 @@ export default function PriorityCallTask() {
             />
             <button
               onClick={lockUrgency}
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white cursor-pointer"
+              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer"
             >
               {c.urgencyCta}
             </button>
@@ -164,7 +164,7 @@ export default function PriorityCallTask() {
               <NeedAStart lang={lang} starters={MAIL_STARTERS[lang]} onPick={(s) => setReply((b) => (b ? `${b} ` : "") + s)} />
             </div>
             <div className="mt-4 flex gap-3">
-              <button onClick={sendReply} className="inline-flex min-h-[44px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white cursor-pointer">
+              <button onClick={sendReply} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
                 {c.send}
               </button>
               <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
@@ -228,7 +228,7 @@ export default function PriorityCallTask() {
       )}
 
       {view === "done" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-[var(--surface-muted)] p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.sentKicker}

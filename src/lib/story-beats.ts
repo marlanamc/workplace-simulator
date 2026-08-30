@@ -1,7 +1,9 @@
 import type { TaskKey } from "@/lib/desktop-content";
+import { CAST, inboxSender } from "@/lib/cast";
 import { firstName, mailGreeting, signatureFor } from "@/lib/mail-greeting";
 import type { Lang, Localized } from "@/lib/task-types";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
+import { TASK_LIST } from "@/lib/tasks/registry";
 
 export const HUDDLE_TIME_FLAG = "huddleTime";
 
@@ -24,93 +26,25 @@ export type InboxRow = {
 };
 
 /**
- * Done-screen "Next" button, keyed by the task it opens. Act I names the
- * place. Act II+ names the bookmark — finding it on the bar stays the exercise.
- */
-export const HANDOFF_CTA: Record<TaskKey, Localized> = {
-  tour: { en: "Open the Web Browser", es: "Abrir el navegador web" },
-  mail: { en: "Open Mail", es: "Abrir correo" },
-  "mail-read": { en: "Open Mail", es: "Abrir correo" },
-  "mail-reply": { en: "Open Mail", es: "Abrir correo" },
-  "mail-attach": { en: "Next: Send the report", es: "Siguiente: Envía el reporte" },
-  schedule: { en: "Next: Open Portal", es: "Siguiente: Abrir Portal" },
-  "swap-request": { en: "Next: Ask for a swap", es: "Siguiente: Pide un cambio" },
-  "mail-etiquette": { en: "Next: Write to Darnell", es: "Siguiente: Escríbele a Darnell" },
-  "call-out-sick": { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
-  timeclock: { en: "Next: Clock out", es: "Siguiente: Marcar salida" },
-  paystub: { en: "Next: Check a pay stub", es: "Siguiente: Revisar un recibo" },
-  "shift-review": { en: "Next: A normal shift", es: "Siguiente: Un turno normal" },
-  "account-recovery": { en: "Next: Sign back in", es: "Siguiente: Vuelve a entrar" },
-  incident: { en: "Next: Open Forms", es: "Siguiente: Abrir Formularios" },
-  handbook: { en: "Next: Open Docs", es: "Siguiente: Abrir Docs" },
-  calendar: { en: "Open Calendar from the bookmarks", es: "Abre Calendar en los marcadores" },
-  files: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
-  spreadsheet: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
-  "make-a-copy": { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
-  "status-report": { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
-  triage: { en: "Open Today from the bookmarks", es: "Abre Today en los marcadores" },
-  "team-schedule": { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
-  "formula-check": { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
-  "team-meeting": { en: "Open Huddle from the bookmarks", es: "Abre Huddle en los marcadores" },
-  "priority-call": { en: "Open Floor from the bookmarks", es: "Abre Floor en los marcadores" },
-};
-
-/**
- * One line of clock time for the desktop briefing. The story, not the skill
- * name.
+ * Done-screen "Next" button, keyed by the task it opens, and one line of
+ * clock time per task for the desktop briefing. Both derived from the task
+ * registry (`src/lib/tasks/registry.ts`).
  *
- * **Time only ever moves forward.** Read top to bottom, these are the days of
- * the learner's employment in order, and each level (see `dayNumber`) is one
- * workday. This list used to run Tuesday → Friday → Monday → Thursday inside a
- * single level, which quietly told a learner that finishing a task could move
- * the story backwards. When you add a task, give it a moment at or after the
- * task above it, and never reuse a weekday for a different level.
- *
- * The weeks: week 1 is the first shift (days 1-3), the email lesson and the
- * sick call bridge into week 2 (day 3b, Friday evening into Monday), and the
- * lead job starts at `calendar` in week 3.
+ * On `shiftMoment`: **time only ever moves forward.** Read the registry top
+ * to bottom, these are the days of the learner's employment in order, and
+ * each level (see `dayNumber`) is one workday. `story-coherence.test.ts`
+ * enforces the weekday ordering; when you add a task give it a moment at or
+ * after the task above it, and never reuse a weekday for a different level.
  */
-export const SHIFT_MOMENT: Record<TaskKey, Localized> = {
-  tour: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
-  // Day 1 — Tuesday, the first shift.
-  mail: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
-  "mail-read": { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
-  "mail-reply": { en: "Tuesday, 8:14 AM. Maria says welcome.", es: "Martes, 8:14 AM. Maria te da la bienvenida." },
-  "mail-attach": { en: "Tuesday, 8:20 AM. She needs a file.", es: "Martes, 8:20 AM. Necesita un archivo." },
-  // Day 2 — Wednesday. The next week's schedule is posted, and it clashes.
-  schedule: { en: "Wednesday morning. Next week is posted.", es: "Miércoles por la mañana. Ya está la próxima semana." },
-  "swap-request": { en: "Wednesday, 9:30 AM. Two shifts overlap.", es: "Miércoles, 9:30 AM. Dos turnos se cruzan." },
-  // Day 3 — Friday, closing out week one: clock-out, pay, a last
-  // walk-through, then one more email lesson before the weekend.
-  timeclock: { en: "Friday, end of shift.", es: "Viernes, fin del turno." },
-  paystub: { en: "Friday, 5:40 PM. Payday for the crew.", es: "Viernes, 5:40 PM. Día de pago del equipo." },
-  "shift-review": { en: "Friday, 6 PM. One last walk-through.", es: "Viernes, 6 PM. Un último repaso." },
-  "mail-etiquette": { en: "Friday, 6:20 PM. One more thing before you go.", es: "Viernes, 6:20 PM. Una cosa más antes de irte." },
-  // Day 3b — Monday, week 2. The sick call, then the promotion.
-  "call-out-sick": { en: "Monday, 6:12 AM. You feel sick.", es: "Lunes, 6:12 AM. Te sientes mal." },
-  // Day 4 — Tuesday of week 2. Something happens on the floor.
-  incident: { en: "Tuesday. The floor is busy.", es: "Martes. El piso está lleno." },
-  handbook: { en: "Tuesday night.", es: "Martes por la noche." },
-  // Day 5 — Wednesday of week 2.
-  "account-recovery": { en: "Wednesday morning. You're signed out.", es: "Miércoles por la mañana. Cerraste sesión." },
-  // Day 6+ — week 3. The lead job starts here.
-  calendar: { en: "Next week. You are a lead now.", es: "La semana que viene. Ya eres líder." },
-  files: { en: "Monday morning. Jordan starts today.", es: "Lunes por la mañana. Jordan empieza hoy." },
-  spreadsheet: { en: "Friday afternoon. Counts are due.", es: "Viernes por la tarde. Hay que entregar las cuentas." },
-  "make-a-copy": { en: "Monday. Maria shared a template.", es: "Lunes. Maria compartió una plantilla." },
-  "status-report": { en: "Monday, 11 AM. Your copy is ready.", es: "Lunes, 11 AM. Tu copia está lista." },
-  triage: { en: "Tuesday, 9:04 AM. Two things waiting.", es: "Martes, 9:04 AM. Dos cosas esperando." },
-  "team-schedule": { en: "Monday. You write the crew week now.", es: "Lunes. Ahora tú escribes la semana del equipo." },
-  "formula-check": { en: "Friday. Hours are due for payroll.", es: "Viernes. Hay que entregar las horas para la nómina." },
-  "team-meeting": { en: "Tuesday. You call the huddle now.", es: "Martes. Ahora tú llamas a la reunión." },
-  "priority-call": { en: "Thursday, 3:40 PM. The floor is loud.", es: "Jueves, 3:40 PM. El piso está fuerte." },
-};
+export const HANDOFF_CTA: Record<TaskKey, Localized> = Object.fromEntries(
+  TASK_LIST.map((d) => [d.key, d.handoffCta]),
+) as Record<TaskKey, Localized>;
 
-const MARIA = {
-  from: "Maria Delgado",
-  initials: "MD",
-  color: "#1a73e8",
-};
+export const SHIFT_MOMENT: Record<TaskKey, Localized> = Object.fromEntries(
+  TASK_LIST.map((d) => [d.key, d.shiftMoment]),
+) as Record<TaskKey, Localized>;
+
+const MARIA = inboxSender(CAST.maria);
 
 export function extractHuddleTime(text: string): "10am" | "2pm" {
   if (/\b2\s*(p\.?m\.?|pm)\b/i.test(text) || /\b14:00\b/.test(text)) return "2pm";
@@ -222,9 +156,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-paystub",
-    from: "Harborside HR",
-    initials: "HR",
-    color: "#9334e6",
+    ...inboxSender(CAST.hr),
     time: "Fri",
     unread: true,
     story: true,
@@ -416,9 +348,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-team-schedule",
-    from: "Jordan Kim",
-    initials: "JK",
-    color: "#0f9d58",
+    ...inboxSender(CAST.jordan),
     time: "11:40 AM",
     unread: true,
     story: true,

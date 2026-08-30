@@ -121,7 +121,7 @@ export default function TeamMeetingTask() {
           <div className="mx-auto max-w-[640px] px-6 pb-6">
             <button
               onClick={sendInvite}
-              className="inline-flex min-h-[44px] items-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white cursor-pointer"
+              className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer"
             >
               {c.sendCta}
             </button>
@@ -203,7 +203,7 @@ export default function TeamMeetingTask() {
       )}
 
       {view === "done" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-[var(--surface-muted)] p-6">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard
               kicker={c.sentKicker}

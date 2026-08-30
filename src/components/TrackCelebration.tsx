@@ -19,12 +19,12 @@ export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => voi
         <Confetti count={26} />
         <div className="animate-pop-in mb-4 text-[48px] leading-none">{celebrateTrack.awardEmoji}</div>
         <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title}</h2>
-        <p className="mb-6 text-[15px] leading-relaxed text-[var(--text-secondary)]">
+        <p className="mb-6 text-[15px] leading-relaxed text-text-secondary">
           Award unlocked. It&rsquo;s in your trophy case.
         </p>
         <button
           onClick={onSeeAward}
-          className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-[var(--accent)] px-6 text-[16px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+          className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-accent px-6 text-[16px] font-medium text-white hover:bg-accent-hover cursor-pointer"
         >
           See award
         </button>

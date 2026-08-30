@@ -40,18 +40,18 @@ export default function PickerModal({
         className="flex w-full max-w-[560px] flex-col overflow-hidden rounded-2xl bg-white shadow-2xl animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 border-b border-[var(--border)] px-5 py-3.5">
+        <div className="flex items-center gap-3 border-b border-border px-5 py-3.5">
           <span className="text-[15px] font-medium">{title}</span>
           <div className="flex-1" />
           <button
             onClick={onCancel}
             aria-label="Close"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-[16px] text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] cursor-pointer"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-[16px] text-text-secondary hover:bg-surface-muted cursor-pointer"
           >
             ✕
           </button>
         </div>
-        <div className="flex items-center justify-between border-b border-[var(--border)] px-5 py-2 text-[12px] font-medium text-[var(--text-tertiary)]">
+        <div className="flex items-center justify-between border-b border-border px-5 py-2 text-[12px] font-medium text-text-tertiary">
           <span>{categoryLabel}</span>
           <div className="flex gap-8">
             {columnLabels.map((label) => (
@@ -64,7 +64,7 @@ export default function PickerModal({
             <button
               key={item.key}
               onClick={() => onSelect(item)}
-              className="flex w-full items-center justify-between gap-3 border-b border-[var(--surface-muted)] px-5 py-3 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+              className="flex w-full items-center justify-between gap-3 border-b border-surface-muted px-5 py-3 text-left hover:bg-surface-muted cursor-pointer"
             >
               <span className="flex min-w-0 items-center gap-3">
                 {item.tagText && (
@@ -78,17 +78,17 @@ export default function PickerModal({
                 <span className="truncate text-[14px]">{item.label}</span>
               </span>
               {item.columns?.map((col, i) => (
-                <span key={i} className="shrink-0 text-[13px] text-[var(--text-tertiary)]">
+                <span key={i} className="shrink-0 text-[13px] text-text-tertiary">
                   {col}
                 </span>
               ))}
             </button>
           ))}
         </div>
-        <div className="flex items-center justify-end gap-2 border-t border-[var(--border)] px-5 py-3">
+        <div className="flex items-center justify-end gap-2 border-t border-border px-5 py-3">
           <button
             onClick={onCancel}
-            className="min-h-[42px] rounded-full border border-[var(--border)] px-4 text-[14px] font-medium text-[var(--text-primary)] cursor-pointer"
+            className="min-h-[42px] rounded-full border border-border px-4 text-[14px] font-medium text-text-primary cursor-pointer"
           >
             {cancelLabel}
           </button>

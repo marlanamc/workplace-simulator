@@ -1,3 +1,4 @@
+import { CAST, inboxSender } from "@/lib/cast";
 import { mailGreeting } from "@/lib/mail-greeting";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 
@@ -24,8 +25,8 @@ export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-etiquette", "call-o
 
 /** The "To" address for a compose-only task - who the learner is writing from scratch. */
 export const COMPOSE_RECIPIENT: Partial<Record<PlayableMailTask, string>> = {
-  "mail-etiquette": "darnell.washington@harborsidecafe.com",
-  "call-out-sick": "maria.delgado@harborsidecafe.com",
+  "mail-etiquette": CAST.darnell.email,
+  "call-out-sick": CAST.maria.email,
 };
 
 export function isComposeOnly(task: PlayableMailTask): boolean {
@@ -538,6 +539,20 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 const wrongHint = (en: string, es: string): Localized => ({ en, es });
 
+/** A clutter email in the Day One inbox: never the target, always dismissible with a hint. */
+interface DecoyEmail {
+  key: string;
+  from: string;
+  initials: string;
+  color: string;
+  time: string;
+  isTarget: false;
+  unread?: boolean;
+  subject: Localized;
+  preview: Localized;
+  wrongHint: Localized;
+}
+
 export const FILES: PickableItem[] = [
   { key: "photo-jobsite-0714.jpg", label: "photo-jobsite-0714.jpg", tagText: "JPG", tagColor: "#5f6368", columns: ["Jul 14"], isTarget: false,
     wrongHint: wrongHint("That's a photo, not the report. Look for the file with 'safety-report' in the name.", "Esa es una foto, no el reporte. Busca el archivo que dice 'safety-report'.") },
@@ -548,8 +563,8 @@ export const FILES: PickableItem[] = [
     wrongHint: wrongHint("That one is June. She asked for July.", "Ese es de junio. Ella pidió el de julio.") },
 ];
 
-const DECOY_EMAILS = [
-  { key: "darnell", from: "Darnell Washington", initials: "DW", color: "#e37400", time: "7:41 AM", isTarget: false, unread: true,
+const DECOY_EMAILS: DecoyEmail[] = [
+  { key: "darnell", ...inboxSender(CAST.darnell), time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
     preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
     wrongHint: wrongHint("Darnell is a coworker. Look for Maria Delgado.", "Darnell es un compañero. Busca a Maria Delgado.") },
@@ -557,7 +572,7 @@ const DECOY_EMAILS = [
     subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
     preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },
     wrongHint: wrongHint("That's an automatic message about the schedule. Maria's email has her name on the left.", "Ese es un mensaje automático del horario. El correo de Maria tiene su nombre a la izquierda.") },
-  { key: "hr", from: "Harborside HR", initials: "HR", color: "#9334e6", time: "Yesterday", isTarget: false,
+  { key: "hr", ...inboxSender(CAST.hr), time: "Yesterday", isTarget: false,
     subject: { en: "Your paystub is ready", es: "Tu recibo de pago está listo" },
     preview: { en: "View your paystub in the portal.", es: "Ve tu recibo en el portal." },
     wrongHint: wrongHint("That's from HR about pay. Today's task is the email from Maria Delgado.", "Eso es de RR.HH. sobre el pago. La tarea de hoy es el correo de Maria Delgado.") },
@@ -579,7 +594,7 @@ const DECOY_EMAILS = [
     wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
 
-type InboxEmail = (typeof DECOY_EMAILS)[number] | {
+type InboxEmail = DecoyEmail | {
   key: string;
   from: string;
   initials: string;
@@ -598,9 +613,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   const safetyMeta = SUBJECT_BY_TASK["mail-attach"];
   const welcome: InboxEmail = {
     key: "maria-welcome",
-    from: "Maria Delgado",
-    initials: "MD",
-    color: "#1a73e8",
+    ...inboxSender(CAST.maria),
     time: "8:14 AM",
     isTarget: task === "mail-reply",
     unread: task === "mail-reply",
@@ -616,9 +629,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   };
   const safety: InboxEmail = {
     key: "maria-safety",
-    from: "Maria Delgado",
-    initials: "MD",
-    color: "#1a73e8",
+    ...inboxSender(CAST.maria),
     time: "8:20 AM",
     isTarget: true,
     unread: true,

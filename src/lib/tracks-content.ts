@@ -1,5 +1,8 @@
-import type { AppKey, TaskKey } from "./desktop-content";
+import type { TaskKey } from "./desktop-content";
 import type { Localized } from "./task-types";
+import { TASK_LIST, type PortalSection, type TaskLocation } from "./tasks/registry";
+
+export type { PortalSection, TaskLocation };
 
 export const POINTS_PER_TASK = 100;
 
@@ -524,30 +527,7 @@ export function sceneForLevel(level: Level): DesktopScene {
   return actForLevel(level)?.scene ?? "harborside-open";
 }
 
-/**
- * Which level each Browser tab belongs to. Single source of truth for
- * BrowserClient's tab strip *and* for other UI (e.g. the Objectives panel)
- * that needs to know which level's checklist matches whatever tab is
- * currently open.
- */
-export const TAB_LEVEL_KEYS: Record<string, string> = {
-  tour: "level0",
-  mail: "level1",
-  portal: "level2",
-  incident: "level3b",
-  handbook: "level3b",
-  "account-recovery": "level3c",
-  calendar: "level4",
-  files: "level5",
-  spreadsheet: "level6",
-  "make-a-copy": "level7",
-  "status-report": "level7",
-  triage: "level8",
-  "team-schedule": "level9",
-  "formula-check": "level10",
-  "team-meeting": "level11",
-  "priority-call": "level12",
-};
+export { TAB_LEVEL_KEYS } from "./tabs";
 
 export function levelForTrack(trackKey: string): Level {
   return LEVELS.find((l) => l.trackKeys.includes(trackKey)) ?? LEVELS[LEVELS.length - 1];
@@ -617,212 +597,14 @@ export interface TaskInfo {
   built: boolean;
 }
 
-export const TASK_INFO: Record<TaskKey, TaskInfo> = {
-  tour: {
-    label: { en: "Learn how this computer works", es: "Aprende cómo funciona esta computadora" },
-    dispatch: {
-      en: "This is a practice computer. Let's see how it works.",
-      es: "Esta es una computadora de práctica. Veamos cómo funciona.",
-    },
-    built: true,
-  },
-  mail: {
-    label: { en: "Answer your supervisor", es: "Contesta a tu supervisora" },
-    dispatch: {
-      en: "Maria already needs something. First shift, first email.",
-      es: "Maria ya necesita algo. Primer turno, primer correo.",
-    },
-    built: true,
-  },
-  "mail-read": {
-    label: { en: "Read your supervisor's email", es: "Lee el correo de tu supervisora" },
-    dispatch: {
-      en: "Maria already needs something. Find it and read it.",
-      es: "Maria ya necesita algo. Encuéntralo y léelo.",
-    },
-    built: true,
-  },
-  "mail-reply": {
-    label: { en: "Thank your manager", es: "Agradece a tu gerente" },
-    dispatch: {
-      en: "Maria says welcome. Write her a short thank-you.",
-      es: "Maria te da la bienvenida. Escríbele un agradecimiento corto.",
-    },
-    built: true,
-  },
-  "mail-attach": {
-    label: { en: "Send the report with the file", es: "Envía el reporte con el archivo" },
-    dispatch: {
-      en: "Maria needs the July safety report. Read what she asks, then attach it.",
-      es: "Maria necesita el reporte de julio. Lee qué pide y adjúntalo.",
-    },
-    built: true,
-  },
-  schedule: {
-    label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
-    dispatch: {
-      en: "New week. Check your shifts against your own calendar.",
-      es: "Semana nueva. Compara tus turnos con tu propio calendario.",
-    },
-    built: true,
-  },
-  // @deprecated Folded into `schedule` — finding the clash and asking for
-  // the swap are one task now (see JobCard "Task 1 of 2 / 2 of 2" issue).
-  // Kept in the union so a learner's historical completion stays a valid
-  // row; nothing routes here any more.
-  "swap-request": {
-    label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
-    dispatch: {
-      en: "Two shifts overlap. Somebody has to swap.",
-      es: "Dos turnos chocan. Alguien tiene que cambiar.",
-    },
-    built: true,
-  },
-  "mail-etiquette": {
-    label: { en: "Write to a coworker", es: "Escríbele a un compañero" },
-    dispatch: {
-      en: "Before you go, close the loop with Darnell.",
-      es: "Antes de irte, respóndele a Darnell.",
-    },
-    built: true,
-  },
-  "call-out-sick": {
-    label: { en: "Tell Maria you can't come in", es: "Dile a Maria que no puedes ir" },
-    dispatch: {
-      en: "You're sick and you're on at 10. Write Maria now.",
-      es: "Estás enfermo y entras a las 10. Escríbele a Maria ya.",
-    },
-    built: true,
-  },
-  timeclock: {
-    label: { en: "Clock out for the day", es: "Marca tu salida del día" },
-    dispatch: {
-      en: "End of day. Clock out, then check the hours.",
-      es: "Fin del día. Marca la salida y revisa las horas.",
-    },
-    built: true,
-  },
-  paystub: {
-    label: { en: "Read a pay stub", es: "Lee un talón de pago" },
-    dispatch: {
-      en: "Yours takes two weeks. Practice on Alex Chen's stub.",
-      es: "El tuyo tarda dos semanas. Practica con el de Alex Chen.",
-    },
-    built: true,
-  },
-  "shift-review": {
-    label: { en: "A normal shift", es: "Un turno normal" },
-    dispatch: {
-      en: "A normal shift. Nothing new - just do the job.",
-      es: "Un turno normal. Nada nuevo: solo haz el trabajo.",
-    },
-    built: true,
-  },
-  "account-recovery": {
-    label: { en: "Get back into a locked account", es: "Recupera una cuenta bloqueada" },
-    dispatch: {
-      en: "You're signed out. Get back in before your shift.",
-      es: "Tu sesión se cerró. Vuelve a entrar antes de tu turno.",
-    },
-    built: true,
-  },
-  incident: {
-    label: { en: "File an incident report", es: "Llena un reporte de incidente" },
-    dispatch: {
-      en: "Someone slipped. Write it up before you forget.",
-      es: "Alguien se resbaló. Escríbelo antes de que se te olvide.",
-    },
-    built: true,
-  },
-  handbook: {
-    label: { en: "Look something up", es: "Busca una respuesta" },
-    dispatch: {
-      en: "They need an answer. The handbook is on your desk.",
-      es: "Necesitan una respuesta. El manual está en tu escritorio.",
-    },
-    built: true,
-  },
-  calendar: {
-    label: { en: "Handle a meeting invite", es: "Maneja una invitación a reunión" },
-    dispatch: {
-      en: "The meeting is at the same time as your shift. Pick a time that works.",
-      es: "La reunión es a la misma hora que tu turno. Elige una hora que funcione.",
-    },
-    built: true,
-  },
-  files: {
-    label: { en: "Share a file the right way", es: "Comparte un archivo de la forma correcta" },
-    dispatch: {
-      en: "They need the file. Share the file, not the whole folder.",
-      es: "Necesitan el archivo. Comparte el archivo, no toda la carpeta.",
-    },
-    built: true,
-  },
-  spreadsheet: {
-    label: { en: "Enter data and share a total", es: "Escribe los números y envía el total" },
-    dispatch: {
-      en: "This week's numbers. Total them and send it up.",
-      es: "Los números de esta semana. Súmalos y envía el total.",
-    },
-    built: true,
-  },
-  "make-a-copy": {
-    label: { en: "Copy a view-only template", es: "Copia una plantilla de solo ver" },
-    dispatch: {
-      en: "The template is view only. Copy it before you type.",
-      es: "La plantilla es de solo ver. Cópiala antes de escribir.",
-    },
-    built: true,
-  },
-  "status-report": {
-    label: { en: "Send a status report", es: "Envía un reporte de avance" },
-    dispatch: {
-      en: "Your copy is waiting. Write the total. Cc Jordan.",
-      es: "Tu copia está lista. Escribe el total. Pon a Jordan en Cc.",
-    },
-    built: true,
-  },
-  triage: {
-    label: { en: "Handle two things at once", es: "Maneja dos cosas a la vez" },
-    dispatch: {
-      en: "Two things are already waiting. Drop neither.",
-      es: "Dos cosas ya están esperando. No dejes caer ninguna.",
-    },
-    built: true,
-  },
-  "team-schedule": {
-    label: { en: "Fill Saturday close", es: "Cubre el cierre del sábado" },
-    dispatch: {
-      en: "Saturday close has nobody on it. Pick someone with room.",
-      es: "El cierre del sábado no tiene a nadie. Elige a alguien con espacio.",
-    },
-    built: true,
-  },
-  "formula-check": {
-    label: { en: "Fix the hours formula", es: "Arregla la fórmula de horas" },
-    dispatch: {
-      en: "The hours total looks fine. The formula does not.",
-      es: "El total de horas se ve bien. La fórmula no.",
-    },
-    built: true,
-  },
-  "team-meeting": {
-    label: { en: "Lead your first huddle", es: "Dirige tu primera reunión de equipo" },
-    dispatch: {
-      en: "The crew needs 15 minutes on next week's schedule.",
-      es: "El equipo necesita 15 minutos para el horario de la próxima semana.",
-    },
-    built: true,
-  },
-  "priority-call": {
-    label: { en: "Three things at once", es: "Tres cosas a la vez" },
-    dispatch: {
-      en: "Three things just landed. Name the first move.",
-      es: "Tres cosas acaban de llegar. Decide el primer paso.",
-    },
-    built: true,
-  },
-};
+/**
+ * Label + dispatch + built flag per task, derived from the task registry
+ * (`src/lib/tasks/registry.ts`). Kept as a named export because several
+ * screens read `TASK_INFO[key].label` / `.dispatch` directly.
+ */
+export const TASK_INFO: Record<TaskKey, TaskInfo> = Object.fromEntries(
+  TASK_LIST.map((d) => [d.key, { label: d.label, dispatch: d.dispatch, built: d.built }]),
+) as Record<TaskKey, TaskInfo>;
 
 export function findTrackForTask(taskKey: TaskKey): Track | undefined {
   return TRACKS.find((t) => t.taskKeys.includes(taskKey));
@@ -899,16 +681,6 @@ export function pathStops(completedTaskKeys: TaskKey[]): PathStop[] {
   }));
 }
 
-/** Employee Portal sub-page. Schedule, Time Clock, and Pay Stubs share one Browser tab. */
-export type PortalSection = "schedule" | "timeclock" | "paystubs" | "swap-request" | "shift-review";
-
-export type TaskLocation = {
-  appKey: AppKey;
-  tab?: string;
-  section?: PortalSection;
-  ctaLabel: string;
-};
-
 export type TaskHandoff = {
   taskKey: TaskKey;
   location: TaskLocation;
@@ -923,33 +695,9 @@ export type TaskHandoff = {
  * New Tab so finding the bookmark stays the exercise. The CTA still names
  * which bookmark to click.
  */
-export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = {
-  tour: { appKey: "browser", tab: "tour", ctaLabel: "Open the Web Browser" },
-  mail: { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  "mail-read": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  "mail-reply": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  "mail-attach": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  schedule: { appKey: "browser", tab: "portal", section: "schedule", ctaLabel: "Open Portal" },
-  "swap-request": { appKey: "browser", tab: "portal", section: "swap-request", ctaLabel: "Open Portal" },
-  "mail-etiquette": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  "call-out-sick": { appKey: "browser", tab: "mail", ctaLabel: "Open Mail" },
-  timeclock: { appKey: "browser", tab: "portal", section: "timeclock", ctaLabel: "Open Portal" },
-  paystub: { appKey: "browser", tab: "portal", section: "paystubs", ctaLabel: "Open Portal" },
-  "shift-review": { appKey: "browser", tab: "portal", section: "shift-review", ctaLabel: "Open Portal" },
-  "account-recovery": { appKey: "browser", tab: "account-recovery", ctaLabel: "Open Sign In" },
-  incident: { appKey: "browser", tab: "incident", ctaLabel: "Open Forms" },
-  handbook: { appKey: "browser", tab: "handbook", ctaLabel: "Open Docs" },
-  calendar: { appKey: "browser", ctaLabel: "Open Calendar from the bookmarks" },
-  files: { appKey: "browser", ctaLabel: "Open Drive from the bookmarks" },
-  spreadsheet: { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
-  "make-a-copy": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
-  "status-report": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
-  triage: { appKey: "browser", ctaLabel: "Open Today from the bookmarks" },
-  "team-schedule": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
-  "formula-check": { appKey: "browser", ctaLabel: "Open Sheets from the bookmarks" },
-  "team-meeting": { appKey: "browser", ctaLabel: "Open Huddle from the bookmarks" },
-  "priority-call": { appKey: "browser", ctaLabel: "Open Floor from the bookmarks" },
-};
+export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = Object.fromEntries(
+  TASK_LIST.flatMap((d) => (d.location ? [[d.key, d.location] as const] : [])),
+);
 
 /** The next built task a learner should open, or null if none is ready. */
 export function nextHandoff(completedTaskKeys: TaskKey[]): TaskHandoff | null {

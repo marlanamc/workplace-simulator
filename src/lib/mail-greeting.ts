@@ -1,3 +1,4 @@
+import { CAST } from "@/lib/cast";
 import type { Lang, Localized } from "@/lib/task-types";
 
 /**
@@ -33,35 +34,27 @@ export interface MailSignature {
   phone?: string;
 }
 
-const HARBORSIDE = "Harborside Cafe";
-
 /**
  * Keyed by the `from` name the inbox already shows, so a row and its signature
- * can never drift apart. A sender with no entry here signs off with just their
- * name — a coworker firing off a quick note doesn't paste a signature block,
- * and pretending otherwise would teach the wrong norm.
+ * can never drift apart. Derived from the cast (`lib/cast.ts`) — every member
+ * with a `title` publishes a signature block. A sender with no entry here
+ * signs off with just their name — a coworker firing off a quick note doesn't
+ * paste a signature block, and pretending otherwise would teach the wrong norm.
  */
-export const SIGNATURES: Record<string, MailSignature> = {
-  "Maria Delgado": {
-    name: "Maria Delgado",
-    title: { en: "Cafe Manager", es: "Gerente del café" },
-    org: HARBORSIDE,
-    email: "maria.delgado@harborsidecafe.com",
-    phone: "(555) 0142",
-  },
-  "Harborside HR": {
-    name: "Harborside HR",
-    title: { en: "Human Resources", es: "Recursos Humanos" },
-    org: HARBORSIDE,
-    email: "hr@harborsidecafe.com",
-  },
-  "Jordan Kim": {
-    name: "Jordan Kim",
-    title: { en: "Shift Lead", es: "Líder de turno" },
-    org: HARBORSIDE,
-    email: "jordan.kim@harborsidecafe.com",
-  },
-};
+export const SIGNATURES: Record<string, MailSignature> = Object.fromEntries(
+  Object.values(CAST)
+    .filter((m) => m.title)
+    .map((m) => [
+      m.name,
+      {
+        name: m.name,
+        title: m.title!,
+        org: m.org ?? "",
+        email: m.email,
+        ...(m.phone ? { phone: m.phone } : {}),
+      } satisfies MailSignature,
+    ]),
+);
 
 export function signatureFor(from: string): MailSignature | undefined {
   return SIGNATURES[from];

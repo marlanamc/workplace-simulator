@@ -12,6 +12,7 @@ import {
 import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
 import { BOOKMARK_LABEL } from "@/lib/shift-spine";
 import { firstPersonSkill } from "@/lib/skills";
+import { TASKS } from "@/lib/tasks/registry";
 
 /**
  * The drift detector. Every task a learner can reach must be fully wired:
@@ -28,6 +29,39 @@ function expectBilingual(value: { en: string; es: string } | undefined, label: s
   expect(value!.en.trim(), `${label}.en is empty`).not.toBe("");
   expect(value!.es.trim(), `${label}.es is empty`).not.toBe("");
 }
+
+describe("the task registry is the single source of truth", () => {
+  it("has an entry for every TaskKey, keyed to itself", () => {
+    for (const key of TASK_KEYS) {
+      expect(TASKS[key], `TASKS[${key}] missing`).toBeDefined();
+      expect(TASKS[key].key, `TASKS[${key}].key mismatch`).toBe(key);
+    }
+  });
+
+  it.each(reachableTaskKeys)("%s (a reachable task) has a complete, bilingual descriptor", (key) => {
+    const d = TASKS[key];
+    expect(d, `TASKS[${key}]`).toBeDefined();
+    expect(d.retired, `${key} is reachable but marked retired`).not.toBe(true);
+    expectBilingual(d.label, `TASKS[${key}].label`);
+    expectBilingual(d.dispatch, `TASKS[${key}].dispatch`);
+    expectBilingual(d.handoffCta, `TASKS[${key}].handoffCta`);
+    expectBilingual(d.shiftMoment, `TASKS[${key}].shiftMoment`);
+    expect(d.skill.trim(), `TASKS[${key}].skill`).not.toBe("");
+    expect(d.bookmarkLabel.trim(), `TASKS[${key}].bookmarkLabel`).not.toBe("");
+    if (d.built) {
+      expect(d.location, `TASKS[${key}].location — a built task needs a home`).toBeDefined();
+    }
+  });
+
+  it("retired keys are in no track (they exist only for old DB rows)", () => {
+    const reachable = new Set(reachableTaskKeys);
+    for (const key of TASK_KEYS) {
+      if (TASKS[key].retired) {
+        expect(reachable.has(key), `retired task "${key}" is still in a track`).toBe(false);
+      }
+    }
+  });
+});
 
 describe("every reachable task is fully wired", () => {
   it.each(reachableTaskKeys)("%s has bilingual TASK_INFO", (key) => {

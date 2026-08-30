@@ -39,10 +39,24 @@ function StartIcon() {
   );
 }
 
+/** Corner lock on a shelf icon. Sits on the tile so it reads as locked, not floating. */
+function ShelfLockMark({ size = 11, iconSize = 8, margin = 2 }: { size?: number; iconSize?: number; margin?: number }) {
+  return (
+    <span className="pointer-events-none absolute inset-0 flex items-end justify-end" aria-hidden>
+      <span
+        className="flex items-center justify-center rounded-full bg-[#202124] text-white"
+        style={{ width: size, height: size, margin }}
+      >
+        <Lock size={iconSize} strokeWidth={2.5} className="block" />
+      </span>
+    </span>
+  );
+}
+
 function badgeStyle(state: AppState) {
-  if (state === "done") return "bg-[var(--success-tint)] text-[var(--success)]";
-  if (state === "locked") return "bg-[var(--surface-muted)] text-[var(--text-tertiary)]";
-  return "bg-[var(--warning-tint)] text-[var(--warning)]";
+  if (state === "done") return "bg-success-tint text-success";
+  if (state === "locked") return "bg-surface-muted text-text-tertiary";
+  return "bg-warning-tint text-warning";
 }
 
 function WifiIcon({ size = 14 }: { size?: number }) {
@@ -155,9 +169,9 @@ export default function Shelf({
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
   const currentLevel = levelForTrack(currentTrack.key);
   const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
-  // Level 0's walkthrough is the one thing on screen for a brand-new learner -
-  // the My Job panel would just repeat what the walkthrough already says.
-  const myJobLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
+  // Level 0's walkthrough is the one thing on screen for a brand-new learner —
+  // Start (the app list) and My Job would open a second map of the same computer.
+  const tourLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");
 
   const c = DESKTOP_COPY[lang];
   const appCopy = APP_COPY[lang];
@@ -217,19 +231,43 @@ export default function Shelf({
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="pointer-events-auto flex items-center gap-0.5">
             <button
+              data-testid="shelf-start"
               onClick={() => {
+                if (tourLocked) {
+                  say(
+                    lang === "en"
+                      ? "That menu opens after you finish looking around."
+                      : "Ese menú se abre cuando termines de mirar alrededor.",
+                  );
+                  return;
+                }
                 setAccountOpen(false);
                 onMyJobOpenChange(false);
                 if (launcherOpen) closeLauncher();
                 else setLauncherOpen(true);
               }}
-              aria-label={c.appsBtn}
-              aria-expanded={launcherOpen}
-              title={c.appsBtn}
+              aria-label={
+                tourLocked
+                  ? lang === "en"
+                    ? "Start · finish the walkthrough first"
+                    : "Inicio · termina la guía primero"
+                  : c.appsBtn
+              }
+              aria-expanded={launcherOpen && !tourLocked}
+              title={
+                tourLocked
+                  ? lang === "en"
+                    ? "Start · finish the walkthrough first"
+                    : "Inicio · termina la guía primero"
+                  : c.appsBtn
+              }
               className="flex h-12 w-10 shrink-0 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
-              style={launcherOpen ? { background: "rgba(255,255,255,0.12)" } : undefined}
+              style={launcherOpen && !tourLocked ? { background: "rgba(255,255,255,0.12)" } : undefined}
             >
-              <StartIcon />
+              <span className="relative inline-flex leading-none">
+                <StartIcon />
+                {tourLocked && <ShelfLockMark size={10} iconSize={7} margin={0} />}
+              </span>
             </button>
 
         {APP_DEFS.map((a) => (
@@ -248,7 +286,7 @@ export default function Shelf({
 
         <ShelfPin
           label={
-            myJobLocked
+            tourLocked
               ? lang === "en"
                 ? "My tasks · finish the walkthrough first"
                 : "Mis tareas · termina la guía primero"
@@ -262,9 +300,9 @@ export default function Shelf({
           }
           active={myJobOpen}
           testId="shelf-my-job"
-          badge={!myJobLocked && leftover > 0 ? String(leftover) : undefined}
+          badge={!tourLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
-            if (myJobLocked) {
+            if (tourLocked) {
               say(
                 lang === "en"
                   ? "That list is part of this practice. It opens after you finish looking around."
@@ -277,16 +315,9 @@ export default function Shelf({
             onMyJobOpenChange(!myJobOpen);
           }}
         >
-          <span className="relative">
+          <span className="relative inline-flex leading-none">
             <AppIcon icon={<Briefcase size={16} strokeWidth={2.25} />} color="#e37400" size={32} />
-            {myJobLocked && (
-              <span
-                className="absolute -right-0.5 -bottom-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#202124] text-white"
-                aria-hidden
-              >
-                <Lock size={9} strokeWidth={2.75} />
-              </span>
-            )}
+            {tourLocked && <ShelfLockMark />}
           </span>
         </ShelfPin>
           </div>
@@ -313,16 +344,13 @@ export default function Shelf({
             style={accountOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
           >
             <span
-              className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--accent)] text-[12px] font-semibold text-white"
+              className="flex h-6 w-6 items-center justify-center rounded-full bg-accent text-[12px] font-semibold text-white"
               aria-hidden
             >
               {displayName.slice(0, 1).toUpperCase()}
             </span>
             <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[10px] font-semibold text-white">
-              1
-            </span>
             <ShelfClock lang={lang} />
           </button>
 
@@ -336,7 +364,7 @@ export default function Shelf({
 
                 {/* account row */}
                 <div className="mb-3 flex items-center gap-2">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[13px] font-semibold text-white">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-[13px] font-semibold text-white">
                     {displayName.slice(0, 1).toUpperCase()}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{displayName}</span>
@@ -370,7 +398,7 @@ export default function Shelf({
                     onClick={() => say(lang === "en" ? "Wi-Fi is always on in this practice space." : "El Wi-Fi siempre está activo en este espacio de práctica.")}
                     className="flex flex-col items-center gap-1.5 rounded-xl bg-white/8 py-2.5 hover:bg-white/12 cursor-pointer"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-white"><WifiIcon size={16} /></span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white"><WifiIcon size={16} /></span>
                     <span className="text-[11px] font-medium leading-none">{lang === "en" ? "Wi-Fi" : "Wi-Fi"}</span>
                     <span className="text-[10px] leading-none text-white/60">{lang === "en" ? "Connected" : "Conectado"}</span>
                   </button>
@@ -378,7 +406,7 @@ export default function Shelf({
                     onClick={() => setLang(lang === "en" ? "es" : "en")}
                     className="flex flex-col items-center gap-1.5 rounded-xl bg-white/8 py-2.5 hover:bg-white/12 cursor-pointer"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-white">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white">
                       <Languages size={16} strokeWidth={2.25} />
                     </span>
                     <span className="text-[11px] font-medium leading-none">{lang === "en" ? "Language" : "Idioma"}</span>
@@ -403,7 +431,7 @@ export default function Shelf({
                     max={100}
                     value={brightness}
                     onChange={(e) => setBrightness(Number(e.target.value))}
-                    className="flex-1 accent-[var(--accent)]"
+                    className="flex-1 accent-accent"
                     aria-label={lang === "en" ? "Screen brightness" : "Brillo de pantalla"}
                   />
                 </div>
@@ -430,21 +458,21 @@ export default function Shelf({
       />
 
       {/* launcher panel */}
-      {launcherOpen && (
+      {launcherOpen && !tourLocked && (
           <div
             ref={launcherPanelRef}
             className="fixed z-40 flex w-[560px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
             style={{ bottom: SHELF_HEIGHT + 12, left: "50%", transform: "translateX(-50%)" }}
           >
             {/* search bar */}
-            <div className="flex items-center gap-3 border-b border-[var(--border)] px-4 py-3.5">
-              <span className="text-[17px] text-[var(--text-tertiary)]" aria-hidden>⌕</span>
+            <div className="flex items-center gap-3 border-b border-border px-4 py-3.5">
+              <span className="text-[17px] text-text-tertiary" aria-hidden>⌕</span>
               <input
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={c.searchPlaceholder}
-                className="flex-1 border-none text-[15px] text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)]"
+                className="flex-1 border-none text-[15px] text-text-primary outline-none placeholder:text-text-tertiary"
               />
             </div>
 
@@ -452,7 +480,7 @@ export default function Shelf({
               {!query && (
                 <>
                   <div className="flex items-center justify-between px-4 pt-3.5 pb-1.5">
-                    <span className="text-[13px] font-medium text-[var(--text-secondary)]">{c.continueLabel}</span>
+                    <span className="text-[13px] font-medium text-text-secondary">{c.continueLabel}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-1 px-2 pb-2">
                     {RECENT_ITEMS.map((r, i) => {
@@ -464,14 +492,14 @@ export default function Shelf({
                           openApp(r.appKey, { tab: r.tab });
                           closeLauncher();
                         }}
-                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-[var(--surface-muted)] cursor-pointer"
+                        className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-surface-muted cursor-pointer"
                       >
                         <AppIcon icon={<Icon size={17} strokeWidth={2.25} />} color={r.color} size={34} />
                         <div className="min-w-0">
-                          <div className="truncate text-[13px] font-medium text-[var(--text-primary)]">
+                          <div className="truncate text-[13px] font-medium text-text-primary">
                             {r.title[lang]}
                           </div>
-                          <div className="truncate text-[12px] text-[var(--text-tertiary)]">
+                          <div className="truncate text-[12px] text-text-tertiary">
                             {r.subtitle[lang]}
                           </div>
                         </div>
@@ -479,15 +507,15 @@ export default function Shelf({
                       );
                     })}
                   </div>
-                  <div className="mx-4 h-px bg-[var(--border)]" />
+                  <div className="mx-4 h-px bg-border" />
                 </>
               )}
 
-              <div className="px-4 pt-3 pb-1.5 text-[13px] font-medium text-[var(--text-secondary)]">
+              <div className="px-4 pt-3 pb-1.5 text-[13px] font-medium text-text-secondary">
                 {c.todayLabel}
               </div>
               {filteredApps.length === 0 ? (
-                <div className="px-4 pb-6 text-[14px] text-[var(--text-tertiary)]">
+                <div className="px-4 pb-6 text-[14px] text-text-tertiary">
                   {lang === "en" ? "No apps match your search." : "No hay apps que coincidan."}
                 </div>
               ) : (
@@ -498,10 +526,10 @@ export default function Shelf({
                       <button
                         key={a.key}
                         onClick={() => openFromLauncher(a.key)}
-                        className="flex flex-col items-center gap-2 rounded-xl px-2 py-3.5 hover:bg-[var(--surface-muted)] cursor-pointer"
+                        className="flex flex-col items-center gap-2 rounded-xl px-2 py-3.5 hover:bg-surface-muted cursor-pointer"
                       >
                         <LucideAppIcon appKey={a.key} size={48} />
-                        <span className="text-center text-[13px] leading-tight text-[var(--text-primary)]">
+                        <span className="text-center text-[13px] leading-tight text-text-primary">
                           {cp.name}
                         </span>
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${badgeStyle(a.state)}`}>
@@ -529,7 +557,7 @@ export default function Shelf({
             <div className="mb-4 flex items-start gap-3">
               <LucideAppIcon appKey={activeApp.key} size={44} />
               <div className="flex-1">
-                <div className="text-[12px] font-medium uppercase tracking-wide text-[var(--accent)]">
+                <div className="text-[12px] font-medium uppercase tracking-wide text-accent">
                   {appCopy[activeApp.key].kicker}
                 </div>
                 <h3 className="mt-1 text-[20px] font-medium leading-tight">
@@ -539,21 +567,21 @@ export default function Shelf({
               <button
                 onClick={() => setInfoApp(null)}
                 aria-label={c.back}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--border)] text-[16px] text-[var(--text-secondary)] cursor-pointer"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-[16px] text-text-secondary cursor-pointer"
               >
                 ✕
               </button>
             </div>
-            <p className="mb-4 text-[15px] leading-relaxed text-[var(--text-secondary)]">
+            <p className="mb-4 text-[15px] leading-relaxed text-text-secondary">
               {appCopy[activeApp.key].brief}
             </p>
             <div className="mb-5 flex flex-col gap-2">
               {appCopy[activeApp.key].points.map((p, i) => (
-                <div key={i} className="flex items-start gap-3 rounded-lg bg-[var(--surface-muted)] px-3 py-2.5">
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--accent-tint)] text-[11px] font-semibold text-[var(--accent)]">
+                <div key={i} className="flex items-start gap-3 rounded-lg bg-surface-muted px-3 py-2.5">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-tint text-[11px] font-semibold text-accent">
                     {i + 1}
                   </span>
-                  <span className="text-[14px] leading-snug text-[var(--text-primary)]">{p}</span>
+                  <span className="text-[14px] leading-snug text-text-primary">{p}</span>
                 </div>
               ))}
             </div>
@@ -564,7 +592,7 @@ export default function Shelf({
                     openApp(activeApp.key);
                     setInfoApp(null);
                   }}
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--accent)] px-5 text-[15px] font-medium text-white hover:bg-[var(--accent-hover)] cursor-pointer"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
                 >
                   {c.start}
                 </button>
@@ -574,14 +602,14 @@ export default function Shelf({
                     setInfoApp(null);
                     say(lang === "en" ? "Coming soon." : "Próximamente.");
                   }}
-                  className="inline-flex min-h-[48px] cursor-not-allowed items-center justify-center rounded-full bg-[var(--surface-muted)] px-5 text-[15px] font-medium text-[var(--text-tertiary)]"
+                  className="inline-flex min-h-[48px] cursor-not-allowed items-center justify-center rounded-full bg-surface-muted px-5 text-[15px] font-medium text-text-tertiary"
                 >
                   {c.soon}
                 </button>
               )}
               <button
                 onClick={() => setInfoApp(null)}
-                className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-[var(--border)] px-5 text-[15px] font-medium text-[var(--text-secondary)] cursor-pointer"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-border px-5 text-[15px] font-medium text-text-secondary cursor-pointer"
               >
                 {c.back}
               </button>

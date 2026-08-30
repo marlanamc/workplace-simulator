@@ -51,6 +51,12 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   // the desktop → job → desktop loop, learned on the very first tap.
   const card = jobCard(page);
   await expect(card.getByText("Look around this computer.")).toBeVisible();
+
+  // Start would open a second map of the same computer. Keep them on the card.
+  await page.getByTestId("shelf-start").click();
+  await expect(page.getByPlaceholder("Search your apps and tasks")).toHaveCount(0);
+  await expect(card.getByText("looking around", { exact: false })).toBeVisible();
+
   await card.getByRole("button", { name: "Open the Web Browser" }).click();
 
   // One instruction at a time; it advances only on the real click.
@@ -114,7 +120,7 @@ test("the job card follows the learner into the app and drives the job", async (
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 3: Payday & Trouble" }).click();
+  await page.getByRole("button", { name: "Start of Day 3: Payday" }).click();
 
   // The card is still there once an app window is open - that is the whole
   // point of it: the surface that sets up the job does not vanish.
@@ -129,11 +135,10 @@ test("studio time machine teleports one account to a later level", async ({ page
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 3: Payday & Trouble" }).click();
+  await page.getByRole("button", { name: "Start of Day 5: The Sick Call" }).click();
 
   // Lands on the learner desktop as a learner at that exact moment: the next
-  // job is Day 3's first task. That is the sick call, not the clock-out —
-  // Day 3 is ordered by story time, and Thursday morning comes before Friday.
+  // job is that day's — the sick call, Monday morning before the 10 AM shift.
   await expect(
     page.getByText("You're sick and you're on at 10. Write Maria now.").first(),
   ).toBeVisible({ timeout: 20_000 });
