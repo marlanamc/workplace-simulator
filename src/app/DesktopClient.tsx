@@ -14,6 +14,8 @@ import LevelUpCelebration from "@/components/LevelUpCelebration";
 import MobileNudge from "@/components/MobileNudge";
 import MariaNoteToast from "@/components/MariaNoteToast";
 import JobCard from "@/components/task/JobCard";
+import ListIntroSpotlight from "@/components/task/ListIntroSpotlight";
+import { LIST_INTRO_FLAG, shouldShowListIntro } from "@/lib/job-card-content";
 import { WindowManagerProvider, useWindowManager } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import { JobCardProvider } from "@/lib/job-card-context";
@@ -100,7 +102,7 @@ function DesktopShell({
   displayName: string;
   fromStudio: boolean;
 }) {
-  const { lang, currentTrack, dismissCelebration, progressEpoch } = useProgress();
+  const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack } = useProgress();
   const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const { apps, active } = useWindowManager();
@@ -108,6 +110,12 @@ function DesktopShell({
   const anyAppActive = active !== null;
 
   const currentLevel = levelForTrack(currentTrack.key);
+  const showListIntro = shouldShowListIntro({
+    storyFlags,
+    completedTaskKeys,
+    levelKey: currentLevel.key,
+    celebrating: Boolean(celebrateLevel?.levelUp || celebrateTrack),
+  });
   const scene = sceneForLevel(currentLevel);
   const windowTop = fromStudio ? 44 : 8;
 
@@ -194,14 +202,17 @@ function DesktopShell({
       <Shelf
         displayName={displayName}
         myJobOpen={myJobOpen}
+        highlightMyJob={showListIntro}
         onMyJobOpenChange={(open) => {
           setMyJobOpen(open);
           if (open) setAwardsOpen(false);
+          if (open && showListIntro) setStoryFlag(LIST_INTRO_FLAG, "true");
         }}
       />
       {/* The one instruction voice. Above the app windows, below the Help
           drawer and pickers, present on every screen. */}
       <JobCard />
+      {showListIntro ? <ListIntroSpotlight /> : null}
       <MariaNoteToast />
       <MobileNudge />
       {fromStudio && <DesignerJumpBanner />}

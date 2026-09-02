@@ -19,7 +19,7 @@ import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { Flag, Lock, Trophy } from "@/lib/icons";
 import { Check } from "lucide-react";
-import { dayTitle, sittingTitle, jobTitle } from "@/lib/shift-spine";
+import { dayTitle, sittingTitle, jobTitle, workdaysInAct, dayInAct, dayLabel } from "@/lib/shift-spine";
 import { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 
 export default function MyJobPanel({
@@ -51,6 +51,8 @@ export default function MyJobPanel({
   const levelTracks = TRACKS.filter((t) => currentLevel.trackKeys.includes(t.key));
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
   const nextTaskLocation = nextTaskKey ? TASK_LOCATIONS[nextTaskKey] : null;
+  const actWorkdays = workdaysInAct(currentLevel);
+  const currentDayInAct = dayInAct(currentLevel);
 
   if (!open) return null;
 
@@ -89,6 +91,37 @@ export default function MyJobPanel({
               {upcoming && (
                 <div className="mt-1 text-[13px] text-white/70">
                   {lang === "en" ? `Next: ${sittingTitle(upcoming)}` : `Siguiente: ${sittingTitle(upcoming)}`}
+                </div>
+              )}
+              {actWorkdays.length > 0 && (
+                <div
+                  className="mt-3 flex items-center gap-1.5"
+                  role="img"
+                  aria-label={
+                    currentDayInAct > 0
+                      ? dayLabel(currentLevel, lang)
+                      : lang === "en"
+                        ? `${actWorkdays.length} days in this job`
+                        : `${actWorkdays.length} días en este trabajo`
+                  }
+                >
+                  {actWorkdays.map((day, i) => {
+                    const n = i + 1;
+                    const status = n < currentDayInAct ? "done" : n === currentDayInAct ? "current" : "ahead";
+                    return (
+                      <span
+                        key={day.key}
+                        aria-hidden
+                        className={
+                          status === "current"
+                            ? "h-2 w-2 rounded-full bg-white"
+                            : status === "done"
+                              ? "h-1.5 w-1.5 rounded-full bg-white/70"
+                              : "h-1.5 w-1.5 rounded-full bg-white/25"
+                        }
+                      />
+                    );
+                  })}
                 </div>
               )}
             </div>

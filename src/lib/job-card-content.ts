@@ -64,6 +64,38 @@ export const INTRO_BEATS: IntroBeat[] = [
 ];
 
 /**
+ * Day One, once: the Job Card points at the orange shelf pin so nobody has
+ * to know the word "briefcase". Locked during the walkthrough; this is the
+ * first sitting where the list is real.
+ */
+export const LIST_INTRO_FLAG = "list-intro-seen";
+export const LIST_INTRO: {
+  kicker: Localized;
+  line: Localized;
+  cta: Localized;
+} = {
+  kicker: { en: "Your list", es: "Tu lista" },
+  line: {
+    en: "Your jobs are this orange button on the bar.",
+    es: "Tus trabajos son este botón naranja en la barra.",
+  },
+  cta: { en: "Got it", es: "Entendido" },
+};
+
+export function shouldShowListIntro(opts: {
+  storyFlags: Record<string, string>;
+  completedTaskKeys: readonly string[];
+  levelKey: string;
+  celebrating: boolean;
+}): boolean {
+  if (opts.storyFlags[LIST_INTRO_FLAG] === "true") return false;
+  if (!opts.completedTaskKeys.includes("tour")) return false;
+  if (opts.levelKey !== "level1") return false;
+  if (opts.celebrating) return false;
+  return true;
+}
+
+/**
  * The desktop line for a job: what just happened, in one short sentence.
  * Tasks without a `jobCardLine` in the registry fall back to their
  * `TASK_INFO.dispatch`. The green finish line (`jobCardDoneLine`) falls back

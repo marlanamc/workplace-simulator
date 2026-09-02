@@ -207,12 +207,12 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
     en: {
       subject: "Welcome to Harborside Cafe",
       reSubject: "Re: Welcome to Harborside Cafe",
-      preview: "Glad you're here. Call me if you need anything.",
+      preview: "You're a new hire. This week you have 5 shifts on the floor.",
     },
     es: {
       subject: "Bienvenido a Harborside Cafe",
       reSubject: "Re: Bienvenido a Harborside Cafe",
-      preview: "Me alegra que estés aquí. Llámame si necesitas algo.",
+      preview: "Eres personal nuevo. Esta semana tienes 5 turnos en el piso.",
     },
   },
   "mail-etiquette": {
@@ -390,12 +390,14 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       plain: [
         GREETING,
         "Welcome to Harborside Cafe. I'm glad you're here.",
+        "You're a new hire. This week you have 5 shifts on the floor.",
         "Call or email me if you need anything.",
         "See you on the floor,",
       ],
       full: [
         GREETING,
         "Welcome to the Harborside Cafe team. I'm glad you're starting with us.",
+        "You're a new hire. This week you have 5 shifts on the floor — that's the job for now.",
         "If you need anything — schedule, login, or just a question — call or email me. I'm here.",
         "Looking forward to working with you.",
         "Thanks,",
@@ -405,12 +407,14 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       plain: [
         GREETING,
         "Bienvenido a Harborside Cafe. Me alegra que estés aquí.",
+        "Eres personal nuevo. Esta semana tienes 5 turnos en el piso.",
         "Llámame o escríbeme si necesitas algo.",
         "Nos vemos en el piso,",
       ],
       full: [
         GREETING,
         "Bienvenido al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
+        "Eres personal nuevo. Esta semana tienes 5 turnos en el piso — ese es el trabajo por ahora.",
         "Si necesitas algo — horario, acceso o solo una pregunta — llámame o escríbeme. Aquí estoy.",
         "Espero trabajar contigo.",
         "Gracias,",

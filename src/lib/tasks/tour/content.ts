@@ -8,8 +8,8 @@ export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy 
       emoji: "☕",
       kicker: "Tu primer día",
       headline: `¡Bienvenida ${name}!`,
-      subheadline: "Felicidades por tu nuevo puesto en Harborside Cafe.",
-      body: "Esta computadora es de práctica. Nada aquí es real, y no la puedes romper. Vamos a mirar alrededor antes de que empiece tu turno.",
+      subheadline: "Eres personal nuevo en Harborside Cafe. Esta semana tienes 5 turnos. Me alegra que estés aquí.",
+      body: "Tómate tu tiempo para aprender cómo funciona. No puedes romper nada.",
       cta: "Enséñame",
     };
   }
@@ -17,8 +17,8 @@ export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy 
     emoji: "☕",
     kicker: "Your first day",
     headline: `Welcome ${name}!`,
-    subheadline: "Congrats on your new role at Harborside Cafe!",
-    body: "This computer is for practice. Nothing here is real, and you cannot break it. Let's look around before your shift starts.",
+      subheadline: "You're a new hire at Harborside Cafe. This week you have 5 shifts. Glad you're here.",
+      body: "Take your time learning how things work. You cannot break anything.",
     cta: "Show me around",
   };
 }
@@ -55,7 +55,7 @@ export const TOUR_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     helpLead: "Now try Help.",
     helpInvite: "Open it if you want a look, or move on if you already know. Help never counts against you.",
-    helpOpened: "Good. That is Help. Use it any time you feel stuck.",
+    helpOpened: "Good. Come back any time you get lost.",
     helpReady: "I'm ready for the task",
     sentKicker: "You're set",
     doneTitle: "You found the lights.",
@@ -75,7 +75,7 @@ export const TOUR_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     helpLead: "Ahora prueba Ayuda.",
     helpInvite: "Ábrela si quieres verla, o sigue adelante si ya sabes. Ayuda nunca cuenta en tu contra.",
-    helpOpened: "Bien. Eso es Ayuda. Úsala cada vez que te trabes.",
+    helpOpened: "Bien. Vuelve aquí cada vez que te pierdas.",
     helpReady: "Estoy listo para la tarea",
     sentKicker: "Listo",
     doneTitle: "Encontraste las luces.",
@@ -120,7 +120,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
       continueLabel: "Got it",
     },
     {
-      instruction: "Tap the ? on this card. That is Help.",
+      instruction: "Tap the ? on this card if you get lost. It explains this job.",
       targetTestId: "job-card-help",
     },
   ],
@@ -138,7 +138,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
       continueLabel: "Entendido",
     },
     {
-      instruction: "Toca el ? en esta tarjeta. Eso es Ayuda.",
+      instruction: "Toca el ? en esta tarjeta si te pierdes. Explica este trabajo.",
       targetTestId: "job-card-help",
     },
   ],
@@ -150,7 +150,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Where to look",
       s: [
         "The blue card in the corner says what to do next.",
-        "Stuck? Tap the ? on this card.",
+        "Lost? Tap the ? on this card.",
         "Card in the way? Drag it, or tap the arrow to hide it.",
       ],
       tip: "The card is always current. When in doubt, read it.",
@@ -161,7 +161,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Dónde mirar",
       s: [
         "La tarjeta azul de la esquina dice qué hacer.",
-        "¿Atorada? Toca el ? en esta tarjeta.",
+        "¿Te perdiste? Toca el ? en esta tarjeta.",
         "¿Te estorba? Arrástrala, o toca la flecha para ocultarla.",
       ],
       tip: "La tarjeta siempre está al día. Si dudas, léela.",

@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { LEVELS, taskKeysForLevel, TASK_INFO } from "@/lib/tracks-content";
+import { LEVELS, taskKeysForLevel, TASK_INFO, actForLevel } from "@/lib/tracks-content";
 import { SHIFT_MOMENT } from "@/lib/story-beats";
-import { dayNumber, dayTitle, dayLabel } from "@/lib/shift-spine";
-import { JOB_CARD_COPY } from "@/lib/job-card-content";
+import { dayNumber, dayTitle, dayLabel, dayInAct, workdaysInAct } from "@/lib/shift-spine";
+import { JOB_CARD_COPY, shouldShowListIntro } from "@/lib/job-card-content";
+import { tourEventIntro } from "@/lib/tasks/tour/content";
+import { bodyForTask } from "@/lib/tasks/mail/content";
 
 /**
  * The story has to hold together for someone reading it once, in order, with
@@ -69,7 +71,28 @@ describe("day numbering", () => {
 
   it("numbers the first real level Day 1, in both languages", () => {
     expect(dayTitle(LEVELS[1], "en")).toBe("Day 1: Day One");
-    expect(dayLabel(LEVELS[1], "es")).toBe("Día 1");
+    expect(dayLabel(LEVELS[1], "en")).toBe("Day 1 of 5");
+    expect(dayLabel(LEVELS[1], "es")).toBe("Día 1 de 5");
+  });
+
+  it("labels Act I workdays as Day N of 5 in both languages", () => {
+    const act1Workdays = LEVELS.filter((level) => actForLevel(level)?.key === "act1" && dayNumber(level) > 0);
+    expect(act1Workdays).toHaveLength(5);
+    expect(workdaysInAct(act1Workdays[0])).toHaveLength(5);
+    act1Workdays.forEach((level, i) => {
+      const n = i + 1;
+      expect(dayInAct(level)).toBe(n);
+      expect(dayLabel(level, "en")).toBe(`Day ${n} of 5`);
+      expect(dayLabel(level, "es")).toBe(`Día ${n} de 5`);
+    });
+  });
+
+  it("tells a new hire the job is 5 shifts, matching the meter", () => {
+    const shifts = workdaysInAct(LEVELS[1]).length;
+    expect(tourEventIntro("en", "Ana").subheadline).toContain(`${shifts} shifts`);
+    expect(tourEventIntro("es", "Ana").subheadline).toContain(`${shifts} turnos`);
+    expect(bodyForTask("mail-reply", "en", "Ana").plain.join(" ")).toContain(`${shifts} shifts on the floor`);
+    expect(bodyForTask("mail-reply", "es", "Ana").plain.join(" ")).toContain(`${shifts} turnos en el piso`);
   });
 });
 
@@ -87,5 +110,25 @@ describe("the task counter", () => {
     for (const lang of ["en", "es"] as const) {
       expect(JOB_CARD_COPY[lang].jobOf(1, 1)).toBe("");
     }
+  });
+});
+
+describe("the Day One list intro", () => {
+  const base = {
+    storyFlags: {},
+    completedTaskKeys: ["tour"],
+    levelKey: "level1",
+    celebrating: false,
+  };
+
+  it("waits until the walkthrough is done and Day One has started", () => {
+    expect(shouldShowListIntro(base)).toBe(true);
+    expect(shouldShowListIntro({ ...base, completedTaskKeys: [] })).toBe(false);
+    expect(shouldShowListIntro({ ...base, levelKey: "level0" })).toBe(false);
+  });
+
+  it("does not talk over the level-up card, and does not repeat", () => {
+    expect(shouldShowListIntro({ ...base, celebrating: true })).toBe(false);
+    expect(shouldShowListIntro({ ...base, storyFlags: { "list-intro-seen": "true" } })).toBe(false);
   });
 });

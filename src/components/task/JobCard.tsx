@@ -7,9 +7,12 @@ import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard } from "@/lib/job-card-context";
 import {
   INTRO_BEATS,
+  LIST_INTRO,
+  LIST_INTRO_FLAG,
   JOB_CARD_COPY,
   JOB_CARD_DONE_LINE,
   JOB_CARD_LINE,
+  shouldShowListIntro,
 } from "@/lib/job-card-content";
 import {
   TASK_INFO,
@@ -65,7 +68,7 @@ interface Script {
  * its own; only its corner.
  */
 export default function JobCard() {
-  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack } =
+  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag } =
     useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
   const {
@@ -188,6 +191,27 @@ export default function JobCard() {
       };
     }
 
+    // Day One, once: point at the orange shelf pin. The walkthrough kept it
+    // locked; this is the first sitting where the list of jobs is real.
+    if (
+      shouldShowListIntro({
+        storyFlags,
+        completedTaskKeys,
+        levelKey: level.key,
+        celebrating: false,
+      })
+    ) {
+      return {
+        badge: "1",
+        kicker: LIST_INTRO.kicker[lang],
+        line: LIST_INTRO.line[lang],
+        tone: "blue",
+        step: -1,
+        primaryLabel: LIST_INTRO.cta[lang],
+        onPrimary: () => setStoryFlag(LIST_INTRO_FLAG, "true"),
+      };
+    }
+
     // Finished a job. One green header, one button — no done screen, no
     // three-way choice, and the skill badge is banked silently.
     //
@@ -223,10 +247,10 @@ export default function JobCard() {
       };
     }
 
-    // "Day 4 · Task 2 of 4". The day comes first because it stays put while
-    // the counter resets — without it, restarting at 1 every day looks like
-    // the game losing its place. The task name lives in the body, not here:
-    // the header is a tight bar and a third clause always truncates.
+    // "Day 3 of 5 · Task 2 of 3". The day comes first because it stays put
+    // while the counter resets — without it, restarting at 1 every day looks
+    // like the game losing its place. The task name lives in the body, not
+    // here: the header is a tight bar and a third clause always truncates.
     // `jobOf` returns "" on a one-task day, so orientation is just the name.
     const kicker = nextTaskKey
       ? [dayLabel(level, lang), c.jobOf(jobNumber, levelTaskKeys.length)].filter(Boolean).join(" · ")

@@ -80,9 +80,9 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   await page.getByRole("button", { name: "Got it" }).click();
 
   // Spotlight the real Help control — the ? on the Job Card.
-  await expect(page.getByText("Tap the ? on this card", { exact: false })).toBeVisible();
+  await expect(page.getByText("if you get lost", { exact: false })).toBeVisible();
   await page.getByTestId("job-card-help").click();
-  await expect(page.getByText("That is Help.", { exact: false })).toBeVisible();
+  await expect(page.getByText("Come back any time you get lost", { exact: false })).toBeVisible();
 
   // Close the Help drawer the tour just opened before moving on.
   await page.keyboard.press("Escape");
@@ -92,6 +92,11 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   // hands off to the first real job.
   await expect(page.getByText("You know how this computer works.")).toBeVisible();
   await page.getByRole("button", { name: "Open my first task" }).click();
+
+  // Day One: the list on the shelf is now real. Point at the orange pin so
+  // nobody has to know the word "briefcase".
+  await expect(jobCard(page).getByText("orange button on the bar", { exact: false })).toBeVisible();
+  await jobCard(page).getByRole("button", { name: "Got it" }).click();
 
   // Mail is open: Maria's email is findable in the inbox. Scope to the inbox —
   // "Maria Delgado" also appears in the desktop briefing behind the window.

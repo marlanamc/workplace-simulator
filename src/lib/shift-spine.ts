@@ -49,10 +49,38 @@ export function dayTitle(level: Level, lang: Lang): string {
   return lang === "en" ? `Day ${n}: ${name}` : `Día ${n}: ${name}`;
 }
 
-/** "Day 4" on its own, for tight spots like the Job Card kicker. */
+/**
+ * Workdays in this level's act: the act's levels that are days on the job
+ * (`dayNumber > 0`). Orientation is in the act but is not a workday.
+ */
+export function workdaysInAct(level: Level): Level[] {
+  const act = actForLevel(level);
+  if (!act) return [];
+  return act.levelKeys
+    .map((key) => LEVELS.find((l) => l.key === key))
+    .filter((l): l is Level => l != null && dayNumber(l) > 0);
+}
+
+/**
+ * 1-based index of this level among its act's workdays, or 0 if it is not
+ * a workday (orientation, or a level that is not in an act).
+ */
+export function dayInAct(level: Level): number {
+  const idx = workdaysInAct(level).findIndex((l) => l.key === level.key);
+  return idx >= 0 ? idx + 1 : 0;
+}
+
+/**
+ * "Day 3 of 5" on the Job Card kicker — position in this job, not a
+ * running total across acts. Orientation keeps its name.
+ */
 export function dayLabel(level: Level, lang: Lang): string {
-  const n = dayNumber(level);
+  const n = dayInAct(level);
+  const total = workdaysInAct(level).length;
   if (n <= 0) return sittingTitle(level);
+  if (total > 0) {
+    return lang === "en" ? `Day ${n} of ${total}` : `Día ${n} de ${total}`;
+  }
   return lang === "en" ? `Day ${n}` : `Día ${n}`;
 }
 

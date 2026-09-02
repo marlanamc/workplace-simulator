@@ -6,7 +6,6 @@ import { nextHandoff } from "@/lib/tracks-content";
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import Confetti from "@/components/task/Confetti";
-import { PartyPopper } from "@/lib/icons";
 import { logout } from "@/app/actions";
 
 /**
@@ -51,7 +50,9 @@ export default function LevelUpCelebration() {
       >
         <Confetti count={22} />
         <div className="relative z-10">
-        <PartyPopper size={48} strokeWidth={1.6} className="mx-auto animate-pop-in text-text-primary" aria-hidden />
+        <div className="mx-auto animate-pop-in text-[48px] leading-none" aria-hidden>
+          {levelUp.emoji}
+        </div>
         <div className="mt-3 text-[12px] font-semibold uppercase tracking-wide text-warning">{kicker}</div>
         <h2 className="mt-2 text-[26px] font-medium leading-tight">{title}</h2>
         <p className="mt-3 text-[16px] leading-relaxed text-text-secondary">{body}</p>

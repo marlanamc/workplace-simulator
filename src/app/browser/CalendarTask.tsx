@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
+import { levelForTrack } from "@/lib/tracks-content";
+import { HUDDLE_DAY, leadHuddleVisible, shiftTimeOn, storyToday } from "@/lib/story-calendar";
 import {
   MEETING,
   CALENDAR_COPY,
@@ -42,19 +44,6 @@ const MONTH_CELLS: Cell[] = [
   { day: 4, other: true },
   { day: 5, other: true },
 ];
-const TODAY = 21;
-const EVENT_DAY = 26;
-
-/**
- * Real start times per shift day, not a repeated "Opening" placeholder.
- * Same two shift blocks Portal's own schedule uses (7–3 open, 10–6 mid,
- * 8–4 Saturday), so a learner who has already read their schedule there
- * recognizes the same shape here.
- */
-const SHIFT_TIMES: Record<number, string> = {
-  17: "7:00 AM", 18: "7:00 AM", 19: "10:00 AM", 20: "10:00 AM", 21: "7:00 AM", 22: "8:00 AM",
-  24: "7:00 AM", 25: "7:00 AM", 27: "10:00 AM", 28: "10:00 AM", 29: "8:00 AM", 31: "7:00 AM",
-};
 
 function CalendarMark() {
   return (
@@ -68,7 +57,11 @@ function CalendarMark() {
 }
 
 export default function CalendarTask() {
-  const { markComplete, completedTaskKeys, lang, setStoryFlag } = useProgress();
+  const { markComplete, completedTaskKeys, lang, setStoryFlag, currentTrack, displayName } = useProgress();
+  const myCalendarName = displayName.trim() || (lang === "en" ? "Me" : "Yo");
+  const level = levelForTrack(currentTrack.key);
+  const today = storyToday(level);
+  const showHuddle = leadHuddleVisible(level);
   const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "home");
   const [body, setBody] = useState("");
   const [chosenTime, setChosenTime] = useState<"10am" | "2pm" | null>(null);
@@ -206,7 +199,7 @@ export default function CalendarTask() {
                   <div key={i} className="flex items-center justify-center py-[1px]">
                     <span
                       className={`flex h-[22px] w-[22px] items-center justify-center rounded-full ${
-                        !cell.other && cell.day === TODAY
+                        !cell.other && cell.day === today
                           ? "bg-[#1a73e8] text-white"
                           : cell.other
                             ? "text-[#bdc1c6]"
@@ -222,7 +215,7 @@ export default function CalendarTask() {
 
             <div>
               <div className="mb-1 px-2 text-[12px] font-medium text-[#5f6368]">{c.myCalendars}</div>
-              <CalCheck color="#1a73e8" label={T("Jordan Kim", "Jordan Kim")} />
+              <CalCheck color="#1a73e8" label={myCalendarName} />
               <CalCheck color="#0b8043" label={c.workShifts} />
               <CalCheck color="#8e24aa" label={c.cafeCalendar} />
             </div>
@@ -265,9 +258,9 @@ export default function CalendarTask() {
             <div className="grid min-h-0 flex-1 grid-cols-7 grid-rows-6">
               {MONTH_CELLS.map((cell, i) => {
                 const inMonth = !cell.other;
-                const isToday = inMonth && cell.day === TODAY;
-                const hasMeeting = inMonth && cell.day === EVENT_DAY;
-                const shiftTime = inMonth ? SHIFT_TIMES[cell.day] : undefined;
+                const isToday = inMonth && cell.day === today;
+                const hasMeeting = inMonth && showHuddle && cell.day === HUDDLE_DAY;
+                const shiftTime = inMonth ? shiftTimeOn(cell.day) : undefined;
                 const hasShift = Boolean(shiftTime);
                 return (
                   <div

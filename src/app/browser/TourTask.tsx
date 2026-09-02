@@ -106,6 +106,9 @@ export default function TourTask({
           <p className="mt-3 max-w-[36ch] text-[17px] leading-relaxed text-[#6a4e32]">
             {intro.subheadline}
           </p>
+          <p className="mt-3 max-w-[36ch] text-[16px] leading-relaxed text-[#8a6a4a]">
+            {intro.body}
+          </p>
         </div>
       )}
 

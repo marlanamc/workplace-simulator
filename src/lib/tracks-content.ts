@@ -281,12 +281,12 @@ export const LEVELS: Level[] = [
     trackKeys: ["mail-etiquette"],
     firstTabKey: "mail",
     levelUp: {
-      emoji: "📧",
-      kicker: { en: "Friday afternoon", es: "Viernes por la tarde" },
-      title: { en: "One more thing before you go.", es: "Una cosa más antes de irte." },
+      emoji: "💳",
+      kicker: { en: "Payday", es: "Día de pago" },
+      title: { en: "You can check hours and pay.", es: "Ya puedes revisar horas y pago." },
       body: {
-        en: "Darnell asked you something on Day One. Maria wants you to close the loop.",
-        es: "Darnell te preguntó algo el primer día. Maria quiere que le respondas.",
+        en: "That is what a new hire has to do. One more thing before you go — Darnell is waiting.",
+        es: "Eso es lo que tiene que hacer un empleado nuevo. Una cosa más antes de irte — Darnell te espera.",
       },
       cta: { en: "Write to Darnell", es: "Escribirle a Darnell" },
     },
