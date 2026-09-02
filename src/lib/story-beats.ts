@@ -6,6 +6,8 @@ import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 import { TASK_LIST } from "@/lib/tasks/registry";
 
 export const HUDDLE_TIME_FLAG = "huddleTime";
+/** Set when the learner flags a hours mismatch and Mail should open to compose. */
+export const TIMECLOCK_MAIL_FLAG = "timeclock-mail-open";
 
 export type StoryFlags = Record<string, string>;
 
@@ -542,6 +544,7 @@ export function storyFlagKeysForTasks(taskKeys: Iterable<TaskKey>): string[] {
   const keys: string[] = [];
   for (const task of taskKeys) {
     if (task === "calendar") keys.push(HUDDLE_TIME_FLAG);
+    if (task === "timeclock") keys.push(TIMECLOCK_MAIL_FLAG);
   }
   return keys;
 }

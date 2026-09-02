@@ -2,8 +2,8 @@
 
 **Time:** ~5 minutes · **Level:** 3 — Payday · **Track:** Payday
 **Task key:** `timeclock` · **Status:** built — the Employee Portal's Time
-Clock tab clocks out into a planted hours mismatch; flagging it opens a short
-message to Maria, right there in the portal.
+Clock tab clocks out into a planted hours mismatch; flagging it opens Mail
+so the learner can write Maria there.
 **Prerequisite:** Level 2 complete (all 3 First Week jobs)
 
 ## We will learn...
@@ -22,10 +22,10 @@ message to Maria, right there in the portal.
 1. Open the **Browser** → **Employee Portal** → **Time Clock**.
 2. Find the **Clock Out** button and use it.
 3. Check today's total hours against your scheduled shift.
-4. Click **Something's off — message my lead** (clicking "Looks right" just
+4. Click **Something looks wrong. Message my supervisor** (clicking "Looks right" just
    gets a friendly reminder to look again).
-5. Write a short message to Maria — sentence starters are there if you want
-   them — and click **Send**.
+5. Mail opens. Write a short message to Maria — sentence starters are there if
+   you want them — and click **Send**.
 
 ## Confidence check-in
 - "I know what to check before I trust a time card." 🙂 😐 🙁

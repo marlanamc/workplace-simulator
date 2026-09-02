@@ -77,7 +77,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     scheduledLabel: "Your scheduled shift",
     reviewQuestion: "Does this look right?",
     looksRight: "Looks right",
-    somethingOff: "Something looks wrong. Message my lead",
+    somethingOff: "Something looks wrong. Message my supervisor",
     recentHeading: "Recent shifts",
     to: "To",
     subjectLabel: "Subject",
@@ -110,7 +110,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     scheduledLabel: "Tu turno programado",
     reviewQuestion: "¿Esto se ve correcto?",
     looksRight: "Se ve bien",
-    somethingOff: "Algo no cuadra. Avisar a mi líder",
+    somethingOff: "Algo no cuadra. Avisar a mi supervisor",
     recentHeading: "Turnos recientes",
     to: "Para",
     subjectLabel: "Asunto",
@@ -134,8 +134,8 @@ export const TIMECLOCK_COPY: Record<Lang, {
 };
 
 export const WRONG_LOOKS_RIGHT_HINT: Record<Lang, string> = {
-  en: "Look again. You clocked in later than your start time, so today's total is short. What would you ask your lead?",
-  es: "Mira otra vez. Marcaste tu entrada más tarde que tu hora programada, así que el total de hoy es menor. ¿Qué querrías revisar con tu líder?",
+  en: "Look again. You clocked in later than your start time, so today's total is short. What would you ask your supervisor?",
+  es: "Mira otra vez. Marcaste tu entrada más tarde que tu hora programada, así que el total de hoy es menor. ¿Qué querrías revisar con tu supervisor?",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
@@ -168,7 +168,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "When the hours don't match",
       s: [
         "Say what you noticed. Say the total, and what you expected.",
-        "You don't need to know why it's wrong. That's your lead's job to figure out.",
+        "You don't need to know why it's wrong. That's your supervisor's job to figure out.",
         "Send it the same day, while it's easy to check.",
       ],
       tip: "Catching this before payday is much easier to fix than after.",
@@ -188,7 +188,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Cuando las horas no coinciden",
       s: [
         "Di qué notaste. Di el total, y lo que esperabas.",
-        "No necesitas saber por qué está mal. Eso lo resuelve tu líder.",
+        "No necesitas saber por qué está mal. Eso lo resuelve tu supervisor.",
         "Envíalo el mismo día, mientras es fácil de revisar.",
       ],
       tip: "Notarlo antes del día de pago es mucho más fácil de arreglar que después.",

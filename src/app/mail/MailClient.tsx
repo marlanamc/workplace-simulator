@@ -40,6 +40,15 @@ import { useWindowManager } from "@/lib/window-manager";
 import { SHOW_ME_POINTER } from "@/lib/use-show-me";
 import BridgeOutCard from "@/components/task/BridgeOutCard";
 import { bridgeOutCopyFor } from "@/lib/bridge-out-content";
+import { CAST } from "@/lib/cast";
+import {
+  STARTERS as TIMECLOCK_STARTERS,
+  LESSONS as TIMECLOCK_LESSONS,
+  TIMECLOCK_COPY,
+  RIGHT_NOW_STEPS as TIMECLOCK_STEPS,
+  RIGHT_NOW_LABEL as TIMECLOCK_RIGHT_NOW_LABEL,
+} from "@/lib/tasks/timeclock/content";
+import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
 
@@ -107,7 +116,10 @@ function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
 
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
   const { markComplete, completedTaskKeys, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
-  const { browserTabToken } = useWindowManager();
+  const { browserTabToken, openApp } = useWindowManager();
+  const timeclockMailActive =
+    !completedTaskKeys.includes("timeclock") && storyFlags[TIMECLOCK_MAIL_FLAG] === "true";
+  const tc = TIMECLOCK_COPY[lang];
   // Fixed for this mount, not recomputed every render: markComplete() updates
   // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
   // not unmounted) across desktop navigation, so a reactive lookup here would
@@ -129,19 +141,26 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
-  const { nudge, dismiss, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } = useSkillGuidance(activeMailTask);
+  const skillKey = timeclockMailActive ? "timeclock" : activeMailTask;
+  const { nudge, dismiss, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } =
+    useSkillGuidance(skillKey);
 
   const [lastTabToken, setLastTabToken] = useState(browserTabToken);
   if (browserTabToken !== lastTabToken) {
     setLastTabToken(browserTabToken);
-    const next = activeMailTaskFor(completedTaskKeys);
-    setActiveMailTask(next);
-    setView(completedTaskKeys.includes(next) ? "done" : isComposeOnly(next) ? "compose" : "empty");
-    setStep(0);
-    setBody("");
-    setAttached(false);
-    setConfirmPick(null);
-    setBridgeOutEligible(false);
+    if (timeclockMailActive) {
+      setBody("");
+      setShowMeTarget(null);
+    } else {
+      const next = activeMailTaskFor(completedTaskKeys);
+      setActiveMailTask(next);
+      setView(completedTaskKeys.includes(next) ? "done" : isComposeOnly(next) ? "compose" : "empty");
+      setStep(0);
+      setBody("");
+      setAttached(false);
+      setConfirmPick(null);
+      setBridgeOutEligible(false);
+    }
   }
 
   const c = MAIL_COPY[lang];
@@ -253,6 +272,30 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         body: T("She asked for the file. Click Attach file.", "Ella pidió el archivo. Haz clic en Adjuntar archivo."),
       });
     finish(activeMailTask === "mail-attach" ? "reply_with_attachment" : "answer_own_words");
+  };
+
+  const trySendTimeclock = () => {
+    if (!body.trim()) {
+      return recordWrong({
+        title: T("Almost.", "Casi."),
+        body: T(
+          "Write a short message first. Even one sentence is fine.",
+          "Primero escribe un mensaje corto. Una oración está bien.",
+        ),
+      });
+    }
+    if (wrongCount === 0) recordClean();
+    else recordMissed();
+    markComplete("timeclock", "flag_hours_mismatch");
+    setStoryFlag(TIMECLOCK_MAIL_FLAG, "false");
+    setBody("");
+    openApp("browser", { tab: "portal", section: "timeclock" });
+  };
+
+  const discardTimeclockMail = () => {
+    setBody("");
+    setStoryFlag(TIMECLOCK_MAIL_FLAG, "false");
+    openApp("browser", { tab: "portal", section: "timeclock" });
   };
 
   const restart = () => {
@@ -397,6 +440,62 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           </div>
 
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+            {timeclockMailActive ? (
+              <>
+                <RightNowBar
+                  icon={TASK_ICONS.timeclock}
+                  stepIndex={2}
+                  stepCount={TIMECLOCK_STEPS.length}
+                  instruction={!body.trim() ? STEP_LINE.write : STEP_LINE.send}
+                  lang={lang}
+                  rightNowLabel={TIMECLOCK_RIGHT_NOW_LABEL}
+                  onShowMe={() => setShowMeTarget(showMeTargetId === "send-button" ? null : "send-button")}
+                  showMeActive={showMeTargetId === "send-button"}
+                />
+                <div className="px-6 py-4 sm:px-8">
+                  <div className="overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
+                    <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
+                      <span className="w-10 shrink-0 text-[#5f6368]">{tc.to}</span>
+                      <span>{CAST.maria.email}</span>
+                    </div>
+                    <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
+                      <span className="w-10 shrink-0 text-[#5f6368]">{tc.subjectLabel}</span>
+                      <span>{tc.subject}</span>
+                    </div>
+                    <textarea
+                      value={body}
+                      onChange={(e) => setBody(e.target.value)}
+                      placeholder={tc.writeHere}
+                      className="min-h-[120px] w-full resize-y border-none px-4 py-3 text-[14px] leading-relaxed outline-none placeholder:text-[#767676]"
+                    />
+                    <div className="flex flex-wrap items-center gap-2 px-4 pb-2">
+                      <NeedAStart
+                        lang={lang}
+                        starters={TIMECLOCK_STARTERS[lang]}
+                        onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+                      />
+                    </div>
+                    <div className="flex flex-wrap items-center gap-1 px-3 py-2">
+                      <button
+                        data-showme="send-button"
+                        onClick={trySendTimeclock}
+                        className="inline-flex min-h-[36px] items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
+                      >
+                        {tc.send}
+                      </button>
+                      <div className="flex-1" />
+                      <button
+                        onClick={discardTimeclockMail}
+                        className="min-h-[36px] px-3 text-[13px] text-[#5f6368] hover:bg-[#f2f6fc] rounded-full cursor-pointer"
+                      >
+                        {tc.discard}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
             {(view === "empty" || view === "read" || view === "confirm" || view === "compose") && (() => {
               const stepCount = STEP_COUNT[activeMailTask];
               const needsAttach = activeMailTask === "mail-attach";
@@ -681,6 +780,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               </div>
               );
             })()}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -688,10 +789,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       <HelpDrawer
         open={help}
         onClose={() => setHelp(false)}
-        kicker={c.lessonKicker}
-        lesson={lesson}
-        tipLabel={c.tipLabel}
-        gotItLabel={c.gotIt}
+        kicker={timeclockMailActive ? tc.lessonKicker : c.lessonKicker}
+        lesson={timeclockMailActive ? TIMECLOCK_LESSONS[lang][1] : lesson}
+        tipLabel={timeclockMailActive ? tc.tipLabel : c.tipLabel}
+        gotItLabel={timeclockMailActive ? tc.gotIt : c.gotIt}
       />
 
       {picker && (

@@ -2,18 +2,18 @@
 
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
-import { CAST } from "@/lib/cast";
 import {
   TIMECLOCK,
   TIMECLOCK_COPY,
-  STARTERS,
   LESSONS,
   WRONG_LOOKS_RIGHT_HINT,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/timeclock/content";
+import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 import { useNudge } from "@/lib/use-nudge";
 import { TASK_ICONS } from "@/lib/icons";
+import { useWindowManager } from "@/lib/window-manager";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
@@ -22,63 +22,46 @@ import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
-import NeedAStart from "@/components/task/NeedAStart";
 
-type View = "clocked_in" | "review" | "compose" | "done";
+type Phase = "clocked_in" | "review";
 
 export default function TimeclockTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("timeclock") ? "done" : "clocked_in");
-  const [body, setBody] = useState("");
+  const { completedTaskKeys, lang, setStoryFlag } = useProgress();
+  const { openApp } = useWindowManager();
+  const done = completedTaskKeys.includes("timeclock");
+  const [phase, setPhase] = useState<Phase>("clocked_in");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
-  // Clock out, then say the hours are wrong, then send.
-  const showMeId =
-    view === "clocked_in" ? "clockout-button" : view === "review" ? "something-off-button" : "send-button";
+  const showMeId = phase === "clocked_in" ? "clockout-button" : "something-off-button";
 
   const c = TIMECLOCK_COPY[lang];
 
   const looksRight = () => say(WRONG_LOOKS_RIGHT_HINT[lang]);
 
-  const trySend = () => {
-    if (!body.trim()) {
-      return say(
-        lang === "en"
-          ? "Write a short message first. Even one sentence is fine."
-          : "Primero escribe un mensaje corto. Una oración está bien."
-      );
-    }
-    setView("done");
-    markComplete("timeclock", "flag_hours_mismatch");
-  };
-
-  const discard = () => {
-    setView("review");
-    setBody("");
+  const messageSupervisor = () => {
+    setStoryFlag(TIMECLOCK_MAIL_FLAG, "true");
+    openApp("browser", { tab: "mail" });
   };
 
   const restart = () => {
-    setView("clocked_in");
-    setBody("");
+    setStoryFlag(TIMECLOCK_MAIL_FLAG, "false");
+    setPhase("clocked_in");
   };
 
   return (
     <div className="relative">
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
-        <AppHeaderTools
-          helpLabel={c.helpBtn}
-          onHelp={() => setHelp(true)}
-        />
+        <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
 
-      {view !== "done" && (
+      {!done && (
         <RightNowBar
           icon={TASK_ICONS.timeclock}
-          stepIndex={view === "clocked_in" ? 0 : view === "review" ? 1 : 2}
+          stepIndex={phase === "clocked_in" ? 0 : 1}
           stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[view === "clocked_in" ? 0 : view === "review" ? 1 : 2]}
+          instruction={RIGHT_NOW_STEPS[phase === "clocked_in" ? 0 : 1]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(showMeId)}
@@ -87,7 +70,7 @@ export default function TimeclockTask() {
         />
       )}
 
-      {view === "clocked_in" && (
+      {!done && phase === "clocked_in" && (
         <div className="flex flex-col gap-5">
           <div className="rounded-xl border border-success-tint bg-success-tint p-5">
             <div className="text-[12px] font-semibold uppercase tracking-wide text-success">
@@ -99,7 +82,7 @@ export default function TimeclockTask() {
             <div className="mt-1 text-[14px] text-text-secondary">{TIMECLOCK.weekHours}</div>
             <button
               data-showme="clockout-button"
-              onClick={() => setView("review")}
+              onClick={() => setPhase("review")}
               className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.clockOut}
@@ -125,7 +108,7 @@ export default function TimeclockTask() {
         </div>
       )}
 
-      {view === "review" && (
+      {!done && phase === "review" && (
         <div className="rounded-xl border border-border bg-white p-5">
           <div className="text-[12px] font-semibold uppercase tracking-wide text-text-tertiary">
             {c.clockedOutStatus}
@@ -155,7 +138,7 @@ export default function TimeclockTask() {
               </button>
               <button
                 data-showme="something-off-button"
-                onClick={() => setView("compose")}
+                onClick={messageSupervisor}
                 className="min-h-[44px] rounded-full border border-border px-4 text-[14px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
               >
                 {c.somethingOff}
@@ -165,50 +148,7 @@ export default function TimeclockTask() {
         </div>
       )}
 
-      {view === "compose" && (
-        <div className="rounded-xl border border-border bg-white p-5">
-          <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
-            <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
-            <span>{CAST.maria.email}</span>
-          </div>
-          <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
-            <span className="w-14 shrink-0 text-text-tertiary">{c.subjectLabel}</span>
-            <span>{c.subject}</span>
-          </div>
-          <textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={c.writeHere}
-            className="min-h-[130px] w-full resize-y border-none py-3 text-[16px] leading-relaxed outline-none placeholder:text-text-tertiary"
-          />
-          <div className="mb-4">
-          <NeedAStart
-            lang={lang}
-            starters={STARTERS[lang]}
-            onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
-            chipClassName="min-h-[38px] rounded-full border border-border bg-surface-muted px-3 text-[13px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
-          />
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-4">
-            <button
-              data-showme="send-button"
-              onClick={trySend}
-              className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-            >
-              {c.send}
-            </button>
-            <button
-              onClick={discard}
-              className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer"
-            >
-              {c.discard}
-            </button>
-          </div>
-        </div>
-      )}
-
-      {view === "done" && (
+      {done && (
         <div className="flex flex-col gap-5">
           <TaskDoneCard
             kicker={c.sentKicker}
@@ -232,7 +172,7 @@ export default function TimeclockTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][view === "clocked_in" ? 0 : 1]}
+        lesson={LESSONS[lang][phase === "clocked_in" ? 0 : 1]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
