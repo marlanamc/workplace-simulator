@@ -334,7 +334,7 @@ export default function BrowserClient() {
 
   return (
     <div
-      className="flex min-h-0 flex-1 flex-col bg-[#dee1e6]"
+      className="relative flex min-h-0 flex-1 flex-col bg-[#dee1e6]"
     >
       {/* ── Top Chrome bar ─────────────────────────────────────── */}
       <div className="flex items-end bg-[#dee1e6] pl-2 pr-1 pt-1.5">
@@ -421,7 +421,7 @@ export default function BrowserClient() {
             key={t.key}
             data-testid={`bookmark-${t.key}`}
             onClick={() => goToBookmark(t)}
-            className={`flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer ${
+            className={`flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] ${
               active?.key === t.key
                 ? "bg-[#e8eaed] text-[#202124]"
                 : "text-[#3c4043] hover:bg-[#f1f3f4]"
@@ -442,7 +442,7 @@ export default function BrowserClient() {
       </div>
 
       {/* ── Page content ─────────────────────────────────────────── */}
-      <div className="min-h-0 flex-1 overflow-hidden bg-white">
+      <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
         {active?.key === "tour"     && (
           <TourTask
             startAtHelp={tourWalkthroughDone}

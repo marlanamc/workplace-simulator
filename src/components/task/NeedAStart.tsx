@@ -27,7 +27,7 @@ export default function NeedAStart({
         onClick={() => setOpen((v) => !v)}
         className="min-h-[32px] text-[12px] text-[#5f6368] underline decoration-[#dadce0] underline-offset-4 hover:text-[#0b57d0] cursor-pointer"
       >
-        {lang === "en" ? "Need a start?" : "¿Necesitas una frase?"}
+        {lang === "en" ? "Need help writing?" : "¿Necesitas ayuda para escribir?"}
       </button>
       {open
         ? starters.map((s, i) => (

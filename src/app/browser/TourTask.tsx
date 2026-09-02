@@ -75,9 +75,9 @@ export default function TourTask({
         <AppHeaderTools helpLabel={c.helpBtn} onHelp={openHelp} />
       </div>
 
-      {/* A quiet welcome page, not a card with a button. The Job Card already
-          welcomed the learner by name on the desktop and is what sent them
-          here; this page only has to look like somewhere they arrived. */}
+      {/* The Job Card still says what to do. This page is the place they
+          landed: first-day welcome, still visible while the walkthrough
+          points at Mail. */}
       {view === "intro" && (
         <div
           className="relative flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto p-10 text-center"
@@ -96,8 +96,11 @@ export default function TourTask({
             {intro.kicker}
           </p>
           <h1 className="mt-2 max-w-[24ch] text-[30px] font-medium leading-[1.15] tracking-[-0.02em]">
-            {intro.subheadline}
+            {intro.headline}
           </h1>
+          <p className="mt-3 max-w-[36ch] text-[17px] leading-relaxed text-[#6a4e32]">
+            {intro.subheadline}
+          </p>
         </div>
       )}
 

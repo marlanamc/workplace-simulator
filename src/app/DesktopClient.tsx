@@ -76,7 +76,7 @@ function DesignerJumpBanner() {
   );
 }
 
-/** Remembers, per learner, that the two first-run Job Card beats have played. */
+/** Remembers, per learner, that the first-run Job Card beats have played. */
 const INTRO_FLAG = "job-card-intro-seen";
 
 function JobCardHost({ children }: { children: ReactNode }) {
@@ -84,7 +84,7 @@ function JobCardHost({ children }: { children: ReactNode }) {
   return (
     <JobCardProvider
       // A returning learner has already met the card; only a genuinely fresh
-      // start gets the two beats.
+      // start gets the intro beats.
       introSeen={storyFlags[INTRO_FLAG] === "true" || completedTaskKeys.length > 0}
       onIntroDone={() => setStoryFlag(INTRO_FLAG, "true")}
     >

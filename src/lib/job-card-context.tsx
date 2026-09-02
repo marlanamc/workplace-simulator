@@ -101,7 +101,7 @@ export function JobCardProvider({
   onIntroDone,
 }: {
   children: ReactNode;
-  /** True once the learner has been through the two first-run beats. */
+  /** True once the learner has been through the first-run beats. */
   introSeen: boolean;
   onIntroDone: () => void;
 }) {

@@ -93,7 +93,7 @@ export const TOUR_COPY: Record<Lang, {
 
 export type TourStep = {
   instruction: string;
-  /** Bookmark to spotlight via `data-testid="bookmark-{key}"`. */
+  /** Bookmark chip to spotlight via `data-testid="bookmark-{key}"`. */
   targetTabKey?: string;
   /** Non-bookmark target via `data-testid`. Click advances (Help ?). */
   targetTestId?: string;
@@ -110,7 +110,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     { instruction: "Click Mail.", targetTabKey: "mail" },
     {
       instruction: "This is your work email. Messages from your manager, coworkers, and vendors show up here.",
-      targetTabKey: "mail",
+      targetTestId: "mail-app-title",
       continueLabel: "Got it",
     },
     { instruction: "Now click Calendar.", targetTabKey: "calendar" },
@@ -128,7 +128,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     { instruction: "Haz clic en Correo.", targetTabKey: "mail" },
     {
       instruction: "Este es tu correo del trabajo. Aquí llegan mensajes de tu gerente, compañeros y proveedores.",
-      targetTabKey: "mail",
+      targetTestId: "mail-app-title",
       continueLabel: "Entendido",
     },
     { instruction: "Ahora haz clic en Calendario.", targetTabKey: "calendar" },
@@ -151,7 +151,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "The blue card in the corner says what to do next.",
         "Stuck? Press Show me. It points at what to click.",
-        "Card in the way? Drag it to another corner.",
+        "Card in the way? Drag it, or tap the arrow to hide it.",
       ],
       tip: "The card is always current. When in doubt, read it.",
     },
@@ -162,10 +162,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "La tarjeta azul de la esquina dice qué hacer.",
         "¿Atorada? Toca Muéstrame. Señala dónde hacer clic.",
-        "¿Te estorba? Arrástrala a otra esquina.",
+        "¿Te estorba? Arrástrala, o toca la flecha para ocultarla.",
       ],
       tip: "La tarjeta siempre está al día. Si dudas, léela.",
     },
   ],
 };
-

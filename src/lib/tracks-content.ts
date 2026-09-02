@@ -149,6 +149,8 @@ export interface LevelUpCopy {
   title: Localized<string>;
   body: Localized<string>;
   cta: Localized<string>;
+  /** When true, clocking out is the primary action — for natural session end points. */
+  stoppingPoint?: boolean;
 }
 
 export interface Level {
@@ -247,10 +249,11 @@ export const LEVELS: Level[] = [
       kicker: { en: "Day one: complete", es: "Primer día: completo" },
       title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
       body: {
-        en: "Your schedule is posted now.",
-        es: "Tu horario ya está publicado.",
+        en: "You replied and sent the report. Clock out for today — your progress is saved. Next time you sign in, your schedule will be waiting.",
+        es: "Respondiste y enviaste el reporte. Marca salida por hoy — tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
       },
       cta: { en: "See my schedule", es: "Ver mi horario" },
+      stoppingPoint: true,
     },
   },
   {

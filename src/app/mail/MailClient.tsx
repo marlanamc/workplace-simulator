@@ -279,7 +279,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       style={{ fontFamily: "Roboto, Arial, sans-serif", zoom: bigText ? 1.15 : undefined }}
     >
       <div className="flex items-center gap-3 px-3 py-2">
-        <div className="flex w-[200px] shrink-0 items-center gap-2 px-2">
+        <div
+          data-testid="mail-app-title"
+          className="flex w-[200px] shrink-0 items-center gap-2 px-2"
+        >
           <span className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#ea4335] text-[15px] font-bold text-white">M</span>
           <span className="text-[22px] font-normal text-[#5f6368]">Mail</span>
         </div>

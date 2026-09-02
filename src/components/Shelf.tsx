@@ -270,19 +270,39 @@ export default function Shelf({
               </span>
             </button>
 
-        {APP_DEFS.map((a) => (
+        {APP_DEFS.map((a) => {
+          const pinLocked = tourLocked && a.key === "pdf";
+          return (
           <ShelfPin
             key={a.key}
-            label={appCopy[a.key].name}
-            active={isOpen(a.key)}
+            label={
+              pinLocked
+                ? lang === "en"
+                  ? "PDF Reader · finish the walkthrough first"
+                  : "Lector de PDF · termina la guía primero"
+                : appCopy[a.key].name
+            }
+            active={!pinLocked && isOpen(a.key)}
             onClick={() => {
+              if (pinLocked) {
+                say(
+                  lang === "en"
+                    ? "That app opens after you finish looking around."
+                    : "Esa app se abre cuando termines de mirar alrededor.",
+                );
+                return;
+              }
               closeOverlays();
               toggleFromShelf(a.key);
             }}
           >
-            <LucideAppIcon appKey={a.key} size={32} />
+            <span className="relative inline-flex leading-none">
+              <LucideAppIcon appKey={a.key} size={32} />
+              {pinLocked && <ShelfLockMark />}
+            </span>
           </ShelfPin>
-        ))}
+          );
+        })}
 
         <ShelfPin
           label={

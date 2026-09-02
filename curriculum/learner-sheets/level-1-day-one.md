@@ -9,7 +9,7 @@ Your manager is **Maria Delgado**. She emailed you.
 
 **Job 2 — Answer her**
 1. Open Maria's email again. Click **Reply**.
-2. Write one sentence. Need words? Click **"Need a start?"**
+2. Write one sentence. Stuck? Click **"Need help writing?"**
 3. Click **Send**.
 
 **Job 3 — Send the file**
@@ -32,7 +32,7 @@ Tu gerente es **Maria Delgado**. Te mandó un correo.
 
 **Trabajo 2 — Contéstale**
 1. Abre el correo de Maria otra vez. Haz clic en **Responder**.
-2. Escribe una oración. ¿Necesitas palabras? Haz clic en **"¿Necesitas una frase?"**
+2. Escribe una oración. ¿Te trabas? Haz clic en **"¿Necesitas ayuda para escribir?"**
 3. Haz clic en **Enviar**.
 
 **Trabajo 3 — Manda el archivo**

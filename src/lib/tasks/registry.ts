@@ -173,8 +173,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
     dispatch: {
-      en: "New week. Check your shifts against your own calendar.",
-      es: "Semana nueva. Compara tus turnos con tu propio calendario.",
+      en: "Your schedule is posted. Check it against your calendar.",
+      es: "Tu horario ya está publicado. Compáralo con tu calendario.",
     },
     skill: "Find a shift conflict and ask for a swap",
     bookmarkLabel: "Portal",

@@ -60,23 +60,41 @@ export default function LevelUpCelebration() {
             {DESKTOP_COPY[lang].bookmarkOnramp}
           </p>
         ) : null}
-        <button
-          onClick={keepGoing}
-          className="mt-7 inline-flex min-h-[50px] w-full items-center justify-center rounded-full bg-accent px-6 text-[16px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-        >
-          {cta}
-        </button>
-        {/* Clocking out really ends the session, the way it would at work.
-            Nothing is lost: progress is saved as each job completes, so
-            signing back in returns them to exactly this point. */}
-        <form action={logout}>
-          <button
-            type="submit"
-            className="mt-2 inline-flex min-h-[50px] w-full items-center justify-center rounded-full px-6 text-[16px] font-medium text-text-secondary hover:bg-surface-muted cursor-pointer"
-          >
-            {DESKTOP_COPY[lang].clockOut}
-          </button>
-        </form>
+        {levelUp.stoppingPoint ? (
+          <>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="mt-7 inline-flex min-h-[50px] w-full items-center justify-center rounded-full bg-accent px-6 text-[16px] font-medium text-white hover:bg-accent-hover cursor-pointer"
+              >
+                {DESKTOP_COPY[lang].clockOut}
+              </button>
+            </form>
+            <button
+              onClick={keepGoing}
+              className="mt-2 inline-flex min-h-[50px] w-full items-center justify-center rounded-full px-6 text-[16px] font-medium text-text-secondary hover:bg-surface-muted cursor-pointer"
+            >
+              {cta}
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={keepGoing}
+              className="mt-7 inline-flex min-h-[50px] w-full items-center justify-center rounded-full bg-accent px-6 text-[16px] font-medium text-white hover:bg-accent-hover cursor-pointer"
+            >
+              {cta}
+            </button>
+            <form action={logout}>
+              <button
+                type="submit"
+                className="mt-2 inline-flex min-h-[50px] w-full items-center justify-center rounded-full px-6 text-[16px] font-medium text-text-secondary hover:bg-surface-muted cursor-pointer"
+              >
+                {DESKTOP_COPY[lang].clockOut}
+              </button>
+            </form>
+          </>
+        )}
         </div>
       </div>
     </div>

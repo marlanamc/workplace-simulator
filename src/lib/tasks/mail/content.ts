@@ -23,8 +23,10 @@ export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-atta
  */
 export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-etiquette", "call-out-sick"];
 
-/** The "To" address for a compose-only task - who the learner is writing from scratch. */
-export const COMPOSE_RECIPIENT: Partial<Record<PlayableMailTask, string>> = {
+/** Who the compose pane addresses — reply tasks pre-fill Maria; compose-only tasks pick their recipient. */
+export const COMPOSE_RECIPIENT: Record<PlayableMailTask, string> = {
+  "mail-reply": CAST.maria.email,
+  "mail-attach": CAST.maria.email,
   "mail-etiquette": CAST.darnell.email,
   "call-out-sick": CAST.maria.email,
 };

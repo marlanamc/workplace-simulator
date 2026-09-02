@@ -7,7 +7,6 @@ import {
   Calendar,
   CalendarClock,
   CalendarDays,
-  CircleHelp,
   ClipboardList,
   Clock,
   Coffee,
@@ -36,7 +35,7 @@ import type { AppKey, TaskKey } from "@/lib/desktop-content";
 export type { LucideIcon };
 
 export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
-  tour: CircleHelp,
+  tour: Coffee,
   mail: Mail,
   "mail-read": MailOpen,
   "mail-reply": Mail,
@@ -127,7 +126,7 @@ export function PdfIcon({ size = 32 }: { size?: number }) {
 }
 
 export const TAB_ICONS: Record<string, LucideIcon> = {
-  tour: CircleHelp,
+  tour: Coffee,
   mail: Mail,
   portal: LayoutGrid,
   "account-recovery": KeyRound,
@@ -146,7 +145,7 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
-  orientation: CircleHelp,
+  orientation: Coffee,
   starter: Coffee,
   schedules: CalendarDays,
   judgment: Compass,

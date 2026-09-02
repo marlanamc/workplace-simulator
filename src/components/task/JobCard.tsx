@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { AlertCircle, Check, MapPin, Shrink, Volume2 } from "lucide-react";
+import { AlertCircle, Check, ChevronDown, ChevronUp, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard } from "@/lib/job-card-context";
@@ -84,6 +84,8 @@ export default function JobCard() {
   const act = actForLevel(level)?.key ?? "act1";
 
   const [corner, setCorner] = useState<Corner>(HOME);
+  const [collapsed, setCollapsed] = useState(false);
+  const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -104,9 +106,17 @@ export default function JobCard() {
     setFinishedTaskKey(jobShown);
     setJobShown(nextTaskKey);
     setCorner(HOME);
+    setCollapsed(false);
   }
 
   const script = buildScript();
+  // A new sentence or a correction is the card talking again — open it so
+  // the learner cannot miss the line they just hid.
+  const voice = `${script.line}\0${correction}`;
+  if (heardVoice !== voice) {
+    setHeardVoice(voice);
+    setCollapsed(false);
+  }
 
   // ─── dragging ────────────────────────────────────────────────────────────
   const startDrag = useCallback((e: React.PointerEvent) => {
@@ -129,9 +139,12 @@ export default function JobCard() {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerup", up);
       setDrag(null);
-      // Let go anywhere: the card snaps to whichever corner it is nearest,
-      // so it can never cover the controls or fall off the screen.
-      if (!last) return;
+      // A tap on the collapsed bar (no drag) opens it again — same as the
+      // chevron, so they do not have to hunt for a small button.
+      if (!last) {
+        setCollapsed((v) => (v ? false : v));
+        return;
+      }
       const cx = last.x + box.width / 2;
       const cy = last.y + box.height / 2;
       setCorner(
@@ -157,8 +170,8 @@ export default function JobCard() {
 
   // ─── the one instruction, derived from state ─────────────────────────────
   function buildScript(): Script {
-    // First run: two beats, one sentence each, one button each. No dots —
-    // there is no job to be partway through yet.
+    // First run: three beats, one sentence each. The last one has no
+    // button — they advance by shrinking the card, which is the point.
     if (introBeat < INTRO_BEATS.length) {
       const beat = INTRO_BEATS[introBeat];
       const name = displayName.trim() || (lang === "en" ? "friend" : "amiga");
@@ -168,8 +181,8 @@ export default function JobCard() {
         line: beat.line[lang].replace("{name}", name),
         tone: "blue",
         step: -1,
-        primaryLabel: beat.cta[lang],
-        onPrimary: advanceIntro,
+        primaryLabel: beat.tryCollapse ? undefined : beat.cta?.[lang],
+        onPrimary: beat.tryCollapse ? undefined : advanceIntro,
       };
     }
 
@@ -208,14 +221,13 @@ export default function JobCard() {
       };
     }
 
-    // "Day 4 · Task 2 of 4 · Find your shift". The day comes first because it
-    // is the part that stays put while the counter resets — without it, the
-    // counter restarting at 1 every day looks like the game losing its place.
-    // `jobOf` returns "" on a one-task day, and the empty segment drops out.
+    // "Day 4 · Task 2 of 4". The day comes first because it stays put while
+    // the counter resets — without it, restarting at 1 every day looks like
+    // the game losing its place. The task name lives in the body, not here:
+    // the header is a tight bar and a third clause always truncates.
+    // `jobOf` returns "" on a one-task day, so orientation is just the name.
     const kicker = nextTaskKey
-      ? [dayLabel(level, lang), c.jobOf(jobNumber, levelTaskKeys.length), TASK_INFO[nextTaskKey].label[lang]]
-          .filter(Boolean)
-          .join(" · ")
+      ? [dayLabel(level, lang), c.jobOf(jobNumber, levelTaskKeys.length)].filter(Boolean).join(" · ")
       : c.dayDoneKicker;
     const badge = nextTaskKey ? String(jobNumber) : "✓";
 
@@ -329,6 +341,33 @@ export default function JobCard() {
             <Shrink size={15} strokeWidth={2.25} aria-hidden />
           </button>
         )}
+        <button
+          type="button"
+          data-testid="job-card-collapse"
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? c.expand : c.collapse}
+          title={collapsed ? c.expand : c.collapse}
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => {
+            const shrinking = !collapsed;
+            setCollapsed(shrinking);
+            // Let them see it shrink, then the next line opens it again —
+            // that is the whole lesson: hide it, and it comes back.
+            if (shrinking && INTRO_BEATS[introBeat]?.tryCollapse) {
+              window.setTimeout(advanceIntro, 550);
+            }
+          }}
+          className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-white${
+            INTRO_BEATS[introBeat]?.tryCollapse && !collapsed ? " animate-showme-pulse-compact" : ""
+          }`}
+          style={{ background: "rgba(255,255,255,0.18)" }}
+        >
+          {collapsed ? (
+            <ChevronUp size={16} strokeWidth={2.5} aria-hidden />
+          ) : (
+            <ChevronDown size={16} strokeWidth={2.5} aria-hidden />
+          )}
+        </button>
         <span className="flex shrink-0 gap-[3px] opacity-75" aria-hidden>
           {[0, 1].map((col) => (
             <span key={col} className="flex flex-col gap-[3px]">
@@ -340,6 +379,7 @@ export default function JobCard() {
         </span>
       </div>
 
+      {!collapsed && (
       <div className="p-5">
         <p
           role="status"
@@ -433,6 +473,7 @@ export default function JobCard() {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 }

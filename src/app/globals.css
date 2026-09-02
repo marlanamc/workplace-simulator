@@ -193,6 +193,20 @@ textarea:focus-visible,
   animation: showme-pulse 1.6s ease-in-out infinite;
 }
 
+@keyframes showme-pulse-compact {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px rgba(232, 116, 0, 0.9), 0 0 0 7px rgba(232, 116, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(232, 116, 0, 0.9), 0 0 0 11px rgba(232, 116, 0, 0.08);
+  }
+}
+
+.animate-showme-pulse-compact {
+  animation: showme-pulse-compact 1.6s ease-in-out infinite;
+}
+
 /* The Job Card arriving — it lifts into its corner rather than blinking in,
    so the learner's eye follows it to where it will always live. */
 @keyframes card-pop {
@@ -221,12 +235,17 @@ textarea:focus-visible,
   .animate-confetti-fall,
   .animate-harbor-wave,
   .animate-card-pop,
-  .animate-showme-pulse {
+  .animate-showme-pulse,
+  .animate-showme-pulse-compact {
     animation: none;
   }
 
   /* The Show-me ring must still be visible without its pulse. */
   .animate-showme-pulse {
     box-shadow: 0 0 0 4px rgba(232, 116, 0, 0.9), 0 0 0 12px rgba(232, 116, 0, 0.25);
+  }
+
+  .animate-showme-pulse-compact {
+    box-shadow: 0 0 0 3px rgba(232, 116, 0, 0.9), 0 0 0 7px rgba(232, 116, 0, 0.2);
   }
 }

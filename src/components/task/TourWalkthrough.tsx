@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCardOptional, useReporterId } from "@/lib/job-card-context";
 import type { TourStep } from "@/lib/tasks/tour/content";
@@ -10,6 +10,8 @@ function targetSelector(step: TourStep) {
   if (step.targetTabKey) return `[data-testid="bookmark-${step.targetTabKey}"]`;
   return null;
 }
+
+type Hole = { left: number; top: number; width: number; height: number };
 
 /**
  * The spotlight half of the tour. It dims the screen, rings the one real
@@ -35,8 +37,10 @@ export default function TourWalkthrough({
   const card = useJobCardOptional();
   const id = useReporterId();
   const step = steps[stepIndex];
-  const [rect, setRect] = useState<DOMRect | null>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const [hole, setHole] = useState<Hole | null>(null);
   const isLookBeat = Boolean(step?.continueLabel);
+  const isBookmark = Boolean(step?.targetTabKey) && !step?.targetTestId;
 
   const reportStep = card?.reportStep;
   const registerPrimary = card?.registerPrimary;
@@ -85,16 +89,38 @@ export default function TourWalkthrough({
   }, [stepIndex, step?.targetTestId]);
 
   useEffect(() => {
-    // No step means nothing is spotlit; measure() clears the hole for us, and
-    // the component renders null below either way.
-    const sel = step ? targetSelector(step) : null;
+    // Look beats have nothing to click. Measuring them put a leftover ring
+    // on the Mail wordmark after the tab switch — a stray oval. The card
+    // already says the sentence; the highlight stays off.
+    const sel = step && !step.continueLabel ? targetSelector(step) : null;
     const measure = () => {
-      if (!sel) {
-        setRect(null);
+      const overlay = overlayRef.current;
+      if (!sel || !overlay) {
+        setHole(null);
         return;
       }
       const el = document.querySelector(sel);
-      setRect(el ? el.getBoundingClientRect() : null);
+      if (!el) {
+        setHole(null);
+        return;
+      }
+      // Overlay-local coords, not viewport. The browser window is `fixed` and
+      // plays a transform on open; `position: fixed` inside it is trapped, so
+      // a raw getBoundingClientRect() sits SHELF_INSET / window-top off the
+      // real chip — tight on the icon, loose after the label.
+      const r = el.getBoundingClientRect();
+      const o = overlay.getBoundingClientRect();
+      // Bookmarks are already padded chips. A small even cushion + a pill
+      // reads as an oval around the icon and label. Other targets keep the
+      // roomier Show-me hole.
+      const pad = isBookmark ? 5 : 8;
+      const padY = isBookmark ? 5 : 6;
+      setHole({
+        left: r.left - o.left - pad,
+        top: r.top - o.top - padY,
+        width: r.width + pad * 2,
+        height: r.height + padY * 2,
+      });
     };
     const raf = requestAnimationFrame(measure);
     // Help lands after a tab switch; measure again shortly so the ? exists.
@@ -107,39 +133,23 @@ export default function TourWalkthrough({
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
-  }, [step, stepIndex]);
+  }, [step, stepIndex, isBookmark]);
 
   if (!step) return null;
 
-  const dim = isLookBeat ? "rgba(28, 20, 16, 0.22)" : "rgba(28, 20, 16, 0.38)";
-
-  const hole = rect
-    ? {
-        left: rect.left - 8,
-        top: rect.top - 6,
-        width: rect.width + 16,
-        height: rect.height + 12,
-      }
-    : null;
+  const dim = "rgba(28, 20, 16, 0.38)";
+  const pulseClass = isBookmark ? "animate-showme-pulse-compact" : "animate-showme-pulse";
+  const radius = isBookmark ? "rounded-full" : "rounded-xl";
 
   return (
-    <div className="pointer-events-none fixed inset-0 z-[70]" aria-hidden>
-      {hole ? (
+    <div ref={overlayRef} className="pointer-events-none absolute inset-0 z-[70]" aria-hidden>
+      {isLookBeat ? null : hole ? (
         <>
           <div
-            className="absolute rounded-xl"
+            className={`absolute ${radius}`}
             style={{ ...hole, boxShadow: `0 0 0 9999px ${dim}` }}
           />
-          {/* A look beat is a steady ring - nothing to click, so nothing
-              should be pulsing at them. A click beat pulses. */}
-          {isLookBeat ? (
-            <div
-              className="absolute rounded-xl"
-              style={{ ...hole, boxShadow: "0 0 0 3px rgba(196, 92, 38, 0.85)" }}
-            />
-          ) : (
-            <div className="animate-showme-pulse absolute rounded-xl" style={hole} />
-          )}
+          <div className={`${pulseClass} absolute ${radius}`} style={hole} />
         </>
       ) : (
         <div className="absolute inset-0 bg-[#1c1410]/45" />

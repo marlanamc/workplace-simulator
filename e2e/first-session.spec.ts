@@ -18,7 +18,8 @@ function jobCard(page: Page) {
 
 /**
  * A brand-new learner lands on the desktop and meets the Job Card first.
- * Both beats have one button; the second leaves them on the first job.
+ * Three beats: welcome, drag, then shrink. The last one advances when
+ * they actually tap the arrow.
  */
 async function clearIntroBeats(page: Page, firstName: string) {
   const card = jobCard(page);
@@ -28,6 +29,8 @@ async function clearIntroBeats(page: Page, firstName: string) {
   await card.getByRole("button", { name: "OK", exact: true }).click();
   await expect(card.getByText("Drag it if it is in the way.", { exact: false })).toBeVisible();
   await card.getByRole("button", { name: "Got it" }).click();
+  await expect(card.getByText("Tap the arrow to shrink it.")).toBeVisible();
+  await card.getByTestId("job-card-collapse").click();
 }
 
 async function signUp(page: Page, name: string) {
@@ -109,9 +112,7 @@ test("the job card introduces itself on an empty desktop, then names the job", a
   // Past the beats it becomes the job card and names the next job. The first
   // day is the one-task tour, so there is deliberately no "Task 1 of 1"
   // counter — the day's name carries the position on its own.
-  await expect(
-    jobCard(page).getByText("Learn how this computer works", { exact: false }),
-  ).toBeVisible();
+  await expect(jobCard(page).getByText("How this works", { exact: true })).toBeVisible();
   await expect(jobCard(page).getByText("of 1", { exact: false })).toHaveCount(0);
 });
 

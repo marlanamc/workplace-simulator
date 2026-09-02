@@ -14,7 +14,9 @@ export interface IntroBeat {
   kicker: Localized<string>;
   /** `{name}` is replaced with the learner's first name. */
   line: Localized<string>;
-  cta: Localized<string>;
+  cta?: Localized<string>;
+  /** Advance when they collapse the card, so this beat is a try, not a read. */
+  tryCollapse?: boolean;
 }
 
 /**
@@ -51,6 +53,14 @@ export const INTRO_BEATS: IntroBeat[] = [
     },
     cta: { en: "Got it", es: "Entendido" },
   },
+  {
+    kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
+    line: {
+      en: "Tap the arrow to shrink it.",
+      es: "Toca la flecha para encogerla.",
+    },
+    tryCollapse: true,
+  },
 ];
 
 /**
@@ -84,6 +94,8 @@ export const JOB_CARD_COPY: Record<
     readAloud: string;
     dragHint: string;
     snapBack: string;
+    collapse: string;
+    expand: string;
     allDoneLine: string;
     seeAwards: string;
     comingSoonLine: string;
@@ -109,6 +121,8 @@ export const JOB_CARD_COPY: Record<
     readAloud: "Read this out loud",
     dragHint: "Move this card to another corner. Drag it, or use the arrow keys.",
     snapBack: "Put the card back in the corner",
+    collapse: "Hide the rest of this card",
+    expand: "Show the rest of this card",
     allDoneLine: "You finished everything.",
     seeAwards: "See awards",
     comingSoonLine: "Nothing new yet. Check back soon.",
@@ -128,6 +142,8 @@ export const JOB_CARD_COPY: Record<
     readAloud: "Léelo en voz alta",
     dragHint: "Mueve esta tarjeta a otra esquina. Arrástrala o usa las flechas.",
     snapBack: "Regresa la tarjeta a la esquina",
+    collapse: "Ocultar el resto de esta tarjeta",
+    expand: "Mostrar el resto de esta tarjeta",
     allDoneLine: "Terminaste todo.",
     seeAwards: "Ver premios",
     comingSoonLine: "Nada nuevo todavía. Vuelve pronto.",
