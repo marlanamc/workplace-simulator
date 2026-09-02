@@ -44,6 +44,8 @@ describe("the task registry is the single source of truth", () => {
     expect(d.retired, `${key} is reachable but marked retired`).not.toBe(true);
     expectBilingual(d.label, `TASKS[${key}].label`);
     expectBilingual(d.dispatch, `TASKS[${key}].dispatch`);
+    if (d.jobCardLine) expectBilingual(d.jobCardLine, `TASKS[${key}].jobCardLine`);
+    if (d.jobCardDoneLine) expectBilingual(d.jobCardDoneLine, `TASKS[${key}].jobCardDoneLine`);
     expectBilingual(d.handoffCta, `TASKS[${key}].handoffCta`);
     expectBilingual(d.shiftMoment, `TASKS[${key}].shiftMoment`);
     expect(d.skill.trim(), `TASKS[${key}].skill`).not.toBe("");

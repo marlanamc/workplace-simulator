@@ -29,7 +29,6 @@ import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import SettingsPopover from "@/components/task/SettingsPopover";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import MailSignature from "@/components/task/MailSignature";
@@ -335,10 +334,6 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           </svg>
           <span className="text-[16px]">{c.searchPlaceholder}</span>
         </div>
-        <AppHeaderTools
-          helpLabel={c.helpBtn}
-          onHelp={() => setHelp(true)}
-        />
         <SettingsPopover
           bigText={bigText}
           onToggleBigText={() => setBigText(!bigText)}
@@ -451,6 +446,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   rightNowLabel={TIMECLOCK_RIGHT_NOW_LABEL}
                   onShowMe={() => setShowMeTarget(showMeTargetId === "send-button" ? null : "send-button")}
                   showMeActive={showMeTargetId === "send-button"}
+                  onHelp={() => setHelp(true)}
                 />
                 <div className="px-6 py-4 sm:px-8">
                   <div className="overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
@@ -544,6 +540,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   rightNowLabel={RIGHT_NOW_LABEL}
                   onShowMe={() => setShowMeTarget(showMeTargetId === showMeId ? null : showMeId)}
                   showMeActive={showMeTargetId === showMeId}
+                  onHelp={() => setHelp(true)}
                 />
               );
             })()}

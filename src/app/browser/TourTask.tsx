@@ -7,7 +7,6 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 
 type View = "intro" | "help" | "done";
@@ -15,6 +14,9 @@ type View = "intro" | "help" | "done";
 export default function TourTask({
   startAtHelp,
   walkthroughRunning,
+  helpOpen,
+  onOpenHelp,
+  onCloseHelp,
   onStartWalkthrough,
 }: {
   /** True once Mail + Calendar walkthrough is done and Help is next. */
@@ -25,6 +27,10 @@ export default function TourTask({
    * reporters means the last one wins and the learner reads the wrong line.
    */
   walkthroughRunning: boolean;
+  /** Help is lifted so the walkthrough can open it via the card's ?. */
+  helpOpen: boolean;
+  onOpenHelp: () => void;
+  onCloseHelp: () => void;
   /** Tell BrowserClient to begin the one-instruction-at-a-time walkthrough overlay. */
   onStartWalkthrough: () => void;
 }) {
@@ -33,7 +39,7 @@ export default function TourTask({
     completedTaskKeys.includes("tour") ? "done" : startAtHelp ? "help" : "intro",
   );
   const [openedHelp, setOpenedHelp] = useState(false);
-  const [help, setHelp] = useState(false);
+  if (helpOpen && !openedHelp) setOpenedHelp(true);
 
   // The walkthrough returns here for the Help beat after Mail + Calendar.
   // Derived rather than synced in an effect; "restart" clears startAtHelp via
@@ -45,7 +51,7 @@ export default function TourTask({
 
   const openHelp = () => {
     setOpenedHelp(true);
-    setHelp(true);
+    onOpenHelp();
   };
 
   const finish = () => {
@@ -72,7 +78,6 @@ export default function TourTask({
             <div className="text-[12px] font-medium uppercase tracking-wide text-[#8a6a4a]">{c.packetKicker}</div>
             <div className="truncate text-[16px] font-medium leading-tight">{c.packetTitle}</div>
           </div>
-        <AppHeaderTools helpLabel={c.helpBtn} onHelp={openHelp} />
       </div>
 
       {/* The Job Card still says what to do. This page is the place they
@@ -115,6 +120,7 @@ export default function TourTask({
               instruction={{ en: c.helpLead, es: c.helpLead }}
               primaryLabel={c.helpReady}
               onPrimary={finish}
+              onHelp={openHelp}
             />
           )}
           <div className="mx-auto flex w-full max-w-[560px] flex-col gap-5">
@@ -147,8 +153,8 @@ export default function TourTask({
       )}
 
       <HelpDrawer
-        open={help}
-        onClose={() => setHelp(false)}
+        open={helpOpen}
+        onClose={onCloseHelp}
         kicker={c.lessonKicker}
         lesson={LESSONS[lang][0]}
         tipLabel={c.tipLabel}

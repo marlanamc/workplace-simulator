@@ -146,6 +146,7 @@ export default function BrowserClient() {
   const { nudge, say, dismiss } = useNudge();
   const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
   const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
+  const [tourHelpOpen, setTourHelpOpen] = useState(false);
 
   const progressLevelKey = levelForTrack(currentTrack.key).key;
   const jumpDef =
@@ -447,9 +448,13 @@ export default function BrowserClient() {
           <TourTask
             startAtHelp={tourWalkthroughDone}
             walkthroughRunning={tourWalkthroughStep !== null}
+            helpOpen={tourHelpOpen}
+            onOpenHelp={() => setTourHelpOpen(true)}
+            onCloseHelp={() => setTourHelpOpen(false)}
             onStartWalkthrough={() => {
               setTourWalkthroughDone(false);
               setTourWalkthroughStep(0);
+              setTourHelpOpen(false);
             }}
           />
         )}
@@ -467,21 +472,20 @@ export default function BrowserClient() {
           steps={TOUR_STEPS[lang]}
           stepIndex={tourWalkthroughStep}
           tabColors={TAB_COLORS}
+          onHelp={() => setTourHelpOpen(true)}
           onAdvance={() => {
             const steps = TOUR_STEPS[lang];
             const next = tourWalkthroughStep + 1;
             if (next >= steps.length) {
               setTourWalkthroughStep(null);
               setTourWalkthroughDone(true);
-              return;
-            }
-            const nextStep = steps[next];
-            // Help lives on the Welcome packet — open that tab before spotlighting ?.
-            if (nextStep.targetTestId === "tour-help") {
+              // Wrap-up ("I'm ready") lives on the welcome packet. The ?
+              // they just tapped is on the card, so this tab switch is only
+              // so TourTask can report that last beat.
               const tourDef = BASE_TABS.find((t) => t.key === "tour")!;
               setOpenTabs([tourDef]);
               setActiveTab("tour");
-              setTourWalkthroughDone(true);
+              return;
             }
             setTourWalkthroughStep(next);
           }}

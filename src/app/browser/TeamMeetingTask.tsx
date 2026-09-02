@@ -22,7 +22,6 @@ import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import { Calendar, FileText } from "lucide-react";
 
@@ -76,7 +75,6 @@ export default function TeamMeetingTask() {
           {view === "docs" ? "Docs" : view === "calendar" ? "Calendar" : lang === "en" ? "Huddle" : "Reunión"}
         </span>
         <div className="flex-1" />
-        <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
 
       {view !== "done" && (

@@ -20,7 +20,6 @@ import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import { Calendar, Mail, Table2 } from "lucide-react";
 
@@ -95,7 +94,6 @@ export default function PriorityCallTask() {
           {view === "mail" ? "Mail" : view === "cover" ? "Sheets" : view === "calendar" ? "Calendar" : lang === "en" ? "On the floor" : "En el piso"}
         </span>
         <div className="flex-1" />
-        <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
 
       {view !== "done" && (

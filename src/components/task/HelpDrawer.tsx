@@ -2,7 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import type { Lesson } from "@/lib/task-types";
+import { useJobCardOptional } from "@/lib/job-card-context";
 
+/**
+ * The task's Help lesson. When a Job Card is present it *reports* the lesson
+ * there — the card is the only voice — and draws nothing of its own. The
+ * overlay below is only for surfaces without a card (studio preview, tests).
+ */
 export default function HelpDrawer({
   open,
   onClose,
@@ -18,19 +24,42 @@ export default function HelpDrawer({
   tipLabel: string;
   gotItLabel: string;
 }) {
+  const card = useJobCardOptional();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  const reportHelp = card?.reportHelp;
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) return;
     closeRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") onCloseRef.current();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open]);
 
-  if (!open) return null;
+  useEffect(() => {
+    if (!reportHelp) return;
+    if (!open) {
+      reportHelp(null);
+      return;
+    }
+    reportHelp({
+      kicker,
+      lesson,
+      tipLabel,
+      gotItLabel,
+      onClose: () => onCloseRef.current(),
+    });
+    return () => reportHelp(null);
+  }, [reportHelp, open, kicker, lesson, tipLabel, gotItLabel]);
+
+  if (card || !open) return null;
 
   return (
     <div className="absolute inset-0 z-[75] flex justify-end bg-black/40" onClick={onClose}>

@@ -10,7 +10,6 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
@@ -96,7 +95,6 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
     <div className="relative">
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
-        <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
       <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 

@@ -91,6 +91,8 @@ export const JOB_CARD_COPY: Record<
     doItAgain: string;
     showMe: string;
     hide: string;
+    help: string;
+    hideHelp: string;
     readAloud: string;
     dragHint: string;
     snapBack: string;
@@ -118,6 +120,8 @@ export const JOB_CARD_COPY: Record<
     doItAgain: "Do it again",
     showMe: "Show me",
     hide: "Hide",
+    help: "Help with this job",
+    hideHelp: "Hide help",
     readAloud: "Read this out loud",
     dragHint: "Move this card to another corner. Drag it, or use the arrow keys.",
     snapBack: "Put the card back in the corner",
@@ -139,6 +143,8 @@ export const JOB_CARD_COPY: Record<
     doItAgain: "Hazlo otra vez",
     showMe: "Muéstrame",
     hide: "Ocultar",
+    help: "Ayuda con este trabajo",
+    hideHelp: "Ocultar ayuda",
     readAloud: "Léelo en voz alta",
     dragHint: "Mueve esta tarjeta a otra esquina. Arrástrala o usa las flechas.",
     snapBack: "Regresa la tarjeta a la esquina",

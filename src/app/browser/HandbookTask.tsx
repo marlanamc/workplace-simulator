@@ -16,7 +16,6 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import HandbookPage from "./HandbookPage";
 
@@ -80,10 +79,6 @@ export default function HandbookTask() {
                 ))}
               </div>
             </div>
-            <AppHeaderTools
-              helpLabel={c.helpBtn}
-              onHelp={() => setHelp(true)}
-            />
           </div>
 
           <div className="mx-2 mb-1 flex h-10 items-center gap-1 rounded-full bg-[#f0f4f9] px-3 text-[13px] text-[#444746]">

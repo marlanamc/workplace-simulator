@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { INTRO_BEATS } from "@/lib/job-card-content";
-import type { Localized } from "@/lib/task-types";
+import type { Lesson, Localized } from "@/lib/task-types";
 
 /**
  * The Job Card's state source.
@@ -41,12 +41,25 @@ export interface JobCardStep {
   showMeActive: boolean;
   /** Whether the task offers a Show me at all on this step. */
   canShowMe: boolean;
+  /** Whether the task handed the card a Help lesson for this step. */
+  canHelp?: boolean;
+  /** Pulse the card's ? — the tour's Help beat, where the control is the card. */
+  pulseHelp?: boolean;
   /**
    * A step that advances from the card rather than from a click in the app -
    * the tour's "look at this" beats, where the only thing to do is read and
    * say Got it. The card renders it as its one primary button.
    */
   primaryLabel?: string;
+}
+
+/** A 2-minute lesson the card speaks when the learner taps ?. */
+export interface JobCardHelp {
+  kicker: string;
+  lesson: Lesson;
+  tipLabel: string;
+  gotItLabel: string;
+  onClose: () => void;
 }
 
 /** What a finished task reports. The card supplies the button. */
@@ -85,6 +98,13 @@ interface JobCardValue {
   pressPrimary: () => void;
   /** The running task hands over that button's action. Ref, as above. */
   registerPrimary: (handler: (() => void) | null) => void;
+  /** Open the running task's Help lesson. Ref, as Show me. */
+  registerHelp: (handler: (() => void) | null) => void;
+  /** Toggle Help on the card: open the lesson, or close it if it is up. */
+  pressHelp: () => void;
+  /** The lesson currently on the card, or null when Help is shut. */
+  help: JobCardHelp | null;
+  reportHelp: (help: JobCardHelp | null) => void;
   /** Index into `INTRO_BEATS`; past its length means the learner is through them. */
   introBeat: number;
   advanceIntro: () => void;
@@ -109,8 +129,10 @@ export function JobCardProvider({
   const [finish, setFinish] = useState<JobCardFinish | null>(null);
   const [raised, setRaised] = useState<{ message: string; onStep: string } | null>(null);
   const [introBeat, setIntroBeat] = useState(introSeen ? INTRO_BEATS.length : 0);
+  const [help, setHelp] = useState<JobCardHelp | null>(null);
   const showMeHandler = useRef<(() => void) | null>(null);
   const primaryHandler = useRef<(() => void) | null>(null);
+  const helpHandler = useRef<(() => void) | null>(null);
   const correctionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Identifies the moment the learner is standing in. A correction raised on
@@ -172,6 +194,23 @@ export function JobCardProvider({
     primaryHandler.current?.();
   }, [clearCorrection]);
 
+  const registerHelp = useCallback((handler: (() => void) | null) => {
+    helpHandler.current = handler;
+  }, []);
+
+  const reportHelp = useCallback((next: JobCardHelp | null) => {
+    setHelp(next);
+  }, []);
+
+  const pressHelp = useCallback(() => {
+    clearCorrection();
+    if (help) {
+      help.onClose();
+      return;
+    }
+    helpHandler.current?.();
+  }, [clearCorrection, help]);
+
   // Both statements run in the button's event handler, never inside the state
   // updater: `onIntroDone` persists a story flag on ProgressProvider, and an
   // updater has to stay pure.
@@ -194,6 +233,10 @@ export function JobCardProvider({
       registerShowMe,
       pressPrimary,
       registerPrimary,
+      registerHelp,
+      pressHelp,
+      help,
+      reportHelp,
       introBeat,
       advanceIntro,
     }),
@@ -209,6 +252,10 @@ export function JobCardProvider({
       registerShowMe,
       pressPrimary,
       registerPrimary,
+      registerHelp,
+      pressHelp,
+      help,
+      reportHelp,
       introBeat,
       advanceIntro,
     ],

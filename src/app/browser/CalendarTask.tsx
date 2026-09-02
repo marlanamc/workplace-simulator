@@ -18,7 +18,6 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
@@ -146,10 +145,6 @@ export default function CalendarTask() {
           </svg>
           <span className="text-[16px]">{c.searchPlaceholder}</span>
         </div>
-        <AppHeaderTools
-          helpLabel={c.helpBtn}
-          onHelp={() => setHelp(true)}
-        />
       </div>
 
       {view !== "done" && (

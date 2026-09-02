@@ -18,7 +18,6 @@ import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 
@@ -138,10 +137,6 @@ export default function SpreadsheetTask() {
         </span>
         <span className="text-[18px] text-[#3c4043]">{view === "home" ? c.appName : c.sheetName}</span>
         <div className="flex-1" />
-        <AppHeaderTools
-          helpLabel={c.helpBtn}
-          onHelp={() => setHelp(true)}
-        />
       </div>
 
       {view !== "done" && (

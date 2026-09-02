@@ -75,6 +75,14 @@ describe("job card wiring", () => {
     expect(src, "coaches the learner but never mounts the correction seam").toContain("NudgeToast");
   });
 
+  it.each(tasks)("$name hands Help to the card when it has a Help drawer", ({ src }) => {
+    if (!src.includes("<HelpDrawer")) return;
+    if (!src.includes("<RightNowBar")) return;
+    // Without onHelp the card has no ?, and the lesson stays buried in the
+    // window header — the one place a lost learner is not looking.
+    expect(src, "has Help but never hands it to the card").toMatch(/<RightNowBar[\s\S]*onHelp=/);
+  });
+
   it.each(tasks)("$name names its own finish", ({ src }) => {
     if (!src.includes("<TaskDoneActions")) return;
     const call = src.match(/<TaskDoneActions[\s\S]*?\/>/)![0];

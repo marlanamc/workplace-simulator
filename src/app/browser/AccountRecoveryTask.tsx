@@ -16,7 +16,6 @@ import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import { firstPersonSkill } from "@/lib/skills";
 import { Lock } from "lucide-react";
@@ -73,7 +72,6 @@ export default function AccountRecoveryTask() {
     <div className="relative">
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
-        <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
       <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 

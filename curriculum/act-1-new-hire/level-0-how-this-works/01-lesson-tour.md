@@ -24,12 +24,13 @@ works.
 3. Read the first card. Click **Show me around**.
 4. Tap all three facts (nothing is real; the white button is next; Help and
    your list). Click **I have these**.
-5. Click the **?** at the top right. Read Help. Click **Got it**.
+5. Tap the **?** on the blue card. Read Help. Click **Got it**.
 6. Click **I'm ready for the job**.
 7. On the done screen, the blue button is **Open Mail** — that is Level 1.
 
-If they skip Help, a short toast tells them to click the ? first. That is
-the whole point of this step.
+Help is the **?** on the blue card — there is not a second one in the
+window header. They can skip it and still move on; the point is knowing
+where it lives.
 
 ## Confidence check-in
 The app asks this on the done screen. Worth a glance:

@@ -227,8 +227,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Read a pay stub", es: "Lee un talón de pago" },
     dispatch: {
-      en: "Yours takes two weeks. Practice on Alex Chen's stub.",
-      es: "El tuyo tarda dos semanas. Practica con el de Alex Chen.",
+      en: "Your first paycheck is not here yet. Practice on Alex Chen's stub.",
+      es: "Tu primer cheque todavía no está. Practica con el de Alex Chen.",
     },
     skill: "Read a pay stub",
     bookmarkLabel: "Portal",
@@ -238,6 +238,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes, 5:40 PM. Día de pago del equipo.",
     },
     location: browser("Open Portal", "portal", "paystubs"),
+    jobCardLine: { en: "Open Alex Chen's pay stub.", es: "Abre el recibo de Alex Chen." },
   },
 
   "shift-review": {

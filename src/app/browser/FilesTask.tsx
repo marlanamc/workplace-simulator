@@ -17,7 +17,6 @@ import {
 } from "@/lib/tasks/files/content";
 import RightNowBar from "@/components/task/RightNowBar";
 import SettingsPopover from "@/components/task/SettingsPopover";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import { levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -169,10 +168,6 @@ export default function FilesTask() {
             className="h-full w-full bg-transparent text-[16px] outline-none placeholder:text-[#444746]"
           />
         </div>
-        <AppHeaderTools
-          helpLabel={c.helpBtn}
-          onHelp={() => setHelp(true)}
-        />
         <SettingsPopover
           bigText={bigText}
           onToggleBigText={() => setBigText(!bigText)}

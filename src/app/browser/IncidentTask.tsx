@@ -16,7 +16,6 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 
@@ -73,10 +72,6 @@ export default function IncidentTask() {
         </span>
         <span className="text-[18px] text-[#5f6368]">Forms</span>
         <div className="flex-1" />
-        <AppHeaderTools
-          helpLabel={c.helpBtn}
-          onHelp={() => setHelp(true)}
-        />
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto">

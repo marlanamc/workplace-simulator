@@ -79,9 +79,9 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   await expect(page.getByText("August 2026").first()).toBeVisible();
   await page.getByRole("button", { name: "Got it" }).click();
 
-  // Spotlight the real Help control (not "top right" prose).
-  await expect(page.getByText("Click the ? for Help.", { exact: false })).toBeVisible();
-  await page.getByTestId("tour-help").click();
+  // Spotlight the real Help control — the ? on the Job Card.
+  await expect(page.getByText("Tap the ? on this card", { exact: false })).toBeVisible();
+  await page.getByTestId("job-card-help").click();
   await expect(page.getByText("That is Help.", { exact: false })).toBeVisible();
 
   // Close the Help drawer the tour just opened before moving on.

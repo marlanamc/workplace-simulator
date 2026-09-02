@@ -22,6 +22,7 @@ export default function RightNowBar({
   steps,
   onShowMe,
   showMeActive,
+  onHelp,
   primaryLabel,
   onPrimary,
 }: {
@@ -60,19 +61,22 @@ export default function RightNowBar({
   const reportStep = card?.reportStep;
   const registerShowMe = card?.registerShowMe;
   const registerPrimary = card?.registerPrimary;
+  const registerHelp = card?.registerHelp;
+  const canHelp = Boolean(onHelp);
 
   // Handed over fresh every render without re-running the effect below, so a
   // task that rebuilds its handler each render doesn't thrash the card.
   useEffect(() => {
     registerShowMe?.(onShowMe ?? null);
     registerPrimary?.(onPrimary ?? null);
+    registerHelp?.(onHelp ?? null);
   });
 
   useEffect(() => {
     if (!reportStep) return;
-    reportStep({ id, stepIndex, stepCount: count, line: { en, es }, showMeActive: lit, canShowMe, primaryLabel });
+    reportStep({ id, stepIndex, stepCount: count, line: { en, es }, showMeActive: lit, canShowMe, canHelp, primaryLabel });
     return () => reportStep(null, id);
-  }, [reportStep, id, stepIndex, count, en, es, lit, canShowMe, primaryLabel]);
+  }, [reportStep, id, stepIndex, count, en, es, lit, canShowMe, canHelp, primaryLabel]);
 
   return null;
 }

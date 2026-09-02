@@ -26,10 +26,13 @@ export default function TourWalkthrough({
   steps,
   stepIndex,
   onAdvance,
+  onHelp,
 }: {
   steps: TourStep[];
   stepIndex: number;
   onAdvance: () => void;
+  /** Opens Help on the Job Card — the only ? in the product. */
+  onHelp?: () => void;
   /** Kept for call-site compatibility; the card carries the step's identity now. */
   tabColors?: Record<string, string>;
 }) {
@@ -44,12 +47,15 @@ export default function TourWalkthrough({
 
   const reportStep = card?.reportStep;
   const registerPrimary = card?.registerPrimary;
+  const registerHelp = card?.registerHelp;
   const instruction = step?.instruction ?? "";
   const continueLabel = step?.continueLabel;
+  const isCardHelp = step?.targetTestId === "job-card-help";
 
   // Handed over fresh every render; see RightNowBar for why this is a ref.
   useEffect(() => {
     registerPrimary?.(continueLabel ? onAdvance : null);
+    registerHelp?.(onHelp ?? null);
   });
 
   useEffect(() => {
@@ -65,10 +71,12 @@ export default function TourWalkthrough({
       // The spotlight is already lit on every step - a Show me button would
       // be a no-op, so the card shows only the speaker.
       canShowMe: false,
+      canHelp: Boolean(onHelp),
+      pulseHelp: isCardHelp,
       primaryLabel: continueLabel,
     });
     return () => reportStep(null, id);
-  }, [reportStep, id, stepIndex, steps.length, instruction, continueLabel]);
+  }, [reportStep, id, stepIndex, steps.length, instruction, continueLabel, onHelp, isCardHelp]);
 
   useEffect(() => {
     if (!step || step.continueLabel || step.targetTestId) return;
@@ -92,7 +100,9 @@ export default function TourWalkthrough({
     // Look beats have nothing to click. Measuring them put a leftover ring
     // on the Mail wordmark after the tab switch — a stray oval. The card
     // already says the sentence; the highlight stays off.
-    const sel = step && !step.continueLabel ? targetSelector(step) : null;
+    // The card's ? sits outside this window. Measuring it here would punch a
+    // hole in the wrong place. The card pulses that button instead.
+    const sel = step && !step.continueLabel && !isCardHelp ? targetSelector(step) : null;
     const measure = () => {
       const overlay = overlayRef.current;
       if (!sel || !overlay) {
@@ -133,7 +143,7 @@ export default function TourWalkthrough({
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
-  }, [step, stepIndex, isBookmark]);
+  }, [step, stepIndex, isBookmark, isCardHelp]);
 
   if (!step) return null;
 

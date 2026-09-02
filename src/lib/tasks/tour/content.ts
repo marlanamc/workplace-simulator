@@ -95,7 +95,7 @@ export type TourStep = {
   instruction: string;
   /** Bookmark chip to spotlight via `data-testid="bookmark-{key}"`. */
   targetTabKey?: string;
-  /** Non-bookmark target via `data-testid`. Click advances (Help ?). */
+  /** Non-bookmark target via `data-testid`. Click advances (the card's ?). */
   targetTestId?: string;
   /**
    * Look beat: stay on this app and advance only when they tap the button.
@@ -120,8 +120,8 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
       continueLabel: "Got it",
     },
     {
-      instruction: "Click the ? for Help. Use it any time you feel stuck.",
-      targetTestId: "tour-help",
+      instruction: "Tap the ? on this card. That is Help.",
+      targetTestId: "job-card-help",
     },
   ],
   es: [
@@ -138,8 +138,8 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
       continueLabel: "Entendido",
     },
     {
-      instruction: "Haz clic en el ? para Ayuda. Úsalo cada vez que te trabes.",
-      targetTestId: "tour-help",
+      instruction: "Toca el ? en esta tarjeta. Eso es Ayuda.",
+      targetTestId: "job-card-help",
     },
   ],
 };
@@ -150,7 +150,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Where to look",
       s: [
         "The blue card in the corner says what to do next.",
-        "Stuck? Press Show me. It points at what to click.",
+        "Stuck? Tap the ? on this card.",
         "Card in the way? Drag it, or tap the arrow to hide it.",
       ],
       tip: "The card is always current. When in doubt, read it.",
@@ -161,7 +161,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Dónde mirar",
       s: [
         "La tarjeta azul de la esquina dice qué hacer.",
-        "¿Atorada? Toca Muéstrame. Señala dónde hacer clic.",
+        "¿Atorada? Toca el ? en esta tarjeta.",
         "¿Te estorba? Arrástrala, o toca la flecha para ocultarla.",
       ],
       tip: "La tarjeta siempre está al día. Si dudas, léela.",

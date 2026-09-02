@@ -75,6 +75,8 @@ export default function JobCard() {
     clearCorrection,
     toggleShowMe,
     pressPrimary,
+    pressHelp,
+    help,
     introBeat,
     advanceIntro,
   } = useJobCard();
@@ -112,7 +114,7 @@ export default function JobCard() {
   const script = buildScript();
   // A new sentence or a correction is the card talking again — open it so
   // the learner cannot miss the line they just hid.
-  const voice = `${script.line}\0${correction}`;
+  const voice = `${script.line}\0${correction}\0${help?.lesson.t ?? ""}`;
   if (heardVoice !== voice) {
     setHeardVoice(voice);
     setCollapsed(false);
@@ -328,7 +330,29 @@ export default function JobCard() {
         >
           {script.badge === "✓" ? <Check size={15} strokeWidth={3} /> : script.badge}
         </span>
-        <span className="min-w-0 flex-1 truncate text-[15px] font-medium">{script.kicker}</span>
+        <span className="min-w-0 flex-1 truncate text-[15px] font-medium">
+          {help && !finish ? help.kicker : script.kicker}
+        </span>
+        {step?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
+          <button
+            type="button"
+            data-testid="job-card-help"
+            aria-label={help ? c.hideHelp : c.help}
+            aria-pressed={Boolean(help)}
+            title={help ? c.hideHelp : c.help}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={pressHelp}
+            className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold${
+              step?.pulseHelp && !help ? " animate-showme-pulse-compact" : ""
+            }`}
+            style={{
+              background: help ? "#fff" : "rgba(255,255,255,0.18)",
+              color: help ? tone : "#fff",
+            }}
+          >
+            ?
+          </button>
+        )}
         {corner !== HOME && (
           <button
             type="button"
@@ -381,6 +405,44 @@ export default function JobCard() {
 
       {!collapsed && (
       <div className="p-5">
+        {help && !finish ? (
+          <>
+            <p
+              role="status"
+              aria-live="polite"
+              className="m-0 text-[22px] font-medium leading-[1.2] tracking-[-0.01em] text-[#202124]"
+            >
+              {help.lesson.t}
+            </p>
+            <ol className="mt-3.5 m-0 flex list-none flex-col gap-2 p-0">
+              {help.lesson.s.map((text, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span
+                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold text-white"
+                    style={{ background: TONE.blue }}
+                    aria-hidden
+                  >
+                    {i + 1}
+                  </span>
+                  <span className="text-[16px] font-medium leading-[1.35] text-[#3c4043]">{text}</span>
+                </li>
+              ))}
+            </ol>
+            <p className="mt-3.5 mb-0 rounded-[14px] bg-[#f1f3f4] px-3.5 py-3 text-[15px] leading-[1.35] text-[#3c4043]">
+              <span className="font-semibold text-[#202124]">{help.tipLabel}: </span>
+              {help.lesson.tip}
+            </p>
+            <button
+              type="button"
+              onClick={help.onClose}
+              className="mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+              style={{ background: tone }}
+            >
+              {help.gotItLabel}
+            </button>
+          </>
+        ) : (
+          <>
         <p
           role="status"
           aria-live="polite"
@@ -471,6 +533,8 @@ export default function JobCard() {
               />
             ))}
           </div>
+        )}
+          </>
         )}
       </div>
       )}

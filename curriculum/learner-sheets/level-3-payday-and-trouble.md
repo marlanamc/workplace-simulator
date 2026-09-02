@@ -5,7 +5,7 @@
 2. Clock out. Then look at your hours. Do they look right?
 
 **Job 2 — Read a pay stub**
-1. Open **Alex Chen's** pay stub (yours takes two weeks).
+1. Open **Alex Chen's** pay stub (your first paycheck is not here yet).
 2. Find the **net pay** — the money that actually arrives.
 
 **Job 3 — A normal shift**
@@ -23,7 +23,7 @@ Wrong click? Nothing breaks. Read the little card and try again.
 2. Marca la salida. Mira tus horas. ¿Se ven bien?
 
 **Trabajo 2 — Lee un talón de pago**
-1. Abre el talón de **Alex Chen** (el tuyo tarda dos semanas).
+1. Abre el talón de **Alex Chen** (tu primer cheque todavía no está).
 2. Busca el **pago neto** — el dinero que de verdad llega.
 
 **Trabajo 3 — Un turno normal**

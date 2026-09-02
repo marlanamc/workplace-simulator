@@ -16,7 +16,6 @@ import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
-import AppHeaderTools from "@/components/task/AppHeaderTools";
 import RightNowBar from "@/components/task/RightNowBar";
 
 type View = "home" | "template" | "copy" | "done";
@@ -88,7 +87,6 @@ export default function MakeACopyTask() {
             {view === "template" ? c.viewOnly : lang === "en" ? "Can edit" : "Puede editar"}
           </span>
         )}
-        <AppHeaderTools helpLabel={c.helpBtn} onHelp={() => setHelp(true)} />
       </div>
 
       {(view === "template" || view === "copy") && (
