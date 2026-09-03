@@ -7,6 +7,7 @@ import {
   PATH_A_TASKS,
   PATH_B_TASKS,
   ACT_6_TASKS,
+  ACT_7_TASKS,
   type BridgePath,
 } from "@/lib/bridge-path";
 import {
@@ -62,6 +63,18 @@ function walkHq(start: TaskKey[], path: BridgePath): TaskKey[] {
   return done;
 }
 
+function walkAct7(start: TaskKey[], path: BridgePath): TaskKey[] {
+  const done = [...start];
+  for (const key of ACT_7_TASKS) {
+    if (done.includes(key)) continue;
+    const handoff = nextHandoff(done, path);
+    expect(handoff, `dead end in Act VII after ${done.at(-1)}`).not.toBeNull();
+    expect(handoff!.taskKey).toBe(key);
+    done.push(handoff!.taskKey);
+  }
+  return done;
+}
+
 /**
  * The game-loop invariant: from a fresh account, following the blue button
  * must visit every task exactly once and never dead-end. If any future
@@ -82,12 +95,19 @@ describe("the whole game can be walked start to finish", () => {
     expect(nextHandoff(pathA, "b")?.taskKey).toBe("appointment-scheduling");
 
     const hq = walkHq(pathA, "a");
+    // Act VI completes the required arc — the all-done state is valid here.
     expect(allTracksComplete(hq)).toBe(true);
     expect(needsBridgePicker(hq, "a")).toBeNull();
-    expect(nextHandoff(hq, "a")).toBeNull();
+    // ...but the office path continues into the optional Act VII capstone.
+    expect(nextHandoff(hq, "a")?.taskKey).toBe("meeting-minutes");
     expect(nextHandoff(hq, "b")?.taskKey).toBe("appointment-scheduling");
 
-    const both = walkPath(hq, "b");
+    const act7 = walkAct7(hq, "a");
+    expect(allTracksComplete(act7)).toBe(true);
+    expect(nextHandoff(act7, "a")).toBeNull();
+    expect(nextHandoff(act7, "b")?.taskKey).toBe("appointment-scheduling");
+
+    const both = walkPath(act7, "b");
     expect(needsBridgePicker(both, "b")).toBeNull();
     expect(nextHandoff(both, "b")).toBeNull();
   });
@@ -100,6 +120,10 @@ describe("the whole game can be walked start to finish", () => {
     }
     expect(nextHandoff(pathA, "a")?.taskKey).toBe("office-drive");
     expect(pathA).not.toContain("appointment-scheduling");
+    const act7 = walkAct7(walkHq(pathA, "a"), "a");
+    for (const key of PATH_B_TASKS) {
+      expect(act7, `path A picked up ${key} in Act VII`).not.toContain(key);
+    }
   });
 
   it("a Path B-only run never hands off into Path A", () => {
@@ -113,7 +137,9 @@ describe("the whole game can be walked start to finish", () => {
     expect(nextHandoff(pathB, "a")?.taskKey).toBe("enrollment");
     const hq = walkHq(pathB, "b");
     expect(allTracksComplete(hq)).toBe(true);
-    expect(nextHandoff(hq, "b")).toBeNull();
+    expect(nextHandoff(hq, "b")?.taskKey).toBe("meeting-minutes");
+    const act7 = walkAct7(hq, "b");
+    expect(nextHandoff(act7, "b")).toBeNull();
   });
 
   it("a brand-new learner starts at the tour", () => {
@@ -143,10 +169,12 @@ describe("progress presets (the Studio time machine)", () => {
         }
         continue;
       }
-      const isHq = level.trackKeys.some((tk) =>
-        TRACKS.find((t) => t.key === tk)?.taskKeys.some((k) => ACT_6_TASKS.includes(k)),
+      const isHqOrAct7 = level.trackKeys.some((tk) =>
+        TRACKS.find((t) => t.key === tk)?.taskKeys.some(
+          (k) => ACT_6_TASKS.includes(k) || ACT_7_TASKS.includes(k),
+        ),
       );
-      if (isHq) {
+      if (isHqOrAct7) {
         for (const path of ["a", "b"] as const) {
           const preset = taskKeysBeforeLevel(level.key, path);
           const firstTask = taskKeysForLevel(level, path)[0];

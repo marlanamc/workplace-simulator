@@ -54,6 +54,10 @@ export const TAB_META: TabMeta[] = [
   { key: "billing-sheet", ...SHEETS, levelKey: "level18" },
   { key: "expense-report", label: "Sheets", url: "sheets.harborsidehq.com", color: "#0f9d58", levelKey: "level22" },
   { key: "slides", label: "Slides", url: "slides.harborsidehq.com", color: "#f9ab00", levelKey: "level23" },
+  { key: "meeting-minutes", label: "Meeting", url: "meet.harborsidehq.com/huddle", color: "#34a853", levelKey: "level24" },
+  { key: "performance-review", label: "Review", url: "forms.harborsidehq.com/review", color: "#7248b9", levelKey: "level25" },
+  { key: "ops-report-packet", label: "Report", url: "sheets.harborsidehq.com/weekly", color: "#0f9d58", levelKey: "level26" },
+  { key: "portfolio-reflection", label: "Recap", url: "recap.harborsidehq.com", color: "#c9a227", levelKey: "level27" },
   { key: "zoom", label: "Zoom", url: "zoom.harborsidehq.com/join", color: "#2D8CFF", levelKey: "level21" },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", color: "#7248b9", levelKey: "level3b" },
   { key: "account-recovery", label: "Sign In", url: "accounts.harborsidecafe.com", color: "#5f6368", levelKey: "level3c" },
@@ -88,6 +92,10 @@ const GATED_TABS: Record<string, string> = {
   "college-offer": "level13",
   zoom: "level21",
   slides: "level23",
+  "meeting-minutes": "level24",
+  "performance-review": "level25",
+  "ops-report-packet": "level26",
+  "portfolio-reflection": "level27",
 };
 
 /** Act V tools: only on their path, and only on the days that need them. */

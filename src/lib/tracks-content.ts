@@ -5,6 +5,8 @@ import {
   inferBridgePath,
   isAct5Task,
   isAct6Task,
+  isAct7Task,
+  isAct6Complete,
   pathOfTask,
   pathIsComplete,
   type BridgePath,
@@ -249,6 +251,34 @@ export const TRACKS: Track[] = [
     subtitle: "Three slides. One real number.",
     taskKeys: ["slide-deck"],
     awardEmoji: "📊",
+  },
+  {
+    key: "meeting-minutes",
+    title: "Run the Meeting",
+    subtitle: "Agenda, notes, follow-up — the whole loop",
+    taskKeys: ["meeting-minutes"],
+    awardEmoji: "📋",
+  },
+  {
+    key: "performance-review",
+    title: "The Review",
+    subtitle: "One strength, one area to grow",
+    taskKeys: ["performance-review"],
+    awardEmoji: "📝",
+  },
+  {
+    key: "ops-report-packet",
+    title: "Put It All Together",
+    subtitle: "Every app, one packet",
+    taskKeys: ["ops-report-packet"],
+    awardEmoji: "📦",
+  },
+  {
+    key: "portfolio-reflection",
+    title: "Where You've Been",
+    subtitle: "Look back at the whole program",
+    taskKeys: ["portfolio-reflection"],
+    awardEmoji: "🎓",
   },
 ];
 
@@ -813,6 +843,75 @@ export const LEVELS: Level[] = [
       cta: { en: "Open Slides", es: "Abrir Diapositivas" },
     },
   },
+  {
+    key: "level24",
+    title: "Run the Meeting",
+    trackKeys: ["meeting-minutes"],
+    firstTabKey: "meeting-minutes",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "⭐",
+      kicker: { en: "A promotion", es: "Un ascenso" },
+      title: { en: "You are a Team Lead now!", es: "¡Ahora eres Team Lead!" },
+      body: {
+        en: "New title, and for the first time you run the room instead of just showing up. There is a meeting this morning — it is yours to run.",
+        es: "Nuevo puesto, y por primera vez tú diriges la sala en vez de solo asistir. Hay una reunión esta mañana — te toca dirigirla.",
+      },
+      cta: { en: "Start the agenda", es: "Empezar la agenda" },
+    },
+  },
+  {
+    key: "level25",
+    title: "The Review",
+    trackKeys: ["performance-review"],
+    firstTabKey: "performance-review",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📝",
+      kicker: { en: "Feedback is part of the job now", es: "Dar retroalimentación ahora es parte del trabajo" },
+      title: { en: "One of your team is up for review.", es: "Toca la evaluación de alguien de tu equipo." },
+      body: {
+        en: "Read their month. Name one real strength and one real area to grow — honest, and kind at the same time.",
+        es: "Lee cómo les fue este mes. Nombra una fortaleza real y un área real para mejorar — con honestidad y con amabilidad a la vez.",
+      },
+      cta: { en: "Open the review", es: "Abrir la evaluación" },
+    },
+  },
+  {
+    key: "level26",
+    title: "Put It All Together",
+    trackKeys: ["ops-report-packet"],
+    firstTabKey: "ops-report-packet",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📦",
+      kicker: { en: "Everything at once", es: "Todo a la vez" },
+      title: { en: "The full weekly report is yours this week.", es: "El reporte semanal completo te toca esta semana." },
+      body: {
+        en: "A number from Sheets, a note from Calendar, a short write-up in Docs, sent as one packet. Nothing new — just every piece together.",
+        es: "Un número de Sheets, una nota de Calendar, un resumen corto en Docs, enviado como un solo paquete. Nada nuevo — solo todas las piezas juntas.",
+      },
+      cta: { en: "Open the numbers", es: "Abrir los números" },
+    },
+  },
+  {
+    key: "level27",
+    title: "Where You've Been",
+    trackKeys: ["portfolio-reflection"],
+    firstTabKey: "portfolio-reflection",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🎓",
+      kicker: { en: "The whole way here", es: "Todo el camino hasta aquí" },
+      title: { en: "Look at everything you can do now.", es: "Mira todo lo que ya puedes hacer." },
+      body: {
+        en: "From answering one email on day one to running a full weekly report as a Team Lead. Take a few minutes to look back and write it down.",
+        es: "Desde contestar un correo el primer día hasta hacer un reporte semanal completo como Team Lead. Tómate unos minutos para mirar atrás y escribirlo.",
+      },
+      cta: { en: "Look back", es: "Mirar atrás" },
+      stoppingPoint: true,
+    },
+  },
 ];
 
 /** A group of levels sharing one job title, story arc, and desktop place. */
@@ -840,6 +939,7 @@ export const ACTS: Act[] = [
   { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
   { key: "act5", title: "Act V: Bridge", levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
   { key: "act6", title: "Act VI: Office Administrator", levelKeys: ["level20", "level21", "level22", "level23"], scene: "harborside-floor" },
+  { key: "act7", title: "Act VII: Team Lead", levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
@@ -952,6 +1052,35 @@ export function isTrackComplete(track: Track, completedTaskKeys: TaskKey[]): boo
 }
 
 /**
+ * The learner's earned trophies, grouped by act in curriculum order — for a
+ * "look back at everything you've done" view. `portfolio-reflection` and the
+ * awards case both need the same derivation. Only acts with at least one
+ * earned track are returned.
+ */
+export function earnedAwardsByAct(
+  certificateTrackKeys: readonly string[],
+): { act: Act; tracks: Track[] }[] {
+  const earned = new Set(certificateTrackKeys);
+  return ACTS.map((act) => {
+    const trackKeys: string[] = [];
+    for (const levelKey of act.levelKeys) {
+      const level = LEVELS.find((l) => l.key === levelKey);
+      if (!level) continue;
+      const keys = level.pathTracks
+        ? [level.pathTracks.a, level.pathTracks.b]
+        : level.trackKeys;
+      for (const tk of keys) {
+        if (!trackKeys.includes(tk)) trackKeys.push(tk);
+      }
+    }
+    const tracks = trackKeys
+      .map((tk) => TRACKS.find((t) => t.key === tk))
+      .filter((t): t is Track => Boolean(t) && earned.has(t!.key));
+    return { act, tracks };
+  }).filter((row) => row.tracks.length > 0);
+}
+
+/**
  * Act II used to be one trophy (`growing`). Learners who already earned it
  * should still see trophies after that track split into calendar / files /
  * spreadsheet.
@@ -988,12 +1117,16 @@ export function activeTrack(completedTaskKeys: TaskKey[], path?: BridgePath | nu
       const taskPath = t.taskKeys[0] ? pathOfTask(t.taskKeys[0]) : null;
       return !taskPath || taskPath === inferred;
     });
-    // HQ waits until one Act V door is finished. Otherwise Act IV skips the picker.
+    // The office path is linear: Act V door, then HQ (Act VI), then Team Lead
+    // (Act VII). HQ waits until one Act V door is finished; Act VII waits until
+    // HQ is finished.
     if (!pathIsComplete(inferred, completedTaskKeys)) {
-      tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct6Task(k)));
+      tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct6Task(k) || isAct7Task(k)));
+    } else if (!isAct6Complete(completedTaskKeys)) {
+      tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct7Task(k)));
     }
   } else {
-    tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct5Task(k) || isAct6Task(k)));
+    tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct5Task(k) || isAct6Task(k) || isAct7Task(k)));
   }
   return tracks.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? tracks.at(-1) ?? TRACKS[TRACKS.length - 1];
 }
@@ -1004,7 +1137,10 @@ export function nextTaskInTrack(track: Track, completedTaskKeys: TaskKey[]): Tas
 }
 
 export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
-  const trunk = TRACKS.filter((t) => !t.taskKeys.some((k) => isAct5Task(k)));
+  // Act VII (Team Lead) is the optional office-path capstone — the curriculum
+  // is complete and honest at the end of Act VI, so it does not gate the
+  // all-done state. The "do this next" button still walks through it.
+  const trunk = TRACKS.filter((t) => !t.taskKeys.some((k) => isAct5Task(k) || isAct7Task(k)));
   if (!trunk.every((t) => isTrackComplete(t, completedTaskKeys))) return false;
   return pathIsComplete("a", completedTaskKeys) || pathIsComplete("b", completedTaskKeys);
 }

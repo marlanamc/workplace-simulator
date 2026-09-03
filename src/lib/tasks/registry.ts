@@ -814,6 +814,88 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Slides from the bookmarks"),
     jobCardLine: { en: "Three slides. Then present.", es: "Tres diapositivas. Luego presenta." },
   },
+
+  // ---- Act VII: Team Lead ----
+
+  "meeting-minutes": {
+    key: "meeting-minutes",
+    built: true,
+    label: { en: "Run the meeting start to finish", es: "Dirige la reunión de principio a fin" },
+    dispatch: {
+      en: "Agenda first, notes during, a follow-up with owners after.",
+      es: "Agenda primero, notas durante, y un seguimiento con responsables después.",
+    },
+    skill: "Run a meeting: agenda, notes, and a follow-up with owners",
+    bookmarkLabel: "Meeting",
+    handoffCta: { en: "Open Meeting from the bookmarks", es: "Abre Reunión en los marcadores" },
+    shiftMoment: {
+      en: "Monday. You run the room now.",
+      es: "Lunes. Ahora tú diriges la sala.",
+    },
+    location: browser("Open Meeting from the bookmarks"),
+    jobCardLine: { en: "Agenda, notes, follow-up.", es: "Agenda, notas, seguimiento." },
+    jobCardDoneLine: { en: "The follow-up is sent.", es: "El seguimiento está enviado." },
+  },
+
+  "performance-review": {
+    key: "performance-review",
+    built: true,
+    label: { en: "Write a fair review", es: "Escribe una evaluación justa" },
+    dispatch: {
+      en: "One real strength, one real area to grow. Honest and kind.",
+      es: "Una fortaleza real, un área real para mejorar. Con honestidad y amabilidad.",
+    },
+    skill: "Write a specific, constructive performance note",
+    bookmarkLabel: "Review",
+    handoffCta: { en: "Open Review from the bookmarks", es: "Abre Evaluación en los marcadores" },
+    shiftMoment: {
+      en: "Tuesday. A review is due.",
+      es: "Martes. Hay una evaluación que entregar.",
+    },
+    location: browser("Open Forms from the bookmarks"),
+    jobCardLine: { en: "One strength, one area to grow.", es: "Una fortaleza, un área para mejorar." },
+    jobCardDoneLine: { en: "The review is submitted.", es: "La evaluación está enviada." },
+  },
+
+  "ops-report-packet": {
+    key: "ops-report-packet",
+    built: true,
+    label: { en: "Send the weekly report packet", es: "Envía el paquete del reporte semanal" },
+    dispatch: {
+      en: "A number, a calendar note, a summary. Sent as one packet.",
+      es: "Un número, una nota del calendario, un resumen. Enviado como un solo paquete.",
+    },
+    skill: "Combine a sheet number, a calendar note, and a summary into one packet",
+    bookmarkLabel: "Report",
+    handoffCta: { en: "Open Report from the bookmarks", es: "Abre Reporte en los marcadores" },
+    shiftMoment: {
+      en: "Thursday. The weekly report is due.",
+      es: "Jueves. Hay que entregar el reporte semanal.",
+    },
+    location: browser("Open Report from the bookmarks"),
+    jobCardLine: { en: "Four apps. One packet.", es: "Cuatro apps. Un paquete." },
+    jobCardDoneLine: { en: "The packet is sent.", es: "El paquete está enviado." },
+  },
+
+  "portfolio-reflection": {
+    key: "portfolio-reflection",
+    built: true,
+    label: { en: "Look back at the whole program", es: "Mira atrás en todo el programa" },
+    dispatch: {
+      en: "Every award, a few questions, and a summary that's yours to keep.",
+      es: "Cada premio, unas preguntas, y un resumen que es tuyo para guardar.",
+    },
+    skill: "Review everything I've learned and reflect on it",
+    bookmarkLabel: "Recap",
+    handoffCta: { en: "Open Recap from the bookmarks", es: "Abre Resumen en los marcadores" },
+    shiftMoment: {
+      en: "Friday. The last day of the program.",
+      es: "Viernes. El último día del programa.",
+    },
+    location: browser("Open Recap from the bookmarks"),
+    jobCardLine: { en: "Look back. Then write it down.", es: "Mira atrás. Luego escríbelo." },
+    jobCardDoneLine: { en: "Your summary is ready.", es: "Tu resumen está listo." },
+  },
 };
 
 /** All task descriptors in registry order. */

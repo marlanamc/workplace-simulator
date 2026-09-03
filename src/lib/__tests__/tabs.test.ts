@@ -90,6 +90,16 @@ describe("bookmarkTabKeys", () => {
     expect(bookmarkTabKeys("level22", []).has("expense-report")).toBe(true);
   });
 
+  it("gates the Act VII tabs to their own level", () => {
+    expect(bookmarkTabKeys("level24", []).has("meeting-minutes")).toBe(true);
+    expect(bookmarkTabKeys("level25", []).has("meeting-minutes")).toBe(false);
+    expect(bookmarkTabKeys("level25", []).has("performance-review")).toBe(true);
+    expect(bookmarkTabKeys("level26", []).has("performance-review")).toBe(false);
+    expect(bookmarkTabKeys("level26", []).has("ops-report-packet")).toBe(true);
+    expect(bookmarkTabKeys("level27", []).has("portfolio-reflection")).toBe(true);
+    expect(bookmarkTabKeys("level26", []).has("portfolio-reflection")).toBe(false);
+  });
+
   it("always shows the un-gated tabs", () => {
     const visible = bookmarkTabKeys("level8", []);
     for (const key of ["mail", "calendar", "files", "handbook", "portal", "tour"]) {

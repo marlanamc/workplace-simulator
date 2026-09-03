@@ -85,6 +85,10 @@ export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   "video-call": Video,
   "expense-report": Receipt,
   "slide-deck": Presentation,
+  "meeting-minutes": ClipboardList,
+  "performance-review": FileText,
+  "ops-report-packet": Send,
+  "portfolio-reflection": Compass,
 };
 
 export const APP_ICONS: Record<AppKey, LucideIcon> = {
@@ -177,6 +181,10 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
   "billing-sheet": Table2,
   "expense-report": Table2,
   slides: Presentation,
+  "meeting-minutes": ClipboardList,
+  "performance-review": FileText,
+  "ops-report-packet": Send,
+  "portfolio-reflection": Compass,
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
@@ -208,6 +216,10 @@ export const TRACK_ICONS: Record<string, LucideIcon> = {
   "get-everyone-in-the-room": Users,
   "expense-report": Receipt,
   "slide-deck": Presentation,
+  "meeting-minutes": ClipboardList,
+  "performance-review": FileText,
+  "ops-report-packet": Send,
+  "portfolio-reflection": Compass,
 };
 
 export const FOLDER_ICONS: Record<string, LucideIcon> = {

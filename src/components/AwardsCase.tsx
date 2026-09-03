@@ -43,6 +43,7 @@ const ACT_SHELF: Record<string, Localized<string>> = {
   act4: { en: "Assistant Manager", es: "Gerente asistente" },
   act5: { en: "Bridge", es: "Puente" },
   act6: { en: "Office Administrator", es: "Administración" },
+  act7: { en: "Team Lead", es: "Líder de equipo" },
 };
 
 type ShelfRow = { label?: string; tracks: Track[] };
