@@ -17,7 +17,7 @@ import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS } from "@/lib/tasks/tour/content";
 
-type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));
@@ -201,7 +201,7 @@ export default function BrowserClient() {
     progressLevelKey;
   const viewedLevelDef = LEVELS.find((l) => l.key === viewedLevelKey);
   const freeTabbing = viewedLevelDef?.freeTabbing ?? false;
-  const visibleBookmarks = bookmarkTabKeys(viewedLevelKey, completedTaskKeys, bridgePath);
+  const visibleBookmarks = bookmarkTabKeys(progressLevelKey, completedTaskKeys, bridgePath);
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.
   // `browserTabExplicit` (from window-manager) tells "go to this exact tab"
@@ -398,7 +398,13 @@ export default function BrowserClient() {
             </svg>
           )}
           <span className={`flex-1 truncate text-[14px] ${showingNewTab ? "text-[#5f6368]" : "text-[#202124]"}`}>
-            {showingNewTab ? "Search Google or type a URL" : active?.url ?? ""}
+            {showingNewTab
+              ? "Search Google or type a URL"
+              : active?.key === "files" && (currentTrack.key === "office-drive" || currentTrack.key === "expense-report")
+                ? "drive.harborsidehq.com"
+                : active?.key === "calendar" && currentTrack.key === "get-everyone-in-the-room"
+                  ? "calendar.harborsidehq.com"
+                  : (active?.url ?? "")}
           </span>
           {!showingNewTab && (
             <span className="shrink-0 text-[#f9ab00]" title="Bookmarked" aria-label="Bookmarked">

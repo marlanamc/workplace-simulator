@@ -64,7 +64,7 @@ type MailTask = PlayableMailTask;
  * structure rather than hand-listed, so a mail task that exists in content
  * but isn't wired into a level can never silently become unreachable here.
  */
-const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap((l) => taskKeysForLevel(l)) as string[]).filter(
+const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap((l) => taskKeysForLevel(l, null)) as string[]).filter(
   (k): k is MailTask => (PLAYABLE_MAIL_TASKS as string[]).includes(k),
 );
 
@@ -303,8 +303,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         return recordWrong({
           title: T("Edit the draft first.", "Edita el borrador primero."),
           body: T(
-            "That draft is too casual for HQ. Same yes, different tone.",
-            "Ese borrador es demasiado informal para HQ. El mismo sí, otro tono.",
+            "That draft is too casual for HQ. Keep the same yes, but say it in a more formal tone.",
+            "Ese borrador es demasiado informal para HQ. Di el mismo sí, pero en un tono más formal.",
           ),
         });
       }

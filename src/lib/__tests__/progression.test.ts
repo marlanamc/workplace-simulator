@@ -6,6 +6,7 @@ import {
   needsBridgePicker,
   PATH_A_TASKS,
   PATH_B_TASKS,
+  ACT_6_TASKS,
   type BridgePath,
 } from "@/lib/bridge-path";
 import {
@@ -49,6 +50,18 @@ function walkPath(start: TaskKey[], path: BridgePath): TaskKey[] {
   return done;
 }
 
+function walkHq(start: TaskKey[], path: BridgePath): TaskKey[] {
+  const done = [...start];
+  for (const key of ACT_6_TASKS) {
+    if (done.includes(key)) continue;
+    const handoff = nextHandoff(done, path);
+    expect(handoff, `dead end on HQ after ${done.at(-1)}`).not.toBeNull();
+    expect(handoff!.taskKey).toBe(key);
+    done.push(handoff!.taskKey);
+  }
+  return done;
+}
+
 /**
  * The game-loop invariant: from a fresh account, following the blue button
  * must visit every task exactly once and never dead-end. If any future
@@ -63,12 +76,18 @@ describe("the whole game can be walked start to finish", () => {
     expect(nextHandoff(trunk)).toBeNull();
 
     const pathA = walkPath(trunk, "a");
-    expect(allTracksComplete(pathA)).toBe(true);
+    expect(allTracksComplete(pathA)).toBe(false);
     expect(needsBridgePicker(pathA, "a")).toBe("other");
-    expect(nextHandoff(pathA, "a")).toBeNull();
+    expect(nextHandoff(pathA, "a")?.taskKey).toBe("office-drive");
     expect(nextHandoff(pathA, "b")?.taskKey).toBe("appointment-scheduling");
 
-    const both = walkPath(pathA, "b");
+    const hq = walkHq(pathA, "a");
+    expect(allTracksComplete(hq)).toBe(true);
+    expect(needsBridgePicker(hq, "a")).toBeNull();
+    expect(nextHandoff(hq, "a")).toBeNull();
+    expect(nextHandoff(hq, "b")?.taskKey).toBe("appointment-scheduling");
+
+    const both = walkPath(hq, "b");
     expect(needsBridgePicker(both, "b")).toBeNull();
     expect(nextHandoff(both, "b")).toBeNull();
   });
@@ -79,7 +98,8 @@ describe("the whole game can be walked start to finish", () => {
     for (const key of PATH_B_TASKS) {
       expect(pathA, `path A picked up ${key}`).not.toContain(key);
     }
-    expect(nextHandoff(pathA, "a")).toBeNull();
+    expect(nextHandoff(pathA, "a")?.taskKey).toBe("office-drive");
+    expect(pathA).not.toContain("appointment-scheduling");
   });
 
   it("a Path B-only run never hands off into Path A", () => {
@@ -88,9 +108,12 @@ describe("the whole game can be walked start to finish", () => {
     for (const key of PATH_A_TASKS) {
       expect(pathB, `path B picked up ${key}`).not.toContain(key);
     }
-    expect(allTracksComplete(pathB)).toBe(true);
-    expect(nextHandoff(pathB, "b")).toBeNull();
+    expect(allTracksComplete(pathB)).toBe(false);
+    expect(nextHandoff(pathB, "b")?.taskKey).toBe("office-drive");
     expect(nextHandoff(pathB, "a")?.taskKey).toBe("enrollment");
+    const hq = walkHq(pathB, "b");
+    expect(allTracksComplete(hq)).toBe(true);
+    expect(nextHandoff(hq, "b")).toBeNull();
   });
 
   it("a brand-new learner starts at the tour", () => {
@@ -110,6 +133,20 @@ describe("progress presets (the Studio time machine)", () => {
   it("teleporting to any level's start hands out exactly that level's first task", () => {
     for (const level of LEVELS) {
       if (level.pathTracks) {
+        for (const path of ["a", "b"] as const) {
+          const preset = taskKeysBeforeLevel(level.key, path);
+          const firstTask = taskKeysForLevel(level, path)[0];
+          expect(
+            nextHandoff(preset, path)?.taskKey,
+            `preset for "${level.key}:${path}" should point at ${firstTask}`,
+          ).toBe(firstTask);
+        }
+        continue;
+      }
+      const isHq = level.trackKeys.some((tk) =>
+        TRACKS.find((t) => t.key === tk)?.taskKeys.some((k) => ACT_6_TASKS.includes(k)),
+      );
+      if (isHq) {
         for (const path of ["a", "b"] as const) {
           const preset = taskKeysBeforeLevel(level.key, path);
           const firstTask = taskKeysForLevel(level, path)[0];

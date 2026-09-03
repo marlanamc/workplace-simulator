@@ -14,6 +14,11 @@ import { confirmationOffersOpenSlot } from "@/lib/tasks/appointment-scheduling/c
 import { declineIsSafe } from "@/lib/tasks/patient-intake/content";
 import { emailFlagsMismatch } from "@/lib/tasks/billing-sheet/content";
 import { replyIsSafe as callReplyIsSafe, choiceIsSafe } from "@/lib/tasks/confidentiality-call/content";
+import { isCurrentHqFile, shareIsViewOnly } from "@/lib/tasks/office-drive/content";
+import { slotIsOpenForEveryone } from "@/lib/tasks/multi-person-scheduling/content";
+import { videoCallPasses } from "@/lib/tasks/video-call/content";
+import { expenseReadyToSubmit, MISSING_KEY, receiptedKeys } from "@/lib/tasks/expense-report/content";
+import { slideDeckPasses, takeawayIsASentence } from "@/lib/tasks/slide-deck/content";
 
 /**
  * The graders: every pure function that decides whether a learner's typed
@@ -356,5 +361,76 @@ describe("confidentiality call: polite callback, not a share", () => {
     expect(callReplyIsSafe("Yes she has a 2 PM follow-up.")).toBe(false);
     expect(callReplyIsSafe("I can't help you. Don't call again.")).toBe(false);
     expect(callReplyIsSafe("ok")).toBe(false);
+  });
+});
+
+describe("office drive: current file, view only", () => {
+  it("only the current Q3 file is the target", () => {
+    expect(isCurrentHqFile("q3-final")).toBe(true);
+    expect(isCurrentHqFile("q3-v1")).toBe(false);
+    expect(isCurrentHqFile("q2-final")).toBe(false);
+  });
+
+  it("view-only shares, editor does not", () => {
+    expect(shareIsViewOnly("view")).toBe(true);
+    expect(shareIsViewOnly("edit")).toBe(false);
+    expect(shareIsViewOnly(null)).toBe(false);
+  });
+});
+
+describe("multi-person scheduling: the one open slot", () => {
+  it("accepts the slot that is free for everyone", () => {
+    expect(slotIsOpenForEveryone("2pm")).toBe(true);
+  });
+
+  it("rejects a clash", () => {
+    expect(slotIsOpenForEveryone("10am")).toBe(false);
+    expect(slotIsOpenForEveryone("3pm")).toBe(false);
+  });
+});
+
+describe("video call: muted, camera, chat — not talk-over", () => {
+  it("passes when joined muted, camera tried, and chat used", () => {
+    expect(videoCallPasses({ joinedMuted: true, toggledCamera: true, sentChat: true, unmuted: false })).toBe(true);
+  });
+
+  it("rejects unmute-and-talk-over", () => {
+    expect(videoCallPasses({ joinedMuted: true, toggledCamera: true, sentChat: true, unmuted: true })).toBe(false);
+  });
+
+  it("rejects a join that was not muted, or skipping camera or chat", () => {
+    expect(videoCallPasses({ joinedMuted: false, toggledCamera: true, sentChat: true, unmuted: false })).toBe(false);
+    expect(videoCallPasses({ joinedMuted: true, toggledCamera: false, sentChat: true, unmuted: false })).toBe(false);
+    expect(videoCallPasses({ joinedMuted: true, toggledCamera: true, sentChat: false, unmuted: false })).toBe(false);
+  });
+});
+
+describe("expense report: flag the missing receipt", () => {
+  it("passes when the dinner is flagged and the receipted rows are matched", () => {
+    expect(expenseReadyToSubmit(MISSING_KEY, receiptedKeys())).toBe(true);
+  });
+
+  it("rejects submit-as-is and a partial match", () => {
+    expect(expenseReadyToSubmit(null, receiptedKeys())).toBe(false);
+    expect(expenseReadyToSubmit(MISSING_KEY, ["uber"])).toBe(false);
+    expect(expenseReadyToSubmit("uber", receiptedKeys())).toBe(false);
+  });
+});
+
+describe("slide deck: title, planted number, takeaway, present", () => {
+  it.each([
+    "Flag missing receipts before you send.",
+    "One row had no receipt.",
+    "Marca lo que falta antes de enviar.",
+  ])("accepts a real takeaway: %j", (takeaway) => {
+    expect(takeawayIsASentence(takeaway)).toBe(true);
+    expect(slideDeckPasses({ title: "September expenses", takeaway, confirmedTotal: true, presented: true })).toBe(true);
+  });
+
+  it("rejects a missing title, unconfirmed number, fragment, or skipped Present", () => {
+    expect(slideDeckPasses({ title: "", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: true })).toBe(false);
+    expect(slideDeckPasses({ title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: false, presented: true })).toBe(false);
+    expect(slideDeckPasses({ title: "September", takeaway: "ok", confirmedTotal: true, presented: true })).toBe(false);
+    expect(slideDeckPasses({ title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: false })).toBe(false);
   });
 });

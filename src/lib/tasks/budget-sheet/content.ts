@@ -93,7 +93,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     underLabel: "under",
     chartTitle: "Actual by category",
     emailCta: "Email Maria what is over",
-    readFirst: "Click the status cell that says over. Read the formula first.",
+    readFirst: "First, click the status cell that says \"over\" and read its formula.",
     to: "To",
     subjectLabel: "Subject",
     subject: "This week's budget — one category over",
@@ -102,7 +102,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You read the IF, not just the total.",
-    doneBody: "Labor was $450 over. The formula and the chart said the same thing. You told Maria the category and the amount.",
+    doneBody: "Labor was $450 over budget. The formula and the chart said the same thing. You told Maria which category it was and how much.",
     badgeName: "Read a budget IF and a chart",
     badgeWhere: "Counts toward: Assistant Manager",
     tryAgain: "Do it again",
@@ -131,7 +131,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     underLabel: "bajo",
     chartTitle: "Real por categoría",
     emailCta: "Escribirle a Maria qué se pasó",
-    readFirst: "Haz clic en la celda de estado que dice sobre. Lee la fórmula primero.",
+    readFirst: "Primero, haz clic en la celda de estado que dice \"sobre\" y lee su fórmula.",
     to: "Para",
     subjectLabel: "Asunto",
     subject: "Presupuesto de esta semana — una categoría se pasó",
@@ -140,7 +140,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Leíste el IF, no solo el total.",
-    doneBody: "Mano de obra se pasó $450. La fórmula y el gráfico dijeron lo mismo. Le dijiste a Maria la categoría y la cantidad.",
+    doneBody: "Mano de obra se pasó $450 del presupuesto. La fórmula y el gráfico dijeron lo mismo. Le dijiste a Maria cuál categoría era y por cuánto.",
     badgeName: "Leer un IF de presupuesto y un gráfico",
     badgeWhere: "Cuenta para: Asistente de gerencia",
     tryAgain: "Hacerlo otra vez",
@@ -170,31 +170,31 @@ export const STARTERS: Record<Lang, string[]> = {
   es: [
     "Hola Maria, mano de obra se pasó del presupuesto por $450.",
     "Mano de obra real es 2850 contra un presupuesto de 2400.",
-    "El IF marca mano de obra como sobre. El gráfico muestra la misma barra.",
+    "El IF marca mano de obra como \"sobre\". El gráfico muestra la misma barra.",
   ],
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "IF is a yes-or-no in a cell",
+      t: "An IF formula is a yes-or-no question in a cell",
       s: [
         "Click the status cell. The formula bar shows =IF(actual>budget,\"over\",\"under\").",
-        "In plain language: if this number is bigger than that one, say over. If not, say under.",
-        "The chart next to the table is the same story in bars. Find the tall one that passed its budget.",
+        "In plain words: if this number is bigger than that one, the cell says \"over.\" If not, it says \"under.\"",
+        "The chart next to the table shows the same thing as bars. Find the tall bar that went past its budget line.",
       ],
-      tip: "This lesson is reading, not writing the formula. Once you can read an IF, writing one later is easier.",
+      tip: "In this lesson you only read the formula — you do not write one. Once you can read an IF, writing one later is easier.",
     },
   ],
   es: [
     {
-      t: "IF es un sí-o-no en una celda",
+      t: "Una fórmula IF es una pregunta de sí o no dentro de una celda",
       s: [
-        "Haz clic en la celda de estado. La barra muestra =IF(real>presupuesto,\"sobre\",\"bajo\").",
-        "En lenguaje claro: si este número es más grande que aquel, di sobre. Si no, di bajo.",
-        "El gráfico al lado de la tabla es la misma historia en barras. Encuentra la alta que pasó su presupuesto.",
+        "Haz clic en la celda de estado. La barra de fórmulas muestra =IF(real>presupuesto,\"sobre\",\"bajo\").",
+        "En palabras simples: si este número es más grande que aquel, la celda dice \"sobre.\" Si no, dice \"bajo.\"",
+        "El gráfico al lado de la tabla muestra lo mismo en barras. Busca la barra alta que pasó su línea de presupuesto.",
       ],
-      tip: "Esta lección es de leer, no de escribir la fórmula. Cuando puedas leer un IF, escribirlo después es más fácil.",
+      tip: "En esta lección solo lees la fórmula — no escribes ninguna. Cuando puedas leer un IF, escribir uno después es más fácil.",
     },
   ],
 };

@@ -91,24 +91,24 @@ export function responseIsComplete(body: string): boolean {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "The due date is part of the job",
+      t: "The due date is part of the assignment",
       s: [
-        "Read the syllabus before you write. The date is the first fact.",
-        "Check the box only after you have seen Friday 11:59 PM.",
-        "A complete reply is short: you heard them, and you will do a next step.",
+        "Read the syllabus before you write anything. The due date is the first thing to look for.",
+        "Only check the box after you have seen the date: Friday, 11:59 PM.",
+        "A complete reply is short: you understood the assignment, and here is your next step.",
       ],
-      tip: "Submitting without reading the date is the miss this lesson is about.",
+      tip: "This lesson is about what goes wrong when you submit without checking the due date.",
     },
   ],
   es: [
     {
-      t: "La fecha es parte del trabajo",
+      t: "La fecha de entrega es parte de la tarea",
       s: [
-        "Lee el temario antes de escribir. La fecha es el primer dato.",
-        "Marca la casilla solo cuando ya viste el viernes a las 11:59 PM.",
-        "Una respuesta completa es corta: los oíste, y harás un siguiente paso.",
+        "Lee el temario antes de escribir nada. La fecha de entrega es lo primero que hay que buscar.",
+        "Marca la casilla solo después de haber visto la fecha: viernes, 11:59 PM.",
+        "Una respuesta completa es corta: entendiste la tarea, y este es tu siguiente paso.",
       ],
-      tip: "Entregar sin leer la fecha es el error de esta lección.",
+      tip: "Esta lección trata de lo que sale mal cuando entregas sin revisar la fecha.",
     },
   ],
 };

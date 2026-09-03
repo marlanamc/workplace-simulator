@@ -505,8 +505,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     bookmarkLabel: "Floor",
     handoffCta: { en: "Open Floor from the bookmarks", es: "Abre Floor en los marcadores" },
     shiftMoment: {
-      en: "Thursday, 3:40 PM. The floor is loud.",
-      es: "Jueves, 3:40 PM. El piso está fuerte.",
+      en: "Thursday, 3:40 PM. It's busy out on the floor.",
+      es: "Jueves, 3:40 PM. Hay mucho movimiento en el local.",
     },
     location: browser("Open Floor from the bookmarks"),
   },
@@ -718,6 +718,101 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Front Desk from the bookmarks"),
     jobCardLine: { en: "Stay polite. Do not confirm.", es: "Sé amable. No confirmes." },
+  },
+
+  "office-drive": {
+    key: "office-drive",
+    built: true,
+    label: { en: "Find the current file at HQ", es: "Encuentra el archivo actual en HQ" },
+    dispatch: {
+      en: "HQ Drive is nested. Search, then share the current version — view only.",
+      es: "El Drive de HQ está anidado. Busca, luego comparte la versión actual — solo ver.",
+    },
+    skill: "Search a nested drive for the right file version",
+    bookmarkLabel: "Drive",
+    handoffCta: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
+    shiftMoment: {
+      en: "Monday at HQ. Dana needs the Q3 notes.",
+      es: "Lunes en HQ. Dana necesita las notas del T3.",
+    },
+    location: browser("Open Drive from the bookmarks"),
+    jobCardLine: { en: "Find the current file. Then share it.", es: "Encuentra el archivo actual. Luego compártelo." },
+  },
+
+  "multi-person-scheduling": {
+    key: "multi-person-scheduling",
+    built: true,
+    label: { en: "Find a time that works for everyone", es: "Encuentra un horario que sirva para todos" },
+    dispatch: {
+      en: "Four calendars. One slot is open for all of them.",
+      es: "Cuatro calendarios. Un hueco está libre para todos.",
+    },
+    skill: "Find a meeting time across several calendars",
+    bookmarkLabel: "Calendar",
+    handoffCta: { en: "Open Calendar from the bookmarks", es: "Abre Calendar en los marcadores" },
+    shiftMoment: {
+      en: "Wednesday. Get everyone in one room.",
+      es: "Miércoles. Junta a todos en una sala.",
+    },
+    location: browser("Open Calendar from the bookmarks"),
+    jobCardLine: { en: "Find the slot open for everyone.", es: "Encuentra el hueco libre para todos." },
+  },
+
+  "video-call": {
+    key: "video-call",
+    built: true,
+    label: { en: "Join the meeting you just booked", es: "Únete a la reunión que acabas de agendar" },
+    dispatch: {
+      en: "You are a few minutes late. Join muted. Ask in chat.",
+      es: "Llegas unos minutos tarde. Entra en silencio. Pregunta en el chat.",
+    },
+    skill: "Join a video meeting with workplace etiquette",
+    bookmarkLabel: "Zoom",
+    handoffCta: { en: "Open Zoom from the bookmarks", es: "Abre Zoom en los marcadores" },
+    shiftMoment: {
+      en: "Wednesday. The meeting is starting.",
+      es: "Miércoles. La reunión está empezando.",
+    },
+    location: browser("Open Zoom from the bookmarks"),
+    jobCardLine: { en: "Join muted. Ask in chat.", es: "Entra en silencio. Pregunta en el chat." },
+  },
+
+  "expense-report": {
+    key: "expense-report",
+    built: true,
+    label: { en: "Flag the expense with no receipt", es: "Marca el gasto sin recibo" },
+    dispatch: {
+      en: "Match the receipts. One row has none. Flag it before you send.",
+      es: "Empareja los recibos. Una fila no tiene. Márcala antes de enviar.",
+    },
+    skill: "Match receipts and catch a missing one",
+    bookmarkLabel: "Sheets",
+    handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
+    shiftMoment: {
+      en: "Thursday. The expense report is due.",
+      es: "Jueves. Hay que entregar el informe de gastos.",
+    },
+    location: browser("Open Sheets from the bookmarks"),
+    jobCardLine: { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Marca lo que falta." },
+  },
+
+  "slide-deck": {
+    key: "slide-deck",
+    built: true,
+    label: { en: "Present a three-slide deck", es: "Presenta un deck de tres diapositivas" },
+    dispatch: {
+      en: "Title, the expense total, one takeaway. Then present it.",
+      es: "Título, el total de gastos, una idea. Luego preséntalo.",
+    },
+    skill: "Build a short deck with a real number",
+    bookmarkLabel: "Slides",
+    handoffCta: { en: "Open Slides from the bookmarks", es: "Abre Diapositivas en los marcadores" },
+    shiftMoment: {
+      en: "Friday. The team is waiting.",
+      es: "Viernes. El equipo está esperando.",
+    },
+    location: browser("Open Slides from the bookmarks"),
+    jobCardLine: { en: "Three slides. Then present.", es: "Tres diapositivas. Luego presenta." },
   },
 };
 

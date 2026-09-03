@@ -52,7 +52,9 @@ export const TAB_META: TabMeta[] = [
   { key: "library", label: "Library", url: "library.bhcc.edu/search", color: "#5f6368", levelKey: "level19" },
   { key: "front-desk", label: "Front Desk", url: "desk.harborsidehealth.com", color: "#00897b", levelKey: "level16" },
   { key: "billing-sheet", ...SHEETS, levelKey: "level18" },
-  { key: "zoom", label: "Zoom", url: "zoom.harborsidecafe.com/join", color: "#2D8CFF", levelKey: "level13" },
+  { key: "expense-report", label: "Sheets", url: "sheets.harborsidehq.com", color: "#0f9d58", levelKey: "level22" },
+  { key: "slides", label: "Slides", url: "slides.harborsidehq.com", color: "#f9ab00", levelKey: "level23" },
+  { key: "zoom", label: "Zoom", url: "zoom.harborsidehq.com/join", color: "#2D8CFF", levelKey: "level21" },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", color: "#7248b9", levelKey: "level3b" },
   { key: "account-recovery", label: "Sign In", url: "accounts.harborsidecafe.com", color: "#5f6368", levelKey: "level3c" },
   { key: "portal", label: "Portal", url: "portal.harborsidecafe.com", color: "#8430ce", levelKey: "level2" },
@@ -76,7 +78,7 @@ export const TAB_COLORS: Record<string, string> = Object.fromEntries(
  * The five Sheets-flavored tabs. They share a label, so at most one shows on
  * the bookmark bar at a time — whichever the current level needs.
  */
-const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet", "billing-sheet"];
+const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet", "billing-sheet", "expense-report"];
 
 /** Tabs that appear on the bookmark bar only while their own level is in view. */
 const GATED_TABS: Record<string, string> = {
@@ -84,6 +86,8 @@ const GATED_TABS: Record<string, string> = {
   "team-meeting": "level11",
   "priority-call": "level12",
   "college-offer": "level13",
+  zoom: "level21",
+  slides: "level23",
 };
 
 /** Act V tools: only on their path, and only on the days that need them. */
@@ -93,9 +97,6 @@ const PATH_GATED_TABS: Record<string, { path: "a" | "b"; levels: readonly string
   library: { path: "a", levels: ["level19"] },
   "front-desk": { path: "b", levels: ["level16", "level17", "level18", "level19"] },
 };
-
-/** Studio-only tabs: jumpable, never on the learner bookmark bar. */
-const STUDIO_ONLY_TABS = new Set(["zoom"]);
 
 /**
  * Which bookmarks show on the bar for the level currently being viewed.
@@ -118,11 +119,11 @@ export function bookmarkTabKeys(
     level10: "formula-check",
     level14: "budget-sheet",
     level18: path === "b" ? "billing-sheet" : "spreadsheet",
+    level22: "expense-report",
   };
   const activeSheet = sheetForLevel[viewedLevelKey] ?? "spreadsheet";
   return new Set(
     TAB_META.filter((t) => {
-      if (STUDIO_ONLY_TABS.has(t.key)) return false;
       const pathGate = PATH_GATED_TABS[t.key];
       if (pathGate) {
         return path === pathGate.path && pathGate.levels.includes(viewedLevelKey);

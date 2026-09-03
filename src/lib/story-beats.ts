@@ -110,7 +110,7 @@ const STORY_MAILS: InboxRow[] = [
       es: [
         "Lo tengo. Gracias por enviar el reporte de julio tan rápido.",
         "Nos vemos en el piso.",
-        "Ahora te necesito en el horario. Dos turnos se cruzan.",
+        "Ahora necesito que revises tu horario. Dos turnos se cruzan.",
       ],
     },
   },
@@ -260,14 +260,14 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "files",
     subject: { en: "Jordan has the file", es: "Jordan ya tiene el archivo" },
-    preview: { en: "View only. That's what I wanted.", es: "Solo ver. Eso es lo que quería." },
+    preview: { en: "Shared view only — just what I wanted.", es: "Compartido en solo ver, justo lo que quería." },
     body: {
       en: [
-        "Jordan has this week's schedule, view only. That's exactly what I wanted.",
-        "Friday the counts are due. Total them yourself.",
+        "Jordan has this week's schedule as view only. That's exactly what I wanted.",
+        "Friday the counts are due. Add them up yourself.",
       ],
       es: [
-        "Jordan ya tiene el horario de esta semana, solo para ver. Eso es justo lo que quería.",
+        "Jordan ya tiene el horario de esta semana en modo solo ver. Eso es justo lo que quería.",
         "El viernes hay que entregar las cuentas. Súmalas tú.",
       ],
     },
@@ -300,7 +300,7 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "make-a-copy",
     subject: { en: "Your copy, not the master", es: "Tu copia, no el original" },
-    preview: { en: "That's the move. Work in yours.", es: "Ese es el paso. Trabaja en la tuya." },
+    preview: { en: "That's the right way. Work in your copy.", es: "Así es como se hace. Trabaja en tu copia." },
     body: {
       en: ["You copied the template. The master is still clean.", "Now put this week's numbers in your copy."],
       es: ["Copiaste la plantilla. El original sigue limpio.", "Ahora pon los números de esta semana en tu copia."],
@@ -314,15 +314,15 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "status-report",
     subject: { en: "Got the total — and Jordan did too", es: "Tengo el total — y Jordan también" },
-    preview: { en: "That's how a status email should look.", es: "Así debe verse un correo de estado." },
+    preview: { en: "That's what a status email should look like.", es: "Así se ve un buen correo de estado." },
     body: {
       en: [
-        "Got the SUM. Jordan is on the thread. That's how a status email should look.",
-        "Tuesday will be two things at once. Drop neither.",
+        "Got the SUM, and Jordan is on the email. That's what a status email should look like.",
+        "Tuesday you'll have two things going at once. Do not let either one slip.",
       ],
       es: [
-        "Tengo el SUM. Jordan está en el hilo. Así debe verse un correo de estado.",
-        "El martes serán dos cosas a la vez. No sueltes ninguna.",
+        "Tengo el SUM, y Jordan está en el correo. Así se ve un buen correo de estado.",
+        "El martes vas a tener dos cosas a la vez. No dejes que se te pase ninguna.",
       ],
     },
   },
@@ -338,13 +338,13 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "Friday 10 AM works for inventory.",
-        "Sam has the allergen list, view only. You didn't drop either one.",
-        "You write the crew week now. Saturday close is open.",
+        "Sam has the allergen list, view only. You did not forget either one.",
+        "You write the crew's schedule now. Saturday's close still has no one on it.",
       ],
       es: [
         "El viernes a las 10 AM funciona para inventario.",
-        "Sam tiene la lista de alérgenos, solo ver. No soltaste ninguna.",
-        "Ahora tú escribes la semana del equipo. El cierre del sábado está abierto.",
+        "Sam tiene la lista de alérgenos, solo ver. No te olvidaste de ninguna.",
+        "Ahora tú haces el horario del equipo. El cierre del sábado todavía no tiene a nadie.",
       ],
     },
   },
@@ -400,17 +400,17 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "team-meeting",
     subject: { en: "See you Thursday", es: "Nos vemos el jueves" },
-    preview: { en: "Short agenda. That's a real huddle.", es: "Agenda corta. Eso es una reunión de verdad." },
+    preview: { en: "A short agenda is a good huddle.", es: "Una agenda corta es una buena reunión." },
     body: {
       en: [
         "Thursday 10 AM. I saw the agenda.",
-        "Two or three bullets. That's a huddle a lead can run.",
-        "Thursday will be loud. Three things at once.",
+        "Two or three points is the right size for a huddle a lead can run.",
+        "Thursday will be busy. Three things at once.",
       ],
       es: [
         "Jueves 10 AM. Vi la agenda.",
-        "Dos o tres puntos. Eso es una reunión que un líder puede dirigir.",
-        "El jueves va a estar fuerte. Tres cosas a la vez.",
+        "Dos o tres puntos es el tamaño justo para una reunión que un líder puede dirigir.",
+        "El jueves va a estar movido. Tres cosas a la vez.",
       ],
     },
   },
@@ -421,11 +421,11 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "priority-call",
-    subject: { en: "You held the floor", es: "Aguantaste el piso" },
+    subject: { en: "You kept the floor running", es: "Mantuviste el local funcionando" },
     preview: { en: "There's an Assistant Manager opening.", es: "Hay una vacante de asistente de gerencia." },
     body: {
       en: [
-        "Dana got a real answer. Thursday close is covered. Saturday 10 AM works for me.",
+        "Dana got a real answer. Thursday's close is covered. Saturday 10 AM works for me.",
         "There's an Assistant Manager opening. I want you to read the offer when you're ready.",
       ],
       es: [
@@ -442,16 +442,16 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "college-offer",
     subject: { en: "Class is on the calendar", es: "La clase ya está en el calendario" },
-    preview: { en: "We'll sort Tuesday close before the semester.", es: "Arreglamos el cierre del martes antes del semestre." },
+    preview: { en: "We'll work out Tuesday's close before the semester.", es: "Resolvemos el cierre del martes antes del semestre." },
     body: {
       en: [
-        "You accepted the offer and put the class on a week that already had a close.",
-        "We'll sort Tuesday before the semester starts. That is the whole point of saying it now.",
+        "You accepted the offer and put the class on a week that already had a close shift.",
+        "We'll work out Tuesday before the semester starts. That is why it helps to say it now.",
         "Wednesday I need you to read this week's budget. One category is over.",
       ],
       es: [
-        "Aceptaste la oferta y pusiste la clase en una semana que ya tenía un cierre.",
-        "Arreglamos el martes antes de que empiece el semestre. Ese es el punto de decirlo ahora.",
+        "Aceptaste la oferta y pusiste la clase en una semana que ya tenía un turno de cierre.",
+        "Resolvemos lo del martes antes de que empiece el semestre. Por eso ayuda decirlo ahora.",
         "El miércoles necesito que leas el presupuesto de esta semana. Una categoría se pasó.",
       ],
     },
@@ -463,18 +463,18 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "budget-sheet",
-    subject: { en: "Labor was the one", es: "Mano de obra era esa" },
-    preview: { en: "You read the IF. HQ will write next.", es: "Leíste el IF. HQ escribe después." },
+    subject: { en: "Labor was the one over budget", es: "Mano de obra era la que se pasó" },
+    preview: { en: "You read the IF. HQ writes next.", es: "Leíste el IF. HQ escribe después." },
     body: {
       en: [
-        "Labor was over. You opened the formula instead of guessing from the total.",
-        "I flagged it upstairs. HQ will write the cafe a question on Friday.",
-        "Read the whole thread before you answer. Not every message needs everyone.",
+        "Labor was over budget. You opened the formula instead of guessing from the total.",
+        "I passed it up to HQ. They will email the cafe a question on Friday.",
+        "Read the whole thread before you answer. Not every message needs to go to everyone.",
       ],
       es: [
-        "Mano de obra se pasó. Abriste la fórmula en vez de adivinar por el total.",
-        "Lo subí. HQ le va a escribir al café el viernes.",
-        "Lee todo el hilo antes de responder. No todo mensaje necesita a todos.",
+        "Mano de obra se pasó del presupuesto. Abriste la fórmula en vez de adivinar por el total.",
+        "Lo pasé a HQ. Ellos le van a escribir una pregunta al café el viernes.",
+        "Lee todo el hilo antes de responder. No todos los mensajes tienen que ir a todos.",
       ],
     },
   },
@@ -486,17 +486,17 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "reply-all",
     subject: { en: "You sent it to Dana", es: "Se lo enviaste a Dana" },
-    preview: { en: "That is how an Assistant Manager writes.", es: "Así escribe un asistente de gerencia." },
+    preview: { en: "That's how an Assistant Manager writes.", es: "Así escribe un asistente de gerencia." },
     body: {
       en: [
-        "Dana got a clear yes. The rest of the thread did not need it.",
-        "You edited the draft before you sent it. That pause is the job.",
-        "More is coming. For today, this is a real week as Assistant Manager.",
+        "Dana got a clear yes. The rest of the thread did not need to see it.",
+        "You read your draft again before you sent it. Taking that moment is part of the job.",
+        "There is more to come. For today, this was a real week as Assistant Manager.",
       ],
       es: [
-        "Dana recibió un sí claro. El resto del hilo no lo necesitaba.",
-        "Editaste el borrador antes de enviarlo. Esa pausa es el trabajo.",
-        "Vendrá más. Por hoy, esta fue una semana de verdad como asistente de gerencia.",
+        "Dana recibió un sí claro. El resto del hilo no tenía que verlo.",
+        "Volviste a leer tu borrador antes de enviarlo. Tomarte ese momento es parte del trabajo.",
+        "Viene más. Por hoy, esta fue una semana de verdad como asistente de gerencia.",
       ],
     },
   },
@@ -508,15 +508,15 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "enrollment",
     subject: { en: "You sent the application", es: "Enviaste la solicitud" },
-    preview: { en: "Deadline first. That's the move.", es: "La fecha primero. Ese es el paso." },
+    preview: { en: "Find the deadline first, then apply.", es: "Primero busca la fecha límite, luego aplica." },
     body: {
       en: [
-        "You found the deadline and sent the statement. That is how a portal works.",
-        "Wednesday the award letter lands. The number and the accept-by date are on the page.",
+        "You found the deadline and sent the statement. That is how you use a portal.",
+        "Wednesday the award letter lands. The amount and the accept-by date are on the page.",
       ],
       es: [
-        "Encontraste la fecha y enviaste la carta. Así funciona un portal.",
-        "El miércoles llega la carta de ayuda. El número y la fecha para aceptar están en la página.",
+        "Encontraste la fecha y enviaste la carta. Así se usa un portal.",
+        "El miércoles llega la carta de ayuda financiera. El monto y la fecha para aceptar están en la página.",
       ],
     },
   },
@@ -556,7 +556,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "La ayuda es $2,400. Acepta antes del 15 de octubre. Sacaste los dos números de la página.",
-        "El jueves hay que entregar el curso. Lee el temario primero.",
+        "El jueves hay que entregar la tarea del curso. Lee el temario primero.",
       ],
     },
   },
@@ -591,11 +591,11 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "You read the syllabus first.", es: "Leíste el temario primero." },
     body: {
       en: [
-        "You saw Friday 11:59 PM and still sent it Thursday. That is the whole skill.",
+        "You saw the due date was Friday 11:59 PM and still sent it Thursday. That is the whole skill here.",
         "Friday, find one source you would actually cite.",
       ],
       es: [
-        "Viste el viernes a las 11:59 PM y aun así lo enviaste el jueves. Esa es toda la habilidad.",
+        "Viste que la fecha de entrega era el viernes a las 11:59 PM y aun así lo enviaste el jueves. Esa es toda la habilidad aquí.",
         "El viernes, encuentra una fuente que de verdad citarías.",
       ],
     },
@@ -607,16 +607,16 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "billing-sheet",
-    subject: { en: "93000 was the mismatch", es: "93000 era el error" },
+    subject: { en: "93000 was the mismatch", es: "93000 era el que no cuadraba" },
     preview: { en: "You named the row and the right charge.", es: "Nombraste la fila y el cargo correcto." },
     body: {
       en: [
         "The EKG was billed at $185. The list says $85. You told the office both numbers.",
-        "Friday the phone will ring. You cannot verify who is calling.",
+        "Friday the phone will ring. You will not be able to be sure who is calling.",
       ],
       es: [
         "El EKG se cobró a $185. La lista dice $85. Le dijiste a la oficina los dos números.",
-        "El viernes va a sonar el teléfono. No puedes verificar quién llama.",
+        "El viernes va a sonar el teléfono. No vas a poder estar seguro de quién llama.",
       ],
     },
   },
@@ -628,15 +628,15 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "research",
     subject: { en: "You cited the database", es: "Citaste la base de datos" },
-    preview: { en: "Not the ad. Not the forum.", es: "No el anuncio. No el foro." },
+    preview: { en: "You picked the database, not the ad or the forum.", es: "Elegiste la base de datos, no el anuncio ni el foro." },
     body: {
       en: [
-        "You picked the library database and said why. The ad and the forum looked easier.",
-        "That door is done. The front desk is still open if you want it.",
+        "You picked the library database and said why. The ad and the forum looked easier, but you did not use them.",
+        "That path is done. Monday, Dana needs you at HQ.",
       ],
       es: [
-        "Elegiste la base de datos de la biblioteca y dijiste por qué. El anuncio y el foro se veían más fáciles.",
-        "Esa puerta ya está. La recepción sigue abierta si la quieres.",
+        "Elegiste la base de datos de la biblioteca y dijiste por qué. El anuncio y el foro se veían más fáciles, pero no los usaste.",
+        "Ese camino ya está terminado. El lunes Dana te necesita en HQ.",
       ],
     },
   },
@@ -648,15 +648,115 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "confidentiality-call",
     subject: { en: "You did not confirm", es: "No confirmaste" },
-    preview: { en: "Polite, and a callback.", es: "Amable, y una devolución." },
+    preview: { en: "Polite, and you offered a callback.", es: "Amable, y ofreciste devolver la llamada." },
     body: {
       en: [
-        "You did not share the visit. You offered to have the patient call back. That is the job.",
-        "That door is done. The college path is still open if you want it.",
+        "You did not share the visit. You offered to have the patient call back. That was the right call.",
+        "That path is done. Monday, Dana needs you at HQ.",
       ],
       es: [
-        "No compartiste la visita. Ofreciste que el paciente devuelva la llamada. Ese es el trabajo.",
-        "Esa puerta ya está. El camino de la universidad sigue abierto si lo quieres.",
+        "No compartiste la visita. Ofreciste que el paciente devuelva la llamada. Esa fue la decisión correcta.",
+        "Ese camino ya está terminado. El lunes Dana te necesita en HQ.",
+      ],
+    },
+  },
+  {
+    key: "story-office-drive",
+    ...MARIA,
+    time: "9:18 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "office-drive",
+    subject: { en: "You sent Dana the current file", es: "Le enviaste a Dana el archivo actual" },
+    preview: { en: "The current file, shared view only.", es: "El archivo actual, compartido en solo ver." },
+    body: {
+      en: [
+        "You found the current Q3 notes and shared them as view only. You left last quarter's file alone.",
+        "Wednesday, find a time that works for everyone. Then join the call.",
+      ],
+      es: [
+        "Encontraste las notas actuales del T3 y las compartiste en modo solo ver. Dejaste en paz el archivo del trimestre pasado.",
+        "El miércoles, encuentra un horario que sirva para todos. Luego únete a la llamada.",
+      ],
+    },
+  },
+  {
+    key: "story-multi-person-scheduling",
+    ...MARIA,
+    time: "10:42 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "multi-person-scheduling",
+    subject: { en: "2 PM is the only open slot", es: "Las 2 PM es el único hueco libre" },
+    preview: { en: "Everyone is free at that time.", es: "Todos están libres a esa hora." },
+    body: {
+      en: [
+        "You invited the one time that was open on everyone's calendar. That was exactly right.",
+        "The meeting is starting. Join with your mic off.",
+      ],
+      es: [
+        "Invitaste a la única hora que estaba libre en el calendario de todos. Eso estuvo perfecto.",
+        "La reunión está empezando. Entra con el micrófono apagado.",
+      ],
+    },
+  },
+  {
+    key: "story-video-call",
+    ...MARIA,
+    time: "2:20 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "video-call",
+    subject: { en: "You asked in chat", es: "Preguntaste en el chat" },
+    preview: { en: "Mic off, and you did not talk over anyone.", es: "Micrófono apagado, y no hablaste encima de nadie." },
+    body: {
+      en: [
+        "You joined with your mic off, tried the camera, and asked your question in chat. You did not talk over anyone.",
+        "Thursday the expense report is due. One row has no receipt.",
+      ],
+      es: [
+        "Entraste con el micrófono apagado, probaste la cámara y preguntaste en el chat. No hablaste encima de nadie.",
+        "El jueves hay que entregar el informe de gastos. Una fila no tiene recibo.",
+      ],
+    },
+  },
+  {
+    key: "story-expense-report",
+    ...MARIA,
+    time: "4:08 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "expense-report",
+    subject: { en: "You flagged the dinner", es: "Marcaste la cena" },
+    preview: { en: "The receipts added up to $188.", es: "Los recibos sumaron $188." },
+    body: {
+      en: [
+        "You matched the four receipts and flagged the team dinner. You did not submit it as-is.",
+        "Friday, that $188 goes on the middle slide. Present the slides.",
+      ],
+      es: [
+        "Emparejaste los cuatro recibos y marcaste la cena del equipo. No lo enviaste así como estaba.",
+        "El viernes, esos $188 van en la diapositiva del medio. Presenta las diapositivas.",
+      ],
+    },
+  },
+  {
+    key: "story-slide-deck",
+    ...MARIA,
+    time: "3:22 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "slide-deck",
+    subject: { en: "Three slides, one real number", es: "Tres diapositivas, un número real" },
+    preview: { en: "You presented it.", es: "Lo presentaste." },
+    body: {
+      en: [
+        "A title, the $188, and one takeaway. You presented it. That is all HQ needs for now.",
+        "There is more to come. Check Studio if you still want to try the other path.",
+      ],
+      es: [
+        "Un título, los $188, y una idea. Lo presentaste. Eso es todo lo que HQ necesita por ahora.",
+        "Viene más. Revisa Studio si todavía quieres probar el otro camino.",
       ],
     },
   },
@@ -741,7 +841,7 @@ export function storyMailsFor(completedTaskKeys: TaskKey[], flags: StoryFlags): 
 }
 
 /** Every task in the order the game hands them out. */
-const CURRICULUM_ORDER: TaskKey[] = LEVELS.flatMap((l) => taskKeysForLevel(l));
+const CURRICULUM_ORDER: TaskKey[] = LEVELS.flatMap((l) => taskKeysForLevel(l, null));
 
 /**
  * The inbox as it looked at a moment in the story. While a mail task is

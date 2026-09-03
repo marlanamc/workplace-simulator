@@ -147,42 +147,42 @@ export const HINTS: Record<string, Record<Lang, string>> = {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "View only means do not change their file",
+      t: "View only means you cannot change their file",
       s: [
-        "View only, read only, and Viewer are the same idea. You can look. You cannot type.",
-        "File → Make a copy puts a new file in your Drive. The original stays safe.",
-        "Do not ask for edit access on a template. Do not share the master as Can edit.",
+        "View only, read only, and Viewer all mean the same thing. You can look at the file, but you cannot type in it.",
+        "File → Make a copy puts a new file in your own Drive. The original stays safe.",
+        "Do not ask for edit access on a template. Do not share the original file with Can edit.",
       ],
-      tip: "If a shared Doc or Sheet will not let you type, copy it. Do not fight the lock.",
+      tip: "If a shared Doc or Sheet will not let you type, make your own copy instead of trying to unlock it.",
     },
     {
       t: "Name the copy so people can find it",
       s: [
-        `Use ${COPY_NAME}. A clear name is how the next person finds your week.`,
-        "The copy is yours. You can type. The template still cannot.",
-        "Docs uses the same File → Make a copy menu.",
+        `Use ${COPY_NAME}. A clear name is how the next person will find this week's sheet.`,
+        "The copy is yours, so you can type in it. The template still cannot be changed.",
+        "In Docs, you use the same File → Make a copy menu.",
       ],
-      tip: "The name is a habit, not the whole skill. The skill is: do not overwrite their file.",
+      tip: "The name is a good habit, but the real point is this: do not overwrite someone else's file.",
     },
   ],
   es: [
     {
-      t: "Solo ver significa no cambiar su archivo",
+      t: "Solo ver significa que no puedes cambiar su archivo",
       s: [
-        "Solo ver, solo lectura y Lector son la misma idea. Puedes mirar. No puedes escribir.",
-        "Archivo → Hacer una copia pone un archivo nuevo en tu Drive. El original se queda seguro.",
-        "No pidas permiso de editar en una plantilla. No compartas el original como Puede editar.",
+        "Solo ver, solo lectura y Lector significan lo mismo. Puedes mirar el archivo, pero no puedes escribir en él.",
+        "Archivo → Hacer una copia pone un archivo nuevo en tu propio Drive. El original se queda seguro.",
+        "No pidas permiso de editar en una plantilla. No compartas el archivo original con Puede editar.",
       ],
-      tip: "Si un Doc o Sheet compartido no te deja escribir, cópialo. No pelees con el candado.",
+      tip: "Si un Doc o Sheet compartido no te deja escribir, haz tu propia copia en vez de tratar de desbloquearlo.",
     },
     {
-      t: "Nombra la copia para que se pueda encontrar",
+      t: "Nómbrala para que la gente la pueda encontrar",
       s: [
-        `Usa ${COPY_NAME}. Un nombre claro es cómo la siguiente persona encuentra tu semana.`,
-        "La copia es tuya. Puedes escribir. La plantilla sigue sin poder.",
-        "Docs usa el mismo menú Archivo → Hacer una copia.",
+        `Usa ${COPY_NAME}. Un nombre claro es como la siguiente persona va a encontrar la hoja de esta semana.`,
+        "La copia es tuya, así que puedes escribir en ella. La plantilla sigue sin poder cambiarse.",
+        "En Docs, usas el mismo menú Archivo → Hacer una copia.",
       ],
-      tip: "El nombre es un hábito, no toda la destreza. La destreza es: no pisar su archivo.",
+      tip: "El nombre es una buena costumbre, pero el punto de verdad es este: no sobrescribas el archivo de otra persona.",
     },
   ],
 };

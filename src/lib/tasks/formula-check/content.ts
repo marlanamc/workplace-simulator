@@ -5,15 +5,15 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "🧮",
     kicker: "Friday. Hours are due.",
-    headline: "The total looks fine. The formula does not.",
-    body: "Open the Hours cell. See which rows it adds. Someone on the list is missing.",
+    headline: "The total looks fine, but the formula is not.",
+    body: "Open the Hours cell and look at which rows the formula adds up. Someone on the list is being left out.",
     cta: "Open the sheet",
   },
   es: {
     emoji: "🧮",
     kicker: "Viernes. Hay que entregar las horas.",
-    headline: "El total se ve bien. La fórmula no.",
-    body: "Abre la celda de Horas. Mira qué filas suma. Falta alguien de la lista.",
+    headline: "El total se ve bien, pero la fórmula no.",
+    body: "Abre la celda de Horas y mira qué filas está sumando la fórmula. Está dejando fuera a alguien de la lista.",
     cta: "Abrir la hoja",
   },
 };
@@ -84,7 +84,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You fixed the range, not just the number.",
-    doneBody: "The total looked fine. The formula skipped Casey. You opened it, fixed the rows, and sent Maria the real total.",
+    doneBody: "The total looked fine, but the formula was skipping Casey. You opened it, fixed the rows, and sent Maria the real total.",
     badgeName: "Fix a formula range",
     badgeWhere: "Counts toward: Shift Supervisor",
     tryAgain: "Do it again",
@@ -120,7 +120,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Arreglaste el rango, no solo el número.",
-    doneBody: "El total se veía bien. La fórmula se saltó a Casey. La abriste, corregiste las filas y le enviaste a Maria el total real.",
+    doneBody: "El total se veía bien, pero la fórmula estaba dejando fuera a Casey. La abriste, corregiste las filas y le enviaste a Maria el total real.",
     badgeName: "Corregir el rango de una fórmula",
     badgeWhere: "Cuenta para: Supervisor de turno",
     tryAgain: "Hacerlo otra vez",
@@ -160,8 +160,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Read the formula, not just the number",
       s: [
-        "Click the total cell. The formula bar shows the real range.",
-        "Count the names. If the last row is outside the range, the total is quietly wrong.",
+        "Click the total cell. The formula bar shows you which rows it is actually adding.",
+        "Count the names. If the last row is outside the range, the total is wrong even though it looks fine.",
         "Fix the range so it includes everyone. Then check AVERAGE the same way.",
       ],
       tip: "A number can look official and still skip a person. Open the formula every time.",
@@ -180,9 +180,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Lee la fórmula, no solo el número",
       s: [
-        "Haz clic en la celda del total. La barra de fórmulas muestra el rango real.",
-        "Cuenta los nombres. Si la última fila queda fuera del rango, el total está calladamente mal.",
-        "Corrige el rango para que incluya a todos. Luego revisa AVERAGE igual.",
+        "Haz clic en la celda del total. La barra de fórmulas te muestra qué filas está sumando en realidad.",
+        "Cuenta los nombres. Si la última fila queda fuera del rango, el total está mal aunque se vea bien.",
+        "Corrige el rango para que incluya a todos. Luego revisa AVERAGE de la misma forma.",
       ],
       tip: "Un número puede verse oficial y aun así saltarse a una persona. Abre la fórmula siempre.",
     },
@@ -190,7 +190,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Dile a tu líder qué estaba mal",
       s: [
         "Envía el total corregido. Di qué le faltaba a la fórmula.",
-        "No necesitas una explicación larga. Una oración clara basta.",
+        "No necesitas una explicación larga. Con una oración clara es suficiente.",
         "Corrígelo primero, luego escribe. No envíes un número que no hayas revisado.",
       ],
       tip: "Nombrar a la persona que faltaba ayuda a tu líder a confiar en el número nuevo.",

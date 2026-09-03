@@ -59,7 +59,9 @@ export async function setProgressPreset(presetKey: string | "all") {
   }
 
   const taskKeys =
-    levelKey === "all" ? LEVELS.flatMap((l) => taskKeysForLevel(l)) : taskKeysBeforeLevel(levelKey, path);
+    levelKey === "all"
+      ? LEVELS.flatMap((l) => taskKeysForLevel(l, null))
+      : taskKeysBeforeLevel(levelKey, path);
   const trackKeys =
     levelKey === "all" ? TRACKS.map((t) => t.key) : trackKeysBeforeLevel(levelKey, path);
 

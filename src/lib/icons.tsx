@@ -36,6 +36,8 @@ import {
   Thermometer,
   Users,
   Video,
+  Presentation,
+  Receipt,
 } from "lucide-react";
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 
@@ -78,6 +80,11 @@ export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   "billing-sheet": Calculator,
   research: Library,
   "confidentiality-call": Phone,
+  "office-drive": HardDrive,
+  "multi-person-scheduling": CalendarClock,
+  "video-call": Video,
+  "expense-report": Receipt,
+  "slide-deck": Presentation,
 };
 
 export const APP_ICONS: Record<AppKey, LucideIcon> = {
@@ -168,6 +175,8 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
   library: Library,
   "front-desk": CalendarClock,
   "billing-sheet": Table2,
+  "expense-report": Table2,
+  slides: Presentation,
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
@@ -195,12 +204,20 @@ export const TRACK_ICONS: Record<string, LucideIcon> = {
   "billing-sheet": Calculator,
   research: Library,
   "confidentiality-call": Phone,
+  "office-drive": HardDrive,
+  "get-everyone-in-the-room": Users,
+  "expense-report": Receipt,
+  "slide-deck": Presentation,
 };
 
 export const FOLDER_ICONS: Record<string, LucideIcon> = {
   Schedules: CalendarDays,
   Forms: ClipboardList,
   "Manager Memos": StickyNote,
+  "Q2 2026": FolderOpen,
+  "Q3 2026": FolderOpen,
+  Shared: Users,
+  Receipts: Receipt,
 };
 
 export {

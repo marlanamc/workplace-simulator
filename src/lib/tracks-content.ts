@@ -4,6 +4,7 @@ import { TASK_LIST, type PortalSection, type TaskLocation } from "./tasks/regist
 import {
   inferBridgePath,
   isAct5Task,
+  isAct6Task,
   pathOfTask,
   pathIsComplete,
   type BridgePath,
@@ -220,6 +221,34 @@ export const TRACKS: Track[] = [
     subtitle: "Stay polite. Do not confirm.",
     taskKeys: ["confidentiality-call"],
     awardEmoji: "📞",
+  },
+  {
+    key: "office-drive",
+    title: "Welcome to HQ",
+    subtitle: "Find the current file. Then share it.",
+    taskKeys: ["office-drive"],
+    awardEmoji: "🏢",
+  },
+  {
+    key: "get-everyone-in-the-room",
+    title: "Get Everyone in the Room",
+    subtitle: "Find a time. Then join the meeting.",
+    taskKeys: ["multi-person-scheduling", "video-call"],
+    awardEmoji: "🤝",
+  },
+  {
+    key: "expense-report",
+    title: "The Expense Report",
+    subtitle: "Match the receipts. Flag what is missing.",
+    taskKeys: ["expense-report"],
+    awardEmoji: "🧾",
+  },
+  {
+    key: "slide-deck",
+    title: "Presenting to the Team",
+    subtitle: "Three slides. One real number.",
+    taskKeys: ["slide-deck"],
+    awardEmoji: "📊",
   },
 ];
 
@@ -482,7 +511,7 @@ export const LEVELS: Level[] = [
       title: { en: "Maria trusts you with the numbers.", es: "Maria te confía los números." },
       body: {
         en: "This week's totals are yours to enter and to check.",
-        es: "Los totales de esta semana son tuyos: escríbelos y revísalos.",
+        es: "Los totales de esta semana te toca escribirlos y revisarlos a ti.",
       },
       cta: { en: "Open the numbers", es: "Abrir los números" },
     },
@@ -495,7 +524,7 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "📝",
-      kicker: { en: "Reporting up", es: "Reportar hacia arriba" },
+      kicker: { en: "Reporting up", es: "Informar a tu jefa" },
       title: { en: "Your first report to Maria.", es: "Tu primer reporte para Maria." },
       body: {
         en: "Her template is view only, so make your own copy.",
@@ -580,11 +609,11 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🚨",
-      kicker: { en: "The floor is loud", es: "El piso está a tope" },
+      kicker: { en: "It's busy on the floor", es: "Hay mucho movimiento" },
       title: { en: "Three things at once.", es: "Tres cosas a la vez." },
       body: {
-        en: "Breathe, name the first move, then finish all three.",
-        es: "Respira, di cuál va primero, y termina las tres.",
+        en: "Breathe. Say which one you'll do first, then finish all three.",
+        es: "Respira. Di cuál vas a hacer primero, y luego termina las tres.",
       },
       cta: { en: "Look at all three", es: "Ver las tres" },
     },
@@ -688,11 +717,11 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "⏰",
-      kicker: { en: "The date is the job", es: "La fecha es el trabajo" },
+      kicker: { en: "The date matters", es: "La fecha importa" },
       title: { en: "Check it. Then send it.", es: "Revísalo. Luego envíalo." },
       body: {
-        en: "A due date and a mismatch both wait for someone who looks twice.",
-        es: "Una fecha de entrega y un error esperan a quien mira dos veces.",
+        en: "Both a due date and a wrong charge need someone who checks twice before they act.",
+        es: "Tanto una fecha de entrega como un cargo equivocado necesitan a alguien que revise dos veces antes de actuar.",
       },
       cta: { en: "Open today's work", es: "Abrir el trabajo de hoy" },
     },
@@ -707,13 +736,81 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🔎",
-      kicker: { en: "Judgment, not a guess", es: "Criterio, no una adivinanza" },
-      title: { en: "The plausible one is the hard one.", es: "Lo que suena bien es lo difícil." },
+      kicker: { en: "Use your judgment, don't guess", es: "Usa tu criterio, no adivines" },
+      title: { en: "The one that sounds right is the hard one.", es: "El que suena bien es el difícil." },
       body: {
-        en: "Cite what holds up. Do not confirm what you cannot verify.",
-        es: "Cita lo que se sostiene. No confirmes lo que no puedes verificar.",
+        en: "Cite a source you can trust. Do not confirm anything you cannot check.",
+        es: "Cita una fuente en la que puedas confiar. No confirmes nada que no puedas comprobar.",
       },
       cta: { en: "Do the last job", es: "Haz el último trabajo" },
+    },
+  },
+  {
+    key: "level20",
+    title: "Welcome to HQ",
+    trackKeys: ["office-drive"],
+    firstTabKey: "files",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🏢",
+      kicker: { en: "A different building", es: "Otro edificio" },
+      title: { en: "Welcome to HQ.", es: "Bienvenida a HQ." },
+      body: {
+        en: "The drive is bigger here. Search first, then read the file name twice. Share the current file, not last quarter's.",
+        es: "Aquí el drive es más grande. Busca primero, luego lee el nombre del archivo dos veces. Comparte el archivo actual, no el del trimestre pasado.",
+      },
+      cta: { en: "Open Drive", es: "Abrir Drive" },
+    },
+  },
+  {
+    key: "level21",
+    title: "Get Everyone in the Room",
+    trackKeys: ["get-everyone-in-the-room"],
+    firstTabKey: "calendar",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🤝",
+      kicker: { en: "Four calendars", es: "Cuatro calendarios" },
+      title: { en: "Find the time that is open for everyone.", es: "Encuentra la hora que está libre para todos." },
+      body: {
+        en: "Then join the meeting you just booked. Keep your mic off and ask your question in the chat.",
+        es: "Luego únete a la reunión que acabas de agendar. Deja el micrófono apagado y haz tu pregunta en el chat.",
+      },
+      cta: { en: "Open Calendar", es: "Abrir Calendar" },
+    },
+  },
+  {
+    key: "level22",
+    title: "The Expense Report",
+    trackKeys: ["expense-report"],
+    firstTabKey: "expense-report",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🧾",
+      kicker: { en: "Do not submit it blind", es: "No lo envíes sin revisar" },
+      title: { en: "One row has no receipt.", es: "Una fila no tiene recibo." },
+      body: {
+        en: "Match the rows you can. Flag the one that is missing a receipt. That is the whole task.",
+        es: "Empareja las filas que puedas. Marca la que no tiene recibo. Esa es toda la tarea.",
+      },
+      cta: { en: "Open the sheet", es: "Abrir la hoja" },
+    },
+  },
+  {
+    key: "level23",
+    title: "Presenting to the Team",
+    trackKeys: ["slide-deck"],
+    firstTabKey: "slides",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📊",
+      kicker: { en: "Three slides", es: "Tres diapositivas" },
+      title: { en: "A title, a number, a takeaway.", es: "Un título, un número, una idea." },
+      body: {
+        en: "Use the expense total that is already on the slide. Present it. Do not add a fourth slide.",
+        es: "Usa el total de gastos que ya está en la diapositiva. Preséntalo. No agregues una cuarta diapositiva.",
+      },
+      cta: { en: "Open Slides", es: "Abrir Diapositivas" },
     },
   },
 ];
@@ -742,6 +839,7 @@ export const ACTS: Act[] = [
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
   { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
   { key: "act5", title: "Act V: Bridge", levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
+  { key: "act6", title: "Act VI: Office Administrator", levelKeys: ["level20", "level21", "level22", "level23"], scene: "harborside-floor" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
@@ -890,8 +988,12 @@ export function activeTrack(completedTaskKeys: TaskKey[], path?: BridgePath | nu
       const taskPath = t.taskKeys[0] ? pathOfTask(t.taskKeys[0]) : null;
       return !taskPath || taskPath === inferred;
     });
+    // HQ waits until one Act V door is finished. Otherwise Act IV skips the picker.
+    if (!pathIsComplete(inferred, completedTaskKeys)) {
+      tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct6Task(k)));
+    }
   } else {
-    tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct5Task(k)));
+    tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct5Task(k) || isAct6Task(k)));
   }
   return tracks.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? tracks.at(-1) ?? TRACKS[TRACKS.length - 1];
 }

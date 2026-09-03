@@ -34,11 +34,24 @@ export const PATH_B_TASKS: TaskKey[] = [
   "confidentiality-call",
 ];
 
+export const ACT_6_TASKS: TaskKey[] = [
+  "office-drive",
+  "multi-person-scheduling",
+  "video-call",
+  "expense-report",
+  "slide-deck",
+];
+
 const PATH_A_SET = new Set<string>(PATH_A_TASKS);
 const PATH_B_SET = new Set<string>(PATH_B_TASKS);
+const ACT_6_SET = new Set<string>(ACT_6_TASKS);
 
 export function isAct5Task(key: string): boolean {
   return PATH_A_SET.has(key) || PATH_B_SET.has(key);
+}
+
+export function isAct6Task(key: string): boolean {
+  return ACT_6_SET.has(key);
 }
 
 export function pathOfTask(key: string): BridgePath | null {
@@ -71,7 +84,11 @@ export function inferBridgePath(
 
 export type BridgePickerKind = "choose" | "other";
 
-/** After Act IV: pick a door. After one path: offer the other. */
+export function isAct6Complete(completedTaskKeys: readonly string[]): boolean {
+  return ACT_6_TASKS.every((k) => completedTaskKeys.includes(k));
+}
+
+/** After Act IV: pick a door. After one path: offer the other — until HQ is done. */
 export function needsBridgePicker(
   completedTaskKeys: readonly string[],
   flag?: string | null,
@@ -79,6 +96,8 @@ export function needsBridgePicker(
   const aDone = pathIsComplete("a", completedTaskKeys);
   const bDone = pathIsComplete("b", completedTaskKeys);
   if (aDone && bDone) return null;
+  // After Act VI the other door stays in Studio / My Job, not on the Job Card.
+  if (isAct6Complete(completedTaskKeys)) return null;
   const path = inferBridgePath(completedTaskKeys, flag);
   if (!path && !aDone && !bDone) return "choose";
   if (path === "a" && aDone && !bDone) return "other";

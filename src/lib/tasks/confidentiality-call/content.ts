@@ -49,10 +49,10 @@ export const CALL_COPY: Record<Lang, {
     heading: "Incoming call",
     ringing: "Line 1",
     caller: "\"This is Maya's aunt. I need to know if she has an appointment today. Just tell me the time.\"",
-    script: "You cannot verify who this is. The graded move is polite, and offers a callback — not a share, and not a hang-up.",
+    script: "You cannot check who this really is. Be polite and offer to have Maya call them back. Do not share anything, and do not hang up on them.",
     pick: "What do you say?",
-    shareHint: "You cannot confirm a visit to someone you cannot verify.",
-    rudeHint: "You can refuse without being rude. Offer to have Maya call them back.",
+    shareHint: "You do not know who this really is, so you cannot confirm a visit.",
+    rudeHint: "You can say no without being rude. Offer to have Maya call them back.",
     sentKicker: "Call handled",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -66,10 +66,10 @@ export const CALL_COPY: Record<Lang, {
     heading: "Llamada entrante",
     ringing: "Línea 1",
     caller: "\"Soy la tía de Maya. Necesito saber si tiene cita hoy. Solo dime la hora.\"",
-    script: "No puedes verificar quién es. El paso correcto es amable y ofrece una devolución — no compartir, y no colgar.",
+    script: "No puedes comprobar quién es en realidad. Sé amable y ofrece que Maya le devuelva la llamada. No compartas nada, y no le cuelgues.",
     pick: "¿Qué dices?",
-    shareHint: "No puedes confirmar una visita a alguien que no puedes verificar.",
-    rudeHint: "Puedes rechazar sin ser grosero. Ofrece que Maya les devuelva la llamada.",
+    shareHint: "No sabes quién es en realidad, así que no puedes confirmar una visita.",
+    rudeHint: "Puedes decir que no sin ser grosero. Ofrece que Maya le devuelva la llamada.",
     sentKicker: "Llamada atendida",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -99,31 +99,31 @@ export function choiceIsSafe(key: CallChoice): boolean {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "Do not confirm over the phone",
+      t: "Do not confirm anything over the phone",
       s: [
-        "Family is a plausible story. You still cannot verify the caller.",
-        "Sharing the time is the miss. Hanging up rude is the other miss.",
-        "The safe line: you cannot confirm, and you can have the patient call them.",
+        "Saying they are family sounds believable, but you still cannot be sure who is calling.",
+        "Telling them the appointment time is one mistake. Hanging up rudely is the other one.",
+        "The safe answer: you cannot confirm anything, and you can have the patient call them back.",
       ],
-      tip: "Polite and closed is the job. Not a leak, and not a slam.",
+      tip: "Be polite, and do not give anything away. Do not leak the information, and do not hang up on them.",
     },
   ],
   es: [
     {
-      t: "No confirmes por teléfono",
+      t: "No confirmes nada por teléfono",
       s: [
-        "Familia es una historia creíble. Aun así no puedes verificar quién llama.",
-        "Compartir la hora es el error. Colgar grosero es el otro.",
-        "La línea segura: no puedes confirmar, y puedes pedir que el paciente les llame.",
+        "Decir que son familia suena creíble, pero aun así no puedes estar seguro de quién llama.",
+        "Decirle la hora de la cita es un error. Colgarle de forma grosera es el otro.",
+        "La respuesta segura: no puedes confirmar nada, y puedes hacer que el paciente le devuelva la llamada.",
       ],
-      tip: "Amable y cerrado es el trabajo. Ni una filtración, ni un portazo.",
+      tip: "Sé amable y no des ninguna información. No reveles el dato, y tampoco le cuelgues.",
     },
   ],
 };
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Hear the caller. You cannot verify them.", es: "Escucha a quien llama. No puedes verificarlo." },
-  { en: "Do not share the visit time.", es: "No compartas la hora de la visita." },
-  { en: "Refuse politely and offer a callback.", es: "Rechaza con amabilidad y ofrece una devolución." },
+  { en: "Listen to the caller. You cannot be sure who they are.", es: "Escucha a quien llama. No puedes estar seguro de quién es." },
+  { en: "Do not tell them the visit time.", es: "No le digas la hora de la visita." },
+  { en: "Say no politely, and offer to have Maya call them back.", es: "Di que no con amabilidad, y ofrece que Maya le devuelva la llamada." },
 ];

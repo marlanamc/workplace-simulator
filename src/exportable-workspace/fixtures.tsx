@@ -75,8 +75,8 @@ export const mailMessages: MailMessage[] = [
         "Thanks, Maria",
       ],
       es: [
-        "Buenos dias,",
-        "Jordan empieza hoy. Por favor encuentra el horario de esta semana, renombralo claramente y compartelo con acceso de solo lectura.",
+        "Buenos días,",
+        "Jordan empieza hoy. Por favor busca el horario de esta semana, ponle un nombre claro y compártelo en modo solo ver.",
         "Gracias, Maria",
       ],
     },
@@ -89,7 +89,7 @@ export const mailMessages: MailMessage[] = [
     time: "Yesterday",
     body: {
       en: ["Could you cover the late Friday shift? No worries if not."],
-      es: ["Podrias cubrir el turno tarde del viernes? No hay problema si no."],
+      es: ["¿Podrías cubrir el turno de la tarde del viernes? No hay problema si no puedes."],
     },
   },
   {
@@ -100,7 +100,7 @@ export const mailMessages: MailMessage[] = [
     time: "Mon",
     body: {
       en: ["Your latest pay stub is available in the employee portal."],
-      es: ["Tu talon de pago mas reciente esta disponible en el portal de empleados."],
+      es: ["Tu recibo de pago más reciente ya está disponible en el portal de empleados."],
     },
   },
 ];
@@ -140,7 +140,7 @@ export const portalSections: PortalSection[] = [
           </div>
         ))}
         <p className="text-[13px] text-[#5f6368]">
-          {host.lang === "en" ? "Use this section when another app asks you to check your shifts." : "Usa esta seccion cuando otra app te pida revisar tus turnos."}
+          {host.lang === "en" ? "Use this section when another app asks you to check your shifts." : "Usa esta sección cuando otra app te pida revisar tus turnos."}
         </p>
       </div>
     ),

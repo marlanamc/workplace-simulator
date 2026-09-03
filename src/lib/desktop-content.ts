@@ -235,5 +235,10 @@ export const TASK_KEYS = [
   "billing-sheet",
   "research",
   "confidentiality-call",
+  "office-drive",
+  "multi-person-scheduling",
+  "video-call",
+  "expense-report",
+  "slide-deck",
 ] as const;
 export type TaskKey = (typeof TASK_KEYS)[number];

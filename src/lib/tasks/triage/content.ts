@@ -5,14 +5,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "🔔",
     kicker: "Tuesday, 9:04 AM",
     headline: "Two things are already waiting.",
-    body: "A meeting sits on your close shift. Sam needs a file. Neither one can wait until tomorrow. Order does not matter. Dropping one does.",
+    body: "A meeting lands on your close shift. Sam needs a file. Neither one can wait until tomorrow. You can do them in any order. Just do not forget one.",
     cta: "See what's open",
   },
   es: {
     emoji: "🔔",
     kicker: "Martes, 9:04 AM",
     headline: "Ya hay dos cosas esperando.",
-    body: "Una reunión cae en tu turno de cierre. Sam necesita un archivo. Ninguna puede esperar a mañana. El orden no importa. Soltar una, sí.",
+    body: "Una reunión cae en tu turno de cierre. Sam necesita un archivo. Ninguna de las dos puede esperar a mañana. Puedes hacerlas en el orden que quieras. Solo no te olvides de ninguna.",
     cta: "Ver qué está abierto",
   },
 };
@@ -73,9 +73,9 @@ export const TRIAGE_COPY: Record<Lang, {
     canView: "Viewer",
     canEdit: "Editor",
     share: "Share",
-    sentKicker: "Both handled",
-    doneTitle: "You did not drop either one.",
-    doneBody: "The huddle moved off your close. Sam has the allergen list, view only. Two open things. Both closed.",
+    sentKicker: "Both done",
+    doneTitle: "You took care of both of them.",
+    doneBody: "The huddle moved off your close shift. Sam has the allergen list, view only. Both tasks are done.",
     badgeName: "Handle two requests at once",
     badgeWhere: "Counts toward: Shift Lead",
     tryAgain: "Do it again",
@@ -92,7 +92,7 @@ export const TRIAGE_COPY: Record<Lang, {
     calBody: "Jueves 4:00 PM. Ese es tu cierre. Propón una hora que no sea un turno.",
     calCta: "Abrir Calendar",
     fileTitle: "Sam necesita la lista de alérgenos",
-    fileBody: "Encuentra el archivo en Drive. Compártelo solo para ver. Sam no debe editar el original.",
+    fileBody: "Encuentra el archivo en Drive. Compártelo en modo solo ver. Sam no debe editar el original.",
     fileCta: "Abrir Drive",
     meetingTitle: "Reunión de inventario del jueves",
     meetingWhen: "Jue 27 ago · 4:00–4:20 PM",
@@ -107,9 +107,9 @@ export const TRIAGE_COPY: Record<Lang, {
     canView: "Lector",
     canEdit: "Editor",
     share: "Compartir",
-    sentKicker: "Las dos hechas",
-    doneTitle: "No soltaste ninguna.",
-    doneBody: "La reunión salió de tu cierre. Sam tiene la lista de alérgenos, solo ver. Dos cosas abiertas. Las dos cerradas.",
+    sentKicker: "Las dos listas",
+    doneTitle: "Te encargaste de las dos.",
+    doneBody: "La reunión salió de tu turno de cierre. Sam tiene la lista de alérgenos, solo ver. Las dos tareas están hechas.",
     badgeName: "Atender dos pedidos a la vez",
     badgeWhere: "Cuenta para: Líder de turno",
     tryAgain: "Hacerlo otra vez",
@@ -139,24 +139,24 @@ export const HINTS: Record<Lang, { accept: string; no: string; file: string; edi
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "Notice both before you start either",
+      t: "Look at both before you start one",
       s: [
-        "Two badges. Two jobs. Look at the list first so one does not vanish.",
-        "The calendar one is the same skill as the lead huddle: do not accept a time you work.",
-        "The file one is the same skill as Jordan's schedule: share the file, view only.",
+        "There are two tasks waiting. Look at the whole list first so you do not lose track of one.",
+        "The meeting is like the lead huddle: do not accept a time when you are working.",
+        "The file is like Jordan's schedule: share the file itself, and set it to view only.",
       ],
-      tip: "Order is yours. Forgetting one is the fail.",
+      tip: "You choose the order. The only real mistake is forgetting one of them.",
     },
   ],
   es: [
     {
       t: "Mira las dos antes de empezar una",
       s: [
-        "Dos puntos. Dos trabajos. Mira la lista primero para que una no desaparezca.",
-        "La del calendario es la misma destreza de la reunión de líderes: no aceptes una hora en la que trabajas.",
-        "La del archivo es la misma destreza del horario de Jordan: comparte el archivo, solo ver.",
+        "Hay dos tareas esperando. Mira toda la lista primero para no perder de vista ninguna.",
+        "La reunión es como la reunión de líderes: no aceptes una hora en la que estás trabajando.",
+        "El archivo es como el horario de Jordan: comparte el archivo en sí y ponlo en modo solo ver.",
       ],
-      tip: "El orden es tuyo. Olvidar una es el error.",
+      tip: "Tú eliges el orden. El único error de verdad es olvidarte de una.",
     },
   ],
 };
@@ -165,15 +165,15 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Two things are waiting. Pick one to start — order does not matter.",
-    es: "Hay dos cosas esperando. Elige una para empezar; el orden no importa.",
+    en: "Two things are waiting. Pick one to start — you can do them in any order.",
+    es: "Hay dos cosas esperando. Elige una para empezar; puedes hacerlas en el orden que quieras.",
   },
   {
     en: "Handle the meeting sitting on your close shift.",
     es: "Resuelve la reunión que cae en tu turno de cierre.",
   },
   {
-    en: "Now get Sam the file. Do not drop it.",
-    es: "Ahora consíguele el archivo a Sam. No lo dejes.",
+    en: "Now send Sam the file. Do not forget this one.",
+    es: "Ahora envíale el archivo a Sam. No te olvides de este.",
   },
 ];

@@ -26,6 +26,8 @@ export const JUMP_TABS = [
   "front-desk",
   "billing-sheet",
   "zoom",
+  "expense-report",
+  "slides",
 ] as const;
 export type JumpTab = (typeof JUMP_TABS)[number];
 
@@ -590,7 +592,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
     jobTitle: "Office Administrator (HQ)",
     color: "#c5221f",
     path: "office",
-    blurb: "Open after Act II. Nested Drive, multi-person calendar, expense report, a 3-slide deck.",
+    blurb: "Open after either Act V door. Nested Drive, multi-person calendar, expense report, a 3-slide deck.",
     levels: [
       {
         key: "level20",
@@ -640,7 +642,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
             taskKey: "expense-report",
             skill: "Match receipts to categories, catch the one that's missing",
             app: "Sheets + Drive",
-            tab: "spreadsheet",
+            tab: "expense-report",
           },
         ],
       },
@@ -655,6 +657,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
             taskKey: "slide-deck",
             skill: "Build and present a 3-slide deck using a real number from earlier work",
             app: "Slides",
+            tab: "slides",
           },
         ],
       },

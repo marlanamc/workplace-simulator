@@ -69,11 +69,11 @@ export const RESEARCH_COPY: Record<Lang, {
     query: "workplace email professional",
     pickLabel: "Which one would you cite?",
     whyLabel: "Why this one",
-    whyHint: "One line — who wrote it, or why it holds up…",
+    whyHint: "One line — who wrote it, or why you can trust it…",
     cite: "Cite this source",
     needPick: "Pick a result first.",
     empty: "Say why in one line.",
-    weak: "Say that it is a database, reviewed, or names its authors — not just that you like it.",
+    weak: "Say it is from a database, or that it was reviewed, or that it names its authors — not just that you like it.",
     sentKicker: "Source cited",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -87,11 +87,11 @@ export const RESEARCH_COPY: Record<Lang, {
     query: "correo profesional en el trabajo",
     pickLabel: "¿Cuál citarías?",
     whyLabel: "Por qué este",
-    whyHint: "Una línea — quién lo escribió, o por qué se sostiene…",
+    whyHint: "Una línea — quién lo escribió, o por qué puedes confiar en él…",
     cite: "Citar esta fuente",
     needPick: "Primero elige un resultado.",
     empty: "Di por qué en una línea.",
-    weak: "Di que es una base de datos, revisada, o nombra autores — no solo que te gusta.",
+    weak: "Di que es de una base de datos, o que fue revisado, o que nombra a sus autores — no solo que te gusta.",
     sentKicker: "Fuente citada",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -123,24 +123,24 @@ export function whyHoldsUp(body: string): boolean {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "Cite what holds up",
+      t: "Cite a source you can trust",
       s: [
-        "An ad is selling. A forum is anonymous. A 2014 prediction is stale.",
-        "A library database names authors, a year, and a journal.",
-        "Your one-line why should say one of those facts, not just \"it looks good.\"",
+        "An ad is trying to sell you something. A forum post is anonymous. A prediction from 2014 is out of date.",
+        "A library database gives you the authors, the year, and the journal.",
+        "Your one line should point to one of those facts, not just say \"it looks good.\"",
       ],
-      tip: "If you cannot name who wrote it, do not cite it.",
+      tip: "If you cannot say who wrote it, do not cite it.",
     },
   ],
   es: [
     {
-      t: "Cita lo que se sostiene",
+      t: "Cita una fuente en la que puedas confiar",
       s: [
-        "Un anuncio vende. Un foro es anónimo. Una predicción de 2014 ya pasó.",
-        "Una base de datos nombra autores, un año y una revista.",
-        "Tu por qué de una línea debe decir uno de esos datos, no solo \"se ve bien.\"",
+        "Un anuncio te quiere vender algo. Un mensaje de foro es anónimo. Una predicción de 2014 ya está desactualizada.",
+        "Una base de datos de biblioteca te da los autores, el año y la revista.",
+        "Tu línea debe señalar uno de esos datos, no solo decir \"se ve bien.\"",
       ],
-      tip: "Si no puedes nombrar quién lo escribió, no lo cites.",
+      tip: "Si no puedes decir quién lo escribió, no lo cites.",
     },
   ],
 };
@@ -149,5 +149,5 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the four results.", es: "Lee los cuatro resultados." },
   { en: "Pick the library database.", es: "Elige la base de datos." },
-  { en: "Write one line on why it holds up.", es: "Escribe una línea de por qué se sostiene." },
+  { en: "Write one line on why you can trust it.", es: "Escribe una línea sobre por qué puedes confiar en él." },
 ];

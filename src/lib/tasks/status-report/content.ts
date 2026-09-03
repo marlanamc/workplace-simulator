@@ -5,16 +5,16 @@ import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "✉️",
-    kicker: "Same sheet. Your copy.",
+    kicker: "Same sheet, your own copy.",
     headline: "Write the total yourself. Then cc a co-lead.",
-    body: "The numbers are in. The total cell is empty. Type =SUM, check the number, and email Maria. Jordan needs to see it too.",
+    body: "The numbers are all in. The total cell is empty. Type =SUM, check the number, and email it to Maria. Jordan needs to see it too.",
     cta: "Open my copy",
   },
   es: {
     emoji: "✉️",
-    kicker: "La misma hoja. Tu copia.",
+    kicker: "La misma hoja, tu propia copia.",
     headline: "Escribe el total tú. Luego pon en copia a un co-líder.",
-    body: "Los números ya están. La celda del total está vacía. Escribe =SUM, revisa el número, y escríbele a Maria. Jordan también tiene que verlo.",
+    body: "Ya están todos los números. La celda del total está vacía. Escribe =SUM, revisa el número, y envíaselo a Maria. Jordan también tiene que verlo.",
     cta: "Abrir mi copia",
   },
 };
@@ -82,7 +82,7 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You wrote the formula and cc'd Jordan.",
-    doneBody: `The sheet did not hand you a total. You typed =SUM and got ${STATUS_TOTAL}. Maria is To. Jordan is Cc. That is a status report.`,
+    doneBody: `The sheet did not give you a total. You typed =SUM and got ${STATUS_TOTAL}. Maria is on the To line. Jordan is on Cc. That is what a status report looks like.`,
     badgeName: "Write a SUM and cc a co-lead",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -117,7 +117,7 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Escribiste la fórmula y pusiste a Jordan en copia.",
-    doneBody: `La hoja no te dio el total. Escribiste =SUM y salió ${STATUS_TOTAL}. Maria es Para. Jordan es Cc. Eso es un reporte de estado.`,
+    doneBody: `La hoja no te dio el total. Escribiste =SUM y salió ${STATUS_TOTAL}. Maria está en la línea Para. Jordan está en Cc. Así se ve un reporte de estado.`,
     badgeName: "Escribir un SUM y poner en copia a un co-líder",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -166,42 +166,42 @@ export const CC_PICKS = [
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "Write the formula. Do not wait for one",
+      t: "Write the formula yourself",
       s: [
-        "Click the empty total. Type =SUM( then the cells with numbers, then ).",
-        "Press Enter. Check that the number matches what you would expect.",
-        "Work in your copy. The view-only template still will not take a formula.",
+        "Click the empty total cell. Type =SUM( then click the cells with numbers, then type ).",
+        "Press Enter. Check that the number looks about right.",
+        "Work in your own copy. The view-only template still will not let you type a formula.",
       ],
-      tip: "One SUM. No nesting. The habit is: you authored the total.",
+      tip: "Use one SUM. Do not put a formula inside another formula. The point is that you wrote the total yourself.",
     },
     {
       t: "Cc the person who also needs the number",
       s: [
-        "To is Maria. Cc is the co-lead who uses the same number.",
-        "Say the total in the email. Do not make them open the sheet.",
-        "Cc is for people who need to know. It is not Reply-all.",
+        "Put Maria in the To line. Put the co-lead who uses the same number in the Cc line.",
+        "Write the total in the email itself. Do not make them open the sheet to find it.",
+        "Cc is for people who need to know. It is not the same as Reply all.",
       ],
-      tip: "If they would have to ask you for the number later, they belong on Cc.",
+      tip: "If they would have to come ask you for the number later, put them on Cc now.",
     },
   ],
   es: [
     {
-      t: "Escribe la fórmula. No esperes una",
+      t: "Escribe tú mismo la fórmula",
       s: [
-        "Haz clic en el total vacío. Escribe =SUM( luego las celdas con números, luego ).",
-        "Presiona Enter. Revisa que el número coincida con lo que esperarías.",
-        "Trabaja en tu copia. La plantilla de solo ver sigue sin aceptar una fórmula.",
+        "Haz clic en la celda del total vacía. Escribe =SUM( luego haz clic en las celdas con números, luego escribe ).",
+        "Presiona Enter. Revisa que el número se vea más o menos bien.",
+        "Trabaja en tu propia copia. La plantilla de solo ver sigue sin dejarte escribir una fórmula.",
       ],
-      tip: "Un SUM. Sin anidar. El hábito es: tú escribiste el total.",
+      tip: "Usa un solo SUM. No pongas una fórmula dentro de otra. La idea es que tú escribiste el total.",
     },
     {
       t: "Pon en copia a quien también necesita el número",
       s: [
-        "Para es Maria. Cc es el co-líder que usa el mismo número.",
-        "Di el total en el correo. No los hagas abrir la hoja.",
-        "Cc es para quienes necesitan saber. No es Responder a todos.",
+        "Pon a Maria en la línea Para. Pon en la línea Cc al co-líder que usa el mismo número.",
+        "Escribe el total en el correo mismo. No los hagas abrir la hoja para buscarlo.",
+        "Cc es para las personas que necesitan saber. No es lo mismo que Responder a todos.",
       ],
-      tip: "Si después te tendrían que pedir el número, van en Cc.",
+      tip: "Si después te tendrían que venir a pedir el número, ponlos en Cc ahora.",
     },
   ],
 };

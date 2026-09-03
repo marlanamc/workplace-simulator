@@ -24,6 +24,15 @@ import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import { extractHuddleTime, HUDDLE_TIME_FLAG } from "@/lib/story-beats";
+import {
+  HQ_CAL_COPY,
+  PEOPLE,
+  SLOTS,
+  LESSONS as HQ_LESSONS,
+  RIGHT_NOW_STEPS as HQ_STEPS,
+  RIGHT_NOW_LABEL as HQ_LABEL,
+  slotIsOpenForEveryone,
+} from "@/lib/tasks/multi-person-scheduling/content";
 
 type View = "home" | "invite" | "compose" | "done";
 
@@ -57,6 +66,145 @@ function CalendarMark() {
 }
 
 export default function CalendarTask() {
+  const { currentTrack } = useProgress();
+  if (currentTrack.key === "get-everyone-in-the-room") return <HqFindATime />;
+  return <CafeCalendarTask />;
+}
+
+function HqFindATime() {
+  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const [done, setDone] = useState(completedTaskKeys.includes("multi-person-scheduling"));
+  const [picked, setPicked] = useState<string | null>(null);
+  const [help, setHelp] = useState(false);
+  const { nudge, say, dismiss } = useNudge();
+  const c = HQ_CAL_COPY[lang];
+
+  const pick = (key: string) => {
+    if (!slotIsOpenForEveryone(key)) return say(c.clash);
+    setPicked(key);
+  };
+
+  const invite = () => {
+    if (!picked || !slotIsOpenForEveryone(picked)) return say(c.needSlot);
+    setDone(true);
+    markComplete("multi-person-scheduling", "find_open_slot");
+  };
+
+  const restart = () => {
+    setDone(false);
+    setPicked(null);
+  };
+
+  if (done) {
+    return (
+      <div className="flex h-full min-h-0 flex-col bg-white" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+          <div className="mx-auto flex max-w-[640px] flex-col gap-5">
+            <TaskDoneCard kicker={c.sentKicker} />
+            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#3c4043]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+      <div className="flex items-center gap-3 px-3 py-2">
+        <CalendarMark />
+        <span className="text-[22px] font-normal text-[#5f6368]">{c.appName}</span>
+      </div>
+      <RightNowBar
+        icon={TASK_ICONS["multi-person-scheduling"]}
+        stepIndex={picked ? 1 : 0}
+        steps={HQ_STEPS}
+        lang={lang}
+        rightNowLabel={HQ_LABEL}
+        onHelp={() => setHelp(true)}
+      />
+      <div className="min-h-0 flex-1 overflow-auto p-4">
+        <h1 className="text-[18px] font-medium">{c.heading}</h1>
+        <p className="mt-1 text-[13px] text-[#5f6368]">{c.find}</p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          {PEOPLE.map((p) => (
+            <span key={p.key} className="inline-flex items-center gap-2 text-[12px]">
+              <span className="h-2.5 w-2.5 rounded-sm" style={{ background: p.color }} />
+              {p.name[lang]}
+            </span>
+          ))}
+        </div>
+        <div className="mt-4 overflow-x-auto">
+          <table className="min-w-[520px] border-collapse text-[13px]">
+            <thead>
+              <tr>
+                <th className="border border-[#dadce0] bg-[#f8f9fa] px-2 py-1.5 text-left font-medium" />
+                {SLOTS.map((s) => (
+                  <th key={s.key} className="border border-[#dadce0] bg-[#f8f9fa] px-2 py-1.5 font-medium">
+                    {s.label[lang]}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {PEOPLE.map((p) => (
+                <tr key={p.key}>
+                  <td className="border border-[#dadce0] px-2 py-1.5 font-medium">{p.name[lang]}</td>
+                  {SLOTS.map((s) => {
+                    const busy = (s.busy as readonly string[]).includes(p.key);
+                    return (
+                      <td key={s.key} className="border border-[#dadce0] px-1 py-1.5 text-center">
+                        {busy ? (
+                          <span className="inline-block h-6 w-full rounded-sm" style={{ background: p.color, opacity: 0.85 }} />
+                        ) : (
+                          <span className="text-[11px] text-[#137333]">{c.free}</span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {SLOTS.map((s) => (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => pick(s.key)}
+              className="min-h-[40px] rounded-lg border px-3 text-[13px] font-medium cursor-pointer"
+              style={{
+                borderColor: picked === s.key ? "#1a73e8" : "#dadce0",
+                background: picked === s.key ? "#e8f0fe" : "#fff",
+                color: picked === s.key ? "#1967d2" : "#3c4043",
+              }}
+            >
+              {s.label[lang]}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={invite}
+          className="mt-4 inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer"
+        >
+          {c.invite}
+        </button>
+      </div>
+      <HelpDrawer
+        open={help}
+        onClose={() => setHelp(false)}
+        kicker={c.lessonKicker}
+        lesson={HQ_LESSONS[lang][0]}
+        tipLabel={c.tipLabel}
+        gotItLabel={c.gotIt}
+      />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
+    </div>
+  );
+}
+
+function CafeCalendarTask() {
   const { markComplete, completedTaskKeys, lang, setStoryFlag, currentTrack, displayName } = useProgress();
   const myCalendarName = displayName.trim() || (lang === "en" ? "Me" : "Yo");
   const level = levelForTrack(currentTrack.key);

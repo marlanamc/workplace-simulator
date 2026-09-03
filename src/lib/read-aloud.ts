@@ -5,7 +5,9 @@ import type { Lang } from "@/lib/task-types";
  * Callers never need to feature-detect: on browsers without speechSynthesis
  * these are silent no-ops.
  */
-const SPEECH_LANG: Record<Lang, string> = { en: "en-US", es: "es-ES" };
+// es-US is US Spanish — the audience is US-based adult ESOL learners, so the
+// read-aloud voice should be Latin American, not Castilian (es-ES).
+const SPEECH_LANG: Record<Lang, string> = { en: "en-US", es: "es-US" };
 
 /** Longest text we'll read from one click — a paragraph, not a page. */
 const MAX_SPOKEN_CHARS = 400;

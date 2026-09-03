@@ -57,6 +57,8 @@ interface Script {
   onSecondary?: () => void;
   /** Two peer doors — both buttons use the same weight. */
   equalPair?: boolean;
+  primaryTestId?: string;
+  secondaryTestId?: string;
 }
 
 /**
@@ -308,6 +310,11 @@ export default function JobCard() {
       if (!location) {
         return { badge, kicker, line: c.comingSoonLine, tone: "blue", step: 0 };
       }
+      const otherDoor =
+        nextTaskKey === "office-drive"
+          ? needsBridgePicker(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG])
+          : null;
+      const offerA = !pathIsComplete("a", completedTaskKeys);
       return {
         badge,
         kicker,
@@ -317,6 +324,16 @@ export default function JobCard() {
         primaryLabel: HANDOFF_CTA[nextTaskKey]?.[lang] ?? location.ctaLabel,
         onPrimary: () =>
           openApp(location.appKey, { tab: location.tab, section: location.section }),
+        primaryTestId: nextTaskKey === "office-drive" ? "job-card-hq-start" : undefined,
+        secondaryLabel: otherDoor === "other" ? (offerA ? c.tryCollege : c.tryFrontDesk) : undefined,
+        onSecondary:
+          otherDoor === "other"
+            ? () => {
+                setStoryFlag(BRIDGE_PATH_FLAG, offerA ? "a" : "b");
+                openApp("browser");
+              }
+            : undefined,
+        secondaryTestId: otherDoor === "other" ? "job-card-hq-other" : undefined,
       };
     }
 
@@ -535,7 +552,7 @@ export default function JobCard() {
               clearCorrection();
               script.onPrimary?.();
             }}
-            data-testid={script.equalPair ? "job-card-pick-a" : undefined}
+            data-testid={script.equalPair ? "job-card-pick-a" : script.primaryTestId}
             className="mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center gap-3 whitespace-nowrap rounded-[16px] text-[20px] font-medium text-white"
             style={{ background: tone }}
           >
@@ -577,7 +594,7 @@ export default function JobCard() {
           <button
             type="button"
             onClick={script.onSecondary}
-            data-testid={script.equalPair ? "job-card-pick-b" : undefined}
+            data-testid={script.equalPair ? "job-card-pick-b" : script.secondaryTestId}
             className={
               script.equalPair
                 ? "mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"

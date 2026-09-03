@@ -8,13 +8,20 @@ import {
   PARTICIPANTS,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
+  LESSONS,
+  videoCallPasses,
 } from "@/lib/tasks/video-call/content";
 import ZoomMeeting from "@/components/zoom/ZoomMeeting";
 import RightNowBar from "@/components/task/RightNowBar";
+import HelpDrawer from "@/components/task/HelpDrawer";
+import NudgeToast from "@/components/task/NudgeToast";
+import TaskDoneCard from "@/components/task/TaskDoneCard";
+import TaskDoneActions from "@/components/task/TaskDoneActions";
 import { Video } from "lucide-react";
+import { useNudge } from "@/lib/use-nudge";
 
 export default function VideoCallTask() {
-  const { lang, displayName } = useProgress();
+  const { lang, displayName, markComplete, completedTaskKeys } = useProgress();
   const c = VIDEO_CALL_COPY[lang];
   const [phase, setPhase] = useState<"join" | "room">("join");
   const [muted, setMuted] = useState(true);
@@ -22,38 +29,53 @@ export default function VideoCallTask() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatDraft, setChatDraft] = useState("");
   const [chatLines, setChatLines] = useState<string[]>([]);
-  const [toggledMedia, setToggledMedia] = useState(false);
-  const [previewDone, setPreviewDone] = useState(false);
+  const [joinedMuted, setJoinedMuted] = useState(true);
+  const [toggledCamera, setToggledCamera] = useState(false);
+  const [sentChat, setSentChat] = useState(false);
+  const [unmuted, setUnmuted] = useState(false);
+  const [done, setDone] = useState(completedTaskKeys.includes("video-call"));
+  const [help, setHelp] = useState(false);
+  const { nudge, say, dismiss } = useNudge();
+
+  const finishIfReady = (next: { joinedMuted: boolean; toggledCamera: boolean; sentChat: boolean; unmuted: boolean }) => {
+    if (!videoCallPasses(next)) return;
+    setDone(true);
+    markComplete("video-call", "join_muted_ask_in_chat");
+  };
 
   const sendChat = () => {
     const line = chatDraft.trim();
     if (!line) return;
     setChatLines((rows) => [...rows, line]);
     setChatDraft("");
-    if (toggledMedia) setPreviewDone(true);
+    const next = { joinedMuted, toggledCamera, sentChat: true, unmuted };
+    setSentChat(true);
+    finishIfReady(next);
   };
 
-  if (previewDone) {
+  const restart = () => {
+    setPhase("join");
+    setMuted(true);
+    setCameraOn(false);
+    setChatOpen(false);
+    setChatDraft("");
+    setChatLines([]);
+    setJoinedMuted(true);
+    setToggledCamera(false);
+    setSentChat(false);
+    setUnmuted(false);
+    setDone(false);
+  };
+
+  if (done) {
     return (
-      <div className="flex h-full min-h-0 flex-col items-center justify-center bg-[#1a1a1a] px-6 text-center text-white" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
-        <p className="text-[13px] text-[#2D8CFF]">{c.appName}</p>
-        <h2 className="mt-2 text-[22px] font-medium">{c.previewDone}</h2>
-        <p className="mt-3 max-w-[420px] text-[14px] leading-relaxed text-[#bdbdbd]">{c.previewBody}</p>
-        <button
-          onClick={() => {
-            setPhase("join");
-            setMuted(true);
-            setCameraOn(false);
-            setChatOpen(false);
-            setChatDraft("");
-            setChatLines([]);
-            setToggledMedia(false);
-            setPreviewDone(false);
-          }}
-          className="mt-6 inline-flex min-h-[40px] items-center rounded-lg bg-[#2D8CFF] px-5 text-[14px] font-medium cursor-pointer"
-        >
-          {c.join}
-        </button>
+      <div className="flex h-full min-h-0 flex-col bg-[#1a1a1a]" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
+        <div className="min-h-0 flex-1 overflow-y-auto p-6">
+          <div className="mx-auto flex max-w-[640px] flex-col gap-5">
+            <TaskDoneCard kicker={c.sentKicker} />
+            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          </div>
+        </div>
       </div>
     );
   }
@@ -66,6 +88,7 @@ export default function VideoCallTask() {
         steps={RIGHT_NOW_STEPS}
         lang={lang}
         rightNowLabel={RIGHT_NOW_LABEL}
+        onHelp={() => setHelp(true)}
       />
       <div className="min-h-0 flex-1">
         <ZoomMeeting
@@ -101,14 +124,29 @@ export default function VideoCallTask() {
               </div>
             ) : null
           }
-          onJoin={() => setPhase("room")}
+          onJoin={() => {
+            setJoinedMuted(muted);
+            if (!muted) {
+              setUnmuted(true);
+              say(c.unmuteHint);
+            }
+            setPhase("room");
+          }}
           onToggleMute={() => {
-            setMuted((v) => !v);
-            setToggledMedia(true);
+            setMuted((v) => {
+              const nextMuted = !v;
+              if (!nextMuted) {
+                setUnmuted(true);
+                say(c.unmuteHint);
+              }
+              return nextMuted;
+            });
           }}
           onToggleCamera={() => {
             setCameraOn((v) => !v);
-            setToggledMedia(true);
+            const next = { joinedMuted, toggledCamera: true, sentChat, unmuted };
+            setToggledCamera(true);
+            finishIfReady(next);
           }}
           onToggleChat={() => setChatOpen((v) => !v)}
           onChatDraft={setChatDraft}
@@ -118,9 +156,23 @@ export default function VideoCallTask() {
             setMuted(true);
             setCameraOn(false);
             setChatOpen(false);
+            setUnmuted(false);
+            setJoinedMuted(true);
+            setToggledCamera(false);
+            setSentChat(false);
+            setChatLines([]);
           }}
         />
       </div>
+      <HelpDrawer
+        open={help}
+        onClose={() => setHelp(false)}
+        kicker={c.lessonKicker}
+        lesson={LESSONS[lang][0]}
+        tipLabel={c.tipLabel}
+        gotItLabel={c.gotIt}
+      />
+      <NudgeToast text={nudge} onDismiss={dismiss} />
     </div>
   );
 }

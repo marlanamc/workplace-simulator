@@ -141,6 +141,7 @@ export const JOB_CARD_COPY: Record<
     otherDoorLine: string;
     tryCollege: string;
     tryFrontDesk: string;
+    hqOtherHint: string;
   }
 > = {
   en: {
@@ -178,6 +179,7 @@ export const JOB_CARD_COPY: Record<
     otherDoorLine: "You can try the other path now.",
     tryCollege: "Try the college path",
     tryFrontDesk: "Try the front desk",
+    hqOtherHint: "Or try the other door later.",
   },
   es: {
     jobOf: (n, total) => (total <= 1 ? "" : `Tarea ${n} de ${total}`),
@@ -209,5 +211,6 @@ export const JOB_CARD_COPY: Record<
     otherDoorLine: "Ahora puedes probar el otro camino.",
     tryCollege: "Probar el camino de universidad",
     tryFrontDesk: "Probar la recepción",
+    hqOtherHint: "O prueba la otra puerta después.",
   },
 };

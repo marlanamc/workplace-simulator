@@ -25,6 +25,8 @@ import { FOLDER_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import { Folder, Home, Plus, Users } from "lucide-react";
+import OfficeDriveTask from "./OfficeDriveTask";
+import { RECEIPT_FILES, RECEIPTS_COPY } from "@/lib/tasks/expense-report/content";
 
 type View = "home" | "browse" | "rename" | "share" | "done";
 
@@ -41,6 +43,43 @@ function DriveMark() {
 }
 
 export default function FilesTask() {
+  const { currentTrack } = useProgress();
+  if (currentTrack.key === "office-drive") return <OfficeDriveTask />;
+  if (currentTrack.key === "expense-report") return <ReceiptsDrive />;
+  return <CafeFilesTask />;
+}
+
+function ReceiptsDrive() {
+  const { lang } = useProgress();
+  const c = RECEIPTS_COPY[lang];
+  return (
+    <div className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#1f1f1f]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+      <div className="flex items-center gap-3 px-3 py-2">
+        <div className="flex w-[220px] shrink-0 items-center gap-2 px-2">
+          <DriveMark />
+          <span className="text-[22px] font-normal text-[#5f6368]">Drive</span>
+        </div>
+      </div>
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+        <h2 className="text-[16px] font-medium">{c.heading}</h2>
+        <p className="mt-1 max-w-[480px] text-[13px] text-[#5f6368]">{c.body}</p>
+        <div className="mt-4 flex flex-col">
+          {RECEIPT_FILES.map((f) => (
+            <div key={f.key} className="flex items-center gap-3 border-b border-[#e8eaed] py-3">
+              <Folder size={18} className="shrink-0 text-[#5f6368]" />
+              <span className="min-w-0 flex-1 font-medium">{f.name}</span>
+              <span className="text-[12px] text-[#5f6368]">{f.folder}</span>
+              <span className="text-[12px] text-[#5f6368]">{f.date}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-[13px] text-[#5f6368]">{c.back}</p>
+      </div>
+    </div>
+  );
+}
+
+function CafeFilesTask() {
   const { markComplete, completedTaskKeys, lang, currentTrack, bigText, setBigText } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
   const [query, setQuery] = useState("");

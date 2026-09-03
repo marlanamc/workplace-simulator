@@ -17,6 +17,8 @@ import CourseworkTask from "./CourseworkTask";
 import LibrarySearchTask from "./LibrarySearchTask";
 import FrontDeskTask from "./FrontDeskTask";
 import BillingSheetTask from "./BillingSheetTask";
+import ExpenseReportTask from "./ExpenseReportTask";
+import SlideDeckTask from "./SlideDeckTask";
 import VideoCallTask from "./VideoCallTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
@@ -49,6 +51,8 @@ export const TAB_COMPONENTS: Record<string, ComponentType> = {
   library: LibrarySearchTask,
   "front-desk": FrontDeskTask,
   "billing-sheet": BillingSheetTask,
+  "expense-report": ExpenseReportTask,
+  slides: SlideDeckTask,
   zoom: VideoCallTask,
   handbook: HandbookTask,
   incident: IncidentTask,

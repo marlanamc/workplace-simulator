@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FILES, MESSY_FILES, RENAME_TARGET, normalizeRename } from "@/lib/tasks/files/content";
+import { HQ_FILES } from "@/lib/tasks/office-drive/content";
 import { LEVELS } from "@/lib/tracks-content";
 import { newTabHint, sittingTitle, jobTitle } from "@/lib/shift-spine";
 
@@ -41,6 +42,20 @@ describe("Files decoys", () => {
   it("messy mode adds decoys, never removes the originals", () => {
     for (const f of FILES) {
       expect(MESSY_FILES.map((m) => m.key)).toContain(f.key);
+    }
+  });
+});
+
+describe("HQ Drive decoys", () => {
+  it("exactly one target file", () => {
+    expect(HQ_FILES.filter((f) => f.isTarget)).toHaveLength(1);
+  });
+
+  it("every decoy has a bilingual wrong-click hint", () => {
+    for (const f of HQ_FILES) {
+      if (f.isTarget) continue;
+      expect(f.wrongHint?.en, `${f.key} en hint`).toBeTruthy();
+      expect(f.wrongHint?.es, `${f.key} es hint`).toBeTruthy();
     }
   });
 });
