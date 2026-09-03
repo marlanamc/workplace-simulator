@@ -10,6 +10,9 @@ import TeamScheduleTask from "./TeamScheduleTask";
 import FormulaCheckTask from "./FormulaCheckTask";
 import TeamMeetingTask from "./TeamMeetingTask";
 import PriorityCallTask from "./PriorityCallTask";
+import CollegeOfferTask from "./CollegeOfferTask";
+import BudgetSheetTask from "./BudgetSheetTask";
+import VideoCallTask from "./VideoCallTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import AccountRecoveryTask from "./AccountRecoveryTask";
@@ -34,6 +37,9 @@ export const TAB_COMPONENTS: Record<string, ComponentType> = {
   "formula-check": FormulaCheckTask,
   "team-meeting": TeamMeetingTask,
   "priority-call": PriorityCallTask,
+  "college-offer": CollegeOfferTask,
+  "budget-sheet": BudgetSheetTask,
+  zoom: VideoCallTask,
   handbook: HandbookTask,
   incident: IncidentTask,
   "account-recovery": AccountRecoveryTask,

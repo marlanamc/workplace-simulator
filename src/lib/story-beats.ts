@@ -434,6 +434,72 @@ const STORY_MAILS: InboxRow[] = [
       ],
     },
   },
+  {
+    key: "story-college-offer",
+    ...MARIA,
+    time: "4:18 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "college-offer",
+    subject: { en: "Class is on the calendar", es: "La clase ya está en el calendario" },
+    preview: { en: "We'll sort Tuesday close before the semester.", es: "Arreglamos el cierre del martes antes del semestre." },
+    body: {
+      en: [
+        "You accepted the offer and put the class on a week that already had a close.",
+        "We'll sort Tuesday before the semester starts. That is the whole point of saying it now.",
+        "Wednesday I need you to read this week's budget. One category is over.",
+      ],
+      es: [
+        "Aceptaste la oferta y pusiste la clase en una semana que ya tenía un cierre.",
+        "Arreglamos el martes antes de que empiece el semestre. Ese es el punto de decirlo ahora.",
+        "El miércoles necesito que leas el presupuesto de esta semana. Una categoría se pasó.",
+      ],
+    },
+  },
+  {
+    key: "story-budget-sheet",
+    ...MARIA,
+    time: "3:40 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "budget-sheet",
+    subject: { en: "Labor was the one", es: "Mano de obra era esa" },
+    preview: { en: "You read the IF. HQ will write next.", es: "Leíste el IF. HQ escribe después." },
+    body: {
+      en: [
+        "Labor was over. You opened the formula instead of guessing from the total.",
+        "I flagged it upstairs. HQ will write the cafe a question on Friday.",
+        "Read the whole thread before you answer. Not every message needs everyone.",
+      ],
+      es: [
+        "Mano de obra se pasó. Abriste la fórmula en vez de adivinar por el total.",
+        "Lo subí. HQ le va a escribir al café el viernes.",
+        "Lee todo el hilo antes de responder. No todo mensaje necesita a todos.",
+      ],
+    },
+  },
+  {
+    key: "story-reply-all",
+    ...MARIA,
+    time: "5:12 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "reply-all",
+    subject: { en: "You sent it to Dana", es: "Se lo enviaste a Dana" },
+    preview: { en: "That is how an Assistant Manager writes.", es: "Así escribe un asistente de gerencia." },
+    body: {
+      en: [
+        "Dana got a clear yes. The rest of the thread did not need it.",
+        "You edited the draft before you sent it. That pause is the job.",
+        "More is coming. For today, this is a real week as Assistant Manager.",
+      ],
+      es: [
+        "Dana recibió un sí claro. El resto del hilo no lo necesitaba.",
+        "Editaste el borrador antes de enviarlo. Esa pausa es el trabajo.",
+        "Vendrá más. Por hoy, esta fue una semana de verdad como asistente de gerencia.",
+      ],
+    },
+  },
 ];
 
 export function storyMailAfter(taskKey: TaskKey): InboxRow | undefined {

@@ -3,6 +3,9 @@ import { CORRECT_WEEK_TOTAL } from "@/lib/tasks/crew-week";
 import { emailMentionsFix, parseRange, rangeCoversCrew } from "@/lib/tasks/formula-check/content";
 import { replyIsSafe } from "@/lib/tasks/priority-call/content";
 import { agendaBulletCount, titleIsAboutSchedule } from "@/lib/tasks/team-meeting/content";
+import { replyAcceptsOffer, overlapMentionsShift } from "@/lib/tasks/college-offer/content";
+import { emailFlagsOver } from "@/lib/tasks/budget-sheet/content";
+import { casualDraftUntouched, stillSoundsCasual, replyAllAnswersDana } from "@/lib/tasks/mail/content";
 
 /**
  * The graders: every pure function that decides whether a learner's typed
@@ -135,5 +138,74 @@ describe("team meeting: title and agenda", () => {
     expect(agendaBulletCount("- one\n\n\n")).toBe(1);
     expect(agendaBulletCount("\n\n")).toBe(0);
     expect(agendaBulletCount("-\n-\n")).toBe(0);
+  });
+});
+
+describe("college offer: accept and flag the overlap", () => {
+  it.each([
+    "I accept the offer for the Business Essentials class.",
+    "Yes, I'll take the Tuesday BHCC class.",
+    "Acepto la clase de Business Essentials.",
+    "Sí, voy a tomar la clase en BHCC.",
+  ])("accepts a real acceptance: %j", (body) => {
+    expect(replyAcceptsOffer(body)).toBe(true);
+  });
+
+  it("rejects a reply that does not accept or name the class", () => {
+    expect(replyAcceptsOffer("Thanks!")).toBe(false);
+    expect(replyAcceptsOffer("I accept.")).toBe(false);
+    expect(replyAcceptsOffer("asdf")).toBe(false);
+  });
+
+  it.each([
+    "The class overlaps my Tuesday close.",
+    "Can we move my Tuesday shift before the semester?",
+    "La clase choca con el cierre del martes.",
+    "El turno del martes entra en conflicto.",
+  ])("accepts an overlap note: %j", (body) => {
+    expect(overlapMentionsShift(body)).toBe(true);
+  });
+
+  it("rejects an overlap note that never names the conflict", () => {
+    expect(overlapMentionsShift("Looks good, thanks")).toBe(false);
+  });
+});
+
+describe("budget sheet: flag the over category", () => {
+  it.each([
+    "Labor is over budget by $450.",
+    "Labor actual is 2850 against 2400.",
+    "Mano de obra se pasó por 450.",
+    "La nómina está over.",
+  ])("accepts a real flag: %j", (body) => {
+    expect(emailFlagsOver(body)).toBe(true);
+  });
+
+  it("rejects an email that names neither labor nor the overage", () => {
+    expect(emailFlagsOver("Hi Maria, the budget looks fine.")).toBe(false);
+    expect(emailFlagsOver("Supplies look high.")).toBe(false);
+  });
+});
+
+describe("reply-all: audience and tone", () => {
+  it("rejects the planted casual draft", () => {
+    expect(casualDraftUntouched("yeah that's fine lol", "en")).toBe(true);
+    expect(casualDraftUntouched("sí está bien jaja", "es")).toBe(true);
+    expect(stillSoundsCasual("yeah that's fine lol")).toBe(true);
+  });
+
+  it.each([
+    "Hi Dana, yes — we can take the 6 AM Friday delivery.",
+    "Yes, Friday at 6 AM works. Someone will be on the dock.",
+    "Hola Dana, sí, podemos recibir la entrega del viernes a las 6 AM.",
+    "No podemos a las 6. Can we do 8 AM Friday?",
+  ])("accepts a professional answer: %j", (body) => {
+    expect(replyAllAnswersDana(body)).toBe(true);
+  });
+
+  it("rejects a casual or empty answer", () => {
+    expect(replyAllAnswersDana("yeah that's fine lol")).toBe(false);
+    expect(replyAllAnswersDana("ok")).toBe(false);
+    expect(replyAllAnswersDana("Thanks!")).toBe(false);
   });
 });

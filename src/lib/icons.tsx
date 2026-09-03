@@ -7,6 +7,7 @@ import {
   Calendar,
   CalendarClock,
   CalendarDays,
+  ChartColumn,
   ClipboardList,
   Clock,
   Coffee,
@@ -15,6 +16,7 @@ import {
   FileText,
   FolderOpen,
   Globe,
+  GraduationCap,
   HardDrive,
   KeyRound,
   LayoutGrid,
@@ -23,12 +25,14 @@ import {
   MailOpen,
   Megaphone,
   Paperclip,
+  Reply,
   RotateCcw,
   Send,
   StickyNote,
   Table2,
   Thermometer,
   Users,
+  Video,
 } from "lucide-react";
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 
@@ -60,6 +64,9 @@ export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   "formula-check": Calculator,
   "team-meeting": Users,
   "priority-call": Megaphone,
+  "college-offer": GraduationCap,
+  "budget-sheet": ChartColumn,
+  "reply-all": Reply,
 };
 
 export const APP_ICONS: Record<AppKey, LucideIcon> = {
@@ -142,6 +149,9 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
   "formula-check": Table2,
   "team-meeting": Calendar,
   "priority-call": Megaphone,
+  "college-offer": Mail,
+  "budget-sheet": Table2,
+  zoom: Video,
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
@@ -158,6 +168,9 @@ export const TRACK_ICONS: Record<string, LucideIcon> = {
   "formula-check": Calculator,
   "team-meeting": Users,
   "priority-call": Megaphone,
+  "college-offer": GraduationCap,
+  "budget-sheet": ChartColumn,
+  "reply-all": Reply,
 };
 
 export const FOLDER_ICONS: Record<string, LucideIcon> = {

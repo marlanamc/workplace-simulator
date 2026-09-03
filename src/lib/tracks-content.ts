@@ -135,6 +135,27 @@ export const TRACKS: Track[] = [
     taskKeys: ["priority-call"],
     awardEmoji: "🚨",
   },
+  {
+    key: "college-offer",
+    title: "An Offer",
+    subtitle: "Read it, accept it, make it fit",
+    taskKeys: ["college-offer"],
+    awardEmoji: "🎓",
+  },
+  {
+    key: "budget-sheet",
+    title: "The Budget",
+    subtitle: "Read the IF, then the chart",
+    taskKeys: ["budget-sheet"],
+    awardEmoji: "📈",
+  },
+  {
+    key: "reply-all",
+    title: "Reply-All",
+    subtitle: "Who actually needs this",
+    taskKeys: ["reply-all"],
+    awardEmoji: "📬",
+  },
 ];
 
 /**
@@ -496,6 +517,57 @@ export const LEVELS: Level[] = [
       cta: { en: "Look at all three", es: "Ver las tres" },
     },
   },
+  {
+    key: "level13",
+    title: "An Offer",
+    trackKeys: ["college-offer"],
+    firstTabKey: "college-offer",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🎓",
+      kicker: { en: "A promotion", es: "Un ascenso" },
+      title: { en: "You are an Assistant Manager now!", es: "¡Ahora eres asistente de gerencia!" },
+      body: {
+        en: "Harborside will pay for a class. Read the offer, then make it fit your week.",
+        es: "Harborside pagará una clase. Lee la oferta y haz que quepa en tu semana.",
+      },
+      cta: { en: "Read the offer", es: "Leer la oferta" },
+    },
+  },
+  {
+    key: "level14",
+    title: "The Budget",
+    trackKeys: ["budget-sheet"],
+    firstTabKey: "budget-sheet",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📈",
+      kicker: { en: "The numbers have a story", es: "Los números cuentan algo" },
+      title: { en: "One category is over.", es: "Una categoría se pasó." },
+      body: {
+        en: "Open the formula. Then look at the chart. They should say the same thing.",
+        es: "Abre la fórmula. Luego mira el gráfico. Deben decir lo mismo.",
+      },
+      cta: { en: "Open the sheet", es: "Abrir la hoja" },
+    },
+  },
+  {
+    key: "level15",
+    title: "Reply-All",
+    trackKeys: ["reply-all"],
+    firstTabKey: "mail",
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📬",
+      kicker: { en: "HQ is on the thread", es: "HQ está en el hilo" },
+      title: { en: "Not everyone needs your answer.", es: "No todos necesitan tu respuesta." },
+      body: {
+        en: "Read the whole thread. Reply to the person who asked — not the whole list.",
+        es: "Lee todo el hilo. Responde a quien preguntó — no a toda la lista.",
+      },
+      cta: { en: "Open Mail", es: "Abrir correo" },
+    },
+  },
 ];
 
 /** A group of levels sharing one job title, story arc, and desktop place. */
@@ -520,6 +592,7 @@ export const ACTS: Act[] = [
   { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2"], scene: "harborside-open" },
   { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
+  { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {

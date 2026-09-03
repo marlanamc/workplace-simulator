@@ -6,7 +6,7 @@ import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/li
 const GREETING = "__GREETING__";
 
 /** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
-export type PlayableMailTask = "mail-reply" | "mail-attach" | "mail-etiquette" | "call-out-sick";
+export type PlayableMailTask = "mail-reply" | "mail-attach" | "mail-etiquette" | "call-out-sick" | "reply-all";
 
 /**
  * Every task Mail can run, in the order they're introduced. MailClient
@@ -14,7 +14,7 @@ export type PlayableMailTask = "mail-reply" | "mail-attach" | "mail-etiquette" |
  * order, rather than a separate hand-maintained list - a mail task that
  * exists here but isn't reachable is a silent dead end, not a build error.
  */
-export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach", "mail-etiquette", "call-out-sick"];
+export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach", "mail-etiquette", "call-out-sick", "reply-all"];
 
 /**
  * Tasks where the learner writes to Maria (or a coworker) from scratch
@@ -24,11 +24,15 @@ export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-atta
 export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-etiquette", "call-out-sick"];
 
 /** Who the compose pane addresses — reply tasks pre-fill Maria; compose-only tasks pick their recipient. */
+export const DANA_EMAIL = "dana.ortiz@harborsidecafe.com";
+export const REPLY_ALL_RECIPIENTS = `${DANA_EMAIL}, ${CAST.maria.email}, priya.shah@harborsidecafe.com, ${CAST.jordan.email}`;
+
 export const COMPOSE_RECIPIENT: Record<PlayableMailTask, string> = {
   "mail-reply": CAST.maria.email,
   "mail-attach": CAST.maria.email,
   "mail-etiquette": CAST.darnell.email,
   "call-out-sick": CAST.maria.email,
+  "reply-all": DANA_EMAIL,
 };
 
 export function isComposeOnly(task: PlayableMailTask): boolean {
@@ -98,6 +102,22 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       headline: "Maria necesita un archivo.",
       body: "Pidió el reporte de seguridad de julio para hoy. Primero confirma qué necesita. Luego responde y adjunta el archivo.",
       cta: "Abrir mi bandeja",
+    },
+  },
+  "reply-all": {
+    en: {
+      emoji: "📬",
+      kicker: "Friday. HQ wrote.",
+      headline: "Not everyone needs your answer.",
+      body: "Read the whole thread. One message is FYI. One asks you a yes or no. Reply to the person who asked.",
+      cta: "Open the thread",
+    },
+    es: {
+      emoji: "📬",
+      kicker: "Viernes. Escribió HQ.",
+      headline: "No todos necesitan tu respuesta.",
+      body: "Lee todo el hilo. Un mensaje es solo FYI. Otro te pide un sí o no. Responde a quien preguntó.",
+      cta: "Abrir el hilo",
     },
   },
 };
@@ -200,6 +220,20 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
   },
+  "reply-all": {
+    en: {
+      kicker: "Message sent",
+      body: "Dana got a clear yes. The rest of the thread did not. You edited the casual draft before you sent it.",
+      badgeNumber: "18",
+      badgeWhere: "Counts toward: Assistant Manager",
+    },
+    es: {
+      kicker: "Mensaje enviado",
+      body: "Dana recibió un sí claro. El resto del hilo no. Editaste el borrador informal antes de enviarlo.",
+      badgeNumber: "18",
+      badgeWhere: "Cuenta para: Asistente de gerencia",
+    },
+  },
 };
 
 export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: string; reSubject: string; preview: string }>> = {
@@ -251,6 +285,18 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
       preview: "¿Me puedes enviar hoy el reporte de seguridad de julio?",
     },
   },
+  "reply-all": {
+    en: {
+      subject: "Friday delivery window",
+      reSubject: "Re: Friday delivery window",
+      preview: "Can your cafe take the 6 AM Friday delivery next week?",
+    },
+    es: {
+      subject: "Ventana de entrega del viernes",
+      reSubject: "Re: Ventana de entrega del viernes",
+      preview: "¿Puede tu café recibir la entrega del viernes a las 6 AM?",
+    },
+  },
 };
 
 export const MAIL_COPY: Record<Lang, {
@@ -265,6 +311,7 @@ export const MAIL_COPY: Record<Lang, {
   helpBtn: string;
   langBtn: string;
   reply: string;
+  replyAll: string;
   forward: string;
   supervisor: string;
   to: string;
@@ -304,6 +351,7 @@ export const MAIL_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     reply: "Reply",
+    replyAll: "Reply all",
     forward: "Forward",
     supervisor: "Your supervisor",
     to: "To",
@@ -343,6 +391,7 @@ export const MAIL_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     reply: "Responder",
+    replyAll: "Responder a todos",
     forward: "Reenviar",
     supervisor: "Tu supervisora",
     to: "Para",
@@ -381,7 +430,87 @@ export const MAIL_COPY: Record<Lang, {
  * SIGNATURES so every email Maria sends ends the same way — which is the point
  * of a signature, and is not something to retype into each body.
  */
-type ReadableMailTask = Exclude<PlayableMailTask, "call-out-sick" | "mail-etiquette">;
+export const CASUAL_DRAFT: Record<Lang, string> = {
+  en: "yeah that's fine lol",
+  es: "sí está bien jaja",
+};
+
+export const REPLY_ALL_THREAD: {
+  from: string;
+  initials: string;
+  color: string;
+  time: string;
+  to: Localized;
+  fyi?: boolean;
+  ask?: boolean;
+  body: Localized<string[]>;
+}[] = [
+  {
+    from: "Priya Shah",
+    initials: "PS",
+    color: "#00897b",
+    time: "9:02 AM",
+    to: { en: "to Cafe leads, HQ Ops", es: "para líderes del café, HQ Ops" },
+    fyi: true,
+    body: {
+      en: [
+        "Heads up only — the city is changing Friday truck windows next week.",
+        "No action from cafe leads. I will send the new times when I have them.",
+      ],
+      es: [
+        "Solo aviso — la ciudad cambia las ventanas de camiones del viernes la semana que viene.",
+        "Los líderes del café no tienen que hacer nada. Envío los horarios nuevos cuando los tenga.",
+      ],
+    },
+  },
+  {
+    from: "Jordan Kim",
+    initials: "JK",
+    color: "#0f9d58",
+    time: "9:11 AM",
+    to: { en: "to Priya Shah", es: "para Priya Shah" },
+    fyi: true,
+    body: {
+      en: ["Got it, thanks Priya. We'll wait for the times."],
+      es: ["Enterado, gracias Priya. Esperamos los horarios."],
+    },
+  },
+  {
+    from: "Dana Ortiz",
+    initials: "DO",
+    color: "#7248b9",
+    time: "10:04 AM",
+    to: { en: "to me, Maria Delgado, Priya Shah, Jordan Kim", es: "para mí, Maria Delgado, Priya Shah, Jordan Kim" },
+    ask: true,
+    body: {
+      en: [
+        "Quick ask for the Assistant Manager — can Harborside take a 6 AM Friday delivery next week?",
+        "I only need a yes or no from you. Not a group vote.",
+      ],
+      es: [
+        "Pregunta rápida para el asistente de gerencia — ¿puede Harborside recibir una entrega el viernes a las 6 AM?",
+        "Solo necesito un sí o un no de ti. No una votación del grupo.",
+      ],
+    },
+  },
+];
+
+export function casualDraftUntouched(body: string, lang: Lang): boolean {
+  return body.trim().toLowerCase() === CASUAL_DRAFT[lang].toLowerCase();
+}
+
+export function stillSoundsCasual(body: string): boolean {
+  return /\blol\b|jaja|yeah that's fine|sí está bien jaja|lmao|haha/.test(body.toLowerCase());
+}
+
+export function replyAllAnswersDana(body: string): boolean {
+  const t = body.toLowerCase();
+  const answers = /yes|no|sí|si\b|podemos|we can|we cannot|no podemos|take|recib/.test(t);
+  const aboutDelivery = /friday|viernes|6|delivery|entrega|dock|muelle|am\b/.test(t);
+  return answers && aboutDelivery && !stillSoundsCasual(body);
+}
+
+type ReadableMailTask = Exclude<PlayableMailTask, "call-out-sick" | "mail-etiquette" | "reply-all">;
 
 const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
   // Job 1: welcome note — thank-you reply, no file.
@@ -524,6 +653,18 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
       "Avísame si necesitas algo más.",
     ],
   },
+  "reply-all": {
+    en: [
+      "Hi Dana, yes — we can take the 6 AM Friday delivery.",
+      "We will have someone on the dock.",
+      "Thank you for checking with us first.",
+    ],
+    es: [
+      "Hola Dana, sí — podemos recibir la entrega del viernes a las 6 AM.",
+      "Alguien estará en el muelle.",
+      "Gracias por preguntarnos primero.",
+    ],
+  },
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -652,5 +793,21 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   // storyMailsUpTo regardless of what this function returns.
   if (task === "mail-reply") return [welcome, ...DECOY_EMAILS];
   if (task === "mail-attach") return [safety, welcome, ...DECOY_EMAILS];
+  if (task === "reply-all") {
+    const meta = SUBJECT_BY_TASK["reply-all"];
+    return [
+      {
+        key: "hq-thread",
+        from: "Dana Ortiz",
+        initials: "DO",
+        color: "#7248b9",
+        time: "10:04 AM",
+        isTarget: true,
+        unread: true,
+        subject: { en: meta.en.subject, es: meta.es.subject },
+        preview: { en: meta.en.preview, es: meta.es.preview },
+      },
+    ];
+  }
   return [];
 }

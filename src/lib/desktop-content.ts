@@ -224,5 +224,8 @@ export const TASK_KEYS = [
   "formula-check",
   "team-meeting",
   "priority-call",
+  "college-offer",
+  "budget-sheet",
+  "reply-all",
 ] as const;
 export type TaskKey = (typeof TASK_KEYS)[number];

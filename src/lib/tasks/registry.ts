@@ -510,6 +510,63 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Floor from the bookmarks"),
   },
+
+  "college-offer": {
+    key: "college-offer",
+    built: true,
+    label: { en: "Read and accept the offer", es: "Lee y acepta la oferta" },
+    dispatch: {
+      en: "Harborside will pay for a class. Read the offer, then make it fit your week.",
+      es: "Harborside pagará una clase. Lee la oferta y haz que quepa en tu semana.",
+    },
+    skill: "Accept an offer and put it on a full calendar",
+    bookmarkLabel: "Offer",
+    handoffCta: { en: "Open Offer from the bookmarks", es: "Abre Oferta en los marcadores" },
+    shiftMoment: {
+      en: "Monday. The offer is in your inbox.",
+      es: "Lunes. La oferta está en tu bandeja.",
+    },
+    location: browser("Open Offer from the bookmarks"),
+    jobCardLine: { en: "Read the offer. Then make it fit.", es: "Lee la oferta. Luego haz que quepa." },
+  },
+
+  "budget-sheet": {
+    key: "budget-sheet",
+    built: true,
+    label: { en: "Flag what is over budget", es: "Marca lo que se pasó del presupuesto" },
+    dispatch: {
+      en: "One category is over. Open the formula, then tell Maria.",
+      es: "Una categoría se pasó. Abre la fórmula y avísale a Maria.",
+    },
+    skill: "Read a budget IF and a chart",
+    bookmarkLabel: "Sheets",
+    handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
+    shiftMoment: {
+      en: "Wednesday. This week's budget is in.",
+      es: "Miércoles. Ya está el presupuesto de esta semana.",
+    },
+    location: browser("Open Sheets from the bookmarks"),
+    jobCardLine: { en: "Find what is over budget.", es: "Encuentra qué se pasó del presupuesto." },
+  },
+
+  "reply-all": {
+    key: "reply-all",
+    built: true,
+    label: { en: "Reply to the right people", es: "Responde a las personas correctas" },
+    dispatch: {
+      en: "HQ asked a question. Not everyone on the thread needs your answer.",
+      es: "HQ hizo una pregunta. No todos en el hilo necesitan tu respuesta.",
+    },
+    skill: "Choose reply instead of reply-all",
+    bookmarkLabel: "Mail",
+    handoffCta: { en: "Open Mail from the bookmarks", es: "Abre Correo en los marcadores" },
+    shiftMoment: {
+      en: "Friday. A long thread from HQ.",
+      es: "Viernes. Un hilo largo de HQ.",
+    },
+    location: browser("Open Mail from the bookmarks"),
+    jobCardLine: { en: "Reply to who asked. Not everyone.", es: "Responde a quien preguntó. No a todos." },
+  },
 };
 
 /** All task descriptors in registry order. */

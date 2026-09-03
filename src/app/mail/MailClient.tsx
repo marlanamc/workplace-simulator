@@ -15,6 +15,12 @@ import {
   isComposeOnly,
   PLAYABLE_MAIL_TASKS,
   COMPOSE_RECIPIENT,
+  CASUAL_DRAFT,
+  REPLY_ALL_THREAD,
+  REPLY_ALL_RECIPIENTS,
+  casualDraftUntouched,
+  stillSoundsCasual,
+  replyAllAnswersDana,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
@@ -73,6 +79,7 @@ const STEP_LINE = {
     // Compose-only: there is no email to open, so these lines are never shown.
     "mail-etiquette": { en: "Write to Darnell.", es: "Escríbele a Darnell." },
     "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
+    "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
   } as Record<MailTask, Localized<string>>,
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
   attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
@@ -102,6 +109,7 @@ const STEP_COUNT: Record<MailTask, number> = {
   "mail-attach": 4,
   "mail-etiquette": 2,
   "call-out-sick": 2,
+  "reply-all": 3,
 };
 
 function isStoryMail(m: { key: string }): m is InboxRow {
@@ -140,6 +148,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
+  const [replyAudience, setReplyAudience] = useState<"dana" | "all" | null>(null);
   const skillKey = timeclockMailActive ? "timeclock" : activeMailTask;
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } =
     useSkillGuidance(skillKey);
@@ -155,10 +164,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       setActiveMailTask(next);
       setView(completedTaskKeys.includes(next) ? "done" : isComposeOnly(next) ? "compose" : "empty");
       setStep(0);
-      setBody("");
+      setBody(next === "reply-all" ? "" : "");
       setAttached(false);
       setConfirmPick(null);
       setBridgeOutEligible(false);
+      setReplyAudience(null);
     }
   }
 
@@ -213,9 +223,21 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       advance(2);
       return;
     }
+    if (activeMailTask === "reply-all") {
+      setReplyAudience("dana");
+      setBody(CASUAL_DRAFT[lang]);
+    }
     setView("compose");
     advance(2);
   };
+  const wrongReplyAll = () =>
+    recordWrong({
+      title: T("Not Reply all.", "No es Responder a todos."),
+      body: T(
+        "Dana asked you, not the whole thread. Click Reply.",
+        "Dana te preguntó a ti, no a todo el hilo. Haz clic en Responder.",
+      ),
+    });
   const wrongForward = () =>
     recordWrong({
       title: T("Not that one. That is Forward.", "Ese no es. Es Reenviar."),
@@ -270,6 +292,34 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         title: T("Not yet.", "Todavía no."),
         body: T("She asked for the file. Click Attach file.", "Ella pidió el archivo. Haz clic en Adjuntar archivo."),
       });
+    if (activeMailTask === "reply-all") {
+      if (replyAudience !== "dana") {
+        return recordWrong({
+          title: T("Not the whole thread.", "No todo el hilo."),
+          body: T("Dana asked you. Reply to Dana, not everyone.", "Dana te preguntó a ti. Respóndele a Dana, no a todos."),
+        });
+      }
+      if (casualDraftUntouched(body, lang) || stillSoundsCasual(body)) {
+        return recordWrong({
+          title: T("Edit the draft first.", "Edita el borrador primero."),
+          body: T(
+            "That draft is too casual for HQ. Same yes, different tone.",
+            "Ese borrador es demasiado informal para HQ. El mismo sí, otro tono.",
+          ),
+        });
+      }
+      if (!replyAllAnswersDana(body)) {
+        return recordWrong({
+          title: T("Answer Dana's ask.", "Responde lo que Dana pregunta."),
+          body: T(
+            "She needs a yes or no about the Friday 6 AM delivery.",
+            "Necesita un sí o un no sobre la entrega del viernes a las 6 AM.",
+          ),
+        });
+      }
+      finish("choose_reply_not_reply_all");
+      return;
+    }
     finish(activeMailTask === "mail-attach" ? "reply_with_attachment" : "answer_own_words");
   };
 
@@ -307,6 +357,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setPicker(false);
     setOpenStory(null);
     setBridgeOutEligible(false);
+    setReplyAudience(null);
   };
 
   const notThisFolder = () =>
@@ -499,9 +550,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               // card names whichever one the learner is actually on.
               const composeLine = needsAttach && !attached
                 ? STEP_LINE.attach
-                : !body.trim()
-                  ? STEP_LINE.write
-                  : STEP_LINE.send;
+                : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
+                  ? { en: "Edit the casual draft.", es: "Edita el borrador informal." }
+                  : !body.trim()
+                    ? STEP_LINE.write
+                    : STEP_LINE.send;
               const confirmAnswered =
                 Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
               const instruction =
@@ -509,8 +562,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   ? STEP_LINE.openMail[activeMailTask]
                   : view === "read"
                     // Job 2 goes through a comprehension check first, so its
-                    // button here says Continue, not Reply.
-                    ? clickLine(needsAttach ? BUTTON_LABEL.continue : BUTTON_LABEL.reply)
+                    // button here says Continue, not Reply. Reply-all names
+                    // the safer button so the card does not say Reply all.
+                    ? activeMailTask === "reply-all"
+                      ? { en: "Click Reply. Not Reply all.", es: "Haz clic en Responder. No en Responder a todos." }
+                      : clickLine(needsAttach ? BUTTON_LABEL.continue : BUTTON_LABEL.reply)
                     : view === "confirm"
                       ? confirmAnswered
                         ? clickLine(BUTTON_LABEL.replyAfterConfirm)
@@ -556,7 +612,33 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 <h2 className="mb-5 text-[22px] font-normal leading-tight text-[#1f1f1f]">{subjectMeta.subject}</h2>
                 {/* A compose-only task has no email to quote above the reply -
                     the learner is starting this thread, not answering one. */}
-                {!composeOnly && (
+                {!composeOnly && activeMailTask === "reply-all" && (
+                <div className="flex flex-col gap-6">
+                  {REPLY_ALL_THREAD.map((msg) => (
+                    <div key={`${msg.from}-${msg.time}`} className="flex items-start gap-3">
+                      <div
+                        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-medium text-white"
+                        style={{ background: msg.color }}
+                      >
+                        {msg.initials}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-baseline justify-between gap-2">
+                          <span className="text-[14px] font-medium">{msg.from}</span>
+                          <span className="text-[12px] text-[#5f6368]">{msg.time}</span>
+                        </div>
+                        <div className="text-[12px] text-[#5f6368]">{msg.to[lang]}</div>
+                        <div className="mt-3 flex max-w-[62ch] flex-col gap-2 text-[14px] leading-[1.6] text-[#1f1f1f]">
+                          {msg.body[lang].map((p) => (
+                            <p key={p} className="m-0">{p}</p>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                )}
+                {!composeOnly && activeMailTask !== "reply-all" && (
                 <div className="flex items-start gap-3">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a73e8] text-[14px] font-medium text-white">
                     MD
@@ -573,7 +655,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-etiquette">, lang, displayName).plain.map((p, i) => (
+                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-etiquette" | "reply-all">, lang, displayName).plain.map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
@@ -597,6 +679,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
                       >
                         {c.forward}
+                      </button>
+                    )}
+                    {activeMailTask === "reply-all" && (
+                      <button
+                        onClick={wrongReplyAll}
+                        className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#444746] hover:bg-[#f2f6fc] cursor-pointer"
+                      >
+                        {c.replyAll}
                       </button>
                     )}
                   </div>
@@ -642,7 +732,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   <div className="mt-6 ml-[52px] overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.to}</span>
-                      <span>{COMPOSE_RECIPIENT[activeMailTask]}</span>
+                      <span>{activeMailTask === "reply-all" && replyAudience === "all" ? REPLY_ALL_RECIPIENTS : COMPOSE_RECIPIENT[activeMailTask]}</span>
                     </div>
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>

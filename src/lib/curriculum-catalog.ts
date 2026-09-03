@@ -18,6 +18,9 @@ export const JUMP_TABS = [
   "formula-check",
   "team-meeting",
   "priority-call",
+  "college-offer",
+  "budget-sheet",
+  "zoom",
 ] as const;
 export type JumpTab = (typeof JUMP_TABS)[number];
 
@@ -434,7 +437,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
             taskKey: "college-offer",
             skill: "Read a formal offer letter, reply, add a commitment to a full calendar",
             app: "Mail + Calendar",
-            tab: "mail",
+            tab: "college-offer",
           },
         ],
       },
@@ -449,7 +452,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
             taskKey: "budget-sheet",
             skill: "Read a budget with an IF status column and a chart, flag what's over",
             app: "Sheets",
-            tab: "spreadsheet",
+            tab: "budget-sheet",
           },
         ],
       },
@@ -614,8 +617,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
             n: "2",
             taskKey: "video-call",
             skill: "Join and run the meeting itself",
-            app: "Calendar",
-            tab: "calendar",
+            app: "Zoom",
+            tab: "zoom",
           },
         ],
       },

@@ -45,6 +45,9 @@ export const TAB_META: TabMeta[] = [
   { key: "formula-check", ...SHEETS, levelKey: "level10" },
   { key: "team-meeting", label: "Huddle", url: "calendar.harborsidecafe.com", color: "#34a853", levelKey: "level11" },
   { key: "priority-call", label: "Floor", url: "today.harborsidecafe.com", color: "#d93025", levelKey: "level12" },
+  { key: "college-offer", label: "Offer", url: "mail.harborsidecafe.com", color: "#ea4335", levelKey: "level13" },
+  { key: "budget-sheet", ...SHEETS, levelKey: "level14" },
+  { key: "zoom", label: "Zoom", url: "zoom.harborsidecafe.com/join", color: "#2D8CFF", levelKey: "level13" },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", color: "#7248b9", levelKey: "level3b" },
   { key: "account-recovery", label: "Sign In", url: "accounts.harborsidecafe.com", color: "#5f6368", levelKey: "level3c" },
   { key: "portal", label: "Portal", url: "portal.harborsidecafe.com", color: "#8430ce", levelKey: "level2" },
@@ -68,14 +71,18 @@ export const TAB_COLORS: Record<string, string> = Object.fromEntries(
  * The five Sheets-flavored tabs. They share a label, so at most one shows on
  * the bookmark bar at a time — whichever the current level needs.
  */
-const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check"];
+const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet"];
 
 /** Tabs that appear on the bookmark bar only while their own level is in view. */
 const GATED_TABS: Record<string, string> = {
   triage: "level8",
   "team-meeting": "level11",
   "priority-call": "level12",
+  "college-offer": "level13",
 };
+
+/** Studio-only tabs: jumpable, never on the learner bookmark bar. */
+const STUDIO_ONLY_TABS = new Set(["zoom"]);
 
 /**
  * Which bookmarks show on the bar for the level currently being viewed.
@@ -95,10 +102,12 @@ export function bookmarkTabKeys(
     level7: completedTaskKeys.includes("make-a-copy") ? "status-report" : "make-a-copy",
     level9: "team-schedule",
     level10: "formula-check",
+    level14: "budget-sheet",
   };
   const activeSheet = sheetForLevel[viewedLevelKey] ?? "spreadsheet";
   return new Set(
     TAB_META.filter((t) => {
+      if (STUDIO_ONLY_TABS.has(t.key)) return false;
       if (SHEET_TABS.includes(t.key)) return t.key === activeSheet;
       if (t.key in GATED_TABS) return GATED_TABS[t.key] === viewedLevelKey;
       return true;

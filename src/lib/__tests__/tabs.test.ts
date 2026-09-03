@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { TAB_META, TAB_LEVEL_KEYS, bookmarkTabKeys } from "@/lib/tabs";
 import { LEVELS } from "@/lib/tracks-content";
 
-const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check"];
+const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet"];
 
 describe("tab registry", () => {
   it("TAB_LEVEL_KEYS is derived from TAB_META", () => {
@@ -20,7 +20,7 @@ describe("tab registry", () => {
 
 describe("bookmarkTabKeys", () => {
   it("shows exactly one Sheets variant at a time", () => {
-    for (const levelKey of ["level6", "level7", "level9", "level10", "level5"]) {
+    for (const levelKey of ["level6", "level7", "level9", "level10", "level14", "level5"]) {
       const visible = bookmarkTabKeys(levelKey, []);
       const sheets = SHEET_TABS.filter((k) => visible.has(k));
       expect(sheets, `level "${levelKey}"`).toHaveLength(1);
@@ -31,6 +31,7 @@ describe("bookmarkTabKeys", () => {
     expect(bookmarkTabKeys("level6", []).has("spreadsheet")).toBe(true);
     expect(bookmarkTabKeys("level9", []).has("team-schedule")).toBe(true);
     expect(bookmarkTabKeys("level10", []).has("formula-check")).toBe(true);
+    expect(bookmarkTabKeys("level14", []).has("budget-sheet")).toBe(true);
     // level5 has no Sheets task — falls back to the plain spreadsheet bookmark.
     expect(bookmarkTabKeys("level5", []).has("spreadsheet")).toBe(true);
   });
@@ -43,12 +44,20 @@ describe("bookmarkTabKeys", () => {
     expect(after.has("make-a-copy")).toBe(false);
   });
 
-  it("gates triage / team-meeting / priority-call to their own level", () => {
+  it("gates triage / team-meeting / priority-call / college-offer to their own level", () => {
     expect(bookmarkTabKeys("level8", []).has("triage")).toBe(true);
     expect(bookmarkTabKeys("level9", []).has("triage")).toBe(false);
     expect(bookmarkTabKeys("level11", []).has("team-meeting")).toBe(true);
     expect(bookmarkTabKeys("level12", []).has("priority-call")).toBe(true);
     expect(bookmarkTabKeys("level11", []).has("priority-call")).toBe(false);
+    expect(bookmarkTabKeys("level13", []).has("college-offer")).toBe(true);
+    expect(bookmarkTabKeys("level14", []).has("college-offer")).toBe(false);
+  });
+
+  it("keeps Zoom off the learner bookmark bar", () => {
+    for (const level of LEVELS) {
+      expect(bookmarkTabKeys(level.key, []).has("zoom"), level.key).toBe(false);
+    }
   });
 
   it("always shows the un-gated tabs", () => {
