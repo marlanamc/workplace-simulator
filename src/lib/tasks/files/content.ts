@@ -162,8 +162,10 @@ export const FILES_COPY: Record<Lang, {
   renamePlaceholder: string;
   renameContinue: string;
   shareWith: string;
+  addPeople: string;
   canEdit: string;
   canView: string;
+  canComment: string;
   share: string;
   sentKicker: string;
   doneTitle: string;
@@ -198,8 +200,10 @@ export const FILES_COPY: Record<Lang, {
     renamePlaceholder: "Type the new file name…",
     renameContinue: "Continue",
     shareWith: "Share with",
+    addPeople: "Add people",
     canEdit: "Can edit",
     canView: "Can view",
+    canComment: "Can comment",
     share: "Share",
     sentKicker: "Shared",
     doneTitle: "You shared the right file with the right access.",
@@ -234,8 +238,10 @@ export const FILES_COPY: Record<Lang, {
     renamePlaceholder: "Escribe el nuevo nombre…",
     renameContinue: "Continuar",
     shareWith: "Compartir con",
+    addPeople: "Agregar personas",
     canEdit: "Puede editar",
     canView: "Puede ver",
+    canComment: "Puede comentar",
     share: "Compartir",
     sentKicker: "Compartido",
     doneTitle: "Compartiste el archivo correcto con el acceso correcto.",

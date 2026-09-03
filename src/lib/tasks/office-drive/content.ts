@@ -88,7 +88,9 @@ export const HQ_DRIVE_COPY: Record<Lang, {
   newBtn: string;
   share: string;
   shareWith: string;
+  addPeople: string;
   canView: string;
+  canComment: string;
   canEdit: string;
   sentKicker: string;
   tryAgain: string;
@@ -108,7 +110,9 @@ export const HQ_DRIVE_COPY: Record<Lang, {
     newBtn: "New",
     share: "Share",
     shareWith: "Share with",
+    addPeople: "Add people",
     canView: "Can view",
+    canComment: "Can comment",
     canEdit: "Can edit",
     sentKicker: "Shared view-only",
     tryAgain: "Do it again",
@@ -128,7 +132,9 @@ export const HQ_DRIVE_COPY: Record<Lang, {
     newBtn: "Nuevo",
     share: "Compartir",
     shareWith: "Compartir con",
+    addPeople: "Agregar personas",
     canView: "Puede ver",
+    canComment: "Puede comentar",
     canEdit: "Puede editar",
     sentKicker: "Compartido solo para ver",
     tryAgain: "Hacerlo otra vez",

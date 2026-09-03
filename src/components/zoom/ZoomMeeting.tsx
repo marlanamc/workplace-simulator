@@ -1,7 +1,7 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { Mic, MicOff, Video, VideoOff, MessageSquare, PhoneOff } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Mic, MicOff, Video, VideoOff, MessageSquare, PhoneOff, Users } from "lucide-react";
 
 export interface ZoomParticipant {
   key: string;
@@ -31,6 +31,7 @@ export default function ZoomMeeting({
   cameraOnLabel,
   cameraOffLabel,
   chatLabel,
+  participantsLabel = "Participants",
   leaveLabel,
   youLabel,
   chatPlaceholder,
@@ -64,6 +65,7 @@ export default function ZoomMeeting({
   cameraOnLabel: string;
   cameraOffLabel: string;
   chatLabel: string;
+  participantsLabel?: string;
   leaveLabel: string;
   youLabel: string;
   chatPlaceholder: string;
@@ -77,6 +79,10 @@ export default function ZoomMeeting({
   onSendChat: () => void;
   onLeave: () => void;
 }) {
+  const [rosterOpen, setRosterOpen] = useState(false);
+  // "You" plus the named participants — the number Zoom shows on the toolbar.
+  const totalInRoom = participants.length + 1;
+
   if (phase === "join") {
     return (
       <div className="flex h-full min-h-0 flex-col items-center justify-center bg-[#1a1a1a] px-6 text-white" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
@@ -130,6 +136,22 @@ export default function ZoomMeeting({
           </div>
         ))}
       </div>
+      {rosterOpen && (
+        <div className="border-t border-[#3d3d3d] bg-[#242424] px-3 py-2 text-[13px] text-[#e0e0e0]">
+          <div className="mb-1 font-medium text-white">
+            {participantsLabel} ({totalInRoom})
+          </div>
+          <p className="m-0 py-0.5">
+            {youLabel}
+            {muted ? " · 🔇" : ""}
+          </p>
+          {participants.map((p) => (
+            <p key={p.key} className="m-0 py-0.5">
+              {p.name}
+            </p>
+          ))}
+        </div>
+      )}
       {chatOpen && (
         <div className="border-t border-[#3d3d3d] bg-[#242424] px-3 py-2">
           <div className="mb-2 max-h-[88px] overflow-auto text-[13px] text-[#e0e0e0]">
@@ -156,6 +178,9 @@ export default function ZoomMeeting({
         </ToolbarButton>
         <ToolbarButton active={cameraOn} label={cameraOn ? cameraOffLabel : cameraOnLabel} onClick={onToggleCamera}>
           {cameraOn ? <Video size={18} /> : <VideoOff size={18} />}
+        </ToolbarButton>
+        <ToolbarButton active={rosterOpen} label={`${participantsLabel} (${totalInRoom})`} onClick={() => setRosterOpen((v) => !v)}>
+          <Users size={18} />
         </ToolbarButton>
         <ToolbarButton active={chatOpen} label={chatLabel} onClick={onToggleChat}>
           <MessageSquare size={18} />

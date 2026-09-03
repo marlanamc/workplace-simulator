@@ -33,6 +33,29 @@ export const CALENDAR_ITEM: Localized = {
   es: "El próximo jueves: la apertura de la mañana todavía no tiene a nadie.",
 };
 
+/** Mon–Sun labels for the compact Calendar week strip. */
+export const WEEK_DAYS: { label: Localized; date: number }[] = [
+  { label: { en: "Mon", es: "Lun" }, date: 24 },
+  { label: { en: "Tue", es: "Mar" }, date: 25 },
+  { label: { en: "Wed", es: "Mié" }, date: 26 },
+  { label: { en: "Thu", es: "Jue" }, date: 27 },
+  { label: { en: "Fri", es: "Vie" }, date: 28 },
+  { label: { en: "Sat", es: "Sáb" }, date: 29 },
+  { label: { en: "Sun", es: "Dom" }, date: 30 },
+];
+
+/** The one event the learner opens on the week strip (Thursday). */
+export const CALENDAR_EVENT = {
+  dayIndex: 3,
+  time: { en: "6 AM", es: "6 AM" } as Localized,
+  title: { en: "Morning open", es: "Apertura" } as Localized,
+  detailWhen: { en: "Thu, Aug 27 · 6:00 – 10:00 AM", es: "Jue, 27 de ago · 6:00 – 10:00 AM" } as Localized,
+  detailBody: {
+    en: "No one is assigned to the morning open. Flag it in the weekly report.",
+    es: "Nadie está asignado a la apertura de la mañana. Márcalo en el reporte semanal.",
+  } as Localized,
+};
+
 export const OPS_COPY: Record<Lang, {
   appName: string;
   helpBtn: string;
@@ -49,19 +72,30 @@ export const OPS_COPY: Record<Lang, {
   mailTitle: string;
   mailBody: string;
   mailCta: string;
+  sheetFileName: string;
   sheetHeader: string;
+  dayCol: string;
+  salesCol: string;
   totalLabel: string;
   confirmTotal: string;
+  calAppName: string;
   calHeader: string;
   calNoted: string;
+  calNoteCta: string;
+  eventOpenLabel: string;
+  docsFileName: string;
   docsLabel: string;
   docsPlaceholder: string;
   docsSave: string;
-  mailTo: string;
-  mailSubject: string;
+  mailToValue: string;
+  mailSubjectValue: string;
+  toLabel: string;
+  subjectLabel: string;
   mailLabel: string;
   mailPlaceholder: string;
+  attachmentName: string;
   send: string;
+  backHub: string;
   needConfirm: string;
   needNoted: string;
   needSummary: string;
@@ -89,19 +123,30 @@ export const OPS_COPY: Record<Lang, {
     mailTitle: "Send the packet",
     mailBody: "Send the summary to your manager as one email.",
     mailCta: "Open Mail",
+    sheetFileName: "Weekly sales — Aug 24",
     sheetHeader: "Week of Aug 24 — daily sales",
-    totalLabel: "Week total",
+    dayCol: "Day",
+    salesCol: "Sales",
+    totalLabel: "Total",
     confirmTotal: `Yes — the total is $${PLANTED_WEEK_TOTAL.toLocaleString("en-US")}`,
+    calAppName: "Calendar",
     calHeader: "This week",
     calNoted: "Noted — I'll mention this",
+    calNoteCta: "Note it for the report",
+    eventOpenLabel: "Open the event",
+    docsFileName: "Weekly report — Aug 24",
     docsLabel: "Weekly summary",
     docsPlaceholder: "This week's total was… and coming up…",
     docsSave: "Save the summary",
-    mailTo: "To: Maria Delgado",
-    mailSubject: "Subject: Weekly report — week of Aug 24",
+    mailToValue: "Maria Delgado",
+    mailSubjectValue: "Weekly report — week of Aug 24",
+    toLabel: "To",
+    subjectLabel: "Subject",
     mailLabel: "Your message",
     mailPlaceholder: "A line or two, with the summary below or attached…",
+    attachmentName: "Weekly report — Aug 24",
     send: "Send",
+    backHub: "Back to the report",
     needConfirm: "Confirm the total that's already there. Don't type a different number.",
     needNoted: "Open the calendar item and note it first.",
     needSummary: "Write a short paragraph. Put the week's number in it.",
@@ -129,19 +174,30 @@ export const OPS_COPY: Record<Lang, {
     mailTitle: "Envía el paquete",
     mailBody: "Envía el resumen a tu gerente en un solo correo.",
     mailCta: "Abrir Mail",
+    sheetFileName: "Ventas de la semana — 24 de ago",
     sheetHeader: "Semana del 24 de ago — ventas por día",
-    totalLabel: "Total de la semana",
+    dayCol: "Día",
+    salesCol: "Ventas",
+    totalLabel: "Total",
     confirmTotal: `Sí — el total es $${PLANTED_WEEK_TOTAL.toLocaleString("en-US")}`,
+    calAppName: "Calendar",
     calHeader: "Esta semana",
     calNoted: "Anotado — lo voy a mencionar",
+    calNoteCta: "Anotarlo para el reporte",
+    eventOpenLabel: "Abrir el evento",
+    docsFileName: "Reporte semanal — 24 de ago",
     docsLabel: "Resumen semanal",
     docsPlaceholder: "El total de esta semana fue… y lo que viene…",
     docsSave: "Guardar el resumen",
-    mailTo: "Para: Maria Delgado",
-    mailSubject: "Asunto: Reporte semanal — semana del 24 de ago",
+    mailToValue: "Maria Delgado",
+    mailSubjectValue: "Reporte semanal — semana del 24 de ago",
+    toLabel: "Para",
+    subjectLabel: "Asunto",
     mailLabel: "Tu mensaje",
     mailPlaceholder: "Una o dos líneas, con el resumen abajo o adjunto…",
+    attachmentName: "Reporte semanal — 24 de ago",
     send: "Enviar",
+    backHub: "Volver al reporte",
     needConfirm: "Confirma el total que ya está ahí. No escribas otro número.",
     needNoted: "Abre el punto del calendario y anótalo primero.",
     needSummary: "Escribe un párrafo corto. Pon el número de la semana en él.",

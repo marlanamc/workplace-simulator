@@ -5,6 +5,7 @@ import { useProgress } from "@/lib/progress-context";
 import {
   MEETING_COPY,
   MEETING_SCRIPT,
+  ATTENDEES,
   AGENDA_STARTERS,
   NOTE_STARTERS,
   FOLLOWUP_STARTERS,
@@ -20,6 +21,7 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import TaskHub from "@/components/task/TaskHub";
 import NeedAStart from "@/components/task/NeedAStart";
+import GmailCompose from "@/components/task/GmailCompose";
 import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
@@ -29,7 +31,7 @@ import { ClipboardList, MessageSquare, Send } from "lucide-react";
 type View = "hub" | "agenda" | "meeting" | "followup" | "done";
 
 export default function MeetingMinutesTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
   const [view, setView] = useState<View>(
     completedTaskKeys.includes("meeting-minutes") ? "done" : "hub",
   );
@@ -161,7 +163,18 @@ export default function MeetingMinutesTask() {
         <div className="min-h-0 flex-1 overflow-auto p-6">
           <div className="mx-auto max-w-[560px]">
             <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.meetingKicker}</div>
-            <div className="mt-1 text-[13px] text-[#5f6368]">{c.meetingWho}</div>
+            {/* Meet-style participant strip — a small row of tiles so "you ran
+                the room" actually has a room. */}
+            <div className="mt-2 flex flex-wrap gap-2">
+              <ParticipantTile
+                initials={(displayName.trim()[0] ?? "Y").toUpperCase()}
+                name={lang === "en" ? "You" : "Tú"}
+                color="#5f6368"
+              />
+              {ATTENDEES.map((p) => (
+                <ParticipantTile key={p.name} initials={p.initials} name={p.name} color={p.color} />
+              ))}
+            </div>
             <div className="mt-3 space-y-2 rounded-xl border border-[#dadce0] bg-white p-4 text-[14px] leading-relaxed text-[#3c4043]">
               {script.slice(0, scriptStep + 1).map((line, i) => (
                 <p key={i}>{line}</p>
@@ -201,24 +214,26 @@ export default function MeetingMinutesTask() {
       {view === "followup" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
           <div className="mx-auto max-w-[560px]">
-            <div className="text-[13px] text-[#5f6368]">{c.followupTo}</div>
-            <div className="mt-1 text-[15px] font-medium">{c.followupSubject}</div>
-            <label className="mt-4 block text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.followupLabel}</label>
-            <textarea
-              value={followup}
-              onChange={(e) => setFollowup(e.target.value)}
+            <GmailCompose
+              to={c.followupToValue}
+              subject={c.followupSubjectValue}
+              body={followup}
+              onBody={setFollowup}
               placeholder={c.followupPlaceholder}
-              rows={5}
-              className="mt-2 w-full resize-y rounded-xl border border-[#dadce0] p-3 text-[15px] leading-relaxed outline-none focus:border-[#1a73e8]"
-            />
-            <div className="mt-2">
+              toLabel={c.toLabel}
+              subjectLabel={c.subjectLabel}
+              sendLabel={c.send}
+              onSend={sendFollowup}
+            >
               <NeedAStart lang={lang} starters={FOLLOWUP_STARTERS[lang]} onPick={(s) => setFollowup((b) => (b ? `${b}\n` : "") + s)} />
-            </div>
-            <div className="mt-4 flex gap-3">
-              <button onClick={sendFollowup} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
-                {c.send}
+            </GmailCompose>
+            <div className="mt-3">
+              <button
+                onClick={() => setView("hub")}
+                className="text-[13px] font-medium text-[#0b57d0] cursor-pointer hover:underline"
+              >
+                ← {c.backHub}
               </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
             </div>
           </div>
         </div>
@@ -233,6 +248,20 @@ export default function MeetingMinutesTask() {
         gotItLabel={c.gotIt}
       />
       <NudgeToast text={nudge} onDismiss={dismiss} />
+    </div>
+  );
+}
+
+function ParticipantTile({ initials, name, color }: { initials: string; name: string; color: string }) {
+  return (
+    <div className="flex w-[76px] flex-col items-center gap-1 rounded-lg bg-[#202124] p-2 text-white">
+      <span
+        className="flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-medium"
+        style={{ background: color }}
+      >
+        {initials}
+      </span>
+      <span className="max-w-full truncate text-[11px]">{name}</span>
     </div>
   );
 }

@@ -32,6 +32,7 @@ export const VIDEO_CALL_COPY: Record<Lang, {
   cameraOn: string;
   cameraOff: string;
   chat: string;
+  participants: string;
   leave: string;
   you: string;
   chatPlaceholder: string;
@@ -59,6 +60,7 @@ export const VIDEO_CALL_COPY: Record<Lang, {
     cameraOn: "Start video",
     cameraOff: "Stop video",
     chat: "Chat",
+    participants: "Participants",
     leave: "Leave",
     you: "You",
     chatPlaceholder: "Type your question in the chat…",
@@ -86,6 +88,7 @@ export const VIDEO_CALL_COPY: Record<Lang, {
     cameraOn: "Iniciar video",
     cameraOff: "Detener video",
     chat: "Chat",
+    participants: "Participantes",
     leave: "Salir",
     you: "Tú",
     chatPlaceholder: "Escribe tu pregunta en el chat…",

@@ -5,7 +5,8 @@ import { useProgress } from "@/lib/progress-context";
 import {
   OPS_COPY,
   SHEET_ROWS,
-  CALENDAR_ITEM,
+  WEEK_DAYS,
+  CALENDAR_EVENT,
   PLANTED_WEEK_TOTAL,
   SUMMARY_STARTERS,
   MAIL_STARTERS,
@@ -23,9 +24,15 @@ import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
+import { SheetsFrame, ReadOnlyGrid } from "@/components/task/SheetsFrame";
+import { CalendarFrame, WeekStrip, EventCard } from "@/components/task/CalendarFrame";
+import DocsEditor from "@/components/task/DocsEditor";
+import GmailCompose from "@/components/task/GmailCompose";
 import { Table2, Calendar, FileText, Send } from "lucide-react";
 
 type View = "hub" | "sheet" | "calendar" | "docs" | "mail" | "done";
+
+const TOTAL_ROW = SHEET_ROWS.length + 2; // header is row 1, six days rows 2-7, total row 8
 
 export default function OpsReportPacketTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
@@ -34,9 +41,11 @@ export default function OpsReportPacketTask() {
   );
   const [confirmed, setConfirmed] = useState(false);
   const [noted, setNoted] = useState(false);
+  const [eventOpen, setEventOpen] = useState(false);
   const [summary, setSummary] = useState("");
   const [summarySaved, setSummarySaved] = useState(false);
   const [message, setMessage] = useState("");
+  const [selectedCell, setSelectedCell] = useState<{ row: number; col: string }>({ row: TOTAL_ROW, col: "B" });
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = OPS_COPY[lang];
@@ -78,9 +87,11 @@ export default function OpsReportPacketTask() {
     setView("hub");
     setConfirmed(false);
     setNoted(false);
+    setEventOpen(false);
     setSummary("");
     setSummarySaved(false);
     setMessage("");
+    setSelectedCell({ row: TOTAL_ROW, col: "B" });
   };
 
   if (view === "done") {
@@ -97,17 +108,28 @@ export default function OpsReportPacketTask() {
     );
   }
 
+  const backToHub = (
+    <button
+      onClick={() => setView("hub")}
+      className="text-[13px] font-medium text-[#0b57d0] cursor-pointer hover:underline"
+    >
+      ← {c.backHub}
+    </button>
+  );
+
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-[#f8f9fa] text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
-      <div className="flex items-center gap-3 border-b border-[#e0e0e0] bg-white px-4 py-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded bg-[#0f9d58] text-white">
-          {(() => {
-            const Icon = TASK_ICONS["ops-report-packet"];
-            return <Icon size={18} strokeWidth={2.25} />;
-          })()}
-        </span>
-        <span className="text-[18px] text-[#3c4043]">{c.appName}</span>
-      </div>
+      {view === "hub" && (
+        <div className="flex items-center gap-3 border-b border-[#e0e0e0] bg-white px-4 py-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded bg-[#0f9d58] text-white">
+            {(() => {
+              const Icon = TASK_ICONS["ops-report-packet"];
+              return <Icon size={18} strokeWidth={2.25} />;
+            })()}
+          </span>
+          <span className="text-[18px] text-[#3c4043]">{c.appName}</span>
+        </div>
+      )}
 
       <RightNowBar
         icon={TASK_ICONS["ops-report-packet"]}
@@ -133,107 +155,140 @@ export default function OpsReportPacketTask() {
       )}
 
       {view === "sheet" && (
-        <div className="min-h-0 flex-1 overflow-auto p-6">
-          <div className="mx-auto max-w-[480px]">
-            <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.sheetHeader}</div>
-            <div className="mt-3 inline-block border border-[#c0c0c0] text-[13px]">
-              {SHEET_ROWS.map((row) => (
-                <div key={row.label.en} className="flex">
-                  <div className="w-[120px] border-b border-r border-[#c0c0c0] px-2 py-1.5">{row.label[lang]}</div>
-                  <div className="w-[100px] border-b border-[#c0c0c0] px-2 py-1.5 text-right tabular-nums">${row.value}</div>
-                </div>
-              ))}
-              <div className="flex bg-[#f8f9fa] font-medium">
-                <div className="w-[120px] border-r border-[#c0c0c0] px-2 py-1.5">{c.totalLabel}</div>
-                <div className="w-[100px] px-2 py-1.5 text-right tabular-nums">${PLANTED_WEEK_TOTAL.toLocaleString("en-US")}</div>
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <SheetsFrame fileName={c.sheetFileName}>
+            <ReadOnlyGrid
+              columns={[
+                { key: "A", width: 120, header: c.dayCol },
+                { key: "B", width: 110, header: c.salesCol },
+              ]}
+              rows={[
+                ...SHEET_ROWS.map((r, i) => ({
+                  row: i + 2,
+                  cells: { A: r.label[lang], B: `$${r.value}` },
+                })),
+                {
+                  row: TOTAL_ROW,
+                  total: true,
+                  cells: { A: c.totalLabel, B: `$${PLANTED_WEEK_TOTAL.toLocaleString("en-US")}` },
+                },
+              ]}
+              formulaFor={(row, col) =>
+                row === TOTAL_ROW && col === "B" ? `=SUM(B2:B${TOTAL_ROW - 1})` : undefined
+              }
+              selected={selectedCell}
+              onSelect={setSelectedCell}
+            />
+            <div className="border-t border-[#e0e0e0] bg-white px-4 py-3">
+              <label className="flex items-center gap-2 text-[14px] cursor-pointer">
+                <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} />
+                {c.confirmTotal}
+              </label>
+              <div className="mt-3 flex items-center gap-4">
+                <button onClick={saveSheet} className="inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer">
+                  {lang === "en" ? "Done here" : "Listo aquí"}
+                </button>
+                {backToHub}
               </div>
             </div>
-            <label className="mt-4 flex items-center gap-2 text-[14px] cursor-pointer">
-              <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} />
-              {c.confirmTotal}
-            </label>
-            <div className="mt-4 flex gap-3">
-              <button onClick={saveSheet} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
-                {lang === "en" ? "Done here" : "Listo aquí"}
-              </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
-            </div>
-          </div>
+          </SheetsFrame>
         </div>
       )}
 
       {view === "calendar" && (
-        <div className="min-h-0 flex-1 overflow-auto p-6">
-          <div className="mx-auto max-w-[420px]">
-            <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.calHeader}</div>
-            <div className="mt-3 overflow-hidden rounded-2xl border border-[#dadce0] bg-white">
-              <div className="h-2 bg-[#d93025]" />
-              <p className="px-5 py-4 text-[14px] leading-relaxed">{CALENDAR_ITEM[lang]}</p>
+        <div className="relative min-h-0 flex-1 overflow-hidden">
+          <CalendarFrame appName={c.calAppName}>
+            <WeekStrip
+              days={WEEK_DAYS.map((d, i) => ({ label: d.label[lang], date: d.date, today: i === 0 }))}
+              events={[
+                {
+                  key: "morning-open",
+                  dayIndex: CALENDAR_EVENT.dayIndex,
+                  time: CALENDAR_EVENT.time[lang],
+                  title: CALENDAR_EVENT.title[lang],
+                  color: "#d93025",
+                  onOpen: () => setEventOpen(true),
+                },
+              ]}
+            />
+            <div className="border-t border-[#dadce0] bg-white px-4 py-3">
+              <label className="flex items-center gap-2 text-[14px] cursor-pointer">
+                <input type="checkbox" checked={noted} onChange={(e) => setNoted(e.target.checked)} />
+                {c.calNoted}
+              </label>
+              <div className="mt-3 flex items-center gap-4">
+                <button onClick={saveCalendar} className="inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer">
+                  {lang === "en" ? "Done here" : "Listo aquí"}
+                </button>
+                {backToHub}
+              </div>
             </div>
-            <label className="mt-4 flex items-center gap-2 text-[14px] cursor-pointer">
-              <input type="checkbox" checked={noted} onChange={(e) => setNoted(e.target.checked)} />
-              {c.calNoted}
-            </label>
-            <div className="mt-4 flex gap-3">
-              <button onClick={saveCalendar} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
-                {lang === "en" ? "Done here" : "Listo aquí"}
+          </CalendarFrame>
+          {eventOpen && (
+            <EventCard
+              title={CALENDAR_EVENT.title[lang]}
+              when={CALENDAR_EVENT.detailWhen[lang]}
+              body={CALENDAR_EVENT.detailBody[lang]}
+              accent="#d93025"
+              onClose={() => setEventOpen(false)}
+            >
+              <button
+                onClick={() => {
+                  setNoted(true);
+                  setEventOpen(false);
+                }}
+                className="inline-flex min-h-[40px] items-center rounded-full bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer"
+              >
+                {c.calNoteCta}
               </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
-            </div>
-          </div>
+            </EventCard>
+          )}
         </div>
       )}
 
       {view === "docs" && (
-        <div className="min-h-0 flex-1 overflow-auto p-6">
-          <div className="mx-auto max-w-[560px]">
-            <label className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.docsLabel}</label>
-            <textarea
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-              placeholder={c.docsPlaceholder}
-              rows={5}
-              className="mt-2 w-full resize-y rounded-xl border border-[#dadce0] p-3 text-[15px] leading-relaxed outline-none focus:border-[#1a73e8]"
-            />
-            <div className="mt-2">
-              <NeedAStart lang={lang} starters={SUMMARY_STARTERS[lang]} onPick={(s) => setSummary((b) => (b ? `${b} ` : "") + s)} />
-            </div>
-            <div className="mt-4 flex gap-3">
-              <button onClick={saveDocs} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
+        <div className="min-h-0 flex-1 overflow-hidden">
+          <DocsEditor
+            docTitle={c.docsFileName}
+            body={summary}
+            onBody={setSummary}
+            placeholder={c.docsPlaceholder}
+            lang={lang}
+          >
+            <NeedAStart lang={lang} starters={SUMMARY_STARTERS[lang]} onPick={(s) => setSummary((b) => (b ? `${b} ` : "") + s)} />
+            <div className="mt-4 flex items-center gap-4">
+              <button onClick={saveDocs} className="inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer">
                 {c.docsSave}
               </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
+              {backToHub}
             </div>
-          </div>
+          </DocsEditor>
         </div>
       )}
 
       {view === "mail" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
           <div className="mx-auto max-w-[560px]">
-            <div className="text-[13px] text-[#5f6368]">{c.mailTo}</div>
-            <div className="mt-1 text-[15px] font-medium">{c.mailSubject}</div>
-            <label className="mt-4 block text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.mailLabel}</label>
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
+            <GmailCompose
+              to={c.mailToValue}
+              subject={c.mailSubjectValue}
+              body={message}
+              onBody={setMessage}
               placeholder={c.mailPlaceholder}
-              rows={3}
-              className="mt-2 w-full resize-y rounded-xl border border-[#dadce0] p-3 text-[15px] leading-relaxed outline-none focus:border-[#1a73e8]"
-            />
-            <div className="mt-2">
+              toLabel={c.toLabel}
+              subjectLabel={c.subjectLabel}
+              sendLabel={c.send}
+              onSend={sendPacket}
+              attachment={
+                summarySaved
+                  ? { name: c.attachmentName, kind: "DOC", size: "18 KB", color: "#1a73e8" }
+                  : null
+              }
+            >
               <NeedAStart lang={lang} starters={MAIL_STARTERS[lang]} onPick={(s) => setMessage((b) => (b ? `${b} ` : "") + s)} />
-            </div>
-            {summarySaved && (
-              <div className="mt-3 rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[13px] text-[#5f6368]">
-                {lang === "en" ? "Attached: Weekly summary" : "Adjunto: Resumen semanal"}
-              </div>
-            )}
-            <div className="mt-4 flex gap-3">
-              <button onClick={sendPacket} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
-                {c.send}
-              </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
+            </GmailCompose>
+            <div className="mt-3">
+              {backToHub}
             </div>
           </div>
         </div>

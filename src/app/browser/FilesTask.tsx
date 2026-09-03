@@ -368,7 +368,15 @@ function CafeFilesTask() {
                 confirmLabel={c.share}
                 onConfirm={tryShare}
               >
-                <p className="mb-3 text-[13px] text-[#444746]">
+                {/* Real Drive: you add the person first, then pick their role. */}
+                <label className="mb-1 block text-[12px] font-medium text-[#5f6368]">{c.addPeople}</label>
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-[#dadce0] px-3 py-2">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0f9d58] text-[11px] font-medium text-white">
+                    JK
+                  </span>
+                  <span className="text-[14px]">Jordan Kim</span>
+                </div>
+                <p className="mb-2 text-[13px] text-[#444746]">
                   {c.shareWith} <span className="font-medium">Jordan Kim</span>
                 </p>
                 <div className="flex flex-col gap-1">
@@ -381,6 +389,10 @@ function CafeFilesTask() {
                     <span>{c.canView}</span>
                     <span className="text-[12px] text-[#5f6368]">{lang === "en" ? "Viewer" : "Lector"}</span>
                   </button>
+                  <div className="flex min-h-[44px] items-center justify-between rounded-lg border border-[#dadce0] px-3 text-left text-[14px] text-[#9aa0a6]">
+                    <span>{c.canComment}</span>
+                    <span className="text-[12px]">{lang === "en" ? "Commenter" : "Comentador"}</span>
+                  </div>
                   <button
                     onClick={() => setPermission("edit")}
                     className={`flex min-h-[44px] items-center justify-between rounded-lg border px-3 text-left text-[14px] cursor-pointer ${

@@ -37,9 +37,14 @@ export const MEETING_COPY: Record<Lang, {
   notesSave: string;
   followupTo: string;
   followupSubject: string;
+  followupToValue: string;
+  followupSubjectValue: string;
+  toLabel: string;
+  subjectLabel: string;
   followupLabel: string;
   followupPlaceholder: string;
   send: string;
+  backHub: string;
   needAgenda: string;
   needNotes: string;
   needFollowup: string;
@@ -75,9 +80,14 @@ export const MEETING_COPY: Record<Lang, {
     notesSave: "Save my notes",
     followupTo: "To: Alex, Jordan, Riley",
     followupSubject: "Subject: Monday huddle — what we decided",
+    followupToValue: "Alex, Jordan, Riley",
+    followupSubjectValue: "Monday huddle — what we decided",
+    toLabel: "To",
+    subjectLabel: "Subject",
     followupLabel: "Your message",
     followupPlaceholder: "One line per action: what, who, by when…",
     send: "Send",
+    backHub: "Back to the meeting",
     needAgenda: "Write at least two points, one per line.",
     needNotes: "Write a couple of lines on what got decided.",
     needFollowup: "List each action with a name and a day. One line each.",
@@ -113,9 +123,14 @@ export const MEETING_COPY: Record<Lang, {
     notesSave: "Guardar mis notas",
     followupTo: "Para: Alex, Jordan, Riley",
     followupSubject: "Asunto: Reunión del lunes — lo que decidimos",
+    followupToValue: "Alex, Jordan, Riley",
+    followupSubjectValue: "Reunión del lunes — lo que decidimos",
+    toLabel: "Para",
+    subjectLabel: "Asunto",
     followupLabel: "Tu mensaje",
     followupPlaceholder: "Una línea por tarea: qué, quién, para cuándo…",
     send: "Enviar",
+    backHub: "Volver a la reunión",
     needAgenda: "Escribe al menos dos puntos, uno por línea.",
     needNotes: "Escribe un par de líneas sobre lo que se decidió.",
     needFollowup: "Anota cada tarea con un nombre y un día. Una línea cada una.",
@@ -127,6 +142,13 @@ export const MEETING_COPY: Record<Lang, {
     gotIt: "Entendido. Volver a mi tarea",
   },
 };
+
+/** The people in the room, for the Meet-style participant strip. */
+export const ATTENDEES: { name: string; initials: string; color: string }[] = [
+  { name: "Alex", initials: "A", color: "#1a73e8" },
+  { name: "Jordan", initials: "J", color: "#e8710a" },
+  { name: "Riley", initials: "R", color: "#188038" },
+];
 
 /** The scripted huddle. Revealed one line at a time; the learner notes what matters. */
 export const MEETING_SCRIPT: Record<Lang, string[]> = {

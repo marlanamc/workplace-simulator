@@ -131,15 +131,19 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await passCelebration(page);
 
   // --- Level 26: ops-report-packet ---
+  // Each hub card now opens the real app surface (Sheets grid, Calendar week
+  // strip, a Docs editor, the Gmail compose card).
   await openTask(page, "ops-report-packet");
   await expect(page.getByRole("heading", { name: "The weekly report" })).toBeVisible({ timeout: 20_000 });
 
   await page.getByRole("button", { name: "Open Sheets" }).click();
-  await page.getByRole("checkbox").first().check();
+  await page.getByRole("checkbox", { name: /the total is/ }).check();
   await page.getByRole("button", { name: "Done here" }).click();
 
   await page.getByRole("button", { name: "Open Calendar" }).click();
-  await page.getByRole("checkbox").first().check();
+  // Open the event chip, then note it from the detail card.
+  await page.getByRole("button", { name: /Morning open/ }).first().click();
+  await page.getByRole("button", { name: "Note it for the report" }).click();
   await page.getByRole("button", { name: "Done here" }).click();
 
   await page.getByRole("button", { name: "Open Docs" }).click();
