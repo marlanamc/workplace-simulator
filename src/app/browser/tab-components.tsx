@@ -20,6 +20,10 @@ import BillingSheetTask from "./BillingSheetTask";
 import ExpenseReportTask from "./ExpenseReportTask";
 import SlideDeckTask from "./SlideDeckTask";
 import VideoCallTask from "./VideoCallTask";
+import MeetingMinutesTask from "./MeetingMinutesTask";
+import PerformanceReviewTask from "./PerformanceReviewTask";
+import OpsReportPacketTask from "./OpsReportPacketTask";
+import PortfolioReflectionTask from "./PortfolioReflectionTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import AccountRecoveryTask from "./AccountRecoveryTask";
@@ -53,6 +57,10 @@ export const TAB_COMPONENTS: Record<string, ComponentType> = {
   "billing-sheet": BillingSheetTask,
   "expense-report": ExpenseReportTask,
   slides: SlideDeckTask,
+  "meeting-minutes": MeetingMinutesTask,
+  "performance-review": PerformanceReviewTask,
+  "ops-report-packet": OpsReportPacketTask,
+  "portfolio-reflection": PortfolioReflectionTask,
   zoom: VideoCallTask,
   handbook: HandbookTask,
   incident: IncidentTask,

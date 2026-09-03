@@ -240,5 +240,11 @@ export const TASK_KEYS = [
   "video-call",
   "expense-report",
   "slide-deck",
+  // Act VII — Team Lead (office-path capstone). Four teacher-check tasks:
+  // the app grades that the work is complete, never its tone.
+  "meeting-minutes",
+  "performance-review",
+  "ops-report-packet",
+  "portfolio-reflection",
 ] as const;
 export type TaskKey = (typeof TASK_KEYS)[number];

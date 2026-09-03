@@ -5,7 +5,7 @@ import { LEVELS, TRACKS } from "@/lib/tracks-content";
 import { dayTitle } from "@/lib/shift-spine";
 import { learnerKey, storage } from "@/lib/storage";
 import { setProgressPreset } from "@/app/actions";
-import { BRIDGE_PATH_FLAG, isAct6Task, type BridgePath } from "@/lib/bridge-path";
+import { BRIDGE_PATH_FLAG, isAct6Task, isAct7Task, type BridgePath } from "@/lib/bridge-path";
 
 /**
  * The Studio time machine: one click sets THIS signed-in account's progress
@@ -59,10 +59,12 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
         </button>
         {LEVELS.slice(1).map((level) => {
           const title = dayTitle(level, "en");
-          const isHq = level.trackKeys.some((tk) =>
-            TRACKS.find((t) => t.key === tk)?.taskKeys.some((k) => isAct6Task(k)),
+          // HQ (Act VI) and Team Lead (Act VII) both sit on a chosen bridge
+          // path, so their presets carry the :a/:b door the way Act V's do.
+          const isHqOrAct7 = level.trackKeys.some((tk) =>
+            TRACKS.find((t) => t.key === tk)?.taskKeys.some((k) => isAct6Task(k) || isAct7Task(k)),
           );
-          if (level.pathTracks || isHq) {
+          if (level.pathTracks || isHqOrAct7) {
             const pickerKey = level.pathTracks && level.key === "level16" ? level.key : null;
             return (
               <span key={level.key} className="contents">

@@ -17,7 +17,7 @@ import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS } from "@/lib/tasks/tour/content";
 
-type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));

@@ -760,6 +760,97 @@ const STORY_MAILS: InboxRow[] = [
       ],
     },
   },
+
+  // ---- Act VII: Team Lead ----
+
+  {
+    key: "story-meeting-minutes",
+    ...MARIA,
+    time: "11:30 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "meeting-minutes",
+    subject: { en: "Good first meeting", es: "Buena primera reunión" },
+    preview: { en: "The follow-up said who owes what by when.", es: "El seguimiento dijo quién hace qué y para cuándo." },
+    body: {
+      en: [
+        "The agenda kept it short, and the follow-up said who owes what by when. That is the part people usually skip.",
+        "The team knows what to do now.",
+        "Tuesday there is a review to write for one of them.",
+      ],
+      es: [
+        "La agenda la mantuvo corta, y el seguimiento dijo quién hace qué y para cuándo. Esa es la parte que la gente suele saltarse.",
+        "El equipo ya sabe qué hacer.",
+        "El martes hay una evaluación que escribir para uno de ellos.",
+      ],
+    },
+  },
+  {
+    key: "story-performance-review",
+    ...MARIA,
+    time: "3:05 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "performance-review",
+    subject: { en: "That was fair", es: "Fue justa" },
+    preview: { en: "Specific, and not harsh.", es: "Concreta, y no dura." },
+    body: {
+      en: [
+        "You named something real they did well, and something real to work on. Both specific, neither harsh.",
+        "That is a review someone can actually use.",
+        "Thursday, the full weekly report is yours — every app, one packet.",
+      ],
+      es: [
+        "Nombraste algo real que hicieron bien, y algo real para trabajar. Las dos cosas concretas, ninguna dura.",
+        "Esa es una evaluación que de verdad se puede usar.",
+        "El jueves, el reporte semanal completo es tuyo — todas las apps, un solo paquete.",
+      ],
+    },
+  },
+  {
+    key: "story-ops-report-packet",
+    ...MARIA,
+    time: "4:20 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "ops-report-packet",
+    subject: { en: "Got the packet", es: "Recibí el paquete" },
+    preview: { en: "One email, not three loose attachments.", es: "Un correo, no tres adjuntos sueltos." },
+    body: {
+      en: [
+        "The number, the calendar note, and the summary all came together, in one email. Not three loose attachments.",
+        "That is the whole weekly report, start to finish, on your own.",
+        "One last thing before you go — look back at where you started.",
+      ],
+      es: [
+        "El número, la nota del calendario y el resumen llegaron juntos, en un solo correo. No tres adjuntos sueltos.",
+        "Ese es el reporte semanal completo, de principio a fin, tú solo.",
+        "Una última cosa antes de irte — mira atrás, a dónde empezaste.",
+      ],
+    },
+  },
+  {
+    key: "story-portfolio-reflection",
+    ...MARIA,
+    time: "Fri",
+    unread: true,
+    story: true,
+    unlockAfter: "portfolio-reflection",
+    subject: { en: "From day one to here", es: "Del primer día hasta aquí" },
+    preview: { en: "Look how much you can do now.", es: "Mira todo lo que ya puedes hacer." },
+    body: {
+      en: [
+        "I still have your first email — the one where you thanked me for the welcome. Look how much you can do now.",
+        "This summary is yours. Show it to whoever you want.",
+        "Whatever is next for you, you are ready for it.",
+      ],
+      es: [
+        "Todavía tengo tu primer correo — ese donde me agradeciste la bienvenida. Mira todo lo que ya puedes hacer.",
+        "Este resumen es tuyo. Muéstraselo a quien quieras.",
+        "Lo que siga para ti, estás lista para eso.",
+      ],
+    },
+  },
 ];
 
 export function storyMailAfter(taskKey: TaskKey): InboxRow | undefined {

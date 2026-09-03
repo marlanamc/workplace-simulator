@@ -19,6 +19,19 @@ import { slotIsOpenForEveryone } from "@/lib/tasks/multi-person-scheduling/conte
 import { videoCallPasses } from "@/lib/tasks/video-call/content";
 import { expenseReadyToSubmit, MISSING_KEY, receiptedKeys } from "@/lib/tasks/expense-report/content";
 import { slideDeckPasses, takeawayIsASentence } from "@/lib/tasks/slide-deck/content";
+import {
+  agendaLooksReady,
+  notesLookReal,
+  followupHasOwnersAndDates,
+  meetingMinutesPasses,
+} from "@/lib/tasks/meeting-minutes/content";
+import {
+  strengthIsSpecific,
+  areaToGrowIsConstructive,
+  performanceReviewPasses,
+} from "@/lib/tasks/performance-review/content";
+import { summaryPullsBoth, opsReportPacketPasses } from "@/lib/tasks/ops-report-packet/content";
+import { reflectionComplete } from "@/lib/tasks/portfolio-reflection/content";
 
 /**
  * The graders: every pure function that decides whether a learner's typed
@@ -432,5 +445,85 @@ describe("slide deck: title, planted number, takeaway, present", () => {
     expect(slideDeckPasses({ title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: false, presented: true })).toBe(false);
     expect(slideDeckPasses({ title: "September", takeaway: "ok", confirmedTotal: true, presented: true })).toBe(false);
     expect(slideDeckPasses({ title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: false })).toBe(false);
+  });
+});
+
+describe("meeting minutes: agenda, notes, and a follow-up with owners", () => {
+  const agenda = "Saturday close — who covers it\nLate supply order — next step";
+  const notes = "Jordan takes Saturday close.\nAlex calls the supplier this morning.";
+
+  it.each([
+    "Saturday close: Jordan, this Saturday. Supplier call: Alex, by end of day Monday. Training: Riley, Thursday morning.",
+    "Jordan will do Saturday close this weekend, Alex calls the supplier Monday, and Riley trains the new hire Thursday.",
+    "Cierre del sábado: Jordan, este sábado. Llamada al proveedor: Alex, antes del lunes. Capacitación: Riley, jueves por la mañana.",
+    "Jordan toma el cierre del sábado, Alex llama al proveedor el lunes y Riley capacita el jueves.",
+  ])("accepts a real follow-up: %j", (followup) => {
+    expect(followupHasOwnersAndDates(followup)).toBe(true);
+    expect(meetingMinutesPasses({ agenda, notes, followup })).toBe(true);
+  });
+
+  it("rejects an empty follow-up, a one-line agenda, or blank notes", () => {
+    expect(agendaLooksReady("Saturday close")).toBe(false);
+    expect(notesLookReal("")).toBe(false);
+    expect(followupHasOwnersAndDates("")).toBe(false);
+    expect(followupHasOwnersAndDates("thanks everyone")).toBe(false);
+    expect(meetingMinutesPasses({ agenda: "Saturday close", notes, followup: "Alex Monday" })).toBe(false);
+  });
+});
+
+describe("performance review: one real strength, one real area to grow", () => {
+  it.each([
+    ["Sam trained two new hires this month and stayed patient with both.", "The morning open needs Sam there by 6 every day."],
+    ["Este mes, Sam capacitó a dos personas nuevas y mantuvo la paciencia.", "La apertura de la mañana necesita a Sam a las 6 todos los días."],
+  ])("accepts a specific strength and a constructive area: %j", (strength, area) => {
+    expect(strengthIsSpecific(strength)).toBe(true);
+    expect(areaToGrowIsConstructive(area)).toBe(true);
+    expect(performanceReviewPasses({ strength, area })).toBe(true);
+  });
+
+  it("rejects vague praise or a one-word area", () => {
+    expect(strengthIsSpecific("good job")).toBe(false);
+    expect(strengthIsSpecific("buen trabajo")).toBe(false);
+    expect(performanceReviewPasses({ strength: "great work", area: "be on time" })).toBe(false);
+    expect(performanceReviewPasses({ strength: "Sam trained two new hires patiently.", area: "late" })).toBe(false);
+  });
+});
+
+describe("ops report packet: number checked, calendar noted, summary, sent", () => {
+  const base = { sheetTotalConfirmed: true, calendarNoted: true, packetSent: true };
+
+  it.each([
+    "This week's total was $4,820, up from last week. Coming up: Thursday's open still needs someone.",
+    "El total de esta semana fue $4,820. Lo que viene: la apertura del jueves todavía necesita a alguien.",
+  ])("accepts a summary with the number in it: %j", (summary) => {
+    expect(summaryPullsBoth(summary)).toBe(true);
+    expect(opsReportPacketPasses({ ...base, summary })).toBe(true);
+  });
+
+  it("rejects an unconfirmed total, an unnoted calendar, a numberless summary, or a skipped send", () => {
+    const summary = "This week's total was $4,820. Coming up: Thursday's open needs someone.";
+    expect(summaryPullsBoth("We did well this week and something is coming up soon too")).toBe(false);
+    expect(opsReportPacketPasses({ ...base, sheetTotalConfirmed: false, summary })).toBe(false);
+    expect(opsReportPacketPasses({ ...base, calendarNoted: false, summary })).toBe(false);
+    expect(opsReportPacketPasses({ ...base, packetSent: false, summary })).toBe(false);
+    expect(opsReportPacketPasses({ ...base, summary: "" })).toBe(false);
+  });
+});
+
+describe("portfolio reflection: every prompt answered", () => {
+  it("accepts four short real answers", () => {
+    expect(
+      reflectionComplete([
+        "Reading a schedule and asking for a swap.",
+        "Writing formulas from scratch.",
+        "It gets easier — keep going.",
+        "It is worth the time, even 20 minutes a week.",
+      ]),
+    ).toBe(true);
+  });
+
+  it("rejects a blank or too-short answer", () => {
+    expect(reflectionComplete(["Reading a schedule.", "Formulas.", "ok", "Do it."])).toBe(false);
+    expect(reflectionComplete(["Reading a schedule and asking for a swap.", "", "It gets easier.", "Worth the time."])).toBe(false);
   });
 });
