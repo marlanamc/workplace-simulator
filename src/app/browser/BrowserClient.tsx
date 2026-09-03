@@ -17,7 +17,7 @@ import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS } from "@/lib/tasks/tour/content";
 
-type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));
@@ -142,7 +142,7 @@ function NewTabPage() {
 
 export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
-  const { lang, currentTrack, completedTaskKeys } = useProgress();
+  const { lang, currentTrack, completedTaskKeys, bridgePath } = useProgress();
   const { nudge, say, dismiss } = useNudge();
   const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
   const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
@@ -201,7 +201,7 @@ export default function BrowserClient() {
     progressLevelKey;
   const viewedLevelDef = LEVELS.find((l) => l.key === viewedLevelKey);
   const freeTabbing = viewedLevelDef?.freeTabbing ?? false;
-  const visibleBookmarks = bookmarkTabKeys(viewedLevelKey, completedTaskKeys);
+  const visibleBookmarks = bookmarkTabKeys(viewedLevelKey, completedTaskKeys, bridgePath);
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.
   // `browserTabExplicit` (from window-manager) tells "go to this exact tab"

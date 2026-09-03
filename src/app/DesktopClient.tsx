@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { type TaskKey } from "@/lib/desktop-content";
+import type { BridgePath } from "@/lib/bridge-path";
 import { DesktopClock } from "@/components/LiveClock";
 import { levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
@@ -225,6 +226,7 @@ export default function DesktopClient(props: {
   displayName: string;
   completedTaskKeys: TaskKey[];
   certificateTrackKeys: string[];
+  initialBridgePath?: BridgePath | null;
   jumpTab?: string;
   fromStudio?: boolean;
 }) {
@@ -240,6 +242,7 @@ export default function DesktopClient(props: {
         displayName={props.displayName}
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
+        initialBridgePath={props.initialBridgePath}
       >
         <JobCardHost>
           <DesktopShell displayName={props.displayName} fromStudio={!!props.fromStudio} />

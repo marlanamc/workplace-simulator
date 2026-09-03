@@ -567,6 +567,158 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Mail from the bookmarks"),
     jobCardLine: { en: "Reply to who asked. Not everyone.", es: "Responde a quien preguntó. No a todos." },
   },
+
+  enrollment: {
+    key: "enrollment",
+    built: true,
+    label: { en: "Apply before the deadline", es: "Aplica antes de la fecha" },
+    dispatch: {
+      en: "The college portal has a deadline and a list. Find both. Then write.",
+      es: "El portal de la universidad tiene una fecha y una lista. Encuentra las dos. Luego escribe.",
+    },
+    skill: "Navigate a college portal under a deadline",
+    bookmarkLabel: "College",
+    handoffCta: { en: "Open College from the bookmarks", es: "Abre Universidad en los marcadores" },
+    shiftMoment: {
+      en: "Monday. The application is open.",
+      es: "Lunes. La solicitud está abierta.",
+    },
+    location: browser("Open College from the bookmarks"),
+    jobCardLine: { en: "Find the deadline. Then apply.", es: "Encuentra la fecha. Luego aplica." },
+  },
+
+  "appointment-scheduling": {
+    key: "appointment-scheduling",
+    built: true,
+    label: { en: "Book the visit without a clash", es: "Agenda la cita sin un choque" },
+    dispatch: {
+      en: "A patient asked for a time that is already taken. Offer the open slot.",
+      es: "Un paciente pidió una hora que ya está ocupada. Ofrece el hueco libre.",
+    },
+    skill: "Book an appointment without double-booking",
+    bookmarkLabel: "Front Desk",
+    handoffCta: { en: "Open Front Desk from the bookmarks", es: "Abre Recepción en los marcadores" },
+    shiftMoment: {
+      en: "Monday. The morning list is in.",
+      es: "Lunes. Ya está la lista de la mañana.",
+    },
+    location: browser("Open Front Desk from the bookmarks"),
+    jobCardLine: { en: "Spot the clash. Offer the open slot.", es: "Mira el choque. Ofrece el hueco." },
+  },
+
+  "financial-aid": {
+    key: "financial-aid",
+    built: true,
+    label: { en: "Read the award letter", es: "Lee la carta de ayuda" },
+    dispatch: {
+      en: "The award letter is in the portal. Find the amount and the accept-by date.",
+      es: "La carta de ayuda está en el portal. Encuentra el monto y la fecha para aceptar.",
+    },
+    skill: "Find the amount and deadline on an award letter",
+    bookmarkLabel: "College",
+    handoffCta: { en: "Open College from the bookmarks", es: "Abre Universidad en los marcadores" },
+    shiftMoment: {
+      en: "Wednesday. The award letter arrived.",
+      es: "Miércoles. Llegó la carta de ayuda.",
+    },
+    location: browser("Open College from the bookmarks"),
+    jobCardLine: { en: "Find the amount and the date.", es: "Encuentra el monto y la fecha." },
+  },
+
+  "patient-intake": {
+    key: "patient-intake",
+    built: true,
+    label: { en: "File the intake. Do not overshare.", es: "Archiva el ingreso. No compartas de más." },
+    dispatch: {
+      en: "A new patient form is in. File it. A coworker will ask to see it.",
+      es: "Hay un formulario de un paciente nuevo. Archívalo. Un compañero va a pedir verlo.",
+    },
+    skill: "Judge who may see a patient form",
+    bookmarkLabel: "Front Desk",
+    handoffCta: { en: "Open Front Desk from the bookmarks", es: "Abre Recepción en los marcadores" },
+    shiftMoment: {
+      en: "Wednesday. A new patient just checked in.",
+      es: "Miércoles. Un paciente nuevo acaba de llegar.",
+    },
+    location: browser("Open Front Desk from the bookmarks"),
+    jobCardLine: { en: "File it. Do not overshare.", es: "Archívalo. No compartas de más." },
+  },
+
+  coursework: {
+    key: "coursework",
+    built: true,
+    label: { en: "Submit the assignment on time", es: "Entrega la tarea a tiempo" },
+    dispatch: {
+      en: "The syllabus has a due date. Read it. Write a short answer. Submit.",
+      es: "El temario tiene una fecha. Léelo. Escribe una respuesta corta. Entrégala.",
+    },
+    skill: "Read a syllabus and submit on time",
+    bookmarkLabel: "Coursework",
+    handoffCta: { en: "Open Coursework from the bookmarks", es: "Abre Curso en los marcadores" },
+    shiftMoment: {
+      en: "Thursday. Something is due tonight.",
+      es: "Jueves. Algo se entrega esta noche.",
+    },
+    location: browser("Open Coursework from the bookmarks"),
+    jobCardLine: { en: "Read the due date. Then submit.", es: "Lee la fecha. Luego entrega." },
+  },
+
+  "billing-sheet": {
+    key: "billing-sheet",
+    built: true,
+    label: { en: "Flag the billing mismatch", es: "Marca el error de facturación" },
+    dispatch: {
+      en: "One visit code does not match its charge. Find it and tell the office.",
+      es: "Un código de visita no coincide con el cargo. Encuéntralo y avisa a la oficina.",
+    },
+    skill: "Match visit codes to charges",
+    bookmarkLabel: "Sheets",
+    handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
+    shiftMoment: {
+      en: "Thursday. Today's billing sheet is in.",
+      es: "Jueves. Ya está la hoja de facturación.",
+    },
+    location: browser("Open Sheets from the bookmarks"),
+    jobCardLine: { en: "Find the charge that does not match.", es: "Encuentra el cargo que no cuadra." },
+  },
+
+  research: {
+    key: "research",
+    built: true,
+    label: { en: "Cite a source that holds up", es: "Cita una fuente que se sostenga" },
+    dispatch: {
+      en: "Four results came back. Pick the one you would cite, and say why.",
+      es: "Salieron cuatro resultados. Elige el que citarías, y di por qué.",
+    },
+    skill: "Tell a credible source from an unreliable one",
+    bookmarkLabel: "Library",
+    handoffCta: { en: "Open Library from the bookmarks", es: "Abre Biblioteca en los marcadores" },
+    shiftMoment: {
+      en: "Friday. You need one source.",
+      es: "Viernes. Necesitas una fuente.",
+    },
+    location: browser("Open Library from the bookmarks"),
+    jobCardLine: { en: "Pick the source you would cite.", es: "Elige la fuente que citarías." },
+  },
+
+  "confidentiality-call": {
+    key: "confidentiality-call",
+    built: true,
+    label: { en: "Do not confirm over the phone", es: "No confirmes por teléfono" },
+    dispatch: {
+      en: "Someone called claiming to be family. You cannot verify who they are.",
+      es: "Alguien llamó diciendo ser familia. No puedes verificar quién es.",
+    },
+    skill: "Decline a plausible request for private information",
+    bookmarkLabel: "Front Desk",
+    handoffCta: { en: "Open Front Desk from the bookmarks", es: "Abre Recepción en los marcadores" },
+    shiftMoment: {
+      en: "Friday. The phone is ringing.",
+      es: "Viernes. Está sonando el teléfono.",
+    },
+    location: browser("Open Front Desk from the bookmarks"),
+    jobCardLine: { en: "Stay polite. Do not confirm.", es: "Sé amable. No confirmes." },
+  },
 };
 
 /** All task descriptors in registry order. */

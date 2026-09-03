@@ -1,6 +1,15 @@
 import type { TaskKey } from "./desktop-content";
 import type { Localized } from "./task-types";
 import { TASK_LIST, type PortalSection, type TaskLocation } from "./tasks/registry";
+import {
+  inferBridgePath,
+  isAct5Task,
+  pathOfTask,
+  pathIsComplete,
+  type BridgePath,
+} from "./bridge-path";
+
+export type { BridgePath };
 
 export type { PortalSection, TaskLocation };
 
@@ -156,6 +165,62 @@ export const TRACKS: Track[] = [
     taskKeys: ["reply-all"],
     awardEmoji: "📬",
   },
+  {
+    key: "enrollment",
+    title: "Getting Ready",
+    subtitle: "Find the deadline. Then apply.",
+    taskKeys: ["enrollment"],
+    awardEmoji: "🏫",
+  },
+  {
+    key: "appointment-scheduling",
+    title: "Getting Ready",
+    subtitle: "Book the visit without a clash",
+    taskKeys: ["appointment-scheduling"],
+    awardEmoji: "🗓️",
+  },
+  {
+    key: "financial-aid",
+    title: "The Paperwork",
+    subtitle: "Find the amount and the date",
+    taskKeys: ["financial-aid"],
+    awardEmoji: "📄",
+  },
+  {
+    key: "patient-intake",
+    title: "The Paperwork",
+    subtitle: "File it. Do not overshare.",
+    taskKeys: ["patient-intake"],
+    awardEmoji: "🩺",
+  },
+  {
+    key: "coursework",
+    title: "Staying On Top of It",
+    subtitle: "Read the syllabus. Submit on time.",
+    taskKeys: ["coursework"],
+    awardEmoji: "📚",
+  },
+  {
+    key: "billing-sheet",
+    title: "Staying On Top of It",
+    subtitle: "Match the code to the charge",
+    taskKeys: ["billing-sheet"],
+    awardEmoji: "💵",
+  },
+  {
+    key: "research",
+    title: "Finding a Real Answer",
+    subtitle: "Cite the source that holds up",
+    taskKeys: ["research"],
+    awardEmoji: "🔎",
+  },
+  {
+    key: "confidentiality-call",
+    title: "Finding a Real Answer",
+    subtitle: "Stay polite. Do not confirm.",
+    taskKeys: ["confidentiality-call"],
+    awardEmoji: "📞",
+  },
 ];
 
 /**
@@ -181,6 +246,13 @@ export interface Level {
   trackKeys: string[];
   /** The Browser tab to land on when a learner opens or revisits this level. */
   firstTabKey: string;
+  /**
+   * Act V: this level lists both path tracks. Completion and Job Card
+   * counts use only the chosen door. `firstTabKey` stays the Path A tab
+   * for the integrity check; `pathFirstTab` picks the real landing tab.
+   */
+  pathTracks?: { a: string; b: string };
+  pathFirstTab?: { a: string; b: string };
   /**
    * Whether this level lets the learner open/close tabs freely and starts
    * them on a blank New Tab (finding the right bookmark is the exercise).
@@ -568,6 +640,82 @@ export const LEVELS: Level[] = [
       cta: { en: "Open Mail", es: "Abrir correo" },
     },
   },
+  {
+    key: "level16",
+    title: "Getting Ready",
+    trackKeys: ["enrollment", "appointment-scheduling"],
+    firstTabKey: "college-portal",
+    pathTracks: { a: "enrollment", b: "appointment-scheduling" },
+    pathFirstTab: { a: "college-portal", b: "front-desk" },
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🚪",
+      kicker: { en: "A new door", es: "Una puerta nueva" },
+      title: { en: "College, or the front desk.", es: "Universidad, o la recepción." },
+      body: {
+        en: "Pick one. You can come back for the other later.",
+        es: "Elige una. Puedes volver a la otra después.",
+      },
+      cta: { en: "Pick a door", es: "Elige una puerta" },
+    },
+  },
+  {
+    key: "level17",
+    title: "The Paperwork",
+    trackKeys: ["financial-aid", "patient-intake"],
+    firstTabKey: "college-portal",
+    pathTracks: { a: "financial-aid", b: "patient-intake" },
+    pathFirstTab: { a: "college-portal", b: "front-desk" },
+    freeTabbing: true,
+    levelUp: {
+      emoji: "📋",
+      kicker: { en: "The paper has the answer", es: "El papel tiene la respuesta" },
+      title: { en: "Read it before you file it.", es: "Léelo antes de archivarlo." },
+      body: {
+        en: "The number and the deadline are on the page. So is who is allowed to see it.",
+        es: "El número y la fecha están en la página. También quién puede verlo.",
+      },
+      cta: { en: "Open the paperwork", es: "Abrir el papeleo" },
+    },
+  },
+  {
+    key: "level18",
+    title: "Staying On Top of It",
+    trackKeys: ["coursework", "billing-sheet"],
+    firstTabKey: "coursework",
+    pathTracks: { a: "coursework", b: "billing-sheet" },
+    pathFirstTab: { a: "coursework", b: "billing-sheet" },
+    freeTabbing: true,
+    levelUp: {
+      emoji: "⏰",
+      kicker: { en: "The date is the job", es: "La fecha es el trabajo" },
+      title: { en: "Check it. Then send it.", es: "Revísalo. Luego envíalo." },
+      body: {
+        en: "A due date and a mismatch both wait for someone who looks twice.",
+        es: "Una fecha de entrega y un error esperan a quien mira dos veces.",
+      },
+      cta: { en: "Open today's work", es: "Abrir el trabajo de hoy" },
+    },
+  },
+  {
+    key: "level19",
+    title: "Finding a Real Answer",
+    trackKeys: ["research", "confidentiality-call"],
+    firstTabKey: "library",
+    pathTracks: { a: "research", b: "confidentiality-call" },
+    pathFirstTab: { a: "library", b: "front-desk" },
+    freeTabbing: true,
+    levelUp: {
+      emoji: "🔎",
+      kicker: { en: "Judgment, not a guess", es: "Criterio, no una adivinanza" },
+      title: { en: "The plausible one is the hard one.", es: "Lo que suena bien es lo difícil." },
+      body: {
+        en: "Cite what holds up. Do not confirm what you cannot verify.",
+        es: "Cita lo que se sostiene. No confirmes lo que no puedes verificar.",
+      },
+      cta: { en: "Do the last job", es: "Haz el último trabajo" },
+    },
+  },
 ];
 
 /** A group of levels sharing one job title, story arc, and desktop place. */
@@ -593,6 +741,7 @@ export const ACTS: Act[] = [
   { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
   { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
+  { key: "act5", title: "Act V: Bridge", levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
 ];
 
 export function actForLevel(level: Level): Act | undefined {
@@ -609,18 +758,25 @@ export function levelForTrack(trackKey: string): Level {
   return LEVELS.find((l) => l.trackKeys.includes(trackKey)) ?? LEVELS[LEVELS.length - 1];
 }
 
-export function taskKeysForLevel(level: Level): TaskKey[] {
-  return level.trackKeys.flatMap((tk) => TRACKS.find((t) => t.key === tk)?.taskKeys ?? []);
+export function taskKeysForLevel(level: Level, path?: BridgePath | null): TaskKey[] {
+  const keys = path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys;
+  return keys.flatMap((tk) => TRACKS.find((t) => t.key === tk)?.taskKeys ?? []);
+}
+
+export function firstTabForLevel(level: Level, path?: BridgePath | null): string {
+  if (path && level.pathFirstTab) return level.pathFirstTab[path];
+  return level.firstTabKey;
 }
 
 /** Highest level the learner has reached, even if they replayed an earlier one. */
-export function furthestLevelIndex(completedTaskKeys: TaskKey[]): number {
+export function furthestLevelIndex(completedTaskKeys: TaskKey[], path?: BridgePath | null): number {
+  const inferred = path ?? inferBridgePath(completedTaskKeys);
   let max = 0;
   LEVELS.forEach((level, i) => {
-    if (taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k))) {
+    if (taskKeysForLevel(level, inferred).some((k) => completedTaskKeys.includes(k))) {
       max = Math.max(max, i);
     }
-    if (i > 0 && isLevelComplete(LEVELS[i - 1], completedTaskKeys)) {
+    if (i > 0 && isLevelComplete(LEVELS[i - 1], completedTaskKeys, inferred)) {
       max = Math.max(max, i);
     }
   });
@@ -628,8 +784,8 @@ export function furthestLevelIndex(completedTaskKeys: TaskKey[]): number {
 }
 
 /** Levels the learner has actually reached - their furthest level and every one before it. */
-export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
-  return LEVELS.slice(0, furthestLevelIndex(completedTaskKeys) + 1);
+export function unlockedLevels(completedTaskKeys: TaskKey[], path?: BridgePath | null): Level[] {
+  return LEVELS.slice(0, furthestLevelIndex(completedTaskKeys, path) + 1);
 }
 
 /**
@@ -638,22 +794,29 @@ export function unlockedLevels(completedTaskKeys: TaskKey[]): Level[] {
  * Studio progress presets — one test account teleporting to any point in
  * the game. Returns [] for an unknown level key (a fresh account).
  */
-export function taskKeysBeforeLevel(levelKey: string): TaskKey[] {
+export function taskKeysBeforeLevel(levelKey: string, path?: BridgePath | null): TaskKey[] {
   const idx = LEVELS.findIndex((l) => l.key === levelKey);
   if (idx <= 0) return [];
-  return LEVELS.slice(0, idx).flatMap(taskKeysForLevel);
+  return LEVELS.slice(0, idx).flatMap((l) => taskKeysForLevel(l, path));
 }
 
 /** Track keys fully finished before a level begins — the certificates that preset should hold. */
-export function trackKeysBeforeLevel(levelKey: string): string[] {
+export function trackKeysBeforeLevel(levelKey: string, path?: BridgePath | null): string[] {
   const idx = LEVELS.findIndex((l) => l.key === levelKey);
   if (idx <= 0) return [];
-  return LEVELS.slice(0, idx).flatMap((l) => l.trackKeys);
+  return LEVELS.slice(0, idx).flatMap((l) => (path && l.pathTracks ? [l.pathTracks[path]] : l.trackKeys));
 }
 
-/** Whether every track in a level is fully done. */
-export function isLevelComplete(level: Level, completedTaskKeys: TaskKey[]): boolean {
-  return level.trackKeys.every((tk) => {
+/** Whether the relevant tracks in a level are fully done. */
+export function isLevelComplete(
+  level: Level,
+  completedTaskKeys: TaskKey[],
+  path?: BridgePath | null,
+): boolean {
+  const inferred = path ?? inferBridgePath(completedTaskKeys);
+  if (level.pathTracks && !inferred) return false;
+  const keys = inferred && level.pathTracks ? [level.pathTracks[inferred]] : level.trackKeys;
+  return keys.every((tk) => {
     const track = TRACKS.find((t) => t.key === tk);
     return track ? isTrackComplete(track, completedTaskKeys) : false;
   });
@@ -716,12 +879,21 @@ function hasStartedJob(completedTaskKeys: TaskKey[]): boolean {
 }
 
 /** The first track that isn't fully complete yet - where a learner should focus. */
-export function activeTrack(completedTaskKeys: TaskKey[]): Track {
+export function activeTrack(completedTaskKeys: TaskKey[], path?: BridgePath | null): Track {
   // People who already have job progress should not be pulled back to Level 0.
-  const tracks = hasStartedJob(completedTaskKeys)
+  const inferred = path ?? inferBridgePath(completedTaskKeys);
+  let tracks = hasStartedJob(completedTaskKeys)
     ? TRACKS.filter((t) => t.key !== ORIENTATION_TRACK)
     : TRACKS;
-  return tracks.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? TRACKS[TRACKS.length - 1];
+  if (inferred) {
+    tracks = tracks.filter((t) => {
+      const taskPath = t.taskKeys[0] ? pathOfTask(t.taskKeys[0]) : null;
+      return !taskPath || taskPath === inferred;
+    });
+  } else {
+    tracks = tracks.filter((t) => !t.taskKeys.some((k) => isAct5Task(k)));
+  }
+  return tracks.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? tracks.at(-1) ?? TRACKS[TRACKS.length - 1];
 }
 
 /** The first not-yet-done task in a track, or null if the track is fully complete. */
@@ -730,7 +902,9 @@ export function nextTaskInTrack(track: Track, completedTaskKeys: TaskKey[]): Tas
 }
 
 export function allTracksComplete(completedTaskKeys: TaskKey[]): boolean {
-  return TRACKS.every((t) => isTrackComplete(t, completedTaskKeys));
+  const trunk = TRACKS.filter((t) => !t.taskKeys.some((k) => isAct5Task(k)));
+  if (!trunk.every((t) => isTrackComplete(t, completedTaskKeys))) return false;
+  return pathIsComplete("a", completedTaskKeys) || pathIsComplete("b", completedTaskKeys);
 }
 
 /** One "stop" per task, in curriculum order - the path bar the home screen and My Job panel both show. */
@@ -744,8 +918,9 @@ export interface PathStop {
  * the very next task (amber - "in progress"), everything else (muted).
  * Shared by ShiftBriefing and MyJobPanel so the path bar is drawn once.
  */
-export function pathStops(completedTaskKeys: TaskKey[]): PathStop[] {
-  const allTaskKeys = LEVELS.flatMap(taskKeysForLevel);
+export function pathStops(completedTaskKeys: TaskKey[], path?: BridgePath | null): PathStop[] {
+  const inferred = path ?? inferBridgePath(completedTaskKeys);
+  const allTaskKeys = LEVELS.flatMap((l) => taskKeysForLevel(l, inferred));
   const nextKey = allTaskKeys.find((k) => !completedTaskKeys.includes(k));
   return allTaskKeys.map((taskKey) => ({
     taskKey,
@@ -776,8 +951,8 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = Object.fro
 );
 
 /** The next built task a learner should open, or null if none is ready. */
-export function nextHandoff(completedTaskKeys: TaskKey[]): TaskHandoff | null {
-  const next = nextTaskInTrack(activeTrack(completedTaskKeys), completedTaskKeys);
+export function nextHandoff(completedTaskKeys: TaskKey[], path?: BridgePath | null): TaskHandoff | null {
+  const next = nextTaskInTrack(activeTrack(completedTaskKeys, path), completedTaskKeys);
   if (!next) return null;
   const location = TASK_LOCATIONS[next];
   if (!location) return null;

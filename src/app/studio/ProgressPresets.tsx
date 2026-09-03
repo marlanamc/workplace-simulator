@@ -5,6 +5,7 @@ import { LEVELS } from "@/lib/tracks-content";
 import { dayTitle } from "@/lib/shift-spine";
 import { learnerKey, storage } from "@/lib/storage";
 import { setProgressPreset } from "@/app/actions";
+import { BRIDGE_PATH_FLAG, type BridgePath } from "@/lib/bridge-path";
 
 /**
  * The Studio time machine: one click sets THIS signed-in account's progress
@@ -15,10 +16,10 @@ import { setProgressPreset } from "@/app/actions";
 export default function ProgressPresets({ learnerId }: { learnerId: string }) {
   const [busyKey, setBusyKey] = useState<string | null>(null);
 
-  const apply = async (levelKey: string | "all") => {
+  const apply = async (presetKey: string | "all", path?: BridgePath) => {
     if (busyKey) return;
-    setBusyKey(levelKey);
-    const result = await setProgressPreset(levelKey);
+    setBusyKey(presetKey);
+    const result = await setProgressPreset(presetKey);
     if (!result.ok) {
       setBusyKey(null);
       return;
@@ -27,6 +28,9 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
     // stale ones would leak "future" story into the rewound state.
     storage.remove(learnerKey.storyFlags(learnerId));
     storage.remove(learnerKey.rungs(learnerId));
+    if (path) {
+      storage.setJSON(learnerKey.storyFlags(learnerId), { [BRIDGE_PATH_FLAG]: path });
+    }
     // Full navigation on purpose: router.push() would keep the cached RSC
     // payload and the desktop would render the pre-rewind progress.
     // eslint-disable-next-line @next/next/no-location-assign-relative-destination
@@ -53,16 +57,49 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
         >
           {busyKey === LEVELS[0].key ? "…" : "Fresh account"}
         </button>
-        {LEVELS.slice(1).map((level) => (
-          <button
-            key={level.key}
-            onClick={() => apply(level.key)}
-            disabled={busyKey !== null}
-            className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
-          >
-            {busyKey === level.key ? "…" : `Start of ${dayTitle(level, "en")}`}
-          </button>
-        ))}
+        {LEVELS.slice(1).map((level) => {
+          const title = dayTitle(level, "en");
+          if (level.pathTracks) {
+            const pickerKey = level.key === "level16" ? level.key : null;
+            return (
+              <span key={level.key} className="contents">
+                {pickerKey ? (
+                  <button
+                    onClick={() => apply(pickerKey)}
+                    disabled={busyKey !== null}
+                    className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
+                  >
+                    {busyKey === pickerKey ? "…" : `Start of ${title} (pick a door)`}
+                  </button>
+                ) : null}
+                <button
+                  onClick={() => apply(`${level.key}:a`, "a")}
+                  disabled={busyKey !== null}
+                  className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
+                >
+                  {busyKey === `${level.key}:a` ? "…" : `Start of ${title} · College`}
+                </button>
+                <button
+                  onClick={() => apply(`${level.key}:b`, "b")}
+                  disabled={busyKey !== null}
+                  className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
+                >
+                  {busyKey === `${level.key}:b` ? "…" : `Start of ${title} · Front desk`}
+                </button>
+              </span>
+            );
+          }
+          return (
+            <button
+              key={level.key}
+              onClick={() => apply(level.key)}
+              disabled={busyKey !== null}
+              className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
+            >
+              {busyKey === level.key ? "…" : `Start of ${title}`}
+            </button>
+          );
+        })}
         <button
           onClick={() => apply("all")}
           disabled={busyKey !== null}

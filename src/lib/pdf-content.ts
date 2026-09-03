@@ -25,7 +25,19 @@ export interface PayStubDoc extends PdfBase {
   netPay: string;
 }
 
-export type PdfDocument = ReportDoc | PayStubDoc;
+export interface AwardLetterDoc extends PdfBase {
+  kind: "award-letter";
+  school: string;
+  student: string;
+  term: string;
+  awardName: string;
+  amount: string;
+  acceptBy: string;
+  body: string[];
+  signedBy: string;
+}
+
+export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc;
 
 export const PDF_DOCUMENTS: PdfDocument[] = [
   {
@@ -68,5 +80,23 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
       { label: "Social Security / Medicare", amount: "-$11.05" },
     ],
     netPay: "$863.30",
+  },
+  {
+    kind: "award-letter",
+    id: "award-letter-fall-2026",
+    name: "bhcc-award-letter-fall-2026.pdf",
+    size: "112 KB",
+    date: "Sep 10, 2026",
+    school: "Bunker Hill Community College",
+    student: "Jordan Rivera",
+    term: "Fall 2026",
+    awardName: "Federal Pell Grant",
+    amount: "$2,400.00",
+    acceptBy: "October 15, 2026",
+    body: [
+      "We are pleased to offer the following financial aid for the Fall 2026 term.",
+      "This award is applied to tuition and fees. You must accept or decline by the date below. After that date the offer may be given to another student.",
+    ],
+    signedBy: "Office of Financial Aid, Bunker Hill Community College",
   },
 ];

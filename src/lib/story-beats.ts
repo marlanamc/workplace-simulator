@@ -500,6 +500,166 @@ const STORY_MAILS: InboxRow[] = [
       ],
     },
   },
+  {
+    key: "story-enrollment",
+    ...MARIA,
+    time: "4:10 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "enrollment",
+    subject: { en: "You sent the application", es: "Enviaste la solicitud" },
+    preview: { en: "Deadline first. That's the move.", es: "La fecha primero. Ese es el paso." },
+    body: {
+      en: [
+        "You found the deadline and sent the statement. That is how a portal works.",
+        "Wednesday the award letter lands. The number and the accept-by date are on the page.",
+      ],
+      es: [
+        "Encontraste la fecha y enviaste la carta. Así funciona un portal.",
+        "El miércoles llega la carta de ayuda. El número y la fecha para aceptar están en la página.",
+      ],
+    },
+  },
+  {
+    key: "story-appointment-scheduling",
+    ...MARIA,
+    time: "4:10 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "appointment-scheduling",
+    subject: { en: "11:30 is on the book", es: "Las 11:30 ya están" },
+    preview: { en: "You offered the open slot.", es: "Ofreciste el hueco libre." },
+    body: {
+      en: [
+        "The 10:00 was taken. You offered 11:30 and sent a confirmation.",
+        "Wednesday a new patient checks in. File the form. Do not overshare it.",
+      ],
+      es: [
+        "Las 10:00 estaban ocupadas. Ofreciste las 11:30 y enviaste la confirmación.",
+        "El miércoles llega un paciente nuevo. Archiva el formulario. No lo compartas de más.",
+      ],
+    },
+  },
+  {
+    key: "story-financial-aid",
+    ...inboxSender(CAST.hr),
+    time: "11:22 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "financial-aid",
+    subject: { en: "You read the letter", es: "Leíste la carta" },
+    preview: { en: "$2,400. Accept by October 15.", es: "$2,400. Aceptar antes del 15 de octubre." },
+    body: {
+      en: [
+        "The award is $2,400. Accept by October 15. You pulled both numbers off the page.",
+        "Thursday, coursework is due. Read the syllabus first.",
+      ],
+      es: [
+        "La ayuda es $2,400. Acepta antes del 15 de octubre. Sacaste los dos números de la página.",
+        "El jueves hay que entregar el curso. Lee el temario primero.",
+      ],
+    },
+  },
+  {
+    key: "story-patient-intake",
+    ...MARIA,
+    time: "11:22 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "patient-intake",
+    subject: { en: "The form is filed", es: "El formulario está archivado" },
+    preview: { en: "You did not hand it to the wrong person.", es: "No se lo diste a la persona equivocada." },
+    body: {
+      en: [
+        "The intake is in. You kept it off a coworker who is not on the care team.",
+        "Thursday, the billing sheet has one charge that does not match.",
+      ],
+      es: [
+        "El ingreso está archivado. No se lo diste a un compañero que no está en el equipo de cuidado.",
+        "El jueves, la hoja de facturación tiene un cargo que no cuadra.",
+      ],
+    },
+  },
+  {
+    key: "story-coursework",
+    ...MARIA,
+    time: "6:40 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "coursework",
+    subject: { en: "Submitted before the date", es: "Entregado antes de la fecha" },
+    preview: { en: "You read the syllabus first.", es: "Leíste el temario primero." },
+    body: {
+      en: [
+        "You saw Friday 11:59 PM and still sent it Thursday. That is the whole skill.",
+        "Friday, find one source you would actually cite.",
+      ],
+      es: [
+        "Viste el viernes a las 11:59 PM y aun así lo enviaste el jueves. Esa es toda la habilidad.",
+        "El viernes, encuentra una fuente que de verdad citarías.",
+      ],
+    },
+  },
+  {
+    key: "story-billing-sheet",
+    ...MARIA,
+    time: "6:40 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "billing-sheet",
+    subject: { en: "93000 was the mismatch", es: "93000 era el error" },
+    preview: { en: "You named the row and the right charge.", es: "Nombraste la fila y el cargo correcto." },
+    body: {
+      en: [
+        "The EKG was billed at $185. The list says $85. You told the office both numbers.",
+        "Friday the phone will ring. You cannot verify who is calling.",
+      ],
+      es: [
+        "El EKG se cobró a $185. La lista dice $85. Le dijiste a la oficina los dos números.",
+        "El viernes va a sonar el teléfono. No puedes verificar quién llama.",
+      ],
+    },
+  },
+  {
+    key: "story-research",
+    ...MARIA,
+    time: "3:55 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "research",
+    subject: { en: "You cited the database", es: "Citaste la base de datos" },
+    preview: { en: "Not the ad. Not the forum.", es: "No el anuncio. No el foro." },
+    body: {
+      en: [
+        "You picked the library database and said why. The ad and the forum looked easier.",
+        "That door is done. The front desk is still open if you want it.",
+      ],
+      es: [
+        "Elegiste la base de datos de la biblioteca y dijiste por qué. El anuncio y el foro se veían más fáciles.",
+        "Esa puerta ya está. La recepción sigue abierta si la quieres.",
+      ],
+    },
+  },
+  {
+    key: "story-confidentiality-call",
+    ...MARIA,
+    time: "3:55 PM",
+    unread: true,
+    story: true,
+    unlockAfter: "confidentiality-call",
+    subject: { en: "You did not confirm", es: "No confirmaste" },
+    preview: { en: "Polite, and a callback.", es: "Amable, y una devolución." },
+    body: {
+      en: [
+        "You did not share the visit. You offered to have the patient call back. That is the job.",
+        "That door is done. The college path is still open if you want it.",
+      ],
+      es: [
+        "No compartiste la visita. Ofreciste que el paciente devuelva la llamada. Ese es el trabajo.",
+        "Esa puerta ya está. El camino de la universidad sigue abierto si lo quieres.",
+      ],
+    },
+  },
 ];
 
 export function storyMailAfter(taskKey: TaskKey): InboxRow | undefined {
@@ -581,7 +741,7 @@ export function storyMailsFor(completedTaskKeys: TaskKey[], flags: StoryFlags): 
 }
 
 /** Every task in the order the game hands them out. */
-const CURRICULUM_ORDER: TaskKey[] = LEVELS.flatMap(taskKeysForLevel);
+const CURRICULUM_ORDER: TaskKey[] = LEVELS.flatMap((l) => taskKeysForLevel(l));
 
 /**
  * The inbox as it looked at a moment in the story. While a mail task is

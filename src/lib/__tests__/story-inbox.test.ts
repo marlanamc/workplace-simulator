@@ -11,9 +11,9 @@ import { storyMailsFor, storyMailsUpTo } from "@/lib/story-beats";
  */
 
 /** A learner who has finished everything up to and including the calendar. */
-const FAR_ALONG: TaskKey[] = LEVELS.flatMap(taskKeysForLevel).slice(
+const FAR_ALONG: TaskKey[] = LEVELS.flatMap((l) => taskKeysForLevel(l)).slice(
   0,
-  LEVELS.flatMap(taskKeysForLevel).indexOf("calendar") + 1,
+  LEVELS.flatMap((l) => taskKeysForLevel(l)).indexOf("calendar") + 1,
 );
 
 describe("storyMailsUpTo", () => {
@@ -35,7 +35,7 @@ describe("storyMailsUpTo", () => {
   });
 
   it("every story mail's unlockAfter task exists in the curriculum order", () => {
-    const order = LEVELS.flatMap(taskKeysForLevel);
+    const order = LEVELS.flatMap((l) => taskKeysForLevel(l));
     for (const mail of storyMailsFor(order, {})) {
       expect(order, `story mail "${mail.key}" unlocks after unknown task "${mail.unlockAfter}"`).toContain(mail.unlockAfter);
     }

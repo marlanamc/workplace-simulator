@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 import type { TaskKey } from "@/lib/desktop-content";
 import {
+  bridgePathBadge,
+  bridgePathFromBadgeKeys,
+  needsBridgePicker,
+  PATH_A_TASKS,
+  PATH_B_TASKS,
+  type BridgePath,
+} from "@/lib/bridge-path";
+import {
   LEVELS,
   TRACKS,
   activeTrack,
@@ -17,27 +25,72 @@ import {
   unlockedLevels,
 } from "@/lib/tracks-content";
 
+function walkUntilPicker(start: TaskKey[] = []): TaskKey[] {
+  const done = [...start];
+  for (let i = 0; i < 80; i++) {
+    const handoff = nextHandoff(done);
+    if (!handoff) return done;
+    expect(done, `task ${handoff.taskKey} handed out twice`).not.toContain(handoff.taskKey);
+    done.push(handoff.taskKey);
+  }
+  throw new Error("walk did not reach a picker");
+}
+
+function walkPath(start: TaskKey[], path: BridgePath): TaskKey[] {
+  const done = [...start];
+  const expected = path === "a" ? PATH_A_TASKS : PATH_B_TASKS;
+  for (const key of expected) {
+    if (done.includes(key)) continue;
+    const handoff = nextHandoff(done, path);
+    expect(handoff, `dead end on path ${path} after ${done.at(-1)}`).not.toBeNull();
+    expect(handoff!.taskKey).toBe(key);
+    done.push(handoff!.taskKey);
+  }
+  return done;
+}
+
 /**
  * The game-loop invariant: from a fresh account, following the blue button
  * must visit every task exactly once and never dead-end. If any future
  * change breaks "there is always a next job," this is the test that fails.
  */
 describe("the whole game can be walked start to finish", () => {
-  it("nextHandoff always exists until every task is done, with no repeats", () => {
-    const done: TaskKey[] = [];
-    const totalTasks = TRACKS.reduce((n, t) => n + t.taskKeys.length, 0);
+  it("the trunk walks to the Act V picker, then one path is enough to leave", () => {
+    const trunk = walkUntilPicker();
+    expect(trunk.at(-1)).toBe("reply-all");
+    expect(needsBridgePicker(trunk)).toBe("choose");
+    expect(allTracksComplete(trunk)).toBe(false);
+    expect(nextHandoff(trunk)).toBeNull();
 
-    for (let i = 0; i < totalTasks; i++) {
-      const handoff = nextHandoff(done);
-      expect(handoff, `dead end after ${done.length} tasks (last: ${done.at(-1)})`).not.toBeNull();
-      expect(done, `task ${handoff!.taskKey} handed out twice`).not.toContain(handoff!.taskKey);
-      expect(handoff!.location.ctaLabel, `task ${handoff!.taskKey} has no CTA label`).toBeTruthy();
-      done.push(handoff!.taskKey);
+    const pathA = walkPath(trunk, "a");
+    expect(allTracksComplete(pathA)).toBe(true);
+    expect(needsBridgePicker(pathA, "a")).toBe("other");
+    expect(nextHandoff(pathA, "a")).toBeNull();
+    expect(nextHandoff(pathA, "b")?.taskKey).toBe("appointment-scheduling");
+
+    const both = walkPath(pathA, "b");
+    expect(needsBridgePicker(both, "b")).toBeNull();
+    expect(nextHandoff(both, "b")).toBeNull();
+  });
+
+  it("a Path A-only run never hands off into Path B", () => {
+    const trunk = walkUntilPicker();
+    const pathA = walkPath(trunk, "a");
+    for (const key of PATH_B_TASKS) {
+      expect(pathA, `path A picked up ${key}`).not.toContain(key);
     }
+    expect(nextHandoff(pathA, "a")).toBeNull();
+  });
 
-    expect(done).toHaveLength(totalTasks);
-    expect(allTracksComplete(done)).toBe(true);
-    expect(nextHandoff(done)).toBeNull();
+  it("a Path B-only run never hands off into Path A", () => {
+    const trunk = walkUntilPicker();
+    const pathB = walkPath(trunk, "b");
+    for (const key of PATH_A_TASKS) {
+      expect(pathB, `path B picked up ${key}`).not.toContain(key);
+    }
+    expect(allTracksComplete(pathB)).toBe(true);
+    expect(nextHandoff(pathB, "b")).toBeNull();
+    expect(nextHandoff(pathB, "a")?.taskKey).toBe("enrollment");
   });
 
   it("a brand-new learner starts at the tour", () => {
@@ -56,6 +109,17 @@ describe("the whole game can be walked start to finish", () => {
 describe("progress presets (the Studio time machine)", () => {
   it("teleporting to any level's start hands out exactly that level's first task", () => {
     for (const level of LEVELS) {
+      if (level.pathTracks) {
+        for (const path of ["a", "b"] as const) {
+          const preset = taskKeysBeforeLevel(level.key, path);
+          const firstTask = taskKeysForLevel(level, path)[0];
+          expect(
+            nextHandoff(preset, path)?.taskKey,
+            `preset for "${level.key}:${path}" should point at ${firstTask}`,
+          ).toBe(firstTask);
+        }
+        continue;
+      }
       const preset = taskKeysBeforeLevel(level.key);
       const firstTask = taskKeysForLevel(level)[0];
       expect(
@@ -63,6 +127,18 @@ describe("progress presets (the Studio time machine)", () => {
         `preset for "${level.key}" should point at its first task`,
       ).toBe(firstTask);
     }
+  });
+
+  it("the path badge is how a refresh remembers the chosen door", () => {
+    expect(bridgePathFromBadgeKeys([])).toBeNull();
+    expect(bridgePathFromBadgeKeys(["track:enrollment", bridgePathBadge("a")])).toBe("a");
+    expect(bridgePathFromBadgeKeys([bridgePathBadge("b"), "track:reply-all"])).toBe("b");
+  });
+
+  it("start of Act V with no path is the picker, not a path task", () => {
+    const preset = taskKeysBeforeLevel("level16");
+    expect(nextHandoff(preset)).toBeNull();
+    expect(needsBridgePicker(preset)).toBe("choose");
   });
 
   it("start-of-first-level is a fresh account; unknown keys are too", () => {

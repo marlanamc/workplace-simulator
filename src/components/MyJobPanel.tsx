@@ -13,6 +13,7 @@ import {
   nextTaskInTrack,
   furthestLevelIndex,
   taskKeysForLevel,
+  firstTabForLevel,
   type Level,
 } from "@/lib/tracks-content";
 import { useProgress } from "@/lib/progress-context";
@@ -38,6 +39,7 @@ export default function MyJobPanel({
     justEarnedPoints,
     restartLevel,
     lang,
+    bridgePath,
   } = useProgress();
   const { openApp } = useWindowManager();
   const [levelsOpen, setLevelsOpen] = useState(false);
@@ -45,10 +47,12 @@ export default function MyJobPanel({
 
   const currentLevel = levelForTrack(currentTrack.key);
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
-  const reachedIndex = furthestLevelIndex(completedTaskKeys);
-  const upcoming = isLevelComplete(currentLevel, completedTaskKeys) ? nextLevel(currentLevel) : null;
+  const reachedIndex = furthestLevelIndex(completedTaskKeys, bridgePath);
+  const upcoming = isLevelComplete(currentLevel, completedTaskKeys, bridgePath) ? nextLevel(currentLevel) : null;
 
-  const levelTracks = TRACKS.filter((t) => currentLevel.trackKeys.includes(t.key));
+  const scopedTrackKeys =
+    bridgePath && currentLevel.pathTracks ? [currentLevel.pathTracks[bridgePath]] : currentLevel.trackKeys;
+  const levelTracks = TRACKS.filter((t) => scopedTrackKeys.includes(t.key));
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
   const nextTaskLocation = nextTaskKey ? TASK_LOCATIONS[nextTaskKey] : null;
   const actWorkdays = workdaysInAct(currentLevel);
@@ -59,7 +63,7 @@ export default function MyJobPanel({
   const goToLevel = (level: Level, index: number) => {
     if (index > reachedIndex) return;
     onOpenChange(false);
-    openApp("browser", { tab: level.firstTabKey });
+    openApp("browser", { tab: firstTabForLevel(level, bridgePath) });
     setLevelsOpen(false);
     setPendingReplay(null);
   };
@@ -245,9 +249,9 @@ export default function MyJobPanel({
                         const level = LEVELS[i];
                         const locked = i > reachedIndex;
                         const isCurrent = i === currentLevelIndex;
-                        const complete = !locked && isLevelComplete(level, completedTaskKeys);
+                        const complete = !locked && isLevelComplete(level, completedTaskKeys, bridgePath);
                         const canReplay =
-                          !locked && taskKeysForLevel(level).some((k) => completedTaskKeys.includes(k));
+                          !locked && taskKeysForLevel(level, bridgePath).some((k) => completedTaskKeys.includes(k));
                         return (
                           <div key={level.key} className={`rounded-xl ${isCurrent ? "bg-accent-tint" : ""}`}>
                             <div className="flex items-center">
@@ -288,7 +292,7 @@ export default function MyJobPanel({
                                       setPendingReplay(null);
                                       setLevelsOpen(false);
                                       onOpenChange(false);
-                                      openApp("browser", { tab: level.firstTabKey });
+                                      openApp("browser", { tab: firstTabForLevel(level, bridgePath) });
                                     }}
                                     className="text-[12px] font-medium text-accent cursor-pointer"
                                   >

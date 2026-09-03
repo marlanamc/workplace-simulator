@@ -11,7 +11,7 @@ import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
  * being taught something the next screen contradicts.
  */
 
-const ALL_TASKS = LEVELS.flatMap(taskKeysForLevel);
+const ALL_TASKS = LEVELS.flatMap((l) => taskKeysForLevel(l));
 
 describe("the schedule/swap content", () => {
   it("exactly one shift clashes, and the personal calendar explains why", () => {

@@ -15,7 +15,8 @@ import {
   type Track,
   type Level,
 } from "@/lib/tracks-content";
-import { completeTask, awardCertificate, restartLevelProgress } from "@/app/actions";
+import { completeTask, awardCertificate, persistBridgePath, restartLevelProgress } from "@/app/actions";
+import { BRIDGE_PATH_FLAG, inferBridgePath, type BridgePath } from "@/lib/bridge-path";
 import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
 import { applyGapDecay, recordCleanRun, recordMissedRun, rungFor, type Rung, type RungMap } from "@/lib/release-ladder";
 import { DEVICE_KEY, learnerKey, storage } from "@/lib/storage";
@@ -46,6 +47,7 @@ interface ProgressValue {
   celebrateTrack: Track | null;
   celebrateLevel: Level | null;
   currentTrack: Track;
+  bridgePath: BridgePath | null;
   progressEpoch: number;
   storyFlags: StoryFlags;
   setStoryFlag: (key: string, value: string) => void;
@@ -72,12 +74,14 @@ export function ProgressProvider({
   displayName,
   initialCompletedTaskKeys,
   initialCertificateTrackKeys,
+  initialBridgePath,
   children,
 }: {
   learnerId: string;
   displayName: string;
   initialCompletedTaskKeys: TaskKey[];
   initialCertificateTrackKeys: string[];
+  initialBridgePath?: BridgePath | null;
   children: ReactNode;
 }) {
   const [completedTaskKeys, setCompletedTaskKeys] = useState<TaskKey[]>(initialCompletedTaskKeys);
@@ -86,7 +90,11 @@ export function ProgressProvider({
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
   const [progressEpoch, setProgressEpoch] = useState(0);
-  const [storyFlags, setStoryFlags] = useState<StoryFlags>(() => loadStoryFlags(learnerId));
+  const [storyFlags, setStoryFlags] = useState<StoryFlags>(() => {
+    const stored = loadStoryFlags(learnerId);
+    if (initialBridgePath) return { ...stored, [BRIDGE_PATH_FLAG]: initialBridgePath };
+    return stored;
+  });
   const [rungMap, setRungMap] = useState<RungMap>(() => {
     const loaded = loadRungMap(learnerId);
     const decayed = applyGapDecay(loaded, new Date().toISOString());
@@ -120,6 +128,9 @@ export function ProgressProvider({
       saveStoryFlags(learnerId, next);
       return next;
     });
+    if (key === BRIDGE_PATH_FLAG && (value === "a" || value === "b")) {
+      persistBridgePath(value);
+    }
   }, [learnerId]);
 
   // Every state write and side effect here runs *outside* the state updaters —
@@ -140,7 +151,8 @@ export function ProgressProvider({
       // priority over the smaller per-track celebration - only one modal
       // shows for a task completion that finishes both at once.
       const level = levelForTrack(track.key);
-      const upcoming = isLevelComplete(level, next) ? nextLevel(level) : null;
+      const path = inferBridgePath(next, storyFlags[BRIDGE_PATH_FLAG]);
+      const upcoming = isLevelComplete(level, next, path) ? nextLevel(level) : null;
       if (upcoming?.levelUp) setCelebrateLevel(upcoming);
       else setCelebrateTrack(track);
     }
@@ -152,11 +164,12 @@ export function ProgressProvider({
     pointsTimer.current = setTimeout(() => setJustEarnedPoints(null), 2200);
 
     completeTask(taskKey, badgeKey);
-  }, [completedTaskKeys]);
+  }, [completedTaskKeys, storyFlags]);
 
   const restartLevel = useCallback((level: Level) => {
-    const taskKeys = new Set(taskKeysForLevel(level));
-    const trackKeys = new Set(level.trackKeys);
+    const path = inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]);
+    const taskKeys = new Set(taskKeysForLevel(level, path));
+    const trackKeys = new Set(path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys);
     setCompletedTaskKeys((prev) => prev.filter((k) => !taskKeys.has(k)));
     setCertificateTrackKeys((prev) => prev.filter((k) => !trackKeys.has(k)));
 
@@ -170,7 +183,7 @@ export function ProgressProvider({
     setMariaNoteTaskKey(null);
     setProgressEpoch((n) => n + 1);
     restartLevelProgress(level.key);
-  }, [learnerId, storyFlags]);
+  }, [learnerId, storyFlags, completedTaskKeys]);
 
   const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
 
@@ -200,7 +213,8 @@ export function ProgressProvider({
       certificateTrackKeys,
       celebrateTrack,
       celebrateLevel,
-      currentTrack: activeTrack(completedTaskKeys),
+      currentTrack: activeTrack(completedTaskKeys, inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG])),
+      bridgePath: inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]),
       progressEpoch,
       storyFlags,
       setStoryFlag,

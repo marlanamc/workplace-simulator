@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { TAB_META, TAB_LEVEL_KEYS, bookmarkTabKeys } from "@/lib/tabs";
 import { LEVELS } from "@/lib/tracks-content";
 
-const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet"];
+const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet", "billing-sheet"];
 
 describe("tab registry", () => {
   it("TAB_LEVEL_KEYS is derived from TAB_META", () => {
@@ -58,6 +58,29 @@ describe("bookmarkTabKeys", () => {
     for (const level of LEVELS) {
       expect(bookmarkTabKeys(level.key, []).has("zoom"), level.key).toBe(false);
     }
+  });
+
+  it("gates Act V tools to their path and day", () => {
+    expect(bookmarkTabKeys("level16", [], "a").has("college-portal")).toBe(true);
+    expect(bookmarkTabKeys("level16", [], "a").has("front-desk")).toBe(false);
+    expect(bookmarkTabKeys("level16", [], "b").has("front-desk")).toBe(true);
+    expect(bookmarkTabKeys("level16", [], "b").has("college-portal")).toBe(false);
+    expect(bookmarkTabKeys("level16", []).has("college-portal")).toBe(false);
+    expect(bookmarkTabKeys("level16", []).has("front-desk")).toBe(false);
+
+    expect(bookmarkTabKeys("level18", [], "a").has("coursework")).toBe(true);
+    expect(bookmarkTabKeys("level18", [], "a").has("billing-sheet")).toBe(false);
+    expect(bookmarkTabKeys("level18", [], "b").has("billing-sheet")).toBe(true);
+    expect(bookmarkTabKeys("level18", [], "b").has("coursework")).toBe(false);
+
+    expect(bookmarkTabKeys("level19", [], "a").has("library")).toBe(true);
+    expect(bookmarkTabKeys("level19", [], "b").has("front-desk")).toBe(true);
+    expect(bookmarkTabKeys("level19", [], "a").has("front-desk")).toBe(false);
+  });
+
+  it("keeps Zoom off the bar even on Act V", () => {
+    expect(bookmarkTabKeys("level16", [], "a").has("zoom")).toBe(false);
+    expect(bookmarkTabKeys("level18", [], "b").has("zoom")).toBe(false);
   });
 
   it("always shows the un-gated tabs", () => {

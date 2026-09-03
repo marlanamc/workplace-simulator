@@ -64,7 +64,7 @@ type MailTask = PlayableMailTask;
  * structure rather than hand-listed, so a mail task that exists in content
  * but isn't wired into a level can never silently become unreachable here.
  */
-const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap(taskKeysForLevel) as string[]).filter(
+const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap((l) => taskKeysForLevel(l)) as string[]).filter(
   (k): k is MailTask => (PLAYABLE_MAIL_TASKS as string[]).includes(k),
 );
 

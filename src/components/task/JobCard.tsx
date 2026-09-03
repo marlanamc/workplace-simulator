@@ -23,6 +23,7 @@ import {
   nextTaskInTrack,
   taskKeysForLevel,
 } from "@/lib/tracks-content";
+import { BRIDGE_PATH_FLAG, needsBridgePicker, pathIsComplete } from "@/lib/bridge-path";
 import type { TaskKey } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import { dayLabel } from "@/lib/shift-spine";
@@ -54,6 +55,8 @@ interface Script {
   help?: boolean;
   secondaryLabel?: string;
   onSecondary?: () => void;
+  /** Two peer doors — both buttons use the same weight. */
+  equalPair?: boolean;
 }
 
 /**
@@ -68,7 +71,7 @@ interface Script {
  * its own; only its corner.
  */
 export default function JobCard() {
-  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag } =
+  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag, bridgePath } =
     useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
   const {
@@ -95,7 +98,7 @@ export default function JobCard() {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
-  const levelTaskKeys = taskKeysForLevel(level);
+  const levelTaskKeys = taskKeysForLevel(level, bridgePath);
   const doneInLevel = levelTaskKeys.filter((k) => completedTaskKeys.includes(k)).length;
   const jobNumber = Math.min(doneInLevel + 1, levelTaskKeys.length);
 
@@ -223,7 +226,7 @@ export default function JobCard() {
       const finishedTrack = justFinished ? findTrackForTask(justFinished) : undefined;
       // The day the learner just finished, not the one they are moving into.
       const finishedLevelKeys = finishedTrack
-        ? taskKeysForLevel(levelForTrack(finishedTrack.key))
+        ? taskKeysForLevel(levelForTrack(finishedTrack.key), bridgePath)
         : levelTaskKeys;
       const remaining = finishedLevelKeys.filter((k) => !completedTaskKeys.includes(k)).length;
       const levelFinished = remaining === 0;
@@ -261,6 +264,42 @@ export default function JobCard() {
     // it names. This is what the desktop briefing used to do.
     if (active === null || !step) {
       if (!nextTaskKey) {
+        const picker = needsBridgePicker(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]);
+        if (picker === "choose") {
+          return {
+            badge: "→",
+            kicker: c.pickDoorKicker,
+            line: c.pickDoorLine,
+            tone: "blue",
+            step: 0,
+            primaryLabel: c.pickCollege,
+            onPrimary: () => {
+              setStoryFlag(BRIDGE_PATH_FLAG, "a");
+              openApp("browser");
+            },
+            secondaryLabel: c.pickFrontDesk,
+            onSecondary: () => {
+              setStoryFlag(BRIDGE_PATH_FLAG, "b");
+              openApp("browser");
+            },
+            equalPair: true,
+          };
+        }
+        if (picker === "other") {
+          const offerA = !pathIsComplete("a", completedTaskKeys);
+          return {
+            badge: "→",
+            kicker: c.otherDoorKicker,
+            line: c.otherDoorLine,
+            tone: "blue",
+            step: 4,
+            primaryLabel: offerA ? c.tryCollege : c.tryFrontDesk,
+            onPrimary: () => {
+              setStoryFlag(BRIDGE_PATH_FLAG, offerA ? "a" : "b");
+              openApp("browser");
+            },
+          };
+        }
         return { badge: "✓", kicker: c.dayDoneKicker, line: c.allDoneLine, tone: "green", step: 4 };
       }
       const location = TASK_LOCATIONS[nextTaskKey];
@@ -496,6 +535,7 @@ export default function JobCard() {
               clearCorrection();
               script.onPrimary?.();
             }}
+            data-testid={script.equalPair ? "job-card-pick-a" : undefined}
             className="mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center gap-3 whitespace-nowrap rounded-[16px] text-[20px] font-medium text-white"
             style={{ background: tone }}
           >
@@ -537,8 +577,13 @@ export default function JobCard() {
           <button
             type="button"
             onClick={script.onSecondary}
-            className="mt-2.5 flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
-            style={{ color: "var(--text-secondary)" }}
+            data-testid={script.equalPair ? "job-card-pick-b" : undefined}
+            className={
+              script.equalPair
+                ? "mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+                : "mt-2.5 flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
+            }
+            style={script.equalPair ? { background: tone } : { color: "var(--text-secondary)" }}
           >
             {script.secondaryLabel}
           </button>

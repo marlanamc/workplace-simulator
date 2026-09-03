@@ -133,6 +133,14 @@ export const JOB_CARD_COPY: Record<
     allDoneLine: string;
     seeAwards: string;
     comingSoonLine: string;
+    pickDoorKicker: string;
+    pickDoorLine: string;
+    pickCollege: string;
+    pickFrontDesk: string;
+    otherDoorKicker: string;
+    otherDoorLine: string;
+    tryCollege: string;
+    tryFrontDesk: string;
   }
 > = {
   en: {
@@ -162,6 +170,14 @@ export const JOB_CARD_COPY: Record<
     allDoneLine: "You finished everything.",
     seeAwards: "See awards",
     comingSoonLine: "Nothing new yet. Check back soon.",
+    pickDoorKicker: "A new door",
+    pickDoorLine: "College, or the front desk.",
+    pickCollege: "Prep for college",
+    pickFrontDesk: "Try the front desk",
+    otherDoorKicker: "The other door",
+    otherDoorLine: "You can try the other path now.",
+    tryCollege: "Try the college path",
+    tryFrontDesk: "Try the front desk",
   },
   es: {
     jobOf: (n, total) => (total <= 1 ? "" : `Tarea ${n} de ${total}`),
@@ -185,5 +201,13 @@ export const JOB_CARD_COPY: Record<
     allDoneLine: "Terminaste todo.",
     seeAwards: "Ver premios",
     comingSoonLine: "Nada nuevo todavía. Vuelve pronto.",
+    pickDoorKicker: "Una puerta nueva",
+    pickDoorLine: "Universidad, o la recepción.",
+    pickCollege: "Prepárate para la universidad",
+    pickFrontDesk: "Prueba la recepción",
+    otherDoorKicker: "La otra puerta",
+    otherDoorLine: "Ahora puedes probar el otro camino.",
+    tryCollege: "Probar el camino de universidad",
+    tryFrontDesk: "Probar la recepción",
   },
 };

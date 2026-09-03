@@ -1,5 +1,6 @@
 import type { TaskKey } from "./desktop-content";
 import type { Lang } from "./task-types";
+import type { BridgePath } from "./bridge-path";
 import {
   LEVELS,
   TASK_INFO,
@@ -91,8 +92,12 @@ export function jobTitle(level: Level): string {
 }
 
 /** Built tasks still open in this level. */
-export function remainingTasksInLevel(level: Level, completedTaskKeys: TaskKey[]): number {
-  return taskKeysForLevel(level).filter((k) => !completedTaskKeys.includes(k) && TASK_INFO[k]?.built).length;
+export function remainingTasksInLevel(
+  level: Level,
+  completedTaskKeys: TaskKey[],
+  path?: BridgePath | null,
+): number {
+  return taskKeysForLevel(level, path).filter((k) => !completedTaskKeys.includes(k) && TASK_INFO[k]?.built).length;
 }
 
 export function nextBuiltTask(track: Track, completedTaskKeys: TaskKey[]): TaskKey | null {

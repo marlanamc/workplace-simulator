@@ -227,5 +227,13 @@ export const TASK_KEYS = [
   "college-offer",
   "budget-sheet",
   "reply-all",
+  "enrollment",
+  "appointment-scheduling",
+  "financial-aid",
+  "patient-intake",
+  "coursework",
+  "billing-sheet",
+  "research",
+  "confidentiality-call",
 ] as const;
 export type TaskKey = (typeof TASK_KEYS)[number];

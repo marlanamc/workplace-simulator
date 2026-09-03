@@ -16,21 +16,21 @@ import { logout } from "@/app/actions";
  * progress is already saved either way.
  */
 export default function LevelUpCelebration() {
-  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang } = useProgress();
+  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp) return null;
   const { levelUp } = celebrateLevel;
   const kicker = levelUp.kicker[lang];
   const title = levelUp.title[lang];
   const body = levelUp.body[lang];
-  const handoff = nextHandoff(completedTaskKeys);
+  const handoff = nextHandoff(completedTaskKeys, bridgePath);
   const cta =
     celebrateLevel.freeTabbing && handoff
       ? HANDOFF_CTA[handoff.taskKey][lang]
       : levelUp.cta[lang];
 
   const keepGoing = () => {
-    const handoff = nextHandoff(completedTaskKeys);
+    const handoff = nextHandoff(completedTaskKeys, bridgePath);
     dismissLevelCelebration();
     if (!handoff) return;
     openApp(handoff.location.appKey, {

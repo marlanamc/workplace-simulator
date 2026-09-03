@@ -21,7 +21,7 @@ import type { Lang } from "@/lib/task-types";
 const LANGS: Lang[] = ["en", "es"];
 // Only tasks that HAVE an email to read; call-out-sick is composed from scratch.
 const MAIL_TASKS = ["mail-reply", "mail-attach"] as const;
-const ALL_TASKS = LEVELS.flatMap(taskKeysForLevel);
+const ALL_TASKS = LEVELS.flatMap((l) => taskKeysForLevel(l));
 
 describe("mailGreeting", () => {
   it("uses the learner's first name only", () => {

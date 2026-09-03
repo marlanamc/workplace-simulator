@@ -166,7 +166,7 @@ export default function Shelf({
   onMyJobOpenChange: (open: boolean) => void;
   highlightMyJob?: boolean;
 }) {
-  const { completedTaskKeys, currentTrack, lang, setLang } = useProgress();
+  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath } = useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
@@ -175,7 +175,7 @@ export default function Shelf({
   const { nudge, say, dismiss } = useNudge();
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
   const currentLevel = levelForTrack(currentTrack.key);
-  const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys);
+  const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys, bridgePath);
   // Level 0's walkthrough is the one thing on screen for a brand-new learner —
   // Start (the app list) and My Job would open a second map of the same computer.
   const tourLocked = currentLevel.key === "level0" && !completedTaskKeys.includes("tour");

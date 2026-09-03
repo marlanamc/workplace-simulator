@@ -19,9 +19,12 @@ import {
   GraduationCap,
   HardDrive,
   KeyRound,
+  Landmark,
   LayoutGrid,
+  Library,
   ListChecks,
   Mail,
+  Phone,
   MailOpen,
   Megaphone,
   Paperclip,
@@ -67,6 +70,14 @@ export const TASK_ICONS: Record<TaskKey, LucideIcon> = {
   "college-offer": GraduationCap,
   "budget-sheet": ChartColumn,
   "reply-all": Reply,
+  enrollment: Landmark,
+  "appointment-scheduling": CalendarClock,
+  "financial-aid": FileText,
+  "patient-intake": ClipboardList,
+  coursework: BookOpen,
+  "billing-sheet": Calculator,
+  research: Library,
+  "confidentiality-call": Phone,
 };
 
 export const APP_ICONS: Record<AppKey, LucideIcon> = {
@@ -152,6 +163,11 @@ export const TAB_ICONS: Record<string, LucideIcon> = {
   "college-offer": Mail,
   "budget-sheet": Table2,
   zoom: Video,
+  "college-portal": Landmark,
+  coursework: BookOpen,
+  library: Library,
+  "front-desk": CalendarClock,
+  "billing-sheet": Table2,
 };
 
 export const TRACK_ICONS: Record<string, LucideIcon> = {
@@ -171,6 +187,14 @@ export const TRACK_ICONS: Record<string, LucideIcon> = {
   "college-offer": GraduationCap,
   "budget-sheet": ChartColumn,
   "reply-all": Reply,
+  enrollment: Landmark,
+  "appointment-scheduling": CalendarClock,
+  "financial-aid": FileText,
+  "patient-intake": ClipboardList,
+  coursework: BookOpen,
+  "billing-sheet": Calculator,
+  research: Library,
+  "confidentiality-call": Phone,
 };
 
 export const FOLDER_ICONS: Record<string, LucideIcon> = {
