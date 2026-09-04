@@ -373,6 +373,25 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Drive from the bookmarks"),
   },
 
+  "mail-send-link": {
+    key: "mail-send-link",
+    built: true,
+    label: { en: "Send Jordan the link", es: "Envíale el enlace a Jordan" },
+    dispatch: {
+      en: "You shared the file. Now email Jordan the link — not an attached copy.",
+      es: "Compartiste el archivo. Ahora envíale el enlace a Jordan por correo — no una copia adjunta.",
+    },
+    skill: "Send a link to a file instead of a copy",
+    bookmarkLabel: "Mail",
+    handoffCta: { en: "Open Mail", es: "Abrir correo" },
+    shiftMoment: {
+      en: "Monday, 10:15 AM. Jordan needs the schedule.",
+      es: "Lunes, 10:15 AM. Jordan necesita el horario.",
+    },
+    location: browser("Open Mail", "mail"),
+    jobCardLine: { en: "Email Jordan the schedule link.", es: "Envíale a Jordan el enlace del horario." },
+  },
+
   spreadsheet: {
     key: "spreadsheet",
     built: true,

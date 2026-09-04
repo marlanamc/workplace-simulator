@@ -5,7 +5,13 @@ import { replyIsSafe } from "@/lib/tasks/priority-call/content";
 import { agendaBulletCount, titleIsAboutSchedule } from "@/lib/tasks/team-meeting/content";
 import { replyAcceptsOffer, overlapMentionsShift } from "@/lib/tasks/college-offer/content";
 import { emailFlagsOver } from "@/lib/tasks/budget-sheet/content";
-import { casualDraftUntouched, stillSoundsCasual, replyAllAnswersDana } from "@/lib/tasks/mail/content";
+import {
+  casualDraftUntouched,
+  stillSoundsCasual,
+  replyAllAnswersDana,
+  saysAttached,
+  sendsLinkNotFile,
+} from "@/lib/tasks/mail/content";
 import { statementShowsInterest } from "@/lib/tasks/enrollment/content";
 import { amountLooksRight, dateLooksRight } from "@/lib/tasks/financial-aid/content";
 import { responseIsComplete } from "@/lib/tasks/coursework/content";
@@ -233,6 +239,31 @@ describe("reply-all: audience and tone", () => {
     expect(replyAllAnswersDana("yeah that's fine lol")).toBe(false);
     expect(replyAllAnswersDana("ok")).toBe(false);
     expect(replyAllAnswersDana("Thanks!")).toBe(false);
+  });
+});
+
+describe("send a link, not a file", () => {
+  it.each([
+    "Hi Jordan, here's the link to this week's schedule. You should have view access now.",
+    "Jordan — I shared the schedule with you. Open it from the link, not an old copy.",
+    "Hola Jordan, aquí está el enlace del horario de esta semana. Ya tienes acceso para ver.",
+    "The schedule is at drive.harborsidecafe.com/schedule — I'll keep it updated there.",
+  ])("accepts an email that points at the file: %j", (body) => {
+    expect(sendsLinkNotFile(body)).toBe(true);
+  });
+
+  it.each([
+    "Hi Jordan, I attached this week's schedule.",
+    "Here's the schedule, see the attachment.",
+    "Hola Jordan, te adjunto el horario de esta semana.",
+  ])("rejects an email that sends a copy: %j", (body) => {
+    expect(saysAttached(body)).toBe(true);
+    expect(sendsLinkNotFile(body)).toBe(false);
+  });
+
+  it("rejects a one-word or empty send", () => {
+    expect(sendsLinkNotFile("here")).toBe(false);
+    expect(sendsLinkNotFile("")).toBe(false);
   });
 });
 

@@ -280,6 +280,26 @@ const STORY_MAILS: InboxRow[] = [
     },
   },
   {
+    key: "story-mail-send-link",
+    ...inboxSender(CAST.jordan),
+    time: "10:38 AM",
+    unread: true,
+    story: true,
+    unlockAfter: "mail-send-link",
+    subject: { en: "Got the link", es: "Recibí el enlace" },
+    preview: { en: "Opened it fine. Thanks.", es: "Se abrió bien. Gracias." },
+    body: {
+      en: [
+        "Got the link and opened it fine. Thanks for not sending a copy — I know it'll stay current.",
+        "See you on the floor.",
+      ],
+      es: [
+        "Recibí el enlace y se abrió bien. Gracias por no mandar una copia — así sé que va a estar al día.",
+        "Nos vemos en el piso.",
+      ],
+    },
+  },
+  {
     key: "story-spreadsheet",
     ...RENATA,
     time: "4:03 PM",

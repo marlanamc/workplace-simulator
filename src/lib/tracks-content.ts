@@ -95,7 +95,7 @@ export const TRACKS: Track[] = [
     key: "files",
     title: "Shared Files",
     subtitle: "Send the right file, the right way",
-    taskKeys: ["files"],
+    taskKeys: ["files", "mail-send-link"],
     awardEmoji: "📁",
   },
   {

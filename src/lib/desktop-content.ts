@@ -216,6 +216,9 @@ export const TASK_KEYS = [
   "handbook",
   "calendar",
   "files",
+  // Second lesson of the Shared Files level: you shared the file, now send
+  // the coworker the link (not an attached copy that goes stale).
+  "mail-send-link",
   "spreadsheet",
   "make-a-copy",
   "status-report",
