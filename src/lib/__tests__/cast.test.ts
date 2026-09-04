@@ -1,12 +1,41 @@
 import { describe, expect, it } from "vitest";
-import { CAST, CAFE_DOMAIN, castByName, inboxSender } from "@/lib/cast";
+import {
+  CAST,
+  CAFE_DOMAIN,
+  CAFE_NAME,
+  COLLEGE_NAME,
+  HEALTH_NAME,
+  HQ_NAME,
+  castByName,
+  inboxSender,
+} from "@/lib/cast";
 import { SIGNATURES, signatureFor } from "@/lib/mail-greeting";
 
+const DOMAIN_BY_ORG: Record<string, string> = {
+  [CAFE_NAME]: "harborsidecafe.com",
+  [HEALTH_NAME]: "harborsidehealth.com",
+  [HQ_NAME]: "harborsidehq.com",
+  [COLLEGE_NAME]: "bhcc.edu",
+};
+
 describe("cast", () => {
-  it("every member has a well-formed cafe email and 2-letter initials", () => {
+  it("every member has a well-formed email and 2-letter initials", () => {
     for (const m of Object.values(CAST)) {
-      expect(m.email.endsWith(`@${CAFE_DOMAIN}`), `${m.name} email`).toBe(true);
+      expect(m.email, `${m.name} email`).toMatch(/^[^@]+@[^@]+\.[a-z]+$/);
       expect(m.initials, `${m.name} initials`).toMatch(/^[A-Z]{2}$/);
+    }
+  });
+
+  it("a member's email domain matches their org", () => {
+    for (const m of Object.values(CAST)) {
+      if (!m.org) {
+        // No org set — the cafe is the default home for coworkers.
+        expect(m.email.endsWith(`@${CAFE_DOMAIN}`), `${m.name} email`).toBe(true);
+        continue;
+      }
+      const expected = DOMAIN_BY_ORG[m.org];
+      expect(expected, `${m.org} has a known domain`).toBeDefined();
+      expect(m.email.endsWith(`@${expected}`), `${m.name} email on ${m.org}`).toBe(true);
     }
   });
 
