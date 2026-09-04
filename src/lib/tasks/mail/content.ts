@@ -279,12 +279,12 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
     en: {
       subject: "Welcome to Harborside Cafe",
       reSubject: "Re: Welcome to Harborside Cafe",
-      preview: "You're a new hire. This week you have 5 shifts on the floor.",
+      preview: "You're on the schedule for 5 shifts this week.",
     },
     es: {
       subject: "Bienvenido a Harborside Cafe",
       reSubject: "Re: Bienvenido a Harborside Cafe",
-      preview: "Eres personal nuevo. Esta semana tienes 5 turnos en el piso.",
+      preview: "Estás en el horario para 5 turnos esta semana.",
     },
   },
   "mail-send-link": {
@@ -595,14 +595,14 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       plain: [
         GREETING,
         "Welcome to Harborside Cafe. I'm glad you're here.",
-        "You're a new hire. This week you have 5 shifts on the floor.",
+        "You're on the schedule for 5 shifts this week.",
         "Call or email me if you need anything.",
         "See you on the floor,",
       ],
       full: [
         GREETING,
         "Welcome to the Harborside Cafe team. I'm glad you're starting with us.",
-        "You're a new hire. This week you have 5 shifts on the floor — that's all you need to focus on for now.",
+        "You're on the schedule for 5 shifts this week — that's all you need to focus on for now.",
         "If you need anything — schedule, login, or just a question — call or email me. I'm here.",
         "Looking forward to working with you.",
         "Thanks,",
@@ -612,14 +612,14 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       plain: [
         GREETING,
         "Bienvenido a Harborside Cafe. Me alegra que estés aquí.",
-        "Eres personal nuevo. Esta semana tienes 5 turnos en el piso.",
+        "Estás en el horario para 5 turnos esta semana.",
         "Llámame o escríbeme si necesitas algo.",
         "Nos vemos en el piso,",
       ],
       full: [
         GREETING,
         "Bienvenido al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
-        "Eres personal nuevo. Esta semana tienes 5 turnos en el piso — con eso te basta por ahora.",
+        "Estás en el horario para 5 turnos esta semana — con eso te basta por ahora.",
         "Si necesitas algo — horario, acceso o solo una pregunta — llámame o escríbeme. Aquí estoy.",
         "Espero trabajar contigo.",
         "Gracias,",

@@ -97,12 +97,15 @@ export default function TourWalkthrough({
   }, [stepIndex, step?.targetTestId]);
 
   useEffect(() => {
-    // Look beats have nothing to click. Measuring them put a leftover ring
-    // on the Mail wordmark after the tab switch — a stray oval. The card
-    // already says the sentence; the highlight stays off.
+    // Look beats have nothing to click, so they normally skip the ring —
+    // measuring one right after a tab-switching click step put a leftover
+    // ring on the Mail wordmark's stale position. A look beat can opt back
+    // in with `ringOnLook` when nothing before it could have moved the
+    // target (e.g. the very first step, ringing the bookmarks row itself).
     // The card's ? sits outside this window. Measuring it here would punch a
     // hole in the wrong place. The card pulses that button instead.
-    const sel = step && !step.continueLabel && !isCardHelp ? targetSelector(step) : null;
+    const sel =
+      step && (!step.continueLabel || step.ringOnLook) && !isCardHelp ? targetSelector(step) : null;
     const measure = () => {
       const overlay = overlayRef.current;
       if (!sel || !overlay) {
@@ -153,7 +156,7 @@ export default function TourWalkthrough({
 
   return (
     <div ref={overlayRef} className="pointer-events-none absolute inset-0 z-[70]" aria-hidden>
-      {isLookBeat ? null : hole ? (
+      {isLookBeat && !step.ringOnLook ? null : hole ? (
         <>
           <div
             className={`absolute ${radius}`}

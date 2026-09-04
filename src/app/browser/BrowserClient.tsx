@@ -15,7 +15,7 @@ import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
-import { TOUR_STEPS } from "@/lib/tasks/tour/content";
+import { TOUR_STEPS, CALENDAR_REMINDER_STEPS, CALENDAR_REMINDER_FLAG } from "@/lib/tasks/tour/content";
 
 type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
 
@@ -142,11 +142,13 @@ function NewTabPage() {
 
 export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
-  const { lang, currentTrack, completedTaskKeys, bridgePath } = useProgress();
+  const { lang, currentTrack, completedTaskKeys, bridgePath, storyFlags, setStoryFlag } = useProgress();
   const { nudge, say, dismiss } = useNudge();
   const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
   const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
   const [tourHelpOpen, setTourHelpOpen] = useState(false);
+  const [calendarReminderStep, setCalendarReminderStep] = useState<number | null>(null);
+  const [calendarReminderOffered, setCalendarReminderOffered] = useState(false);
 
   const progressLevelKey = levelForTrack(currentTrack.key).key;
   const jumpDef =
@@ -261,6 +263,21 @@ export default function BrowserClient() {
   ) {
     setWalkthroughOffered(true);
     setTourWalkthroughStep(0);
+  }
+
+  // A 1-step callback to the Calendar bookmark shown once at the start of
+  // Level 4, its first real use since Day One's tour. Free-tabbing levels
+  // start blank, so without this the learner has to guess which bookmark to
+  // click - the point is to remind, not to re-teach.
+  if (
+    viewedLevelKey === "level4" &&
+    !completedTaskKeys.includes("calendar") &&
+    storyFlags[CALENDAR_REMINDER_FLAG] !== "true" &&
+    !calendarReminderOffered &&
+    calendarReminderStep === null
+  ) {
+    setCalendarReminderOffered(true);
+    setCalendarReminderStep(0);
   }
 
   // ── Tab actions ────────────────────────────────────────────
@@ -422,7 +439,10 @@ export default function BrowserClient() {
         </button>
       </div>
 
-      <div className="flex items-center gap-0.5 border-b border-[#dadce0] bg-white px-3 py-[3px]">
+      <div
+        data-testid="bookmarks-row"
+        className="flex items-center gap-0.5 border-b border-[#dadce0] bg-white px-3 py-[3px]"
+      >
         {BASE_TABS.filter((t) => visibleBookmarks.has(t.key)).map((t) => (
           <button
             key={t.key}
@@ -494,6 +514,17 @@ export default function BrowserClient() {
               return;
             }
             setTourWalkthroughStep(next);
+          }}
+        />
+      )}
+
+      {calendarReminderStep !== null && (
+        <TourWalkthrough
+          steps={CALENDAR_REMINDER_STEPS[lang]}
+          stepIndex={calendarReminderStep}
+          onAdvance={() => {
+            setCalendarReminderStep(null);
+            setStoryFlag(CALENDAR_REMINDER_FLAG, "true");
           }}
         />
       )}

@@ -102,26 +102,28 @@ export type TourStep = {
    * Use after opening Mail/Calendar so they notice what the app is for.
    */
   continueLabel?: string;
+  /**
+   * Ring `targetTestId` even though this is a look beat. Default off: a look
+   * beat right after a tab-switching click step measures a stale position
+   * (see TourWalkthrough). Only safe for a look beat with nothing before it
+   * that could have moved the target, e.g. the very first step.
+   */
+  ringOnLook?: boolean;
 };
 
 
 export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   en: [
     {
-      instruction:
-        "On a real computer, you type a web address in the bar at the top and use the back arrow to go back. Here, you get around with the bookmarks on the row below it.",
-      continueLabel: "Show me the bookmarks",
+      instruction: "These are your bookmarks. Each one opens an app you use for work.",
+      targetTestId: "bookmarks-row",
+      continueLabel: "Show me",
+      ringOnLook: true,
     },
     { instruction: "Click Mail.", targetTabKey: "mail" },
     {
       instruction: "This is your work email. Messages from your manager, coworkers, and vendors show up here.",
       targetTestId: "mail-app-title",
-      continueLabel: "Got it",
-    },
-    { instruction: "Now click Calendar.", targetTabKey: "calendar" },
-    {
-      instruction: "This is your work calendar. Meetings and your work shifts show up here.",
-      targetTabKey: "calendar",
       continueLabel: "Got it",
     },
     {
@@ -131,20 +133,15 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   ],
   es: [
     {
-      instruction:
-        "En una computadora de verdad, escribes una dirección web en la barra de arriba y usas la flecha para regresar. Aquí te mueves con los marcadores de la fila de abajo.",
-      continueLabel: "Muéstrame los marcadores",
+      instruction: "Estos son tus marcadores. Cada uno abre una app que usas para el trabajo.",
+      targetTestId: "bookmarks-row",
+      continueLabel: "Muéstramelos",
+      ringOnLook: true,
     },
     { instruction: "Haz clic en Correo.", targetTabKey: "mail" },
     {
       instruction: "Este es tu correo del trabajo. Aquí llegan mensajes de tu gerente, compañeros y proveedores.",
       targetTestId: "mail-app-title",
-      continueLabel: "Entendido",
-    },
-    { instruction: "Ahora haz clic en Calendario.", targetTabKey: "calendar" },
-    {
-      instruction: "Este es tu calendario del trabajo. Aquí aparecen las reuniones y tus turnos de trabajo.",
-      targetTabKey: "calendar",
       continueLabel: "Entendido",
     },
     {
@@ -154,27 +151,51 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   ],
 };
 
+/**
+ * Level 4, once: a 1-step callback to the Calendar bookmark shown on Day
+ * One's tour but not used since. Reminds, doesn't re-teach - the spotlight
+ * ring is the whole reminder. From Act II on, the Job Card shows the task's
+ * own goal line instead of a reported step's line (see JobCard.tsx), so
+ * `instruction` here never actually renders; it exists only to satisfy
+ * TourStep and TourWalkthrough's reportStep call.
+ */
+export const CALENDAR_REMINDER_FLAG = "calendar-reminder-seen";
+export const CALENDAR_REMINDER_STEPS: Record<Lang, TourStep[]> = {
+  en: [
+    {
+      instruction: "Remember Calendar from your first day? Click it.",
+      targetTabKey: "calendar",
+    },
+  ],
+  es: [
+    {
+      instruction: "¿Recuerdas Calendar de tu primer día? Haz clic ahí.",
+      targetTabKey: "calendar",
+    },
+  ],
+};
+
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
       t: "Where to look",
       s: [
-        "The blue card in the corner says what to do next.",
+        "This blue card in the corner tells you what to do next.",
         "Lost? Tap the ? on this card.",
-        "Card in the way? Drag it, or tap the arrow to hide it.",
+        "Card in the way? Drag it, or tap the arrow to shrink it.",
       ],
-      tip: "The card is always current. When in doubt, read it.",
+      tip: "This card always tells you what to do next. Read it if you are not sure.",
     },
   ],
   es: [
     {
       t: "Dónde mirar",
       s: [
-        "La tarjeta azul de la esquina dice qué hacer.",
+        "Esta tarjeta azul de la esquina te dice qué hacer.",
         "¿Te perdiste? Toca el ? en esta tarjeta.",
-        "¿Te estorba? Arrástrala, o toca la flecha para ocultarla.",
+        "¿Te estorba? Arrástrala, o toca la flecha para encogerla.",
       ],
-      tip: "La tarjeta siempre está al día. Si dudas, léela.",
+      tip: "Esta tarjeta siempre te dice qué hacer. Léela si no estás segura.",
     },
   ],
 };
