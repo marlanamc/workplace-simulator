@@ -7,14 +7,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "✉️",
     kicker: "Same sheet, your own copy.",
     headline: "Write the total yourself. Then cc a co-lead.",
-    body: "The numbers are all in. The total cell is empty. Type =SUM, check the number, and email it to Maria. Jordan needs to see it too.",
+    body: "The numbers are all in. The total cell is empty. Type =SUM, check the number, and email it to Renata. Jordan needs to see it too.",
     cta: "Open my copy",
   },
   es: {
     emoji: "✉️",
     kicker: "La misma hoja, tu propia copia.",
     headline: "Escribe el total tú. Luego pon en copia a un co-líder.",
-    body: "Ya están todos los números. La celda del total está vacía. Escribe =SUM, revisa el número, y envíaselo a Maria. Jordan también tiene que verlo.",
+    body: "Ya están todos los números. La celda del total está vacía. Escribe =SUM, revisa el número, y envíaselo a Renata. Jordan también tiene que verlo.",
     cta: "Abrir mi copia",
   },
 };
@@ -82,7 +82,7 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You wrote the formula and cc'd Jordan.",
-    doneBody: `The sheet did not give you a total. You typed =SUM and got ${STATUS_TOTAL}. Maria is on the To line. Jordan is on Cc. That is what a status report looks like.`,
+    doneBody: `The sheet did not give you a total. You typed =SUM and got ${STATUS_TOTAL}. Renata is on the To line. Jordan is on Cc. That is what a status report looks like.`,
     badgeName: "Write a SUM and cc a co-lead",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -117,7 +117,7 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Escribiste la fórmula y pusiste a Jordan en copia.",
-    doneBody: `La hoja no te dio el total. Escribiste =SUM y salió ${STATUS_TOTAL}. Maria está en la línea Para. Jordan está en Cc. Así se ve un reporte de estado.`,
+    doneBody: `La hoja no te dio el total. Escribiste =SUM y salió ${STATUS_TOTAL}. Renata está en la línea Para. Jordan está en Cc. Así se ve un reporte de estado.`,
     badgeName: "Escribir un SUM y poner en copia a un co-líder",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -134,24 +134,24 @@ export const HINTS: Record<Lang, { formula: string; empty: string; cc: string; t
     formula: "Type =SUM(B2:B6) in the total cell. That is every ticket row.",
     empty: "Write a short message first. Even one sentence is fine.",
     cc: "Click Cc and add Jordan. A co-lead needs this number too.",
-    total: `Mention the total (${STATUS_TOTAL}) so Maria does not have to open the sheet.`,
+    total: `Mention the total (${STATUS_TOTAL}) so Renata does not have to open the sheet.`,
   },
   es: {
     formula: "Escribe =SUM(B2:B6) en la celda del total. Esas son todas las filas de tickets.",
     empty: "Primero escribe un mensaje corto. Una oración está bien.",
     cc: "Haz clic en Cc y agrega a Jordan. Un co-líder también necesita este número.",
-    total: `Menciona el total (${STATUS_TOTAL}) para que Maria no tenga que abrir la hoja.`,
+    total: `Menciona el total (${STATUS_TOTAL}) para que Renata no tenga que abrir la hoja.`,
   },
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    `Hi Maria, this week's ticket total is ${STATUS_TOTAL}.`,
+    `Hi Renata, this week's ticket total is ${STATUS_TOTAL}.`,
     "I added it with =SUM on my copy of the status sheet.",
     "Cc'ing Jordan so he has the number too.",
   ],
   es: [
-    `Hola Maria, el total de tickets de esta semana es ${STATUS_TOTAL}.`,
+    `Hola Renata, el total de tickets de esta semana es ${STATUS_TOTAL}.`,
     "Lo sumé con =SUM en mi copia de la hoja de estado.",
     "Pongo a Jordan en copia para que también tenga el número.",
   ],
@@ -177,7 +177,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Cc the person who also needs the number",
       s: [
-        "Put Maria in the To line. Put the co-lead who uses the same number in the Cc line.",
+        "Put Renata in the To line. Put the co-lead who uses the same number in the Cc line.",
         "Write the total in the email itself. Do not make them open the sheet to find it.",
         "Cc is for people who need to know. It is not the same as Reply all.",
       ],
@@ -197,7 +197,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Pon en copia a quien también necesita el número",
       s: [
-        "Pon a Maria en la línea Para. Pon en la línea Cc al co-líder que usa el mismo número.",
+        "Pon a Renata en la línea Para. Pon en la línea Cc al co-líder que usa el mismo número.",
         "Escribe el total en el correo mismo. No los hagas abrir la hoja para buscarlo.",
         "Cc es para las personas que necesitan saber. No es lo mismo que Responder a todos.",
       ],
@@ -223,7 +223,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "La celda del total está vacía. Escribe =SUM y revisa el número.",
   },
   {
-    en: "Email Maria the report, and cc Jordan.",
-    es: "Envíale el reporte a Maria, con copia a Jordan.",
+    en: "Email Renata the report, and cc Jordan.",
+    es: "Envíale el reporte a Renata, con copia a Jordan.",
   },
 ];

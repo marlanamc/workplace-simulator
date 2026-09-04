@@ -469,8 +469,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "A promotion", es: "Un ascenso" },
       title: { en: "You are a Shift Lead now!", es: "¡Ahora eres líder de turno!" },
       body: {
-        en: "New title, new pay — and someone slipped on the floor.",
-        es: "Nuevo puesto, nueva paga — y alguien se resbaló en el piso.",
+        en: "New title, new pay, and a new manager — Renata Silva, the GM. Someone just slipped on the floor.",
+        es: "Nuevo puesto, nueva paga y una nueva gerente — Renata Silva, la gerente general. Alguien se acaba de resbalar en el piso.",
       },
       cta: { en: "Handle it", es: "Encargarme" },
     },
@@ -500,7 +500,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "📅",
       kicker: { en: "A lead plans ahead", es: "Un líder planea" },
-      title: { en: "Maria put you on the calendar.", es: "Maria te puso en el calendario." },
+      title: { en: "Renata put you on the calendar.", es: "Renata te puso en el calendario." },
       body: {
         en: "A meeting invite landed right on top of your shift.",
         es: "Llegó una invitación a reunión justo encima de tu turno.",
@@ -523,8 +523,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Monday", es: "Lunes" },
       title: { en: "Jordan starts today.", es: "Jordan empieza hoy." },
       body: {
-        en: "Maria asked you to send Jordan this week's schedule.",
-        es: "Maria te pidió enviarle a Jordan el horario de esta semana.",
+        en: "Renata asked you to send Jordan this week's schedule.",
+        es: "Renata te pidió enviarle a Jordan el horario de esta semana.",
       },
       cta: { en: "Find the file", es: "Buscar el archivo" },
     },
@@ -538,7 +538,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "📊",
       kicker: { en: "Closing time", es: "Hora de cierre" },
-      title: { en: "Maria trusts you with the numbers.", es: "Maria te confía los números." },
+      title: { en: "Renata trusts you with the numbers.", es: "Renata te confía los números." },
       body: {
         en: "This week's totals are yours to enter and to check.",
         es: "Los totales de esta semana te toca escribirlos y revisarlos a ti.",
@@ -555,7 +555,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "📝",
       kicker: { en: "Reporting up", es: "Informar a tu jefa" },
-      title: { en: "Your first report to Maria.", es: "Tu primer reporte para Maria." },
+      title: { en: "Your first report to Renata.", es: "Tu primer reporte para Renata." },
       body: {
         en: "Her template is view only, so make your own copy.",
         es: "Su plantilla es de solo ver, así que haz tu propia copia.",

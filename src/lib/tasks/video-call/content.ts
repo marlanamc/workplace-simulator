@@ -3,9 +3,9 @@ import type { Lang, Lesson, Localized } from "@/lib/task-types";
 export const MEETING_ID = "847 220 1963";
 
 export const PARTICIPANTS = [
-  { key: "maria", name: "Maria Delgado", initials: "MD", color: "#1a73e8" },
+  { key: "anita", name: "Anita Raman", initials: "AR", color: "#8430ce" },
   { key: "jordan", name: "Jordan Kim", initials: "JK", color: "#0f9d58" },
-  { key: "dana", name: "Dana Ortiz", initials: "DO", color: "#7248b9" },
+  { key: "chris", name: "Chris Okafor", initials: "CO", color: "#e8710a" },
 ] as const;
 
 export interface VideoCallState {

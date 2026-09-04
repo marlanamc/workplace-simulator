@@ -68,13 +68,13 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     templateSchedule: "Schedule",
     recentHeading: "Recent spreadsheets",
     openedLabel: "Opened today",
-    noteHeading: "Maria's note",
+    noteHeading: "Renata's note",
     noteBody: "The Hours total looks close enough for payroll. Still — click the formula. Does it include everyone?",
     hoursHeader: "Hours",
     nameHeader: "Name",
     totalLabel: "Total",
     averageLabel: "Average",
-    emailCta: "Email Maria the corrected total",
+    emailCta: "Email Renata the corrected total",
     fixFirst: "The SUM is still missing someone. Change the range so it includes the last name.",
     to: "To",
     subjectLabel: "Subject",
@@ -84,7 +84,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You fixed the range, not just the number.",
-    doneBody: "The total looked fine, but the formula was skipping Casey. You opened it, fixed the rows, and sent Maria the real total.",
+    doneBody: "The total looked fine, but the formula was skipping Casey. You opened it, fixed the rows, and sent Renata the real total.",
     badgeName: "Fix a formula range",
     badgeWhere: "Counts toward: Shift Supervisor",
     tryAgain: "Do it again",
@@ -104,13 +104,13 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     templateSchedule: "Horario",
     recentHeading: "Hojas de cálculo recientes",
     openedLabel: "Abierta hoy",
-    noteHeading: "Nota de Maria",
+    noteHeading: "Nota de Renata",
     noteBody: "El total de Horas se ve bastante bien para la nómina. Aun así — haz clic en la fórmula. ¿Incluye a todos?",
     hoursHeader: "Horas",
     nameHeader: "Nombre",
     totalLabel: "Total",
     averageLabel: "Promedio",
-    emailCta: "Enviar a Maria el total corregido",
+    emailCta: "Enviar a Renata el total corregido",
     fixFirst: "El SUM todavía omite a alguien. Cambia el rango para que incluya el último nombre.",
     to: "Para",
     subjectLabel: "Asunto",
@@ -120,7 +120,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Arreglaste el rango, no solo el número.",
-    doneBody: "El total se veía bien, pero la fórmula estaba dejando fuera a Casey. La abriste, corregiste las filas y le enviaste a Maria el total real.",
+    doneBody: "El total se veía bien, pero la fórmula estaba dejando fuera a Casey. La abriste, corregiste las filas y le enviaste a Renata el total real.",
     badgeName: "Corregir el rango de una fórmula",
     badgeWhere: "Cuenta para: Supervisor de turno",
     tryAgain: "Hacerlo otra vez",
@@ -138,18 +138,18 @@ export const EMPTY_EMAIL_HINT: Record<Lang, string> = {
 };
 
 export const WRONG_EMAIL_HINT: Record<Lang, string> = {
-  en: `Tell Maria the corrected total (${CORRECT_WEEK_TOTAL}) and that a name was missing.`,
-  es: `Dile a Maria el total corregido (${CORRECT_WEEK_TOTAL}) y que faltaba un nombre.`,
+  en: `Tell Renata the corrected total (${CORRECT_WEEK_TOTAL}) and that a name was missing.`,
+  es: `Dile a Renata el total corregido (${CORRECT_WEEK_TOTAL}) y que faltaba un nombre.`,
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    `Hi Maria, the hours total is ${CORRECT_WEEK_TOTAL}.`,
+    `Hi Renata, the hours total is ${CORRECT_WEEK_TOTAL}.`,
     "The SUM was missing Casey Brooks. I fixed the range.",
     "The AVERAGE already included everyone.",
   ],
   es: [
-    `Hola Maria, el total de horas es ${CORRECT_WEEK_TOTAL}.`,
+    `Hola Renata, el total de horas es ${CORRECT_WEEK_TOTAL}.`,
     "El SUM no incluía a Casey Brooks. Ya corregí el rango.",
     "El AVERAGE ya incluía a todos.",
   ],
@@ -237,7 +237,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Haz clic en el total de Horas y mira qué filas suma.",
   },
   {
-    en: "Someone is missing. Fix the formula, then tell Maria.",
-    es: "Falta alguien. Arregla la fórmula y avísale a Maria.",
+    en: "Someone is missing. Fix the formula, then tell Renata.",
+    es: "Falta alguien. Arregla la fórmula y avísale a Renata.",
   },
 ];

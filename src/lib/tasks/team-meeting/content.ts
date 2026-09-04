@@ -151,7 +151,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "A meeting needs a time and a point",
       s: [
-        "Create the invite yourself. Do not wait for Maria to send one.",
+        "Create the invite yourself. Do not wait for Renata to send one.",
         "Check the crew's shifts before you pick a time. Same conflict skill. New side of it.",
         "Two or three bullets in Docs is the agenda. Attach it or the invite is just a time.",
       ],
@@ -162,7 +162,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Una reunión necesita una hora y un propósito",
       s: [
-        "Crea tú la invitación. No esperes a que Maria envíe una.",
+        "Crea tú la invitación. No esperes a que Renata envíe una.",
         "Revisa los turnos del equipo antes de elegir la hora. La misma destreza de conflicto. El otro lado.",
         "Dos o tres puntos en Docs son la agenda. Adjúntala o la invitación es solo una hora.",
       ],

@@ -116,7 +116,7 @@ export default function IncidentTask() {
             <div className="flex items-center justify-between pt-1">
               <FormSubmitButton onClick={trySubmit}>{c.submit}</FormSubmitButton>
               <p className="text-[12px] text-[#5f6368]">
-                {c.submitTo} Maria Delgado
+                {c.submitTo} Renata Silva
               </p>
             </div>
             <p className="text-[12px] text-[#5f6368]">

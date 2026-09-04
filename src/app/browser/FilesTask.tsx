@@ -329,7 +329,7 @@ function CafeFilesTask() {
                       </span>
                       <span className="truncate text-[14px]">{f.name}</span>
                     </span>
-                    <span className="truncate text-[13px] text-[#444746]">Maria Delgado</span>
+                    <span className="truncate text-[13px] text-[#444746]">Renata Silva</span>
                     <span className="text-right text-[13px] text-[#444746]">{f.date}</span>
                   </button>
                 ))}

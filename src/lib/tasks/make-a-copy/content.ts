@@ -4,16 +4,16 @@ import { COPY_NAME } from "../status-sheet";
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📄",
-    kicker: "Monday. Maria shared a file.",
+    kicker: "Monday. Renata shared a file.",
     headline: "The status template is view only.",
-    body: "You can look. You cannot type. Make your own copy so you do not change Maria's master.",
+    body: "You can look. You cannot type. Make your own copy so you do not change Renata's master.",
     cta: "Open the template",
   },
   es: {
     emoji: "📄",
-    kicker: "Lunes. Maria compartió un archivo.",
+    kicker: "Lunes. Renata compartió un archivo.",
     headline: "La plantilla de estado es solo para ver.",
-    body: "Puedes mirar. No puedes escribir. Haz tu propia copia para no cambiar el original de Maria.",
+    body: "Puedes mirar. No puedes escribir. Haz tu propia copia para no cambiar el original de Renata.",
     cta: "Abrir la plantilla",
   },
 };
@@ -64,7 +64,7 @@ export const MAKE_COPY_COPY: Record<Lang, {
     templateBudget: "Budget",
     templateSchedule: "Schedule",
     recentHeading: "Shared with you",
-    openedLabel: "Maria Delgado · View only",
+    openedLabel: "Renata Silva · View only",
     fileMenu: "File",
     makeCopy: "Make a copy",
     share: "Share",
@@ -77,7 +77,7 @@ export const MAKE_COPY_COPY: Record<Lang, {
     cancel: "Cancel",
     typeHint: "This is your copy. Type in a cell to make sure you can edit it.",
     typedKicker: "You have your own copy",
-    doneTitle: "You copied the template. You did not change Maria's file.",
+    doneTitle: "You copied the template. You did not change Renata's file.",
     doneBody: "View only means look, not type. File → Make a copy is how you work without overwriting the master. Docs uses the same menu.",
     badgeName: "Make a copy of a view-only file",
     badgeWhere: "Counts toward: Office Ready",
@@ -99,7 +99,7 @@ export const MAKE_COPY_COPY: Record<Lang, {
     templateBudget: "Presupuesto",
     templateSchedule: "Horario",
     recentHeading: "Compartido contigo",
-    openedLabel: "Maria Delgado · Solo ver",
+    openedLabel: "Renata Silva · Solo ver",
     fileMenu: "Archivo",
     makeCopy: "Hacer una copia",
     share: "Compartir",
@@ -112,7 +112,7 @@ export const MAKE_COPY_COPY: Record<Lang, {
     cancel: "Cancelar",
     typeHint: "Esta es tu copia. Escribe en una celda para comprobar que puedes editar.",
     typedKicker: "Ya tienes tu propia copia",
-    doneTitle: "Copiaste la plantilla. No cambiaste el archivo de Maria.",
+    doneTitle: "Copiaste la plantilla. No cambiaste el archivo de Renata.",
     doneBody: "Solo ver significa mirar, no escribir. Archivo → Hacer una copia es cómo trabajas sin pisar el original. Docs usa el mismo menú.",
     badgeName: "Hacer una copia de un archivo de solo ver",
     badgeWhere: "Cuenta para: Oficina",
@@ -127,8 +127,8 @@ export const MAKE_COPY_COPY: Record<Lang, {
 
 export const HINTS: Record<string, Record<Lang, string>> = {
   typeTemplate: {
-    en: "This is Maria's template. Make a copy so you don't change the original.",
-    es: "Esta es la plantilla de Maria. Haz una copia para no cambiar el original.",
+    en: "This is Renata's template. Make a copy so you don't change the original.",
+    es: "Esta es la plantilla de Renata. Haz una copia para no cambiar el original.",
   },
   share: {
     en: "That would let people change the master. Make your own copy instead.",
@@ -191,8 +191,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Open the status template Maria shared.",
-    es: "Abre la plantilla de estado que Maria compartió.",
+    en: "Open the status template Renata shared.",
+    es: "Abre la plantilla de estado que Renata compartió.",
   },
   {
     en: "It is view only. Make your own copy.",

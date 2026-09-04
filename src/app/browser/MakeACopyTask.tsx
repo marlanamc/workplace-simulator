@@ -57,7 +57,7 @@ export default function MakeACopyTask() {
   };
 
   const notYet = () =>
-    say(lang === "en" ? "Open the Weekly Status Template Maria shared." : "Abre la Plantilla de estado semanal que compartió Maria.");
+    say(lang === "en" ? "Open the Weekly Status Template Renata shared." : "Abre la Plantilla de estado semanal que compartió Renata.");
 
   const sheetName = view === "copy" ? COPY_NAME : view === "template" ? c.templateName : c.appName;
 

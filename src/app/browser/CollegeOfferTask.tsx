@@ -270,7 +270,7 @@ export default function CollegeOfferTask() {
           <div className="mx-auto max-w-[520px] overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
             <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
               <span className="w-10 shrink-0 text-[#5f6368]">{c.overlapTo}</span>
-              <span>{CAST.maria.email}</span>
+              <span>{CAST.renata.email}</span>
             </div>
             <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
               <span className="w-10 shrink-0 text-[#5f6368]">{c.overlapSubject}</span>

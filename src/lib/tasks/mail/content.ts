@@ -23,9 +23,10 @@ export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-atta
  */
 export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-etiquette", "call-out-sick"];
 
-/** Who the compose pane addresses — reply tasks pre-fill Maria; compose-only tasks pick their recipient. */
+/** Who the compose pane addresses — reply tasks pre-fill the manager; compose-only tasks pick their recipient. */
 export const DANA_EMAIL = "dana.ortiz@harborsidecafe.com";
-export const REPLY_ALL_RECIPIENTS = `${DANA_EMAIL}, ${CAST.maria.email}, priya.shah@harborsidecafe.com, ${CAST.jordan.email}`;
+// reply-all is Act IV, so the manager on the thread is Renata, not Maria.
+export const REPLY_ALL_RECIPIENTS = `${DANA_EMAIL}, ${CAST.renata.email}, priya.shah@harborsidecafe.com, ${CAST.jordan.email}`;
 
 export const COMPOSE_RECIPIENT: Record<PlayableMailTask, string> = {
   "mail-reply": CAST.maria.email,
@@ -480,7 +481,7 @@ export const REPLY_ALL_THREAD: {
     initials: "DO",
     color: "#7248b9",
     time: "10:04 AM",
-    to: { en: "to me, Maria Delgado, Priya Shah, Jordan Kim", es: "para mí, Maria Delgado, Priya Shah, Jordan Kim" },
+    to: { en: "to me, Renata Silva, Priya Shah, Jordan Kim", es: "para mí, Renata Silva, Priya Shah, Jordan Kim" },
     ask: true,
     body: {
       en: [

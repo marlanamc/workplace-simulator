@@ -223,15 +223,15 @@ function CafeCalendarTask() {
   const wrongNo = () =>
     say(
       T(
-        "Don't just say no. Maria still needs a meeting. Suggest a new time instead.",
-        "No solo rechaces. Maria igual necesita la reunión. Propón otro horario."
+        "Don't just say no. Renata still needs a meeting. Suggest a new time instead.",
+        "No solo rechaces. Renata igual necesita la reunión. Propón otro horario."
       )
     );
   const wrongMaybe = () =>
     say(
       T(
-        "Maybe leaves Maria waiting. You are off that day. Suggest a new time.",
-        "Quizá deja a Maria esperando. Ese día no trabajas. Propón otro horario."
+        "Maybe leaves Renata waiting. You are off that day. Suggest a new time.",
+        "Quizá deja a Renata esperando. Ese día no trabajas. Propón otro horario."
       )
     );
   const wrongShift = () =>
@@ -521,7 +521,7 @@ function CafeCalendarTask() {
                   <div className="px-5 pt-3">
                     <div className="flex gap-3 border-b border-[#e0e3e8] py-2 text-[13px]">
                       <span className="w-14 shrink-0 text-[#5f6368]">{c.to}</span>
-                      <span>{CAST.maria.email}</span>
+                      <span>{CAST.renata.email}</span>
                     </div>
                     <div className="flex gap-3 border-b border-[#e0e3e8] py-2 text-[13px]">
                       <span className="w-14 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>

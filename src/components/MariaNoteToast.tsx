@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { DESKTOP_COPY } from "@/lib/desktop-content";
-import { noteIsFromMaria } from "@/lib/story-beats";
+import { noteIsFromMaria, storyNoteSenderFirstName } from "@/lib/story-beats";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { SHELF_RESERVE } from "@/components/Shelf";
@@ -25,7 +25,14 @@ export default function MariaNoteToast() {
   if (!mariaNoteTaskKey || celebrateLevel || celebrateTrack) return null;
 
   const c = DESKTOP_COPY[lang];
-  const label = noteIsFromMaria(mariaNoteTaskKey) ? c.mariaNote : c.someoneNote;
+  const senderName = storyNoteSenderFirstName(mariaNoteTaskKey);
+  const label = noteIsFromMaria(mariaNoteTaskKey)
+    ? c.mariaNote
+    : senderName
+      ? lang === "es"
+        ? `${senderName} dejó una nota`
+        : `${senderName} left a note`
+      : c.someoneNote;
 
   return (
     <button

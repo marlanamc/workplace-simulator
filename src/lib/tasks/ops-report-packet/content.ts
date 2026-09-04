@@ -138,7 +138,7 @@ export const OPS_COPY: Record<Lang, {
     docsLabel: "Weekly summary",
     docsPlaceholder: "This week's total was… and coming up…",
     docsSave: "Save the summary",
-    mailToValue: "Maria Delgado",
+    mailToValue: "Anita Raman",
     mailSubjectValue: "Weekly report — week of Aug 24",
     toLabel: "To",
     subjectLabel: "Subject",
@@ -189,7 +189,7 @@ export const OPS_COPY: Record<Lang, {
     docsLabel: "Resumen semanal",
     docsPlaceholder: "El total de esta semana fue… y lo que viene…",
     docsSave: "Guardar el resumen",
-    mailToValue: "Maria Delgado",
+    mailToValue: "Anita Raman",
     mailSubjectValue: "Reporte semanal — semana del 24 de ago",
     toLabel: "Para",
     subjectLabel: "Asunto",
@@ -223,8 +223,8 @@ export const SUMMARY_STARTERS: Record<Lang, string[]> = {
 };
 
 export const MAIL_STARTERS: Record<Lang, string[]> = {
-  en: ["Hi Maria, here is this week's report.", "Summary is below. Let me know if you want anything added."],
-  es: ["Hola Maria, aquí está el reporte de esta semana.", "El resumen está abajo. Avísame si quieres que agregue algo."],
+  en: ["Hi Anita, here is this week's report.", "Summary is below. Let me know if you want anything added."],
+  es: ["Hola Anita, aquí está el reporte de esta semana.", "El resumen está abajo. Avísame si quieres que agregue algo."],
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {

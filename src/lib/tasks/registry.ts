@@ -402,7 +402,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     skill: "Copy a view-only file before you type",
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
-    shiftMoment: { en: "Monday. Maria shared a template.", es: "Lunes. Maria compartió una plantilla." },
+    shiftMoment: { en: "Monday. Renata shared a template.", es: "Lunes. Renata compartió una plantilla." },
     location: browser("Open Sheets from the bookmarks"),
   },
 
@@ -535,8 +535,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Flag what is over budget", es: "Marca lo que se pasó del presupuesto" },
     dispatch: {
-      en: "One category is over. Open the formula, then tell Maria.",
-      es: "Una categoría se pasó. Abre la fórmula y avísale a Maria.",
+      en: "One category is over. Open the formula, then tell Renata.",
+      es: "Una categoría se pasó. Abre la fórmula y avísale a Renata.",
     },
     skill: "Read a budget IF and a chart",
     bookmarkLabel: "Sheets",
@@ -732,8 +732,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     bookmarkLabel: "Drive",
     handoffCta: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
     shiftMoment: {
-      en: "Monday at HQ. Dana needs the Q3 notes.",
-      es: "Lunes en HQ. Dana necesita las notas del T3.",
+      en: "Monday at HQ. Chris needs the Q3 notes.",
+      es: "Lunes en HQ. Chris necesita las notas del T3.",
     },
     location: browser("Open Drive from the bookmarks"),
     jobCardLine: { en: "Find the current file. Then share it.", es: "Encuentra el archivo actual. Luego compártelo." },

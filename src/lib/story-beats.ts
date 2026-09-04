@@ -46,7 +46,14 @@ export const SHIFT_MOMENT: Record<TaskKey, Localized> = Object.fromEntries(
   TASK_LIST.map((d) => [d.key, d.shiftMoment]),
 ) as Record<TaskKey, Localized>;
 
+// Story ownership by stage. Maria runs the new-hire arc; Renata takes over at
+// the Shift Lead promotion (`level3b`) and runs through Act IV; the college,
+// health, and HQ stops each have their own manager. See `src/lib/cast.ts`.
 const MARIA = inboxSender(CAST.maria);
+const RENATA = inboxSender(CAST.renata);
+const MARCUS = inboxSender(CAST.marcus);
+const THUY = inboxSender(CAST.thuy);
+const ANITA = inboxSender(CAST.anita);
 
 export function extractHuddleTime(text: string): "10am" | "2pm" {
   if (/\b2\s*(p\.?m\.?|pm)\b/i.test(text) || /\b14:00\b/.test(text)) return "2pm";
@@ -202,7 +209,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-incident",
-    ...MARIA,
+    ...RENATA,
     time: "2:18 PM",
     unread: true,
     story: true,
@@ -213,18 +220,18 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "I have the write-up about the slip. Thank you.",
         "I'll follow up with the floor.",
-        "The handbook is on your desk if they ask you something.",
+        "I'm the GM now, so this comes to me. The handbook is on your desk if they ask you something.",
       ],
       es: [
         "Tengo el reporte del resbalón. Gracias.",
         "Voy a dar seguimiento en el piso.",
-        "El manual está en tu escritorio si te preguntan algo.",
+        "Ahora yo soy la gerente general, así que esto me llega a mí. El manual está en tu escritorio si te preguntan algo.",
       ],
     },
   },
   {
     key: "story-handbook",
-    ...MARIA,
+    ...RENATA,
     time: "8:51 PM",
     unread: true,
     story: true,
@@ -234,17 +241,17 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You found the answer in the handbook instead of guessing. That is exactly what it is for.",
-        "Next week you are a lead. The calendar is yours. Open it from the bookmarks bar.",
+        "You're a lead now, and the calendar is yours. Open it from the bookmarks bar.",
       ],
       es: [
         "Encontraste la respuesta en el manual en vez de adivinar. Para eso es.",
-        "La semana que viene eres líder. El calendario es tuyo. Ábrelo en la barra de marcadores.",
+        "Ahora eres líder, y el calendario es tuyo. Ábrelo en la barra de marcadores.",
       ],
     },
   },
   {
     key: "story-calendar",
-    ...MARIA,
+    ...RENATA,
     time: "9:06 AM",
     unread: true,
     story: true,
@@ -254,7 +261,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-files",
-    ...MARIA,
+    ...RENATA,
     time: "11:12 AM",
     unread: true,
     story: true,
@@ -274,7 +281,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-spreadsheet",
-    ...MARIA,
+    ...RENATA,
     time: "4:03 PM",
     unread: true,
     story: true,
@@ -294,7 +301,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-make-a-copy",
-    ...MARIA,
+    ...RENATA,
     time: "9:18 AM",
     unread: true,
     story: true,
@@ -308,7 +315,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-status-report",
-    ...MARIA,
+    ...RENATA,
     time: "11:02 AM",
     unread: true,
     story: true,
@@ -328,7 +335,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-triage",
-    ...MARIA,
+    ...RENATA,
     time: "10:11 AM",
     unread: true,
     story: true,
@@ -372,7 +379,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-formula-check",
-    ...MARIA,
+    ...RENATA,
     time: "3:12 PM",
     unread: true,
     story: true,
@@ -394,7 +401,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-team-meeting",
-    ...MARIA,
+    ...RENATA,
     time: "10:04 AM",
     unread: true,
     story: true,
@@ -416,7 +423,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-priority-call",
-    ...MARIA,
+    ...RENATA,
     time: "6:02 PM",
     unread: true,
     story: true,
@@ -436,7 +443,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-college-offer",
-    ...MARIA,
+    ...RENATA,
     time: "4:18 PM",
     unread: true,
     story: true,
@@ -458,7 +465,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-budget-sheet",
-    ...MARIA,
+    ...RENATA,
     time: "3:40 PM",
     unread: true,
     story: true,
@@ -480,7 +487,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-reply-all",
-    ...MARIA,
+    ...RENATA,
     time: "5:12 PM",
     unread: true,
     story: true,
@@ -502,7 +509,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-enrollment",
-    ...MARIA,
+    ...MARCUS,
     time: "4:10 PM",
     unread: true,
     story: true,
@@ -522,7 +529,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-appointment-scheduling",
-    ...MARIA,
+    ...THUY,
     time: "4:10 PM",
     unread: true,
     story: true,
@@ -542,7 +549,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-financial-aid",
-    ...inboxSender(CAST.hr),
+    ...MARCUS,
     time: "11:22 AM",
     unread: true,
     story: true,
@@ -562,7 +569,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-patient-intake",
-    ...MARIA,
+    ...THUY,
     time: "11:22 AM",
     unread: true,
     story: true,
@@ -582,7 +589,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-coursework",
-    ...MARIA,
+    ...MARCUS,
     time: "6:40 PM",
     unread: true,
     story: true,
@@ -602,7 +609,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-billing-sheet",
-    ...MARIA,
+    ...THUY,
     time: "6:40 PM",
     unread: true,
     story: true,
@@ -622,7 +629,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-research",
-    ...MARIA,
+    ...MARCUS,
     time: "3:55 PM",
     unread: true,
     story: true,
@@ -632,17 +639,17 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You picked the library database and said why. The ad and the forum looked easier, but you did not use them.",
-        "That path is done. Monday, Dana needs you at HQ.",
+        "That path is done. Monday, Anita needs you at HQ.",
       ],
       es: [
         "Elegiste la base de datos de la biblioteca y dijiste por qué. El anuncio y el foro se veían más fáciles, pero no los usaste.",
-        "Ese camino ya está terminado. El lunes Dana te necesita en HQ.",
+        "Ese camino ya está terminado. El lunes Anita te necesita en HQ.",
       ],
     },
   },
   {
     key: "story-confidentiality-call",
-    ...MARIA,
+    ...THUY,
     time: "3:55 PM",
     unread: true,
     story: true,
@@ -652,22 +659,22 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You did not share the visit. You offered to have the patient call back. That was the right call.",
-        "That path is done. Monday, Dana needs you at HQ.",
+        "That path is done. Monday, Anita needs you at HQ.",
       ],
       es: [
         "No compartiste la visita. Ofreciste que el paciente devuelva la llamada. Esa fue la decisión correcta.",
-        "Ese camino ya está terminado. El lunes Dana te necesita en HQ.",
+        "Ese camino ya está terminado. El lunes Anita te necesita en HQ.",
       ],
     },
   },
   {
     key: "story-office-drive",
-    ...MARIA,
+    ...ANITA,
     time: "9:18 AM",
     unread: true,
     story: true,
     unlockAfter: "office-drive",
-    subject: { en: "You sent Dana the current file", es: "Le enviaste a Dana el archivo actual" },
+    subject: { en: "You sent Chris the current file", es: "Le enviaste a Chris el archivo actual" },
     preview: { en: "The current file, shared view only.", es: "El archivo actual, compartido en solo ver." },
     body: {
       en: [
@@ -682,7 +689,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-multi-person-scheduling",
-    ...MARIA,
+    ...ANITA,
     time: "10:42 AM",
     unread: true,
     story: true,
@@ -702,7 +709,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-video-call",
-    ...MARIA,
+    ...ANITA,
     time: "2:20 PM",
     unread: true,
     story: true,
@@ -722,7 +729,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-expense-report",
-    ...MARIA,
+    ...ANITA,
     time: "4:08 PM",
     unread: true,
     story: true,
@@ -742,7 +749,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-slide-deck",
-    ...MARIA,
+    ...ANITA,
     time: "3:22 PM",
     unread: true,
     story: true,
@@ -765,7 +772,7 @@ const STORY_MAILS: InboxRow[] = [
 
   {
     key: "story-meeting-minutes",
-    ...MARIA,
+    ...ANITA,
     time: "11:30 AM",
     unread: true,
     story: true,
@@ -787,7 +794,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-performance-review",
-    ...MARIA,
+    ...ANITA,
     time: "3:05 PM",
     unread: true,
     story: true,
@@ -809,7 +816,7 @@ const STORY_MAILS: InboxRow[] = [
   },
   {
     key: "story-ops-report-packet",
-    ...MARIA,
+    ...ANITA,
     time: "4:20 PM",
     unread: true,
     story: true,
@@ -877,6 +884,12 @@ export function storyBodyFor(row: InboxRow, lang: Lang, displayName: string): st
 
 export function noteIsFromMaria(taskKey: TaskKey): boolean {
   return storyMailAfter(taskKey)?.from === MARIA.from;
+}
+
+/** First name of whoever sent the story note for this task, for the desktop toast. */
+export function storyNoteSenderFirstName(taskKey: TaskKey): string | undefined {
+  const from = storyMailAfter(taskKey)?.from;
+  return from ? firstName(from) : undefined;
 }
 
 const WEEKDAYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
