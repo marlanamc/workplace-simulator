@@ -107,6 +107,11 @@ export type TourStep = {
 
 export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   en: [
+    {
+      instruction:
+        "On a real computer, you type a web address in the bar at the top and use the back arrow to go back. Here, you get around with the bookmarks on the row below it.",
+      continueLabel: "Show me the bookmarks",
+    },
     { instruction: "Click Mail.", targetTabKey: "mail" },
     {
       instruction: "This is your work email. Messages from your manager, coworkers, and vendors show up here.",
@@ -125,6 +130,11 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     },
   ],
   es: [
+    {
+      instruction:
+        "En una computadora de verdad, escribes una dirección web en la barra de arriba y usas la flecha para regresar. Aquí te mueves con los marcadores de la fila de abajo.",
+      continueLabel: "Muéstrame los marcadores",
+    },
     { instruction: "Haz clic en Correo.", targetTabKey: "mail" },
     {
       instruction: "Este es tu correo del trabajo. Aquí llegan mensajes de tu gerente, compañeros y proveedores.",

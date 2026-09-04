@@ -4,17 +4,17 @@ export const OPEN_SLOT = "2pm";
 
 export const PEOPLE = [
   { key: "you", name: { en: "You", es: "Tú" }, color: "#1a73e8" },
-  { key: "dana", name: { en: "Dana Ortiz", es: "Dana Ortiz" }, color: "#7248b9" },
-  { key: "maria", name: { en: "Maria Delgado", es: "Maria Delgado" }, color: "#0b8043" },
+  { key: "chris", name: { en: "Chris Okafor", es: "Chris Okafor" }, color: "#7248b9" },
+  { key: "anita", name: { en: "Anita Raman", es: "Anita Raman" }, color: "#0b8043" },
   { key: "jordan", name: { en: "Jordan Kim", es: "Jordan Kim" }, color: "#e37400" },
 ] as const;
 
 export const SLOTS = [
-  { key: "10am", label: { en: "10:00 AM", es: "10:00 AM" }, busy: ["dana"] },
-  { key: "11am", label: { en: "11:00 AM", es: "11:00 AM" }, busy: ["maria"] },
+  { key: "10am", label: { en: "10:00 AM", es: "10:00 AM" }, busy: ["chris"] },
+  { key: "11am", label: { en: "11:00 AM", es: "11:00 AM" }, busy: ["anita"] },
   { key: "1pm", label: { en: "1:00 PM", es: "1:00 PM" }, busy: ["jordan"] },
   { key: "2pm", label: { en: "2:00 PM", es: "2:00 PM" }, busy: [] },
-  { key: "3pm", label: { en: "3:00 PM", es: "3:00 PM" }, busy: ["you", "dana"] },
+  { key: "3pm", label: { en: "3:00 PM", es: "3:00 PM" }, busy: ["you", "chris"] },
 ] as const;
 
 export function slotIsOpenForEveryone(key: string): boolean {

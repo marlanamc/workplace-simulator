@@ -112,6 +112,7 @@ export default function VideoCallTask() {
           cameraOnLabel={c.cameraOn}
           cameraOffLabel={c.cameraOff}
           chatLabel={c.chat}
+          participantsLabel={c.participants}
           leaveLabel={c.leave}
           youLabel={c.you}
           chatPlaceholder={c.chatPlaceholder}

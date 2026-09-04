@@ -121,10 +121,10 @@ export const COLLEGE_OFFER_COPY: Record<Lang, {
     saveEvent: "Save",
     overlapTo: "To",
     overlapSubject: "Tuesday class overlaps close",
-    overlapWrite: "Tell Maria the class hits Tuesday close…",
+    overlapWrite: "Tell Renata the class hits Tuesday close…",
     sentKicker: "Offer accepted",
     doneTitle: "You made work and class share a week.",
-    doneBody: "You accepted the offer, put Tuesday 2 to 4 on a calendar that already had close, and told Maria before the semester. That is the whole skill.",
+    doneBody: "You accepted the offer, put Tuesday 2 to 4 on a calendar that already had close, and told Renata before the semester. That is the whole skill.",
     badgeName: "Accept an offer and put it on a full calendar",
     badgeWhere: "Counts toward: Assistant Manager",
     tryAgain: "Do it again",
@@ -158,10 +158,10 @@ export const COLLEGE_OFFER_COPY: Record<Lang, {
     saveEvent: "Guardar",
     overlapTo: "Para",
     overlapSubject: "La clase del martes choca con el cierre",
-    overlapWrite: "Dile a Maria que la clase choca con el cierre del martes…",
+    overlapWrite: "Dile a Renata que la clase choca con el cierre del martes…",
     sentKicker: "Oferta aceptada",
     doneTitle: "Hiciste que el trabajo y la clase compartan una semana.",
-    doneBody: "Aceptaste la oferta, pusiste el martes de 2 a 4 en un calendario que ya tenía el cierre, y le avisaste a Maria antes del semestre. Esa es toda la destreza.",
+    doneBody: "Aceptaste la oferta, pusiste el martes de 2 a 4 en un calendario que ya tenía el cierre, y le avisaste a Renata antes del semestre. Esa es toda la destreza.",
     badgeName: "Aceptar una oferta y ponerla en un calendario lleno",
     badgeWhere: "Cuenta para: Asistente de gerencia",
     tryAgain: "Hacerlo otra vez",
@@ -187,11 +187,11 @@ export const STARTERS: Record<Lang, string[]> = {
 
 export const OVERLAP_STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Maria, the BHCC class is Tuesdays 2–4. That overlaps my Tuesday close.",
+    "Hi Renata, the BHCC class is Tuesdays 2–4. That overlaps my Tuesday close.",
     "The class hits the same hours as Tuesday close. Can we move my shift before the semester?",
   ],
   es: [
-    "Hola Maria, la clase de BHCC es martes de 2 a 4. Choca con mi cierre del martes.",
+    "Hola Renata, la clase de BHCC es martes de 2 a 4. Choca con mi cierre del martes.",
     "La clase cae a la misma hora que el cierre del martes. ¿Podemos mover mi turno antes del semestre?",
   ],
 };
@@ -207,14 +207,14 @@ export const HINTS: Record<Lang, {
     accept: "Say you accept, and name the class or BHCC.",
     slot: "Pick the Tuesday 2 to 4 class time from the offer.",
     repeats: "Check Repeats weekly. This is a class, not a one-time meeting.",
-    overlap: "Tell Maria the class hits your Tuesday close.",
+    overlap: "Tell Renata the class hits your Tuesday close.",
     empty: "Write a short message first. Even one sentence is fine.",
   },
   es: {
     accept: "Di que aceptas, y nombra la clase o BHCC.",
     slot: "Elige el horario del martes de 2 a 4 que dice la oferta.",
     repeats: "Marca Se repite cada semana. Es una clase, no una reunión de una vez.",
-    overlap: "Dile a Maria que la clase choca con tu cierre del martes.",
+    overlap: "Dile a Renata que la clase choca con tu cierre del martes.",
     empty: "Primero escribe un mensaje corto. Una oración está bien.",
   },
 };
@@ -271,7 +271,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Pon la clase del martes en tu calendario.",
   },
   {
-    en: "Tell Maria it overlaps Tuesday close.",
-    es: "Dile a Maria que choca con el cierre del martes.",
+    en: "Tell Renata it overlaps Tuesday close.",
+    es: "Dile a Renata que choca con el cierre del martes.",
   },
 ];

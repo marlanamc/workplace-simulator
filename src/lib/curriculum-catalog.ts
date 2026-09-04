@@ -52,6 +52,7 @@ export interface CatalogLesson {
 
 /** Later lessons where the student authors the email, sheet, or formula. The app cannot grade those. They go to the teacher. */
 const TEACHER_CHECK_TASKS = new Set([
+  "mail-send-link",
   "status-report",
   "team-schedule",
   "team-meeting",
@@ -302,6 +303,13 @@ export const CATALOG_ACTS: CatalogAct[] = [
             skill: "Find a file in a shared drive and share it at view, not edit",
             app: "Drive",
             tab: "files",
+          },
+          {
+            n: "2",
+            taskKey: "mail-send-link",
+            skill: "Email a coworker the link to a file, not an attached copy",
+            app: "Mail",
+            tab: "mail",
           },
         ],
       },

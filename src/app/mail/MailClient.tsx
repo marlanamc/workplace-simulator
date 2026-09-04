@@ -21,6 +21,8 @@ import {
   casualDraftUntouched,
   stillSoundsCasual,
   replyAllAnswersDana,
+  saysAttached,
+  sendsLinkNotFile,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
@@ -77,6 +79,7 @@ const STEP_LINE = {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
     // Compose-only: there is no email to open, so these lines are never shown.
+    "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
     "mail-etiquette": { en: "Write to Darnell.", es: "Escríbele a Darnell." },
     "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
     "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
@@ -107,6 +110,7 @@ const BUTTON_LABEL = {
 const STEP_COUNT: Record<MailTask, number> = {
   "mail-reply": 3,
   "mail-attach": 4,
+  "mail-send-link": 2,
   "mail-etiquette": 2,
   "call-out-sick": 2,
   "reply-all": 3,
@@ -318,6 +322,28 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         });
       }
       finish("choose_reply_not_reply_all");
+      return;
+    }
+    if (activeMailTask === "mail-send-link") {
+      if (saysAttached(body)) {
+        return recordWrong({
+          title: T("Send the link, not a copy.", "Envía el enlace, no una copia."),
+          body: T(
+            "You shared the file already. Point Jordan at that link — an attached copy goes stale when you edit the schedule.",
+            "Ya compartiste el archivo. Dirige a Jordan a ese enlace — una copia adjunta queda vieja cuando edites el horario.",
+          ),
+        });
+      }
+      if (!sendsLinkNotFile(body)) {
+        return recordWrong({
+          title: T("Say where the file is.", "Di dónde está el archivo."),
+          body: T(
+            "Tell Jordan it's the schedule and that the link is here — one or two lines.",
+            "Dile a Jordan que es el horario y que el enlace está aquí — una o dos líneas.",
+          ),
+        });
+      }
+      finish("send_a_link_not_a_file");
       return;
     }
     finish(activeMailTask === "mail-attach" ? "reply_with_attachment" : "answer_own_words");
@@ -655,7 +681,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-etiquette" | "reply-all">, lang, displayName).plain.map((p, i) => (
+                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-etiquette" | "mail-send-link" | "reply-all">, lang, displayName).plain.map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>

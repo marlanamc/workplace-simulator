@@ -6,7 +6,13 @@ import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/li
 const GREETING = "__GREETING__";
 
 /** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
-export type PlayableMailTask = "mail-reply" | "mail-attach" | "mail-etiquette" | "call-out-sick" | "reply-all";
+export type PlayableMailTask =
+  | "mail-reply"
+  | "mail-attach"
+  | "mail-send-link"
+  | "mail-etiquette"
+  | "call-out-sick"
+  | "reply-all";
 
 /**
  * Every task Mail can run, in the order they're introduced. MailClient
@@ -14,22 +20,24 @@ export type PlayableMailTask = "mail-reply" | "mail-attach" | "mail-etiquette" |
  * order, rather than a separate hand-maintained list - a mail task that
  * exists here but isn't reachable is a silent dead end, not a build error.
  */
-export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach", "mail-etiquette", "call-out-sick", "reply-all"];
+export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach", "mail-send-link", "mail-etiquette", "call-out-sick", "reply-all"];
 
 /**
  * Tasks where the learner writes to Maria (or a coworker) from scratch
  * rather than replying to something in the inbox. There is no email to open
  * first, so Mail starts on the compose window instead of the message list.
  */
-export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-etiquette", "call-out-sick"];
+export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-send-link", "mail-etiquette", "call-out-sick"];
 
-/** Who the compose pane addresses — reply tasks pre-fill Maria; compose-only tasks pick their recipient. */
+/** Who the compose pane addresses — reply tasks pre-fill the manager; compose-only tasks pick their recipient. */
 export const DANA_EMAIL = "dana.ortiz@harborsidecafe.com";
-export const REPLY_ALL_RECIPIENTS = `${DANA_EMAIL}, ${CAST.maria.email}, priya.shah@harborsidecafe.com, ${CAST.jordan.email}`;
+// reply-all is Act IV, so the manager on the thread is Renata, not Maria.
+export const REPLY_ALL_RECIPIENTS = `${DANA_EMAIL}, ${CAST.renata.email}, priya.shah@harborsidecafe.com, ${CAST.jordan.email}`;
 
 export const COMPOSE_RECIPIENT: Record<PlayableMailTask, string> = {
   "mail-reply": CAST.maria.email,
   "mail-attach": CAST.maria.email,
+  "mail-send-link": CAST.jordan.email,
   "mail-etiquette": CAST.darnell.email,
   "call-out-sick": CAST.maria.email,
   "reply-all": DANA_EMAIL,
@@ -54,6 +62,22 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       headline: "Tu gerente te da la bienvenida.",
       body: "Maria Delgado dirige Harborside Cafe. Te envió un saludo corto y dijo que la llames si necesitas algo. Escríbele un agradecimiento.",
       cta: "Abrir mi bandeja",
+    },
+  },
+  "mail-send-link": {
+    en: {
+      emoji: "🔗",
+      kicker: "Wednesday, 10:15 AM",
+      headline: "Jordan needs this week's schedule.",
+      body: "You just shared the file with Jordan. Now send a short email with the link, so Jordan can open it. Don't attach a copy — a copy goes stale the next time you change the schedule.",
+      cta: "Write to Jordan",
+    },
+    es: {
+      emoji: "🔗",
+      kicker: "Miércoles, 10:15 AM",
+      headline: "Jordan necesita el horario de esta semana.",
+      body: "Acabas de compartir el archivo con Jordan. Ahora envía un correo corto con el enlace, para que Jordan lo pueda abrir. No adjuntes una copia — una copia queda vieja la próxima vez que cambies el horario.",
+      cta: "Escribirle a Jordan",
     },
   },
   "mail-etiquette": {
@@ -178,6 +202,20 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
   },
+  "mail-send-link": {
+    en: {
+      kicker: "Message sent",
+      body: "Jordan can open the schedule from the link, and it will always be the current one. A link points at the live file; an attachment is a copy that stops matching the moment you edit the original.",
+      badgeNumber: "09",
+      badgeWhere: "Counts toward: Office Ready · Food Service Ready",
+    },
+    es: {
+      kicker: "Mensaje enviado",
+      body: "Jordan puede abrir el horario desde el enlace, y siempre será el actual. Un enlace apunta al archivo vivo; un adjunto es una copia que deja de coincidir en cuanto editas el original.",
+      badgeNumber: "09",
+      badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
+    },
+  },
   "mail-etiquette": {
     en: {
       kicker: "Message sent",
@@ -247,6 +285,18 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
       subject: "Bienvenido a Harborside Cafe",
       reSubject: "Re: Bienvenido a Harborside Cafe",
       preview: "Eres personal nuevo. Esta semana tienes 5 turnos en el piso.",
+    },
+  },
+  "mail-send-link": {
+    en: {
+      subject: "This week's schedule",
+      reSubject: "This week's schedule",
+      preview: "Sending Jordan the link to the shared schedule.",
+    },
+    es: {
+      subject: "El horario de esta semana",
+      reSubject: "El horario de esta semana",
+      preview: "Enviarle a Jordan el enlace del horario compartido.",
     },
   },
   "mail-etiquette": {
@@ -480,7 +530,7 @@ export const REPLY_ALL_THREAD: {
     initials: "DO",
     color: "#7248b9",
     time: "10:04 AM",
-    to: { en: "to me, Maria Delgado, Priya Shah, Jordan Kim", es: "para mí, Maria Delgado, Priya Shah, Jordan Kim" },
+    to: { en: "to me, Renata Silva, Priya Shah, Jordan Kim", es: "para mí, Renata Silva, Priya Shah, Jordan Kim" },
     ask: true,
     body: {
       en: [
@@ -510,7 +560,33 @@ export function replyAllAnswersDana(body: string): boolean {
   return answers && aboutDelivery && !stillSoundsCasual(body);
 }
 
-type ReadableMailTask = Exclude<PlayableMailTask, "call-out-sick" | "mail-etiquette" | "reply-all">;
+/** The email says "attached / adjunto" — the mistake this lesson teaches against. */
+export function saysAttached(body: string): boolean {
+  return /\battach(ed|ment|ing)?\b|\badjunt|\bse adjunta\b|\ben el adjunto\b/i.test(body);
+}
+
+/**
+ * A "send the link" email that did its job: it points at the file (a URL, or
+ * the words "link"/"enlace"), names what the file is, and does NOT tell Jordan
+ * to open an attachment. Deliberately lenient — a learner who wrote a real
+ * sentence with "here's the link to the schedule" passes.
+ */
+export function sendsLinkNotFile(body: string): boolean {
+  const t = body.trim();
+  if (t.split(/\s+/).filter(Boolean).length < 5) return false;
+  if (saysAttached(t)) return false;
+  const hasLink =
+    /https?:\/\/|drive\.|docs\.|\.com\/|\blink\b|\benlace\b|\baccess\b|\bacceso\b|\bshared? (it|the file)\b|\bcompart/i.test(
+      t,
+    );
+  const namesFile = /schedule|horario|file|archivo|sheet|hoja|it\b|this week/i.test(t);
+  return hasLink && namesFile;
+}
+
+type ReadableMailTask = Exclude<
+  PlayableMailTask,
+  "call-out-sick" | "mail-etiquette" | "mail-send-link" | "reply-all"
+>;
 
 const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
   // Job 1: welcome note — thank-you reply, no file.
@@ -609,6 +685,18 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
       "Muchas gracias. Me alegra estar aquí.",
       "Gracias. Te llamo si necesito algo.",
       "También espero trabajar contigo.",
+    ],
+  },
+  "mail-send-link": {
+    en: [
+      "Hi Jordan, here's the link to this week's schedule.",
+      "You should have view access now. Let me know if it doesn't open.",
+      "I'll keep it updated here, so always check the link, not an old copy.",
+    ],
+    es: [
+      "Hola Jordan, aquí está el enlace del horario de esta semana.",
+      "Ya deberías tener acceso para ver. Avísame si no abre.",
+      "Lo voy a mantener actualizado aquí, así que revisa siempre el enlace, no una copia vieja.",
     ],
   },
   "mail-etiquette": {
@@ -710,7 +798,20 @@ export const FILES: PickableItem[] = [
     wrongHint: wrongHint("That one is June. She asked for July.", "Ese es de junio. Ella pidió el de julio.") },
 ];
 
-const DECOY_EMAILS: DecoyEmail[] = [
+/**
+ * Clutter mail, one pool per task. A real work inbox is never empty, so every
+ * mail job — not just Day One — has a few things in it that are not the job.
+ *
+ * Two rules keep the clutter honest:
+ *  - Timestamps sit on the task's own day. A `mail-etiquette` decoy is dated to
+ *    that Friday afternoon, not to Day One's "7:41 AM".
+ *  - The wrong-click hint names what the job actually is, so the clutter never
+ *    fights the task's framing (a compose-only job says "there's nothing to
+ *    open here — click Compose").
+ * Story mail (the manager's replies, filtered to the right day by
+ * `storyMailsUpTo`) shows alongside these regardless.
+ */
+const DAY_ONE_DECOYS: DecoyEmail[] = [
   { key: "darnell", ...inboxSender(CAST.darnell), time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
     preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
@@ -740,6 +841,80 @@ const DECOY_EMAILS: DecoyEmail[] = [
     preview: { en: "Sale ends Sunday. Use code FALL15.", es: "La oferta termina el domingo. Usa el código FALL15." },
     wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
+
+const NOT_A_JOB_EN =
+  "Nothing here needs an answer right now. Your job is to write a new email — click Compose.";
+const NOT_A_JOB_ES =
+  "Nada de esto necesita respuesta ahora. Tu tarea es escribir un correo nuevo — haz clic en Redactar.";
+
+/** Mid-week of the shared-files level: you just shared a file, now send the link. */
+const SEND_LINK_DECOYS: DecoyEmail[] = [
+  { key: "it-outage", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "8:02 AM", isTarget: false,
+    subject: { en: "Drive was slow this morning — fixed", es: "Drive estuvo lento esta mañana — resuelto" },
+    preview: { en: "No action needed.", es: "No hay que hacer nada." },
+    wrongHint: wrongHint("That's an IT status note. Your job is to send Jordan the link.", "Eso es un aviso de sistemas. Tu tarea es enviarle el enlace a Jordan.") },
+  { key: "vendor-quote", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "Yesterday", isTarget: false,
+    subject: { en: "Updated wholesale price list", es: "Lista de precios mayoristas actualizada" },
+    preview: { en: "Effective next month.", es: "Vigente el próximo mes." },
+    wrongHint: wrongHint("That's the coffee vendor, not Jordan. Send Jordan the schedule link.", "Ese es el proveedor de café, no Jordan. Envíale a Jordan el enlace del horario.") },
+  { key: "team-digest", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Mon", isTarget: false,
+    subject: { en: "This week's notes", es: "Notas de esta semana" },
+    preview: { en: "Patio tables, new cups, lost and found.", es: "Mesas del patio, vasos nuevos, objetos perdidos." },
+    wrongHint: wrongHint("That's the weekly team note. You need to email Jordan the link.", "Esa es la nota semanal del equipo. Tienes que enviarle el enlace a Jordan.") },
+];
+
+/** Friday afternoon of week one — you're writing Darnell, not opening anything. */
+const ETIQUETTE_DECOYS: DecoyEmail[] = [
+  { key: "fridge", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "1:12 PM", isTarget: false,
+    subject: { en: "Fridge gets cleaned out Monday", es: "El refrigerador se vacía el lunes" },
+    preview: { en: "Take your food home this weekend.", es: "Llévate tu comida este fin de semana." },
+    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+  { key: "payroll-note", ...inboxSender(CAST.hr), time: "11:40 AM", isTarget: false,
+    subject: { en: "Direct deposit posts Friday", es: "El depósito directo entra el viernes" },
+    preview: { en: "Nothing to do. Just a heads up.", es: "No hay que hacer nada. Solo un aviso." },
+    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+  { key: "it-survey", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Thu", isTarget: false,
+    subject: { en: "2-minute survey: the new tablets", es: "Encuesta de 2 minutos: las tabletas nuevas" },
+    preview: { en: "Optional. Closes next week.", es: "Opcional. Cierra la próxima semana." },
+    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+];
+
+/** Monday morning of week two, before your shift — you're writing Maria that you're sick. */
+const SICK_CALL_DECOYS: DecoyEmail[] = [
+  { key: "benefits", ...inboxSender(CAST.hr), time: "7:30 AM", isTarget: false,
+    subject: { en: "Open enrollment starts next week", es: "La inscripción abierta empieza la próxima semana" },
+    preview: { en: "You'll get the forms by email.", es: "Recibirás los formularios por correo." },
+    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+  { key: "it-maint", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "6:05 AM", isTarget: false,
+    subject: { en: "Login system maintenance tonight", es: "Mantenimiento del sistema de acceso esta noche" },
+    preview: { en: "11 PM to 1 AM. No action needed.", es: "De 11 PM a 1 AM. No hay que hacer nada." },
+    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+  { key: "potluck", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Sat", isTarget: false,
+    subject: { en: "Potluck sign-up for next Friday", es: "Lista para el potluck del próximo viernes" },
+    preview: { en: "Add what you'll bring.", es: "Anota qué vas a traer." },
+    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+];
+
+/** Act IV, an HQ thread day. The reply-all thread is the only thing to open. */
+const REPLY_ALL_DECOYS: DecoyEmail[] = [
+  { key: "hq-newsletter", from: "Harborside HQ", initials: "HQ", color: "#8430ce", time: "8:15 AM", isTarget: false,
+    subject: { en: "Company update: Q3 in review", es: "Novedades: resumen del T3" },
+    preview: { en: "A read, not a to-do.", es: "Para leer, no para hacer." },
+    wrongHint: wrongHint("That's the company newsletter. Open the delivery-window thread and answer Dana.", "Ese es el boletín de la empresa. Abre el hilo de la entrega y respóndele a Dana.") },
+  { key: "facilities", from: "Facilities", initials: "FC", color: "#5f6368", time: "Yesterday", isTarget: false,
+    subject: { en: "Sign replacement scheduled", es: "Cambio de letrero programado" },
+    preview: { en: "Crew comes Thursday. No action.", es: "El equipo viene el jueves. No hay que hacer nada." },
+    wrongHint: wrongHint("That's Facilities, not the thread from HQ. Reply to Dana about Friday's delivery.", "Eso es Mantenimiento, no el hilo de HQ. Respóndele a Dana sobre la entrega del viernes.") },
+];
+
+const DECOY_POOLS: Record<PlayableMailTask, DecoyEmail[]> = {
+  "mail-reply": DAY_ONE_DECOYS,
+  "mail-attach": DAY_ONE_DECOYS,
+  "mail-send-link": SEND_LINK_DECOYS,
+  "mail-etiquette": ETIQUETTE_DECOYS,
+  "call-out-sick": SICK_CALL_DECOYS,
+  "reply-all": REPLY_ALL_DECOYS,
+};
 
 type InboxEmail = DecoyEmail | {
   key: string;
@@ -783,16 +958,13 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     subject: { en: safetyMeta.en.subject, es: safetyMeta.es.subject },
     preview: { en: safetyMeta.en.preview, es: safetyMeta.es.preview },
   };
-  // The decoy clutter teaches "find the right email among a messy inbox" -
-  // Day One's job. Later mail tasks open straight into compose (there's
-  // nothing to find), so showing this same frozen Day One backdrop days or
-  // weeks later just sits there getting more wrong: a decoy timestamped
-  // "7:41 AM" doesn't age, and mail-etiquette explicitly says Darnell's
-  // question is from days ago while its own row still claims this morning.
-  // Story mail (Maria's replies, correctly filtered by day) still shows via
-  // storyMailsUpTo regardless of what this function returns.
-  if (task === "mail-reply") return [welcome, ...DECOY_EMAILS];
-  if (task === "mail-attach") return [safety, welcome, ...DECOY_EMAILS];
+  // Every job's inbox carries a little clutter, dated to that job's own day
+  // (see DECOY_POOLS). The target rows for a job come first, then its pool.
+  // Story mail (the manager's replies, correctly filtered by day) still shows
+  // via storyMailsUpTo regardless of what this function returns.
+  const decoys = DECOY_POOLS[task] ?? [];
+  if (task === "mail-reply") return [welcome, ...decoys];
+  if (task === "mail-attach") return [safety, welcome, ...decoys];
   if (task === "reply-all") {
     const meta = SUBJECT_BY_TASK["reply-all"];
     return [
@@ -807,7 +979,10 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
         subject: { en: meta.en.subject, es: meta.es.subject },
         preview: { en: meta.en.preview, es: meta.es.preview },
       },
+      ...decoys,
     ];
   }
-  return [];
+  // Compose-only jobs (mail-etiquette, call-out-sick, mail-send-link): nothing
+  // to open, but the inbox still isn't empty.
+  return decoys;
 }

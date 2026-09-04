@@ -98,11 +98,11 @@ export default function HandbookTask() {
             <aside className="flex w-[260px] shrink-0 flex-col gap-3 overflow-y-auto border-l border-[#e8eaed] bg-[#f8f9fa] p-3">
               <div className="rounded-xl bg-white p-3 shadow-[0_1px_2px_rgba(60,64,67,.15)]">
                 <div className="mb-2 flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1a73e8] text-[11px] font-medium text-white">
-                    MD
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#d93025] text-[11px] font-medium text-white">
+                    RS
                   </span>
                   <div>
-                    <div className="text-[13px] font-medium">Maria Delgado</div>
+                    <div className="text-[13px] font-medium">Renata Silva</div>
                     <div className="text-[11px] text-[#5f6368]">
                       {lang === "en" ? "Comment" : "Comentario"}
                     </div>

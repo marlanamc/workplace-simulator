@@ -1,6 +1,6 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
 
-export const SHARE_WITH = "Dana Ortiz";
+export const SHARE_WITH = "Chris Okafor";
 export const TARGET_FILE = "q3-final";
 
 export interface HqDriveFile {
@@ -35,8 +35,8 @@ export const HQ_FILES: HqDriveFile[] = [
     date: "Aug 28",
     isTarget: false,
     wrongHint: hint(
-      "That's version 1. Dana asked for the current file, not the draft.",
-      "Esa es la versión 1. Dana pidió el archivo actual, no el borrador.",
+      "That's version 1. Chris asked for the current file, not the draft.",
+      "Esa es la versión 1. Chris pidió el archivo actual, no el borrador.",
     ),
   },
   {
@@ -88,7 +88,9 @@ export const HQ_DRIVE_COPY: Record<Lang, {
   newBtn: string;
   share: string;
   shareWith: string;
+  addPeople: string;
   canView: string;
+  canComment: string;
   canEdit: string;
   sentKicker: string;
   tryAgain: string;
@@ -108,7 +110,9 @@ export const HQ_DRIVE_COPY: Record<Lang, {
     newBtn: "New",
     share: "Share",
     shareWith: "Share with",
+    addPeople: "Add people",
     canView: "Can view",
+    canComment: "Can comment",
     canEdit: "Can edit",
     sentKicker: "Shared view-only",
     tryAgain: "Do it again",
@@ -128,7 +132,9 @@ export const HQ_DRIVE_COPY: Record<Lang, {
     newBtn: "Nuevo",
     share: "Compartir",
     shareWith: "Compartir con",
+    addPeople: "Agregar personas",
     canView: "Puede ver",
+    canComment: "Puede comentar",
     canEdit: "Puede editar",
     sentKicker: "Compartido solo para ver",
     tryAgain: "Hacerlo otra vez",
@@ -141,8 +147,8 @@ export const HQ_DRIVE_COPY: Record<Lang, {
 };
 
 export const WRONG_EDIT_HINT: Localized = {
-  en: "Dana asked for view only. Editor lets her change the file.",
-  es: "Dana pidió solo ver. Editor le deja cambiar el archivo.",
+  en: "Chris asked for view only. Editor lets them change the file.",
+  es: "Chris pidió solo ver. Editor deja que cambie el archivo.",
 };
 
 export const NEED_PERMISSION_HINT: Localized = {
@@ -163,8 +169,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Share the file itself, not the folder",
       s: [
-        "Dana needs the current Q3 notes. Share them as view only.",
-        "Editor access is for people who should be able to change the file. Dana should not.",
+        "Chris needs the current Q3 notes. Share them as view only.",
+        "Editor access is for people who should be able to change the file. Chris should not.",
       ],
       tip: "When someone only needs to read a file, view only is the safe choice.",
     },
@@ -181,8 +187,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Comparte el archivo mismo, no la carpeta",
       s: [
-        "Dana necesita las notas actuales del T3. Compártelas en modo solo ver.",
-        "El acceso de editor es para las personas que deben poder cambiar el archivo. Dana no.",
+        "Chris necesita las notas actuales del T3. Compártelas en modo solo ver.",
+        "El acceso de editor es para las personas que deben poder cambiar el archivo. Chris no.",
       ],
       tip: "Cuando alguien solo necesita leer un archivo, solo ver es la opción segura.",
     },
@@ -192,5 +198,5 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Find the current Q3 file.", es: "Encuentra el archivo actual del T3." },
-  { en: "Share it with Dana as view only.", es: "Compártelo con Dana en modo solo ver." },
+  { en: "Share it with Chris as view only.", es: "Compártelo con Chris en modo solo ver." },
 ];

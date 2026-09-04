@@ -38,6 +38,7 @@ export const SLIDES_COPY: Record<Lang, {
   next: string;
   back: string;
   present: string;
+  slideLabels: [string, string, string];
   needTitle: string;
   needConfirm: string;
   needTakeaway: string;
@@ -63,6 +64,7 @@ export const SLIDES_COPY: Record<Lang, {
     next: "Next slide",
     back: "Back",
     present: "Present",
+    slideLabels: ["Title", "The number", "Takeaway"],
     needTitle: "Put a title on the first slide first.",
     needConfirm: "Confirm the total that is already there. Do not type a different number.",
     needTakeaway: "Write one full sentence — at least a few words.",
@@ -88,6 +90,7 @@ export const SLIDES_COPY: Record<Lang, {
     next: "Siguiente",
     back: "Atrás",
     present: "Presentar",
+    slideLabels: ["Título", "El número", "Idea"],
     needTitle: "Pon un título en la primera diapositiva primero.",
     needConfirm: "Confirma el total que ya está ahí. No escribas otro número.",
     needTakeaway: "Escribe una oración completa — al menos unas palabras.",

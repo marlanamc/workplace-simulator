@@ -4,14 +4,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Next week",
-    headline: "Maria put a meeting on a day you work.",
+    headline: "Renata put a meeting on a day you work.",
     body: "The Weekly Lead Huddle is on the calendar. Check the day against your shifts before you say yes.",
     cta: "Open Calendar",
   },
   es: {
     emoji: "📅",
     kicker: "La semana que viene",
-    headline: "Maria puso una reunión un día que trabajas.",
+    headline: "Renata puso una reunión un día que trabajas.",
     body: "La reunión semanal de líderes está en el calendario. Revisa el día contra tus turnos antes de decir que sí.",
     cta: "Abrir Calendar",
   },
@@ -38,7 +38,7 @@ export const HUDDLE_TIMES = [
 
 export const MEETING = {
   title: "Weekly Lead Huddle",
-  organizer: "Maria Delgado · Cafe Manager",
+  organizer: "Renata Silva · General Manager",
   day: "Wed",
   date: "Aug 26",
   time: "9:00 AM – 9:30 AM",
@@ -119,7 +119,7 @@ export const CALENDAR_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You caught a scheduling conflict before it became a problem.",
-    doneBody: "Maria got your note about the huddle landing on your day off. Checking your calendar against your schedule, every time, is what keeps this from turning into a surprise trip in on a day you didn't plan for.",
+    doneBody: "Renata got your note about the huddle landing on your day off. Checking your calendar against your schedule, every time, is what keeps this from turning into a surprise trip in on a day you didn't plan for.",
     badgeName: "Handle a meeting invite the right way",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -161,7 +161,7 @@ export const CALENDAR_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Detectaste un conflicto de horario antes de que fuera un problema.",
-    doneBody: "Maria recibió tu nota sobre la reunión en tu día libre. Revisar tu calendario contra tu horario, siempre, es lo que evita que esto se convierta en una sorpresa un día que no planeabas venir.",
+    doneBody: "Renata recibió tu nota sobre la reunión en tu día libre. Revisar tu calendario contra tu horario, siempre, es lo que evita que esto se convierta en una sorpresa un día que no planeabas venir.",
     badgeName: "Manejar una invitación a una reunión correctamente",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -180,13 +180,13 @@ export const WRONG_ACCEPT_HINT: Record<Lang, string> = {
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Maria, I'm not scheduled to work Wednesday.",
+    "Hi Renata, I'm not scheduled to work Wednesday.",
     "Could we move the huddle to a day I'm already in?",
     "I'm happy to call in instead, if that works better.",
     "Let me know what works. Thank you.",
   ],
   es: [
-    "Hola Maria, no estoy programado para trabajar el miércoles.",
+    "Hola Renata, no estoy programado para trabajar el miércoles.",
     "¿Podríamos mover la reunión a un día que ya trabaje?",
     "Con gusto puedo llamar en vez de eso, si funciona mejor.",
     "Avísame qué funciona. Gracias.",

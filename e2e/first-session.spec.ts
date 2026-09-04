@@ -62,6 +62,11 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 
   await card.getByRole("button", { name: "Open the Web Browser" }).click();
 
+  // First a look beat: the address bar and back arrow are display-only here;
+  // you navigate with the bookmarks.
+  await expect(page.getByText("you get around with the bookmarks", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Show me the bookmarks" }).click();
+
   // One instruction at a time; it advances only on the real click.
   await expect(page.getByText("Click Mail.")).toBeVisible();
   await page.getByTestId("bookmark-mail").click();

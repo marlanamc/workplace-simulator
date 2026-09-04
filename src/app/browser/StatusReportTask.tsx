@@ -184,7 +184,7 @@ export default function StatusReportTask() {
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-10 shrink-0 text-text-tertiary">{c.to}</span>
-              <span>{CAST.maria.email}</span>
+              <span>{CAST.renata.email}</span>
             </div>
             <div className="mb-3 flex items-center gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-10 shrink-0 text-text-tertiary">{c.cc}</span>

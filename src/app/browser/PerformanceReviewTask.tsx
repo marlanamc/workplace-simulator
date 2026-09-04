@@ -22,6 +22,13 @@ import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
+import {
+  FormsShell,
+  FormTitleCard,
+  QuestionCard,
+  FormTextarea,
+  FormSubmitButton,
+} from "@/components/task/FormsShell";
 
 export default function PerformanceReviewTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
@@ -55,7 +62,7 @@ export default function PerformanceReviewTask() {
 
   if (done) {
     return (
-      <div className="flex h-full min-h-0 flex-col bg-white" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
+      <FormsShell>
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard kicker={c.sentKicker} />
@@ -63,22 +70,12 @@ export default function PerformanceReviewTask() {
           </div>
         </div>
         <NudgeToast text={nudge} onDismiss={dismiss} />
-      </div>
+      </FormsShell>
     );
   }
 
   return (
-    <div className="relative flex h-full min-h-0 flex-col bg-[#f8f9fa] text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
-      <div className="flex items-center gap-3 border-b border-[#e0e0e0] bg-white px-4 py-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded bg-[#7248b9] text-white">
-          {(() => {
-            const Icon = TASK_ICONS["performance-review"];
-            return <Icon size={18} strokeWidth={2.25} />;
-          })()}
-        </span>
-        <span className="text-[18px] text-[#3c4043]">{c.appName}</span>
-      </div>
-
+    <FormsShell>
       <RightNowBar
         icon={TASK_ICONS["performance-review"]}
         stepIndex={stepIndex}
@@ -88,55 +85,48 @@ export default function PerformanceReviewTask() {
         onHelp={() => setHelp(true)}
       />
 
-      <div className="min-h-0 flex-1 overflow-auto p-6">
-        <div className="mx-auto flex max-w-[560px] flex-col gap-5">
-          <div>
-            <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.formTitle}</div>
-            <div className="mt-3 rounded-xl border border-[#dadce0] bg-white p-4">
-              <div className="text-[16px] font-medium">{PROFILE.name}</div>
-              <div className="text-[13px] text-[#5f6368]">{PROFILE.role[lang]}</div>
-              <div className="mt-3 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.winsLabel}</div>
-              <ul className="mt-1 list-disc pl-5 text-[14px] leading-relaxed text-[#3c4043]">
-                {PROFILE.wins.map((w, i) => (
-                  <li key={i}>{w[lang]}</li>
-                ))}
-              </ul>
-              <div className="mt-3 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.issueLabel}</div>
-              <p className="mt-1 text-[14px] leading-relaxed text-[#3c4043]">{PROFILE.issue[lang]}</p>
-            </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-[640px] flex-col gap-3 px-4 py-6">
+          <FormTitleCard title={c.formTitle} requiredLabel={lang === "en" ? "Required" : "Obligatorio"} />
+
+          <div className="rounded-lg bg-white px-6 py-5 shadow-[0_1px_2px_rgba(0,0,0,.15)]">
+            <div className="text-[16px] font-medium text-[#202124]">{PROFILE.name}</div>
+            <div className="text-[13px] text-[#5f6368]">{PROFILE.role[lang]}</div>
+            <div className="mt-3 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.winsLabel}</div>
+            <ul className="mt-1 list-disc pl-5 text-[14px] leading-relaxed text-[#3c4043]">
+              {PROFILE.wins.map((w, i) => (
+                <li key={i}>{w[lang]}</li>
+              ))}
+            </ul>
+            <div className="mt-3 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.issueLabel}</div>
+            <p className="mt-1 text-[14px] leading-relaxed text-[#3c4043]">{PROFILE.issue[lang]}</p>
           </div>
 
-          <div>
-            <label className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.strengthLabel}</label>
-            <textarea
+          <QuestionCard label={c.strengthLabel} required>
+            <FormTextarea
               value={strength}
               onChange={(e) => setStrength(e.target.value)}
               placeholder={c.strengthPlaceholder}
-              rows={3}
-              className="mt-2 w-full resize-y rounded-xl border border-[#dadce0] p-3 text-[15px] leading-relaxed outline-none focus:border-[#1a73e8]"
             />
-            <div className="mt-2">
+            <div className="mt-3">
               <NeedAStart lang={lang} starters={STRENGTH_STARTERS[lang]} onPick={(s) => setStrength((b) => (b ? `${b} ` : "") + s)} />
             </div>
-          </div>
+          </QuestionCard>
 
-          <div>
-            <label className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.areaLabel}</label>
-            <textarea
+          <QuestionCard label={c.areaLabel} required>
+            <FormTextarea
               value={area}
               onChange={(e) => setArea(e.target.value)}
               placeholder={c.areaPlaceholder}
-              rows={3}
-              className="mt-2 w-full resize-y rounded-xl border border-[#dadce0] p-3 text-[15px] leading-relaxed outline-none focus:border-[#1a73e8]"
             />
-            <div className="mt-2">
+            <div className="mt-3">
               <NeedAStart lang={lang} starters={AREA_STARTERS[lang]} onPick={(s) => setArea((b) => (b ? `${b} ` : "") + s)} />
             </div>
-          </div>
+          </QuestionCard>
 
-          <button onClick={submit} className="inline-flex min-h-[44px] w-fit items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
-            {c.submit}
-          </button>
+          <div className="pt-1">
+            <FormSubmitButton onClick={submit}>{c.submit}</FormSubmitButton>
+          </div>
         </div>
       </div>
 
@@ -149,6 +139,6 @@ export default function PerformanceReviewTask() {
         gotItLabel={c.gotIt}
       />
       <NudgeToast text={nudge} onDismiss={dismiss} />
-    </div>
+    </FormsShell>
   );
 }
