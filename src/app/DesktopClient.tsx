@@ -5,7 +5,7 @@ import Link from "next/link";
 import { type TaskKey } from "@/lib/desktop-content";
 import type { BridgePath } from "@/lib/bridge-path";
 import { DesktopClock } from "@/components/LiveClock";
-import { levelForTrack, sceneForLevel } from "@/lib/tracks-content";
+import { actForLevel, isLevelComplete, levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
 import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 import MyJobPanel from "@/components/MyJobPanel";
@@ -14,6 +14,10 @@ import TrackCelebration from "@/components/TrackCelebration";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import MobileNudge from "@/components/MobileNudge";
 import MariaNoteToast from "@/components/MariaNoteToast";
+import SimulatorWelcome from "@/components/SimulatorWelcome";
+import ActIntro from "@/components/ActIntro";
+import { WELCOME_FLAG } from "@/lib/welcome-content";
+import { actIntroFlag } from "@/lib/act-intro-content";
 import JobCard from "@/components/task/JobCard";
 import ListIntroSpotlight from "@/components/task/ListIntroSpotlight";
 import { LIST_INTRO_FLAG, shouldShowListIntro } from "@/lib/job-card-content";
@@ -83,7 +87,29 @@ function DesignerJumpBanner() {
 const INTRO_FLAG = "job-card-intro-seen";
 
 function JobCardHost({ children }: { children: ReactNode }) {
-  const { storyFlags, setStoryFlag, completedTaskKeys } = useProgress();
+  const { storyFlags, setStoryFlag, completedTaskKeys, currentTrack, bridgePath } = useProgress();
+  if (completedTaskKeys.length === 0 && storyFlags[INTRO_FLAG] !== "true" && storyFlags[WELCOME_FLAG] !== "true") {
+    return <SimulatorWelcome onContinue={() => setStoryFlag(WELCOME_FLAG, "true")} />;
+  }
+
+  // Before each later act: the orientation screen (new role, new manager, new
+  // skills). Fires the moment `currentTrack` crosses into an act's first level
+  // — once per act, and never again on replay. `act.key !== "act1"` keeps a
+  // brand-new learner (currentTrack = orientation) on `SimulatorWelcome`; a
+  // Studio time-machine jump wipes story flags, so this also (correctly)
+  // re-shows the intro for the act you land in.
+  const currentLevel = levelForTrack(currentTrack.key);
+  const act = actForLevel(currentLevel);
+  if (
+    act &&
+    act.key !== "act1" &&
+    act.levelKeys[0] === currentLevel.key &&
+    !isLevelComplete(currentLevel, completedTaskKeys, bridgePath) &&
+    storyFlags[actIntroFlag(act.key)] !== "true"
+  ) {
+    return <ActIntro act={act} onContinue={() => setStoryFlag(actIntroFlag(act.key), "true")} />;
+  }
+
   return (
     <JobCardProvider
       // A returning learner has already met the card; only a genuinely fresh
@@ -203,7 +229,6 @@ function DesktopShell({
       <Shelf
         displayName={displayName}
         myJobOpen={myJobOpen}
-        highlightMyJob={showListIntro}
         onMyJobOpenChange={(open) => {
           setMyJobOpen(open);
           if (open) setAwardsOpen(false);

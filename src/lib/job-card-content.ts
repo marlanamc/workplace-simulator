@@ -17,11 +17,13 @@ export interface IntroBeat {
   cta?: Localized<string>;
   /** Advance when they collapse the card, so this beat is a try, not a read. */
   tryCollapse?: boolean;
+  /** Advance after moving to a different corner, by pointer or keyboard. */
+  tryDrag?: boolean;
 }
 
 /**
- * First run, on an empty desktop: three beats, one sentence and one button
- * each, before any app window exists.
+ * First run, on an empty desktop: welcome, move, then shrink,
+ * before any app window exists.
  *
  * The welcome and the "you cannot break it" reassurance live here rather than
  * in a separate full-screen card inside the Welcome tab. That card used to be
@@ -48,10 +50,10 @@ export const INTRO_BEATS: IntroBeat[] = [
     // quiet affordance, and a learner who feels stuck behind the card needs to
     // already know it moves rather than discover it under pressure.
     line: {
-      en: "It stays in this corner. Drag it if it is in the way.",
-      es: "Se queda en esta esquina. Arrástrala si te estorba.",
+      en: "Drag this card to another corner.",
+      es: "Arrastra esta tarjeta a otra esquina.",
     },
-    cta: { en: "Got it", es: "Entendido" },
+    tryDrag: true,
   },
   {
     kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
@@ -76,10 +78,10 @@ export const LIST_INTRO: {
 } = {
   kicker: { en: "Your list", es: "Tu lista" },
   line: {
-    en: "Your jobs are this orange button on the bar.",
-    es: "Tus trabajos son este botón naranja en la barra.",
+    en: "This orange button on the bottom bar opens your task list.",
+    es: "Este botón naranja en la barra de abajo abre tu lista de tareas.",
   },
-  cta: { en: "Got it", es: "Entendido" },
+  cta: { en: "I understand", es: "Entiendo" },
 };
 
 export function shouldShowListIntro(opts: {
@@ -156,7 +158,7 @@ export const JOB_CARD_COPY: Record<
     dayDoneLine: "That's today done.",
     startTomorrow: "Start tomorrow",
     nextJob: "Next task",
-    oneJobLeft: "Done. One task left.",
+    oneJobLeft: "Done. One more task for today.",
     jobsLeft: (n) => `Done. ${n} tasks left.`,
     doItAgain: "Do it again",
     showMe: "Show me",
@@ -188,7 +190,7 @@ export const JOB_CARD_COPY: Record<
     dayDoneLine: "El día de hoy está listo.",
     startTomorrow: "Empezar mañana",
     nextJob: "Siguiente tarea",
-    oneJobLeft: "Listo. Queda una tarea.",
+    oneJobLeft: "Listo. Queda una tarea más por hoy.",
     jobsLeft: (n) => `Listo. Quedan ${n} tareas.`,
     doItAgain: "Hazlo otra vez",
     showMe: "Muéstrame",

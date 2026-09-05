@@ -80,7 +80,7 @@ export const SWAP_COPY: Record<Lang, {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Pick the Thursday shift, then a shift that starts after your appointment.",
-    es: "Elige el turno del jueves, y luego uno que empiece después de tu cita.",
+    en: "Look at the personal calendar on your phone. Pick a shift that starts after your appointment.",
+    es: "Mira el calendario personal de tu teléfono. Elige un turno que empiece después de tu cita.",
   },
 ];

@@ -52,22 +52,22 @@ export const BEATS: ReviewBeat[] = [
     key: "timeclock",
     emoji: "🕐",
     prompt: {
-      en: "Your shift just ended. What's the first thing you do?",
-      es: "Tu turno acaba de terminar. ¿Qué haces primero?",
+      en: "You just arrived for your shift. What's the first thing you do?",
+      es: "Acabas de llegar a tu turno. ¿Qué haces primero?",
     },
     options: {
       en: [
-        { label: "Clock out and check the hours", correct: true },
-        { label: "Just leave, it clocks out on its own", correct: false },
+        { label: "Clock in and check the time", correct: true },
+        { label: "Start working. The clock will catch you", correct: false },
       ],
       es: [
-        { label: "Marcar salida y revisar las horas", correct: true },
-        { label: "Solo irte, se marca solo", correct: false },
+        { label: "Marcar entrada y revisar la hora", correct: true },
+        { label: "Empezar a trabajar. El reloj te registra solo", correct: false },
       ],
     },
     wrongHint: {
-      en: "You have to clock out yourself, then check the hours look right.",
-      es: "Tienes que marcar tu salida tú mismo, y luego revisar que las horas estén bien.",
+      en: "You have to clock in yourself, then check the time looks right.",
+      es: "Tienes que marcar tu entrada tú mismo, y luego revisar que la hora esté bien.",
     },
   },
   {
@@ -110,7 +110,7 @@ export const REVIEW_COPY: Record<Lang, {
     subhead: "Three quick checks. Nothing new to learn today.",
     continueLabel: "Continue",
     sentKicker: "Shift complete",
-    doneBody: "Three things you already knew how to do, all in one shift. No new tools, no coaching needed - that's what a normal day looks like now.",
+    doneBody: "You reviewed where to find your schedule, when to clock in, and what to check on your pay stub.",
     badgeName: "A normal shift, start to finish",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -121,7 +121,7 @@ export const REVIEW_COPY: Record<Lang, {
     subhead: "Tres revisiones rápidas. Hoy no hay nada nuevo que aprender.",
     continueLabel: "Continuar",
     sentKicker: "Turno completo",
-    doneBody: "Tres cosas que ya sabías hacer, todas en un turno. Sin herramientas nuevas, sin necesitar ayuda: así se ve un día normal ahora.",
+    doneBody: "Repasaste dónde encontrar tu horario, cuándo marcar entrada y qué revisar en tu recibo de pago.",
     badgeName: "Un turno normal, de principio a fin",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",

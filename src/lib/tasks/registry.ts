@@ -148,7 +148,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria said welcome. Write her back.", es: "Maria te dio la bienvenida. Contéstale." },
-    jobCardDoneLine: { en: "Sent. One task left.", es: "Enviado. Queda una tarea." },
+    jobCardDoneLine: { en: "Message sent. One more task for today.", es: "Mensaje enviado. Queda una tarea más por hoy." },
   },
 
   "mail-attach": {
@@ -173,8 +173,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
     dispatch: {
-      en: "Your schedule is posted. Check it against your calendar.",
-      es: "Tu horario ya está publicado. Compáralo con tu calendario.",
+      en: "Your schedule is posted. Check it against the calendar on your phone.",
+      es: "Tu horario ya está publicado. Compáralo con el calendario de tu teléfono.",
     },
     skill: "Find a shift conflict and ask for a swap",
     bookmarkLabel: "Portal",
@@ -210,15 +210,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   timeclock: {
     key: "timeclock",
     built: true,
-    label: { en: "Clock out for the day", es: "Marca tu salida del día" },
+    label: { en: "Clock in for the day", es: "Marca tu entrada del día" },
     dispatch: {
-      en: "End of day. Clock out, then check the hours.",
-      es: "Fin del día. Marca la salida y revisa las horas.",
+      en: "You got here at 7. Clock in, then check the time.",
+      es: "Llegaste a las 7. Marca tu entrada y revisa la hora.",
     },
     skill: "Check your hours and speak up",
     bookmarkLabel: "Portal",
-    handoffCta: { en: "Next: Clock out", es: "Siguiente: Marcar salida" },
-    shiftMoment: { en: "Friday, end of shift.", es: "Viernes, fin del turno." },
+    handoffCta: { en: "Next: Clock in", es: "Siguiente: Marcar entrada" },
+    shiftMoment: { en: "Friday, 8:15 AM.", es: "Viernes, 8:15 AM." },
     location: browser("Open Portal", "portal", "timeclock"),
   },
 

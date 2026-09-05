@@ -111,7 +111,6 @@ function ShelfPin({
   badge,
   onClick,
   testId,
-  pulse = false,
   children,
 }: {
   label: string;
@@ -120,7 +119,6 @@ function ShelfPin({
   onClick: () => void;
   /** Lets the walkthrough spotlight this pin. */
   testId?: string;
-  pulse?: boolean;
   children: ReactNode;
 }) {
   return (
@@ -131,9 +129,7 @@ function ShelfPin({
       aria-label={label}
       aria-pressed={active}
       onClick={onClick}
-      className={`relative flex h-12 w-10 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10${
-        pulse ? " animate-showme-pulse-compact" : ""
-      }`}
+      className="relative flex h-12 w-10 items-center justify-center rounded-md text-white cursor-pointer hover:bg-white/10"
       style={active ? { background: "rgba(255,255,255,0.12)" } : undefined}
     >
       {children}
@@ -159,12 +155,10 @@ export default function Shelf({
   displayName,
   myJobOpen,
   onMyJobOpenChange,
-  highlightMyJob = false,
 }: {
   displayName: string;
   myJobOpen: boolean;
   onMyJobOpenChange: (open: boolean) => void;
-  highlightMyJob?: boolean;
 }) {
   const { completedTaskKeys, currentTrack, lang, setLang, bridgePath } = useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
@@ -327,7 +321,6 @@ export default function Shelf({
           }
           active={myJobOpen}
           testId="shelf-my-job"
-          pulse={highlightMyJob}
           badge={!tourLocked && leftover > 0 ? String(leftover) : undefined}
           onClick={() => {
             if (tourLocked) {

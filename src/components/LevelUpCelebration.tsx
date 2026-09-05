@@ -2,7 +2,7 @@
 
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
-import { nextHandoff } from "@/lib/tracks-content";
+import { actForLevel, nextHandoff } from "@/lib/tracks-content";
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import Confetti from "@/components/task/Confetti";
@@ -19,6 +19,13 @@ export default function LevelUpCelebration() {
   const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp) return null;
+  // At an act boundary (II–VII), the full-page ActIntro carries the promotion,
+  // the new manager, and the new skills — this small modal would just be a
+  // second, thinner version of the same beat, so stand down here.
+  const boundaryAct = actForLevel(celebrateLevel);
+  if (boundaryAct && boundaryAct.key !== "act1" && boundaryAct.levelKeys[0] === celebrateLevel.key) {
+    return null;
+  }
   const { levelUp } = celebrateLevel;
   const kicker = levelUp.kicker[lang];
   const title = levelUp.title[lang];

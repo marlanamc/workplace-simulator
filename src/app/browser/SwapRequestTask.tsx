@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { SCHEDULE, SWAP_OPTIONS } from "@/lib/tasks/schedule/content";
+import { SCHEDULE, SCHEDULE_COPY, SWAP_OPTIONS } from "@/lib/tasks/schedule/content";
 import { SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
+import PhoneCalendar from "@/components/task/PhoneCalendar";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
@@ -113,7 +114,8 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       )}
 
       {view === "form" && (
-        <div className="max-w-[440px] rounded-xl border border-border bg-white p-5">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+          <div className="min-w-0 max-w-[440px] flex-1 rounded-xl border border-border bg-white p-5">
           <div className="mb-4 overflow-hidden rounded-lg border border-border">
             {SCHEDULE.map((d, i) => (
               <div
@@ -175,13 +177,17 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             />
           </label>
 
-          <button
-            data-showme="submit-button"
-            onClick={submit}
-            className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-          >
-            {c.submit}
-          </button>
+            <button
+              data-showme="submit-button"
+              onClick={submit}
+              className="inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
+            >
+              {c.submit}
+            </button>
+          </div>
+          <aside className="w-full shrink-0 lg:w-[260px]">
+            <PhoneCalendar label={SCHEDULE_COPY[lang].phoneLabel} heading={SCHEDULE_COPY[lang].phoneHeading} lang={lang} />
+          </aside>
         </div>
       )}
 
@@ -206,12 +212,12 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
         lesson={{
           t: lang === "en" ? "Asking for a shift swap" : "Pedir un cambio de turno",
           s: lang === "en"
-            ? ["Pick the shift that overlaps with something you already have.", "Choose a date you can actually work instead.", "A reason helps, but it isn't required."]
-            : ["Elige el turno que se cruza con algo que ya tienes.", "Elige una fecha en la que sí puedas trabajar.", "Un motivo ayuda, pero no es obligatorio."],
+            ? ["Look at the personal calendar on your phone.", "Choose a shift that starts after your appointment.", "A reason helps, but it isn't required."]
+            : ["Mira el calendario personal de tu teléfono.", "Elige un turno que empiece después de tu cita.", "Un motivo ayuda, pero no es obligatorio."],
           tip: lang === "en" ? "Submitting the form is enough - you don't have to also email anyone." : "Con enviar el formulario basta, no hace falta enviar un correo también.",
         }}
         tipLabel={lang === "en" ? "Tip" : "Consejo"}
-        gotItLabel={lang === "en" ? "Got it. Back to my task" : "Entendido. Volver a mi tarea"}
+        gotItLabel={lang === "en" ? "I understand. Back to my task" : "Entendido. Volver a mi tarea"}
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />

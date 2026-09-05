@@ -128,6 +128,13 @@ export default function JobCard() {
     setCollapsed(false);
   }
 
+  // A real move completes the practice; a tap or a drop in the same corner does not.
+  const moveToCorner = useCallback((next: Corner) => {
+    if (next === corner) return;
+    setCorner(next);
+    if (INTRO_BEATS[introBeat]?.tryDrag) advanceIntro();
+  }, [corner, introBeat, advanceIntro, setCorner]);
+
   // ─── dragging ────────────────────────────────────────────────────────────
   const startDrag = useCallback((e: React.PointerEvent) => {
     if (e.button !== 0) return;
@@ -157,7 +164,7 @@ export default function JobCard() {
       }
       const cx = last.x + box.width / 2;
       const cy = last.y + box.height / 2;
-      setCorner(
+      moveToCorner(
         ((cy < window.innerHeight / 2 ? "t" : "b") +
           (cx < window.innerWidth / 2 ? "l" : "r")) as Corner,
       );
@@ -165,12 +172,12 @@ export default function JobCard() {
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
     e.preventDefault();
-  }, []);
+  }, [moveToCorner]);
 
   const nudgeCorner = (e: React.KeyboardEvent) => {
     const set = (next: Corner) => {
       e.preventDefault();
-      setCorner(next);
+      moveToCorner(next);
     };
     if (e.key === "ArrowLeft") set((corner[0] + "l") as Corner);
     else if (e.key === "ArrowRight") set((corner[0] + "r") as Corner);
@@ -180,8 +187,8 @@ export default function JobCard() {
 
   // ─── the one instruction, derived from state ─────────────────────────────
   function buildScript(): Script {
-    // First run: three beats, one sentence each. The last one has no
-    // button — they advance by shrinking the card, which is the point.
+    // First run: welcome, move, then shrink. The two practice beats
+    // advance on their real actions rather than an acknowledgment.
     if (introBeat < INTRO_BEATS.length) {
       const beat = INTRO_BEATS[introBeat];
       const name = displayName.trim() || (lang === "en" ? "friend" : "amiga");
@@ -191,8 +198,8 @@ export default function JobCard() {
         line: beat.line[lang].replace("{name}", name),
         tone: "blue",
         step: -1,
-        primaryLabel: beat.tryCollapse ? undefined : beat.cta?.[lang],
-        onPrimary: beat.tryCollapse ? undefined : advanceIntro,
+        primaryLabel: beat.tryCollapse || beat.tryDrag ? undefined : beat.cta?.[lang],
+        onPrimary: beat.tryCollapse || beat.tryDrag ? undefined : advanceIntro,
       };
     }
 
@@ -390,10 +397,12 @@ export default function JobCard() {
     <div
       ref={cardRef}
       data-job-card
+      data-corner={corner}
       className="animate-card-pop fixed z-[72] overflow-hidden rounded-[24px] bg-white"
       style={{ width: CARD_W, maxWidth: "calc(100vw - 32px)", touchAction: "none", ...position }}
     >
       <div
+        data-testid="job-card-drag-handle"
         onPointerDown={startDrag}
         onKeyDown={nudgeCorner}
         tabIndex={0}
@@ -458,7 +467,12 @@ export default function JobCard() {
             // Let them see it shrink, then the next line opens it again —
             // that is the whole lesson: hide it, and it comes back.
             if (shrinking && INTRO_BEATS[introBeat]?.tryCollapse) {
-              window.setTimeout(advanceIntro, 550);
+              window.setTimeout(() => {
+                // Start the first job at home, like every later job. A top
+                // corner used for drag practice would cover the bookmarks.
+                setCorner(HOME);
+                advanceIntro();
+              }, 550);
             }
           }}
           className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-white${
@@ -515,7 +529,7 @@ export default function JobCard() {
             <button
               type="button"
               onClick={help.onClose}
-              className="mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+              className="job-card-primary mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
               style={{ background: tone }}
             >
               {help.gotItLabel}
@@ -553,7 +567,7 @@ export default function JobCard() {
               script.onPrimary?.();
             }}
             data-testid={script.equalPair ? "job-card-pick-a" : script.primaryTestId}
-            className="mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center gap-3 whitespace-nowrap rounded-[16px] text-[20px] font-medium text-white"
+            className="job-card-primary mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center gap-3 whitespace-nowrap rounded-[16px] text-[20px] font-medium text-white"
             style={{ background: tone }}
           >
             {script.primaryLabel}
@@ -597,7 +611,7 @@ export default function JobCard() {
             data-testid={script.equalPair ? "job-card-pick-b" : script.secondaryTestId}
             className={
               script.equalPair
-                ? "mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+                ? "job-card-primary mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
                 : "mt-2.5 flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
             }
             style={script.equalPair ? { background: tone } : { color: "var(--text-secondary)" }}

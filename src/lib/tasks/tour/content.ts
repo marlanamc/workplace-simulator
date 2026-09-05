@@ -53,7 +53,7 @@ export const TOUR_COPY: Record<Lang, {
     packetKicker: "Harborside Cafe · New hire",
     packetTitle: "Welcome. How this computer works.",
     helpBtn: "Help me with this step",
-    helpLead: "Now try Help.",
+    helpLead: "You tried Help. You are ready for your first task.",
     helpInvite: "Open it if you want a look, or move on if you already know. Help never counts against you.",
     helpOpened: "Good. Come back any time you get lost.",
     helpReady: "I'm ready for the task",
@@ -66,27 +66,27 @@ export const TOUR_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it. Back to my task",
+    gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
     packetKicker: "Harborside Cafe · Personal nuevo",
     packetTitle: "Bienvenida. Cómo funciona esta computadora.",
     helpBtn: "Ayúdame con este paso",
-    helpLead: "Ahora prueba Ayuda.",
+    helpLead: "Ya probaste Ayuda. Estás listo para tu primera tarea.",
     helpInvite: "Ábrela si quieres verla, o sigue adelante si ya sabes. Ayuda nunca cuenta en tu contra.",
     helpOpened: "Bien. Vuelve aquí cada vez que te pierdas.",
     helpReady: "Estoy listo para la tarea",
     sentKicker: "Listo",
     doneTitle: "Encontraste las luces.",
-    doneBody: "Botón blanco en el escritorio: el siguiente trabajo. Signo de interrogación: Ayuda. El maletín en la barra de abajo: tu lista de este turno. Siguiente siempre es el botón azul.",
+    doneBody: "Vuelve al escritorio y terminaremos el recorrido allí.",
     badgeName: "Orientarte",
     badgeWhere: "Cuenta para: empezar",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
-    gotIt: "Ya. Volver a mi tarea",
+    gotIt: "Entiendo. Volver a mi tarea",
     askPerson: "Preguntarle a una persona",
   },
 };
@@ -115,7 +115,7 @@ export type TourStep = {
 export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   en: [
     {
-      instruction: "These are your bookmarks. Each one opens an app you use for work.",
+      instruction: "These are your bookmarks. They are shortcuts to websites you use for work.",
       targetTestId: "bookmarks-row",
       continueLabel: "Show me",
       ringOnLook: true,
@@ -124,16 +124,16 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     {
       instruction: "This is your work email. Messages from your manager, coworkers, and vendors show up here.",
       targetTestId: "mail-app-title",
-      continueLabel: "Got it",
+      continueLabel: "I understand",
     },
     {
-      instruction: "Tap the ? on this card if you get lost. It explains this job.",
+      instruction: "Tap the ? on this card to try Help.",
       targetTestId: "job-card-help",
     },
   ],
   es: [
     {
-      instruction: "Estos son tus marcadores. Cada uno abre una app que usas para el trabajo.",
+      instruction: "Estos son tus marcadores. Son accesos directos a sitios web que usas para el trabajo.",
       targetTestId: "bookmarks-row",
       continueLabel: "Muéstramelos",
       ringOnLook: true,
@@ -142,10 +142,10 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
     {
       instruction: "Este es tu correo del trabajo. Aquí llegan mensajes de tu gerente, compañeros y proveedores.",
       targetTestId: "mail-app-title",
-      continueLabel: "Entendido",
+      continueLabel: "Entiendo",
     },
     {
-      instruction: "Toca el ? en esta tarjeta si te pierdes. Explica este trabajo.",
+      instruction: "Toca el ? en esta tarjeta para probar Ayuda.",
       targetTestId: "job-card-help",
     },
   ],
@@ -182,7 +182,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "This blue card in the corner tells you what to do next.",
         "Lost? Tap the ? on this card.",
-        "Card in the way? Drag it, or tap the arrow to shrink it.",
+        "Card in the way? Drag it, or tap the arrow to shrink it. Tap the arrow again to open it.",
       ],
       tip: "This card always tells you what to do next. Read it if you are not sure.",
     },
@@ -193,7 +193,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Esta tarjeta azul de la esquina te dice qué hacer.",
         "¿Te perdiste? Toca el ? en esta tarjeta.",
-        "¿Te estorba? Arrástrala, o toca la flecha para encogerla.",
+        "¿Te estorba? Arrástrala, o toca la flecha para encogerla. Toca la flecha otra vez para abrirla.",
       ],
       tip: "Esta tarjeta siempre te dice qué hacer. Léela si no estás segura.",
     },

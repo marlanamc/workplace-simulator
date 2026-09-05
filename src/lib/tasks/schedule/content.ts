@@ -4,15 +4,15 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Uh oh",
-    headline: "Next week's shifts are up. Check them against your own calendar.",
-    body: "Work posts the schedule. Nobody checks it against your life for you. Find the day that clashes with something you already have.",
+    headline: "Next week's shifts are up. Check them against the personal calendar on your phone.",
+    body: "Work posts the schedule. Nobody checks it against your life for you. Find the day that is at the same time as something already on your phone.",
     cta: "Check my schedule",
   },
   es: {
     emoji: "📅",
     kicker: "Uy no",
-    headline: "Ya salieron los turnos de la próxima semana. Compáralos con tu propio calendario.",
-    body: "El trabajo publica el horario. Nadie lo compara con tu vida por ti. Busca el día que choca con algo que ya tienes.",
+    headline: "Ya salieron los turnos de la próxima semana. Compáralos con el calendario personal de tu teléfono.",
+    body: "El trabajo publica el horario. Nadie lo compara con tu vida por ti. Busca el día que cae a la misma hora que algo que ya tienes en tu teléfono.",
     cta: "Revisar mi horario",
   },
 };
@@ -123,8 +123,8 @@ export const SCHEDULE_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     pickConflict: "Request a swap",
-    phoneLabel: "Your phone",
-    phoneHeading: "Calendar",
+    phoneLabel: "Your personal calendar",
+    phoneHeading: "My Calendar",
     doneTitle: "You caught the conflict and asked for a swap.",
     doneBody: "Thursday's shift landed on your doctor's appointment, so you asked Maria for a swap the same visit you spotted it. Catching that yourself, the day the schedule goes up, is what keeps a clash from turning into a missed shift or a missed appointment.",
     badgeName: "Read a schedule against your own calendar",
@@ -133,7 +133,7 @@ export const SCHEDULE_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it. Back to my task",
+    gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
@@ -142,8 +142,8 @@ export const SCHEDULE_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     pickConflict: "Pedir un cambio",
-    phoneLabel: "Tu teléfono",
-    phoneHeading: "Calendario",
+    phoneLabel: "Tu calendario personal",
+    phoneHeading: "Mi calendario",
     doneTitle: "Detectaste el conflicto y pediste un cambio.",
     doneBody: "El turno del jueves caía en tu cita con el doctor, así que le pediste a Maria un cambio en la misma visita en que lo notaste. Notarlo tú, el día que sale el horario, es lo que evita que un choque se convierta en un turno perdido o una cita perdida.",
     badgeName: "Leer un horario contra tu propio calendario",
@@ -158,8 +158,8 @@ export const SCHEDULE_COPY: Record<Lang, {
 };
 
 export const WRONG_SWAP_HINT: Localized = {
-  en: "That shift is fine. Look at your calendar too. Which work day is at the same time as something you already have?",
-  es: "Ese turno está bien. Mira tu calendario también. ¿Qué día de trabajo cae a la misma hora que algo que ya tienes?",
+  en: "That shift is fine. Look at the personal calendar on your phone too. Which work day is at the same time as something you already have?",
+  es: "Ese turno está bien. Mira también el calendario personal de tu teléfono. ¿Qué día de trabajo cae a la misma hora que algo que ya tienes?",
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -169,7 +169,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Each row is one day. The time on the right is your shift.",
         "\"Off\" means you're not scheduled that day.",
-        "Look at your own calendar too. If a shift is at the same time as something you already have, ask for a swap.",
+        "Look at the personal calendar on your phone too. If a shift is at the same time as something you already have, ask for a swap.",
       ],
       tip: "Do this as soon as a new schedule is posted. The sooner you catch a conflict, the easier it is to fix.",
     },
@@ -180,7 +180,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Cada fila es un día. La hora a la derecha es tu turno.",
         "\"Off\" significa que no trabajas ese día.",
-        "Mira tu propio calendario también. Si un turno cae a la misma hora que algo que ya tienes, pide un cambio.",
+        "Mira también el calendario personal de tu teléfono. Si un turno cae a la misma hora que algo que ya tienes, pide un cambio.",
       ],
       tip: "Hazlo en cuanto se publique un horario nuevo. Mientras antes veas el conflicto, más fácil es resolverlo.",
     },
@@ -191,7 +191,13 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Compare next week's shifts to your own calendar. Find the day that clashes.",
-    es: "Compara los turnos de la próxima semana con tu calendario. Busca el día que choca.",
+    en: "Compare next week's shifts to the personal calendar on your phone. Find the day that is at the same time as something you already have.",
+    es: "Compara los turnos de la próxima semana con el calendario personal de tu teléfono. Busca el día que cae a la misma hora que algo que ya tienes.",
   },
 ];
+
+/** After two wrong days, narrow the comparison without completing it for them. */
+export const STUCK_SWAP_HINT: Localized = {
+  en: "Look at Thursday, Aug 27. Your doctor visit is at 11 AM. Compare that time with Thursday's work shift.",
+  es: "Mira el jueves 27 de agosto. Tu cita con el doctor es a las 11 AM. Compara esa hora con el turno del jueves.",
+};

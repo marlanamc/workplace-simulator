@@ -413,14 +413,14 @@ export const MAIL_COPY: Record<Lang, {
     discard: "Discard",
     sentKicker: "Message sent",
     doneTitle: "You answered your supervisor.",
-    doneBody: "Maria got your reply and the file. In a real job, most asks from a manager look like this. A short answer, with the file attached.",
+    doneBody: DONE_COPY["mail-attach"].en.body,
     badgeName: "Reply with an attachment",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it. Back to my task",
+    gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
     pickerTitle: "Choose a file to attach",
     downloads: "Downloads",
@@ -453,7 +453,7 @@ export const MAIL_COPY: Record<Lang, {
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
     doneTitle: "Respondiste a tu supervisora.",
-    doneBody: "Maria recibió tu respuesta y el archivo. En un trabajo real, así se responde a la mayoría de las peticiones de un gerente: una respuesta corta con el archivo adjunto.",
+    doneBody: DONE_COPY["mail-attach"].es.body,
     badgeName: "Responder con un archivo adjunto",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -521,7 +521,7 @@ export const REPLY_ALL_THREAD: {
     to: { en: "to Priya Shah", es: "para Priya Shah" },
     fyi: true,
     body: {
-      en: ["Got it, thanks Priya. We'll wait for the times."],
+      en: ["I understand, thanks Priya. We'll wait for the times."],
       es: ["Enterado, gracias Priya. Esperamos los horarios."],
     },
   },
@@ -986,3 +986,31 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   // to open, but the inbox still isn't empty.
   return decoys;
 }
+
+/** Compose jobs need their own Help, rather than the attachment lesson. */
+export const COMPOSE_LESSONS: Partial<Record<PlayableMailTask, Record<Lang, Lesson>>> = {
+  "mail-etiquette": {
+    en: {
+      t: "A clear work email",
+      s: ["Check that the To line says Darnell.", "Answer his question first: there are extra aprons in the storage room.", "Add where to find them, then a short closing. Use your own words."],
+      tip: "A short, useful answer is enough. You do not need to copy a sentence starter exactly.",
+    },
+    es: {
+      t: "Un correo de trabajo claro",
+      s: ["Revisa que la línea Para diga Darnell.", "Responde primero su pregunta: hay delantales de más en el almacén.", "Agrega dónde encontrarlos y una despedida corta. Usa tus propias palabras."],
+      tip: "Basta con una respuesta breve y útil. No necesitas copiar exactamente una frase de ayuda.",
+    },
+  },
+  "call-out-sick": {
+    en: {
+      t: "Let Maria know you cannot come in",
+      s: ["Check that the To line says Maria.", "Say you are sick and cannot work your shift today.", "Keep it short. You do not need to describe your symptoms."],
+      tip: "This practice uses email. At your workplace, follow its call-out process and notice rules.",
+    },
+    es: {
+      t: "Avísale a Maria que no puedes ir",
+      s: ["Revisa que la línea Para diga Maria.", "Di que estás enfermo y no puedes trabajar tu turno de hoy.", "Sé breve. No necesitas describir tus síntomas."],
+      tip: "Esta práctica usa correo. En tu trabajo, sigue su proceso y sus reglas para avisar de una ausencia.",
+    },
+  },
+};

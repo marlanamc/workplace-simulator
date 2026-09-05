@@ -157,7 +157,7 @@ export const PAYSTUB_COPY: Record<Lang, {
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it. Back to my task",
+    gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {

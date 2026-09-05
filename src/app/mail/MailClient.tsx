@@ -7,6 +7,7 @@ import {
   bodyForTask,
   STARTERS,
   LESSONS,
+  COMPOSE_LESSONS,
   FILES,
   emailsForTask,
   SUBJECT_BY_TASK,
@@ -209,7 +210,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const advance = (n: number) => setStep((s) => (s < n ? n : s));
 
   const lessonIdx = Math.min(step, 4);
-  const lesson = LESSONS[lang][lessonIdx];
+  const lesson = COMPOSE_LESSONS[activeMailTask]?.[lang] ?? LESSONS[lang][lessonIdx];
 
   const openMail = () => {
     setView("read");

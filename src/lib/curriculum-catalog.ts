@@ -231,7 +231,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
           {
             n: "2",
             taskKey: "timeclock",
-            skill: "Clock out and confirm your hours look right",
+            skill: "Clock in and confirm the time looks right",
             app: "Portal",
             tab: "portal",
           },

@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { SCHEDULE, SWAP_OPTIONS, PERSONAL_CALENDAR } from "@/lib/tasks/schedule/content";
+import { SCHEDULE, SWAP_OPTIONS, PERSONAL_CALENDAR, RIGHT_NOW_STEPS, SCHEDULE_COPY } from "@/lib/tasks/schedule/content";
+import { TIMECLOCK } from "@/lib/tasks/timeclock/content";
+import { RIGHT_NOW_STEPS as SWAP_STEPS } from "@/lib/tasks/swap-request/content";
 import { TRACKS, TASK_LOCATIONS, type PortalSection } from "@/lib/tracks-content";
 import { storyMailsFor } from "@/lib/story-beats";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
@@ -14,6 +16,17 @@ import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 const ALL_TASKS = LEVELS.flatMap((l) => taskKeysForLevel(l, null));
 
 describe("the schedule/swap content", () => {
+  it("names the personal calendar on the phone, so learners know what to compare", () => {
+    expect(RIGHT_NOW_STEPS[0].en.toLowerCase()).toContain("phone");
+    expect(RIGHT_NOW_STEPS[0].en.toLowerCase()).toContain("same time");
+    expect(RIGHT_NOW_STEPS[0].es.toLowerCase()).toContain("teléfono");
+    expect(RIGHT_NOW_STEPS[0].es.toLowerCase()).toContain("misma hora");
+    expect(SCHEDULE_COPY.en.phoneLabel.toLowerCase()).toMatch(/personal calendar/);
+    expect(SCHEDULE_COPY.es.phoneLabel.toLowerCase()).toMatch(/calendario personal/);
+    expect(SWAP_STEPS[0].en.toLowerCase()).toContain("phone");
+    expect(SWAP_STEPS[0].es.toLowerCase()).toContain("teléfono");
+  });
+
   it("exactly one shift clashes, and the personal calendar explains why", () => {
     const clashing = SCHEDULE.filter((d) => d.conflict);
     expect(clashing).toHaveLength(1);
@@ -99,5 +112,13 @@ describe("the story chain still connects", () => {
   it("the call-out gets its own reply from Maria", () => {
     const mails = storyMailsFor(ALL_TASKS, {});
     expect(mails.find((m) => m.unlockAfter === "call-out-sick")).toBeDefined();
+  });
+});
+
+describe("payday starts in the morning", () => {
+  it("records a late punch after the learner already arrived", () => {
+    expect(TIMECLOCK.arrivedAt).toBe("7:00 AM");
+    expect(TIMECLOCK.now).toBe("8:15 AM");
+    expect(TIMECLOCK.clockedInAt).toBe("8:15 AM");
   });
 });

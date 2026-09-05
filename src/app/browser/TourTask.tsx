@@ -19,7 +19,7 @@ export default function TourTask({
   onCloseHelp,
   onStartWalkthrough,
 }: {
-  /** True once Mail + Calendar walkthrough is done and Help is next. */
+  /** True once Mail walkthrough is done and Help is next. */
   startAtHelp: boolean;
   /**
    * The spotlight overlay is still stepping. It is already speaking through
@@ -41,7 +41,7 @@ export default function TourTask({
   const [openedHelp, setOpenedHelp] = useState(false);
   if (helpOpen && !openedHelp) setOpenedHelp(true);
 
-  // The walkthrough returns here for the Help beat after Mail + Calendar.
+  // The walkthrough returns here for the Help beat after Mail.
   // Derived rather than synced in an effect; "restart" clears startAtHelp via
   // onStartWalkthrough, so it can still send the learner back to the intro.
   const view: View = startAtHelp && ownView === "intro" ? "help" : ownView;

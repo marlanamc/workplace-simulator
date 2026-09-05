@@ -21,6 +21,9 @@ async function signUp(page: Page, name: string) {
   await page.locator('input[placeholder="••••"]').first().click();
   await page.keyboard.type("1234");
   await page.getByRole("button", { name: /^(Add|Agregar)$/ }).click();
+  await expect(page.getByTestId("simulator-welcome")).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator("[data-job-card]")).toHaveCount(0);
+  await page.getByTestId("welcome-continue").click();
 }
 
 /** Clear whatever celebration modals stack up after a level finishes: the
@@ -85,6 +88,12 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await page.goto("/studio");
   await page.getByRole("button", { name: /Run the Meeting · College/ }).click();
   await page.waitForURL(/from=studio/, { timeout: 20_000 });
+
+  // A Studio jump into an act's first level lands on the full-page act intro.
+  const actIntro = page.getByTestId("act-intro");
+  if (await actIntro.isVisible().catch(() => false)) {
+    await page.getByTestId("act-intro-continue").click();
+  }
   await passCelebration(page);
 
   // The Job Card re-opens itself on every step change and lives in the

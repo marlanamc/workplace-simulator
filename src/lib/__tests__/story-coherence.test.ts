@@ -91,8 +91,8 @@ describe("day numbering", () => {
     const shifts = workdaysInAct(LEVELS[1]).length;
     expect(tourEventIntro("en", "Ana").subheadline).toContain(`${shifts} shifts`);
     expect(tourEventIntro("es", "Ana").subheadline).toContain(`${shifts} turnos`);
-    expect(bodyForTask("mail-reply", "en", "Ana").plain.join(" ")).toContain(`${shifts} shifts on the floor`);
-    expect(bodyForTask("mail-reply", "es", "Ana").plain.join(" ")).toContain(`${shifts} turnos en el piso`);
+    expect(bodyForTask("mail-reply", "en", "Ana").plain.join(" ")).toContain(`${shifts} shifts`);
+    expect(bodyForTask("mail-reply", "es", "Ana").plain.join(" ")).toContain(`${shifts} turnos`);
   });
 });
 

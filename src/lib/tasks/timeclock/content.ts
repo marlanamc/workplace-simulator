@@ -3,27 +3,26 @@ import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "⏰",
-    kicker: "End of shift",
-    headline: "Time to clock out. Check the hours first.",
-    body: "Your shift is done. Before you go home, clock out and make sure the hours match what you worked. A quick look now can save a problem on payday.",
-    cta: "Clock out",
+    kicker: "Morning",
+    headline: "You got here at 7. Clock in, then check the time.",
+    body: "Your shift started at 7:00 AM. It is 8:15 AM now. Clock in, then look at the time the clock recorded.",
+    cta: "Clock in",
   },
   es: {
     emoji: "⏰",
-    kicker: "Fin del turno",
-    headline: "Hora de marcar salida. Revisa las horas primero.",
-    body: "Tu turno terminó. Antes de irte a casa, marca tu salida y asegúrate de que las horas coincidan con lo que trabajaste. Un vistazo rápido ahora te ahorra un dolor de cabeza el día de pago.",
-    cta: "Marcar salida",
+    kicker: "Por la mañana",
+    headline: "Llegaste a las 7. Marca tu entrada y revisa la hora.",
+    body: "Tu turno empezó a las 7:00 AM. Ahora son las 8:15 AM. Marca tu entrada y mira la hora que registró el reloj.",
+    cta: "Marcar entrada",
   },
 };
 
 export const TIMECLOCK = {
   scheduledStart: "7:00 AM",
   scheduledEnd: "3:00 PM",
-  scheduledHours: "8h 00m",
-  clockedInAt: "8:02 AM",
-  clockedOutAt: "3:00 PM",
-  todayTotal: "6h 58m",
+  arrivedAt: "7:00 AM",
+  now: "8:15 AM",
+  clockedInAt: "8:15 AM",
   weekHours: "24h 30m this week",
   recent: [
     { date: "Mon, Aug 18", in: "6:58 AM", out: "3:04 PM", total: "8h 06m" },
@@ -36,11 +35,13 @@ export const TIMECLOCK_COPY: Record<Lang, {
   heading: string;
   helpBtn: string;
   langBtn: string;
+  notClockedInStatus: string;
+  nowLabel: string;
+  clockIn: string;
   clockedInStatus: string;
   sinceLabel: string;
-  clockOut: string;
-  clockedOutStatus: string;
-  todayTotalLabel: string;
+  arrivedLabel: string;
+  punchLabel: string;
   scheduledLabel: string;
   reviewQuestion: string;
   looksRight: string;
@@ -69,11 +70,13 @@ export const TIMECLOCK_COPY: Record<Lang, {
     heading: "Time Clock",
     helpBtn: "Help me with this step",
     langBtn: "Español",
+    notClockedInStatus: "Not clocked in",
+    nowLabel: "Now",
+    clockIn: "Clock In",
     clockedInStatus: "Clocked in",
     sinceLabel: "Since",
-    clockOut: "Clock Out",
-    clockedOutStatus: "Clocked out",
-    todayTotalLabel: "Today's total",
+    arrivedLabel: "You arrived",
+    punchLabel: "Clock-in time",
     scheduledLabel: "Your scheduled shift",
     reviewQuestion: "Does this look right?",
     looksRight: "Looks right",
@@ -81,32 +84,34 @@ export const TIMECLOCK_COPY: Record<Lang, {
     recentHeading: "Recent shifts",
     to: "To",
     subjectLabel: "Subject",
-    subject: "My hours today look short",
+    subject: "I forgot to clock in at 7",
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
     discard: "Discard",
     sentKicker: "Message sent",
-    doneTitle: "You caught a mismatch and said something.",
-    doneBody: "Your total did not match your scheduled shift, so you told Maria. That is the right move before payday.",
+    doneTitle: "You caught a late punch and said something.",
+    doneBody: "You got here at 7:00 AM, but the clock said 8:15 AM, so you told Maria. That is the right move before payday.",
     badgeName: "Check your hours and speak up",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
-    gotIt: "Got it. Back to my task",
+    gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
     heading: "Reloj de tiempo",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
+    notClockedInStatus: "Sin marcar entrada",
+    nowLabel: "Ahora",
+    clockIn: "Marcar entrada",
     clockedInStatus: "Turno iniciado",
     sinceLabel: "Desde",
-    clockOut: "Marcar salida",
-    clockedOutStatus: "Turno terminado",
-    todayTotalLabel: "Total de hoy",
+    arrivedLabel: "Llegaste",
+    punchLabel: "Hora de entrada",
     scheduledLabel: "Tu turno programado",
     reviewQuestion: "¿Esto se ve correcto?",
     looksRight: "Se ve bien",
@@ -114,14 +119,14 @@ export const TIMECLOCK_COPY: Record<Lang, {
     recentHeading: "Turnos recientes",
     to: "Para",
     subjectLabel: "Asunto",
-    subject: "Mis horas de hoy parecen menos de lo esperado",
+    subject: "Olvidé marcar entrada a las 7",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
     discard: "Descartar",
     sentKicker: "Mensaje enviado",
-    doneTitle: "Notaste un error y lo dijiste.",
-    doneBody: "Tu total no coincidía con tu turno programado, así que se lo dijiste a Maria en vez de dejarlo pasar. Eso es lo que hay que hacer antes de que afecte un pago.",
+    doneTitle: "Notaste un registro tarde y lo dijiste.",
+    doneBody: "Llegaste a las 7:00 AM, pero el reloj decía 8:15 AM, así que se lo dijiste a Maria. Eso es lo que hay que hacer antes del día de pago.",
     badgeName: "Revisar tus horas y avisar",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -134,21 +139,21 @@ export const TIMECLOCK_COPY: Record<Lang, {
 };
 
 export const WRONG_LOOKS_RIGHT_HINT: Record<Lang, string> = {
-  en: "Look again. You clocked in later than your start time, so today's total is short. What would you ask your supervisor?",
-  es: "Mira otra vez. Marcaste tu entrada más tarde que tu hora programada, así que el total de hoy es menor. ¿Qué querrías revisar con tu supervisor?",
+  en: "Look again. You got here at 7:00 AM, but the clock says 8:15 AM. What would you tell your supervisor?",
+  es: "Mira otra vez. Llegaste a las 7:00 AM, pero el reloj dice 8:15 AM. ¿Qué le dirías a tu supervisor?",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Maria, my hours today look short.",
-    "I clocked in at 8:02 AM instead of 7:00 AM.",
-    "Can you check that this is recorded correctly?",
+    "Hi Maria, I forgot to clock in when I arrived.",
+    "I got here at 7:00 AM, but I clocked in at 8:15 AM.",
+    "Can you change my start time to 7:00 AM?",
     "Let me know if you need anything else. Thank you.",
   ],
   es: [
-    "Hola Maria, mis horas de hoy parecen menos de lo esperado.",
-    "Marqué mi entrada a las 8:02 AM en vez de las 7:00 AM.",
-    "¿Puedes revisar que esto esté registrado correctamente?",
+    "Hola Maria, olvidé marcar entrada cuando llegué.",
+    "Llegué a las 7:00 AM, pero marqué entrada a las 8:15 AM.",
+    "¿Puedes cambiar mi hora de entrada a las 7:00 AM?",
     "Avísame si necesitas algo más. Gracias.",
   ],
 };
@@ -156,40 +161,40 @@ export const STARTERS: Record<Lang, string[]> = {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "Clocking out",
+      t: "Clocking in",
       s: [
-        "Click Clock Out at the very end of your shift, not before.",
-        "Once you clock out, the app shows your total hours for today.",
-        "Compare that total to the shift you were scheduled for.",
+        "Click Clock In when you arrive, at the start of your shift.",
+        "After you clock in, the app shows the time it recorded.",
+        "Compare that time to when you actually got here.",
       ],
       tip: "Do this every shift. It only takes a second, and it is the way to catch a mistake early.",
     },
     {
-      t: "When the hours don't match",
+      t: "When the time doesn't match",
       s: [
-        "Say what you noticed. Say the total, and what you expected.",
-        "You don't need to know why it's wrong. That's your supervisor's job to figure out.",
-        "Send it the same day, while it's easy to check.",
+        "Say what you noticed. Say when you arrived, and what the clock shows.",
+        "You don't need to know how to fix it. That's your supervisor's job.",
+        "Send it the same morning, while it's easy to check.",
       ],
       tip: "Catching this before payday is much easier to fix than after.",
     },
   ],
   es: [
     {
-      t: "Marcar salida",
+      t: "Marcar entrada",
       s: [
-        "Haz clic en Marcar salida solo al final de tu turno.",
-        "Cuando marcas salida, la app muestra tu total de horas de hoy.",
-        "Compara ese total con el turno que tenías programado.",
+        "Haz clic en Marcar entrada cuando llegues, al empezar tu turno.",
+        "Cuando marcas entrada, la app muestra la hora que registró.",
+        "Compara esa hora con la hora en que de verdad llegaste.",
       ],
       tip: "Hazlo cada turno. Toma un segundo, y es la forma de notar un error a tiempo.",
     },
     {
-      t: "Cuando las horas no coinciden",
+      t: "Cuando la hora no coincide",
       s: [
-        "Di qué notaste. Di el total, y lo que esperabas.",
-        "No necesitas saber por qué está mal. Eso lo resuelve tu supervisor.",
-        "Envíalo el mismo día, mientras es fácil de revisar.",
+        "Di qué notaste. Di a qué hora llegaste, y lo que muestra el reloj.",
+        "No necesitas saber cómo arreglarlo. Eso lo resuelve tu supervisor.",
+        "Envíalo esa misma mañana, mientras es fácil de revisar.",
       ],
       tip: "Notarlo antes del día de pago es mucho más fácil de arreglar que después.",
     },
@@ -200,15 +205,15 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Clock out to end your shift.",
-    es: "Marca tu salida para terminar el turno.",
+    en: "You got here at 7. Clock in for your shift.",
+    es: "Llegaste a las 7. Marca tu entrada para el turno.",
   },
   {
-    en: "Check the hours against what you actually worked.",
-    es: "Revisa las horas contra lo que de verdad trabajaste.",
+    en: "Check the clock-in time against when you arrived.",
+    es: "Compara la hora de entrada con la hora en que llegaste.",
   },
   {
-    en: "Message Maria about the hours that don't match.",
-    es: "Escríbele a Maria sobre las horas que no coinciden.",
+    en: "Tell Maria you forgot to clock in at 7.",
+    es: "Dile a Maria que olvidaste marcar entrada a las 7.",
   },
 ];

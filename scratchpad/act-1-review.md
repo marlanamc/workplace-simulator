@@ -1,29 +1,41 @@
 # Act I: New Hire — Review
 
-Dev server running at [http://localhost:3000](http://localhost:3000). Play alongside this and drop notes in **Marlana's feedback**.
+Updated 2026-09-05 against the current source. This is a code/content review, not a new live playtest; earlier live-verification notes below are historical. Drop playtest notes in **Marlana's feedback**.
+
+**Updated opinion:** Level 0 is stronger now. Introducing the Job Card on the desktop, then using it to open the browser, teaches the actual navigation loop. Keep the four-step browser tour. The next priority is making sure learners can recover after shrinking the card and reach their first real email without confusion—not adding more introductory content.
+
+**Implementation follow-up (2026-09-05):** Act I changes and remaining playtest questions are tracked in [codex_revisions.md](codex_revisions.md). Findings below describe the review baseline; the revision log records what has since been addressed.
+
+**Scope:** This file covers Acts I–II. The current map has 13 levels: Act I is L0, L1, L2, L3, L3a, L3a2; Act II is L3b, L3c, L4–L8. The numbered task reviews are retained for continuity; the level-by-level sections at the end cover every current level, including tasks missing from the original review. Source of truth: `src/lib/tracks-content.ts` (`ACTS`, `LEVELS`, `TRACKS`).
 
 ---
 
 ## 1. L0 — How This Works
 
-**Task:** tour — find bookmarks, Mail, Calendar, and the ? help
+**Task:** tour — desktop Job Card introduction, then bookmarks → Mail → work-email explanation → Help; a task-list introduction follows at the start of L1.
 
 ### What's working
 
-- Genuinely minimal: 6 steps, mostly single clicks
-- Teaches the *interface* first (bookmarks instead of a URL bar, the help `?`) before any task-logic — right order for someone who's never used a browser-like UI
-- "You cannot break anything" in the welcome copy is a nice anxiety-reducer
+- The desktop comes first. The learner meets one instruction surface and uses its button to open the browser; this teaches the same loop later jobs use (`DesktopClient.tsx`, `job-card-content.ts`).
+- The browser walkthrough is four steps in both languages. Calendar is removed, so everything introduced has an immediate use (`tasks/tour/content.ts`).
+- Ringing the whole bookmarks row before narrowing to Mail gives the word “bookmarks” a visible referent. That fixes the old abstract “show me” beat.
+- Shrinking the card requires a real arrow click. Opening Mail and Help also require interaction; the tour includes practice rather than only acknowledgments.
+- “You cannot break anything” remains useful reassurance. The Help lesson now uses clearer wording about this card and shrinking it.
 
 ### Concerns / could be better
 
-- Tour points at Mail and Calendar, but Act I's first task is Mail only
-- Calendar doesn't get used until Act II (level 4)
-- Tour spends a step on a bookmark the learner won't touch again for 3 levels — minor risk they forget it means anything by then
+- Four steps describes only the browser walkthrough. There are also three desktop introduction beats, the Help close/finish transition, and the L1 task-list introduction. Judge the complete onboarding by how easily someone reaches Maria's email, not the walkthrough count.
+- Dragging is described but not required. That is reasonable for pacing, but clicking “Got it” does not demonstrate the learner can move an obstructing card.
+- “Tap the ? ... if you get lost” sounds optional even though clicking it is required to advance this tour step. Make the practice instruction direct: “Tap the ? to try Help.” Keep the reassurance in the lesson, in both languages.
+- The final Help step returns from Mail to the tour tab. Closing Help, finishing, and meeting the task list introduce several transitions before the first real job; check whether learners understand where they landed.
+- The English and Spanish `TOUR_COPY.doneBody` differ materially: English says to return to the desktop; Spanish still lists the white desktop button, briefcase, and blue next button. These are not equivalent instructions.
+- `e2e/first-session.spec.ts` still expects the old first-step wording and the removed Calendar beats. This is a confirmed stale test, not evidence that the current walkthrough fails for learners. The historical verification notes below do not establish that today's e2e suite passes.
 
 ### Suggested change
 
-- Cut the Calendar step from the tour, **or** move it later (e.g. a 1-step "remember Calendar?" beat right before level 4 opens it for real)
-- Keep the tour tightly matched to what's used in the next hour of play
+- Keep the current sequence and the Calendar introduction at its point of use.
+- Prioritize updating the stale e2e expectations and aligning the bilingual completion copy; then make the required Help action explicit.
+- Playtest the full desktop → tour → Help → first-email handoff, including shrinking/restoring the card, small screens, and Spanish. Keep every recovery instruction in the Job Card.
 
 ### Fixed (2026-09-04)
 
@@ -94,7 +106,7 @@ Dev server running at [http://localhost:3000](http://localhost:3000). Play along
 
 ---
 
-## 4. L2 — Settling In
+## 4. L2 — The First Week
 
 **Task:** schedule — spot the shift that conflicts with a personal calendar event, request the correct swap
 
@@ -113,7 +125,7 @@ Dev server running at [http://localhost:3000](http://localhost:3000). Play along
 ### Suggested change
 
 - Keep it unflagged on first attempt (that's the actual skill)
-- Add a "stuck" escalation: if they open the swap picker and choose wrong twice, the RightNowBar hint gets more explicit (e.g. "Look at Thursday specifically")
+- Add a "stuck" escalation: if they open the swap picker and choose wrong twice, the Job Card hint gets more explicit (e.g. "Look at Thursday specifically")
 - Preserves the challenge while giving low-confidence learners a way out instead of a wall
 
 ### Marlana's feedback
@@ -121,7 +133,7 @@ Dev server running at [http://localhost:3000](http://localhost:3000). Play along
 
 ---
 
-## 5. L2 — Settling In
+## 5. L3 — Payday
 
 **Task:** timeclock — clock out, notice hours are short (8:02 start vs 7:00 scheduled), message supervisor
 
@@ -133,23 +145,19 @@ Dev server running at [http://localhost:3000](http://localhost:3000). Play along
 
 ### Concerns / could be better
 
-- Only one path is graded (send the "something's off" message)
-- "Looks right" as a wrong answer isn't explored — unclear what happens if a learner clicks it
-- Does it just re-show the question, or is there no wrong-hint at all (unlike the others, which have explicit wrongHint copy)?
-- Worth checking live
+- Resolved in source: the “Looks right” button calls `looksRight()`, which sends `WRONG_LOOKS_RIGHT_HINT[lang]` through the existing feedback path (`TimeclockTask.tsx`). It is not a silent wrong answer.
+- The remaining question is whether the learner understands the start-time discrepancy after reading that correction.
 
 ### Suggested change
 
-- Verify live first
-- If "Looks right" has no wrongHint, add one (`WRONG_LOOKS_RIGHT_HINT` already exists in the file — confirm it's actually wired to that button)
-- Every other task in Act I gives a specific wrong-answer hint; this one should match
+- No new wrong-answer handler needed. During playtesting, deliberately choose “Looks right” and check that the correction is visible and understandable in the Job Card.
 
 ### Marlana's feedback
 
 
 ---
 
-## 6. L2 — Settling In
+## 6. L3 — Payday
 
 **Task:** paystub — open Alex Chen's stub (not Sam's/Priya's), read gross vs. net, confirm hours
 
@@ -161,49 +169,43 @@ Dev server running at [http://localhost:3000](http://localhost:3000). Play along
 
 ### Concerns / could be better
 
-- Densest task in Act I: 3 sub-steps (open right stub → net pay question → hours question)
-- Plus new vocab (gross, net, deductions, overtime) in a level that's otherwise 1-step tasks
-- Might be the actual difficulty spike of Act I — more than the schedule task
+- Still a likely difficulty spike: selecting the person, reading the stub, and answering two questions combines navigation, vocabulary, and numeracy.
+- Correction to the old review: the Help lessons already explain gross pay, net pay, and deductions, and the net-pay step defines it as the amount reaching the bank. The issue is whether learners notice/use the available explanation, not missing vocabulary content.
 
 ### Suggested change
 
-- Don't cut content
-- Consider whether the vocab (gross / net / deductions) gets its own beat in the 2-minute lesson *before* the questions, rather than only inside the wrong-answer hints
-- Right now a learner who guesses right on both questions never sees the words explained
+- Keep the content. Watch whether learners can explain their net-pay answer; if they guess, use a brief Job Card prompt or existing Help lesson rather than adding another instruction surface.
 
 ### Marlana's feedback
 
 
 ---
 
-## 7. L3 — When Something Happens
+## 7. L3b — When Something Happens (Act II)
 
 **Task:** incident — write up a customer slip in order, submit to shift lead
 
 ### What's working
 
 - Open-ended writing task with real scaffolding (sentence starters covering what / injury / action-taken / notification) rather than multiple choice
-- Good variety after 5 straight click-and-pick tasks
+- Good variety alongside the earlier email writing and numeric tasks
 - Framing ("no one right way to say it, clear and in order is what matters") removes perfectionism pressure
 
 ### Concerns / could be better
 
-- Teacher-graded, not app-graded — no pass/fail check in the code; it just submits
-- Fine pedagogically, but worth confirming the UI actually tells the learner "this goes to your teacher"
-- Risk: they think they passed or failed a task the app never checked
+- The component checks nonempty time/place and at least 15 characters of narrative, then marks the task complete. It does not assess chronology or factual completeness (`IncidentTask.tsx`).
+- The old “teacher-graded” claim was too strong: this submit handler does not send the written report to a teacher. Completion copy nevertheless says the lead has what happened “in order.” A completion badge is stronger evidence than the check supports.
 
 ### Suggested change
 
-- Verify live
-- If the done-screen doesn't already say something like "your teacher will read this," add one line making that explicit
-- Badge/checkmark language elsewhere reads like a pass, so this task needs to visibly break that pattern
+- Distinguish “submitted/completed the practice” from “the report is accurate.” Do not promise teacher review unless a real submission/review path exists. Check that learners include what happened and what they did, without forcing one exact phrasing.
 
 ### Marlana's feedback
 
 
 ---
 
-## 8. L3 — When Something Happens
+## 8. L3b — When Something Happens (Act II)
 
 **Task:** handbook — look up sick-call-out policy under a "Jordan needs an answer now" prompt
 
@@ -227,22 +229,20 @@ Dev server running at [http://localhost:3000](http://localhost:3000). Play along
 ---
 
 > [!note] Cross-cutting pattern
-> - Every Act I task ends on a "done" screen with a *why this mattered* sentence
+> - The original eight task reviews share a "done" screen with a *why this mattered* sentence
 > - Example: "Catching that yourself... is what keeps a clash from turning into a missed shift"
-> - Consistently bilingual, consistently short
+> - Generally short and bilingual; L0 completion copy needs alignment between languages
 > - Worth naming: it's the connective tissue across all 8 — quiet spaced-repetition of the *reason*, not just the mechanic
 
-> [!question] Biggest open question
-> - Tasks 4–6 (schedule, timeclock, paystub) all withhold a visual "something's wrong here" cue
-> - Learner has to notice a mismatch unaided
-> - Consistent design — but that's 3 tasks in a row with no highlighting
-> - Right amount of difficulty stacking for Level 2, or should at least one of the three have a lighter touch?
+> [!question] Updated pacing question
+> - Schedule is now L2; timeclock, paystub, and shift-review form L3. The original “three tasks in Level 2” concern no longer describes the level map.
+> - Payday still combines discrepancy checking, pay vocabulary, and recall. Watch whether shift-review shows understanding or only recognition of the correct option.
 
 ---
 
 # Act II: Shift Lead — Review
 
-Same cast, new job title. Act II hands over lead tools: Calendar, Drive, Sheets. 5 levels, 7 tasks.
+Same cast, new job title. Current Act II has 7 levels and 10 tasks: incident/handbook (L3b, reviewed above), account recovery (L3c), then Calendar, Drive, and Sheets (L4–L8).
 
 ---
 
@@ -262,7 +262,7 @@ Same cast, new job title. Act II hands over lead tools: Calendar, Drive, Sheets.
   - Act I schedule
   - Act I timeclock hours-check
   - Now this
-- Repetition is good for retention, but by level 9 it may read as same puzzle, new skin rather than a new challenge
+- Repetition is good for retention, but at this review's task 9 it may read as same puzzle, new skin rather than a new challenge
 - Worth deciding if that's intentional scaffolding or just needs a genuinely new wrinkle
 
 ### Suggested change
@@ -292,15 +292,11 @@ Same cast, new job title. Act II hands over lead tools: Calendar, Drive, Sheets.
 
 ### Concerns / could be better
 
-- None significant on the base version
-- Rename convention is typed free-text with no visible format example on-screen at time of typing
-- Hint text has it — worth confirming during play that it's visible, not buried behind a help tap
+- Resolved in source: `FilesTask.tsx` renders `c.renameHint` immediately above the rename input. The format example is already available while typing. Visual readability still needs a playtest.
 
 ### Suggested change
 
-- Verify live that `renameHint` ("Format: schedule-week-of-aug-24") is visible on-screen while typing, not just reachable via help
-- If it's only in help, surface it as inline placeholder / subtext by default
-- This is exactly the kind of format-recall task where an example should never be hidden
+- Keep the inline example. Test whether learners distinguish finding the correct file from renaming it, then understand why Jordan gets view-only access.
 
 ### Marlana's feedback
 
@@ -344,18 +340,13 @@ Same cast, new job title. Act II hands over lead tools: Calendar, Drive, Sheets.
 
 ### Concerns / could be better
 
-- Lesson text says "flag one that's wrong" (per the catalog's skill description)
-- No row in `TIP_ROWS` marked as intentionally wrong, nor a decoy slip
-- Actual content only has the learner transcribe 5 correct numbers
-- Worth checking live whether a "spot the error" step exists in the UI that isn't in this content file
-- As read, the catalog's stated skill ("flag one that's wrong") doesn't match what the data supports
+- Confirmed source mismatch: `curriculum-catalog.ts` says “flag one that's wrong,” but the component checks the learner's transcription against five supplied amounts. There is no deliberate bad-source-slip step in the current flow.
+- More consequential: `SpreadsheetTask.tsx` only checks that the email body is nonempty. A learner can omit or misstate the total and still complete the job.
 
 ### Suggested change
 
-- Verify live first — could be a stale catalog description rather than a missing feature
-- If confirmed missing, either:
-  - Add one intentionally-wrong tip slip that should NOT be transcribed as-is (mirrors the paystub task's "which stub" pattern), **or**
-  - Fix `curriculum-catalog.ts`'s skill text to drop "flag one that's wrong" so the description matches what's actually taught
+- Align the catalog description with the current data-entry skill; do not add another puzzle just to satisfy stale copy.
+- Add a forgiving check that the message reports the correct total, following the existing status-report pattern. Accept natural wording in both languages and explain a missing or incorrect total through the Job Card.
 
 ### Marlana's feedback
 
@@ -394,19 +385,16 @@ Same cast, new job title. Act II hands over lead tools: Calendar, Drive, Sheets.
 - First task that has the learner actually *author* a formula rather than just read one
 - Appropriately sequenced right after make-a-copy, so the "this is your editable copy" context is fresh
 - Cc vs. To vs. Reply-all distinction gets its own explicit lesson line — worth doing, common real confusion
-- Teacher-graded (free-text formula + free-text email), consistent with the "authored content" pattern from Act I's incident report
+- App checks the SUM formula, Cc recipient, and whether the email mentions the total (`StatusReportTask.tsx`); this is more validation than the original review credited
 
 ### Concerns / could be better
 
-- `CC_PICKS` includes Alex and Sam as wrong cc options with `ok: false`
-- No wrongHint surfaced anywhere in this content file for picking them
-- Worth checking in the live UI whether choosing the wrong cc gives feedback or just silently fails to complete the task
+- Resolved in source: wrong Cc selections call `say(HINTS[lang].cc)` immediately, and sending also checks the Cc address. This is not a silent failure.
+- Passing those checks demonstrates the required mechanics, not the quality of the entire written report. Avoid describing it as teacher-graded without evidence of teacher review.
 
 ### Suggested change
 
-- Verify live
-- If wrong cc picks silently fail rather than explaining why, add a short hint ("Alex doesn't need this number — Jordan is the co-lead who does")
-- Cc lesson should have the same wrong-answer teaching pattern as every other multiple-choice moment in the game
+- Keep the current wrong-Cc feedback. Focus playtesting on valid SUM variants, understanding the selected range, and including the total in a meaningful message.
 
 ### Marlana's feedback
 
@@ -438,10 +426,95 @@ Same cast, new job title. Act II hands over lead tools: Calendar, Drive, Sheets.
 
 ---
 
-> [!note] Act II cross-cutting notes
-> - Acts I and II share the same "done screen names why it mattered" pattern — consistency holds up
-> - Task 9 (calendar) risks feeling repetitive coming right after Act I's 3 unaided-noticing tasks (schedule / timeclock / paystub) — that's now 4 tasks in a row testing "compare two lists / notice a mismatch"
-> - Task 10 (files) is where the difficulty actually escalates with new sub-skills, so the ordering front-loads sameness before the real step-up
-> - Two spots to verify live rather than just from source:
->   - Task 12's "flag one that's wrong" (spreadsheet) skill description doesn't seem to match the data
->   - Task 14's wrong-cc options (`CC_PICKS`) don't show an obvious wrongHint path in this file
+> [!note] Updated Act II cross-cutting notes
+> - Calendar is a reasonable transfer task: a familiar comparison in a new tool. It does not directly follow three mismatch tasks; email etiquette, sick-call practice, incident/handbook, and account recovery intervene.
+> - The larger difficulty changes are the three-part files task and authoring a formula/report. Give those more playtest attention than the repetition alone.
+> - Source resolves the old rename-example and wrong-Cc questions. The spreadsheet catalog still promises “flag one that's wrong,” while the implementation checks transcription rather than a deliberately incorrect source slip.
+
+---
+
+# Things that can go wrong — every current level in Acts I–II
+
+These are learner mistakes and product risks to test, not a claim that every risk is a reproduced bug. Each section names the recovery or observation worth checking. Keep coaching in the Job Card. Level keys match `tracks-content.ts`; lettered levels are intentional.
+
+## L0 — How this works
+
+- **Losing the instruction:** after shrinking the card, a learner may not know how to restore it or may mistake a locked shelf control for a broken app. Check recovery before adding more tour content.
+- **Following the ring without understanding:** a learner can click Mail but still not know bookmarks open apps. Ask them to find Mail again after the tour.
+- **Stopping at Help:** the conditional wording can make a required click sound optional; returning to the tour tab can look like going backward. Check the Help close/finish handoff.
+- **Regression risk:** stale e2e Calendar expectations and mismatched English/Spanish completion text are confirmed source issues. Update both before relying on this as a verified onboarding flow.
+
+## L1 — Day One (`mail-reply`, `mail-attach`)
+
+- **Wrong message or action:** learners may open a decoy, compose a new email, or Forward instead of Reply. Check that the correction names the intended sender/action and preserves their ability to retry.
+- **Incomplete attachment workflow:** a learner may pass the comprehension question but select June instead of July, pick a photo, or send without the file. Verify the attachment can be inspected and corrected.
+- **Scaffold dependence:** clicking a sentence starter can look like composing a response without understanding it. Ask what the reply says and which file Maria requested.
+
+## L2 — The First Week (`schedule`)
+
+- **Comparing only dates:** a learner can pick the right day but the wrong time, or confuse a personal appointment with the work shift. Keep the initial comparison unflagged; use increasingly specific Job Card help when stuck.
+- **Repeated guessing:** if a learner cycles through swap options, eventual success is weak evidence of understanding. Ask them to point to the two conflicting entries.
+- **Losing context in the picker:** check that they can return to the schedule without losing their place and that both lists remain readable on a small screen.
+
+## L3 — Payday (`timeclock`, `paystub`, `shift-review`)
+
+- **Trusting the recorded hours:** “Looks right” may be chosen because the clock generated the number. The correction is wired; check whether it helps the learner find the 8:02 versus 7:00 discrepancy.
+- **Reading the wrong number/person:** Sam's stub, gross pay, and regular-only hours are plausible mistakes. Confirm wrong answers lead back to the relevant label rather than repeated guessing.
+- **Vocabulary overload:** net/gross/deductions explanations exist in Help. Check that learners can use them while keeping their place in the paystub task.
+- **Recall mistaken for performance:** shift-review is three choice questions, not another real clock-out or paystub operation. It is useful retrieval practice; it does not by itself demonstrate independent tool use.
+
+## L3a — One More Thing (`mail-etiquette`)
+
+- **Writing without a clear request:** the learner may include a greeting and closing but omit the purpose, or address the wrong person. Test whether the task rewards a useful message rather than just recognizable email parts.
+- **Rejecting a valid voice:** concise or differently phrased English/Spanish can still be professional. Include natural alternate answers when checking grading behavior.
+- **Copying without transfer:** starters are helpful, but ask the learner to explain who the message is for and what they need from that person.
+
+## L3a2 — The Sick Call (`call-out-sick`)
+
+- **Missing the essential notice:** a learner may say they are sick without clearly saying they cannot attend today's shift, or write to a coworker instead of Maria. Check recovery for each omission.
+- **Assuming email guarantees notice:** this scenario practices contacting Maria before the shift; avoid implying that the same channel or notice rule applies at every workplace.
+- **Too much personal detail:** learners may think a good message requires a detailed medical explanation. Review whether the scaffolding supports a short, relevant absence message.
+
+## L3b — When Something Happens (`incident`, `handbook`) — Act II
+
+- **Completion mistaken for quality:** the incident check accepts a sufficiently long narrative without checking order or facts. The current done copy can overstate what was demonstrated; do not promise teacher review without a real review path.
+- **Guessing policy numbers:** a learner may choose a break-length number instead of the callout window. Ask them to show the policy passage supporting their answer.
+- **Reading pressure:** the urgent scenario may encourage guessing or make learners rush the report. Check that Help and corrections let them slow down without implying failure.
+
+## L3c — Locked Out (`account-recovery`)
+
+- **Mixing up credentials:** learners may confuse their classroom PIN, the simulated work password, and the six-digit verification code. Check that the current step makes the distinction clear.
+- **Picking the wrong text:** the ad and coworker's message are intentional distractors. A successful retry should come from recognizing the sender and code, not memorizing the option position.
+- **Poor transfer from a fixed code:** the simulation uses a fixed code. Check whether learners understand finding the code in the message rather than remembering these six digits.
+
+## L4 — The Calendar (`calendar`)
+
+- **Accepting before checking availability:** learners may see an invitation as an instruction they must accept. Ask them to compare the invite with their day off before choosing a response.
+- **Confusing a proposal with acceptance:** check whether they understand what proposing a new time communicates.
+- **Unexplained spotlight:** the Calendar ring has no rendered reminder text in this flow. Since L0 no longer introduces Calendar, treat this as its first introduction, not a memory test; check whether the Job Card goal gives enough context.
+
+## L5 — Shared Files (`files`, `mail-send-link`)
+
+- **Correct-looking wrong file:** draft/copy/next-week names can be confused. Verify learners inspect date/version before renaming, especially in messy mode.
+- **Format versus intent:** the rename example is visible and normalization is forgiving. Check natural spacing/case variations and whether the learner understands why a shared convention helps.
+- **Too much access:** choosing edit instead of view is the consequential sharing error. Ask why Jordan only needs view access.
+- **Link and access treated as the same thing:** learners can describe a link without understanding that the recipient also needs permission. Ask them to explain both steps after sending the message.
+
+## L6 — The Numbers (`spreadsheet`)
+
+- **Plausible wrong total:** a misplaced decimal or wrong row can still produce a realistic sum. The entry check catches mismatches; check whether its feedback helps locate the error.
+- **Unsupported catalog promise:** no deliberate bad source slip is present in this flow. Align “flag one that's wrong” with transcription checking, or deliberately design that additional skill.
+- **Sending without reporting the total:** confirmed in `SpreadsheetTask.tsx`: `trySend()` only requires a nonempty body. A message that omits or misstates the total can complete the task. This is a stronger concern than the catalog wording because reporting the number is part of the stated job.
+
+## L7 — Reporting In (`make-a-copy`, `status-report`)
+
+- **Editing the template:** learners may try typing, sharing, or downloading instead of making a copy. Verify the wrong-path hints help them understand why a copy is needed.
+- **Formula syntax without range understanding:** a learner can copy SUM without understanding which cells it adds. Check their explanation of the range as well as the accepted formula.
+- **Wrong audience or missing number:** wrong Cc feedback is wired, and sending checks Cc and the total. Exercise these paths with readable alternate messages in both languages.
+- **Assuming full assessment:** these checks validate particular requirements, not every claim in the report. Keep completion language proportional to what is checked.
+
+## L8 — Covering More Ground (`triage`)
+
+- **Forgetting the second job:** the learner may finish the calendar request and assume the whole task is done. Check that the Job Card preserves the remaining obligation.
+- **Losing progress while switching:** test both orders and switching midway through a request, not just completing each in one sitting.
+- **Searching for a hidden preferred order:** the content permits either order. Verify progress and completion really support both, and ask learners how they knew both requests were finished.

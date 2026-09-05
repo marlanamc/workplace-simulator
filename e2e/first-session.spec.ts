@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 /**
  * The golden path a brand-new learner walks in their first minutes:
- * sign up → the tour opens by itself → follow the walkthrough → finish
+ * sign up → open the tour from the Job Card → follow the walkthrough → finish
  * Level 0 → the next job (Mail) is one blue button away.
  *
  * Each run signs up a fresh throwaway learner (unique name, test class
@@ -18,8 +18,8 @@ function jobCard(page: Page) {
 
 /**
  * A brand-new learner lands on the desktop and meets the Job Card first.
- * Three beats: welcome, drag, then shrink. The last one advances when
- * they actually tap the arrow.
+ * Three beats: welcome, drag, then shrink. Moving to another corner and
+ * tapping the collapse arrow advance the two practice beats.
  */
 async function clearIntroBeats(page: Page, firstName: string) {
   const card = jobCard(page);
@@ -27,13 +27,33 @@ async function clearIntroBeats(page: Page, firstName: string) {
     timeout: 20_000,
   });
   await card.getByRole("button", { name: "OK", exact: true }).click();
-  await expect(card.getByText("Drag it if it is in the way.", { exact: false })).toBeVisible();
-  await card.getByRole("button", { name: "Got it" }).click();
+  await expect(card.getByText("Drag this card to another corner.")).toBeVisible();
+  await expect(card.getByRole("button", { name: "I understand", exact: true })).toHaveCount(0);
+  const handle = card.getByTestId("job-card-drag-handle");
+  const box = await handle.boundingBox();
+  if (!box) throw new Error("Job Card drag handle is not visible");
+  // A click and a short drag within the same corner must not skip practice.
+  const x = box.x + 35;
+  const y = box.y + box.height / 2;
+  await page.mouse.click(x, y);
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + 15, y - 15, { steps: 3 });
+  await page.mouse.up();
+  await expect(card.getByText("Drag this card to another corner.")).toBeVisible();
+  await expect(card).toHaveAttribute("data-corner", "bl");
+  const current = await handle.boundingBox();
+  if (!current) throw new Error("Job Card drag handle is not visible");
+  await page.mouse.move(current.x + 35, current.y + current.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(current.x + 35, 50, { steps: 12 });
+  await page.mouse.up();
+  await expect(card).toHaveAttribute("data-corner", "tl");
   await expect(card.getByText("Tap the arrow to shrink it.")).toBeVisible();
   await card.getByTestId("job-card-collapse").click();
 }
 
-async function signUp(page: Page, name: string) {
+async function signUp(page: Page, name: string, enterDesktop = true) {
   await page.goto("/login");
   // The lock screen shows a user picker first; new learners go through Add user.
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
@@ -43,6 +63,9 @@ async function signUp(page: Page, name: string) {
   await page.locator('input[placeholder="••••"]').first().click();
   await page.keyboard.type("1234");
   await page.getByRole("button", { name: /^(Add|Agregar)$/ }).click();
+  await expect(page.getByTestId("simulator-welcome")).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator("[data-job-card]")).toHaveCount(0);
+  if (enterDesktop) await page.getByTestId("welcome-continue").click();
 }
 
 test("first session: sign up, finish the walkthrough, see the next job", async ({ page }) => {
@@ -64,8 +87,8 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 
   // First a look beat: the address bar and back arrow are display-only here;
   // you navigate with the bookmarks.
-  await expect(page.getByText("you get around with the bookmarks", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Show me the bookmarks" }).click();
+  await expect(page.getByText("These are your bookmarks.", { exact: false })).toBeVisible();
+  await page.getByRole("button", { name: "Show me", exact: true }).click();
 
   // One instruction at a time; it advances only on the real click.
   await expect(page.getByText("Click Mail.")).toBeVisible();
@@ -73,24 +96,16 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 
   // Pause on Mail so they notice it is their work email.
   await expect(page.getByText("This is your work email.", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Got it" }).click();
-
-  await expect(page.getByText("Now click Calendar.")).toBeVisible();
-  await page.getByTestId("bookmark-calendar").click();
-
-  // Pause on Calendar so they actually see it.
-  await expect(page.getByText("Meetings and your work shifts show up here.", { exact: false })).toBeVisible();
-  // No intro card here any more: the real calendar is what they see.
-  await expect(page.getByText("August 2026").first()).toBeVisible();
-  await page.getByRole("button", { name: "Got it" }).click();
+  await page.getByRole("button", { name: "I understand" }).click();
 
   // Spotlight the real Help control — the ? on the Job Card.
-  await expect(page.getByText("if you get lost", { exact: false })).toBeVisible();
+  await expect(card.getByText("Tap the ? on this card to try Help.")).toBeVisible();
   await page.getByTestId("job-card-help").click();
-  await expect(page.getByText("Come back any time you get lost", { exact: false })).toBeVisible();
+  await expect(card.getByText("Where to look", { exact: true })).toBeVisible();
 
-  // Close the Help drawer the tour just opened before moving on.
-  await page.keyboard.press("Escape");
+  // Help is in the Job Card. Close it with the same visible control a learner uses.
+  await card.getByRole("button", { name: "I understand. Back to my task", exact: true }).click();
+  await expect(card.getByText("You tried Help. You are ready for your first task.")).toBeVisible();
   await page.getByRole("button", { name: "I'm ready for the task" }).click();
 
   // Level 0 done — the level-up celebration takes over, and its one button
@@ -100,8 +115,19 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 
   // Day One: the list on the shelf is now real. Point at the orange pin so
   // nobody has to know the word "briefcase".
-  await expect(jobCard(page).getByText("orange button on the bar", { exact: false })).toBeVisible();
-  await jobCard(page).getByRole("button", { name: "Got it" }).click();
+  await expect(jobCard(page).getByText("orange button on the bottom bar", { exact: false })).toBeVisible();
+  const spotlight = page.getByTestId("task-list-spotlight");
+  await expect(spotlight).toHaveCount(1);
+  const outline = await spotlight.boundingBox();
+  const viewport = page.viewportSize();
+  if (!outline || !viewport) throw new Error("Missing spotlight geometry");
+  expect(outline.x).toBeGreaterThanOrEqual(4);
+  expect(outline.y).toBeGreaterThanOrEqual(4);
+  expect(outline.x + outline.width).toBeLessThanOrEqual(viewport.width - 4);
+  expect(outline.y + outline.height).toBeLessThanOrEqual(viewport.height - 4);
+  await expect(page.getByTestId("shelf-my-job")).not.toHaveClass(/animate-showme-pulse/);
+  await page.screenshot({ path: test.info().outputPath("task-list-introduction.png"), animations: "disabled" });
+  await jobCard(page).getByRole("button", { name: "I understand" }).click();
 
   // Mail is open: Maria's email is findable in the inbox. Scope to the inbox —
   // "Maria Delgado" also appears in the desktop briefing behind the window.
@@ -167,6 +193,11 @@ test("language choice on the login page sticks after signing in and reloading", 
   await page.locator('input[placeholder="••••"]').first().click();
   await page.keyboard.type("1234");
   await page.getByRole("button", { name: "Agregar", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Te damos la bienvenida al Simulador de Trabajo" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId("simulator-welcome")).toBeVisible();
+  await page.getByTestId("welcome-continue").click();
+
 
   // The card greets them in Spanish...
   const spanishIntro = jobCard(page).getByText("Bienvenida", { exact: false });
@@ -175,4 +206,108 @@ test("language choice on the login page sticks after signing in and reloading", 
   // ...and a reload does NOT silently reset them to English.
   await page.reload();
   await expect(spanishIntro).toBeVisible({ timeout: 20_000 });
+
+  // Exercise the full translated tour and manual card recovery at Chromebook size.
+  await page.setViewportSize({ width: 1024, height: 768 });
+  const card = jobCard(page);
+  await card.getByRole("button", { name: "OK", exact: true }).click();
+  await expect(card.getByText("Arrastra esta tarjeta a otra esquina.")).toBeVisible();
+  const handle = card.getByTestId("job-card-drag-handle");
+  await handle.focus();
+  await page.keyboard.press("ArrowLeft");
+  await expect(card.getByText("Arrastra esta tarjeta a otra esquina.")).toBeVisible();
+  await page.keyboard.press("ArrowUp");
+  await expect(card).toHaveAttribute("data-corner", "tl");
+  await expect(card.getByText("Toca la flecha para encogerla.")).toBeVisible();
+  await card.getByTestId("job-card-collapse").click();
+  await expect(card.getByText("Conoce esta computadora.")).toBeVisible();
+  await card.getByTestId("job-card-collapse").click();
+  await expect(card.getByTestId("job-card-collapse")).toHaveAttribute("aria-expanded", "false");
+  await card.getByTestId("job-card-collapse").click();
+  await card.getByRole("button", { name: "Abrir el navegador web", exact: true }).click();
+  await expect(card.getByText("Estos son tus marcadores.", { exact: false })).toBeVisible();
+  await card.getByRole("button", { name: "Muéstramelos", exact: true }).click();
+  await page.getByTestId("bookmark-mail").click();
+  await card.getByRole("button", { name: "Entiendo", exact: true }).click();
+  await expect(card.getByText("Toca el ? en esta tarjeta para probar Ayuda.")).toBeVisible();
+  await card.getByTestId("job-card-help").click();
+  await expect(card.getByText("Dónde mirar", { exact: true })).toBeVisible();
+  await card.getByRole("button", { name: "Entiendo. Volver a mi tarea", exact: true }).click();
+  await card.getByRole("button", { name: "Estoy listo para la tarea", exact: true }).click();
+  await page.getByRole("button", { name: "Abrir mi primera tarea", exact: true }).click();
+  await expect(card.getByText("Este botón naranja en la barra de abajo abre tu lista de tareas.")).toBeVisible();
+  await card.getByRole("button", { name: "Entiendo", exact: true }).click();
+  await expect(page.getByText("Maria Delgado", { exact: true }).first()).toBeVisible();
+});
+
+test("schedule: repeated wrong days get specific help and the correct day still opens the swap", async ({ page }) => {
+  await signUp(page, `E2e Schedule ${Date.now()}`);
+  await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
+  await page.goto("/studio");
+  await page.getByRole("button", { name: "Start of Day 2: The First Week", exact: true }).click();
+  await expect(jobCard(page).getByText("calendar on your phone", { exact: false })).toBeVisible();
+  await jobCard(page).getByRole("button", { name: "Next: Open Portal", exact: true }).click();
+  await expect(jobCard(page).getByText("personal calendar on your phone", { exact: false })).toBeVisible();
+  await expect(page.getByText("Your personal calendar")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "My Calendar" })).toBeVisible();
+  await page.getByTitle("Cambiar a español").click();
+  await expect(jobCard(page).getByText("calendario personal de tu teléfono", { exact: false })).toBeVisible();
+  await expect(page.getByText("Tu calendario personal")).toBeVisible();
+  await page.getByTitle("Switch to English").click();
+  const swaps = page.getByRole("button", { name: "Request a swap", exact: true });
+  await swaps.nth(0).click();
+  await expect(jobCard(page).getByText("That shift is fine.", { exact: false })).toBeVisible();
+  await expect(jobCard(page).getByText("Look at Thursday, Aug 27.", { exact: false })).toHaveCount(0);
+  await swaps.nth(1).click();
+  await expect(jobCard(page).getByText("Look at Thursday, Aug 27.", { exact: false }).first()).toBeVisible();
+  await swaps.nth(2).click();
+  await expect(page.getByRole("combobox").first()).toHaveValue("Thu");
+  await expect(jobCard(page).getByText("Look at Thursday, Aug 27.", { exact: false })).toHaveCount(0);
+  await expect(jobCard(page).getByText("personal calendar on your phone", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "My Calendar" })).toBeVisible();
+  await expect(page.getByText("Your personal calendar")).toBeVisible();
+  await expect(page.getByText("Which shift could you work instead?")).toBeVisible();
+});
+
+test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) => {
+  await signUp(page, `E2e Timeclock ${Date.now()}`);
+  await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
+  await page.goto("/studio");
+  await page.getByRole("button", { name: "Start of Day 3: Payday", exact: true }).click();
+  await expect(jobCard(page).getByText("You got here at 7.", { exact: false })).toBeVisible();
+  await jobCard(page).getByRole("button", { name: "Next: Clock in", exact: true }).click();
+  await expect(page.getByText("Not clocked in")).toBeVisible();
+  await expect(page.getByText("Now 8:15 AM")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Clock In", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Clock Out", exact: true })).toHaveCount(0);
+  await jobCard(page).getByTestId("job-card-collapse").click();
+  await page.getByRole("button", { name: "Clock In", exact: true }).click();
+  await expect(page.getByText("You arrived", { exact: true })).toBeVisible();
+  await expect(page.getByText("Clock-in time", { exact: true })).toBeVisible();
+  await jobCard(page).getByTestId("job-card-collapse").click();
+  await page.getByRole("button", { name: "Looks right", exact: true }).click();
+  await expect(jobCard(page).getByText("You got here at 7:00 AM", { exact: false })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Something looks wrong. Message my supervisor", exact: true })).toBeVisible();
+});
+
+test("welcome explains the purpose, supports language choice, and stays dismissed on reload", async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await signUp(page, `E2e Welcome ${Date.now()}`, false);
+  const welcome = page.getByTestId("simulator-welcome");
+  await expect(welcome.getByRole("heading", { level: 1 })).toHaveText("Welcome to the Workplace Simulator");
+  await expect(welcome.getByRole("listitem")).toHaveCount(5);
+  await expect(welcome.getByRole("link", { name: "mcreed@ebhcs.org" })).toHaveAttribute("href", "mailto:mcreed@ebhcs.org");
+  await expect(welcome.getByText("Your first job: Harborside Cafe", { exact: false })).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath("welcome-en.png"), fullPage: true, animations: "disabled" });
+  await welcome.getByRole("button", { name: "Español", exact: true }).click();
+  await expect(welcome.getByRole("heading", { level: 1 })).toHaveText("Te damos la bienvenida al Simulador de Trabajo");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByTestId("welcome-continue").scrollIntoViewIfNeeded();
+  await expect(page.getByTestId("welcome-continue")).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath("welcome-es-mobile.png"), fullPage: true, animations: "disabled" });
+  await page.getByTestId("welcome-continue").click();
+  await expect(jobCard(page)).toBeVisible();
+  await page.reload();
+  await expect(page.getByTestId("simulator-welcome")).toHaveCount(0);
+  await expect(jobCard(page)).toBeVisible();
 });

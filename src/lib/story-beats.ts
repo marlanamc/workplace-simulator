@@ -134,19 +134,19 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Approved. You're on 2 to 10 Thursday, so go to your appointment.",
         "Thanks for catching it when the schedule went up instead of that morning.",
-        "When the day ends, clock out and check your hours.",
+        "In the morning, clock in when you arrive. Check the time.",
       ],
       es: [
         "Aprobado. El jueves entras de 2 a 10, así que ve a tu cita.",
         "Gracias por verlo cuando salió el horario y no esa misma mañana.",
-        "Al final del día, marca salida y revisa tus horas.",
+        "Por la mañana, marca entrada cuando llegues. Revisa la hora.",
       ],
     },
   },
   {
     key: "story-timeclock",
     ...MARIA,
-    time: "6:41 PM",
+    time: "8:22 AM",
     unread: true,
     story: true,
     unlockAfter: "timeclock",

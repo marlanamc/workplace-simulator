@@ -9,6 +9,7 @@ import {
   TAB_LEVEL_KEYS,
   taskKeysForLevel,
 } from "@/lib/tracks-content";
+import { ACT_INTROS, type ActIntroActKey } from "@/lib/act-intro-content";
 import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
 import { BOOKMARK_LABEL } from "@/lib/shift-spine";
 import { firstPersonSkill } from "@/lib/skills";
@@ -167,6 +168,23 @@ describe("the story arc has no missing chapters", () => {
       expectBilingual(up!.title, `${level.key} levelUp.title`);
       expectBilingual(up!.body, `${level.key} levelUp.body`);
       expectBilingual(up!.cta, `${level.key} levelUp.cta`);
+    }
+  });
+
+  it("every act after the first has a bilingual act intro with 3-5 skills", () => {
+    for (const act of ACTS.filter((a) => a.key !== "act1")) {
+      const intro = ACT_INTROS[act.key as ActIntroActKey];
+      expect(intro, `act "${act.key}" has no ACT_INTROS entry`).toBeDefined();
+      expectBilingual(intro.actLabel, `${act.key} actLabel`);
+      expectBilingual(intro.role, `${act.key} role`);
+      expectBilingual(intro.roleLine, `${act.key} roleLine`);
+      expectBilingual(intro.manager, `${act.key} manager`);
+      expectBilingual(intro.bridge, `${act.key} bridge`);
+      expectBilingual(intro.skillsTitle, `${act.key} skillsTitle`);
+      expectBilingual(intro.start, `${act.key} start`);
+      expect(intro.skills.length, `${act.key} skills count`).toBeGreaterThanOrEqual(3);
+      expect(intro.skills.length, `${act.key} skills count`).toBeLessThanOrEqual(5);
+      intro.skills.forEach((s, i) => expectBilingual(s.label, `${act.key} skill ${i} label`));
     }
   });
 });
