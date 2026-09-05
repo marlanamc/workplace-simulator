@@ -15,6 +15,7 @@ jobs:
           urls=(
             "https://workplace-simulator-one.vercel.app/"
             "https://workplace-simulator-one.vercel.app/login"
+            "https://workplace-simulator-one.vercel.app/api/health"
           )
           fail=0
           for url in "${urls[@]}"; do
