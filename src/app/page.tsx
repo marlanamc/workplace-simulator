@@ -29,6 +29,10 @@ export default async function DesktopPage({
   const learner = await getLearnerById(learnerId);
   if (!learner) redirect("/login");
 
+  // A teacher account has no learner progress and never plays the simulator —
+  // send it straight to the class dashboard.
+  if (learner.role === "teacher") redirect("/teacher");
+
   const params = await searchParams;
   const taskParam = Array.isArray(params.task) ? params.task[0] : params.task;
   const fromParam = Array.isArray(params.from) ? params.from[0] : params.from;

@@ -135,6 +135,16 @@ export async function getClassSubmissions(classCode: string) {
     .orderBy(desc(submissions.submittedAt));
 }
 
+/** One learner's submissions, newest first — for the per-student progress page. */
+export async function getLearnerSubmissions(learnerId: string) {
+  const db = getDb();
+  return db
+    .select()
+    .from(submissions)
+    .where(eq(submissions.learnerId, learnerId))
+    .orderBy(desc(submissions.submittedAt));
+}
+
 /** Every learner in a class, with their completions and badges, for the teacher roster. */
 export async function getClassRoster(classCode: string) {
   const db = getDb();
