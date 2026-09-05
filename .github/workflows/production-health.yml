@@ -1,0 +1,28 @@
+name: Production Health
+
+on:
+  schedule:
+    # Every 30 minutes
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check production is up
+        run: |
+          urls=(
+            "https://workplace-simulator-one.vercel.app/"
+            "https://workplace-simulator-one.vercel.app/login"
+          )
+          fail=0
+          for url in "${urls[@]}"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "$url")
+            echo "$url -> $code"
+            if [ "$code" -lt 200 ] || [ "$code" -ge 400 ]; then
+              echo "::error::$url returned $code"
+              fail=1
+            fi
+          done
+          exit $fail
