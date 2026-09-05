@@ -14,6 +14,7 @@ import {
   playHref,
 } from "@/lib/curriculum-catalog";
 import ProgressPresets from "./ProgressPresets";
+import ActJumpNav from "./ActJumpNav";
 
 export const metadata: Metadata = {
   title: "Studio · Workplace Simulator",
@@ -53,18 +54,10 @@ export default async function StudioPage() {
               </Link>
             </div>
           </div>
-          <nav className="flex flex-wrap gap-1.5" aria-label="Acts">
-            {CATALOG_ACTS.map((act) => (
-              <a
-                key={act.key}
-                href={`#${act.key}`}
-                className="rounded-full px-3 py-1 text-[12px] font-medium text-white/80 hover:bg-white/10 hover:text-white"
-                style={{ boxShadow: `inset 0 0 0 1px ${act.color}55` }}
-              >
-                {act.title.replace(/^Act /, "")}
-              </a>
-            ))}
-          </nav>
+          <ActJumpNav
+            learnerId={learnerId}
+            acts={CATALOG_ACTS.map(({ key, title, color }) => ({ key, title, color }))}
+          />
         </div>
       </header>
 

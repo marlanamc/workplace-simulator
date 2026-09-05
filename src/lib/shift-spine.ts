@@ -63,6 +63,17 @@ export function workdaysInAct(level: Level): Level[] {
 }
 
 /**
+ * The role the learner holds on a given level — the act's job title ("Shift
+ * Lead", "Office Administrator"). During the getting-hired arc at the front of
+ * Act VI (`Level.preHire`) they don't hold the job yet, so this reads
+ * "Applicant" instead of claiming the title they're interviewing for.
+ */
+export function roleLabel(level: Level, lang: Lang): string {
+  if (level.preHire) return lang === "en" ? "Applicant" : "Solicitante";
+  return jobTitle(level);
+}
+
+/**
  * 1-based index of this level among its act's workdays, or 0 if it is not
  * a workday (orientation, or a level that is not in an act).
  */

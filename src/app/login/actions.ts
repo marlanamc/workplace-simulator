@@ -32,5 +32,5 @@ export async function loginOrSignup(_prev: LoginResult, formData: FormData): Pro
   }
 
   const nextRaw = String(formData.get("next") ?? "/");
-  redirect(nextRaw === "/studio" ? "/studio" : "/");
+  redirect(nextRaw === "/studio" || nextRaw === "/teacher" ? nextRaw : "/");
 }

@@ -9,6 +9,7 @@ import {
   STARTERS,
   LESSONS,
   whyHoldsUp,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/research/content";
@@ -40,7 +41,7 @@ export default function LibrarySearchTask() {
     if (!why.trim()) return say(c.empty);
     if (!whyHoldsUp(why)) return say(c.weak);
     setDone(true);
-    markComplete("research", "cite_a_credible_source");
+    markComplete("research", "cite_a_credible_source", describeSubmission(picked, why, lang));
   };
 
   const restart = () => {

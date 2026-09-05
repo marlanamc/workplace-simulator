@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -182,6 +182,21 @@ export function agendaBulletCount(text: string) {
     .split(/\n+/)
     .map((l) => l.replace(/^[-*•]\s*/, "").trim())
     .filter(Boolean).length;
+}
+
+/** What the teacher sees: the meeting title and the agenda the learner wrote. */
+export function describeSubmission(
+  input: { title: string; agenda: string },
+  lang: Lang,
+): SubmissionContent {
+  const c = TEAM_MEETING_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.eventTitleLabel, value: input.title },
+      { label: c.agendaName, value: input.agenda },
+    ],
+  };
 }
 
 /** The persistent "what to do right now" line, one per step of this job. */

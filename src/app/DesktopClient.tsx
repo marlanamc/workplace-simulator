@@ -4,6 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { type TaskKey } from "@/lib/desktop-content";
 import type { BridgePath } from "@/lib/bridge-path";
+import type { TeacherFeedback } from "@/lib/task-types";
+import type { RungMap } from "@/lib/release-ladder";
 import { DesktopClock } from "@/components/LiveClock";
 import { actForLevel, isLevelComplete, levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
@@ -14,6 +16,8 @@ import TrackCelebration from "@/components/TrackCelebration";
 import LevelUpCelebration from "@/components/LevelUpCelebration";
 import MobileNudge from "@/components/MobileNudge";
 import MariaNoteToast from "@/components/MariaNoteToast";
+import TeacherNotesToast from "@/components/TeacherNotesToast";
+import TeacherNotesPanel from "@/components/TeacherNotesPanel";
 import SimulatorWelcome from "@/components/SimulatorWelcome";
 import ActIntro from "@/components/ActIntro";
 import { WELCOME_FLAG } from "@/lib/welcome-content";
@@ -132,6 +136,7 @@ function DesktopShell({
   const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack } = useProgress();
   const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
+  const [teacherNotesOpen, setTeacherNotesOpen] = useState(false);
   const { apps, active } = useWindowManager();
 
   const anyAppActive = active !== null;
@@ -240,6 +245,8 @@ function DesktopShell({
       <JobCard />
       {showListIntro ? <ListIntroSpotlight /> : null}
       <MariaNoteToast />
+      <TeacherNotesToast onOpen={() => setTeacherNotesOpen(true)} />
+      <TeacherNotesPanel open={teacherNotesOpen} onClose={() => setTeacherNotesOpen(false)} />
       <MobileNudge />
       {fromStudio && <DesignerJumpBanner />}
     </div>
@@ -252,6 +259,8 @@ export default function DesktopClient(props: {
   completedTaskKeys: TaskKey[];
   certificateTrackKeys: string[];
   initialBridgePath?: BridgePath | null;
+  initialFeedback?: TeacherFeedback[];
+  initialRungs?: RungMap;
   jumpTab?: string;
   fromStudio?: boolean;
 }) {
@@ -268,6 +277,8 @@ export default function DesktopClient(props: {
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
         initialBridgePath={props.initialBridgePath}
+        initialFeedback={props.initialFeedback}
+        initialRungs={props.initialRungs}
       >
         <JobCardHost>
           <DesktopShell displayName={props.displayName} fromStudio={!!props.fromStudio} />

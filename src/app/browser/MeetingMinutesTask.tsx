@@ -15,6 +15,7 @@ import {
   agendaLooksReady,
   notesLookReal,
   followupHasOwnersAndDates,
+  describeSubmission,
 } from "@/lib/tasks/meeting-minutes/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -52,7 +53,7 @@ export default function MeetingMinutesTask() {
   const finishIfReady = (a: boolean, n: boolean, f: boolean) => {
     if (a && n && f) {
       setView("done");
-      markComplete("meeting-minutes", "run_the_meeting");
+      markComplete("meeting-minutes", "run_the_meeting", describeSubmission({ agenda, notes, followup }, lang));
     } else {
       setView("hub");
     }

@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { LEVELS, TRACKS } from "@/lib/tracks-content";
 import { dayTitle } from "@/lib/shift-spine";
-import { learnerKey, storage } from "@/lib/storage";
-import { setProgressPreset } from "@/app/actions";
-import { BRIDGE_PATH_FLAG, isAct6Task, isAct7Task, type BridgePath } from "@/lib/bridge-path";
+import { isAct6Task, isAct7Task, type BridgePath } from "@/lib/bridge-path";
+import { jumpToPreset } from "./jump-to-preset";
 
 /**
  * The Studio time machine: one click sets THIS signed-in account's progress
@@ -19,22 +18,8 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
   const apply = async (presetKey: string | "all", path?: BridgePath) => {
     if (busyKey) return;
     setBusyKey(presetKey);
-    const result = await setProgressPreset(presetKey);
-    if (!result.ok) {
-      setBusyKey(null);
-      return;
-    }
-    // Progress flags and help-ladder rungs live in localStorage per learner;
-    // stale ones would leak "future" story into the rewound state.
-    storage.remove(learnerKey.storyFlags(learnerId));
-    storage.remove(learnerKey.rungs(learnerId));
-    if (path) {
-      storage.setJSON(learnerKey.storyFlags(learnerId), { [BRIDGE_PATH_FLAG]: path });
-    }
-    // Full navigation on purpose: router.push() would keep the cached RSC
-    // payload and the desktop would render the pre-rewind progress.
-    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-    window.location.assign("/?from=studio");
+    const ok = await jumpToPreset(learnerId, presetKey, path);
+    if (!ok) setBusyKey(null);
   };
 
   const pill =

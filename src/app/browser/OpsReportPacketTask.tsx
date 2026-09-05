@@ -14,6 +14,7 @@ import {
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
   summaryPullsBoth,
+  describeSubmission,
 } from "@/lib/tasks/ops-report-packet/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -56,7 +57,7 @@ export default function OpsReportPacketTask() {
   const finishIfReady = (sheet: boolean, cal: boolean, docs: boolean, sent: boolean) => {
     if (sheet && cal && docs && sent) {
       setView("done");
-      markComplete("ops-report-packet", "weekly_report_packet");
+      markComplete("ops-report-packet", "weekly_report_packet", describeSubmission({ summary, message }, lang));
     } else {
       setView("hub");
     }

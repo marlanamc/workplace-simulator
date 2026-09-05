@@ -12,6 +12,7 @@ import {
   CC_NAME,
   LESSONS,
   emailMentionsTotal,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/status-report/content";
@@ -50,7 +51,7 @@ export default function StatusReportTask() {
     if (cc !== CC_EMAIL) return say(HINTS[lang].cc);
     if (!emailMentionsTotal(body)) return say(HINTS[lang].total);
     setView("done");
-    markComplete("status-report", "author_sum_and_cc");
+    markComplete("status-report", "author_sum_and_cc", describeSubmission({ formula, body }, lang));
   };
 
   const restart = () => {

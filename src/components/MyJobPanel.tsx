@@ -20,7 +20,7 @@ import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { Flag, Lock, Trophy } from "@/lib/icons";
 import { Check } from "lucide-react";
-import { dayTitle, sittingTitle, jobTitle, workdaysInAct, dayInAct, dayLabel } from "@/lib/shift-spine";
+import { dayTitle, sittingTitle, roleLabel, workdaysInAct, dayInAct, dayLabel } from "@/lib/shift-spine";
 import { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 
 export default function MyJobPanel({
@@ -90,7 +90,7 @@ export default function MyJobPanel({
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <div className="truncate text-[22px] font-medium leading-tight tracking-[-0.01em]">
-                {jobTitle(currentLevel)} · {dayTitle(currentLevel, lang)}
+                {roleLabel(currentLevel, lang)} · {dayTitle(currentLevel, lang)}
               </div>
               {upcoming && (
                 <div className="mt-1 text-[13px] text-white/70">

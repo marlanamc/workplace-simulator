@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const DEADLINE = { en: "September 15, 2026", es: "15 de septiembre de 2026" };
 
@@ -115,6 +115,11 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     },
   ],
 };
+
+/** What the teacher sees: the statement of interest the learner wrote. */
+export function describeSubmission(statement: string, lang: Lang): SubmissionContent {
+  return { lang, fields: [{ label: ENROLLMENT_COPY[lang].statementHeading, value: statement }] };
+}
 
 export function statementShowsInterest(body: string): boolean {
   const t = body.toLowerCase();

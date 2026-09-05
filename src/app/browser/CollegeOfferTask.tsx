@@ -13,6 +13,7 @@ import {
   LESSONS,
   replyAcceptsOffer,
   overlapMentionsShift,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/college-offer/content";
@@ -77,7 +78,7 @@ export default function CollegeOfferTask() {
   const finish = () => {
     if (!accepted || !eventSaved || !overlapSent) return say(c.sendNeed);
     setView("done");
-    markComplete("college-offer", "accept_offer_on_full_calendar");
+    markComplete("college-offer", "accept_offer_on_full_calendar", describeSubmission({ reply, overlap }, lang));
   };
 
   const restart = () => {

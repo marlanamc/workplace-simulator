@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
  * Level 27 — Where You've Been. The closing level of the written curriculum.
@@ -140,4 +140,12 @@ export function reflectionComplete(answers: string[]): boolean {
 
 export function portfolioReflectionPasses(answers: string[]): boolean {
   return reflectionComplete(answers);
+}
+
+/** What the teacher sees: each reflection prompt with the learner's answer. */
+export function describeSubmission(answers: string[], lang: Lang): SubmissionContent {
+  return {
+    lang,
+    fields: PROMPTS.map((prompt, i) => ({ label: prompt[lang], value: answers[i] ?? "" })),
+  };
 }

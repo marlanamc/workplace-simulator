@@ -225,6 +225,41 @@ export const TRACKS: Track[] = [
     awardEmoji: "📞",
   },
   {
+    key: "getting-hired-apply",
+    title: "Applying",
+    subtitle: "Read the posting, fill the application",
+    taskKeys: ["job-posting", "job-application"],
+    awardEmoji: "📰",
+  },
+  {
+    key: "getting-hired-resume",
+    title: "Your Résumé",
+    subtitle: "One page from your cafe history",
+    taskKeys: ["resume-build"],
+    awardEmoji: "📄",
+  },
+  {
+    key: "getting-hired-interview",
+    title: "The Interview",
+    subtitle: "Four questions, and one of your own",
+    taskKeys: ["interview-practice"],
+    awardEmoji: "💬",
+  },
+  {
+    key: "getting-hired-offer",
+    title: "The Offer",
+    subtitle: "Read it, find the date, accept",
+    taskKeys: ["job-offer"],
+    awardEmoji: "🎉",
+  },
+  {
+    key: "getting-hired-paperwork",
+    title: "New-Hire Paperwork",
+    subtitle: "W-4, I-9, direct deposit",
+    taskKeys: ["w4-form", "i9-section1", "direct-deposit"],
+    awardEmoji: "🖊️",
+  },
+  {
     key: "office-drive",
     title: "Welcome to HQ",
     subtitle: "Find the current file. Then share it.",
@@ -344,6 +379,14 @@ export interface Level {
    * template future review levels should follow.
    */
   reviewOf?: TaskKey[];
+  /**
+   * Not a day on the job — the learner is getting hired, not working yet (the
+   * getting-hired arc at the front of Act VI: posting, application, résumé,
+   * interview, offer, paperwork). Shown by name, never "Day N", and left out
+   * of the act's shift count, the same treatment the how-this-works tour gets.
+   * See `shift-spine.ts`.
+   */
+  preHire?: boolean;
 }
 
 /**
@@ -776,6 +819,96 @@ export const LEVELS: Level[] = [
     },
   },
   {
+    key: "level19h1",
+    title: "Applying",
+    trackKeys: ["getting-hired-apply"],
+    firstTabKey: "jobs",
+    freeTabbing: true,
+    preHire: true,
+    levelUp: {
+      emoji: "🏢",
+      kicker: { en: "Moving up", es: "Subiendo" },
+      title: { en: "Time to apply for the office job.", es: "Hora de aplicar al puesto de oficina." },
+      body: {
+        en: "You've run shifts, schedules, and budgets at the cafe. Harborside HQ has an Office Administrator opening, and Anita Raman shared it with you.",
+        es: "Has manejado turnos, horarios y presupuestos en el café. Harborside HQ tiene una vacante de Administrador de Oficina, y Anita Raman te la compartió.",
+      },
+      cta: { en: "See the posting", es: "Ver el anuncio" },
+    },
+  },
+  {
+    key: "level19h2",
+    title: "Your Résumé",
+    trackKeys: ["getting-hired-resume"],
+    firstTabKey: "resume",
+    freeTabbing: true,
+    preHire: true,
+    levelUp: {
+      emoji: "📄",
+      kicker: { en: "Show your experience", es: "Muestra tu experiencia" },
+      title: { en: "The application wants a résumé.", es: "La solicitud pide un currículum." },
+      body: {
+        en: "You have real experience now — new hire to assistant manager. Put it on one page: a summary, your last two roles, and your skills.",
+        es: "Ahora tienes experiencia real — de nuevo empleado a asistente de gerencia. Ponla en una página: un resumen, tus últimos dos puestos y tus habilidades.",
+      },
+      cta: { en: "Build my résumé", es: "Armar mi currículum" },
+    },
+  },
+  {
+    key: "level19h3",
+    title: "The Interview",
+    trackKeys: ["getting-hired-interview"],
+    firstTabKey: "interview",
+    freeTabbing: true,
+    preHire: true,
+    levelUp: {
+      emoji: "💬",
+      kicker: { en: "Last step before the offer", es: "Último paso antes de la oferta" },
+      title: { en: "Anita wants to talk.", es: "Anita quiere hablar." },
+      body: {
+        en: "The interview is four common questions. Answer each one the way you'd say it out loud, then ask a question of your own.",
+        es: "La entrevista son cuatro preguntas comunes. Responde cada una como lo dirías en voz alta, y luego haz una pregunta tuya.",
+      },
+      cta: { en: "Start the interview", es: "Empezar la entrevista" },
+    },
+  },
+  {
+    key: "level19h4",
+    title: "The Offer",
+    trackKeys: ["getting-hired-offer"],
+    firstTabKey: "offer",
+    freeTabbing: true,
+    preHire: true,
+    levelUp: {
+      emoji: "🎉",
+      kicker: { en: "They said yes", es: "Dijeron que sí" },
+      title: { en: "The offer is in.", es: "Llegó la oferta." },
+      body: {
+        en: "Read the letter. Find your start date — read the exact line, don't guess. Then reply that you accept.",
+        es: "Lee la carta. Encuentra tu fecha de inicio — lee la línea exacta, no adivines. Luego responde que aceptas.",
+      },
+      cta: { en: "Read the offer", es: "Leer la oferta" },
+    },
+  },
+  {
+    key: "level19h5",
+    title: "New-Hire Paperwork",
+    trackKeys: ["getting-hired-paperwork"],
+    firstTabKey: "onboarding",
+    freeTabbing: true,
+    preHire: true,
+    levelUp: {
+      emoji: "🖊️",
+      kicker: { en: "Almost day one", es: "Casi el primer día" },
+      title: { en: "HR sent the new-hire forms.", es: "RR. HH. envió los formularios de nuevo empleado." },
+      body: {
+        en: "Three forms before your first day: the W-4 (taxes), the I-9 (work authorization), and direct deposit. Each one has a 2-minute lesson if you need it.",
+        es: "Tres formularios antes de tu primer día: el W-4 (impuestos), el I-9 (autorización de trabajo) y el depósito directo. Cada uno tiene una lección de 2 minutos si la necesitas.",
+      },
+      cta: { en: "Open the forms", es: "Abrir los formularios" },
+    },
+  },
+  {
     key: "level20",
     title: "Welcome to HQ",
     trackKeys: ["office-drive"],
@@ -783,11 +916,11 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "🏢",
-      kicker: { en: "A different building", es: "Otro edificio" },
+      kicker: { en: "You got the job", es: "Conseguiste el puesto" },
       title: { en: "Welcome to HQ.", es: "Bienvenida a HQ." },
       body: {
-        en: "The drive is bigger here. Search first, then read the file name twice. Share the current file, not last quarter's.",
-        es: "Aquí el drive es más grande. Busca primero, luego lee el nombre del archivo dos veces. Comparte el archivo actual, no el del trimestre pasado.",
+        en: "You're an Office Administrator now. The drive is bigger here. Search first, then read the file name twice. Share the current file, not last quarter's.",
+        es: "Ahora eres Administrador de Oficina. Aquí el drive es más grande. Busca primero, luego lee el nombre del archivo dos veces. Comparte el archivo actual, no el del trimestre pasado.",
       },
       cta: { en: "Open Drive", es: "Abrir Drive" },
     },
@@ -938,7 +1071,7 @@ export const ACTS: Act[] = [
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
   { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
   { key: "act5", title: "Act V: Bridge", levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
-  { key: "act6", title: "Act VI: Office Administrator", levelKeys: ["level20", "level21", "level22", "level23"], scene: "harborside-floor" },
+  { key: "act6", title: "Act VI: Office Administrator", levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
   { key: "act7", title: "Act VII: Team Lead", levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
 ];
 

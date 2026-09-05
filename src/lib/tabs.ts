@@ -52,6 +52,11 @@ export const TAB_META: TabMeta[] = [
   { key: "library", label: "Library", url: "library.bhcc.edu/search", color: "#5f6368", levelKey: "level19" },
   { key: "front-desk", label: "Front Desk", url: "desk.harborsidehealth.com", color: "#00897b", levelKey: "level16" },
   { key: "billing-sheet", ...SHEETS, levelKey: "level18" },
+  { key: "jobs", label: "Jobs", url: "jobs.harborsidehq.com/openings", color: "#1a73e8", levelKey: "level19h1" },
+  { key: "resume", label: "Résumé", url: "docs.harborsidehq.com/resume", color: "#4285f4", levelKey: "level19h2" },
+  { key: "interview", label: "Interview", url: "meet.harborsidehq.com/interview", color: "#8430ce", levelKey: "level19h3" },
+  { key: "offer", label: "Offer", url: "mail.harborsidehq.com/offer", color: "#8430ce", levelKey: "level19h4" },
+  { key: "onboarding", label: "Onboarding", url: "hr.harborsidehq.com/forms", color: "#7248b9", levelKey: "level19h5" },
   { key: "expense-report", label: "Sheets", url: "sheets.harborsidehq.com", color: "#0f9d58", levelKey: "level22" },
   { key: "slides", label: "Slides", url: "slides.harborsidehq.com", color: "#f9ab00", levelKey: "level23" },
   { key: "meeting-minutes", label: "Meeting", url: "meet.harborsidehq.com/huddle", color: "#34a853", levelKey: "level24" },
@@ -86,6 +91,11 @@ const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedul
 
 /** Tabs that appear on the bookmark bar only while their own level is in view. */
 const GATED_TABS: Record<string, string> = {
+  jobs: "level19h1",
+  resume: "level19h2",
+  interview: "level19h3",
+  offer: "level19h4",
+  onboarding: "level19h5",
   triage: "level8",
   "team-meeting": "level11",
   "priority-call": "level12",

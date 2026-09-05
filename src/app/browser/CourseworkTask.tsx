@@ -8,6 +8,7 @@ import {
   STARTERS,
   LESSONS,
   responseIsComplete,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/coursework/content";
@@ -35,7 +36,7 @@ export default function CourseworkTask() {
     if (!body.trim()) return say(c.empty);
     if (!responseIsComplete(body)) return say(c.weak);
     setSubmitted(true);
-    markComplete("coursework", "submit_assignment_on_time");
+    markComplete("coursework", "submit_assignment_on_time", describeSubmission(body, lang));
   };
 
   const restart = () => {

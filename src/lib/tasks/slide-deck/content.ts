@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /** Planted from the expense-report receipted total. Learners confirm it; they do not invent it. */
 export const PLANTED_TOTAL = 188;
@@ -22,6 +22,21 @@ export function slideDeckPasses(input: SlideDeckInput): boolean {
     input.confirmedTotal &&
     input.presented
   );
+}
+
+/** What the teacher sees: the slide title and the one-sentence takeaway. */
+export function describeSubmission(
+  input: { title: string; takeaway: string },
+  lang: Lang,
+): SubmissionContent {
+  const c = SLIDES_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.titleLabel, value: input.title },
+      { label: c.takeawayLabel, value: input.takeaway },
+    ],
+  };
 }
 
 export const SLIDES_COPY: Record<Lang, {

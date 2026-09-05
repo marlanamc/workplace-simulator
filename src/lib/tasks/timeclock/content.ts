@@ -84,7 +84,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     recentHeading: "Recent shifts",
     to: "To",
     subjectLabel: "Subject",
-    subject: "I forgot to clock in at 7",
+    subject: "Request: clock-in correction for today’s shift",
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
@@ -119,7 +119,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     recentHeading: "Turnos recientes",
     to: "Para",
     subjectLabel: "Asunto",
-    subject: "Olvidé marcar entrada a las 7",
+    subject: "Solicitud: corrección de entrada del turno de hoy",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
@@ -213,7 +213,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Compara la hora de entrada con la hora en que llegaste.",
   },
   {
-    en: "Tell Maria you forgot to clock in at 7.",
-    es: "Dile a Maria que olvidaste marcar entrada a las 7.",
+    en: "Tell Maria you arrived at 7 and clocked in at 8:15.",
+    es: "Dile a Maria que llegaste a las 7 y marcaste a las 8:15.",
   },
 ];

@@ -238,6 +238,18 @@ export const TASK_KEYS = [
   "billing-sheet",
   "research",
   "confidentiality-call",
+  // Act VI opens with the getting-hired arc: the learner applies for the HQ
+  // office job using the cafe management experience they just earned. These are
+  // numbered days like any other, but the `Level.preHire` flag keeps the panel
+  // from calling the learner an "Office Administrator" before the offer.
+  "job-posting",
+  "job-application",
+  "resume-build",
+  "interview-practice",
+  "job-offer",
+  "w4-form",
+  "i9-section1",
+  "direct-deposit",
   "office-drive",
   "multi-person-scheduling",
   "video-call",

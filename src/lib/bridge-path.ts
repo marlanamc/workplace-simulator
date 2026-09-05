@@ -35,6 +35,18 @@ export const PATH_B_TASKS: TaskKey[] = [
 ];
 
 export const ACT_6_TASKS: TaskKey[] = [
+  // The getting-hired arc at the front of Act VI: the learner applies for the
+  // HQ office job with their cafe management experience. Listed in play order,
+  // ahead of the HQ work, so `activeTrack` / `nextHandoff` route here first.
+  "job-posting",
+  "job-application",
+  "resume-build",
+  "interview-practice",
+  "job-offer",
+  "w4-form",
+  "i9-section1",
+  "direct-deposit",
+  // The HQ job itself.
   "office-drive",
   "multi-person-scheduling",
   "video-call",

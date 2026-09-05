@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -254,6 +254,21 @@ export function replyAcceptsOffer(body: string): boolean {
 export function overlapMentionsShift(body: string): boolean {
   const t = body.toLowerCase();
   return /shift|turno|close|cierre|tuesday|martes|overlap|choca|conflicto/.test(t);
+}
+
+/** What the teacher sees: the reply accepting the offer and the note flagging the clash. */
+export function describeSubmission(
+  input: { reply: string; overlap: string },
+  lang: Lang,
+): SubmissionContent {
+  const c = COLLEGE_OFFER_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.subject, value: input.reply },
+      { label: c.overlapSubject, value: input.overlap },
+    ],
+  };
 }
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };

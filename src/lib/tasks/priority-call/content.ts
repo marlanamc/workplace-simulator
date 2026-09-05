@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -239,6 +239,21 @@ export function replyIsSafe(body: string) {
   const t = body.toLowerCase();
   if (OVERPROMISE.test(t)) return false;
   return ACKNOWLEDGES.test(t);
+}
+
+/** What the teacher sees: the "what's most urgent" call and the customer reply. */
+export function describeSubmission(
+  input: { urgency: string; reply: string },
+  lang: Lang,
+): SubmissionContent {
+  const c = PRIORITY_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.urgencyQ, value: input.urgency },
+      { label: c.subject, value: input.reply },
+    ],
+  };
 }
 
 /** The persistent "what to do right now" line, one per step of this job. */

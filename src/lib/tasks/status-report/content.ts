@@ -1,5 +1,5 @@
 import { CAST } from "@/lib/cast";
-import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -209,6 +209,21 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export function emailMentionsTotal(body: string) {
   return body.includes(String(STATUS_TOTAL));
+}
+
+/** What the teacher sees: the SUM formula and the status email. */
+export function describeSubmission(
+  input: { formula: string; body: string },
+  lang: Lang,
+): SubmissionContent {
+  const c = STATUS_REPORT_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.totalLabel, value: input.formula },
+      { label: c.subject, value: input.body },
+    ],
+  };
 }
 
 /** The persistent "what to do right now" line, one per step of this job. */

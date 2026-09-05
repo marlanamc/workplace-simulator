@@ -13,6 +13,7 @@ import {
   strengthIsSpecific,
   areaToGrowIsConstructive,
   performanceReviewPasses,
+  describeSubmission,
 } from "@/lib/tasks/performance-review/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -50,7 +51,7 @@ export default function PerformanceReviewTask() {
     if (!areaToGrowIsConstructive(area)) return say(c.needArea);
     if (!performanceReviewPasses({ strength, area })) return say(c.needArea);
     setDone(true);
-    markComplete("performance-review", "write_a_fair_review");
+    markComplete("performance-review", "write_a_fair_review", describeSubmission({ strength, area }, lang));
   };
 
   const restart = () => {

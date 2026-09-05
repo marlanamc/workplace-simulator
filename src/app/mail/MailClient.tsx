@@ -43,7 +43,8 @@ import NeedAStart from "@/components/task/NeedAStart";
 import MailSignature from "@/components/task/MailSignature";
 import { signatureFor } from "@/lib/mail-greeting";
 import { sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
-import type { Localized } from "@/lib/task-types";
+import type { Localized, SubmissionContent } from "@/lib/task-types";
+import { taskNeedsTeacherReview } from "@/lib/curriculum-catalog";
 import { useWindowManager } from "@/lib/window-manager";
 import { SHOW_ME_POINTER } from "@/lib/use-show-me";
 import BridgeOutCard from "@/components/task/BridgeOutCard";
@@ -269,7 +270,13 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     } else {
       recordMissed();
     }
-    markComplete(activeMailTask, badgeKey);
+    // The later mail tasks (send-a-link, reply-all) are the ones where the
+    // learner writes the whole message and the app can only check so much —
+    // save the text for the teacher to read.
+    const submission: SubmissionContent | undefined = taskNeedsTeacherReview(activeMailTask)
+      ? { lang, fields: [{ label: subjectMeta.reSubject, value: body }] }
+      : undefined;
+    markComplete(activeMailTask, badgeKey, submission);
   };
 
   const pickConfirm = (option: { label: string; correct: boolean }) => {
@@ -519,7 +526,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   icon={TASK_ICONS.timeclock}
                   stepIndex={2}
                   stepCount={TIMECLOCK_STEPS.length}
-                  instruction={!body.trim() ? STEP_LINE.write : STEP_LINE.send}
+                  instruction={!body.trim() ? TIMECLOCK_STEPS[2] : STEP_LINE.send}
                   lang={lang}
                   rightNowLabel={TIMECLOCK_RIGHT_NOW_LABEL}
                   onShowMe={() => setShowMeTarget(showMeTargetId === "send-button" ? null : "send-button")}

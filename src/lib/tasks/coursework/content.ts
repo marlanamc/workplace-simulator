@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const DUE = { en: "Friday, 11:59 PM", es: "Viernes, 11:59 PM" };
 
@@ -79,6 +79,11 @@ export const STARTERS: Record<Lang, string[]> = {
     "Thank you for telling me. I will look into this today.",
   ],
 };
+
+/** What the teacher sees: the assignment prompt and the learner's written reply. */
+export function describeSubmission(body: string, lang: Lang): SubmissionContent {
+  return { lang, fields: [{ label: COURSEWORK_COPY[lang].assignment, value: body }] };
+}
 
 export function responseIsComplete(body: string): boolean {
   const t = body.trim();

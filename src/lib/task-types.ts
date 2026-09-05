@@ -2,6 +2,26 @@ export type Lang = "en" | "es";
 
 export type Localized<T = string> = Record<Lang, T>;
 
+/** One labeled piece of what a learner wrote in a later-act task. */
+export interface SubmissionField {
+  label: string;
+  value: string;
+}
+
+/** Everything a learner wrote in one task submit, kept for the teacher to read. */
+export interface SubmissionContent {
+  lang: Lang;
+  fields: SubmissionField[];
+}
+
+/** A teacher's note on one submission, waiting for the learner to see it. */
+export interface TeacherFeedback {
+  id: string;
+  taskKey: string;
+  content: SubmissionContent;
+  note: string;
+}
+
 /** A single help-drawer micro-lesson: a title, a few short steps, and one tip. */
 export interface Lesson {
   t: string;

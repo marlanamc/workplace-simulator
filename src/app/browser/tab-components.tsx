@@ -27,6 +27,11 @@ import PortfolioReflectionTask from "./PortfolioReflectionTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import AccountRecoveryTask from "./AccountRecoveryTask";
+import JobsTask from "./JobsTask";
+import ResumeBuildTask from "./ResumeBuildTask";
+import InterviewTask from "./InterviewTask";
+import JobOfferTask from "./JobOfferTask";
+import OnboardingFormsTask from "./OnboardingFormsTask";
 
 /**
  * Which component renders each browser tab. Adding a self-contained task
@@ -65,4 +70,9 @@ export const TAB_COMPONENTS: Record<string, ComponentType> = {
   handbook: HandbookTask,
   incident: IncidentTask,
   "account-recovery": AccountRecoveryTask,
+  jobs: JobsTask,
+  resume: ResumeBuildTask,
+  interview: InterviewTask,
+  offer: JobOfferTask,
+  onboarding: OnboardingFormsTask,
 };

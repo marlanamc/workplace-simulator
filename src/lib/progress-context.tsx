@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import {
@@ -15,7 +15,17 @@ import {
   type Track,
   type Level,
 } from "@/lib/tracks-content";
-import { completeTask, awardCertificate, persistBridgePath, restartLevelProgress } from "@/app/actions";
+import {
+  completeTask,
+  awardCertificate,
+  persistBridgePath,
+  recordWritingSubmission,
+  markMyFeedbackSeen,
+  restartLevelProgress,
+  syncSkillRun,
+  type Confidence,
+} from "@/app/actions";
+import type { SubmissionContent, TeacherFeedback } from "@/lib/task-types";
 import { BRIDGE_PATH_FLAG, inferBridgePath, type BridgePath } from "@/lib/bridge-path";
 import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
 import { applyGapDecay, recordCleanRun, recordMissedRun, rungFor, type Rung, type RungMap } from "@/lib/release-ladder";
@@ -26,6 +36,10 @@ const loadStoryFlags = (learnerId: string): StoryFlags =>
 
 const saveStoryFlags = (learnerId: string, flags: StoryFlags) =>
   storage.setJSON(learnerKey.storyFlags(learnerId), flags);
+
+/** Merge a server-known bridge path onto stored flags without mutating either. */
+const withBridgePath = (flags: StoryFlags, bridgePath?: BridgePath | null): StoryFlags =>
+  bridgePath ? { ...flags, [BRIDGE_PATH_FLAG]: bridgePath } : flags;
 
 const loadStoredLang = (): Lang => (storage.getString(DEVICE_KEY.lang) === "es" ? "es" : "en");
 
@@ -51,7 +65,12 @@ interface ProgressValue {
   progressEpoch: number;
   storyFlags: StoryFlags;
   setStoryFlag: (key: string, value: string) => void;
-  markComplete: (taskKey: TaskKey, badgeKey?: string) => void;
+  markComplete: (
+    taskKey: TaskKey,
+    badgeKey?: string,
+    submission?: SubmissionContent,
+    confidence?: Confidence,
+  ) => void;
   restartLevel: (level: Level) => void;
   dismissCelebration: () => void;
   dismissLevelCelebration: () => void;
@@ -65,6 +84,10 @@ interface ProgressValue {
   rungMap: RungMap;
   getRung: (skillKey: string) => Rung;
   recordSkillRun: (skillKey: string, opts: { clean: boolean }) => void;
+  /** Teacher notes on earlier writing that the learner hasn't opened yet. */
+  pendingFeedback: TeacherFeedback[];
+  /** Mark one note as seen: removes it here and records it server-side. */
+  dismissFeedback: (id: string) => void;
 }
 
 const ProgressContext = createContext<ProgressValue | null>(null);
@@ -75,6 +98,8 @@ export function ProgressProvider({
   initialCompletedTaskKeys,
   initialCertificateTrackKeys,
   initialBridgePath,
+  initialFeedback = [],
+  initialRungs = {},
   children,
 }: {
   learnerId: string;
@@ -82,6 +107,9 @@ export function ProgressProvider({
   initialCompletedTaskKeys: TaskKey[];
   initialCertificateTrackKeys: string[];
   initialBridgePath?: BridgePath | null;
+  initialFeedback?: TeacherFeedback[];
+  /** Server-persisted skill rungs. Authoritative over the localStorage cache on load. */
+  initialRungs?: RungMap;
   children: ReactNode;
 }) {
   const [completedTaskKeys, setCompletedTaskKeys] = useState<TaskKey[]>(initialCompletedTaskKeys);
@@ -90,21 +118,66 @@ export function ProgressProvider({
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
   const [progressEpoch, setProgressEpoch] = useState(0);
-  const [storyFlags, setStoryFlags] = useState<StoryFlags>(() => {
-    const stored = loadStoryFlags(learnerId);
-    if (initialBridgePath) return { ...stored, [BRIDGE_PATH_FLAG]: initialBridgePath };
-    return stored;
-  });
+  // 1. Hydration: story flags are localStorage-only. Reading them in a useState
+  // initializer makes SSR paint Welcome/ActIntro while the client skips them.
+  // Same pattern as LoginForm — server snapshot is empty (+ bridge path from
+  // the DB); after hydrate, localStorage wins via isClient.
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+  const [storyFlagsOverride, setStoryFlags] = useState<StoryFlags | null>(null);
+  const storedStoryFlags = withBridgePath(
+    isClient ? loadStoryFlags(learnerId) : {},
+    initialBridgePath,
+  );
+  const storyFlags = storyFlagsOverride ?? storedStoryFlags;
   const [rungMap, setRungMap] = useState<RungMap>(() => {
-    const loaded = loadRungMap(learnerId);
-    const decayed = applyGapDecay(loaded, new Date().toISOString());
-    if (decayed !== loaded) saveRungMap(learnerId, decayed);
+    // Server rungs win over the local cache per skill; skills only present locally
+    // (an offline run not yet synced) are kept.
+    const merged = { ...loadRungMap(learnerId), ...initialRungs };
+    const decayed = applyGapDecay(merged, new Date().toISOString());
+    saveRungMap(learnerId, decayed);
     return decayed;
   });
+  // A ref mirror of rungMap so a skill run can compute the next map and fire its
+  // side effects (localStorage + server sync) *outside* a setState updater — the
+  // StrictMode double-fire rule this file already follows for completions.
+  const rungMapRef = useRef(rungMap);
+  useEffect(() => {
+    rungMapRef.current = rungMap;
+  }, [rungMap]);
+  // Skills a task self-reported this session via `useSkillGuidance` (mail,
+  // shift-review, account-recovery, schedule). `markComplete` records an
+  // automatic clean run for every other task so all ~35 feed the ladder, and
+  // this set keeps it from double-counting the ones that report their own
+  // clean/missed nuance.
+  const reportedSkillsRef = useRef<Set<string>>(new Set());
+
+  const applySkillRun = useCallback((skillKey: string, clean: boolean) => {
+    reportedSkillsRef.current.add(skillKey);
+    const now = new Date().toISOString();
+    const prev = rungMapRef.current;
+    const next = clean ? recordCleanRun(prev, skillKey, now) : recordMissedRun(prev, skillKey, now);
+    if (next === prev) return;
+    rungMapRef.current = next;
+    setRungMap(next);
+    saveRungMap(learnerId, next);
+    const state = next[skillKey];
+    if (state) syncSkillRun(skillKey, state);
+  }, [learnerId]);
+
   const [lang, setLangState] = useState<Lang>(() => loadStoredLang());
   const [bigText, setBigTextState] = useState<boolean>(() => loadStoredFlag(DEVICE_KEY.bigText));
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
+  const [pendingFeedback, setPendingFeedback] = useState<TeacherFeedback[]>(initialFeedback);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const dismissFeedback = useCallback((id: string) => {
+    setPendingFeedback((prev) => prev.filter((f) => f.id !== id));
+    markMyFeedbackSeen(id);
+  }, []);
 
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
@@ -124,20 +197,30 @@ export function ProgressProvider({
 
   const setStoryFlag = useCallback((key: string, value: string) => {
     setStoryFlags((prev) => {
-      const next = { ...prev, [key]: value };
+      const next = { ...withBridgePath(prev ?? loadStoryFlags(learnerId), initialBridgePath), [key]: value };
       saveStoryFlags(learnerId, next);
       return next;
     });
     if (key === BRIDGE_PATH_FLAG && (value === "a" || value === "b")) {
       persistBridgePath(value);
     }
-  }, [learnerId]);
+  }, [learnerId, initialBridgePath]);
 
   // Every state write and side effect here runs *outside* the state updaters —
   // no server action or setState nested inside a setCompletedTaskKeys(prev =>)
   // callback, which would double-fire under StrictMode. The `includes` guard
   // makes a repeat call a no-op.
-  const markComplete = useCallback((taskKey: TaskKey, badgeKey?: string) => {
+  const markComplete = useCallback((
+    taskKey: TaskKey,
+    badgeKey?: string,
+    submission?: SubmissionContent,
+    confidence?: Confidence,
+  ) => {
+    // The learner's written work is saved on every submit of a later-act task,
+    // even a repeat one (a revision after a teacher note), so this runs before
+    // the `includes` guard below.
+    if (submission) recordWritingSubmission(taskKey, submission);
+
     if (completedTaskKeys.includes(taskKey)) return;
     const next = [...completedTaskKeys, taskKey];
     setCompletedTaskKeys(next);
@@ -163,8 +246,13 @@ export function ProgressProvider({
     if (pointsTimer.current) clearTimeout(pointsTimer.current);
     pointsTimer.current = setTimeout(() => setJustEarnedPoints(null), 2200);
 
-    completeTask(taskKey, badgeKey);
-  }, [completedTaskKeys, storyFlags]);
+    completeTask(taskKey, badgeKey, confidence);
+
+    // Every task feeds the release ladder. Tasks that ran `useSkillGuidance`
+    // already reported their own clean/missed run; the rest get an automatic
+    // clean run here (the ladder "only loosens, never punishes").
+    if (!reportedSkillsRef.current.has(taskKey)) applySkillRun(taskKey, true);
+  }, [completedTaskKeys, storyFlags, applySkillRun]);
 
   const restartLevel = useCallback((level: Level) => {
     const path = inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]);
@@ -188,13 +276,8 @@ export function ProgressProvider({
   const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
 
   const recordSkillRun = useCallback((skillKey: string, opts: { clean: boolean }) => {
-    const now = new Date().toISOString();
-    const next = opts.clean
-      ? recordCleanRun(rungMap, skillKey, now)
-      : recordMissedRun(rungMap, skillKey, now);
-    setRungMap(next);
-    saveRungMap(learnerId, next);
-  }, [learnerId, rungMap]);
+    applySkillRun(skillKey, opts.clean);
+  }, [applySkillRun]);
 
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
   const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
@@ -231,6 +314,8 @@ export function ProgressProvider({
       rungMap,
       getRung,
       recordSkillRun,
+      pendingFeedback,
+      dismissFeedback,
     }),
     [
       learnerId,
@@ -256,6 +341,8 @@ export function ProgressProvider({
       rungMap,
       getRung,
       recordSkillRun,
+      pendingFeedback,
+      dismissFeedback,
     ],
   );
 

@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
  * Level 24 — Run the Meeting. The Team Lead promotion.
@@ -280,4 +280,17 @@ export function meetingMinutesPasses(input: MeetingMinutesInput): boolean {
     notesLookReal(input.notes) &&
     followupHasOwnersAndDates(input.followup)
   );
+}
+
+/** What the teacher sees for this submission. */
+export function describeSubmission(input: MeetingMinutesInput, lang: Lang): SubmissionContent {
+  const c = MEETING_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.agendaLabel, value: input.agenda },
+      { label: c.notesLabel, value: input.notes },
+      { label: `${c.followupLabel} — ${c.followupSubjectValue}`, value: input.followup },
+    ],
+  };
 }

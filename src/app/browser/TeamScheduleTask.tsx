@@ -9,6 +9,7 @@ import {
   WRONG_EMAIL_HINT,
   EMPTY_EMAIL_HINT,
   emailMentionsShift,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/team-schedule/content";
@@ -90,7 +91,7 @@ export default function TeamScheduleTask() {
     if (!body.trim()) return say(EMPTY_EMAIL_HINT[lang]);
     if (!emailMentionsShift(body)) return say(WRONG_EMAIL_HINT[lang]);
     setView("done");
-    markComplete("team-schedule", "build_a_crew_schedule");
+    markComplete("team-schedule", "build_a_crew_schedule", describeSubmission(body, lang));
   };
 
   const restart = () => {

@@ -11,6 +11,7 @@ import {
   LESSONS,
   titleIsAboutSchedule,
   agendaBulletCount,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/team-meeting/content";
@@ -57,7 +58,7 @@ export default function TeamMeetingTask() {
   const sendInvite = () => {
     if (!eventSaved || !agendaOk) return say(c.sendNeed);
     setView("done");
-    markComplete("team-meeting", "create_meeting_with_agenda");
+    markComplete("team-meeting", "create_meeting_with_agenda", describeSubmission({ title, agenda }, lang));
   };
 
   const restart = () => {

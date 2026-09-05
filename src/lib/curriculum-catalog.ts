@@ -25,6 +25,11 @@ export const JUMP_TABS = [
   "library",
   "front-desk",
   "billing-sheet",
+  "jobs",
+  "resume",
+  "interview",
+  "offer",
+  "onboarding",
   "zoom",
   "expense-report",
   "slides",
@@ -51,7 +56,12 @@ export interface CatalogLesson {
 }
 
 /** Later lessons where the student authors the email, sheet, or formula. The app cannot grade those. They go to the teacher. */
-const TEACHER_CHECK_TASKS = new Set([
+export const TEACHER_CHECK_TASKS = new Set([
+  "job-posting",
+  "job-application",
+  "resume-build",
+  "interview-practice",
+  "job-offer",
   "mail-send-link",
   "status-report",
   "team-schedule",
@@ -73,6 +83,23 @@ const TEACHER_CHECK_TASKS = new Set([
 
 export function lessonNeedsTeacher(lesson: CatalogLesson): boolean {
   return TEACHER_CHECK_TASKS.has(lesson.taskKey);
+}
+
+/** True when a task's writing should be saved for the teacher to read and comment on. */
+export function taskNeedsTeacherReview(taskKey: string): boolean {
+  return TEACHER_CHECK_TASKS.has(taskKey);
+}
+
+/** The browser tab that opens a task, for "open this again" after a teacher note. */
+export function jumpTabForTask(taskKey: string): JumpTab | undefined {
+  for (const act of CATALOG_ACTS) {
+    for (const level of act.levels) {
+      for (const lesson of level.lessons) {
+        if (lesson.taskKey === taskKey && lesson.tab) return lesson.tab;
+      }
+    }
+  }
+  return undefined;
 }
 
 export interface CatalogLevel {
@@ -604,8 +631,86 @@ export const CATALOG_ACTS: CatalogAct[] = [
     jobTitle: "Office Administrator (HQ)",
     color: "#c5221f",
     path: "office",
-    blurb: "Open after either Act V door. Nested Drive, multi-person calendar, expense report, a 3-slide deck.",
+    blurb: "Open after either Act V door. Apply for the HQ job, then: nested Drive, multi-person calendar, expense report, a 3-slide deck.",
     levels: [
+      {
+        key: "level19h1",
+        n: 19,
+        title: "Applying",
+        folder: "act-6-office-administrator/level-16-applying",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "job-posting",
+            skill: "Read a job posting and match it to your own experience",
+            app: "Jobs",
+            tab: "jobs",
+          },
+          {
+            n: "2",
+            taskKey: "job-application",
+            skill: "Fill out a multi-section job application",
+            app: "Jobs",
+            tab: "jobs",
+          },
+        ],
+      },
+      {
+        key: "level19h2",
+        n: 19,
+        title: "Your Résumé",
+        folder: "act-6-office-administrator/level-16-applying",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "resume-build",
+            skill: "Turn your work history into a one-page résumé",
+            app: "Docs",
+            tab: "resume",
+          },
+        ],
+      },
+      {
+        key: "level19h3",
+        n: 19,
+        title: "The Interview",
+        folder: "act-6-office-administrator/level-16-applying",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "interview-practice",
+            skill: "Answer common interview questions and ask one of your own",
+            app: "Interview",
+            tab: "interview",
+          },
+        ],
+      },
+      {
+        key: "level19h4",
+        n: 19,
+        title: "The Offer",
+        folder: "act-6-office-administrator/level-16-applying",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "job-offer",
+            skill: "Read an offer letter, find the start date, and accept",
+            app: "Mail",
+            tab: "offer",
+          },
+        ],
+      },
+      {
+        key: "level19h5",
+        n: 19,
+        title: "New-Hire Paperwork",
+        folder: "act-6-office-administrator/level-16-applying",
+        lessons: [
+          { n: "1", taskKey: "w4-form", skill: "Fill out a W-4 (tax withholding)", app: "Forms", tab: "onboarding" },
+          { n: "2", taskKey: "i9-section1", skill: "Fill out I-9 Section 1 (work authorization)", app: "Forms", tab: "onboarding" },
+          { n: "3", taskKey: "direct-deposit", skill: "Set up direct deposit", app: "Forms", tab: "onboarding" },
+        ],
+      },
       {
         key: "level20",
         n: 20,

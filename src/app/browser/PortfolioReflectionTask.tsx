@@ -11,6 +11,7 @@ import {
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
   reflectionComplete,
+  describeSubmission,
 } from "@/lib/tasks/portfolio-reflection/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -79,7 +80,7 @@ export default function PortfolioReflectionTask() {
   const submit = () => {
     if (!reflectionComplete(answers)) return say(c.needAll);
     setView("done");
-    markComplete("portfolio-reflection", "look_back");
+    markComplete("portfolio-reflection", "look_back", describeSubmission(answers, lang));
   };
 
   const restart = () => {

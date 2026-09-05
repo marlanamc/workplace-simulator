@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
  * Level 26 — Put It All Together. The biggest single lesson: every app, one
@@ -280,4 +280,19 @@ export function opsReportPacketPasses(input: OpsReportPacketInput): boolean {
     summaryPullsBoth(input.summary) &&
     input.packetSent
   );
+}
+
+/** What the teacher sees for this submission: the written summary and the packet email. */
+export function describeSubmission(
+  input: { summary: string; message: string },
+  lang: Lang,
+): SubmissionContent {
+  const c = OPS_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.docsFileName, value: input.summary },
+      { label: c.mailSubjectValue, value: input.message },
+    ],
+  };
 }

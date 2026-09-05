@@ -11,6 +11,7 @@ import {
   STARTERS as ENROLL_STARTERS,
   LESSONS as ENROLL_LESSONS,
   statementShowsInterest,
+  describeSubmission as describeEnrollment,
   RIGHT_NOW_STEPS as ENROLL_STEPS,
   RIGHT_NOW_LABEL as ENROLL_LABEL,
 } from "@/lib/tasks/enrollment/content";
@@ -69,7 +70,7 @@ function EnrollmentPortal() {
     if (!statement.trim()) return say(c.empty);
     if (!statementShowsInterest(statement)) return say(c.weak);
     setView("done");
-    markComplete("enrollment", "apply_before_the_deadline");
+    markComplete("enrollment", "apply_before_the_deadline", describeEnrollment(statement, lang));
   };
 
   const stepIndex = !docReady ? 1 : 2;

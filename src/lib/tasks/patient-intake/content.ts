@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const PATIENT = { name: "Maya Rivera", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
 
@@ -91,6 +91,11 @@ export const STARTERS: Record<Lang, string[]> = {
     "I can't share that. It stays with the care team.",
   ],
 };
+
+/** What the teacher sees: how the learner declined the coworker's request. */
+export function describeSubmission(reply: string, lang: Lang): SubmissionContent {
+  return { lang, fields: [{ label: INTAKE_COPY[lang].coworkerName, value: reply }] };
+}
 
 export function declineIsSafe(body: string): boolean {
   const t = body.toLowerCase();

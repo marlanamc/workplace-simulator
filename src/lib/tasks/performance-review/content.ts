@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
  * Level 25 — The Review. Write a short, honest performance note for one team
@@ -175,4 +175,16 @@ export interface PerformanceReviewInput {
 
 export function performanceReviewPasses(input: PerformanceReviewInput): boolean {
   return strengthIsSpecific(input.strength) && areaToGrowIsConstructive(input.area);
+}
+
+/** What the teacher sees for this submission. */
+export function describeSubmission(input: PerformanceReviewInput, lang: Lang): SubmissionContent {
+  const c = REVIEW_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.strengthLabel, value: input.strength },
+      { label: c.areaLabel, value: input.area },
+    ],
+  };
 }

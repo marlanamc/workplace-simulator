@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const CREDIBLE_KEY = "database";
 
@@ -113,6 +113,19 @@ export const STARTERS: Record<Lang, string[]> = {
     "It is from the library database and names its authors.",
   ],
 };
+
+/** What the teacher sees: which source the learner cited and their reason. */
+export function describeSubmission(picked: string | null, why: string, lang: Lang): SubmissionContent {
+  const c = RESEARCH_COPY[lang];
+  const source = RESULTS.find((r) => r.key === picked)?.source[lang] ?? (picked ?? "");
+  return {
+    lang,
+    fields: [
+      { label: c.pickLabel, value: source },
+      { label: c.whyLabel, value: why },
+    ],
+  };
+}
 
 export function whyHoldsUp(body: string): boolean {
   const t = body.toLowerCase();

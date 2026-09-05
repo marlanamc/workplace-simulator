@@ -91,7 +91,8 @@ describe("the whole game can be walked start to finish", () => {
     const pathA = walkPath(trunk, "a");
     expect(allTracksComplete(pathA)).toBe(false);
     expect(needsBridgePicker(pathA, "a")).toBe("other");
-    expect(nextHandoff(pathA, "a")?.taskKey).toBe("office-drive");
+    // Act VI now opens with the getting-hired arc (job-posting) before the HQ work.
+    expect(nextHandoff(pathA, "a")?.taskKey).toBe("job-posting");
     expect(nextHandoff(pathA, "b")?.taskKey).toBe("appointment-scheduling");
 
     const hq = walkHq(pathA, "a");
@@ -118,7 +119,7 @@ describe("the whole game can be walked start to finish", () => {
     for (const key of PATH_B_TASKS) {
       expect(pathA, `path A picked up ${key}`).not.toContain(key);
     }
-    expect(nextHandoff(pathA, "a")?.taskKey).toBe("office-drive");
+    expect(nextHandoff(pathA, "a")?.taskKey).toBe("job-posting");
     expect(pathA).not.toContain("appointment-scheduling");
     const act7 = walkAct7(walkHq(pathA, "a"), "a");
     for (const key of PATH_B_TASKS) {
@@ -133,7 +134,7 @@ describe("the whole game can be walked start to finish", () => {
       expect(pathB, `path B picked up ${key}`).not.toContain(key);
     }
     expect(allTracksComplete(pathB)).toBe(false);
-    expect(nextHandoff(pathB, "b")?.taskKey).toBe("office-drive");
+    expect(nextHandoff(pathB, "b")?.taskKey).toBe("job-posting");
     expect(nextHandoff(pathB, "a")?.taskKey).toBe("enrollment");
     const hq = walkHq(pathB, "b");
     expect(allTracksComplete(hq)).toBe(true);

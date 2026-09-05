@@ -142,22 +142,23 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
 
   act6: {
     actLabel: { en: "Act VI", es: "Acto VI" },
-    role: { en: "You're an Office Administrator now", es: "Ahora eres administrador de oficina" },
+    role: { en: "Moving to the office", es: "Te mueves a la oficina" },
     roleLine: {
-      en: "You work at Harborside HQ. The drive is bigger, and the meetings have more people.",
-      es: "Trabajas en Harborside HQ. El drive es más grande y las reuniones tienen más gente.",
+      en: "Harborside HQ has an Office Administrator opening. First you apply for it — a posting, an application, a résumé, an interview. Then you start the job.",
+      es: "Harborside HQ tiene una vacante de Administrador de Oficina. Primero aplicas: un anuncio, una solicitud, un currículum, una entrevista. Luego empiezas el trabajo.",
     },
     manager: managerLine("anita"),
     bridge: {
-      en: "The tools are the same ones you know — Drive, Calendar, Sheets — used at office scale. You search instead of browse, and you run the meeting.",
-      es: "Las herramientas son las mismas que conoces — Drive, Calendario, Sheets — usadas a escala de oficina. Buscas en vez de navegar, y diriges la reunión.",
+      en: "You've earned this with your cafe work. Once you're hired, the tools are ones you know — Drive, Calendar, Sheets — used at office scale.",
+      es: "Te lo ganaste con tu trabajo en el café. Cuando te contraten, las herramientas son las que conoces — Drive, Calendario, Sheets — a escala de oficina.",
     },
     skillsTitle: NEW_SKILLS_TITLE,
     skills: [
+      { label: { en: "Read a job posting", es: "Leer un anuncio de empleo" }, icon: "review", color: "#1a73e8", tint: "#e8f0fe" },
+      { label: { en: "Fill an application", es: "Llenar una solicitud" }, icon: "review", color: "#673ab7", tint: "#f1e9fb" },
       { label: { en: "Search a big drive", es: "Buscar en un drive grande" }, icon: "files", color: "#188038", tint: "#f1efe9" },
       { label: { en: "Schedule and join a call", es: "Agendar y unirte a una llamada" }, icon: "meeting", color: "#8430ce", tint: "#f1e9fb" },
-      { label: { en: "Expense reports", es: "Reportes de gastos" }, icon: "expenses", color: "#b06000", tint: "#fef0dc" },
-      { label: { en: "A short slide deck", es: "Una presentación corta" }, icon: "slides", color: "#1a73e8", tint: "#e8f0fe" },
+      { label: { en: "A short slide deck", es: "Una presentación corta" }, icon: "slides", color: "#b06000", tint: "#fef0dc" },
     ],
     start: { en: "Start Act VI", es: "Comenzar el Acto VI" },
   },

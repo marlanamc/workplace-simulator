@@ -739,6 +739,168 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     jobCardLine: { en: "Stay polite. Do not confirm.", es: "Sé amable. No confirmes." },
   },
 
+  // ---- Act VI: Getting the Office Job (the hiring arc) ----
+
+  "job-posting": {
+    key: "job-posting",
+    built: true,
+    label: { en: "Read the HQ job posting", es: "Lee el anuncio del puesto en HQ" },
+    dispatch: {
+      en: "Anita shared an opening at HQ. Read it and check it against what you've done.",
+      es: "Anita compartió una vacante en HQ. Léela y compárala con lo que has hecho.",
+    },
+    skill: "Read a job posting and match it to my experience",
+    bookmarkLabel: "Jobs",
+    handoffCta: { en: "Open Jobs from the bookmarks", es: "Abre Empleos en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. An opening lands in your inbox.",
+      es: "Antes de HQ. Llega una vacante a tu correo.",
+    },
+    location: browser("Open Jobs from the bookmarks"),
+    jobCardLine: { en: "Read the posting. Do you fit?", es: "Lee el anuncio. ¿Encajas?" },
+    jobCardDoneLine: { en: "You fit. Next: the application.", es: "Encajas. Sigue: la solicitud." },
+  },
+
+  "job-application": {
+    key: "job-application",
+    built: true,
+    label: { en: "Fill out the application", es: "Llena la solicitud" },
+    dispatch: {
+      en: "The application has a few sections. Fill each one, then submit.",
+      es: "La solicitud tiene varias secciones. Llena cada una y envíala.",
+    },
+    skill: "Fill out a job application",
+    bookmarkLabel: "Jobs",
+    handoffCta: { en: "Open Jobs from the bookmarks", es: "Abre Empleos en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. The application is open.",
+      es: "Antes de HQ. La solicitud está abierta.",
+    },
+    location: browser("Open Jobs from the bookmarks"),
+    jobCardLine: { en: "Fill each section. Then submit.", es: "Llena cada sección. Luego envía." },
+    jobCardDoneLine: { en: "Application sent.", es: "Solicitud enviada." },
+  },
+
+  "resume-build": {
+    key: "resume-build",
+    built: true,
+    label: { en: "Build your résumé", es: "Arma tu currículum" },
+    dispatch: {
+      en: "Turn your Harborside jobs into a one-page résumé — summary, roles, skills.",
+      es: "Convierte tus trabajos en Harborside en un currículum de una página — resumen, puestos, habilidades.",
+    },
+    skill: "Build a one-page résumé from my work history",
+    bookmarkLabel: "Résumé",
+    handoffCta: { en: "Open Résumé from the bookmarks", es: "Abre Currículum en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. The application asked for a résumé.",
+      es: "Antes de HQ. La solicitud pidió un currículum.",
+    },
+    location: browser("Open Résumé from the bookmarks"),
+    jobCardLine: { en: "Summary, two roles, your skills.", es: "Resumen, dos puestos, tus habilidades." },
+    jobCardDoneLine: { en: "Résumé saved.", es: "Currículum guardado." },
+  },
+
+  "interview-practice": {
+    key: "interview-practice",
+    built: true,
+    label: { en: "Do the interview", es: "Haz la entrevista" },
+    dispatch: {
+      en: "Anita has four questions. Answer each one, then ask one of your own.",
+      es: "Anita tiene cuatro preguntas. Responde cada una, luego haz una tuya.",
+    },
+    skill: "Answer common interview questions",
+    bookmarkLabel: "Interview",
+    handoffCta: { en: "Open Interview from the bookmarks", es: "Abre Entrevista en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. The interview is scheduled.",
+      es: "Antes de HQ. La entrevista está agendada.",
+    },
+    location: browser("Open Interview from the bookmarks"),
+    jobCardLine: { en: "Answer each question. Then ask one.", es: "Responde cada pregunta. Luego haz una." },
+    jobCardDoneLine: { en: "Interview done.", es: "Entrevista terminada." },
+  },
+
+  "job-offer": {
+    key: "job-offer",
+    built: true,
+    label: { en: "Read and accept the offer", es: "Lee y acepta la oferta" },
+    dispatch: {
+      en: "The offer came from Anita. Find your start date, then reply that you accept.",
+      es: "Llegó la oferta de Anita. Encuentra tu fecha de inicio y responde que aceptas.",
+    },
+    skill: "Read an offer letter and accept it",
+    bookmarkLabel: "Offer",
+    handoffCta: { en: "Open Offer from the bookmarks", es: "Abre Oferta en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. The offer is in your inbox.",
+      es: "Antes de HQ. La oferta está en tu bandeja.",
+    },
+    location: browser("Open Offer from the bookmarks"),
+    jobCardLine: { en: "Find the start date. Then accept.", es: "Encuentra la fecha de inicio. Luego acepta." },
+    jobCardDoneLine: { en: "Offer accepted.", es: "Oferta aceptada." },
+  },
+
+  "w4-form": {
+    key: "w4-form",
+    built: true,
+    label: { en: "Fill out the W-4", es: "Llena el W-4" },
+    dispatch: {
+      en: "First new-hire form: the W-4. It sets your tax withholding. Pick a status, sign, date.",
+      es: "Primer formulario de nuevo empleado: el W-4. Fija tu retención de impuestos. Elige un estado, firma, fecha.",
+    },
+    skill: "Fill out a W-4",
+    bookmarkLabel: "Onboarding",
+    handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. HR sent the new-hire forms.",
+      es: "Antes de HQ. RR. HH. envió los formularios.",
+    },
+    location: browser("Open Onboarding from the bookmarks"),
+    jobCardLine: { en: "W-4: status, sign, date.", es: "W-4: estado, firma, fecha." },
+    jobCardDoneLine: { en: "W-4 submitted.", es: "W-4 enviado." },
+  },
+
+  "i9-section1": {
+    key: "i9-section1",
+    built: true,
+    label: { en: "Fill out the I-9", es: "Llena el I-9" },
+    dispatch: {
+      en: "The I-9 Section 1 — it says you're allowed to work in the U.S. Fill it in and sign.",
+      es: "El I-9 Sección 1 — dice que tienes permiso para trabajar en EE. UU. Llénalo y firma.",
+    },
+    skill: "Fill out I-9 Section 1",
+    bookmarkLabel: "Onboarding",
+    handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. Two forms to go.",
+      es: "Antes de HQ. Faltan dos formularios.",
+    },
+    location: browser("Open Onboarding from the bookmarks"),
+    jobCardLine: { en: "I-9: name, birth date, status, sign.", es: "I-9: nombre, fecha de nacimiento, estado, firma." },
+    jobCardDoneLine: { en: "I-9 submitted.", es: "I-9 enviado." },
+  },
+
+  "direct-deposit": {
+    key: "direct-deposit",
+    built: true,
+    label: { en: "Set up direct deposit", es: "Configura el depósito directo" },
+    dispatch: {
+      en: "Last form: direct deposit. You need your bank's routing number (9 digits) and your account number.",
+      es: "Último formulario: depósito directo. Necesitas el número de ruta de tu banco (9 dígitos) y tu número de cuenta.",
+    },
+    skill: "Set up direct deposit",
+    bookmarkLabel: "Onboarding",
+    handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
+    shiftMoment: {
+      en: "Before HQ. Last form.",
+      es: "Antes de HQ. Último formulario.",
+    },
+    location: browser("Open Onboarding from the bookmarks"),
+    jobCardLine: { en: "Routing number is 9 digits.", es: "El número de ruta tiene 9 dígitos." },
+    jobCardDoneLine: { en: "Direct deposit set up. You're ready for day one.", es: "Depósito directo listo. Estás listo para el primer día." },
+  },
+
   "office-drive": {
     key: "office-drive",
     built: true,

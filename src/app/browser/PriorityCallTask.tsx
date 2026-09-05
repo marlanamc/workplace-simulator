@@ -9,6 +9,7 @@ import {
   HINTS,
   LESSONS,
   replyIsSafe,
+  describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/priority-call/content";
@@ -43,7 +44,7 @@ export default function PriorityCallTask() {
   const finishIfReady = (mail: boolean, cover: boolean, cal: boolean) => {
     if (mail && cover && cal) {
       setView("done");
-      markComplete("priority-call", "handle_three_asks");
+      markComplete("priority-call", "handle_three_asks", describeSubmission({ urgency, reply }, lang));
     } else {
       setView("hub");
     }

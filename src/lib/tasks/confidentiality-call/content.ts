@@ -1,4 +1,4 @@
-import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export type CallChoice = "share" | "rude" | "safe";
 
@@ -94,6 +94,15 @@ export function replyIsSafe(body: string): boolean {
 
 export function choiceIsSafe(key: CallChoice): boolean {
   return key === "safe";
+}
+
+/** What the teacher sees: which answer the learner gave the caller. */
+export function describeSubmission(key: CallChoice, lang: Lang): SubmissionContent {
+  const choice = CALL_CHOICES.find((c) => c.key === key);
+  return {
+    lang,
+    fields: [{ label: CALL_COPY[lang].pick, value: choice?.label[lang] ?? key }],
+  };
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {

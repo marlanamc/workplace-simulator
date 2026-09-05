@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { GAP_SHIFT_LABEL } from "../crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -197,6 +197,11 @@ export function emailMentionsShift(body: string): boolean {
   const hasDay = /\bsat(urday)?\b/.test(t) || /\bs[aá]b(ado)?\b/.test(t);
   const hasTime = /\b4\b/.test(t) || /\b16:00\b/.test(t) || /4\s*[–-]\s*10/.test(t);
   return hasDay && hasTime;
+}
+
+/** What the teacher sees: the message telling the crew member about the new shift. */
+export function describeSubmission(body: string, lang: Lang): SubmissionContent {
+  return { lang, fields: [{ label: TEAM_SCHEDULE_COPY[lang].subject, value: body }] };
 }
 
 /** The persistent "what to do right now" line, one per step of this job. */

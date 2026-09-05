@@ -18,6 +18,7 @@ import {
   STARTERS as INTAKE_STARTERS,
   LESSONS as INTAKE_LESSONS,
   declineIsSafe,
+  describeSubmission as describeIntake,
   RIGHT_NOW_STEPS as INTAKE_STEPS,
   RIGHT_NOW_LABEL as INTAKE_LABEL,
 } from "@/lib/tasks/patient-intake/content";
@@ -26,6 +27,7 @@ import {
   CALL_CHOICES,
   LESSONS as CALL_LESSONS,
   choiceIsSafe,
+  describeSubmission as describeCall,
   RIGHT_NOW_STEPS as CALL_STEPS,
   RIGHT_NOW_LABEL as CALL_LABEL,
   type CallChoice,
@@ -213,7 +215,7 @@ function IntakeDesk() {
     if (/follow-?up|seguimiento/i.test(reply)) return say(c.shared);
     if (!declineIsSafe(reply)) return say(c.weak);
     setDone(true);
-    markComplete("patient-intake", "file_intake_do_not_overshare");
+    markComplete("patient-intake", "file_intake_do_not_overshare", describeIntake(reply, lang));
   };
 
   const restart = () => {
@@ -300,7 +302,7 @@ function PhoneDesk() {
     if (key === "rude") return say(c.rudeHint);
     if (!choiceIsSafe(key)) return;
     setDone(true);
-    markComplete("confidentiality-call", "do_not_confirm_over_the_phone");
+    markComplete("confidentiality-call", "do_not_confirm_over_the_phone", describeCall(key, lang));
   };
 
   return (

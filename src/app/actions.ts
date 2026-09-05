@@ -2,7 +2,21 @@
 
 import { redirect } from "next/navigation";
 import { clearSessionCookie, getSessionLearnerId } from "@/lib/auth";
-import { awardBadge, recordCompletion, deleteCompletions, deleteBadges, getBadges, replaceProgress } from "@/lib/db/queries";
+import {
+  awardBadge,
+  recordCompletion,
+  deleteCompletions,
+  deleteBadges,
+  getBadges,
+  getLearnerById,
+  getSubmissionOwner,
+  markFeedbackSeen,
+  recordSubmission,
+  replaceProgress,
+  setSubmissionNote,
+  upsertSkillRung,
+} from "@/lib/db/queries";
+import type { SubmissionContent } from "@/lib/db/schema";
 import { LEVELS, TRACKS, taskKeysForLevel, taskKeysBeforeLevel, trackKeysBeforeLevel } from "@/lib/tracks-content";
 import {
   BRIDGE_PATH_BADGES,
@@ -25,12 +39,64 @@ export async function logout() {
   redirect("/login");
 }
 
+/** How sure the learner felt on a teacher-check task, tapped on the done screen. */
+export type Confidence = "low" | "mid" | "high";
+
 /** Records a task as done for the signed-in learner and awards a badge, if given. */
-export async function completeTask(taskKey: string, badgeKey?: string) {
+export async function completeTask(taskKey: string, badgeKey?: string, confidence?: Confidence) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) return { ok: false as const };
-  await recordCompletion(learnerId, taskKey);
+  await recordCompletion(learnerId, taskKey, confidence ?? null);
   if (badgeKey) await awardBadge(learnerId, badgeKey);
+  return { ok: true as const };
+}
+
+/**
+ * Persists one skill's release-ladder rung. The pure transition logic in
+ * `src/lib/release-ladder.ts` runs client-side; this only stores the result so it
+ * survives a device switch and the teacher dashboard can read it.
+ */
+export async function syncSkillRun(
+  skillKey: string,
+  state: { rung: number; cleanRunStreak: number; missStreak: number; lastPracticedAt: string },
+) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) return { ok: false as const };
+  await upsertSkillRung(learnerId, skillKey, state);
+  return { ok: true as const };
+}
+
+/**
+ * Saves what the learner wrote in a later-act task (the `TEACHER_CHECK_TASKS` set),
+ * so the teacher can read it and suggest changes. Fire-and-forget alongside
+ * `completeTask` — never blocks completion.
+ */
+export async function recordWritingSubmission(taskKey: string, content: SubmissionContent) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) return { ok: false as const };
+  await recordSubmission(learnerId, taskKey, content);
+  return { ok: true as const };
+}
+
+/** Teacher-only: attach suggested changes to one submission from the teacher's own class. */
+export async function saveSubmissionNote(submissionId: string, note: string) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) return { ok: false as const };
+  const teacher = await getLearnerById(learnerId);
+  if (!teacher || teacher.role !== "teacher") return { ok: false as const };
+  const owner = await getSubmissionOwner(submissionId);
+  if (!owner || owner.classCode !== teacher.classCode) return { ok: false as const };
+  const trimmed = note.trim();
+  if (!trimmed) return { ok: false as const };
+  await setSubmissionNote(submissionId, trimmed);
+  return { ok: true as const };
+}
+
+/** Learner marks a teacher note as read (opened it in the simulator). */
+export async function markMyFeedbackSeen(submissionId: string) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) return { ok: false as const };
+  await markFeedbackSeen(submissionId, learnerId);
   return { ok: true as const };
 }
 

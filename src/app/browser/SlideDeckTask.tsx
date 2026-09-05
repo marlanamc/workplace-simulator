@@ -9,6 +9,7 @@ import {
   RIGHT_NOW_STEPS,
   PLANTED_TOTAL,
   slideDeckPasses,
+  describeSubmission,
 } from "@/lib/tasks/slide-deck/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -51,7 +52,7 @@ export default function SlideDeckTask() {
     }
     setPresenting(true);
     setDone(true);
-    markComplete("slide-deck", "present_three_slides");
+    markComplete("slide-deck", "present_three_slides", describeSubmission({ title, takeaway }, lang));
   };
 
   const restart = () => {
