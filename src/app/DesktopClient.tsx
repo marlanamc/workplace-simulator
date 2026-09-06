@@ -79,7 +79,7 @@ function DesignerJumpBanner() {
   return (
     <div className="fixed inset-x-0 top-0 z-[60] flex h-9 items-center justify-between gap-3 bg-[#202124] px-4 text-[13px] text-white">
       <p className="min-w-0 truncate text-white/80">
-        Studio jump. Learner locks are off for this session.
+        Studio jump. Same locks as a learner on this day.
       </p>
       <Link
         href="/studio"
@@ -208,7 +208,7 @@ function DesktopShell({
           minimizing preserves state (e.g. which mail step you're on) */}
       {apps.browser && (
         <AppWindow active={active === "browser"} topOffset={windowTop}>
-          <BrowserClient key={progressEpoch} studioLocksOff={fromStudio} />
+          <BrowserClient key={progressEpoch} />
         </AppWindow>
       )}
       {apps.pdf && (

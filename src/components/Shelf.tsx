@@ -195,8 +195,9 @@ export default function Shelf({
   };
 
   const accountBoxRef = useRef<HTMLDivElement>(null);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const launcherPanelRef = useRef<HTMLDivElement>(null);
-  useClickOutside(accountBoxRef, accountOpen, () => setAccountOpen(false));
+  useClickOutside([accountBoxRef, accountMenuRef], accountOpen, () => setAccountOpen(false));
   useClickOutside(launcherPanelRef, launcherOpen, closeLauncher);
 
   const closeOverlays = () => {
@@ -374,11 +375,16 @@ export default function Shelf({
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
             <ShelfClock lang={lang} />
           </button>
+        </div>
+      </div>
 
-          {accountOpen && (
-              <div
-                className="absolute right-0 bottom-[calc(100%+8px)] z-40 w-[336px] rounded-2xl bg-[#202124] p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] animate-fade-up"
-              >
+      {/* Above Job Card / celebrations — shelf z-40 would trap an absolute menu. */}
+      {accountOpen && (
+        <div
+          ref={accountMenuRef}
+          className="fixed right-1.5 z-[90] w-[336px] rounded-2xl bg-[#202124] p-3 text-white shadow-[0_20px_50px_rgba(0,0,0,0.45)] animate-fade-up"
+          style={{ bottom: SHELF_HEIGHT + 8 }}
+        >
                 <div className="mb-3 rounded-xl bg-white/8 px-3 py-2.5 text-[12px] leading-snug text-white/70">
                   {c.practiceBanner}
                 </div>
@@ -467,10 +473,8 @@ export default function Shelf({
                     Studio
                   </Link>
                 </div>
-              </div>
-          )}
         </div>
-      </div>
+      )}
 
       {/* screen dimming tied to the brightness slider - a genuine control, not a decoration */}
       <div

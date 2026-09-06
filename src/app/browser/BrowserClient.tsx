@@ -140,7 +140,7 @@ function NewTabPage() {
   );
 }
 
-export default function BrowserClient({ studioLocksOff = false }: { studioLocksOff?: boolean }) {
+export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { lang, currentTrack, completedTaskKeys, bridgePath, storyFlags, setStoryFlag } = useProgress();
   const { nudge, say, dismiss } = useNudge();
@@ -211,7 +211,7 @@ export default function BrowserClient({ studioLocksOff = false }: { studioLocksO
     progressLevelKey,
     completedTaskKeys,
     bridgePath,
-    { unlockedLevelKeys: studioLocksOff ? null : unlockedKeys },
+    { unlockedLevelKeys: unlockedKeys },
   );
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.

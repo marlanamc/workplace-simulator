@@ -6,7 +6,7 @@ import { jumpToPreset, presetForAct } from "./jump-to-preset";
 
 /**
  * Header pills: one click jumps to that act's orientation screen (welcome for
- * Act I, ActIntro for II–VII) with learner locks off — same as the time machine.
+ * Act I, ActIntro for II–VII) with the same in-day locks as a learner.
  */
 export default function ActJumpNav({
   learnerId,

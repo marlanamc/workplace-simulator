@@ -126,7 +126,7 @@ describe("bookmarkTabKeys", () => {
     expect(visible.has("portal")).toBe(false);
   });
 
-  it("Studio locks-off still shows future core apps", () => {
+  it("passing unlockedLevelKeys null shows all core apps (escape hatch)", () => {
     const visible = bookmarkTabKeys("level3", [], null, { unlockedLevelKeys: null });
     expect(visible.has("files")).toBe(true);
     expect(visible.has("calendar")).toBe(true);

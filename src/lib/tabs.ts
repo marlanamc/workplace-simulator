@@ -118,9 +118,9 @@ const PATH_GATED_TABS: Record<string, { path: "a" | "b"; levels: readonly string
 
 export type BookmarkOpts = {
   /**
-   * Levels the learner has reached (furthest + earlier). When set, core apps
+   * Levels the learner has reached (furthest + earlier). Core apps
    * (Mail, Drive, Calendar…) only appear once their owning level is unlocked.
-   * Pass `null` for Studio jumps so designers can peek ahead (locks off).
+   * Omit or pass a Set for normal learner/Studio sessions.
    */
   unlockedLevelKeys?: ReadonlySet<string> | null;
 };

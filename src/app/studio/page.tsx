@@ -37,7 +37,8 @@ export default async function StudioPage() {
                 Acts I and II are the shared trunk. Early levels are scaffolded;
                 the app can check the click. Later, they write their own emails
                 and formulas, and those come to you. Open anything that is built.
-                This page skips learner locks. Don&apos;t send students here.
+                This page is for designers — don&apos;t send students here. Time
+                machine jumps keep the same in-day locks as a learner.
               </p>
             </div>
             <div className="flex items-center gap-3">
