@@ -73,12 +73,12 @@ export const SLIDES_COPY: Record<Lang, {
     titleLabel: "Title",
     titlePlaceholder: "Give these slides a title…",
     numberKicker: "From the expense report",
-    takeawayLabel: "Takeaway",
+    takeawayLabel: "Main point",
     takeawayPlaceholder: "One sentence the team should remember…",
     next: "Next slide",
     back: "Back",
     present: "Present",
-    slideLabels: ["Title", "The number", "Takeaway"],
+    slideLabels: ["Title", "The number", "Main point"],
     needTitle: "Put a title on the first slide first.",
     needConfirm: "Compare the receipt rows and enter their total on slide two.",
     needTakeaway: "Write one full sentence. At least a few words.",
@@ -121,7 +121,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "You need three slides, no more",
       s: [
-        "One slide for the title, one for the expense figure you find in the reference, one for your takeaway.",
+        "One slide for the title, one for the expense figure you find in the reference, one for your main point.",
         "Use only expenses with receipts. Enter their total on slide two.",
       ],
       tip: "After presenting, answer Chris’s question using the expense reference.",
@@ -143,7 +143,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Title the first slide.", es: "Ponle título a la primera diapositiva." },
   { en: "Find and enter the expense total.", es: "Busca y escribe el total de gastos." },
-  { en: "Write a takeaway. Present and answer Chris.", es: "Escribe una idea. Presenta y responde a Chris." },
+  { en: "Write a main point. Present and answer Chris.", es: "Escribe una idea. Presenta y responde a Chris." },
 ];
 
 export const COWORKER_QUESTION: Localized = { en: 'Chris: Why is the dinner expense excluded from this total?', es: 'Chris: ¿Por qué el gasto de la cena no está incluido en este total?' };

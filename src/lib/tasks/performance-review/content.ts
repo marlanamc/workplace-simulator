@@ -23,7 +23,7 @@ export const PROFILE: ReviewProfile = {
   role: { en: "Barista, on the team 8 months", es: "Barista, 8 meses en el equipo" },
   wins: [
     { en: "Trained two new hires this month and stayed patient with both.", es: "Capacitó a dos personas nuevas este mes y tuvo paciencia con las dos." },
-    { en: "Caught a delivery that was short three boxes and flagged it same day.", es: "Notó una entrega que venía corta por tres cajas y lo reportó el mismo día." },
+    { en: "Noticed a delivery that was short three boxes and reported it same day.", es: "Notó una entrega que venía corta por tres cajas y lo reportó el mismo día." },
     { en: "Covered two close shifts on short notice.", es: "Cubrió dos cierres avisando con poco tiempo." },
   ],
   issue: {
@@ -103,7 +103,7 @@ export const REVIEW_COPY: Record<Lang, {
 export const STRENGTH_STARTERS: Record<Lang, string[]> = {
   en: [
     "This month, Sam trained two new hires and kept their patience the whole time.",
-    "Sam caught a short delivery the same day it came in.",
+    "Sam noticed a short delivery the same day it came in.",
   ],
   es: [
     "Este mes, Sam capacitó a dos personas nuevas y mantuvo la paciencia todo el tiempo.",

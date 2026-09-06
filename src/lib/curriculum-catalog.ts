@@ -760,7 +760,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
           {
             n: "1",
             taskKey: "expense-report",
-            skill: "Match receipts to categories, catch the one that's missing",
+            skill: "Match receipts to categories, notice the one that's missing",
             app: "Sheets + Drive",
             tab: "expense-report",
           },

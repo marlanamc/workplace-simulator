@@ -996,7 +996,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "📊",
       kicker: { en: "Three slides", es: "Tres diapositivas" },
-      title: { en: "A title, a number, a takeaway.", es: "Un título, un número, una idea." },
+      title: { en: "A title, a number, a main point.", es: "Un título, un número, una idea." },
       body: {
         en: "Use the expense total that is already on the slide. Present it. Do not add a fourth slide.",
         es: "Usa el total de gastos que ya está en la diapositiva. Preséntalo. No agregues una cuarta diapositiva.",

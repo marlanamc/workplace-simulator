@@ -973,7 +973,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Match the receipts. One row has none. Flag it before you send.",
       es: "Empareja los recibos. Una fila no tiene. Márcala antes de enviar.",
     },
-    skill: "Match receipts and catch a missing one",
+    skill: "Match receipts and notice a missing one",
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -989,7 +989,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Present a three-slide deck", es: "Presenta un deck de tres diapositivas" },
     dispatch: {
-      en: "Title, the expense total, one takeaway. Then present it.",
+      en: "Title, the expense total, one main point. Then present it.",
       es: "Título, el total de gastos, una idea. Luego preséntalo.",
     },
     skill: "Build a short deck with a real number",

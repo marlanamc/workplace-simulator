@@ -273,6 +273,101 @@ function collectEmDashStrings(value: unknown, path: string, out: Array<[string, 
   }
 }
 
+/**
+ * ESOL learners need literal, concrete language. Idioms like "caught a late
+ * punch" or "close the loop" are confusing because they can't be parsed word
+ * by word. This is a denylist of confirmed-bad terms, not a general idiom
+ * detector — keep it short and specific to avoid flagging legitimate literal
+ * uses (e.g. "catch" alone is fine in non-figurative contexts).
+ */
+const IDIOM_DENYLIST = [
+  "close the loop",
+  "circle back",
+  "touch base",
+  "on the same page",
+  "same page",
+  "caught a",
+  "caught the",
+  "catch a conflict",
+  "catch a mistake",
+  "catch a missing",
+  "catch the one",
+  "catching this",
+  "the right move",
+  "ballpark",
+  "in the weeds",
+  "hit the ground running",
+  "under the gun",
+  "up to speed",
+  "drop the ball",
+  "cut corners",
+  "ball is in",
+  "read between the lines",
+  "green light",
+  "back to square one",
+  "red flag",
+  "keep me posted",
+  "keep me in the loop",
+  "end of the day",
+  "home run",
+  "slam dunk",
+  "curveball",
+  "cover your bases",
+  "cover my bases",
+  "out of left field",
+  "hail mary",
+  "step up to the plate",
+  "foot in the door",
+  "elbow grease",
+  "eye on the ball",
+  "smooth sailing",
+  "sink or swim",
+  "fish out of water",
+  "low-hanging fruit",
+  "move the needle",
+  "win-win",
+  "takeaway",
+];
+
+function collectIdiomHits(value: unknown, path: string, out: Array<[string, string]>) {
+  if (typeof value === "string") {
+    const lower = value.toLowerCase();
+    for (const idiom of IDIOM_DENYLIST) {
+      if (lower.includes(idiom)) out.push([path, value]);
+    }
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, i) => collectIdiomHits(item, `${path}[${i}]`, out));
+    return;
+  }
+  if (value && typeof value === "object" && !(value instanceof Date) && !(value instanceof RegExp)) {
+    for (const [key, item] of Object.entries(value)) {
+      collectIdiomHits(item, `${path}.${key}`, out);
+    }
+  }
+}
+
+describe("learner-facing copy avoids confusing idioms", () => {
+  it("has no denylisted idiom in task copy, tracks, story mail, or Job Card lines", () => {
+    const hits: Array<[string, string]> = [];
+    collectIdiomHits(TASKS, "TASKS", hits);
+    collectIdiomHits(LEVELS, "LEVELS", hits);
+    collectIdiomHits(TRACKS, "TRACKS", hits);
+    collectIdiomHits(ACT_INTROS, "ACT_INTROS", hits);
+    collectIdiomHits(TEACHER_NOTES_COPY, "TEACHER_NOTES_COPY", hits);
+    collectIdiomHits(storyMailsFor([...TASK_KEYS], {}), "storyMails", hits);
+    for (const act of ACTS) {
+      collectIdiomHits(welcomeHomeFor(act.key), `welcomeHome.${act.key}`, hits);
+    }
+    for (const [path, mod] of Object.entries(taskContentModules)) {
+      const task = path.match(/tasks\/([^/]+)\//)?.[1] ?? path;
+      collectIdiomHits(mod, `tasks/${task}`, hits);
+    }
+    expect(hits, hits.map(([p, s]) => `${p}: ${s}`).join("\n")).toEqual([]);
+  });
+});
+
 describe("learner-facing copy does not use em dashes", () => {
   it("has no em dash in task copy, tracks, story mail, or Job Card lines", () => {
     const hits: Array<[string, string]> = [];

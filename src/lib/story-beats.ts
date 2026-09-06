@@ -779,7 +779,7 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "You presented it.", es: "Lo presentaste." },
     body: {
       en: [
-        "A title, the $188, and one takeaway. You presented it. That is all HQ needs for now.",
+        "A title, the $188, and one main point. You presented it. That is all HQ needs for now.",
         "There is more to come. Check Studio if you still want to try the other path.",
       ],
       es: [
