@@ -75,6 +75,10 @@ export default function ShiftReviewTask() {
       {view === "form" && (
         <div className="mt-4 max-w-[560px]">
           <div className="rounded-xl border border-border bg-white p-5">
+            <div className="mb-4">
+              <div className="text-[13px] font-medium text-text-secondary">{c.dateLabel}</div>
+              <div className="mt-0.5 text-[15px] text-text-primary">{c.date}</div>
+            </div>
             <label className="mb-2 block text-[13px] font-medium text-text-secondary">{c.summaryLabel}</label>
             <textarea
               data-showme="shift-note-box"

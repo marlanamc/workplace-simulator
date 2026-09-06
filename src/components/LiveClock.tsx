@@ -44,8 +44,9 @@ export function formatClock(now: Date, lang: Lang) {
   }).formatToParts(now);
   const hour = timeParts.find((p) => p.type === "hour")?.value ?? "";
   const minute = timeParts.find((p) => p.type === "minute")?.value ?? "";
+  const dayPeriod = timeParts.find((p) => p.type === "dayPeriod")?.value ?? "";
   return {
-    time: `${hour}:${minute}`,
+    time: dayPeriod ? `${hour}:${minute} ${dayPeriod}` : `${hour}:${minute}`,
     date: new Intl.DateTimeFormat(locale, {
       weekday: "long",
       month: "long",

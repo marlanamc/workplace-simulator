@@ -31,6 +31,9 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 
 export const REVIEW_COPY: Record<Lang, {
   heading: string;
+  /** Story Friday for this sitting — same day as Portal schedule + payday. */
+  date: string;
+  dateLabel: string;
   summaryLabel: string;
   writeHere: string;
   submit: string;
@@ -49,6 +52,8 @@ export const REVIEW_COPY: Record<Lang, {
 }> = {
   en: {
     heading: "Shift notes",
+    date: "Friday, Aug 28",
+    dateLabel: "Shift date",
     summaryLabel: "Shift summary",
     writeHere: "How did your shift go?",
     submit: "Submit",
@@ -69,6 +74,8 @@ export const REVIEW_COPY: Record<Lang, {
   },
   es: {
     heading: "Notas del turno",
+    date: "Viernes, 28 ago",
+    dateLabel: "Fecha del turno",
     summaryLabel: "Resumen del turno",
     writeHere: "¿Cómo te fue en el turno?",
     submit: "Enviar",

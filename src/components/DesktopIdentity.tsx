@@ -1,16 +1,23 @@
 "use client";
 
 import { Caveat } from "next/font/google";
-import { Building2, Coffee, GraduationCap, HeartPulse, type LucideIcon } from "lucide-react";
+import { Building2, Coffee, GraduationCap, HeartPulse } from "lucide-react";
 import { COLLEGE_NAME, HEALTH_NAME, HQ_NAME } from "@/lib/cast";
 import type { Lang } from "@/lib/desktop-content";
 import type { DeskIdentity } from "@/lib/desk-identity";
 
-function workplaceIcon(company: string): LucideIcon {
-  if (company === COLLEGE_NAME) return GraduationCap;
-  if (company === HEALTH_NAME) return HeartPulse;
-  if (company === HQ_NAME) return Building2;
-  return Coffee;
+/** Pick the glyph in JSX — assigning a Lucide component during render trips static-components. */
+function WorkplaceIcon({ company }: { company: string }) {
+  const props = {
+    size: 13 as const,
+    strokeWidth: 1.75 as const,
+    "aria-hidden": true as const,
+    className: "shrink-0 -translate-y-px",
+  };
+  if (company === COLLEGE_NAME) return <GraduationCap {...props} />;
+  if (company === HEALTH_NAME) return <HeartPulse {...props} />;
+  if (company === HQ_NAME) return <Building2 {...props} />;
+  return <Coffee {...props} />;
 }
 
 /** Felt-tip name on the plaque — written, not typeset. */
@@ -34,8 +41,6 @@ export default function DesktopIdentity({
 }) {
   const display = name.trim();
   if (!display) return null;
-
-  const Icon = workplaceIcon(identity.company);
 
   return (
     <aside
@@ -71,7 +76,7 @@ export default function DesktopIdentity({
         {identity.title[lang]}
       </p>
       <p className="m-0 mt-1 flex items-center gap-1.5 text-[12px] italic leading-snug text-[#8a735c]">
-        <Icon size={13} strokeWidth={1.75} aria-hidden className="shrink-0 -translate-y-px" />
+        <WorkplaceIcon company={identity.company} />
         {identity.company}
       </p>
     </aside>
