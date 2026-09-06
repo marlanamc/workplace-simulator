@@ -10,6 +10,7 @@ import {
   taskKeysForLevel,
 } from "@/lib/tracks-content";
 import { ACT_INTROS, type ActIntroActKey } from "@/lib/act-intro-content";
+import { welcomeHomeFor } from "@/lib/welcome-home-content";
 import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
 import { BOOKMARK_LABEL } from "@/lib/shift-spine";
 import { firstPersonSkill } from "@/lib/skills";
@@ -185,6 +186,23 @@ describe("the story arc has no missing chapters", () => {
       expect(intro.skills.length, `${act.key} skills count`).toBeGreaterThanOrEqual(3);
       expect(intro.skills.length, `${act.key} skills count`).toBeLessThanOrEqual(5);
       intro.skills.forEach((s, i) => expectBilingual(s.label, `${act.key} skill ${i} label`));
+    }
+  });
+
+  it("every act has a bilingual Welcome-tab home (re-readable orientation)", () => {
+    for (const act of ACTS) {
+      const home = welcomeHomeFor(act.key);
+      expectBilingual(home.actLabel, `${act.key} welcomeHome.actLabel`);
+      expectBilingual(home.packetKicker, `${act.key} welcomeHome.packetKicker`);
+      expectBilingual(home.packetTitle, `${act.key} welcomeHome.packetTitle`);
+      expectBilingual(home.role, `${act.key} welcomeHome.role`);
+      expectBilingual(home.roleLine, `${act.key} welcomeHome.roleLine`);
+      expectBilingual(home.manager, `${act.key} welcomeHome.manager`);
+      expectBilingual(home.bridge, `${act.key} welcomeHome.bridge`);
+      expectBilingual(home.skillsTitle, `${act.key} welcomeHome.skillsTitle`);
+      expectBilingual(home.reassurance, `${act.key} welcomeHome.reassurance`);
+      expect(home.skills.length, `${act.key} welcomeHome skills`).toBeGreaterThanOrEqual(3);
+      home.skills.forEach((s, i) => expectBilingual(s.label, `${act.key} welcomeHome skill ${i}`));
     }
   });
 });

@@ -49,8 +49,8 @@ export const INTRO_BEATS: IntroBeat[] = [
     // Name the blue top so learners do not try the white body. The header
     // also pulses on this beat — same pattern as the shrink arrow below.
     line: {
-      en: "Drag the blue top to a corner.",
-      es: "Arrastra la parte azul a una esquina.",
+      en: "Drag the blue top of this card to a corner.",
+      es: "Arrastra la parte azul de esta tarjeta a una esquina.",
     },
     tryDrag: true,
   },

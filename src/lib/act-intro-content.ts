@@ -10,6 +10,7 @@ import type { Lang, Localized } from "@/lib/task-types";
  *
  * Shown once per act, gated on a story flag (localStorage, per learner) exactly
  * like `WELCOME_FLAG`. Replaying a level from `MyJobPanel` does not re-show it.
+ * The same copy stays readable on the Browser Welcome tab (`welcomeHomeFor`).
  */
 
 export const actIntroFlag = (actKey: string) => `act-intro-seen:${actKey}`;

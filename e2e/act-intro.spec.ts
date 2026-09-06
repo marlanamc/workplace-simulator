@@ -57,6 +57,16 @@ test("Act II intro: Shift Lead role, Renata as manager, new skills, stays dismis
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
   await expect(page.getByTestId("act-intro")).toHaveCount(0);
 
+  // Welcome tab keeps the same orientation for re-reading — without a Start CTA.
+  await jobCard(page).getByRole("button", { name: /Open Forms|Abrir Forms|Abre Forms/ }).click();
+  await page.getByTestId("bookmark-tour").click();
+  const home = page.getByTestId("welcome-home");
+  await expect(home).toBeVisible({ timeout: 15_000 });
+  await expect(home).toHaveAttribute("data-act", "act2");
+  await expect(home.getByRole("heading", { level: 1 })).toHaveText("You're a Shift Lead now");
+  await expect(home.getByText("Renata Silva", { exact: false })).toBeVisible();
+  await expect(home.getByRole("button", { name: /Start Act/ })).toHaveCount(0);
+
   await page.reload();
   await expect(page.getByTestId("act-intro")).toHaveCount(0);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });

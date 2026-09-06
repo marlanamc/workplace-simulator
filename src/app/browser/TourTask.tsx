@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { TOUR_COPY, LESSONS, tourEventIntro } from "@/lib/tasks/tour/content";
+import { welcomeHomeFor } from "@/lib/welcome-home-content";
+import { actForLevel, levelForTrack } from "@/lib/tracks-content";
 import { TASK_ICONS } from "@/lib/icons";
+import { SkillRow } from "@/components/welcome-shell";
 import HelpDrawer from "@/components/task/HelpDrawer";
-import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 
@@ -34,10 +36,13 @@ export default function TourTask({
   /** Tell BrowserClient to begin the one-instruction-at-a-time walkthrough overlay. */
   onStartWalkthrough: () => void;
 }) {
-  const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
+  const { markComplete, completedTaskKeys, lang, displayName, currentTrack } = useProgress();
   const [ownView, setView] = useState<View>(
     completedTaskKeys.includes("tour") ? "done" : startAtHelp ? "help" : "intro",
   );
+  // Only the just-finished path reports a finish to the Job Card. Reopening
+  // Welcome later must not steal the current task's instruction.
+  const [justFinishedTour, setJustFinishedTour] = useState(false);
   const [openedHelp, setOpenedHelp] = useState(false);
   if (helpOpen && !openedHelp) setOpenedHelp(true);
 
@@ -48,6 +53,12 @@ export default function TourTask({
 
   const c = TOUR_COPY[lang];
   const intro = tourEventIntro(lang, displayName);
+  const actKey = actForLevel(levelForTrack(currentTrack.key))?.key ?? "act1";
+  const home = welcomeHomeFor(actKey);
+  const chrome =
+    view === "done"
+      ? { kicker: home.packetKicker[lang], title: home.packetTitle[lang] }
+      : { kicker: c.packetKicker, title: c.packetTitle };
 
   const openHelp = () => {
     setOpenedHelp(true);
@@ -55,12 +66,14 @@ export default function TourTask({
   };
 
   const finish = () => {
+    setJustFinishedTour(true);
     setView("done");
     markComplete("tour", "how_it_works");
   };
 
   const restart = () => {
     setOpenedHelp(false);
+    setJustFinishedTour(false);
     setView("intro");
     onStartWalkthrough();
   };
@@ -75,8 +88,8 @@ export default function TourTask({
             })()}
           </span>
           <div className="min-w-0 flex-1">
-            <div className="text-[12px] font-medium uppercase tracking-wide text-[#8a6a4a]">{c.packetKicker}</div>
-            <div className="truncate text-[16px] font-medium leading-tight">{c.packetTitle}</div>
+            <div className="text-[12px] font-medium uppercase tracking-wide text-[#8a6a4a]">{chrome.kicker}</div>
+            <div className="truncate text-[16px] font-medium leading-tight">{chrome.title}</div>
           </div>
       </div>
 
@@ -135,23 +148,44 @@ export default function TourTask({
       )}
 
       {view === "done" && (
-        <div className="min-h-0 flex-1 overflow-y-auto bg-white p-6">
-          <div className="mx-auto flex max-w-[640px] flex-col gap-5">
-            <TaskDoneCard
-              kicker={c.sentKicker}
-              title={c.doneTitle}
-              body={c.doneBody}
-              badgeNumber="00"
-              badgeName={c.badgeName}
-              badgeWhere={c.badgeWhere}
-            />
-            <TaskDoneActions
-              kicker={c.sentKicker}
-              tryAgainLabel={c.tryAgain}
-              backToDeskLabel={c.backToDesk}
-              onTryAgain={restart}
-            />
+        <div
+          data-testid="welcome-home"
+          data-act={actKey}
+          className="min-h-0 flex-1 overflow-y-auto p-6 sm:p-8"
+          style={{
+            background:
+              "radial-gradient(900px 480px at 50% 0%, #fff8ef 0%, #f6f1e8 55%, #ebe2d4 100%)",
+          }}
+        >
+          <div className="mx-auto flex w-full max-w-[640px] flex-col">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#b06000]">
+              {home.actLabel[lang]}
+            </p>
+            <h1 className="mt-1 text-[28px] font-semibold leading-[1.15] tracking-tight sm:text-[34px]">
+              {home.role[lang]}
+            </h1>
+            <p className="mt-3 text-[17px] leading-relaxed text-[#3c4043]">{home.roleLine[lang]}</p>
+
+            <section
+              aria-labelledby="welcome-home-skills"
+              className="mt-6 rounded-2xl bg-[#ece3d3] px-5 py-5 sm:px-6 sm:py-5"
+            >
+              <h2 id="welcome-home-skills" className="text-base font-semibold">
+                {home.skillsTitle[lang]}
+              </h2>
+              <SkillRow skills={home.skills} lang={lang} />
+            </section>
+
+            <section className="mt-5 rounded-2xl border border-[#dfd4c2] bg-white/70 px-5 py-5 sm:px-6">
+              <h2 className="text-lg font-semibold">{home.manager[lang]}</h2>
+              <p className="mt-1.5 text-base leading-relaxed text-[#3c4043]">{home.bridge[lang]}</p>
+              <p className="mt-3 text-sm leading-relaxed text-[#5f4b32]">{home.reassurance[lang]}</p>
+            </section>
           </div>
+
+          {justFinishedTour && (
+            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} onTryAgain={restart} />
+          )}
         </div>
       )}
 

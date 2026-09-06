@@ -27,7 +27,7 @@ async function clearIntroBeats(page: Page, firstName: string) {
     timeout: 20_000,
   });
   await card.getByRole("button", { name: "OK", exact: true }).click();
-  await expect(card.getByText("Drag the blue top to a corner.")).toBeVisible();
+  await expect(card.getByText("Drag the blue top of this card to a corner.")).toBeVisible();
   await expect(card.getByRole("button", { name: "I understand", exact: true })).toHaveCount(0);
   const handle = card.getByTestId("job-card-drag-handle");
   const box = await handle.boundingBox();
@@ -40,7 +40,7 @@ async function clearIntroBeats(page: Page, firstName: string) {
   await page.mouse.down();
   await page.mouse.move(x + 15, y - 15, { steps: 3 });
   await page.mouse.up();
-  await expect(card.getByText("Drag the blue top to a corner.")).toBeVisible();
+  await expect(card.getByText("Drag the blue top of this card to a corner.")).toBeVisible();
   await expect(card).toHaveAttribute("data-corner", "bl");
   const current = await handle.boundingBox();
   if (!current) throw new Error("Job Card drag handle is not visible");
@@ -211,11 +211,11 @@ test("language choice on the login page sticks after signing in and reloading", 
   await page.setViewportSize({ width: 1024, height: 768 });
   const card = jobCard(page);
   await card.getByRole("button", { name: "OK", exact: true }).click();
-  await expect(card.getByText("Arrastra la parte azul a una esquina.")).toBeVisible();
+  await expect(card.getByText("Arrastra la parte azul de esta tarjeta a una esquina.")).toBeVisible();
   const handle = card.getByTestId("job-card-drag-handle");
   await handle.focus();
   await page.keyboard.press("ArrowLeft");
-  await expect(card.getByText("Arrastra la parte azul a una esquina.")).toBeVisible();
+  await expect(card.getByText("Arrastra la parte azul de esta tarjeta a una esquina.")).toBeVisible();
   await page.keyboard.press("ArrowUp");
   await expect(card).toHaveAttribute("data-corner", "tl");
   await expect(card.getByText("Haz clic en la flecha para encogerla.")).toBeVisible();

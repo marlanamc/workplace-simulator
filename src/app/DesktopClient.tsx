@@ -9,6 +9,8 @@ import type { BridgePath } from "@/lib/bridge-path";
 import type { TeacherFeedback } from "@/lib/task-types";
 import type { RungMap } from "@/lib/release-ladder";
 import { DesktopClock } from "@/components/LiveClock";
+import DesktopIdentity from "@/components/DesktopIdentity";
+import { deskIdentityFor } from "@/lib/desk-identity";
 import { actForLevel, isLevelComplete, levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
 import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
@@ -135,7 +137,7 @@ function DesktopShell({
   displayName: string;
   fromStudio: boolean;
 }) {
-  const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack } = useProgress();
+  const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack, bridgePath } = useProgress();
   const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const [teacherNotesOpen, setTeacherNotesOpen] = useState(false);
@@ -144,6 +146,8 @@ function DesktopShell({
   const anyAppActive = active !== null;
 
   const currentLevel = levelForTrack(currentTrack.key);
+  const actKey = actForLevel(currentLevel)?.key ?? "act1";
+  const identity = deskIdentityFor(actKey, bridgePath);
   const showListIntro = shouldShowListIntro({
     storyFlags,
     completedTaskKeys,
@@ -190,12 +194,12 @@ function DesktopShell({
         aria-hidden={anyAppActive}
         style={{ paddingBottom: SHELF_RESERVE, paddingTop: fromStudio ? 36 : 0 }}
       >
-        {/* The desktop no longer briefs the learner - the Job Card does, from
-            its corner, and it is still there once an app opens. All that is
-            left here is the lock-screen clock. */}
+        {/* Lock-screen clock plus a quiet identity plaque. The Job Card still
+            says what to do; this only orients who they are in the story. */}
         <div className="flex flex-1 items-start px-10 pt-10">
-          <div className="flex w-full max-w-[400px] flex-col gap-10">
+          <div className="flex w-full max-w-[400px] flex-col">
             <DesktopClock lang={lang} />
+            <DesktopIdentity name={displayName} identity={identity} lang={lang} />
           </div>
         </div>
       </div>

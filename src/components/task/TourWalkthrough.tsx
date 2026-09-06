@@ -44,6 +44,9 @@ export default function TourWalkthrough({
   const [hole, setHole] = useState<Hole | null>(null);
   const isLookBeat = Boolean(step?.continueLabel);
   const isBookmark = Boolean(step?.targetTabKey) && !step?.targetTestId;
+  // The whole bookmarks bar is a short strip under the address bar — it needs
+  // a roomier vertical cushion than a single chip, or the ring looks cut off.
+  const isBookmarksRow = step?.targetTestId === "bookmarks-row";
 
   const reportStep = card?.reportStep;
   const registerPrimary = card?.registerPrimary;
@@ -124,15 +127,24 @@ export default function TourWalkthrough({
       const r = el.getBoundingClientRect();
       const o = overlay.getBoundingClientRect();
       // Bookmarks are already padded chips. A small even cushion + a pill
-      // reads as an oval around the icon and label. Other targets keep the
-      // roomier Show-me hole.
-      const pad = isBookmark ? 5 : 8;
-      const padY = isBookmark ? 5 : 6;
+      // reads as an oval around the icon and label. The full bookmarks row
+      // is a short strip — more vertical room keeps the ring from looking
+      // flush against the address bar and the page below. Other targets
+      // keep the roomier Show-me hole.
+      const pad = isBookmarksRow ? 8 : isBookmark ? 5 : 8;
+      const padY = isBookmarksRow ? 11 : isBookmark ? 5 : 6;
+      // Keep the whole ring inside the overlay so overflow on the window
+      // chrome cannot clip the top or bottom of the oval.
+      const edge = 4;
+      const left = Math.max(edge, r.left - o.left - pad);
+      const top = Math.max(edge, r.top - o.top - padY);
+      const right = Math.min(o.width - edge, r.right - o.left + pad);
+      const bottom = Math.min(o.height - edge, r.bottom - o.top + padY);
       setHole({
-        left: r.left - o.left - pad,
-        top: r.top - o.top - padY,
-        width: r.width + pad * 2,
-        height: r.height + padY * 2,
+        left,
+        top,
+        width: Math.max(0, right - left),
+        height: Math.max(0, bottom - top),
       });
     };
     const raf = requestAnimationFrame(measure);
@@ -146,23 +158,24 @@ export default function TourWalkthrough({
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
-  }, [step, stepIndex, isBookmark, isCardHelp]);
+  }, [step, stepIndex, isBookmark, isBookmarksRow, isCardHelp]);
 
   if (!step) return null;
 
   const dim = "rgba(28, 20, 16, 0.38)";
-  const pulseClass = isBookmark ? "animate-showme-pulse-compact" : "animate-showme-pulse";
-  const radius = isBookmark ? "rounded-full" : "rounded-xl";
+  const pulseClass = isBookmark || isBookmarksRow ? "animate-showme-pulse-compact" : "animate-showme-pulse";
+  // A fuller radius on the row reads as an oval around the strip; chips stay pills.
+  const radius = isBookmarksRow ? "rounded-2xl" : isBookmark ? "rounded-full" : "rounded-xl";
 
   return (
     <div ref={overlayRef} className="pointer-events-none absolute inset-0 z-[70]" aria-hidden>
       {isLookBeat && !step.ringOnLook ? null : hole ? (
         <>
           <div
-            className={`absolute ${radius}`}
+            className={`absolute ${radius}${isBookmarksRow ? " border-[3px] border-[#e87400]" : ""}`}
             style={{ ...hole, boxShadow: `0 0 0 9999px ${dim}` }}
           />
-          <div className={`${pulseClass} absolute ${radius}`} style={hole} />
+          {!isBookmarksRow && <div className={`${pulseClass} absolute ${radius}`} style={hole} />}
         </>
       ) : (
         <div className="absolute inset-0 bg-[#1c1410]/45" />
