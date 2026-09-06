@@ -152,6 +152,18 @@ export const WRONG_ENTRY_HINT: Record<Lang, string> = {
   es: "Eso no coincide con el recibo de ese día. Revisa la cantidad de nuevo.",
 };
 
+/**
+ * The email actually reports the sheet's real total, not just any number.
+ * Lenient about formatting ($241.50, 241.5, 241) — matches any number in
+ * the message within a cent of the real total.
+ */
+export function emailMentionsTotal(body: string): boolean {
+  const t = body.trim();
+  if (t.split(/\s+/).filter(Boolean).length < 4) return false;
+  const numbers = t.match(/\$?\d+(?:\.\d{1,2})?/g) ?? [];
+  return numbers.some((n) => Math.abs(parseFloat(n.replace("$", "")) - REAL_TOTAL) < 0.01);
+}
+
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "Hi Renata, here's this week's tip total.",

@@ -35,6 +35,7 @@ export const APPOINTMENT_COPY: Record<Lang, {
   gotIt: string;
   booked: string;
   open: string;
+  checkSlot: string;
 }> = {
   en: {
     helpBtn: "Help me with this step",
@@ -57,6 +58,7 @@ export const APPOINTMENT_COPY: Record<Lang, {
     gotIt: "Got it. Back to my task",
     booked: "Booked",
     open: "Open",
+    checkSlot: "Click to check",
   },
   es: {
     helpBtn: "Ayúdame con este paso",
@@ -79,6 +81,7 @@ export const APPOINTMENT_COPY: Record<Lang, {
     gotIt: "Entendido. Volver a mi tarea",
     booked: "Ocupada",
     open: "Libre",
+    checkSlot: "Haz clic para revisar",
   },
 };
 

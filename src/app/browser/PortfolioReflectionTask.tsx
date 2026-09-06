@@ -88,6 +88,29 @@ export default function PortfolioReflectionTask() {
     setAnswers(PROMPTS.map(() => ""));
   };
 
+  const copySummary = async () => {
+    const lines: string[] = [c.summaryTitle, ""];
+    for (const { act, tracks } of awards) {
+      lines.push(`${actNumeral(act.title)} · ${act.title.replace(/^Act [IVX]+:\s*/, "")}`);
+      for (const track of tracks) {
+        for (const taskKey of track.taskKeys) lines.push(`- ${SKILLS[taskKey]}`);
+      }
+      lines.push("");
+    }
+    lines.push(c.reflectionHeading, "");
+    PROMPTS.forEach((prompt, i) => {
+      lines.push(prompt[lang]);
+      lines.push(answers[i] ?? "");
+      lines.push("");
+    });
+    try {
+      await navigator.clipboard.writeText(lines.join("\n").trim());
+      say(c.copied);
+    } catch {
+      say(c.copyFailed);
+    }
+  };
+
   if (view === "done") {
     return (
       <div className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
@@ -112,6 +135,12 @@ export default function PortfolioReflectionTask() {
                   </div>
                 ))}
               </dl>
+              <button
+                onClick={copySummary}
+                className="mt-5 inline-flex min-h-[44px] w-fit items-center rounded-full border border-[#dadce0] bg-white px-5 text-[15px] font-medium text-accent hover:bg-surface-muted cursor-pointer"
+              >
+                {c.copySummary}
+              </button>
             </div>
             <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>

@@ -19,7 +19,11 @@ import { whyHoldsUp } from "@/lib/tasks/research/content";
 import { confirmationOffersOpenSlot } from "@/lib/tasks/appointment-scheduling/content";
 import { declineIsSafe } from "@/lib/tasks/patient-intake/content";
 import { emailFlagsMismatch } from "@/lib/tasks/billing-sheet/content";
-import { replyIsSafe as callReplyIsSafe, choiceIsSafe } from "@/lib/tasks/confidentiality-call/content";
+import {
+  replyIsSafe as callReplyIsSafe,
+  replySharesInfo,
+  replyIsRude,
+} from "@/lib/tasks/confidentiality-call/content";
 import { isCurrentHqFile, shareIsViewOnly } from "@/lib/tasks/office-drive/content";
 import { slotIsOpenForEveryone } from "@/lib/tasks/multi-person-scheduling/content";
 import { videoCallPasses } from "@/lib/tasks/video-call/content";
@@ -386,10 +390,14 @@ describe("billing sheet: flag the mismatch", () => {
 });
 
 describe("confidentiality call: polite callback, not a share", () => {
-  it("only the safe choice passes", () => {
-    expect(choiceIsSafe("safe")).toBe(true);
-    expect(choiceIsSafe("share")).toBe(false);
-    expect(choiceIsSafe("rude")).toBe(false);
+  it("flags a reply that confirms the visit", () => {
+    expect(replySharesInfo("Yes, Maya has a 2 PM follow-up.")).toBe(true);
+    expect(replySharesInfo("I can't confirm that.")).toBe(false);
+  });
+
+  it("flags a rude refusal with no callback offer", () => {
+    expect(replyIsRude("I can't help you. Don't call again.")).toBe(true);
+    expect(replyIsRude("I can't help you, but I can have her call you back.")).toBe(false);
   });
 
   it.each([

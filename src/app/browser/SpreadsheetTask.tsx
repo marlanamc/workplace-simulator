@@ -11,6 +11,7 @@ import {
   LESSONS,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
+  emailMentionsTotal,
 } from "@/lib/tasks/spreadsheet/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -84,6 +85,13 @@ export default function SpreadsheetTask() {
         lang === "en"
           ? "Write a short message first. Even one sentence is fine."
           : "Primero escribe un mensaje corto. Una oración está bien."
+      );
+    }
+    if (!emailMentionsTotal(body)) {
+      return say(
+        lang === "en"
+          ? "Say the actual total from the sheet, not just that you sent it."
+          : "Di el total real de la hoja, no solo que ya lo enviaste."
       );
     }
     setView("done");

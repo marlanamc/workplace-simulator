@@ -29,6 +29,9 @@ export const REFLECTION_COPY: Record<Lang, {
   summaryIntro: string;
   canDoHeading: string;
   reflectionHeading: string;
+  copySummary: string;
+  copied: string;
+  copyFailed: string;
   sentKicker: string;
   tryAgain: string;
   backToDesk: string;
@@ -51,6 +54,9 @@ export const REFLECTION_COPY: Record<Lang, {
     summaryIntro: "This is yours. Share it with whoever's useful — a friend, an employer, an advisor.",
     canDoHeading: "What I can do now",
     reflectionHeading: "In my own words",
+    copySummary: "Copy summary to share",
+    copied: "Copied. Paste it in an email or message to share it.",
+    copyFailed: "Couldn't copy automatically. Take a screenshot of this page instead.",
     sentKicker: "Summary ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -73,6 +79,9 @@ export const REFLECTION_COPY: Record<Lang, {
     summaryIntro: "Esto es tuyo. Compártelo con quien te sirva — un amigo, un empleador, un asesor.",
     canDoHeading: "Lo que ya puedo hacer",
     reflectionHeading: "En mis propias palabras",
+    copySummary: "Copiar resumen para compartir",
+    copied: "Copiado. Pégalo en un correo o mensaje para compartirlo.",
+    copyFailed: "No se pudo copiar automáticamente. Toma una captura de esta pantalla en su lugar.",
     sentKicker: "Resumen listo",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",

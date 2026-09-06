@@ -168,11 +168,15 @@ export default function BillingSheetTask() {
                   {COLS.map((col) => {
                     const isSelected = selected.row === r && selected.col === col;
                     const text = col === "A" ? row.patient : col === "B" ? row.code : `$${row.charge}`;
+                    // Only reveal the mismatch once the learner has actually
+                    // selected this row — not on load, or the reference-list
+                    // comparison this task is meant to teach is never required.
+                    const revealed = mismatch && col === "C" && openedMismatch;
                     const cellStyle: CSSProperties = {
                       width: COL_WIDTH[col],
                       height: 26,
-                      background: mismatch && col === "C" ? "#fce8e6" : "white",
-                      color: mismatch && col === "C" ? "#c5221f" : "#202124",
+                      background: revealed ? "#fce8e6" : "white",
+                      color: revealed ? "#c5221f" : "#202124",
                       boxShadow: isSelected ? "inset 0 0 0 2px #1a73e8" : undefined,
                     };
                     return (

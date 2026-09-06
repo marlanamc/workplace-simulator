@@ -1,4 +1,4 @@
-import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -138,6 +138,33 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     },
   ],
 };
+
+/**
+ * A complete incident narrative names both whether anyone was hurt and what
+ * action/notification followed — the two elements starters model beyond the
+ * bare "what happened" fact. Lenient by design: any phrasing with both
+ * signals passes, in either language.
+ */
+export function incidentNarrativeIsComplete(what: string): boolean {
+  const t = what.trim().toLowerCase();
+  if (t.length < 40) return false;
+  const mentionsInjury = /hurt|injur|no one|nadie|lastim/.test(t);
+  const mentionsAction = /clean|told|notif|inform|report|sign|wet floor|avis|limpi|report[eé]|letrero/.test(t);
+  return mentionsInjury && mentionsAction;
+}
+
+/** What the teacher sees: the when/where/what fields the learner submitted. */
+export function describeSubmission(when: string, where: string, what: string, lang: Lang): SubmissionContent {
+  const c = INCIDENT_COPY[lang];
+  return {
+    lang,
+    fields: [
+      { label: c.whenLabel, value: when },
+      { label: c.whereLabel, value: where },
+      { label: c.whatLabel, value: what },
+    ],
+  };
+}
 
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };

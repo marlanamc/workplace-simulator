@@ -119,10 +119,17 @@ export default function VideoCallTask() {
           sendLabel={c.send}
           scenario={
             phase === "room" ? (
-              <div className="mx-4 mt-1 rounded-lg bg-[#2D8CFF]/15 px-3 py-2 text-[13px] text-[#d6e8ff]">
-                <p className="m-0 font-medium">{c.latePrompt}</p>
-                <p className="m-0 mt-1 text-[#bdbdbd]">{c.lateHint}</p>
-              </div>
+              unmuted ? (
+                <div className="mx-4 mt-1 rounded-lg bg-[#DE382C]/20 px-3 py-2 text-[13px] text-[#ffd6d2]">
+                  <p className="m-0 font-medium">{c.unmutedBannerTitle}</p>
+                  <p className="m-0 mt-1 text-[#f0b8b3]">{c.unmutedBannerBody}</p>
+                </div>
+              ) : (
+                <div className="mx-4 mt-1 rounded-lg bg-[#2D8CFF]/15 px-3 py-2 text-[13px] text-[#d6e8ff]">
+                  <p className="m-0 font-medium">{c.latePrompt}</p>
+                  <p className="m-0 mt-1 text-[#bdbdbd]">{c.lateHint}</p>
+                </div>
+              )
             ) : null
           }
           onJoin={() => {

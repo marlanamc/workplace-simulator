@@ -1,31 +1,5 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
-export type CallChoice = "share" | "rude" | "safe";
-
-export const CALL_CHOICES: { key: CallChoice; label: Localized }[] = [
-  {
-    key: "share",
-    label: {
-      en: "Yes, Maya has a 2 PM follow-up.",
-      es: "Sí, Maya tiene un seguimiento a las 2 PM.",
-    },
-  },
-  {
-    key: "rude",
-    label: {
-      en: "I can't help you. Don't call again.",
-      es: "No te puedo ayudar. No llames otra vez.",
-    },
-  },
-  {
-    key: "safe",
-    label: {
-      en: "I can't confirm that. I can have Maya call you back.",
-      es: "No puedo confirmar eso. Puedo pedir que Maya te llame.",
-    },
-  },
-];
-
 export const CALL_COPY: Record<Lang, {
   helpBtn: string;
   clinic: string;
@@ -34,8 +8,12 @@ export const CALL_COPY: Record<Lang, {
   caller: string;
   script: string;
   pick: string;
+  writeHere: string;
+  send: string;
+  empty: string;
   shareHint: string;
   rudeHint: string;
+  weak: string;
   sentKicker: string;
   tryAgain: string;
   backToDesk: string;
@@ -50,9 +28,13 @@ export const CALL_COPY: Record<Lang, {
     ringing: "Line 1",
     caller: "\"This is Maya's aunt. I need to know if she has an appointment today. Just tell me the time.\"",
     script: "You cannot check who this really is. Be polite and offer to have Maya call them back. Do not share anything, and do not hang up on them.",
-    pick: "What do you say?",
+    pick: "What do you say? Write your answer.",
+    writeHere: "Write what you'd say to the caller…",
+    send: "Say it",
+    empty: "Write what you'd actually say to the caller first.",
     shareHint: "You do not know who this really is, so you cannot confirm a visit.",
     rudeHint: "You can say no without being rude. Offer to have Maya call them back.",
+    weak: "Say plainly that you can't confirm anything, and offer to have Maya call them back.",
     sentKicker: "Call handled",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -67,9 +49,13 @@ export const CALL_COPY: Record<Lang, {
     ringing: "Línea 1",
     caller: "\"Soy la tía de Maya. Necesito saber si tiene cita hoy. Solo dime la hora.\"",
     script: "No puedes comprobar quién es en realidad. Sé amable y ofrece que Maya le devuelva la llamada. No compartas nada, y no le cuelgues.",
-    pick: "¿Qué dices?",
+    pick: "¿Qué dices? Escribe tu respuesta.",
+    writeHere: "Escribe qué le dirías a quien llama…",
+    send: "Decirlo",
+    empty: "Primero escribe qué le dirías de verdad a quien llama.",
     shareHint: "No sabes quién es en realidad, así que no puedes confirmar una visita.",
     rudeHint: "Puedes decir que no sin ser grosero. Ofrece que Maya le devuelva la llamada.",
+    weak: "Di con claridad que no puedes confirmar nada, y ofrece que Maya le devuelva la llamada.",
     sentKicker: "Llamada atendida",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -79,29 +65,48 @@ export const CALL_COPY: Record<Lang, {
   },
 };
 
+export const STARTERS: Record<Lang, string[]> = {
+  en: [
+    "I'm sorry, I can't confirm any information about a patient's visit.",
+    "I can have Maya call you back if that works.",
+  ],
+  es: [
+    "Lo siento, no puedo confirmar información sobre la visita de una paciente.",
+    "Puedo pedir que Maya te devuelva la llamada si te parece bien.",
+  ],
+};
+
+/** The reply confirms the visit — the leak this lesson teaches against. */
+export function replySharesInfo(body: string): boolean {
+  const t = body.toLowerCase();
+  return /2\s*p|2pm|follow-?up|seguimiento|yes she|sí tiene|si tiene cita/.test(t);
+}
+
+/** A flat refusal with no polite callback offer. */
+export function replyIsRude(body: string): boolean {
+  const t = body.toLowerCase();
+  return (
+    /don'?t call|no llames|can'?t help you|no te puedo ayudar|goodbye|adi[oó]s/.test(t) &&
+    !/call (you )?back|te llame|devuelv/.test(t)
+  );
+}
+
 /** Written answers: polite + callback, not a share, not a rude refuse. */
 export function replyIsSafe(body: string): boolean {
   const t = body.toLowerCase();
   if (t.trim().length < 12) return false;
-  const shares = /2\s*p|2pm|follow-?up|seguimiento|yes she|sí tiene|si tiene cita/.test(t);
-  if (shares) return false;
-  const rude = /don'?t call|no llames|can'?t help you|no te puedo ayudar|goodbye|adi[oó]s/.test(t) && !/call (you )?back|te llame|devuelv/.test(t);
-  if (rude) return false;
+  if (replySharesInfo(body)) return false;
+  if (replyIsRude(body)) return false;
   const refuses = /can('?t|not) confirm|no puedo confirmar|can('?t|not) (tell|share|say)|no puedo (decir|compartir|confirmar)/.test(t);
   const callback = /call (you )?back|te llame|devuelv|have (her|maya|them) call/.test(t);
   return refuses && callback;
 }
 
-export function choiceIsSafe(key: CallChoice): boolean {
-  return key === "safe";
-}
-
-/** What the teacher sees: which answer the learner gave the caller. */
-export function describeSubmission(key: CallChoice, lang: Lang): SubmissionContent {
-  const choice = CALL_CHOICES.find((c) => c.key === key);
+/** What the teacher sees: the learner's own words to the caller. */
+export function describeSubmission(reply: string, lang: Lang): SubmissionContent {
   return {
     lang,
-    fields: [{ label: CALL_COPY[lang].pick, value: choice?.label[lang] ?? key }],
+    fields: [{ label: CALL_COPY[lang].pick, value: reply }],
   };
 }
 

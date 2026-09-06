@@ -24,6 +24,8 @@ import {
   replyAllAnswersDana,
   saysAttached,
   sendsLinkNotFile,
+  mailEtiquetteAnswersDarnell,
+  callOutSickSaysCannotAttend,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
@@ -331,6 +333,24 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       }
       finish("choose_reply_not_reply_all");
       return;
+    }
+    if (activeMailTask === "mail-etiquette" && !mailEtiquetteAnswersDarnell(body)) {
+      return recordWrong({
+        title: T("Say where they are.", "Di dónde están."),
+        body: T(
+          "Darnell asked where the extra aprons are. Tell him: the storage room.",
+          "Darnell preguntó dónde están los delantales de más. Dile: en el almacén.",
+        ),
+      });
+    }
+    if (activeMailTask === "call-out-sick" && !callOutSickSaysCannotAttend(body)) {
+      return recordWrong({
+        title: T("Say you can't come in.", "Di que no puedes venir."),
+        body: T(
+          "Maria needs to know you cannot work today's shift, not just that you're sick.",
+          "Maria necesita saber que no puedes trabajar tu turno de hoy, no solo que estás enfermo.",
+        ),
+      });
     }
     if (activeMailTask === "mail-send-link") {
       if (saysAttached(body)) {

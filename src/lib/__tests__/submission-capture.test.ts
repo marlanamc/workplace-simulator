@@ -22,12 +22,14 @@ import { describeSubmission as jobApplication } from "@/lib/tasks/job-applicatio
 import { describeSubmission as resumeBuild } from "@/lib/tasks/resume-build/content";
 import { describeSubmission as interviewPractice } from "@/lib/tasks/interview-practice/content";
 import { describeSubmission as jobOffer } from "@/lib/tasks/job-offer/content";
+import { describeSubmission as incident } from "@/lib/tasks/incident/content";
 
 /**
  * Every task the app marks "You check" (`TEACHER_CHECK_TASKS`) must produce a
- * teacher-readable submission on a real passing answer. `mail-send-link` and
- * `reply-all` are captured inline in MailClient (subject + body), so they are
- * listed here as covered without a standalone `describeSubmission`.
+ * teacher-readable submission on a real passing answer. `mail-send-link`,
+ * `reply-all`, `mail-etiquette`, and `call-out-sick` are captured inline in
+ * MailClient (subject + body), so they are listed here as covered without a
+ * standalone `describeSubmission`.
  */
 const CAPTURED: Record<string, ((lang: Lang) => SubmissionContent) | "inline-in-mail"> = {
   "job-posting": (lang) =>
@@ -84,9 +86,13 @@ const CAPTURED: Record<string, ((lang: Lang) => SubmissionContent) | "inline-in-
     collegeOffer({ reply: "I accept the offer for the Business Essentials class.", overlap: "The Tuesday class overlaps my close shift." }, lang),
   enrollment: (lang) => enrollment("I want to enroll in the Business program at BHCC to move into an office role.", lang),
   "patient-intake": (lang) => patientIntake("I can't share that. Only the care team can see intake forms.", lang),
-  "confidentiality-call": (lang) => confidentialityCall("safe", lang),
+  "confidentiality-call": (lang) =>
+    confidentialityCall("I can't confirm that. I can have Maya call you back.", lang),
+  incident: (lang) => incident("Today, 2:15 PM", "Front entrance", "A customer slipped and no one was hurt. I cleaned up the spill and told my shift lead right away.", lang),
   "mail-send-link": "inline-in-mail",
   "reply-all": "inline-in-mail",
+  "mail-etiquette": "inline-in-mail",
+  "call-out-sick": "inline-in-mail",
 };
 
 describe("submission capture", () => {

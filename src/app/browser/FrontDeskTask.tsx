@@ -24,13 +24,14 @@ import {
 } from "@/lib/tasks/patient-intake/content";
 import {
   CALL_COPY,
-  CALL_CHOICES,
+  STARTERS as CALL_STARTERS,
   LESSONS as CALL_LESSONS,
-  choiceIsSafe,
+  replySharesInfo,
+  replyIsRude,
+  replyIsSafe,
   describeSubmission as describeCall,
   RIGHT_NOW_STEPS as CALL_STEPS,
   RIGHT_NOW_LABEL as CALL_LABEL,
-  type CallChoice,
 } from "@/lib/tasks/confidentiality-call/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -87,6 +88,7 @@ function ScheduleDesk() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("appointment-scheduling"));
   const [slot, setSlot] = useState<string | null>(null);
+  const [checked, setChecked] = useState<Set<string>>(new Set());
   const [body, setBody] = useState("");
   const [compose, setCompose] = useState(false);
   const [help, setHelp] = useState(false);
@@ -94,6 +96,7 @@ function ScheduleDesk() {
   const c = APPOINTMENT_COPY[lang];
 
   const pick = (time: string, taken: boolean) => {
+    setChecked((prev) => new Set(prev).add(time));
     if (taken) return say(c.taken);
     setSlot(time);
   };
@@ -113,6 +116,7 @@ function ScheduleDesk() {
   const restart = () => {
     setDone(false);
     setSlot(null);
+    setChecked(new Set());
     setBody("");
     setCompose(false);
   };
@@ -140,6 +144,7 @@ function ScheduleDesk() {
             <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white">
               {SLOTS.map((s) => {
                 const selected = slot === s.time;
+                const revealed = checked.has(s.time);
                 return (
                   <button
                     key={s.time}
@@ -150,9 +155,13 @@ function ScheduleDesk() {
                     }`}
                   >
                     <span className="font-medium tabular-nums">{s.time}</span>
-                    <span className={s.taken ? "text-[#5f6368]" : "font-medium text-[#00695c]"}>
-                      {s.taken ? `${c.booked} · ${s.name}` : c.open}
-                    </span>
+                    {revealed ? (
+                      <span className={s.taken ? "text-[#5f6368]" : "font-medium text-[#00695c]"}>
+                        {s.taken ? `${c.booked} · ${s.name}` : c.open}
+                      </span>
+                    ) : (
+                      <span className="text-[#9aa0a6]">{c.checkSlot}</span>
+                    )}
                   </button>
                 );
               })}
@@ -293,16 +302,23 @@ function IntakeDesk() {
 function PhoneDesk() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("confidentiality-call"));
+  const [reply, setReply] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = CALL_COPY[lang];
 
-  const pick = (key: CallChoice) => {
-    if (key === "share") return say(c.shareHint);
-    if (key === "rude") return say(c.rudeHint);
-    if (!choiceIsSafe(key)) return;
+  const trySend = () => {
+    if (!reply.trim()) return say(c.empty);
+    if (replySharesInfo(reply)) return say(c.shareHint);
+    if (replyIsRude(reply)) return say(c.rudeHint);
+    if (!replyIsSafe(reply)) return say(c.weak);
     setDone(true);
-    markComplete("confidentiality-call", "do_not_confirm_over_the_phone", describeCall(key, lang));
+    markComplete("confidentiality-call", "do_not_confirm_over_the_phone", describeCall(reply, lang));
+  };
+
+  const restart = () => {
+    setDone(false);
+    setReply("");
   };
 
   return (
@@ -319,7 +335,7 @@ function PhoneDesk() {
         />
       )}
       {done ? (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => setDone(false)} />
+        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto flex max-w-[520px] flex-col gap-4">
@@ -329,17 +345,23 @@ function PhoneDesk() {
               <p className="mt-4 text-[16px] leading-relaxed text-white/90">{c.caller}</p>
             </div>
             <p className="text-[14px] text-[#5f6368]">{c.script}</p>
-            <div className="text-[13px] font-medium text-[#5f6368]">{c.pick}</div>
-            {CALL_CHOICES.map((choice) => (
+            <div className="rounded-xl border border-[#dadce0] bg-white p-4">
+              <div className="text-[13px] font-medium text-[#5f6368]">{c.pick}</div>
+              <textarea
+                value={reply}
+                onChange={(e) => setReply(e.target.value)}
+                placeholder={c.writeHere}
+                className="mt-2 min-h-[110px] w-full resize-y rounded-lg border border-[#dadce0] px-3 py-2 text-[15px] outline-none"
+              />
+              <NeedAStart lang={lang} starters={CALL_STARTERS[lang]} onPick={(s) => setReply((b) => (b ? `${b} ` : "") + s)} />
               <button
-                key={choice.key}
                 type="button"
-                onClick={() => pick(choice.key)}
-                className="min-h-[56px] rounded-xl border border-[#dadce0] bg-white px-4 text-left text-[15px] hover:bg-[#e0f2f1] cursor-pointer"
+                onClick={trySend}
+                className="mt-3 inline-flex min-h-[46px] items-center rounded-full bg-[#00695c] px-5 text-[15px] font-medium text-white cursor-pointer"
               >
-                {choice.label[lang]}
+                {c.send}
               </button>
-            ))}
+            </div>
           </div>
         </div>
       )}

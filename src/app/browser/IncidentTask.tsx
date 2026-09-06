@@ -9,6 +9,8 @@ import {
   LESSONS,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
+  incidentNarrativeIsComplete,
+  describeSubmission,
 } from "@/lib/tasks/incident/content";
 import { useNudge } from "@/lib/use-nudge";
 import { TASK_ICONS } from "@/lib/icons";
@@ -48,15 +50,15 @@ export default function IncidentTask() {
           : "Completa cuándo y dónde pasó antes de enviar."
       );
     }
-    if (what.trim().length < 15) {
+    if (!incidentNarrativeIsComplete(what)) {
       return say(
         lang === "en"
-          ? "Write a sentence or two about what happened, in order."
-          : "Escribe una o dos oraciones sobre qué pasó, en orden."
+          ? "Say whether anyone was hurt, and what you did about it — cleaned it up, put out a sign, told your shift lead."
+          : "Di si alguien se lastimó, y qué hiciste al respecto — limpiar, poner un letrero, avisar a tu líder de turno."
       );
     }
     setView("done");
-    markComplete("incident", "write_incident_report");
+    markComplete("incident", "write_incident_report", describeSubmission(when, where, what, lang));
   };
 
   const restart = () => {

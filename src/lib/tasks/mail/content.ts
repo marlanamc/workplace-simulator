@@ -560,6 +560,34 @@ export function replyAllAnswersDana(body: string): boolean {
   return answers && aboutDelivery && !stillSoundsCasual(body);
 }
 
+/**
+ * Answers Darnell's actual question (where the extra aprons are) rather than
+ * just acknowledging his message. Deliberately checks for the one concrete
+ * fact this lesson is about, not exact phrasing — any sentence naming the
+ * storage room passes in either language.
+ */
+export function mailEtiquetteAnswersDarnell(body: string): boolean {
+  const t = body.trim().toLowerCase();
+  if (t.split(/\s+/).filter(Boolean).length < 6) return false;
+  return /storage|store ?room|back room|supply|almac[eé]n|bodega/.test(t);
+}
+
+/**
+ * States, in some form, that the learner cannot attend today's shift — not
+ * just that they're sick. Lenient by design: any phrasing with a
+ * can't-attend signal plus a reference to today/the shift passes.
+ */
+export function callOutSickSaysCannotAttend(body: string): boolean {
+  const t = body.trim().toLowerCase();
+  if (t.split(/\s+/).filter(Boolean).length < 6) return false;
+  const cannotAttend =
+    /can'?t (come|make it|work|be there)|cannot (come|make it|work|be there)|won'?t be able|not (going to|able to) (come|make it|work)|no puedo (ir|trabajar|asistir|llegar)|no podr[eé]|no voy a poder/.test(
+      t,
+    );
+  const aboutShift = /today|shift|work|turno|hoy|trabajo/.test(t);
+  return cannotAttend && aboutShift;
+}
+
 /** The email says "attached / adjunto" — the mistake this lesson teaches against. */
 export function saysAttached(body: string): boolean {
   return /\battach(ed|ment|ing)?\b|\badjunt|\bse adjunta\b|\ben el adjunto\b/i.test(body);
