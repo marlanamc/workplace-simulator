@@ -101,3 +101,52 @@ Run the first learner sessions and the remaining baseline checks. P6 now checks 
 Technical verification found and fixed a performance-review recovery problem: changing the step at submission cleared the missing-evidence hint. The step now derives from the draft, so the Job Card keeps that correction visible. Subsequent fixes should follow similarly concrete evidence.
 
 Verification for this batch: `npm run check` passed lint, typecheck, and 981 unit tests; `npm run test:e2e -- --workers=2` passed all 22 browser tests. The initial run exposed a Spanish test-label mismatch and three navigation timeouts; the corrected full rerun passed. Actual learner observations and fresh-example checks remain pending.
+
+## Future curriculum priority — file confidence and everyday sharing
+
+**User priority recorded 2026-09-06; proposed work, not implemented.** File navigation deserves explicit practice, including for confident English speakers. Do not assume that completing the simulated Drive or attachment tasks proves understanding of a computer’s folders. Preserve the current no-new-levels launch scope; use pilot evidence to identify small improvements inside existing tasks and plan the broader sequence after launch.
+
+The intended skill is following a file through its whole journey: receive → download or save → locate → name and organize → reopen → attach or share → verify the intended file and recipient.
+
+Future practice should cover:
+
+- Finding an email download using the browser’s download history and the actual save location; destinations vary with device, app, and settings.
+- Distinguishing a file from a folder, a browser preview from a saved copy, and local storage from cloud storage. Explain why “Recent” or a search result may show a file without being its storage folder.
+- Choosing a sensible personal folder and meaningful filename; moving, copying, renaming, and finding the file again after closing the app. Include personal versus shared-device storage and recognizing duplicate versions.
+- Finding files through both folder navigation and search, using name, type, and date rather than memorizing one click path.
+- Moving a photo from a phone into the location needed by an upload or attachment picker; distinguishing a photo library from a file browser and an attachment from a shared link. Adapt the supported workflow to learners’ actual devices.
+- Practicing an ID-image request with an obviously fictional sample only: identify the intended recipient and appropriate sharing channel, select the correct image, check readability and unintended background information, and confirm the attachment before sending. Do not normalize sending real identity documents for any unverified request.
+
+**Learning evidence:** After practice, give a differently named fictional file and ask the learner to save it, close the app, find it again, and select it for an attachment. Ask where it is stored and why they chose that location. Observe whether they understand the location or rely on the file staying in Recent. Do not treat speed or memorized folder names as mastery.
+
+**Next design step:** Map gaps across existing attachment, Drive, copy, upload, and portfolio-download tasks; identify which concepts are missing versus merely unfamiliar. Build a coherent bilingual sequence with Job Card coaching and recovery, guided by the actual device mix. Broad file-system practice remains an explicit future priority, not a claim about the current course.
+
+## Future curriculum priority — everyday computer confidence and recovery
+
+**User-approved planning addition, 2026-09-06; not implemented.** Extend the file-confidence sequence to situations where people lose track of location, save status, account identity, or audience. These are proposed learning needs to investigate, not measured prevalence claims or nine new launch levels.
+
+**First priorities:** file management, account awareness, save-state awareness, and recovering from mistakes. These support many existing tasks. Map current coverage before deciding whether to revise an activity or propose additional post-launch work.
+
+| Learning need | Proposed practice | Evidence of understanding |
+|---|---|---|
+| **Saved versus submitted, uploaded, or sent** | Change a practice document, inspect its status, close/reopen it, and separately complete a submission. Include a recoverable failed save or upload. | Learner identifies which action succeeded, verifies persistence, and retries the failed action without assuming all work was lost or sent. |
+| **Personal versus work accounts** | Identify the active account and file owner; resolve a fictional “Request access” situation by checking identity and permissions. | Learner chooses the intended account or requests appropriate access rather than making the file public to bypass the problem. |
+| **Tabs, windows, and apps** | Move between a source and a form, recover a closed tab or obscured window, and return to the draft. | Learner finds the original work without restarting or creating unnecessary duplicate tabs; explains which app holds the source. |
+| **Upload errors and file selection** | Encounter a clearly explained type, size, or incomplete-upload problem; choose the relevant correction and inspect the resulting preview. | Learner responds to the actual error, selects the intended version, and verifies the uploaded file. Do not require repeated guessing or unexplained conversion. |
+| **Recovery from mistakes** | Undo an accidental edit, locate a moved practice file, and recover a deleted practice file where the environment supports it. | Learner chooses an appropriate recovery action and distinguishes a recoverable mistake from an action that requires help. Do not imply every system supports Undo or restoration. |
+| **Printing and PDF output** | Inspect print preview, choose relevant pages and destination, and save a PDF to an intentional location. | Learner catches clipped or extra content and can find/reopen the PDF; understands that saving a PDF is different from sending pages to a printer. |
+| **Sharing and recipient access** | Compare attachment versus link, select the recipient and access level, and inspect a simulated recipient view. | The intended recipient can access the correct file with appropriate permissions; learner explains why that method fits the request. |
+| **Errors, status messages, and permission requests** | Read contrasting messages and decide whether to wait, correct input, retry, review an access request, or seek help. | Learner explains what the message indicates and chooses a relevant response instead of treating every prompt as something to dismiss. |
+| **Asking for useful technical help** | Describe the intended action, what happened, and the exact error; capture only the relevant part of a fictional screen. | Another person can understand the problem from the report; the screenshot excludes unrelated personal information. |
+
+**Shared habit:** pause → read → check where you are → try one relevant action → check the result. Model this through recoverable mistakes and optional Job Card Help; do not turn it into a mandatory acknowledgment checklist before every task.
+
+**Design and validation approach:**
+
+1. Audit the existing mail/attachment, account-recovery, Drive, copy, submission-retry, and portfolio activities for explicit concept practice. Distinguish “the learner clicked successfully” from “the learner understood where the work is and what happened.”
+2. Use observed confusion and the learners’ actual devices to prioritize gaps. Select device-appropriate examples; do not teach one browser’s or operating system’s behavior as universal.
+3. Integrate bounded improvements into existing tasks where they add a useful decision. Reserve broader additions for post-launch planning; retain all current level identities and earned progress.
+4. Provide bilingual Job Card instructions, optional support, and recoverable fictional scenarios. Avoid real identity documents, credentials, or personal account changes during practice.
+5. Recheck with a fresh file, account context, error, or sharing request. Record independent explanation and recovery separately from assistance and memorized clicks. No speed targets or new word-count quotas.
+
+**Scope boundary:** these additions are a curriculum backlog, not shipped features or closed pilot findings. Preserve the final launch-testing week and address demonstrated blockers first.

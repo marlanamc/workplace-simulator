@@ -109,6 +109,16 @@ These are **not closed by passing tests**. Facilitator observation is the next e
 | P11 | Portfolio payoff is fragile or anticlimactic | **Persistence and export fallback implemented; usability pending.** UTF-8 download is available when clipboard access fails. Familiar finish UI remains; decorative finale and selected-work portfolio are deferred. | Observe finish recognition and successful copy/paste on target devices; test denied clipboard permission and Job Card recovery. |
 | P12 | All Act I–II wrong actions, Help, keyboard, leave/return paths have not been observed in both languages | **Open launch gate.** Automated opening coverage is not a complete human walkthrough of every task. | Complete both-language coverage register in the pilot checklist, including late tasks reached through Studio. |
 
+## Added user priority — file navigation and everyday sharing
+
+**Recorded 2026-09-06; future work, not implemented.** The user identifies finding and organizing files as a major practical difficulty, including for experienced English-speaking computer users. Existing attachment and simulated Drive tasks do not establish general understanding of Downloads, folders, local versus cloud storage, or phone-photo uploads.
+
+Prioritize a coherent receive → save → locate → organize → reopen → attach/share sequence, including meaningful names, duplicate recognition, personal/shared-device storage choices, and recovery when a file is not where expected. A fictional ID-image scenario should include recipient/channel judgment and checking the chosen image, not just successful attachment. No real ID is needed for practice.
+
+The [remaining-issues plan](../curriculum/remaining-issues-plan.md#future-curriculum-priority--file-confidence-and-everyday-sharing) records the proposed scope and fresh-file transfer check. This is a future curriculum priority; it does not add launch levels or close any pilot gate.
+
+The user also approved a broader [everyday computer confidence and recovery plan](../curriculum/remaining-issues-plan.md#future-curriculum-priority--everyday-computer-confidence-and-recovery): saved/submitted/sent states, personal/work accounts, tabs/windows/apps, upload errors, Undo and file recovery, print/PDF output, recipient access, interpreting messages, and describing technical problems. File management, account awareness, save-state awareness, and mistake recovery take first priority. Proposed practice uses the habit “pause → read → check where you are → try one relevant action → check the result,” with fresh-example validation. These remain planned learning improvements, not implemented features or additional launch levels.
+
 ## Earlier roadmap: what shipped and what did not
 
 | Proposal | Current decision |
