@@ -75,7 +75,7 @@ export default function BillingSheetTask() {
   };
 
   const notYet = () =>
-    say(lang === "en" ? "That's not today's sheet. Open Visit charges — Monday." : "Esa no es la hoja de hoy. Abre Cargos de visita — lunes.");
+    say(lang === "en" ? "That's not today's sheet. Open Visit charges: Monday." : "Esa no es la hoja de hoy. Abre Cargos de visita: lunes.");
 
   const headerFor = (col: Col) =>
     col === "A" ? c.patientHeader : col === "B" ? c.codeHeader : c.chargeHeader;

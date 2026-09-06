@@ -247,16 +247,20 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   "shift-review": {
     key: "shift-review",
     built: true,
-    label: { en: "A normal shift", es: "Un turno normal" },
+    label: { en: "End-of-shift note", es: "Nota de fin de turno" },
     dispatch: {
-      en: "A normal shift. Nothing new - just do the job.",
-      es: "Un turno normal. Nada nuevo: solo haz el trabajo.",
+      en: "Maria has to leave early. Write a short note about the shift for her to read.",
+      es: "Maria tiene que irse temprano. Escríbele una nota corta del turno para que la lea.",
     },
-    skill: "Handle a normal shift, start to finish",
+    skill: "Write a short end-of-shift summary",
     bookmarkLabel: "Portal",
-    handoffCta: { en: "Next: A normal shift", es: "Siguiente: Un turno normal" },
-    shiftMoment: { en: "Friday, 6 PM. One last walk-through.", es: "Viernes, 6 PM. Un último repaso." },
+    handoffCta: { en: "Next: Write a shift note", es: "Siguiente: Escribir nota del turno" },
+    shiftMoment: { en: "Friday, 6 PM. End of shift.", es: "Viernes, 6 PM. Fin de turno." },
     location: browser("Open Portal", "portal", "shift-review"),
+    jobCardLine: {
+      en: "Maria has to leave early. Write a short note about the shift for her to read.",
+      es: "Maria tiene que irse temprano. Escríbele una nota corta del turno para que la lea.",
+    },
   },
 
   "mail-etiquette": {
@@ -381,8 +385,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Send Jordan the link", es: "Envíale el enlace a Jordan" },
     dispatch: {
-      en: "You shared the file. Now email Jordan the link — not an attached copy.",
-      es: "Compartiste el archivo. Ahora envíale el enlace a Jordan por correo — no una copia adjunta.",
+      en: "You shared the file. Now email Jordan the link, not an attached copy.",
+      es: "Compartiste el archivo. Ahora envíale el enlace a Jordan por correo, no una copia adjunta.",
     },
     skill: "Send a link to a file instead of a copy",
     bookmarkLabel: "Mail",
@@ -789,8 +793,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Build your résumé", es: "Arma tu currículum" },
     dispatch: {
-      en: "Turn your Harborside jobs into a one-page résumé — summary, roles, skills.",
-      es: "Convierte tus trabajos en Harborside en un currículum de una página — resumen, puestos, habilidades.",
+      en: "Turn your Harborside jobs into a one-page résumé: summary, roles, skills.",
+      es: "Convierte tus trabajos en Harborside en un currículum de una página: resumen, puestos, habilidades.",
     },
     skill: "Build a one-page résumé from my work history",
     bookmarkLabel: "Résumé",
@@ -869,8 +873,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Fill out the I-9", es: "Llena el I-9" },
     dispatch: {
-      en: "The I-9 Section 1 — it says you're allowed to work in the U.S. Fill it in and sign.",
-      es: "El I-9 Sección 1 — dice que tienes permiso para trabajar en EE. UU. Llénalo y firma.",
+      en: "The I-9 Section 1. It says you're allowed to work in the U.S. Fill it in and sign.",
+      es: "El I-9 Sección 1. Dice que tienes permiso para trabajar en EE. UU. Llénalo y firma.",
     },
     skill: "Fill out I-9 Section 1",
     bookmarkLabel: "Onboarding",
@@ -909,8 +913,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Find the current file at HQ", es: "Encuentra el archivo actual en HQ" },
     dispatch: {
-      en: "HQ Drive is nested. Search, then share the current version — view only.",
-      es: "El Drive de HQ está anidado. Busca, luego comparte la versión actual — solo ver.",
+      en: "HQ Drive is nested. Search, then share the current version, view only.",
+      es: "El Drive de HQ está anidado. Busca, luego comparte la versión actual, solo ver.",
     },
     skill: "Search a nested drive for the right file version",
     bookmarkLabel: "Drive",

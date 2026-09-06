@@ -30,11 +30,11 @@ export const INTERVIEW_COPY: Record<Lang, {
   gotIt: string;
 }> = {
   en: {
-    appName: "Interview — Office Administrator",
+    appName: "Interview: Office Administrator",
     interviewer: "Anita Raman",
     interviewerTitle: "Operations Director, Harborside HQ",
     heading: "Practice interview",
-    intro: "Four questions. Answer each in a few sentences — the way you'd say it out loud. There's no trick here; say what's true.",
+    intro: "Four questions. Answer each in a few sentences, the way you'd say it out loud. There's no trick here; say what's true.",
     answerHint: "A few sentences. Real examples beat general statements.",
     listeningForLabel: "What she's listening for",
     askBackLabel: "One question to ask her",
@@ -52,11 +52,11 @@ export const INTERVIEW_COPY: Record<Lang, {
     gotIt: "Got it. Back to my task",
   },
   es: {
-    appName: "Entrevista — Administrador de Oficina",
+    appName: "Entrevista: Administrador de Oficina",
     interviewer: "Anita Raman",
     interviewerTitle: "Directora de Operaciones, Harborside HQ",
     heading: "Entrevista de práctica",
-    intro: "Cuatro preguntas. Responde cada una en unas oraciones — como lo dirías en voz alta. No hay trampa; di lo que es verdad.",
+    intro: "Cuatro preguntas. Responde cada una en unas oraciones, como lo dirías en voz alta. No hay trampa; di lo que es verdad.",
     answerHint: "Unas oraciones. Los ejemplos reales valen más que las frases generales.",
     listeningForLabel: "Qué está escuchando ella",
     askBackLabel: "Una pregunta para hacerle a ella",

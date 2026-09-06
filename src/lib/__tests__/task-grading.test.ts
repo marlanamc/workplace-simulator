@@ -231,7 +231,7 @@ describe("reply-all: audience and tone", () => {
   });
 
   it.each([
-    "Hi Dana, yes — we can take the 6 AM Friday delivery.",
+    "Hi Dana, yes. We can take the 6 AM Friday delivery.",
     "Yes, Friday at 6 AM works. Someone will be on the dock.",
     "Hola Dana, sí, podemos recibir la entrega del viernes a las 6 AM.",
     "No podemos a las 6. Can we do 8 AM Friday?",
@@ -249,9 +249,9 @@ describe("reply-all: audience and tone", () => {
 describe("send a link, not a file", () => {
   it.each([
     "Hi Jordan, here's the link to this week's schedule. You should have view access now.",
-    "Jordan — I shared the schedule with you. Open it from the link, not an old copy.",
+    "Jordan, I shared the schedule with you. Open it from the link, not an old copy.",
     "Hola Jordan, aquí está el enlace del horario de esta semana. Ya tienes acceso para ver.",
-    "The schedule is at drive.harborsidecafe.com/schedule — I'll keep it updated there.",
+    "The schedule is at drive.harborsidecafe.com/schedule. I'll keep it updated there.",
   ])("accepts an email that points at the file: %j", (body) => {
     expect(sendsLinkNotFile(body)).toBe(true);
   });
@@ -326,9 +326,9 @@ describe("coursework: a complete reply before submit", () => {
 describe("research: cite the database", () => {
   it.each([
     "It is from the library database and names its authors.",
-    "Peer-reviewed, 2024 — not an ad or a forum.",
+    "Peer-reviewed, 2024. Not an ad or a forum.",
     "Es de la base de datos de la biblioteca y nombra autores.",
-    "Revisado por pares, 2024 — no es un anuncio ni un foro.",
+    "Revisado por pares, 2024. No es un anuncio ni un foro.",
   ])("accepts a real why: %j", (body) => {
     expect(whyHoldsUp(body)).toBe(true);
   });
@@ -358,9 +358,9 @@ describe("appointment scheduling: offer the open slot", () => {
 describe("patient intake: decline the coworker", () => {
   it.each([
     "I can't share that. It stays with the care team.",
-    "Sorry Sam — I'm not allowed to show patient forms.",
+    "Sorry Sam,\nI'm not allowed to show patient forms.",
     "No puedo compartirlo. Se queda con el equipo de cuidado.",
-    "Perdón Sam — no puedo mostrar formularios de pacientes.",
+    "Perdón Sam,\nNo puedo mostrar formularios de pacientes.",
   ])("accepts a safe decline: %j", (body) => {
     expect(declineIsSafe(body)).toBe(true);
   });
@@ -488,7 +488,7 @@ describe("slide deck: title, planted number, takeaway, present", () => {
 });
 
 describe("meeting minutes: agenda, notes, and a follow-up with owners", () => {
-  const agenda = "Saturday close — who covers it\nLate supply order — next step";
+  const agenda = "Saturday close: who covers it\nLate supply order: next step";
   const notes = "Jordan takes Saturday close.\nAlex calls the supplier this morning.";
 
   it.each([
@@ -555,7 +555,7 @@ describe("portfolio reflection: every prompt answered", () => {
       reflectionComplete([
         "Reading a schedule and asking for a swap.",
         "Writing formulas from scratch.",
-        "It gets easier — keep going.",
+        "It gets easier. Keep going.",
         "It is worth the time, even 20 minutes a week.",
       ]),
     ).toBe(true);

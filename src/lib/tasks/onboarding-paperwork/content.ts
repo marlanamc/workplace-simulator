@@ -28,7 +28,7 @@ export const PAPERWORK_SHELL: Record<Lang, {
 }> = {
   en: {
     needRequired: "Fill in every box marked required before you submit.",
-    needSignature: "Sign with your full name — the same name at the top of the form.",
+    needSignature: "Sign with your full name, the same name at the top of the form.",
     needRouting: "A routing number is exactly 9 digits. Check it again.",
     sentKicker: "Form submitted",
     tryAgain: "Do it again",
@@ -43,7 +43,7 @@ export const PAPERWORK_SHELL: Record<Lang, {
   },
   es: {
     needRequired: "Llena cada casilla marcada como obligatoria antes de enviar.",
-    needSignature: "Firma con tu nombre completo — el mismo nombre que está arriba del formulario.",
+    needSignature: "Firma con tu nombre completo, el mismo nombre que está arriba del formulario.",
     needRouting: "Un número de ruta tiene exactamente 9 dígitos. Revísalo otra vez.",
     sentKicker: "Formulario enviado",
     tryAgain: "Hacerlo otra vez",
@@ -169,7 +169,7 @@ export const DEPOSIT_COPY: Record<Lang, {
   en: {
     formName: "Direct Deposit Authorization",
     title: "Send my pay to my bank",
-    blurb: "Direct deposit puts your pay straight into your account on payday — no check to cash.",
+    blurb: "Direct deposit puts your pay straight into your account on payday. No check to cash.",
     bankLabel: "Bank name",
     routingLabel: "Routing number",
     routingHint: "9 digits. It's the first number on the bottom of a check, on the left.",
@@ -177,12 +177,12 @@ export const DEPOSIT_COPY: Record<Lang, {
     accountTypeLabel: "Account type",
     submit: "Submit direct deposit",
     doneTitle: "Direct deposit set up.",
-    doneBody: "Your pay will land in your account each payday. That's all the paperwork — day one is next.",
+    doneBody: "Your pay will land in your account each payday. That's all the paperwork. Day one is next.",
   },
   es: {
     formName: "Autorización de Depósito Directo",
     title: "Enviar mi pago a mi banco",
-    blurb: "El depósito directo pone tu pago directo en tu cuenta el día de pago — sin cheque que cobrar.",
+    blurb: "El depósito directo pone tu pago directo en tu cuenta el día de pago. Sin cheque que cobrar.",
     bankLabel: "Nombre del banco",
     routingLabel: "Número de ruta",
     routingHint: "9 dígitos. Es el primer número abajo de un cheque, a la izquierda.",
@@ -190,7 +190,7 @@ export const DEPOSIT_COPY: Record<Lang, {
     accountTypeLabel: "Tipo de cuenta",
     submit: "Enviar depósito directo",
     doneTitle: "Depósito directo configurado.",
-    doneBody: "Tu pago llegará a tu cuenta cada día de pago. Eso es todo el papeleo — sigue el primer día.",
+    doneBody: "Tu pago llegará a tu cuenta cada día de pago. Eso es todo el papeleo. Sigue el primer día.",
   },
 };
 
@@ -223,7 +223,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
       s: [
         "It tells your job how much tax to hold back from each paycheck.",
         "Your filing status (single, married, head of household) is the main choice. Pick the one that's true for you.",
-        "A dependent is someone you support — usually a child. If you have none, enter 0. You can change this form later any time.",
+        "A dependent is someone you support, usually a child. If you have none, enter 0. You can change this form later any time.",
       ],
       tip: "Not sure about status? \"Single\" is the safe default and you can update it.",
     },
@@ -232,7 +232,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
       s: [
         "Le dice a tu trabajo cuánto impuesto retener de cada cheque.",
         "Tu estado civil para impuestos (soltero, casado, cabeza de familia) es la decisión principal. Elige el que sea verdad para ti.",
-        "Un dependiente es alguien que mantienes — normalmente un hijo. Si no tienes, escribe 0. Puedes cambiar este formulario después en cualquier momento.",
+        "Un dependiente es alguien que mantienes, normalmente un hijo. Si no tienes, escribe 0. Puedes cambiar este formulario después en cualquier momento.",
       ],
       tip: "¿No estás seguro del estado? \"Soltero\" es lo seguro por defecto y lo puedes actualizar.",
     },
@@ -245,7 +245,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
         "Section 1 is the part you fill in yourself: your name, birth date, address, and your work-authorization status.",
         "On your first day you'll bring ID documents (like a passport, or a driver's license plus a Social Security card) so HR can check them.",
       ],
-      tip: "Fill it in exactly as your ID reads — same name, same spelling.",
+      tip: "Fill it in exactly as your ID reads: same name, same spelling.",
     },
     es: {
       t: "¿Qué es un I-9?",
@@ -254,7 +254,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
         "La Sección 1 es la parte que llenas tú: tu nombre, fecha de nacimiento, domicilio y tu estado de autorización de trabajo.",
         "Tu primer día traerás documentos de identidad (como un pasaporte, o una licencia de conducir más una tarjeta de Seguro Social) para que RR. HH. los revise.",
       ],
-      tip: "Llénalo exactamente como dice tu identificación — mismo nombre, misma ortografía.",
+      tip: "Llénalo exactamente como dice tu identificación: mismo nombre, misma ortografía.",
     },
   },
   "direct-deposit": {

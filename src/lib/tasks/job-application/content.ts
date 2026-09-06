@@ -36,9 +36,9 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   en: {
     siteName: "Harborside Jobs",
     heading: "Application · Office Administrator",
-    intro: "Four short sections. Your simulated experience is listed below — this is practice, not real employment history.",
+    intro: "Four short sections. Your simulated experience is listed below. This is practice, not real employment history.",
     positionLabel: "Position you're applying for",
-    position: "Office Administrator — Harborside HQ",
+    position: "Office Administrator: Harborside HQ",
     historyLabel: "Work history",
     historyHint: "From your Harborside record. Read it over.",
     present: "Present",
@@ -50,7 +50,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
     needWhy: "Write a few sentences on why you want the role.",
     sentKicker: "Application submitted",
     doneTitle: "Your application is in.",
-    doneBody: "Position, history, availability, and your reason — all sent. Next comes the interview.",
+    doneBody: "Position, history, availability, and your reason: all sent. Next comes the interview.",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -60,9 +60,9 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   es: {
     siteName: "Empleos Harborside",
     heading: "Solicitud · Administrador de Oficina",
-    intro: "Cuatro secciones cortas. Tu experiencia simulada aparece abajo — es práctica, no historial de empleo real.",
+    intro: "Cuatro secciones cortas. Tu experiencia simulada aparece abajo. Es práctica, no historial de empleo real.",
     positionLabel: "Puesto al que aplicas",
-    position: "Administrador de Oficina — Harborside HQ",
+    position: "Administrador de Oficina: Harborside HQ",
     historyLabel: "Historial de trabajo",
     historyHint: "De tu registro de Harborside. Léelo con calma.",
     present: "Presente",
@@ -74,7 +74,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
     needWhy: "Escribe unas oraciones sobre por qué quieres el puesto.",
     sentKicker: "Solicitud enviada",
     doneTitle: "Tu solicitud está enviada.",
-    doneBody: "Puesto, historial, disponibilidad y tu razón — todo enviado. Sigue la entrevista.",
+    doneBody: "Puesto, historial, disponibilidad y tu razón: todo enviado. Sigue la entrevista.",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -126,13 +126,13 @@ export const STARTERS: Record<Lang, string[]> = {
   en: [
     "In the simulator I practiced organizing work and sharing information.",
     "I like keeping things organized so the team can do their work.",
-    "I already use the tools this job needs — calendars, spreadsheets, shared files.",
+    "I already use the tools this job needs: calendars, spreadsheets, shared files.",
     "I want steady daytime hours and room to keep learning.",
   ],
   es: [
     "En el simulador practiqué organizar el trabajo y compartir información.",
     "Me gusta mantener todo organizado para que el equipo pueda hacer su trabajo.",
-    "Ya uso las herramientas que este trabajo necesita — calendarios, hojas de cálculo, archivos compartidos.",
+    "Ya uso las herramientas que este trabajo necesita: calendarios, hojas de cálculo, archivos compartidos.",
     "Quiero un horario estable de día y espacio para seguir aprendiendo.",
   ],
 };
@@ -142,7 +142,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Filling out an application",
       s: [
-        "Go section by section. Do not skip one because it looks long — most are short once you start.",
+        "Go section by section. Do not skip one because it looks long. Most are short once you start.",
         "For \"why do you want this role,\" say something true and specific. \"I need a job\" is honest but weak; \"I want to keep growing and I'm good at organizing\" is better.",
         "Check the pre-filled parts. If a date or title is wrong, fix it before you submit.",
       ],
@@ -153,7 +153,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Llenar una solicitud",
       s: [
-        "Ve sección por sección. No te saltes una porque se ve larga — casi todas son cortas cuando empiezas.",
+        "Ve sección por sección. No te saltes una porque se ve larga. Casi todas son cortas cuando empiezas.",
         "Para \"por qué quieres este puesto,\" di algo verdadero y específico. \"Necesito un trabajo\" es honesto pero débil; \"quiero seguir creciendo y soy bueno organizando\" es mejor.",
         "Revisa las partes ya llenas. Si una fecha o un título está mal, corrígelo antes de enviar.",
       ],

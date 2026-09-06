@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TaskKey } from "@/lib/desktop-content";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
-import { storyMailsFor, storyMailsUpTo } from "@/lib/story-beats";
+import { sortInboxByTime, storyMailsFor, storyMailsUpTo } from "@/lib/story-beats";
 
 /**
  * The inbox must time-travel: replaying Day One shows Day One's inbox,
@@ -39,5 +39,19 @@ describe("storyMailsUpTo", () => {
     for (const mail of storyMailsFor(order, {})) {
       expect(order, `story mail "${mail.key}" unlocks after unknown task "${mail.unlockAfter}"`).toContain(mail.unlockAfter);
     }
+  });
+
+  it("stamps Day 1 and Day 2 Maria mail on different August days", () => {
+    const throughSchedule = LEVELS.flatMap((l) => taskKeysForLevel(l, null)).slice(
+      0,
+      LEVELS.flatMap((l) => taskKeysForLevel(l, null)).indexOf("schedule") + 1,
+    );
+    const mails = storyMailsFor(throughSchedule, {});
+    const thankYou = mails.find((m) => m.key === "story-mail");
+    const swap = mails.find((m) => m.key === "story-schedule");
+    expect(thankYou?.sentOn).toBe(18);
+    expect(swap?.sentOn).toBe(19);
+    const sorted = sortInboxByTime([thankYou!, swap!], 21);
+    expect(sorted.map((m) => m.key)).toEqual(["story-schedule", "story-mail"]);
   });
 });

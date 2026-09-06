@@ -4,7 +4,7 @@ import { useCallback, useRef, useState } from "react";
 import { AlertCircle, Check, ChevronDown, ChevronUp, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
-import { useJobCard } from "@/lib/job-card-context";
+import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
 import {
   INTRO_BEATS,
   LIST_INTRO,
@@ -116,12 +116,34 @@ export default function JobCard() {
   // Adjusted during render, the pattern this codebase already uses.
   const [jobShown, setJobShown] = useState(nextTaskKey);
   const [finishedTaskKey, setFinishedTaskKey] = useState<TaskKey | null>(null);
+  /** Last mid-job line for the current curriculum task — survives tab switches
+   *  inside the browser (Portal → Mail) so Mail can't blank the card. */
+  const [heldStep, setHeldStep] = useState<JobCardStep | null>(null);
   if (jobShown !== nextTaskKey) {
     setFinishedTaskKey(jobShown);
     setJobShown(nextTaskKey);
+    setHeldStep(null);
     setCorner(HOME);
     setCollapsed(false);
   }
+
+  // Ignore reports from a different job (Mail already queued for tomorrow
+  // while today is still shift notes). Keep the last matching line while the
+  // learner pokes around other tabs of the same window.
+  const liveStep =
+    step && (!step.taskKey || step.taskKey === nextTaskKey) ? step : null;
+  if (liveStep) {
+    const same =
+      heldStep &&
+      heldStep.line.en === liveStep.line.en &&
+      heldStep.stepIndex === liveStep.stepIndex &&
+      heldStep.canShowMe === liveStep.canShowMe &&
+      heldStep.canHelp === liveStep.canHelp &&
+      heldStep.primaryLabel === liveStep.primaryLabel;
+    if (!same) setHeldStep(liveStep);
+  }
+  const effectiveStep =
+    liveStep ?? (active !== null && heldStep ? heldStep : null);
 
   const script = buildScript();
   // A new sentence or a correction is the card talking again — open it so
@@ -297,7 +319,7 @@ export default function JobCard() {
 
     // Nothing open: the card sets the job up and its button opens the thing
     // it names. This is what the desktop briefing used to do.
-    if (active === null || !step) {
+    if (active === null || !effectiveStep) {
       if (!nextTaskKey) {
         return { badge: "✓", kicker: c.dayDoneKicker, line: c.allDoneLine, tone: "green", step: 4 };
       }
@@ -323,28 +345,34 @@ export default function JobCard() {
     // Mid-job. Guidance loosens by act: Act I spells out every click, Act II
     // keeps the goal on screen but offers Show me only once it's needed, and
     // Act III says the title and gets out of the way.
+    // Show me only while the owning task is still mounted (liveStep) — a held
+    // line from another browser tab has no spotlight target to light.
     const helpOffered =
-      act === "act1" ? step.canShowMe : act === "act2" ? step.canShowMe && Boolean(correction) : false;
+      liveStep && act === "act1"
+        ? liveStep.canShowMe
+        : liveStep && act === "act2"
+          ? liveStep.canShowMe && Boolean(correction)
+          : false;
     // Act I spells out the click. From Act II on the card states the goal and
     // lets the learner work out the clicks, which is the whole point of the
     // ladder: the scaffolding comes down as they stop needing it.
     const goalLine = nextTaskKey
       ? (JOB_CARD_LINE[nextTaskKey]?.[lang] ?? TASK_INFO[nextTaskKey].label[lang])
-      : step.line[lang];
-    const midLine = act === "act1" ? step.line[lang] : goalLine;
+      : effectiveStep.line[lang];
+    const midLine = act === "act1" ? effectiveStep.line[lang] : goalLine;
 
     return {
       badge,
       kicker,
       line: midLine,
       tone: "blue",
-      help: helpOffered,
+      help: Boolean(helpOffered),
       // A step that advances from the card, not from a click in the app.
-      primaryLabel: step.primaryLabel,
-      onPrimary: step.primaryLabel ? pressPrimary : undefined,
+      primaryLabel: liveStep?.primaryLabel,
+      onPrimary: liveStep?.primaryLabel ? pressPrimary : undefined,
       // Four bars for a job of any length: the task's own step count is
       // mapped onto them so the shape never changes between jobs.
-      step: Math.min(3, Math.round((step.stepIndex / Math.max(1, step.stepCount - 1)) * 3)),
+      step: Math.min(3, Math.round((effectiveStep.stepIndex / Math.max(1, effectiveStep.stepCount - 1)) * 3)),
     };
   }
 
@@ -400,7 +428,7 @@ export default function JobCard() {
         <span className="min-w-0 flex-1 truncate text-[15px] font-medium">
           {help && !finish ? help.kicker : script.kicker}
         </span>
-        {step?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
+        {liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
           <button
             type="button"
             data-testid="job-card-help"
@@ -410,7 +438,7 @@ export default function JobCard() {
             onPointerDown={(e) => e.stopPropagation()}
             onClick={pressHelp}
             className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold${
-              step?.pulseHelp && !help ? " animate-showme-pulse-compact" : ""
+              liveStep?.pulseHelp && !help ? " animate-showme-pulse-compact" : ""
             }`}
             style={{
               background: help ? "#fff" : "rgba(255,255,255,0.18)",
@@ -579,12 +607,12 @@ export default function JobCard() {
               className="flex min-h-[56px] flex-1 cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap rounded-[16px] text-[17px] font-medium"
               style={{
                 border: `2px solid ${TONE.blue}`,
-                background: step?.showMeActive ? TONE.blue : "#fff",
-                color: step?.showMeActive ? "#fff" : TONE.blue,
+                background: liveStep?.showMeActive ? TONE.blue : "#fff",
+                color: liveStep?.showMeActive ? "#fff" : TONE.blue,
               }}
             >
               <MapPin size={20} strokeWidth={2.25} aria-hidden />
-              {step?.showMeActive ? c.hide : c.showMe}
+              {liveStep?.showMeActive ? c.hide : c.showMe}
             </button>
             <button
               type="button"

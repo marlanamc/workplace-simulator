@@ -11,10 +11,12 @@ import {
 } from "@/lib/tracks-content";
 import { ACT_INTROS, type ActIntroActKey } from "@/lib/act-intro-content";
 import { welcomeHomeFor } from "@/lib/welcome-home-content";
-import { HANDOFF_CTA, SHIFT_MOMENT } from "@/lib/story-beats";
+import { HANDOFF_CTA, SHIFT_MOMENT, storyMailsFor } from "@/lib/story-beats";
 import { BOOKMARK_LABEL } from "@/lib/shift-spine";
 import { firstPersonSkill } from "@/lib/skills";
 import { TASKS } from "@/lib/tasks/registry";
+import { TEACHER_NOTES_COPY } from "@/lib/teacher-notes-content";
+import { formatPortfolioSummary } from "@/lib/portfolio-summary";
 
 /**
  * The drift detector. Every task a learner can reach must be fully wired:
@@ -249,5 +251,64 @@ describe("in-task step instructions are bilingual", () => {
 
   it.each(withSteps)("%s RIGHT_NOW_LABEL is bilingual", (task, mod) => {
     expectBilingual(mod.RIGHT_NOW_LABEL as { en: string; es: string }, `${task} RIGHT_NOW_LABEL`);
+  });
+});
+
+/** English learners copy what they read. An em dash in a starter or Job Card line is a new punctuation mark to guess. */
+const EMDASH = "\u2014";
+
+function collectEmDashStrings(value: unknown, path: string, out: Array<[string, string]>) {
+  if (typeof value === "string") {
+    if (value.includes(EMDASH)) out.push([path, value]);
+    return;
+  }
+  if (Array.isArray(value)) {
+    value.forEach((item, i) => collectEmDashStrings(item, `${path}[${i}]`, out));
+    return;
+  }
+  if (value && typeof value === "object" && !(value instanceof Date) && !(value instanceof RegExp)) {
+    for (const [key, item] of Object.entries(value)) {
+      collectEmDashStrings(item, `${path}.${key}`, out);
+    }
+  }
+}
+
+describe("learner-facing copy does not use em dashes", () => {
+  it("has no em dash in task copy, tracks, story mail, or Job Card lines", () => {
+    const hits: Array<[string, string]> = [];
+    collectEmDashStrings(TASKS, "TASKS", hits);
+    collectEmDashStrings(LEVELS, "LEVELS", hits);
+    collectEmDashStrings(TRACKS, "TRACKS", hits);
+    collectEmDashStrings(ACT_INTROS, "ACT_INTROS", hits);
+    collectEmDashStrings(TEACHER_NOTES_COPY, "TEACHER_NOTES_COPY", hits);
+    collectEmDashStrings(storyMailsFor([...TASK_KEYS], {}), "storyMails", hits);
+    for (const act of ACTS) {
+      collectEmDashStrings(welcomeHomeFor(act.key), `welcomeHome.${act.key}`, hits);
+    }
+    for (const [path, mod] of Object.entries(taskContentModules)) {
+      const task = path.match(/tasks\/([^/]+)\//)?.[1] ?? path;
+      collectEmDashStrings(mod, `tasks/${task}`, hits);
+    }
+    collectEmDashStrings(
+      formatPortfolioSummary({
+        certificateTrackKeys: [],
+        completedTaskKeys: [],
+        answers: ["", "", "", ""],
+        lang: "en",
+      }),
+      "portfolioSummary.en",
+      hits,
+    );
+    collectEmDashStrings(
+      formatPortfolioSummary({
+        certificateTrackKeys: [],
+        completedTaskKeys: [],
+        answers: ["", "", "", ""],
+        lang: "es",
+      }),
+      "portfolioSummary.es",
+      hits,
+    );
+    expect(hits, hits.map(([p, s]) => `${p}: ${s}`).join("\n")).toEqual([]);
   });
 });

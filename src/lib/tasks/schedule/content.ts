@@ -76,8 +76,8 @@ export const SWAP_OPTIONS: SwapOption[] = [
     label: { en: "Wed Aug 26 · 10:00 AM – 6:00 PM", es: "Mié 26 ago · 10:00 AM – 6:00 PM" },
     works: false,
     wrongHint: {
-      en: "Wednesday is your day off, not the problem. Maria needs Thursday covered — ask for a different time that same day.",
-      es: "El miércoles es tu día libre, no el problema. Maria necesita cubrir el jueves — pide otra hora ese mismo día.",
+      en: "Wednesday is your day off, not the problem. Maria needs Thursday covered. Ask for a different time that same day.",
+      es: "El miércoles es tu día libre, no el problema. Maria necesita cubrir el jueves. Pide otra hora ese mismo día.",
     },
   },
   {

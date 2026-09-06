@@ -16,6 +16,7 @@ import { useJobCardOptional, useReporterId } from "@/lib/job-card-context";
  * card just speaks for them.
  */
 export default function RightNowBar({
+  taskKey,
   stepIndex,
   stepCount,
   instruction,
@@ -28,6 +29,8 @@ export default function RightNowBar({
 }: {
   /** Kept for call-site compatibility; the card shows a job badge instead. */
   icon?: LucideIcon;
+  /** Curriculum task this report belongs to — see JobCardStep.taskKey. */
+  taskKey?: import("@/lib/desktop-content").TaskKey;
   stepIndex: number;
   /**
    * The task's full step list. When given, `instruction` and `stepCount` are
@@ -74,9 +77,19 @@ export default function RightNowBar({
 
   useEffect(() => {
     if (!reportStep) return;
-    reportStep({ id, stepIndex, stepCount: count, line: { en, es }, showMeActive: lit, canShowMe, canHelp, primaryLabel });
+    reportStep({
+      id,
+      taskKey,
+      stepIndex,
+      stepCount: count,
+      line: { en, es },
+      showMeActive: lit,
+      canShowMe,
+      canHelp,
+      primaryLabel,
+    });
     return () => reportStep(null, id);
-  }, [reportStep, id, stepIndex, count, en, es, lit, canShowMe, canHelp, primaryLabel]);
+  }, [reportStep, id, taskKey, stepIndex, count, en, es, lit, canShowMe, canHelp, primaryLabel]);
 
   return null;
 }

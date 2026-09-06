@@ -26,8 +26,8 @@ export const TIMECLOCK = {
   // Day 3 morning: only Day 1 + Day 2 are finished punches.
   weekHours: "16h 05m this week",
   recent: [
-    { date: "Mon, Aug 18", in: "6:58 AM", out: "3:04 PM", total: "8h 06m" },
-    { date: "Sat, Aug 16", in: "8:01 AM", out: "4:00 PM", total: "7h 59m" },
+    { date: "Tue, Aug 18", in: "6:58 AM", out: "3:04 PM", total: "8h 06m" },
+    { date: "Wed, Aug 19", in: "10:01 AM", out: "6:00 PM", total: "7h 59m" },
   ],
 };
 

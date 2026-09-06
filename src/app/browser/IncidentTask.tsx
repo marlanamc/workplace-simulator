@@ -53,8 +53,8 @@ export default function IncidentTask() {
     if (!incidentNarrativeIsComplete(what)) {
       return say(
         lang === "en"
-          ? "Say whether anyone was hurt, and what you did about it — cleaned it up, put out a sign, told your shift lead."
-          : "Di si alguien se lastimó, y qué hiciste al respecto — limpiar, poner un letrero, avisar a tu líder de turno."
+          ? "Say whether anyone was hurt, and what you did about it: cleaned it up, put out a sign, told your shift lead."
+          : "Di si alguien se lastimó, y qué hiciste al respecto: limpiar, poner un letrero, avisar a tu líder de turno."
       );
     }
     setView("done");

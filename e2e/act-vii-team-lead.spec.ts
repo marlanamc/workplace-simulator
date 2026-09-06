@@ -109,7 +109,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await expect(page.getByRole("heading", { name: "Run the meeting" })).toBeVisible({ timeout: 20_000 });
 
   await page.getByRole("button", { name: "Write it" }).click();
-  await page.getByPlaceholder(/two or three points/).fill("Saturday close — who covers it\nLate supply order — next step");
+  await page.getByPlaceholder(/two or three points/).fill("Saturday close: who covers it\nLate supply order: next step");
   await page.getByRole("button", { name: "Save the agenda" }).click();
 
   await page.getByRole("button", { name: "Start the meeting" }).click();
@@ -126,8 +126,8 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
     .getByPlaceholder(/One line per action/)
     .fill("Saturday close: Jordan, this Saturday. Supplier call: Alex, by end of day Monday. Training: Alex, Friday morning.");
   for (const [action, owner, day] of [['Saturday close','Jordan','sat'], ['Supplier call','Alex','mon'], ['New hire training','Alex','fri']]) {
-    await page.getByRole('combobox', {name: `${action} — Owner`, exact:true}).selectOption(owner);
-    await page.getByRole('combobox', {name: `${action} — Day`, exact:true}).selectOption(day);
+    await page.getByRole('combobox', {name: `${action}: Owner`, exact:true}).selectOption(owner);
+    await page.getByRole('combobox', {name: `${action}: Day`, exact:true}).selectOption(day);
   }
   await page.getByRole("button", { name: "Send" }).click();
 
@@ -136,7 +136,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
 
   // --- Level 25: performance-review ---
   await openTask(page, "performance-review");
-  await expect(page.getByText("Monthly review — one team member")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Monthly review: one team member")).toBeVisible({ timeout: 20_000 });
   await page.getByTestId('review-evidence').selectOption('training');
   await page.getByPlaceholder(/Something specific they actually did/).fill("Sam trained two new hires this month and stayed patient with both.");
   await page.getByPlaceholder(/What needs to change/).fill("The morning open needs Sam there by 6. Being on time every day would help the shift start clean.");

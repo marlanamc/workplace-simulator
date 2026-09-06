@@ -178,7 +178,7 @@ export default function SlideDeckTask() {
             ) : index === 1 ? (
               <>
                 <p className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.numberKicker}</p>
-                <table className="mt-3 text-[13px]"><caption>{lang === "en" ? "Expense report — reference" : "Informe de gastos — referencia"}</caption><tbody>
+                <table className="mt-3 text-[13px]"><caption>{lang === "en" ? "Expense report: reference" : "Informe de gastos: referencia"}</caption><tbody>
                   {EXPENSE_ROWS.map((r) => <tr key={r.key}><th className="pr-3 text-left font-normal">{r.merchant[lang]}</th><td>${r.amount}</td><td className="pl-3">{r.receipt ?? (lang === "en" ? "No receipt" : "Sin recibo")}</td></tr>)}
                 </tbody></table>
                 <label className="mt-3 block">{lang === "en" ? "Total with receipts" : "Total con recibos"}

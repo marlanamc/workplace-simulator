@@ -52,9 +52,9 @@ export const REFLECTION_COPY: Record<Lang, {
     reflectIntro: "Four short questions. A sentence or two each.",
     answerPlaceholder: "Your answer…",
     submit: "See my summary",
-    needAll: "Answer all four questions — a few words each is fine.",
+    needAll: "Answer all four questions. A few words each is fine.",
     summaryTitle: "Your summary",
-    summaryIntro: "This is yours. Share it with whoever's useful — a friend, an employer, an advisor.",
+    summaryIntro: "This is yours. Share it with whoever's useful: a friend, an employer, an advisor.",
     canDoHeading: "What I can do now",
     reflectionHeading: "In my own words",
     copySummary: "Copy summary to share",
@@ -80,9 +80,9 @@ export const REFLECTION_COPY: Record<Lang, {
     reflectIntro: "Cuatro preguntas cortas. Una o dos oraciones cada una.",
     answerPlaceholder: "Tu respuesta…",
     submit: "Ver mi resumen",
-    needAll: "Responde las cuatro preguntas — unas palabras cada una está bien.",
+    needAll: "Responde las cuatro preguntas. Unas palabras cada una está bien.",
     summaryTitle: "Tu resumen",
-    summaryIntro: "Esto es tuyo. Compártelo con quien te sirva — un amigo, un empleador, un asesor.",
+    summaryIntro: "Esto es tuyo. Compártelo con quien te sirva: un amigo, un empleador, un asesor.",
     canDoHeading: "Lo que ya puedo hacer",
     reflectionHeading: "En mis propias palabras",
     copySummary: "Copiar resumen para compartir",
@@ -124,7 +124,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "This one is a look back, not a test",
       s: [
-        "The top of the screen lists every award you've earned. Scroll through it — that's a real record of what you can do.",
+        "The top of the screen lists every award you've earned. Scroll through it. That's a real record of what you can do.",
         "Then answer the four questions. There are no wrong answers. A sentence or two each is plenty.",
         "The summary it makes is yours to keep. It says, in plain words, what you learned to do here.",
       ],
@@ -135,7 +135,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Este es un repaso, no un examen",
       s: [
-        "Arriba en la pantalla está la lista de cada premio que ganaste. Recórrela — es un registro real de lo que puedes hacer.",
+        "Arriba en la pantalla está la lista de cada premio que ganaste. Recórrela. Es un registro real de lo que puedes hacer.",
         "Luego responde las cuatro preguntas. No hay respuestas incorrectas. Una o dos oraciones cada una es suficiente.",
         "El resumen que hace es tuyo para guardar. Dice, en palabras simples, lo que aprendiste a hacer aquí.",
       ],

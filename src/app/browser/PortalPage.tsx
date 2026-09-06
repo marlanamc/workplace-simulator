@@ -17,7 +17,7 @@ const SECTIONS: { key: Section; label: string }[] = [
   { key: "swap-request", label: "Shift Swap" },
   { key: "timeclock", label: "Time Clock" },
   { key: "paystubs", label: "Pay Stubs" },
-  { key: "shift-review", label: "Shift Review" },
+  { key: "shift-review", label: "Shift notes" },
 ];
 
 const PORTAL_SECTIONS = new Set<string>(SECTIONS.map((s) => s.key));

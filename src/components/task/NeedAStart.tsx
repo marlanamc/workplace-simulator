@@ -5,6 +5,8 @@ import type { Lang } from "@/lib/task-types";
 
 const CHIP =
   "min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer";
+const CHIP_MULTILINE =
+  "min-h-[32px] rounded-lg border border-[#dadce0] px-3 py-1.5 text-left text-[12px] leading-snug whitespace-pre-line text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer";
 
 /** Sentence starters stay one click away so the compose box looks like the real app. */
 export default function NeedAStart({
@@ -31,7 +33,12 @@ export default function NeedAStart({
       </button>
       {open
         ? starters.map((s, i) => (
-            <button key={i} type="button" onClick={() => onPick(s)} className={chipClassName}>
+            <button
+              key={i}
+              type="button"
+              onClick={() => onPick(s)}
+              className={s.includes("\n") && chipClassName === CHIP ? CHIP_MULTILINE : chipClassName}
+            >
               {s}
             </button>
           ))

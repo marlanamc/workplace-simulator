@@ -28,7 +28,8 @@ import {
   callOutSickSaysCannotAttend,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
-import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
+import { formatInboxTime, inboxToday } from "@/lib/story-calendar";
+import { LEVELS, levelForTrack, taskKeysForLevel, nextTaskInTrack } from "@/lib/tracks-content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { TASK_ICONS } from "@/lib/icons";
@@ -130,10 +131,11 @@ function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
 }
 
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
-  const { markComplete, completedTaskKeys, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
+  const { markComplete, completedTaskKeys, currentTrack, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
   const { browserTabToken, openApp } = useWindowManager();
   const timeclockMailActive =
     !completedTaskKeys.includes("timeclock") && storyFlags[TIMECLOCK_MAIL_FLAG] === "true";
+  const nextKey = nextTaskInTrack(currentTrack, completedTaskKeys);
   const tc = TIMECLOCK_COPY[lang];
   // Fixed for this mount, not recomputed every render: markComplete() updates
   // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
@@ -144,6 +146,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // that's the `browserTabToken` bump below, mirroring PortalPage's own
   // `portalSectionToken` re-open pattern.
   const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys));
+  // Mail stays browsable while another job (shift notes, etc.) owns the day —
+  // only coach on the card when this window *is* that job.
+  const ownsJobCard = timeclockMailActive || (nextKey !== null && nextKey === activeMailTask);
   const [step, setStep] = useState(0);
   const [view, setView] = useState<View>(
     completedTaskKeys.includes(activeMailTask) ? "done" : isComposeOnly(activeMailTask) ? "compose" : "empty",
@@ -191,12 +196,20 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const mariaSignature = signatureFor("Maria Delgado");
   const T = (en: string, es: string) => (lang === "en" ? en : es);
   const mailDone = completedTaskKeys.includes(activeMailTask);
+  const storyTodayDay = inboxToday(levelForTrack(currentTrack.key));
+  const stamp = (row: { time: string; sentOn?: number }) =>
+    row.sentOn != null
+      ? formatInboxTime({ sentOn: row.sentOn, clock: row.time, today: storyTodayDay, lang })
+      : row.time;
   // While a Day One job is running (first time OR a replay), the inbox shows
   // the story as it stood at that moment — no future Maria mails flooding in.
-  const rawInbox = sortInboxByTime([
-    ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
-    ...emailsForTask(activeMailTask),
-  ]);
+  const rawInbox = sortInboxByTime(
+    [
+      ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
+      ...emailsForTask(activeMailTask),
+    ],
+    storyTodayDay,
+  );
   // During the Welcome walkthrough the tour is doing the talking, so keep the
   // bold unread row from pulling focus. Otherwise finding it is the job.
   const inbox = welcomeWalkthroughActive ? rawInbox.filter((m) => !m.isTarget) : rawInbox;
@@ -357,8 +370,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         return recordWrong({
           title: T("Send the link, not a copy.", "Envía el enlace, no una copia."),
           body: T(
-            "You shared the file already. Point Jordan at that link — an attached copy goes stale when you edit the schedule.",
-            "Ya compartiste el archivo. Dirige a Jordan a ese enlace — una copia adjunta queda vieja cuando edites el horario.",
+            "You shared the file already. Point Jordan at that link. An attached copy goes stale when you edit the schedule.",
+            "Ya compartiste el archivo. Dirige a Jordan a ese enlace. Una copia adjunta queda vieja cuando edites el horario.",
           ),
         });
       }
@@ -366,8 +379,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         return recordWrong({
           title: T("Say where the file is.", "Di dónde está el archivo."),
           body: T(
-            "Tell Jordan it's the schedule and that the link is here — one or two lines.",
-            "Dile a Jordan que es el horario y que el enlace está aquí — una o dos líneas.",
+            "Tell Jordan it's the schedule and that the link is here. One or two lines.",
+            "Dile a Jordan que es el horario y que el enlace está aquí. Una o dos líneas.",
           ),
         });
       }
@@ -526,7 +539,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     <div className="min-w-0 flex-1">
                       <div className="flex items-baseline justify-between gap-2">
                         <span className={`truncate text-[14px] ${unread ? "font-bold" : "font-medium"}`}>{m.from}</span>
-                        <span className="shrink-0 text-[12px] text-[#444746]">{m.time}</span>
+                        <span className="shrink-0 text-[12px] text-[#444746]">{stamp(m)}</span>
                       </div>
                       <div className={`truncate text-[14px] ${unread ? "font-bold text-[#001d35]" : "text-[#444746]"}`}>
                         {m.subject[lang]}
@@ -542,7 +555,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
             {timeclockMailActive ? (
               <>
+                {ownsJobCard && (
                 <RightNowBar
+                  taskKey="timeclock"
                   icon={TASK_ICONS.timeclock}
                   stepIndex={2}
                   stepCount={TIMECLOCK_STEPS.length}
@@ -553,6 +568,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   showMeActive={showMeTargetId === "send-button"}
                   onHelp={() => setHelp(true)}
                 />
+                )}
                 <div className="px-6 py-4 sm:px-8">
                   <div className="overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
@@ -641,7 +657,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         ? "attach-button"
                         : "send-button";
               return (
+                ownsJobCard ? (
                 <RightNowBar
+                  taskKey={activeMailTask}
                   icon={TASK_ICONS.mail}
                   stepIndex={stepIndex}
                   stepCount={stepCount}
@@ -652,6 +670,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   showMeActive={showMeTargetId === showMeId}
                   onHelp={() => setHelp(true)}
                 />
+                ) : null
               );
             })()}
             {view === "empty" && (
@@ -704,7 +723,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         <span className="ml-1 text-[12px] text-[#5f6368]">&lt;{mariaSignature?.email}&gt;</span>
                       </div>
                       <div className="text-[12px] text-[#5f6368]">
-                        {activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM"}
+                        {stamp({
+                          time: activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM",
+                          sentOn: 18,
+                        })}
                       </div>
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
@@ -883,7 +905,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                           <span className="ml-1 text-[12px] text-[#5f6368]">&lt;{storySig.email}&gt;</span>
                         )}
                       </div>
-                      <div className="text-[12px] text-[#5f6368]">{openStory.time}</div>
+                      <div className="text-[12px] text-[#5f6368]">{stamp(openStory)}</div>
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">

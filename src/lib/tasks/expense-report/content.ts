@@ -163,12 +163,12 @@ export const RECEIPTS_COPY: Record<Lang, {
   back: string;
 }> = {
   en: {
-    heading: "Receipts — September",
+    heading: "Receipts: September",
     body: "There are four PDFs here. There is no receipt for the team dinner.",
     back: "You can only read these. Match them to the rows on the sheet.",
   },
   es: {
-    heading: "Recibos — septiembre",
+    heading: "Recibos: septiembre",
     body: "Aquí hay cuatro PDFs. No hay recibo de la cena del equipo.",
     back: "Estos solo se pueden leer. Emparéjalos con las filas de la hoja.",
   },

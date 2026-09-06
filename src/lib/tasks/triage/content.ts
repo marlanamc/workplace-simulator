@@ -165,7 +165,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Two things are waiting. Pick one to start — you can do them in any order.",
+    en: "Two things are waiting. Pick one to start. You can do them in any order.",
     es: "Hay dos cosas esperando. Elige una para empezar; puedes hacerlas en el orden que quieras.",
   },
   {

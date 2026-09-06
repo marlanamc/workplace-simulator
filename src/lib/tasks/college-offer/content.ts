@@ -50,12 +50,12 @@ export const OFFER_LETTER: Record<Lang, string[]> = {
   en: [
     "Harborside Cafe will pay tuition for one Business Essentials class at Bunker Hill Community College this fall.",
     "The class meets Tuesdays, 2:00–4:00 PM, starting September 15. Stay employed here and keep a passing grade.",
-    "Reply to this email if you accept. Then put the class on your work calendar — Tuesday close is already on that day.",
+    "Reply to this email if you accept. Then put the class on your work calendar. Tuesday close is already on that day.",
   ],
   es: [
     "Harborside Cafe pagará la matrícula de una clase de Business Essentials en Bunker Hill Community College este otoño.",
     "La clase es los martes, de 2:00 a 4:00 PM, desde el 15 de septiembre. Sigue empleado aquí y mantén una nota de aprobado.",
-    "Responde a este correo si aceptas. Luego pon la clase en tu calendario de trabajo — el cierre del martes ya está ese día.",
+    "Responde a este correo si aceptas. Luego pon la clase en tu calendario de trabajo. El cierre del martes ya está ese día.",
   ],
 };
 
@@ -102,7 +102,7 @@ export const COLLEGE_OFFER_COPY: Record<Lang, {
     mailBody: "HR laid out the class, the day, and what they expect back. Accept it in your own words.",
     mailCta: "Open Mail",
     calTitle: "Put the class on the calendar",
-    calBody: "Add it as a weekly event. Tuesday close is already there — say so before the semester starts.",
+    calBody: "Add it as a weekly event. Tuesday close is already there. Say so before the semester starts.",
     calCta: "Open Calendar",
     sendCta: "Finish both, then close the job",
     sendNeed: "Accept the offer and put the class on the calendar first.",
@@ -139,7 +139,7 @@ export const COLLEGE_OFFER_COPY: Record<Lang, {
     mailBody: "RR.HH. explicó la clase, el día y lo que esperan. Acéptala con tus palabras.",
     mailCta: "Abrir correo",
     calTitle: "Pon la clase en el calendario",
-    calBody: "Agrégala como evento semanal. El cierre del martes ya está — dilo antes de que empiece el semestre.",
+    calBody: "Agrégala como evento semanal. El cierre del martes ya está. Dilo antes de que empiece el semestre.",
     calCta: "Abrir Calendar",
     sendCta: "Termina las dos y cierra el trabajo",
     sendNeed: "Primero acepta la oferta y pon la clase en el calendario.",
@@ -226,7 +226,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "A formal offer names what you get and what they expect. Read both.",
         "Accept in a short reply. Then put the real class time on the calendar you already use for shifts.",
-        "If it overlaps a shift, say so now — not the first week of class.",
+        "If it overlaps a shift, say so now, not the first week of class.",
       ],
       tip: "This is a 15-minute taste of a college-style task, not a whole semester. Real programs like Bunker Hill's Transitions to College exist for that.",
     },
@@ -237,7 +237,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Una oferta formal dice qué recibes y qué esperan. Lee las dos cosas.",
         "Acepta en una respuesta corta. Luego pon la hora real de la clase en el calendario que ya usas para los turnos.",
-        "Si choca con un turno, dilo ahora — no la primera semana de clase.",
+        "Si choca con un turno, dilo ahora, no la primera semana de clase.",
       ],
       tip: "Esto es un sabor de 15 minutos de una tarea de tipo universidad, no un semestre. Programas reales como Transitions to College de Bunker Hill existen para eso.",
     },

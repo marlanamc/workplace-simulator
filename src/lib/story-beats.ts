@@ -2,6 +2,7 @@ import type { TaskKey } from "@/lib/desktop-content";
 import { CAST, inboxSender } from "@/lib/cast";
 import { firstName, mailGreeting, signatureFor } from "@/lib/mail-greeting";
 import type { Lang, Localized } from "@/lib/task-types";
+import { inboxSortKey, sentOnForTask } from "@/lib/story-calendar";
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 import { TASK_LIST } from "@/lib/tasks/registry";
 
@@ -17,6 +18,8 @@ export type InboxRow = {
   initials: string;
   color: string;
   time: string;
+  /** August day this row was sent. Used to stamp past days once the sitting moves on. */
+  sentOn?: number;
   isTarget?: boolean;
   unread?: boolean;
   story?: boolean;
@@ -155,11 +158,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "Got your note about the hours. I'll look at the punch and fix it if it is wrong.",
-        "Finish today's normal-shift checks, then you're done for this sitting.",
+        "Before you go, leave a short end-of-shift note in the portal.",
       ],
       es: [
         "Recibí tu nota sobre las horas. Voy a revisar el registro y lo corrijo si está mal.",
-        "Termina las revisiones del turno normal de hoy, y listo por esta sesión.",
+        "Antes de irte, deja una nota corta de fin de turno en el portal.",
       ],
     },
   },
@@ -175,11 +178,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You opened your stub and checked the net pay and the hours. That is the habit.",
-        "If a future stub looks off, write Maria the same day — don't wait until the next payday.",
+        "If a future stub looks off, write Maria the same day. Don't wait until the next payday.",
       ],
       es: [
         "Abriste tu recibo y revisaste el pago neto y las horas. Ese es el hábito.",
-        "Si un recibo futuro se ve mal, escríbele a Maria el mismo día — no esperes al siguiente día de pago.",
+        "Si un recibo futuro se ve mal, escríbele a Maria el mismo día. No esperes al siguiente día de pago.",
       ],
     },
   },
@@ -265,7 +268,7 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "files",
     subject: { en: "Jordan has the file", es: "Jordan ya tiene el archivo" },
-    preview: { en: "Shared view only — just what I wanted.", es: "Compartido en solo ver, justo lo que quería." },
+    preview: { en: "Shared view only, just what I wanted.", es: "Compartido en solo ver, justo lo que quería." },
     body: {
       en: [
         "Jordan has this week's schedule as view only. That's exactly what I wanted.",
@@ -288,11 +291,11 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "Opened it fine. Thanks.", es: "Se abrió bien. Gracias." },
     body: {
       en: [
-        "Got the link and opened it fine. Thanks for not sending a copy — I know it'll stay current.",
+        "Got the link and opened it fine. Thanks for not sending a copy. I know it'll stay current.",
         "See you on the floor.",
       ],
       es: [
-        "Recibí el enlace y se abrió bien. Gracias por no mandar una copia — así sé que va a estar al día.",
+        "Recibí el enlace y se abrió bien. Gracias por no mandar una copia. Así sé que va a estar al día.",
         "Nos vemos en el piso.",
       ],
     },
@@ -338,7 +341,7 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "status-report",
-    subject: { en: "Got the total — and Jordan did too", es: "Tengo el total — y Jordan también" },
+    subject: { en: "Got the total, and Jordan did too", es: "Tengo el total, y Jordan también" },
     preview: { en: "That's what a status email should look like.", es: "Así se ve un buen correo de estado." },
     body: {
       en: [
@@ -823,12 +826,12 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "You named something real they did well, and something real to work on. Both specific, neither harsh.",
         "That is a review someone can actually use.",
-        "Thursday, the full weekly report is yours — every app, one packet.",
+        "Thursday, the full weekly report is yours. Every app, one packet.",
       ],
       es: [
         "Nombraste algo real que hicieron bien, y algo real para trabajar. Las dos cosas concretas, ninguna dura.",
         "Esa es una evaluación que de verdad se puede usar.",
-        "El jueves, el reporte semanal completo es tuyo — todas las apps, un solo paquete.",
+        "El jueves, el reporte semanal completo es tuyo. Todas las apps, un solo paquete.",
       ],
     },
   },
@@ -845,12 +848,12 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "The number, the calendar note, and the summary all came together, in one email. Not three loose attachments.",
         "That is the whole weekly report, start to finish, on your own.",
-        "One last thing before you go — look back at where you started.",
+        "One last thing before you go. Look back at where you started.",
       ],
       es: [
         "El número, la nota del calendario y el resumen llegaron juntos, en un solo correo. No tres adjuntos sueltos.",
         "Ese es el reporte semanal completo, de principio a fin, tú solo.",
-        "Una última cosa antes de irte — mira atrás, a dónde empezaste.",
+        "Una última cosa antes de irte. Mira atrás, a dónde empezaste.",
       ],
     },
   },
@@ -865,12 +868,12 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "Look how much you can do now.", es: "Mira todo lo que ya puedes hacer." },
     body: {
       en: [
-        "I still have your first email — the one where you thanked me for the welcome. Look how much you can do now.",
+        "I still have your first email, the one where you thanked me for the welcome. Look how much you can do now.",
         "This summary is yours. Show it to whoever you want.",
         "Whatever is next for you, you are ready for it.",
       ],
       es: [
-        "Todavía tengo tu primer correo — ese donde me agradeciste la bienvenida. Mira todo lo que ya puedes hacer.",
+        "Todavía tengo tu primer correo, ese donde me agradeciste la bienvenida. Mira todo lo que ya puedes hacer.",
         "Este resumen es tuyo. Muéstraselo a quien quieras.",
         "Lo que siga para ti, estás lista para eso.",
       ],
@@ -939,11 +942,14 @@ export function inboxTimeRank(time: string): number {
   return 0;
 }
 
-export function sortInboxByTime<T extends { time: string }>(rows: T[]): T[] {
+export function sortInboxByTime<T extends { time: string; sentOn?: number }>(
+  rows: T[],
+  today = 21,
+): T[] {
   return rows
     .map((row, index) => ({ row, index }))
     .sort((a, b) => {
-      const diff = inboxTimeRank(b.row.time) - inboxTimeRank(a.row.time);
+      const diff = inboxSortKey(b.row, today) - inboxSortKey(a.row, today);
       return diff !== 0 ? diff : a.index - b.index;
     })
     .map(({ row }) => row);
@@ -956,9 +962,10 @@ export function storyMailsFor(completedTaskKeys: TaskKey[], flags: StoryFlags): 
     (a, b) => completedTaskKeys.indexOf(b.unlockAfter) - completedTaskKeys.indexOf(a.unlockAfter),
   );
   return unlocked.map((mail) => {
-    if (mail.key !== "story-calendar") return mail;
+    const sentOn = sentOnForTask(mail.unlockAfter);
+    if (mail.key !== "story-calendar") return { ...mail, sentOn };
     const reply = huddleReply(flags);
-    return { ...mail, ...reply };
+    return { ...mail, ...reply, sentOn };
   });
 }
 

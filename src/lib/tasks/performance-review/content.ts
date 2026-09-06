@@ -27,8 +27,8 @@ export const PROFILE: ReviewProfile = {
     { en: "Covered two close shifts on short notice.", es: "Cubrió dos cierres avisando con poco tiempo." },
   ],
   issue: {
-    en: "Runs late for the morning open about once a week — usually 10 to 15 minutes.",
-    es: "Llega tarde a la apertura de la mañana como una vez por semana — casi siempre de 10 a 15 minutos.",
+    en: "Runs late for the morning open about once a week, usually 10 to 15 minutes.",
+    es: "Llega tarde a la apertura de la mañana como una vez por semana, casi siempre de 10 a 15 minutos.",
   },
 };
 
@@ -57,7 +57,7 @@ export const REVIEW_COPY: Record<Lang, {
   en: {
     appName: "Review",
     helpBtn: "Help me with this step",
-    formTitle: "Monthly review — one team member",
+    formTitle: "Monthly review: one team member",
     profileKicker: "This month",
     winsLabel: "What went well",
     issueLabel: "One thing to watch",
@@ -79,7 +79,7 @@ export const REVIEW_COPY: Record<Lang, {
   es: {
     appName: "Evaluación",
     helpBtn: "Ayúdame con este paso",
-    formTitle: "Evaluación del mes — una persona del equipo",
+    formTitle: "Evaluación del mes: una persona del equipo",
     profileKicker: "Este mes",
     winsLabel: "Lo que salió bien",
     issueLabel: "Algo para observar",
@@ -129,9 +129,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Skip \"good job\" and \"needs improvement\". Both are too vague to use.",
         "For the strength, choose a profile fact. Which action are you recognizing?",
-        "For the area to grow, be clear about what needs to change — and say what better would look like, so it reads as help, not just a complaint.",
+        "For the area to grow, be clear about what needs to change, and say what better would look like, so it reads as help, not just a complaint.",
       ],
-      tip: "There is no single right wording here. Fair and specific beats polished. If this feels hard, that's normal — being honest about someone else in writing is genuinely difficult.",
+      tip: "There is no single right wording here. Fair and specific beats polished. If this feels hard, that's normal. Being honest about someone else in writing is genuinely difficult.",
     },
   ],
   es: [
@@ -140,9 +140,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Evita \"buen trabajo\" y \"necesita mejorar\". Las dos son demasiado vagas para servir.",
         "Para la fortaleza, elige un dato del perfil. ¿Qué acción estás reconociendo?",
-        "Para el área para mejorar, sé claro sobre qué necesita cambiar — y di cómo se vería mejor, para que se lea como ayuda y no solo como una queja.",
+        "Para el área para mejorar, sé claro sobre qué necesita cambiar, y di cómo se vería mejor, para que se lea como ayuda y no solo como una queja.",
       ],
-      tip: "Aquí no hay una sola forma correcta de decirlo. Justo y concreto vale más que pulido. Si se siente difícil, es normal — ser honesto por escrito sobre otra persona de verdad cuesta.",
+      tip: "Aquí no hay una sola forma correcta de decirlo. Justo y concreto vale más que pulido. Si se siente difícil, es normal. Ser honesto por escrito sobre otra persona de verdad cuesta.",
     },
   ],
 };

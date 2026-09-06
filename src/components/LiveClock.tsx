@@ -72,12 +72,6 @@ export function DesktopClock({ lang }: { lang: Lang }) {
       >
         {clock.time}
       </div>
-      <div
-        suppressHydrationWarning
-        className="mt-2 text-[20px] font-normal leading-snug text-white/90"
-      >
-        {clock.date}
-      </div>
     </div>
   );
 }
@@ -89,18 +83,11 @@ export function ShelfClock({ lang }: { lang: Lang }) {
       <span suppressHydrationWarning className="text-[13px] font-medium tabular-nums">
         {clock.time}
       </span>
-      <span suppressHydrationWarning className="mt-0.5 text-[10px] text-white/70">
-        {clock.dateShort}
-      </span>
     </span>
   );
 }
 
 export function QuickSettingsClock({ lang }: { lang: Lang }) {
   const clock = useLiveClock(lang);
-  return (
-    <span suppressHydrationWarning>
-      {clock.date} · {clock.time}
-    </span>
-  );
+  return <span suppressHydrationWarning>{clock.time}</span>;
 }

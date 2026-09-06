@@ -68,7 +68,7 @@ export const MEETING_COPY: Record<Lang, {
     followupTitle: "Send the follow-up",
     followupBody: "List each action, who owns it, and by when.",
     followupCta: "Write the email",
-    agendaLabel: "Agenda — Monday huddle",
+    agendaLabel: "Agenda: Monday huddle",
     agendaPlaceholder: "Type two or three points, one per line…",
     agendaSave: "Save the agenda",
     meetingKicker: "The huddle",
@@ -79,9 +79,9 @@ export const MEETING_COPY: Record<Lang, {
     notesPlaceholder: "What got decided? A few short lines…",
     notesSave: "Save my notes",
     followupTo: "To: Alex, Jordan, Riley",
-    followupSubject: "Subject: Monday huddle — what we decided",
+    followupSubject: "Subject: Monday huddle, what we decided",
     followupToValue: "Alex, Jordan, Riley",
-    followupSubjectValue: "Monday huddle — what we decided",
+    followupSubjectValue: "Monday huddle: what we decided",
     toLabel: "To",
     subjectLabel: "Subject",
     followupLabel: "Your message",
@@ -111,7 +111,7 @@ export const MEETING_COPY: Record<Lang, {
     followupTitle: "Envía el seguimiento",
     followupBody: "Anota cada tarea, quién la hace y para cuándo.",
     followupCta: "Escribir el correo",
-    agendaLabel: "Agenda — reunión del lunes",
+    agendaLabel: "Agenda: reunión del lunes",
     agendaPlaceholder: "Escribe dos o tres puntos, uno por línea…",
     agendaSave: "Guardar la agenda",
     meetingKicker: "La reunión",
@@ -122,9 +122,9 @@ export const MEETING_COPY: Record<Lang, {
     notesPlaceholder: "¿Qué se decidió? Unas líneas cortas…",
     notesSave: "Guardar mis notas",
     followupTo: "Para: Alex, Jordan, Riley",
-    followupSubject: "Asunto: Reunión del lunes — lo que decidimos",
+    followupSubject: "Asunto: Reunión del lunes, lo que decidimos",
     followupToValue: "Alex, Jordan, Riley",
-    followupSubjectValue: "Reunión del lunes — lo que decidimos",
+    followupSubjectValue: "Reunión del lunes: lo que decidimos",
     toLabel: "Para",
     subjectLabel: "Asunto",
     followupLabel: "Tu mensaje",
@@ -160,7 +160,7 @@ export const MEETING_SCRIPT: Record<Lang, string[]> = {
     "Alex: I'll call the supplier this morning and get a date.",
     "You: Good. Last, the new hire starts Thursday.",
     "Riley: I'll do the Thursday morning training.",
-    "Riley: Correction — I am away Thursday. Alex will handle the training Friday morning instead.",
+    "Riley: Correction. I am away Thursday. Alex will handle the training Friday morning instead.",
     "Alex: Confirmed. I will train the new hire Friday morning.",
     "You: That covers it. I'll send a summary.",
   ],
@@ -172,20 +172,20 @@ export const MEETING_SCRIPT: Record<Lang, string[]> = {
     "Alex: Yo llamo al proveedor esta mañana y consigo una fecha.",
     "Tú: Bien. Por último, la persona nueva empieza el jueves.",
     "Riley: Yo hago la capacitación del jueves por la mañana.",
-    "Riley: Corrección — no estaré el jueves. Alex hará la capacitación el viernes por la mañana.",
+    "Riley: Corrección. No estaré el jueves. Alex hará la capacitación el viernes por la mañana.",
     "Alex: Confirmado. Capacitaré a la persona nueva el viernes por la mañana.",
     "Tú: Con eso está. Voy a enviar un resumen.",
   ],
 };
 
 export const AGENDA_STARTERS: Record<Lang, string[]> = {
-  en: ["Saturday close — who covers it", "Late supply order — next step", "New hire starts Thursday — training"],
-  es: ["Cierre del sábado — quién lo cubre", "Pedido de insumos atrasado — siguiente paso", "Persona nueva empieza el jueves — capacitación"],
+  en: ["Saturday close: who covers it", "Late supply order: next step", "New hire starts Thursday: training"],
+  es: ["Cierre del sábado: quién lo cubre", "Pedido de insumos atrasado: siguiente paso", "Persona nueva empieza el jueves: capacitación"],
 };
 
 export const NOTE_STARTERS: Record<Lang, string[]> = {
-  en: ["Jordan takes Saturday close.", "Alex calls the supplier this morning.", "Training owner and day changed — check the final decision."],
-  es: ["Jordan toma el cierre del sábado.", "Alex llama al proveedor esta mañana.", "Cambió el responsable y el día de capacitación — revisa la decisión final."],
+  en: ["Jordan takes Saturday close.", "Alex calls the supplier this morning.", "Training owner and day changed. Check the final decision."],
+  es: ["Jordan toma el cierre del sábado.", "Alex llama al proveedor esta mañana.", "Cambió el responsable y el día de capacitación. Revisa la decisión final."],
 };
 
 export const FOLLOWUP_STARTERS: Record<Lang, string[]> = {
@@ -207,7 +207,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "A meeting needs a start, a middle, and a follow-up",
       s: [
         "The agenda is two or three points, written before the meeting. It keeps the huddle short.",
-        "During the meeting, note what gets decided — not every word, just the decisions and who agreed to what.",
+        "During the meeting, note what gets decided, not every word, just the decisions and who agreed to what.",
         "The follow-up email is the part people skip. List each action, the person who owns it, and the day it's due.",
       ],
       tip: "If your follow-up email doesn't say a name and a day for each item, the meeting will drift. That one email is the whole point of this lesson.",
@@ -218,7 +218,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Una reunión necesita un inicio, un medio y un seguimiento",
       s: [
         "La agenda son dos o tres puntos, escritos antes de la reunión. Mantiene la reunión corta.",
-        "Durante la reunión, anota lo que se decide — no cada palabra, solo las decisiones y quién aceptó qué.",
+        "Durante la reunión, anota lo que se decide, no cada palabra, solo las decisiones y quién aceptó qué.",
         "El correo de seguimiento es la parte que la gente se salta. Anota cada tarea, la persona que la hace y el día en que se entrega.",
       ],
       tip: "Si tu correo de seguimiento no dice un nombre y un día para cada punto, la reunión se va a diluir. Ese correo es todo el sentido de esta lección.",
@@ -294,7 +294,7 @@ export function describeSubmission(input: MeetingMinutesInput, lang: Lang): Subm
     fields: [
       { label: c.agendaLabel, value: input.agenda },
       { label: c.notesLabel, value: input.notes },
-      { label: `${c.followupLabel} — ${c.followupSubjectValue}`, value: input.followup },
+      { label: `${c.followupLabel}: ${c.followupSubjectValue}`, value: input.followup },
     ],
   };
 }

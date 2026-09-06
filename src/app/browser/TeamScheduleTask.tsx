@@ -103,8 +103,8 @@ export default function TeamScheduleTask() {
   const notYet = () =>
     say(
       lang === "en"
-        ? "That's not today's sheet. Open Crew Week — Aug 24."
-        : "Esa no es la hoja de hoy. Abre Semana del equipo — 24 ago."
+        ? "That's not today's sheet. Open Crew Week: Aug 24."
+        : "Esa no es la hoja de hoy. Abre Semana del equipo: 24 ago."
     );
 
   const assignCover = (key: string, label: string) => {

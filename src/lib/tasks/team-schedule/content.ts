@@ -56,7 +56,7 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     appName: "Sheets",
-    sheetName: "Crew Week — Aug 24",
+    sheetName: "Crew Week: Aug 24",
     startNewHeading: "Start a new spreadsheet",
     blankLabel: "Blank",
     templateBudget: "Budget",
@@ -91,7 +91,7 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
   es: {
     helpBtn: "Ayúdame con este paso",
     appName: "Sheets",
-    sheetName: "Semana del equipo — 24 ago",
+    sheetName: "Semana del equipo: 24 ago",
     startNewHeading: "Iniciar una nueva hoja de cálculo",
     blankLabel: "En blanco",
     templateBudget: "Presupuesto",

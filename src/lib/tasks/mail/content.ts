@@ -69,14 +69,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       emoji: "🔗",
       kicker: "Wednesday, 10:15 AM",
       headline: "Jordan needs this week's schedule.",
-      body: "You just shared the file with Jordan. Now send a short email with the link, so Jordan can open it. Don't attach a copy — a copy goes stale the next time you change the schedule.",
+      body: "You just shared the file with Jordan. Now send a short email with the link, so Jordan can open it. Don't attach a copy. A copy goes stale the next time you change the schedule.",
       cta: "Write to Jordan",
     },
     es: {
       emoji: "🔗",
       kicker: "Miércoles, 10:15 AM",
       headline: "Jordan necesita el horario de esta semana.",
-      body: "Acabas de compartir el archivo con Jordan. Ahora envía un correo corto con el enlace, para que Jordan lo pueda abrir. No adjuntes una copia — una copia queda vieja la próxima vez que cambies el horario.",
+      body: "Acabas de compartir el archivo con Jordan. Ahora envía un correo corto con el enlace, para que Jordan lo pueda abrir. No adjuntes una copia. Una copia queda vieja la próxima vez que cambies el horario.",
       cta: "Escribirle a Jordan",
     },
   },
@@ -84,7 +84,7 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
     en: {
       emoji: "📧",
       kicker: "Friday, 6:20 PM",
-      headline: "Before you go — answer Darnell.",
+      headline: "Before you go, answer Darnell.",
       body: "Maria says you found extra aprons in the storage room. Darnell asked about them on your first day. Let him know before you leave, so he's not still wondering Monday.",
       cta: "Write to Darnell",
     },
@@ -101,7 +101,7 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       emoji: "🤒",
       kicker: "Monday, 6:12 AM",
       headline: "You're sick. You're on at 10.",
-      body: "You woke up sick and you're on the schedule this morning. Write Maria now, before your shift — not after it starts.",
+      body: "You woke up sick and you're on the schedule this morning. Write Maria now, before your shift, not after it starts.",
       cta: "Write to Maria",
     },
     es: {
@@ -191,7 +191,7 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
   "mail-reply": {
     en: {
       kicker: "Message sent",
-      body: "You thanked Maria. Next she will ask for a file — read what she needs, then send it attached.",
+      body: "You thanked Maria. Next she will ask for a file. Read what she needs, then send it attached.",
       badgeNumber: "01",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
@@ -504,11 +504,11 @@ export const REPLY_ALL_THREAD: {
     fyi: true,
     body: {
       en: [
-        "Heads up only — the city is changing Friday truck windows next week.",
+        "Heads up only. The city is changing Friday truck windows next week.",
         "No action from cafe leads. I will send the new times when I have them.",
       ],
       es: [
-        "Solo aviso — la ciudad cambia las ventanas de camiones del viernes la semana que viene.",
+        "Solo aviso. La ciudad cambia las ventanas de camiones del viernes la semana que viene.",
         "Los líderes del café no tienen que hacer nada. Envío los horarios nuevos cuando los tenga.",
       ],
     },
@@ -534,11 +534,11 @@ export const REPLY_ALL_THREAD: {
     ask: true,
     body: {
       en: [
-        "Quick ask for the Assistant Manager — can Harborside take a 6 AM Friday delivery next week?",
+        "Quick ask for the Assistant Manager. Can Harborside take a 6 AM Friday delivery next week?",
         "I only need a yes or no from you. Not a group vote.",
       ],
       es: [
-        "Pregunta rápida para el asistente de gerencia — ¿puede Harborside recibir una entrega el viernes a las 6 AM?",
+        "Pregunta rápida para el asistente de gerencia. ¿Puede Harborside recibir una entrega el viernes a las 6 AM?",
         "Solo necesito un sí o un no de ti. No una votación del grupo.",
       ],
     },
@@ -630,8 +630,8 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       full: [
         GREETING,
         "Welcome to the Harborside Cafe team. I'm glad you're starting with us.",
-        "You're on the schedule for 5 shifts this week — that's all you need to focus on for now.",
-        "If you need anything — schedule, login, or just a question — call or email me. I'm here.",
+        "You're on the schedule for 5 shifts this week. That's all you need to focus on for now.",
+        "If you need anything (schedule, login, or just a question), call or email me. I'm here.",
         "Looking forward to working with you.",
         "Thanks,",
       ],
@@ -647,8 +647,8 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       full: [
         GREETING,
         "Bienvenido al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
-        "Estás en el horario para 5 turnos esta semana — con eso te basta por ahora.",
-        "Si necesitas algo — horario, acceso o solo una pregunta — llámame o escríbeme. Aquí estoy.",
+        "Estás en el horario para 5 turnos esta semana. Con eso te basta por ahora.",
+        "Si necesitas algo (horario, acceso o solo una pregunta), llámame o escríbeme. Aquí estoy.",
         "Espero trabajar contigo.",
         "Gracias,",
       ],
@@ -729,13 +729,13 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
   },
   "mail-etiquette": {
     en: [
-      "Hi Darnell, yes — we found extra aprons in the storage room.",
+      "Hi Darnell, yes. We found extra aprons in the storage room.",
       "They're on the second shelf, past the cleaning supplies.",
       "Let me know if you need me to grab you one.",
       "See you Monday.",
     ],
     es: [
-      "Hola Darnell, sí — encontramos delantales de más en el almacén.",
+      "Hola Darnell, sí. Encontramos delantales de más en el almacén.",
       "Están en el segundo estante, después de los productos de limpieza.",
       "Avísame si necesitas que te traiga uno.",
       "Nos vemos el lunes.",
@@ -771,12 +771,12 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
   },
   "reply-all": {
     en: [
-      "Hi Dana, yes — we can take the 6 AM Friday delivery.",
+      "Hi Dana, yes. We can take the 6 AM Friday delivery.",
       "We will have someone on the dock.",
       "Thank you for checking with us first.",
     ],
     es: [
-      "Hola Dana, sí — podemos recibir la entrega del viernes a las 6 AM.",
+      "Hola Dana, sí. Podemos recibir la entrega del viernes a las 6 AM.",
       "Alguien estará en el muelle.",
       "Gracias por preguntarnos primero.",
     ],
@@ -871,14 +871,14 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
 ];
 
 const NOT_A_JOB_EN =
-  "Nothing here needs an answer right now. Your job is to write a new email — click Compose.";
+  "Nothing here needs an answer right now. Your job is to write a new email. Click Compose.";
 const NOT_A_JOB_ES =
-  "Nada de esto necesita respuesta ahora. Tu tarea es escribir un correo nuevo — haz clic en Redactar.";
+  "Nada de esto necesita respuesta ahora. Tu tarea es escribir un correo nuevo. Haz clic en Redactar.";
 
 /** Mid-week of the shared-files level: you just shared a file, now send the link. */
 const SEND_LINK_DECOYS: DecoyEmail[] = [
   { key: "it-outage", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "8:02 AM", isTarget: false,
-    subject: { en: "Drive was slow this morning — fixed", es: "Drive estuvo lento esta mañana — resuelto" },
+    subject: { en: "Drive was slow this morning: fixed", es: "Drive estuvo lento esta mañana: resuelto" },
     preview: { en: "No action needed.", es: "No hay que hacer nada." },
     wrongHint: wrongHint("That's an IT status note. Your job is to send Jordan the link.", "Eso es un aviso de sistemas. Tu tarea es enviarle el enlace a Jordan.") },
   { key: "vendor-quote", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "Yesterday", isTarget: false,
@@ -950,6 +950,7 @@ type InboxEmail = DecoyEmail | {
   initials: string;
   color: string;
   time: string;
+  sentOn?: number;
   isTarget: boolean;
   unread: boolean;
   subject: Localized;
@@ -965,6 +966,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     key: "maria-welcome",
     ...inboxSender(CAST.maria),
     time: "8:14 AM",
+    sentOn: 18,
     isTarget: task === "mail-reply",
     unread: task === "mail-reply",
     subject: { en: welcomeMeta.en.subject, es: welcomeMeta.es.subject },
@@ -981,6 +983,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     key: "maria-safety",
     ...inboxSender(CAST.maria),
     time: "8:20 AM",
+    sentOn: 18,
     isTarget: true,
     unread: true,
     subject: { en: safetyMeta.en.subject, es: safetyMeta.es.subject },

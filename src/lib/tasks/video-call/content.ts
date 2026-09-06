@@ -49,7 +49,7 @@ export const VIDEO_CALL_COPY: Record<Lang, {
 }> = {
   en: {
     appName: "Zoom",
-    meetingTitle: "HQ check-in — Wednesday",
+    meetingTitle: "HQ check-in: Wednesday",
     joinKicker: "You are a few minutes late. Join with your mic off.",
     nameLabel: "Your name",
     meetingIdLabel: "Meeting ID",
@@ -77,7 +77,7 @@ export const VIDEO_CALL_COPY: Record<Lang, {
   },
   es: {
     appName: "Zoom",
-    meetingTitle: "Check-in de HQ — miércoles",
+    meetingTitle: "Check-in de HQ: miércoles",
     joinKicker: "Llegas unos minutos tarde. Entra con el micrófono apagado.",
     nameLabel: "Tu nombre",
     meetingIdLabel: "ID de la reunión",

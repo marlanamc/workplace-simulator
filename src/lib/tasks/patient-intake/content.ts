@@ -82,12 +82,12 @@ export const INTAKE_COPY: Record<Lang, {
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "I can't share that. It stays with the care team.",
-    "Sorry Sam — I'm not allowed to show patient forms.",
+    "Sorry Sam,\nI'm not allowed to show patient forms.",
     "No puedo compartirlo. Se queda con el equipo de cuidado.",
   ],
   es: [
     "No puedo compartirlo. Se queda con el equipo de cuidado.",
-    "Perdón Sam — no puedo mostrar formularios de pacientes.",
+    "Perdón Sam,\nNo puedo mostrar formularios de pacientes.",
     "I can't share that. It stays with the care team.",
   ],
 };
@@ -114,7 +114,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Fill in the form and file it. That is your job here.",
         "A coworker who is not on the care team does not get to look at it.",
-        "The nurse is different — she is on the care team, so she can take the chart. Sam cannot.",
+        "The nurse is different. She is on the care team, so she can take the chart. Sam cannot.",
       ],
       tip: "If you told Sam the reason for the visit in your reply, you shared too much.",
     },
@@ -125,7 +125,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Llena el formulario y archívalo. Ese es tu trabajo aquí.",
         "Un compañero que no está en el equipo de cuidado no puede verlo.",
-        "La enfermera es distinta — ella sí está en el equipo de cuidado, así que puede llevar el expediente. Sam no.",
+        "La enfermera es distinta. Ella sí está en el equipo de cuidado, así que puede llevar el expediente. Sam no.",
       ],
       tip: "Si le dijiste a Sam el motivo de la visita en tu respuesta, compartiste de más.",
     },

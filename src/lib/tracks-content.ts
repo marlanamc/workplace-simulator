@@ -53,7 +53,7 @@ export const TRACKS: Track[] = [
   {
     key: "payday-trouble",
     title: "Payday",
-    subtitle: "Hours, a late punch, and a normal shift",
+    subtitle: "Hours, a late punch, and a shift note",
     taskKeys: ["timeclock", "shift-review"],
     awardEmoji: "💳",
   },
@@ -74,7 +74,7 @@ export const TRACKS: Track[] = [
   {
     key: "first-paycheck",
     title: "First Paycheck",
-    subtitle: "Your stub is here — check it",
+    subtitle: "Your stub is here. Check it",
     taskKeys: ["paystub"],
     awardEmoji: "💵",
   },
@@ -298,7 +298,7 @@ export const TRACKS: Track[] = [
   {
     key: "meeting-minutes",
     title: "Run the Meeting",
-    subtitle: "Agenda, notes, follow-up — the whole loop",
+    subtitle: "Agenda, notes, follow-up: the whole loop",
     taskKeys: ["meeting-minutes"],
     awardEmoji: "📋",
   },
@@ -386,8 +386,8 @@ export interface Level {
   /**
    * This level introduces no new skill - it's a fresh consolidation pass
    * over these already-taught task keys (spaced practice, not a new lesson).
-   * Primarily documentation for now; `level3`'s `shift-review` job is the
-   * template future review levels should follow.
+   * Primarily documentation for now; spaced-practice levels can list the
+   * earlier task keys they consolidate.
    */
   reviewOf?: TaskKey[];
   /**
@@ -455,8 +455,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Day one: complete", es: "Primer día: completo" },
       title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
       body: {
-        en: "You replied and sent the report. Clock out for today — your progress is saved. Next time you sign in, your schedule will be waiting.",
-        es: "Respondiste y enviaste el reporte. Marca salida por hoy — tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
+        en: "You replied and sent the report. Clock out for today. Your progress is saved. Next time you sign in, your schedule will be waiting.",
+        es: "Respondiste y enviaste el reporte. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
       },
       cta: { en: "See my schedule", es: "Ver mi horario" },
       stoppingPoint: true,
@@ -467,8 +467,6 @@ export const LEVELS: Level[] = [
     title: "Clock-In Fix",
     trackKeys: ["payday-trouble"],
     firstTabKey: "portal",
-    // shift-review is a fresh pass over schedule + clock-in (pay comes later).
-    reviewOf: ["schedule", "timeclock"],
     levelUp: {
       emoji: "✅",
       kicker: { en: "Day 2: done", es: "Día 2: listo" },
@@ -490,8 +488,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Hours checked", es: "Horas revisadas" },
       title: { en: "You caught a late punch.", es: "Detectaste un registro tarde." },
       body: {
-        en: "That is what a new hire has to do with hours. One more thing before you go — Darnell is waiting.",
-        es: "Eso es lo que tiene que hacer un empleado nuevo con las horas. Una cosa más antes de irte — Darnell te espera.",
+        en: "That is what a new hire has to do with hours. One more thing before you go. Darnell is waiting.",
+        es: "Eso es lo que tiene que hacer un empleado nuevo con las horas. Una cosa más antes de irte. Darnell te espera.",
       },
       cta: { en: "Write to Darnell", es: "Escribirle a Darnell" },
     },
@@ -538,8 +536,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "A promotion", es: "Un ascenso" },
       title: { en: "You are a Shift Lead now!", es: "¡Ahora eres líder de turno!" },
       body: {
-        en: "New title, new pay, and a new manager — Renata Silva, the GM. Someone just slipped on the floor.",
-        es: "Nuevo puesto, nueva paga y una nueva gerente — Renata Silva, la gerente general. Alguien se acaba de resbalar en el piso.",
+        en: "New title, new pay, and a new manager, Renata Silva, the GM. Someone just slipped on the floor.",
+        es: "Nuevo puesto, nueva paga y una nueva gerente, Renata Silva, la gerente general. Alguien se acaba de resbalar en el piso.",
       },
       cta: { en: "Handle it", es: "Encargarme" },
     },
@@ -554,8 +552,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Monday morning", es: "Lunes por la mañana" },
       title: { en: "You're locked out.", es: "Tu cuenta está bloqueada." },
       body: {
-        en: "It happens to every lead — stay calm and sign back in.",
-        es: "Le pasa a todo líder — con calma, vuelve a entrar.",
+        en: "It happens to every lead. Stay calm and sign back in.",
+        es: "Le pasa a todo líder. Con calma, vuelve a entrar.",
       },
       cta: { en: "Get back in", es: "Volver a entrar" },
     },
@@ -762,8 +760,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "HQ is on the thread", es: "HQ está en el hilo" },
       title: { en: "Not everyone needs your answer.", es: "No todos necesitan tu respuesta." },
       body: {
-        en: "Read the whole thread. Reply to the person who asked — not the whole list.",
-        es: "Lee todo el hilo. Responde a quien preguntó — no a toda la lista.",
+        en: "Read the whole thread. Reply to the person who asked, not the whole list.",
+        es: "Lee todo el hilo. Responde a quien preguntó, no a toda la lista.",
       },
       cta: { en: "Open Mail", es: "Abrir correo" },
     },
@@ -874,8 +872,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Show your experience", es: "Muestra tu experiencia" },
       title: { en: "The application wants a résumé.", es: "La solicitud pide un currículum." },
       body: {
-        en: "You have real experience now — new hire to assistant manager. Put it on one page: a summary, your last two roles, and your skills.",
-        es: "Ahora tienes experiencia real — de nuevo empleado a asistente de gerencia. Ponla en una página: un resumen, tus últimos dos puestos y tus habilidades.",
+        en: "You have real experience now, new hire to assistant manager. Put it on one page: a summary, your last two roles, and your skills.",
+        es: "Ahora tienes experiencia real, de nuevo empleado a asistente de gerencia. Ponla en una página: un resumen, tus últimos dos puestos y tus habilidades.",
       },
       cta: { en: "Build my résumé", es: "Armar mi currículum" },
     },
@@ -910,8 +908,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "They said yes", es: "Dijeron que sí" },
       title: { en: "The offer is in.", es: "Llegó la oferta." },
       body: {
-        en: "Read the letter. Find your start date — read the exact line, don't guess. Then reply that you accept.",
-        es: "Lee la carta. Encuentra tu fecha de inicio — lee la línea exacta, no adivines. Luego responde que aceptas.",
+        en: "Read the letter. Find your start date. Read the exact line, don't guess. Then reply that you accept.",
+        es: "Lee la carta. Encuentra tu fecha de inicio. Lee la línea exacta, no adivines. Luego responde que aceptas.",
       },
       cta: { en: "Read the offer", es: "Leer la oferta" },
     },
@@ -1013,8 +1011,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "A promotion", es: "Un ascenso" },
       title: { en: "You are a Team Lead now!", es: "¡Ahora eres Team Lead!" },
       body: {
-        en: "New title, and for the first time you run the room instead of just showing up. There is a meeting this morning — it is yours to run.",
-        es: "Nuevo puesto, y por primera vez tú diriges la sala en vez de solo asistir. Hay una reunión esta mañana — te toca dirigirla.",
+        en: "New title, and for the first time you run the room instead of just showing up. There is a meeting this morning. It is yours to run.",
+        es: "Nuevo puesto, y por primera vez tú diriges la sala en vez de solo asistir. Hay una reunión esta mañana. Te toca dirigirla.",
       },
       cta: { en: "Start the agenda", es: "Empezar la agenda" },
     },
@@ -1030,8 +1028,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Feedback is part of the job now", es: "Dar retroalimentación ahora es parte del trabajo" },
       title: { en: "One of your team is up for review.", es: "Toca la evaluación de alguien de tu equipo." },
       body: {
-        en: "Read their month. Name one real strength and one real area to grow — honest, and kind at the same time.",
-        es: "Lee cómo les fue este mes. Nombra una fortaleza real y un área real para mejorar — con honestidad y con amabilidad a la vez.",
+        en: "Read their month. Name one real strength and one real area to grow, honest and kind at the same time.",
+        es: "Lee cómo les fue este mes. Nombra una fortaleza real y un área real para mejorar, con honestidad y con amabilidad a la vez.",
       },
       cta: { en: "Open the review", es: "Abrir la evaluación" },
     },
@@ -1047,8 +1045,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Everything at once", es: "Todo a la vez" },
       title: { en: "The full weekly report is yours this week.", es: "El reporte semanal completo te toca esta semana." },
       body: {
-        en: "A number from Sheets, a note from Calendar, a short write-up in Docs, sent as one packet. Nothing new — just every piece together.",
-        es: "Un número de Sheets, una nota de Calendar, un resumen corto en Docs, enviado como un solo paquete. Nada nuevo — solo todas las piezas juntas.",
+        en: "A number from Sheets, a note from Calendar, a short write-up in Docs, sent as one packet. Nothing new, just every piece together.",
+        es: "Un número de Sheets, una nota de Calendar, un resumen corto en Docs, enviado como un solo paquete. Nada nuevo, solo todas las piezas juntas.",
       },
       cta: { en: "Open the numbers", es: "Abrir los números" },
     },

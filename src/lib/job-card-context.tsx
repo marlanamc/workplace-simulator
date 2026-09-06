@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { INTRO_BEATS } from "@/lib/job-card-content";
+import type { TaskKey } from "@/lib/desktop-content";
 import type { Lesson, Localized } from "@/lib/task-types";
 
 /**
@@ -34,6 +35,12 @@ import type { Lesson, Localized } from "@/lib/task-types";
 export interface JobCardStep {
   /** Stable id of the reporter, so a mounted-but-hidden task can't win. */
   id: string;
+  /**
+   * Curriculum task this step belongs to. When set, the card ignores reports
+   * from a different job (e.g. Mail coaching for tomorrow while today is
+   * still shift notes).
+   */
+  taskKey?: TaskKey;
   stepIndex: number;
   stepCount: number;
   line: Localized<string>;

@@ -5,14 +5,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "💵",
     kicker: "Friday. Your first payday.",
     headline: "Your stub is here.",
-    body: "Two weeks in. Open your pay stub and check the net pay and the hours — the same way you will every payday.",
+    body: "Two weeks in. Open your pay stub and check the net pay and the hours, the same way you will every payday.",
     cta: "Open my stub",
   },
   es: {
     emoji: "💵",
     kicker: "Viernes. Tu primer día de pago.",
     headline: "Ya está tu recibo.",
-    body: "Dos semanas. Abre tu recibo y revisa el pago neto y las horas — igual que harás cada día de pago.",
+    body: "Dos semanas. Abre tu recibo y revisa el pago neto y las horas, igual que harás cada día de pago.",
     cta: "Abrir mi recibo",
   },
 };

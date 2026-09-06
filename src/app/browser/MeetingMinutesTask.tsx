@@ -220,10 +220,10 @@ export default function MeetingMinutesTask() {
             <details className="mb-3 rounded border bg-white p-3"><summary>{lang === 'en' ? 'Huddle transcript' : 'Transcripción de la reunión'}</summary>{script.map((line, i) => <p className="mt-2" key={i}>{line}</p>)}</details>
             <fieldset className="mb-4 space-y-3"><legend>{lang === 'en' ? 'Action list attached to the email' : 'Lista de acciones adjunta al correo'}</legend>
               {ACTION_ITEMS.map((item) => <div key={item.key} className="grid grid-cols-3 gap-2 items-center"><span>{item.label[lang]}</span>
-                <select aria-label={`${item.label[lang]} — ${lang === 'en' ? 'Owner' : 'Responsable'}`} className="min-h-11 border bg-white p-2" value={commitments[item.key]?.owner ?? ''} onChange={(e) => setCommitments((prev) => ({...prev, [item.key]: {day: prev[item.key]?.day ?? '', owner: e.target.value}}))}>
+                <select aria-label={`${item.label[lang]}: ${lang === 'en' ? 'Owner' : 'Responsable'}`} className="min-h-11 border bg-white p-2" value={commitments[item.key]?.owner ?? ''} onChange={(e) => setCommitments((prev) => ({...prev, [item.key]: {day: prev[item.key]?.day ?? '', owner: e.target.value}}))}>
                   <option value="">{lang === 'en' ? 'Owner' : 'Responsable'}</option>{ATTENDEES.map((p) => <option key={p.name}>{p.name}</option>)}
                 </select>
-                <select aria-label={`${item.label[lang]} — ${lang === 'en' ? 'Day' : 'Día'}`} className="min-h-11 border bg-white p-2" value={commitments[item.key]?.day ?? ''} onChange={(e) => setCommitments((prev) => ({...prev, [item.key]: {owner: prev[item.key]?.owner ?? '', day: e.target.value}}))}>
+                <select aria-label={`${item.label[lang]}: ${lang === 'en' ? 'Day' : 'Día'}`} className="min-h-11 border bg-white p-2" value={commitments[item.key]?.day ?? ''} onChange={(e) => setCommitments((prev) => ({...prev, [item.key]: {owner: prev[item.key]?.owner ?? '', day: e.target.value}}))}>
                   <option value="">{lang === 'en' ? 'Day' : 'Día'}</option>{ACTION_DAYS.map((d) => <option value={d.key} key={d.key}>{d.label[lang]}</option>)}
                 </select></div>)}
             </fieldset>

@@ -17,7 +17,7 @@ export function formatPortfolioSummary(input: {
   const { lang, answers } = input;
   const c = REFLECTION_COPY[lang];
   const done = new Set(input.completedTaskKeys);
-  const lines = [c.summaryTitle, lang === 'en' ? 'Simulated workplace practice — not employment history.' : 'Práctica laboral simulada — no es historial de empleo.', ''];
+  const lines = [c.summaryTitle, lang === 'en' ? 'Simulated workplace practice, not employment history.' : 'Práctica laboral simulada, no es historial de empleo.', ''];
   for (const { act, tracks } of earnedAwardsByAct(input.certificateTrackKeys)) {
     const tasks = tracks.flatMap((track) => track.taskKeys).filter((key) => done.has(key));
     if (!tasks.length) continue;

@@ -37,11 +37,11 @@ export const RESUME_COPY: Record<Lang, {
   gotIt: string;
 }> = {
   en: {
-    appName: "Docs — Résumé",
+    appName: "Docs: Résumé",
     heading: "Build your résumé",
     intro: "Your completed simulated roles are listed. Add a summary line, one accomplishment for each of your last two roles, and the skills you've shown.",
     contactLabel: "Contact",
-    summaryLabel: "Summary — one or two sentences",
+    summaryLabel: "Summary: one or two sentences",
     summaryHint: "Describe the skills you practiced here. This résumé is a simulation, not a record of paid employment.",
     experienceLabel: "Experience",
     bulletHint: "One thing you did well in this role. Start with an action word: ran, checked, trained, fixed.",
@@ -62,11 +62,11 @@ export const RESUME_COPY: Record<Lang, {
     gotIt: "Got it. Back to my task",
   },
   es: {
-    appName: "Docs — Currículum",
+    appName: "Docs: Currículum",
     heading: "Arma tu currículum",
     intro: "Tus puestos simulados completados están en la lista. Agrega una línea de resumen, un logro por cada uno de tus últimos dos puestos, y las habilidades que has mostrado.",
     contactLabel: "Contacto",
-    summaryLabel: "Resumen — una o dos oraciones",
+    summaryLabel: "Resumen: una o dos oraciones",
     summaryHint: "Describe las habilidades que practicaste aquí. Este currículum es una simulación, no un historial de empleo real.",
     experienceLabel: "Experiencia",
     bulletHint: "Una cosa que hiciste bien en este puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé.",
@@ -136,7 +136,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "A first résumé is short",
       s: [
         "One page. A summary line, your last two or three jobs, and your skills. That's it.",
-        "For each job, write one thing you did well — not your whole job description. Start with an action word: ran, checked, trained, fixed, built.",
+        "For each job, write one thing you did well, not your whole job description. Start with an action word: ran, checked, trained, fixed, built.",
         "Use the jobs you have. \"Team Member\" and \"Shift Lead\" at a cafe are real experience and they count.",
       ],
       tip: "Numbers help: \"trained 4 new hires\" beats \"trained new hires.\"",
@@ -147,7 +147,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Un primer currículum es corto",
       s: [
         "Una página. Una línea de resumen, tus últimos dos o tres trabajos, y tus habilidades. Eso es todo.",
-        "Para cada trabajo, escribe una cosa que hiciste bien — no toda la descripción del puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé, armé.",
+        "Para cada trabajo, escribe una cosa que hiciste bien, no toda la descripción del puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé, armé.",
         "Usa los trabajos que tienes. \"Miembro del equipo\" y \"Líder de turno\" en un café son experiencia real y cuentan.",
       ],
       tip: "Los números ayudan: \"capacité a 4 empleados nuevos\" es mejor que \"capacité a empleados nuevos.\"",

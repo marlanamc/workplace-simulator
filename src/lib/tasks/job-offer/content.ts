@@ -32,15 +32,15 @@ export const JOB_OFFER_COPY: Record<Lang, {
   gotIt: string;
 }> = {
   en: {
-    appName: "Mail — Offer",
+    appName: "Mail: Offer",
     from: "Anita Raman",
     fromEmail: "anita.raman@harborsidehq.com",
-    subject: "Offer — Office Administrator",
+    subject: "Offer: Office Administrator",
     letterHeading: "Offer of employment",
     startDateLabel: "When do you start? Pick the date from the letter.",
     startDateHint: "Read the letter again. The start date is in the second paragraph.",
     wrongDate: "That's not the date in the letter. Look at the second paragraph.",
-    replyLabel: "Reply to Anita — accept the offer",
+    replyLabel: "Reply to Anita: accept the offer",
     replyHint: "Short and warm. Thank her, say you accept, and confirm the start date.",
     send: "Send reply",
     needDate: "Pick the start date from the letter first.",
@@ -55,15 +55,15 @@ export const JOB_OFFER_COPY: Record<Lang, {
     gotIt: "Got it. Back to my task",
   },
   es: {
-    appName: "Correo — Oferta",
+    appName: "Correo: Oferta",
     from: "Anita Raman",
     fromEmail: "anita.raman@harborsidehq.com",
-    subject: "Oferta — Administrador de Oficina",
+    subject: "Oferta: Administrador de Oficina",
     letterHeading: "Oferta de empleo",
     startDateLabel: "¿Cuándo empiezas? Elige la fecha de la carta.",
     startDateHint: "Lee la carta otra vez. La fecha de inicio está en el segundo párrafo.",
     wrongDate: "Esa no es la fecha de la carta. Mira el segundo párrafo.",
-    replyLabel: "Responde a Anita — acepta la oferta",
+    replyLabel: "Responde a Anita: acepta la oferta",
     replyHint: "Corto y amable. Agradécele, di que aceptas y confirma la fecha de inicio.",
     send: "Enviar respuesta",
     needDate: "Primero elige la fecha de inicio de la carta.",
@@ -83,12 +83,12 @@ export const OFFER_LETTER: Record<Lang, string[]> = {
   en: [
     "Dear applicant, we're glad to offer you the Office Administrator role at Harborside HQ. The pay is $25.50 per hour, full time, with benefits after 60 days.",
     "Your first day is Monday, October 6. You'll report to me. Plan to arrive at 9:00 AM for orientation.",
-    "Please reply to accept. Before your first day, complete the new-hire forms — HR will send them.",
+    "Please reply to accept. Before your first day, complete the new-hire forms. HR will send them.",
   ],
   es: [
     "Estimado solicitante, nos alegra ofrecerte el puesto de Administrador de Oficina en Harborside HQ. El pago es de $25.50 por hora, tiempo completo, con beneficios después de 60 días.",
     "Tu primer día es el lunes 6 de octubre. Vas a reportarte conmigo. Planea llegar a las 9:00 AM para la orientación.",
-    "Por favor responde para aceptar. Antes de tu primer día, completa los formularios de nuevo empleado — RR. HH. te los enviará.",
+    "Por favor responde para aceptar. Antes de tu primer día, completa los formularios de nuevo empleado. RR. HH. te los enviará.",
   ],
 };
 
@@ -128,10 +128,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Reading an offer letter",
       s: [
         "An offer letter has the facts you need: the job title, the pay, the start date, and what to do next.",
-        "Find the start date and write it down. Do not guess — read the exact line.",
+        "Find the start date and write it down. Do not guess. Read the exact line.",
         "Reply within a day or two. Thank them, say clearly that you accept, and repeat the start date so there's no mix-up.",
       ],
-      tip: "Repeating the date back is not extra — it's how you both know you agree.",
+      tip: "Repeating the date back is not extra. It's how you both know you agree.",
     },
   ],
   es: [
@@ -139,10 +139,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Leer una carta de oferta",
       s: [
         "Una carta de oferta tiene los datos que necesitas: el puesto, el pago, la fecha de inicio y qué hacer después.",
-        "Encuentra la fecha de inicio y anótala. No adivines — lee la línea exacta.",
+        "Encuentra la fecha de inicio y anótala. No adivines. Lee la línea exacta.",
         "Responde en uno o dos días. Agradece, di claramente que aceptas y repite la fecha de inicio para que no haya confusión.",
       ],
-      tip: "Repetir la fecha no es de más — es cómo ambos saben que están de acuerdo.",
+      tip: "Repetir la fecha no es de más. Es cómo ambos saben que están de acuerdo.",
     },
   ],
 };

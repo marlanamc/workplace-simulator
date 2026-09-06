@@ -45,7 +45,7 @@ export const HQ_CAL_COPY: Record<Lang, {
 }> = {
   en: {
     appName: "Calendar",
-    heading: "Wednesday — find a time",
+    heading: "Wednesday: find a time",
     find: "Four calendars. One slot is open for everyone.",
     invite: "Invite everyone to this time",
     clash: "Someone is busy then. Find the slot that is open for all four.",
@@ -62,7 +62,7 @@ export const HQ_CAL_COPY: Record<Lang, {
   },
   es: {
     appName: "Calendar",
-    heading: "Miércoles — encuentra un horario",
+    heading: "Miércoles: encuentra un horario",
     find: "Cuatro calendarios. Un hueco está libre para todos.",
     invite: "Invitar a todos a esta hora",
     clash: "Alguien está ocupado entonces. Encuentra el hueco libre para los cuatro.",

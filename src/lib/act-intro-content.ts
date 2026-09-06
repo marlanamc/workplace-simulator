@@ -52,7 +52,7 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
     },
     manager: managerLine("renata"),
     bridge: {
-      en: "You know the cafe computer. Now you use the tools a lead uses — the calendar, shared files, and the weekly numbers.",
+      en: "You know the cafe computer. Now you use the tools a lead uses: the calendar, shared files, and the weekly numbers.",
       es: "Ya conoces la computadora del café. Ahora usas las herramientas de un líder: el calendario, los archivos compartidos y los números de la semana.",
     },
     skillsTitle: NEW_SKILLS_TITLE,
@@ -145,13 +145,13 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
     actLabel: { en: "Act VI", es: "Acto VI" },
     role: { en: "Moving to the office", es: "Te mueves a la oficina" },
     roleLine: {
-      en: "Harborside HQ has an Office Administrator opening. First you apply for it — a posting, an application, a résumé, an interview. Then you start the job.",
+      en: "Harborside HQ has an Office Administrator opening. First you apply for it: a posting, an application, a résumé, an interview. Then you start the job.",
       es: "Harborside HQ tiene una vacante de Administrador de Oficina. Primero aplicas: un anuncio, una solicitud, un currículum, una entrevista. Luego empiezas el trabajo.",
     },
     manager: managerLine("anita"),
     bridge: {
-      en: "You can build on your simulated cafe practice. Once you're hired, the tools are ones you know — Drive, Calendar, Sheets — used at office scale.",
-      es: "Puedes aprovechar tu práctica en el café simulado. Cuando te contraten, las herramientas son las que conoces — Drive, Calendario, Sheets — a escala de oficina.",
+      en: "You can build on your simulated cafe practice. Once you're hired, the tools are ones you know (Drive, Calendar, Sheets), used at office scale.",
+      es: "Puedes aprovechar tu práctica en el café simulado. Cuando te contraten, las herramientas son las que conoces (Drive, Calendario, Sheets), a escala de oficina.",
     },
     skillsTitle: NEW_SKILLS_TITLE,
     skills: [

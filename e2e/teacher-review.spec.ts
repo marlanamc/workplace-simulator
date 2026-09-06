@@ -60,7 +60,7 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
   await expect(bm).toBeVisible({ timeout: 20_000 });
   await bm.click();
 
-  await expect(page.getByText("Monthly review — one team member")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByText("Monthly review: one team member")).toBeVisible({ timeout: 20_000 });
   await page.getByTestId('review-evidence').selectOption('training');
   await page.getByPlaceholder(/Something specific they actually did/).fill(STRENGTH);
   await page.getByPlaceholder(/What needs to change/).fill(AREA);
