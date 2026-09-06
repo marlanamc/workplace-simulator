@@ -1,7 +1,23 @@
 "use client";
 
+import { Caveat } from "next/font/google";
+import { Building2, Coffee, GraduationCap, HeartPulse, type LucideIcon } from "lucide-react";
+import { COLLEGE_NAME, HEALTH_NAME, HQ_NAME } from "@/lib/cast";
 import type { Lang } from "@/lib/desktop-content";
 import type { DeskIdentity } from "@/lib/desk-identity";
+
+function workplaceIcon(company: string): LucideIcon {
+  if (company === COLLEGE_NAME) return GraduationCap;
+  if (company === HEALTH_NAME) return HeartPulse;
+  if (company === HQ_NAME) return Building2;
+  return Coffee;
+}
+
+/** Felt-tip name on the plaque — written, not typeset. */
+const writtenName = Caveat({
+  subsets: ["latin", "latin-ext"],
+  weight: "600",
+});
 
 /**
  * Name, title, and company under the lock-screen clock — a quiet sticky note
@@ -18,6 +34,8 @@ export default function DesktopIdentity({
 }) {
   const display = name.trim();
   if (!display) return null;
+
+  const Icon = workplaceIcon(identity.company);
 
   return (
     <aside
@@ -40,13 +58,20 @@ export default function DesktopIdentity({
           boxShadow: "0 1px 2px rgba(28,16,10,0.12)",
         }}
       />
-      <p className="m-0 text-[15px] font-semibold leading-snug tracking-[-0.01em] text-[#2a2118]">
+      <p
+        className={`${writtenName.className} m-0 -rotate-[0.4deg] text-[24px] leading-none text-[#2a1810]`}
+      >
         {display}
       </p>
-      <p className="m-0 mt-1.5 text-[13px] font-medium leading-snug text-[#5a4a38]">
+      <span
+        aria-hidden
+        className="mt-2 mb-2.5 block h-px w-[4.5rem] bg-[#2a1810]/20"
+      />
+      <p className="m-0 text-[10.5px] font-medium uppercase leading-snug tracking-[0.16em] text-[#6b5340]">
         {identity.title[lang]}
       </p>
-      <p className="m-0 mt-0.5 text-[12px] font-normal leading-snug text-[#7a6a56]">
+      <p className="m-0 mt-1 flex items-center gap-1.5 text-[12px] italic leading-snug text-[#8a735c]">
+        <Icon size={13} strokeWidth={1.75} aria-hidden className="shrink-0 -translate-y-px" />
         {identity.company}
       </p>
     </aside>
