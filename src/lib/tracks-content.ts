@@ -59,7 +59,7 @@ export const TRACKS: Track[] = [
   },
   {
     key: "mail-etiquette",
-    title: "One More Thing",
+    title: "Write to a Coworker",
     subtitle: "The shape every short work email follows",
     taskKeys: ["mail-etiquette"],
     awardEmoji: "📧",
@@ -480,18 +480,22 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3a",
-    title: "One More Thing",
+    title: "Write to a Coworker",
     trackKeys: ["mail-etiquette"],
     firstTabKey: "mail",
     levelUp: {
-      emoji: "💳",
-      kicker: { en: "Hours checked", es: "Horas revisadas" },
-      title: { en: "You caught a late punch.", es: "Detectaste un registro tarde." },
-      body: {
-        en: "That is what a new hire has to do with hours. One more thing before you go. Darnell is waiting.",
-        es: "Eso es lo que tiene que hacer un empleado nuevo con las horas. Una cosa más antes de irte. Darnell te espera.",
+      emoji: "🎉",
+      kicker: { en: "Day 3: complete", es: "Día 3: listo" },
+      title: {
+        en: "You left Maria a clear note.",
+        es: "Le dejaste a Maria una nota clara.",
       },
-      cta: { en: "Write to Darnell", es: "Escribirle a Darnell" },
+      body: {
+        en: "You checked your hours and summed up the shift. Clock out for today. Your progress is saved. Next time you sign in, reply to Darnell.",
+        es: "Revisaste tus horas y resumiste el turno. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, respóndele a Darnell.",
+      },
+      cta: { en: "Reply to Darnell", es: "Responderle a Darnell" },
+      stoppingPoint: true,
     },
   },
   {

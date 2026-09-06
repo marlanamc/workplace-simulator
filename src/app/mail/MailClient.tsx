@@ -85,7 +85,7 @@ const STEP_LINE = {
     "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
     // Compose-only: there is no email to open, so these lines are never shown.
     "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
-    "mail-etiquette": { en: "Write to Darnell.", es: "Escríbele a Darnell." },
+    "mail-etiquette": { en: "Reply to Darnell.", es: "Respóndele a Darnell." },
     "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
     "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
   } as Record<MailTask, Localized<string>>,

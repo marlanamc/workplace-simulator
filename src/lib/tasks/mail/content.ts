@@ -83,17 +83,17 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
   "mail-etiquette": {
     en: {
       emoji: "📧",
-      kicker: "Friday, 6:20 PM",
-      headline: "Before you go, answer Darnell.",
-      body: "Maria says you found extra aprons in the storage room. Darnell asked about them on your first day. Let him know before you leave, so he's not still wondering Monday.",
-      cta: "Write to Darnell",
+      kicker: "Saturday morning",
+      headline: "Reply to your coworker, Darnell.",
+      body: "Maria said you found extra aprons in the storage room. Darnell asked about them on your first day. Write him back and tell him where they are.",
+      cta: "Reply to Darnell",
     },
     es: {
       emoji: "📧",
-      kicker: "Viernes, 6:20 PM",
-      headline: "Antes de irte, respóndele a Darnell.",
-      body: "Maria dice que encontraste delantales de más en el almacén. Darnell preguntó por ellos tu primer día. Avísale antes de irte, para que no siga esperando el lunes.",
-      cta: "Escribirle a Darnell",
+      kicker: "Sábado por la mañana",
+      headline: "Responde a tu compañero, Darnell.",
+      body: "Maria dijo que encontraste delantales de más en el almacén. Darnell preguntó por ellos tu primer día. Escríbele y dile dónde están.",
+      cta: "Responderle a Darnell",
     },
   },
   "call-out-sick": {
@@ -891,17 +891,17 @@ const SEND_LINK_DECOYS: DecoyEmail[] = [
     wrongHint: wrongHint("That's the weekly team note. You need to email Jordan the link.", "Esa es la nota semanal del equipo. Tienes que enviarle el enlace a Jordan.") },
 ];
 
-/** Friday afternoon of week one — you're writing Darnell, not opening anything. */
+/** Saturday of week one — you're writing Darnell, not opening anything. */
 const ETIQUETTE_DECOYS: DecoyEmail[] = [
-  { key: "fridge", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "1:12 PM", isTarget: false,
+  { key: "fridge", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "9:12 AM", isTarget: false,
     subject: { en: "Fridge gets cleaned out Monday", es: "El refrigerador se vacía el lunes" },
     preview: { en: "Take your food home this weekend.", es: "Llévate tu comida este fin de semana." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
-  { key: "payroll-note", ...inboxSender(CAST.hr), time: "11:40 AM", isTarget: false,
+  { key: "payroll-note", ...inboxSender(CAST.hr), time: "8:40 AM", isTarget: false,
     subject: { en: "Direct deposit posts Friday", es: "El depósito directo entra el viernes" },
     preview: { en: "Nothing to do. Just a heads up.", es: "No hay que hacer nada. Solo un aviso." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
-  { key: "it-survey", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Thu", isTarget: false,
+  { key: "it-survey", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Fri", isTarget: false,
     subject: { en: "2-minute survey: the new tablets", es: "Encuesta de 2 minutos: las tabletas nuevas" },
     preview: { en: "Optional. Closes next week.", es: "Opcional. Cierra la próxima semana." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },

@@ -24,6 +24,7 @@ describe("the cafe calendar follows the story", () => {
   it("moves today forward with the sitting, not the wall clock", () => {
     expect(storyToday(byKey("level2"))).toBe(19);
     expect(storyToday(byKey("level3"))).toBe(21);
+    expect(storyToday(byKey("level3a"))).toBe(22);
     expect(storyToday(byKey("level3a2"))).toBe(24);
     expect(storyToday(byKey("level3a3"))).toBe(28);
   });
