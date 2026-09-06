@@ -182,7 +182,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "This blue card in the corner tells you what to do next.",
         "Lost? Tap the ? on this card.",
-        "Card in the way? Drag it, or tap the arrow to shrink it. Tap the arrow again to open it.",
+        "Card in the way? Drag the blue top, or click the arrow to shrink it. Click the arrow again to open it.",
       ],
       tip: "This card always tells you what to do next. Read it if you are not sure.",
     },
@@ -193,7 +193,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Esta tarjeta azul de la esquina te dice qué hacer.",
         "¿Te perdiste? Toca el ? en esta tarjeta.",
-        "¿Te estorba? Arrástrala, o toca la flecha para encogerla. Toca la flecha otra vez para abrirla.",
+        "¿Te estorba? Arrastra la parte azul, o haz clic en la flecha para encogerla. Haz clic otra vez para abrirla.",
       ],
       tip: "Esta tarjeta siempre te dice qué hacer. Léela si no estás segura.",
     },

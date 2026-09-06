@@ -385,7 +385,9 @@ export default function JobCard() {
         role="button"
         aria-label={c.dragHint}
         title={c.dragHint}
-        className="flex items-center gap-2.5 px-5 py-3 text-white"
+        className={`flex items-center gap-2.5 px-5 py-3 text-white${
+          INTRO_BEATS[introBeat]?.tryDrag ? " animate-showme-pulse-compact" : ""
+        }`}
         style={{ background: tone, cursor: drag ? "grabbing" : "grab" }}
       >
         <span

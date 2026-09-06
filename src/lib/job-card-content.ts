@@ -46,20 +46,19 @@ export const INTRO_BEATS: IntroBeat[] = [
   },
   {
     kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
-    // Teaching the drag here is the only reliable moment: the grip dots are a
-    // quiet affordance, and a learner who feels stuck behind the card needs to
-    // already know it moves rather than discover it under pressure.
+    // Name the blue top so learners do not try the white body. The header
+    // also pulses on this beat — same pattern as the shrink arrow below.
     line: {
-      en: "Drag this card to another corner.",
-      es: "Arrastra esta tarjeta a otra esquina.",
+      en: "Drag the blue top to a corner.",
+      es: "Arrastra la parte azul a una esquina.",
     },
     tryDrag: true,
   },
   {
     kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
     line: {
-      en: "Tap the arrow to shrink it.",
-      es: "Toca la flecha para encogerla.",
+      en: "Click the arrow to shrink it.",
+      es: "Haz clic en la flecha para encogerla.",
     },
     tryCollapse: true,
   },
