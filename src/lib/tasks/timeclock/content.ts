@@ -23,11 +23,11 @@ export const TIMECLOCK = {
   arrivedAt: "7:00 AM",
   now: "8:15 AM",
   clockedInAt: "8:15 AM",
-  weekHours: "24h 30m this week",
+  // Day 3 morning: only Day 1 + Day 2 are finished punches.
+  weekHours: "16h 05m this week",
   recent: [
     { date: "Mon, Aug 18", in: "6:58 AM", out: "3:04 PM", total: "8h 06m" },
     { date: "Sat, Aug 16", in: "8:01 AM", out: "4:00 PM", total: "7h 59m" },
-    { date: "Fri, Aug 15", in: "10:03 AM", out: "6:02 PM", total: "7h 59m" },
   ],
 };
 
@@ -40,7 +40,6 @@ export const TIMECLOCK_COPY: Record<Lang, {
   clockIn: string;
   clockedInStatus: string;
   sinceLabel: string;
-  arrivedLabel: string;
   punchLabel: string;
   scheduledLabel: string;
   reviewQuestion: string;
@@ -75,7 +74,6 @@ export const TIMECLOCK_COPY: Record<Lang, {
     clockIn: "Clock In",
     clockedInStatus: "Clocked in",
     sinceLabel: "Since",
-    arrivedLabel: "You arrived",
     punchLabel: "Clock-in time",
     scheduledLabel: "Your scheduled shift",
     reviewQuestion: "Does this look right?",
@@ -110,7 +108,6 @@ export const TIMECLOCK_COPY: Record<Lang, {
     clockIn: "Marcar entrada",
     clockedInStatus: "Turno iniciado",
     sinceLabel: "Desde",
-    arrivedLabel: "Llegaste",
     punchLabel: "Hora de entrada",
     scheduledLabel: "Tu turno programado",
     reviewQuestion: "¿Esto se ve correcto?",
@@ -148,12 +145,14 @@ export const STARTERS: Record<Lang, string[]> = {
     "Hi Maria, I forgot to clock in when I arrived.",
     "I got here at 7:00 AM, but I clocked in at 8:15 AM.",
     "Can you change my start time to 7:00 AM?",
+    "Sorry you have to go back and fix this.",
     "Let me know if you need anything else. Thank you.",
   ],
   es: [
     "Hola Maria, olvidé marcar entrada cuando llegué.",
     "Llegué a las 7:00 AM, pero marqué entrada a las 8:15 AM.",
     "¿Puedes cambiar mi hora de entrada a las 7:00 AM?",
+    "Perdón que tengas que volver a corregirlo.",
     "Avísame si necesitas algo más. Gracias.",
   ],
 };

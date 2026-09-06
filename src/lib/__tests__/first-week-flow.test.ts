@@ -121,4 +121,9 @@ describe("payday starts in the morning", () => {
     expect(TIMECLOCK.now).toBe("8:15 AM");
     expect(TIMECLOCK.clockedInAt).toBe("8:15 AM");
   });
+
+  it("shows only the two finished shifts from Days 1–2", () => {
+    expect(TIMECLOCK.recent).toHaveLength(2);
+    expect(TIMECLOCK.weekHours).toBe("16h 05m this week");
+  });
 });

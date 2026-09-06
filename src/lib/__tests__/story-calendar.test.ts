@@ -21,6 +21,7 @@ describe("the cafe calendar follows the story", () => {
     expect(storyToday(byKey("level2"))).toBe(19);
     expect(storyToday(byKey("level3"))).toBe(21);
     expect(storyToday(byKey("level3a2"))).toBe(24);
+    expect(storyToday(byKey("level3a3"))).toBe(28);
   });
 
   it("never shows a shift from before they were hired", () => {

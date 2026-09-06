@@ -191,8 +191,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Compare next week's shifts to the personal calendar on your phone. Find the day that is at the same time as something you already have.",
-    es: "Compara los turnos de la próxima semana con el calendario personal de tu teléfono. Busca el día que cae a la misma hora que algo que ya tienes.",
+    en: "Compare next week's shifts to the personal calendar on your phone. Find a shift that is at the same time as something you already have scheduled.",
+    es: "Compara los turnos de la próxima semana con el calendario personal de tu teléfono. Busca un turno que cae a la misma hora que algo que ya tienes agendado.",
   },
 ];
 

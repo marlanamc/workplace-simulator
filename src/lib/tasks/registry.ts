@@ -227,18 +227,21 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Read a pay stub", es: "Lee un talón de pago" },
     dispatch: {
-      en: "Your first paycheck is not here yet. Practice on Alex Chen's stub.",
-      es: "Tu primer cheque todavía no está. Practica con el de Alex Chen.",
+      en: "Your first stub is here. Open it and check the numbers.",
+      es: "Ya está tu primer recibo. Ábrelo y revisa los números.",
     },
     skill: "Read a pay stub",
     bookmarkLabel: "Portal",
-    handoffCta: { en: "Next: Check a pay stub", es: "Siguiente: Revisar un recibo" },
+    handoffCta: { en: "Next: Check my pay stub", es: "Siguiente: Revisar mi recibo" },
     shiftMoment: {
-      en: "Friday, 5:40 PM. Payday for the crew.",
-      es: "Viernes, 5:40 PM. Día de pago del equipo.",
+      en: "Friday, 5:40 PM. Your first payday.",
+      es: "Viernes, 5:40 PM. Tu primer día de pago.",
     },
     location: browser("Open Portal", "portal", "paystubs"),
-    jobCardLine: { en: "Open Alex Chen's pay stub.", es: "Abre el recibo de Alex Chen." },
+    jobCardLine: {
+      en: "Your first stub is here. Open it and check net pay and hours.",
+      es: "Ya está tu primer recibo. Ábrelo y revisa el pago neto y las horas.",
+    },
   },
 
   "shift-review": {

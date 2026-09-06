@@ -9,6 +9,7 @@ import {
   NET_PAY_CHECK,
   HOURS_CHECK,
   LESSONS,
+  TARGET_STUB_ID,
   type CheckOption,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
@@ -25,28 +26,23 @@ import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
 type View = "list" | "check1" | "check2" | "done";
 
-/** The stub the card sends them to - "not Sam's, not Priya's" is the exercise. */
-const TARGET_EMPLOYEE = "Alex Chen";
-
 export default function PaystubTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
-  // Alex's stub, then the right answer to each check.
   const showMeId = view === "list" ? "target-stub" : "correct-option";
   const { openApp } = useWindowManager();
 
   const c = PAYSTUB_COPY[lang];
+  const myName = displayName.trim() || (lang === "en" ? "You" : "Tú");
 
   const openStub = (p: (typeof PAY_STUBS)[number]) => {
     if (p.pdfDocId) {
       openApp("pdf", { docId: p.pdfDocId });
       setView("check1");
-      return;
     }
-    if (p.wrongHint) say(p.wrongHint[lang]);
   };
 
   const answer = (opt: CheckOption, onCorrect: () => void) => {
@@ -88,12 +84,12 @@ export default function PaystubTask() {
             {PAY_STUBS.map((p, i) => (
               <button
                 key={p.id}
-                data-showme={p.employee === TARGET_EMPLOYEE ? "target-stub" : undefined}
+                data-showme={p.id === TARGET_STUB_ID ? "target-stub" : undefined}
                 onClick={() => openStub(p)}
                 className={`flex w-full items-center justify-between px-4 py-3.5 text-left hover:bg-surface-muted cursor-pointer ${i !== 0 ? "border-t border-border" : ""}`}
               >
                 <div>
-                  <div className="text-[14px] font-medium text-text-primary">{p.employee}</div>
+                  <div className="text-[14px] font-medium text-text-primary">{myName}</div>
                   <div className="text-[13px] text-text-tertiary">
                     {p.role} · {p.period}
                   </div>

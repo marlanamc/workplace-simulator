@@ -208,7 +208,7 @@ function DesktopShell({
           minimizing preserves state (e.g. which mail step you're on) */}
       {apps.browser && (
         <AppWindow active={active === "browser"} topOffset={windowTop}>
-          <BrowserClient key={progressEpoch} />
+          <BrowserClient key={progressEpoch} studioLocksOff={fromStudio} />
         </AppWindow>
       )}
       {apps.pdf && (
@@ -271,6 +271,8 @@ export default function DesktopClient(props: {
   initialRungs?: RungMap;
   jumpTab?: string;
   fromStudio?: boolean;
+  /** Studio day jump: seed the arrival level-up card for this level key. */
+  arriveLevelKey?: string;
 }) {
   // A brand-new learner lands on the desktop, not inside a browser window.
   // The Job Card introduces itself on an empty screen, and *its* button opens
@@ -289,6 +291,7 @@ export default function DesktopClient(props: {
         initialBridgePath={props.initialBridgePath}
         initialFeedback={props.initialFeedback}
         initialRungs={props.initialRungs}
+        initialArriveLevelKey={props.arriveLevelKey ?? null}
       >
         <JobCardHost>
           <DesktopShell displayName={props.displayName} fromStudio={!!props.fromStudio} />

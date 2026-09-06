@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { neon } from "@neondatabase/serverless";
+import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 
 /**
  * The teacher-review loop: a learner writes a review, the app saves the text,
@@ -46,6 +47,7 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
   if (await actIntro.isVisible().catch(() => false)) {
     await page.getByTestId("act-intro-continue").click();
   }
+  await continuePastStudioArrivalIfPresent(page);
   await page.addStyleTag({
     content: `[data-job-card]{left:auto!important;right:8px!important;top:8px!important;bottom:auto!important;max-width:260px!important}`,
   });

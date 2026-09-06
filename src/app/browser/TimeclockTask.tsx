@@ -119,12 +119,10 @@ export default function TimeclockTask() {
           </div>
           <div className="mt-3 flex flex-wrap gap-6">
             <div>
-              <div className="text-[13px] text-text-tertiary">{c.arrivedLabel}</div>
-              <div className="mt-0.5 text-[22px] font-medium">{TIMECLOCK.arrivedAt}</div>
-            </div>
-            <div>
               <div className="text-[13px] text-text-tertiary">{c.punchLabel}</div>
-              <div className="mt-0.5 text-[22px] font-medium">{TIMECLOCK.clockedInAt}</div>
+              <div className="mt-0.5 inline-block rounded-md bg-[#fce8e6] px-2 py-0.5 text-[22px] font-medium text-danger">
+                {TIMECLOCK.clockedInAt}
+              </div>
             </div>
             <div>
               <div className="text-[13px] text-text-tertiary">{c.scheduledLabel}</div>

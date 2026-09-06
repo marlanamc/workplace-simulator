@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { continuePastStudioArrivalIfPresent } from './studio-arrival';
 
 test('failed writing stays retryable across reload without claiming success', async ({ page }) => {
   test.slow();
@@ -13,6 +14,7 @@ test('failed writing stays retryable across reload without claiming success', as
   await page.goto('/studio');
   await page.getByRole('button',{name:/The Review/}).click();
   await page.waitForURL(/from=studio/);
+  await continuePastStudioArrivalIfPresent(page);
   const card = page.locator('[data-job-card]');
   await card.getByRole('button',{name:/^Open /}).click();
   await page.getByTestId('bookmark-performance-review').click();

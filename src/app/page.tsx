@@ -22,7 +22,7 @@ function settledOrEmpty<T>(result: PromiseSettledResult<T[]>, label: string): T[
 export default async function DesktopPage({
   searchParams,
 }: {
-  searchParams: Promise<{ task?: string | string[]; from?: string | string[] }>;
+  searchParams: Promise<{ task?: string | string[]; from?: string | string[]; arrive?: string | string[] }>;
 }) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) redirect("/login");
@@ -37,6 +37,7 @@ export default async function DesktopPage({
   const params = await searchParams;
   const taskParam = Array.isArray(params.task) ? params.task[0] : params.task;
   const fromParam = Array.isArray(params.from) ? params.from[0] : params.from;
+  const arriveParam = Array.isArray(params.arrive) ? params.arrive[0] : params.arrive;
 
   // Load independently so optional feedback/rungs may degrade gracefully.
   // Required progress and writing must never fall back to a fresh account.
@@ -100,6 +101,7 @@ export default async function DesktopPage({
       initialRungs={initialRungs}
       jumpTab={isJumpTab(taskParam) ? taskParam : undefined}
       fromStudio={fromParam === "studio"}
+      arriveLevelKey={fromParam === "studio" ? arriveParam : undefined}
     />
   );
 }

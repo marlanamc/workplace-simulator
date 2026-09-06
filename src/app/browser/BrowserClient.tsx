@@ -8,7 +8,7 @@ import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
-import { LEVELS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
+import { LEVELS, levelForTrack, nextTaskInTrack, unlockedLevels } from "@/lib/tracks-content";
 import { TAB_META, TAB_COLORS, bookmarkTabKeys } from "@/lib/tabs";
 import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
@@ -140,7 +140,7 @@ function NewTabPage() {
   );
 }
 
-export default function BrowserClient() {
+export default function BrowserClient({ studioLocksOff = false }: { studioLocksOff?: boolean }) {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { lang, currentTrack, completedTaskKeys, bridgePath, storyFlags, setStoryFlag } = useProgress();
   const { nudge, say, dismiss } = useNudge();
@@ -203,7 +203,16 @@ export default function BrowserClient() {
     progressLevelKey;
   const viewedLevelDef = LEVELS.find((l) => l.key === viewedLevelKey);
   const freeTabbing = viewedLevelDef?.freeTabbing ?? false;
-  const visibleBookmarks = bookmarkTabKeys(progressLevelKey, completedTaskKeys, bridgePath);
+  const unlockedKeys = new Set(unlockedLevels(completedTaskKeys, bridgePath).map((l) => l.key));
+  unlockedKeys.add(progressLevelKey);
+  // Orientation teaches the Mail bookmark before Day One formally unlocks it.
+  if (progressLevelKey === "level0") unlockedKeys.add("level1");
+  const visibleBookmarks = bookmarkTabKeys(
+    progressLevelKey,
+    completedTaskKeys,
+    bridgePath,
+    { unlockedLevelKeys: studioLocksOff ? null : unlockedKeys },
+  );
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.
   // `browserTabExplicit` (from window-manager) tells "go to this exact tab"

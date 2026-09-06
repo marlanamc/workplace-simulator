@@ -47,6 +47,7 @@ const TODAY_BY_LEVEL: Partial<Record<string, number>> = {
   level3: 21,
   level3a: 21,
   level3a2: 24,
+  level3a3: 28,
 };
 
 const FALLBACK_TODAY = 21;

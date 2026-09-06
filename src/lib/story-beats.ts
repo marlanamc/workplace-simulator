@@ -155,11 +155,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "Got your note about the hours. I'll look at the punch and fix it if it is wrong.",
-        "Friday is payday. Practice on Alex Chen's stub.",
+        "Finish today's normal-shift checks, then you're done for this sitting.",
       ],
       es: [
         "Recibí tu nota sobre las horas. Voy a revisar el registro y lo corrijo si está mal.",
-        "El viernes es día de pago. Practica con el recibo de Alex Chen.",
+        "Termina las revisiones del turno normal de hoy, y listo por esta sesión.",
       ],
     },
   },
@@ -170,18 +170,16 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "paystub",
-    subject: { en: "Alex's numbers check out", es: "Los números de Alex cuadran" },
-    preview: { en: "You opened the right stub.", es: "Abriste el recibo correcto." },
+    subject: { en: "Your numbers check out", es: "Tus números cuadran" },
+    preview: { en: "You read your first stub.", es: "Leíste tu primer recibo." },
     body: {
       en: [
-        "You opened Alex Chen's stub, not the first name on the list.",
-        "When yours lands in two weeks, read it the same way. If something looks off, write Maria.",
-        "Monday is a normal shift, start to finish. Run it.",
+        "You opened your stub and checked the net pay and the hours. That is the habit.",
+        "If a future stub looks off, write Maria the same day — don't wait until the next payday.",
       ],
       es: [
-        "Abriste el recibo de Alex Chen, no el primer nombre de la lista.",
-        "Cuando llegue el tuyo en dos semanas, léelo igual. Si algo se ve mal, escríbele a Maria.",
-        "El lunes es un turno normal, de principio a fin. Hazlo.",
+        "Abriste tu recibo y revisaste el pago neto y las horas. Ese es el hábito.",
+        "Si un recibo futuro se ve mal, escríbele a Maria el mismo día — no esperes al siguiente día de pago.",
       ],
     },
   },
@@ -198,12 +196,12 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Got it, and I have the shift covered. Rest today.",
         "You wrote before the shift instead of after it started, which is the part that matters. Two hours' notice is the rule here.",
-        "When you're back, something may go wrong on the floor. Write it up if it does.",
+        "When you're back Friday, your first pay stub should be in the portal. Open it and check the numbers.",
       ],
       es: [
         "Recibido, y ya cubrí el turno. Descansa hoy.",
         "Escribiste antes del turno y no después de que empezara, que es lo que importa. Aquí la regla son dos horas de aviso.",
-        "Cuando regreses, puede pasar algo en el piso. Escríbelo si pasa.",
+        "Cuando regreses el viernes, tu primer recibo debería estar en el portal. Ábrelo y revisa los números.",
       ],
     },
   },

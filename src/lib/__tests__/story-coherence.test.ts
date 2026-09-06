@@ -71,28 +71,33 @@ describe("day numbering", () => {
 
   it("numbers the first real level Day 1, in both languages", () => {
     expect(dayTitle(LEVELS[1], "en")).toBe("Day 1: Day One");
-    expect(dayLabel(LEVELS[1], "en")).toBe("Day 1 of 5");
-    expect(dayLabel(LEVELS[1], "es")).toBe("Día 1 de 5");
+    expect(dayLabel(LEVELS[1], "en")).toBe("Day 1 of 6");
+    expect(dayLabel(LEVELS[1], "es")).toBe("Día 1 de 6");
   });
 
-  it("labels Act I workdays as Day N of 5 in both languages", () => {
+  it("labels Act I workdays as Day N of 6 in both languages", () => {
     const act1Workdays = LEVELS.filter((level) => actForLevel(level)?.key === "act1" && dayNumber(level) > 0);
-    expect(act1Workdays).toHaveLength(5);
-    expect(workdaysInAct(act1Workdays[0])).toHaveLength(5);
+    expect(act1Workdays).toHaveLength(6);
+    expect(workdaysInAct(act1Workdays[0])).toHaveLength(6);
     act1Workdays.forEach((level, i) => {
       const n = i + 1;
       expect(dayInAct(level)).toBe(n);
-      expect(dayLabel(level, "en")).toBe(`Day ${n} of 5`);
-      expect(dayLabel(level, "es")).toBe(`Día ${n} de 5`);
+      expect(dayLabel(level, "en")).toBe(`Day ${n} of 6`);
+      expect(dayLabel(level, "es")).toBe(`Día ${n} de 6`);
     });
   });
 
-  it("tells a new hire the job is 5 shifts, matching the meter", () => {
+  it("keeps the Job Card meter aligned with Act I workday count", () => {
     const shifts = workdaysInAct(LEVELS[1]).length;
-    expect(tourEventIntro("en", "Ana").subheadline).toContain(`${shifts} shifts`);
-    expect(tourEventIntro("es", "Ana").subheadline).toContain(`${shifts} turnos`);
-    expect(bodyForTask("mail-reply", "en", "Ana").plain.join(" ")).toContain(`${shifts} shifts`);
-    expect(bodyForTask("mail-reply", "es", "Ana").plain.join(" ")).toContain(`${shifts} turnos`);
+    expect(shifts).toBe(6);
+    expect(dayLabel(LEVELS[1], "en")).toContain(`of ${shifts}`);
+  });
+
+  it("still tells a new hire this week has 5 cafe shifts (schedule flavor, not sitting count)", () => {
+    expect(tourEventIntro("en", "Ana").subheadline).toContain("5 shifts");
+    expect(tourEventIntro("es", "Ana").subheadline).toContain("5 turnos");
+    expect(bodyForTask("mail-reply", "en", "Ana").plain.join(" ")).toContain("5 shifts");
+    expect(bodyForTask("mail-reply", "es", "Ana").plain.join(" ")).toContain("5 turnos");
   });
 });
 

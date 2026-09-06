@@ -53,8 +53,8 @@ export const TRACKS: Track[] = [
   {
     key: "payday-trouble",
     title: "Payday",
-    subtitle: "Money, hours, and a normal shift",
-    taskKeys: ["timeclock", "paystub", "shift-review"],
+    subtitle: "Hours, a late punch, and a normal shift",
+    taskKeys: ["timeclock", "shift-review"],
     awardEmoji: "💳",
   },
   {
@@ -70,6 +70,13 @@ export const TRACKS: Track[] = [
     subtitle: "Give notice well, not just on time",
     taskKeys: ["call-out-sick"],
     awardEmoji: "🤒",
+  },
+  {
+    key: "first-paycheck",
+    title: "First Paycheck",
+    subtitle: "Your stub is here — check it",
+    taskKeys: ["paystub"],
+    awardEmoji: "💵",
   },
   {
     key: "judgment",
@@ -323,6 +330,9 @@ export const TRACKS: Track[] = [
  * steps into this level. These are the story's chapter cards: read in order
  * they tell one arc — hired, trusted, promoted — with Maria as the
  * through-line, so no level ever feels like clicking buttons for no reason.
+ *
+ * Studio "Start of Day X" jumps should show this same card (see
+ * `arrivalLevelUp`) so designers land where a real learner would.
  */
 export interface LevelUpCopy {
   emoji: string;
@@ -403,7 +413,7 @@ export interface Level {
  * so the desktop stays a place they recognize. From level4 on — the same point
  * TASK_LOCATIONS stops naming a `tab` — we trust them and jump directly.
  */
-const EARLY_LEVEL_KEYS = new Set(["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3b", "level3c"]);
+const EARLY_LEVEL_KEYS = new Set(["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3a3", "level3b", "level3c"]);
 
 export function isEarlyLevel(level: Level): boolean {
   return EARLY_LEVEL_KEYS.has(level.key);
@@ -454,21 +464,20 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3",
-    title: "Payday",
+    title: "Clock-In Fix",
     trackKeys: ["payday-trouble"],
     firstTabKey: "portal",
-    // shift-review deliberately teaches nothing new - it's a fresh pass over
-    // these three already-taught jobs. Template for future review levels.
-    reviewOf: ["schedule", "timeclock", "paystub"],
+    // shift-review is a fresh pass over schedule + clock-in (pay comes later).
+    reviewOf: ["schedule", "timeclock"],
     levelUp: {
       emoji: "✅",
-      kicker: { en: "The first week: done", es: "La primera semana: hecha" },
-      title: { en: "You made it through week one.", es: "Sobreviviste la primera semana." },
+      kicker: { en: "Day 2: done", es: "Día 2: listo" },
+      title: { en: "You checked your schedule.", es: "Revisaste tu horario." },
       body: {
-        en: "Today is payday — time to check your hours.",
-        es: "Hoy es día de pago — toca revisar tus horas.",
+        en: "Today is payday for the crew. Clock in when you arrive, then check your hours.",
+        es: "Hoy es día de pago del equipo. Marca entrada al llegar, luego revisa tus horas.",
       },
-      cta: { en: "Check my pay", es: "Revisar mi pago" },
+      cta: { en: "Clock in", es: "Marcar entrada" },
     },
   },
   {
@@ -478,11 +487,11 @@ export const LEVELS: Level[] = [
     firstTabKey: "mail",
     levelUp: {
       emoji: "💳",
-      kicker: { en: "Payday", es: "Día de pago" },
-      title: { en: "You can check hours and pay.", es: "Ya puedes revisar horas y pago." },
+      kicker: { en: "Hours checked", es: "Horas revisadas" },
+      title: { en: "You caught a late punch.", es: "Detectaste un registro tarde." },
       body: {
-        en: "That is what a new hire has to do. One more thing before you go — Darnell is waiting.",
-        es: "Eso es lo que tiene que hacer un empleado nuevo. Una cosa más antes de irte — Darnell te espera.",
+        en: "That is what a new hire has to do with hours. One more thing before you go — Darnell is waiting.",
+        es: "Eso es lo que tiene que hacer un empleado nuevo con las horas. Una cosa más antes de irte — Darnell te espera.",
       },
       cta: { en: "Write to Darnell", es: "Escribirle a Darnell" },
     },
@@ -501,6 +510,22 @@ export const LEVELS: Level[] = [
         es: "Hoy tienes turno a las 10. Escríbele a Maria antes de tu turno, no después.",
       },
       cta: { en: "Write to Maria", es: "Escribirle a Maria" },
+    },
+  },
+  {
+    key: "level3a3",
+    title: "First Paycheck",
+    trackKeys: ["first-paycheck"],
+    firstTabKey: "portal",
+    levelUp: {
+      emoji: "💵",
+      kicker: { en: "Friday. Payday.", es: "Viernes. Día de pago." },
+      title: { en: "Your first stub is here.", es: "Ya está tu primer recibo." },
+      body: {
+        en: "Two weeks in. Open your pay stub and check the net pay and the hours.",
+        es: "Dos semanas. Abre tu recibo y revisa el pago neto y las horas.",
+      },
+      cta: { en: "Open my stub", es: "Abrir mi recibo" },
     },
   },
   {
@@ -1067,7 +1092,7 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
  * `curriculum/00-scope-and-sequence.md`.
  */
 export const ACTS: Act[] = [
-  { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2"], scene: "harborside-open" },
+  { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3a3"], scene: "harborside-open" },
   { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
   { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
   { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
@@ -1078,6 +1103,18 @@ export const ACTS: Act[] = [
 
 export function actForLevel(level: Level): Act | undefined {
   return ACTS.find((a) => a.levelKeys.includes(level.key));
+}
+
+/**
+ * The level-up card a learner sees when first arriving at this level.
+ * Act II+ openers use `ActIntro` instead — return null so Studio jumps do
+ * not stack a second modal on top of that screen.
+ */
+export function arrivalLevelUp(level: Level): Level | null {
+  if (!level.levelUp) return null;
+  const act = actForLevel(level);
+  if (act && act.key !== "act1" && act.levelKeys[0] === level.key) return null;
+  return level;
 }
 
 export function sceneForLevel(level: Level): DesktopScene {

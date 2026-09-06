@@ -6,12 +6,14 @@ import type { Lang } from "@/lib/task-types";
 import {
   POINTS_PER_TASK,
   activeTrack,
+  arrivalLevelUp,
   findTrackForTask,
   isTrackComplete,
   levelForTrack,
   isLevelComplete,
   nextCourseLevel,
   taskKeysForLevel,
+  LEVELS,
   type Track,
   type Level,
 } from "@/lib/tracks-content";
@@ -113,6 +115,7 @@ export function ProgressProvider({
   initialWriting = {},
   initialFeedback = [],
   initialRungs = {},
+  initialArriveLevelKey = null,
   children,
 }: {
   learnerId: string;
@@ -125,6 +128,11 @@ export function ProgressProvider({
   initialFeedback?: TeacherFeedback[];
   /** Server-persisted skill rungs. Authoritative over the localStorage cache on load. */
   initialRungs?: RungMap;
+  /**
+   * Studio day jump: show the same level-up card a learner sees when this
+   * day begins. Ignored for Act II+ openers (ActIntro owns that arrival).
+   */
+  initialArriveLevelKey?: string | null;
   children: ReactNode;
 }) {
   const [courseRoute, setCourseRoute] = useState<CourseRoute | null>(initialCourseRoute);
@@ -142,7 +150,11 @@ export function ProgressProvider({
   const [certificateTrackKeys, setCertificateTrackKeys] = useState<string[]>(initialCertificateTrackKeys);
   const [justEarnedPoints, setJustEarnedPoints] = useState<number | null>(null);
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
-  const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
+  const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(() => {
+    if (!initialArriveLevelKey) return null;
+    const level = LEVELS.find((l) => l.key === initialArriveLevelKey);
+    return level ? arrivalLevelUp(level) : null;
+  });
   const [progressEpoch, setProgressEpoch] = useState(0);
   const chooseCourseRoute = useCallback(async (route: CourseRoute) => {
     routeAttempt.current = route;

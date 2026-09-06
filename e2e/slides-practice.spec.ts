@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { continuePastStudioArrivalIfPresent } from './studio-arrival';
 
 for (const lang of ['en', 'es'] as const) {
  test(`slides require source data and a coworker answer (${lang})`, async ({page}) => {
@@ -14,6 +15,7 @@ for (const lang of ['en', 'es'] as const) {
   await page.goto('/studio');
   await page.getByRole('button',{name:/Presenting to the Team/}).click();
   await page.waitForURL(/from=studio/);
+  await continuePastStudioArrivalIfPresent(page);
   const card=page.locator('[data-job-card]');
   await card.getByRole('button',{name:/^Open |^Abrir |^Abre /}).click();
   await page.getByTestId('bookmark-slides').click();

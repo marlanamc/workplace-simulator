@@ -1,5 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
+import { continuePastStudioArrivalIfPresent } from './studio-arrival';
 
 async function signup(page: Page, lang: 'en'|'es') {
  await page.goto('/login');
@@ -18,6 +19,7 @@ async function preset(page:Page, name:RegExp, tab:string) {
  await page.waitForURL(/from=studio/);
  const intro=page.getByTestId('act-intro');
  if(await intro.isVisible()) await page.getByTestId('act-intro-continue').click();
+ await continuePastStudioArrivalIfPresent(page);
  const card=page.locator('[data-job-card]');
  await card.getByRole('button',{name:/^Open |^Abre |^Abrir /}).click();
  await page.getByTestId(`bookmark-${tab}`).click();

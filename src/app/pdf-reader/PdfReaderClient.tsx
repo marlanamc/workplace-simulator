@@ -7,6 +7,7 @@ import WindowControls from "@/components/WindowControls";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { useWindowManager } from "@/lib/window-manager";
+import { useProgress } from "@/lib/progress-context";
 import { PdfIcon } from "@/lib/icons";
 
 /** A real US Letter sheet: 8.5in × 11in, ~1in margins, 12pt Times. Zoom scales the whole page. */
@@ -131,7 +132,13 @@ function AwardLetterPage({ doc }: { doc: Extract<PdfDocument, { kind: "award-let
   );
 }
 
-function PayStubPage({ doc }: { doc: Extract<PdfDocument, { kind: "paystub" }> }) {
+function PayStubPage({
+  doc,
+  employeeName,
+}: {
+  doc: Extract<PdfDocument, { kind: "paystub" }>;
+  employeeName?: string;
+}) {
   return (
     <>
       <Letterhead />
@@ -141,7 +148,7 @@ function PayStubPage({ doc }: { doc: Extract<PdfDocument, { kind: "paystub" }> }
           <tr>
             <td className="border border-[#1a1a1a] px-[0.7em] py-[0.4em]">
               <div className="text-[0.78em] font-bold">Employee</div>
-              <div className="mt-[0.1em]">{doc.employee}</div>
+              <div className="mt-[0.1em]">{employeeName?.trim() || doc.employee}</div>
             </td>
             <td className="border border-[#1a1a1a] px-[0.7em] py-[0.4em]">
               <div className="text-[0.78em] font-bold">Pay period</div>
@@ -209,6 +216,7 @@ function PayStubPage({ doc }: { doc: Extract<PdfDocument, { kind: "paystub" }> }
 
 export default function PdfReaderClient() {
   const { pdfDocId, pdfDocToken } = useWindowManager();
+  const { displayName } = useProgress();
   const [activeId, setActiveId] = useState(
     pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
   );
@@ -330,7 +338,10 @@ export default function PdfReaderClient() {
                       ) : active.kind === "award-letter" ? (
                         <AwardLetterPage doc={active} />
                       ) : (
-                        <PayStubPage doc={active} />
+                        <PayStubPage
+                          doc={active}
+                          employeeName={active.id === "paystub-first" ? displayName : undefined}
+                        />
                       )}
                     </PdfPage>
                   </div>

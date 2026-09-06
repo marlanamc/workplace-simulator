@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { continuePastStudioArrival } from "./studio-arrival";
 
 /**
  * The golden path a brand-new learner walks in their first minutes:
@@ -157,7 +158,8 @@ test("the job card follows the learner into the app and drives the job", async (
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 3: Payday" }).click();
+  await page.getByRole("button", { name: "Start of Day 3: Clock-In Fix" }).click();
+  await continuePastStudioArrival(page, /^Clock in$|^Marcar entrada$/);
 
   // The card is still there once an app window is open - that is the whole
   // point of it: the surface that sets up the job does not vanish.
@@ -173,12 +175,11 @@ test("studio time machine teleports one account to a later level", async ({ page
 
   await page.goto("/studio");
   await page.getByRole("button", { name: "Start of Day 5: The Sick Call" }).click();
+  await continuePastStudioArrival(page, /Write to Maria|Escribirle a Maria/);
 
-  // Lands on the learner desktop as a learner at that exact moment: the next
-  // job is that day's — the sick call, Monday morning before the 10 AM shift.
-  await expect(
-    page.getByText("You're sick and you're on at 10. Write Maria now.").first(),
-  ).toBeVisible({ timeout: 20_000 });
+  // Celebration opens Mail into compose; Job Card is already on the write step.
+  await expect(jobCard(page).getByText("Write one short line.")).toBeVisible({ timeout: 20_000 });
+  await expect(page.getByRole("heading", { name: "Can't come in today" })).toBeVisible();
 });
 
 test("language choice on the login page sticks after signing in and reloading", async ({ page }) => {
@@ -245,8 +246,8 @@ test("schedule: repeated wrong days get specific help and the correct day still 
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
   await page.goto("/studio");
   await page.getByRole("button", { name: "Start of Day 2: The First Week", exact: true }).click();
-  await expect(jobCard(page).getByText("calendar on your phone", { exact: false })).toBeVisible();
-  await jobCard(page).getByRole("button", { name: "Next: Open Portal", exact: true }).click();
+  await continuePastStudioArrival(page, /See my schedule|Ver mi horario/);
+  // Arrival CTA already opens Portal — the Job Card is on the schedule step.
   await expect(jobCard(page).getByText("personal calendar on your phone", { exact: false })).toBeVisible();
   await expect(page.getByText("Your personal calendar")).toBeVisible();
   await expect(page.getByRole("heading", { name: "My Calendar" })).toBeVisible();
@@ -273,17 +274,19 @@ test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) 
   await signUp(page, `E2e Timeclock ${Date.now()}`);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 3: Payday", exact: true }).click();
+  await page.getByRole("button", { name: "Start of Day 3: Clock-In Fix", exact: true }).click();
+  await continuePastStudioArrival(page, /^Clock in$|^Marcar entrada$/);
+  // Arrival CTA already opens the Time Clock — no separate "Next: Clock in" handoff.
   await expect(jobCard(page).getByText("You got here at 7.", { exact: false })).toBeVisible();
-  await jobCard(page).getByRole("button", { name: "Next: Clock in", exact: true }).click();
   await expect(page.getByText("Not clocked in")).toBeVisible();
   await expect(page.getByText("Now 8:15 AM")).toBeVisible();
   await expect(page.getByRole("button", { name: "Clock In", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Clock Out", exact: true })).toHaveCount(0);
   await jobCard(page).getByTestId("job-card-collapse").click();
   await page.getByRole("button", { name: "Clock In", exact: true }).click();
-  await expect(page.getByText("You arrived", { exact: true })).toBeVisible();
   await expect(page.getByText("Clock-in time", { exact: true })).toBeVisible();
+  await expect(page.getByText("8:15 AM").first()).toBeVisible();
+  await expect(page.getByText("You arrived", { exact: true })).toHaveCount(0);
   await jobCard(page).getByTestId("job-card-collapse").click();
   await page.getByRole("button", { name: "Looks right", exact: true }).click();
   await expect(jobCard(page).getByText("You got here at 7:00 AM", { exact: false })).toBeVisible();

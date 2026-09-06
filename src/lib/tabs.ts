@@ -116,19 +116,27 @@ const PATH_GATED_TABS: Record<string, { path: "a" | "b"; levels: readonly string
   "front-desk": { path: "b", levels: ["level16", "level17", "level18", "level19"] },
 };
 
+export type BookmarkOpts = {
+  /**
+   * Levels the learner has reached (furthest + earlier). When set, core apps
+   * (Mail, Drive, Calendar…) only appear once their owning level is unlocked.
+   * Pass `null` for Studio jumps so designers can peek ahead (locks off).
+   */
+  unlockedLevelKeys?: ReadonlySet<string> | null;
+};
+
 /**
  * Which bookmarks show on the bar for the level currently being viewed.
  *
- * Non-gated tabs (Mail, Calendar, Drive, Docs, Portal…) always show. The
- * Sheets group collapses to one entry: the variant this level uses, or
- * `spreadsheet` as the default on levels that don't have their own. On
- * level 7 the entry swaps from "make a copy" to "status report" once the
- * copy is made. The three one-off tabs only show on their own level.
+ * Sheets collapse to one entry for the current level (no fallback Sheets
+ * bookmark on days that do not use Sheets). Specialty tabs stay level-gated.
+ * Core apps are progress-gated unless `unlockedLevelKeys` is `null` (Studio).
  */
 export function bookmarkTabKeys(
   viewedLevelKey: string,
   completedTaskKeys: readonly string[],
   path?: "a" | "b" | null,
+  opts?: BookmarkOpts,
 ): Set<string> {
   const sheetForLevel: Record<string, string> = {
     level6: "spreadsheet",
@@ -139,16 +147,26 @@ export function bookmarkTabKeys(
     level18: path === "b" ? "billing-sheet" : "spreadsheet",
     level22: "expense-report",
   };
-  const activeSheet = sheetForLevel[viewedLevelKey] ?? "spreadsheet";
+  const activeSheet = sheetForLevel[viewedLevelKey];
+  const locksOff = opts?.unlockedLevelKeys === null;
+  const unlocked = opts?.unlockedLevelKeys;
+
   return new Set(
     TAB_META.filter((t) => {
       const pathGate = PATH_GATED_TABS[t.key];
       if (pathGate) {
         return path === pathGate.path && pathGate.levels.includes(viewedLevelKey);
       }
-      if (SHEET_TABS.includes(t.key)) return t.key === activeSheet;
+      if (SHEET_TABS.includes(t.key)) {
+        if (!activeSheet) return false;
+        if (t.key !== activeSheet) return false;
+        if (locksOff) return true;
+        return !unlocked || unlocked.has(t.levelKey) || unlocked.has(viewedLevelKey);
+      }
       if (t.key in GATED_TABS) return GATED_TABS[t.key] === viewedLevelKey;
-      return true;
+      if (locksOff) return true;
+      if (!unlocked) return true;
+      return unlocked.has(t.levelKey);
     }).map((t) => t.key),
   );
 }

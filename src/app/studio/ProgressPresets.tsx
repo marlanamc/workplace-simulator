@@ -30,9 +30,10 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
       <h2 className="text-[15px] font-medium">Time machine</h2>
       <p className="mt-1 max-w-[640px] text-[13px] leading-relaxed text-[#9aa0a6]">
         Sets <span className="text-[#e8eaed]">your</span> account&apos;s progress to the start of a
-        level and opens the learner desktop — celebrations, story emails, and locks behave exactly
-        as they would for a real learner at that moment. It replaces this account&apos;s progress,
-        so use a test account, not a demo account you care about.
+        level and opens the learner desktop — including the same arrival card a real learner
+        sees (level-up or act intro). Celebrations, story emails, and locks behave as they would
+        at that moment. It replaces this account&apos;s progress, so use a test account, not a
+        demo account you care about.
       </p>
       <div className="mt-3 flex flex-wrap gap-1.5">
         <button

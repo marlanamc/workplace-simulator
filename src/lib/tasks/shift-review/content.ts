@@ -3,16 +3,16 @@ import type { EventIntroCopy, Lang, Localized } from "@/lib/task-types";
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "☀️",
-    kicker: "Monday. A normal shift.",
+    kicker: "Friday. A normal shift.",
     headline: "A normal shift. Nothing new.",
-    body: "No new tools today - just three things you already know how to do, back to back.",
+    body: "No new tools today - just two things you already know how to do, back to back.",
     cta: "Start the shift",
   },
   es: {
     emoji: "☀️",
-    kicker: "Lunes. Un turno normal.",
+    kicker: "Viernes. Un turno normal.",
     headline: "Un turno normal. Nada nuevo.",
-    body: "Hoy no hay herramientas nuevas, solo tres cosas que ya sabes hacer, una tras otra.",
+    body: "Hoy no hay herramientas nuevas, solo dos cosas que ya sabes hacer, una tras otra.",
     cta: "Empezar el turno",
   },
 };
@@ -70,28 +70,6 @@ export const BEATS: ReviewBeat[] = [
       es: "Tienes que marcar tu entrada tú mismo, y luego revisar que la hora esté bien.",
     },
   },
-  {
-    key: "paystub",
-    emoji: "💵",
-    prompt: {
-      en: "How do you know your last paycheck was correct?",
-      es: "¿Cómo sabes que tu último cheque fue correcto?",
-    },
-    options: {
-      en: [
-        { label: "Find your pay stub and check the hours and total", correct: true },
-        { label: "Assume it's right - it's usually the same", correct: false },
-      ],
-      es: [
-        { label: "Buscar tu recibo de pago y revisar las horas y el total", correct: true },
-        { label: "Suponer que está bien, casi siempre es igual", correct: false },
-      ],
-    },
-    wrongHint: {
-      en: "Check your own pay stub. Leads catch mistakes instead of assuming.",
-      es: "Revisa tu propio recibo de pago. Los líderes detectan errores en vez de suponer.",
-    },
-  },
 ];
 
 export const REVIEW_COPY: Record<Lang, {
@@ -107,10 +85,10 @@ export const REVIEW_COPY: Record<Lang, {
 }> = {
   en: {
     heading: "A Normal Shift",
-    subhead: "Three quick checks. Nothing new to learn today.",
+    subhead: "Two quick checks. Nothing new to learn today.",
     continueLabel: "Continue",
     sentKicker: "Shift complete",
-    doneBody: "You reviewed where to find your schedule, when to clock in, and what to check on your pay stub.",
+    doneBody: "You reviewed where to find your schedule and when to clock in.",
     badgeName: "A normal shift, start to finish",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -118,10 +96,10 @@ export const REVIEW_COPY: Record<Lang, {
   },
   es: {
     heading: "Un turno normal",
-    subhead: "Tres revisiones rápidas. Hoy no hay nada nuevo que aprender.",
+    subhead: "Dos revisiones rápidas. Hoy no hay nada nuevo que aprender.",
     continueLabel: "Continuar",
     sentKicker: "Turno completo",
-    doneBody: "Repasaste dónde encontrar tu horario, cuándo marcar entrada y qué revisar en tu recibo de pago.",
+    doneBody: "Repasaste dónde encontrar tu horario y cuándo marcar entrada.",
     badgeName: "Un turno normal, de principio a fin",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",

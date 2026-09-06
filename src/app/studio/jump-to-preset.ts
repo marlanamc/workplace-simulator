@@ -23,9 +23,21 @@ export async function jumpToPreset(
   }
   // Full navigation on purpose: router.push() would keep the cached RSC
   // payload and the desktop would render the pre-rewind progress.
+  // `arrive` seeds the same level-up card a real learner sees when this day
+  // begins (Act intros are handled separately via cleared story flags).
+  const arrive = arriveLevelKey(presetKey);
+  const qs = new URLSearchParams({ from: "studio" });
+  if (arrive) qs.set("arrive", arrive);
   // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-  window.location.assign("/?from=studio");
+  window.location.assign(`/?${qs.toString()}`);
   return true;
+}
+
+/** Level key for a day/preset jump; null for "all" / route-picker presets. */
+export function arriveLevelKey(presetKey: string): string | null {
+  if (presetKey === "all" || presetKey === "core-complete") return null;
+  const colon = presetKey.indexOf(":");
+  return colon === -1 ? presetKey : presetKey.slice(0, colon);
 }
 
 /**

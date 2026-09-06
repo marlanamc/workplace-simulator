@@ -203,7 +203,6 @@ export const TASK_KEYS = [
   // Kept here so a learner's historical completion stays a valid DB row.
   "swap-request",
   "timeclock",
-  "paystub",
   "shift-review",
   // Named lesson on the email shape every earlier reply modeled silently:
   // subject states the ask, body opens with the purpose, closes clean.
@@ -211,6 +210,8 @@ export const TASK_KEYS = [
   // shape under real stakes the very next scene.
   "mail-etiquette",
   "call-out-sick",
+  // First real paycheck ~two weeks after hire (Act I Day 6).
+  "paystub",
   "account-recovery",
   "incident",
   "handbook",

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 
 const CLASS_CODE = "TEST-E2E";
 
@@ -26,9 +27,9 @@ test("the office preset starts HQ without an elective prerequisite", async ({ pa
   await page.goto("/studio");
   await page.getByRole("button", { name: /Welcome to HQ/ }).click();
   await page.waitForURL(/from=studio/, { timeout: 20_000 });
+  await continuePastStudioArrivalIfPresent(page);
 
   const card = jobCard(page);
-  await expect(card.getByRole("button", { name: /^Open / })).toBeVisible({ timeout: 20_000 });
-  await expect(card.getByRole("button", {name: "Change direction"})).toBeVisible();
-  await expect(card.getByText("Find the current file. Then share it.")).toBeVisible();
+  await expect(card.getByText("Find the current file. Then share it.")).toBeVisible({ timeout: 20_000 });
+  await expect(card.getByRole("button", { name: /Open Drive|Abrir Drive/ })).toBeVisible();
 });

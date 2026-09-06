@@ -13,7 +13,7 @@ import {
 import { TASK_LIST } from "./tasks/registry";
 
 /**
- * The sitting's name on its own — "Payday & Trouble".
+ * The sitting's name on its own — "Clock-In Fix".
  *
  * `Level.title` holds the bare name and no number. Numbering is derived from
  * `LEVELS` order by `dayNumber` instead of being written into the string,
