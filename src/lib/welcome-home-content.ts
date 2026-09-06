@@ -41,12 +41,12 @@ const ACT1_HOME: WelcomeHome = {
     es: "Estás aprendiendo la computadora del café. Tareas pequeñas, Ayuda cuando la necesites, y puedes intentarlo de nuevo.",
   },
   manager: {
-    en: CAST.renata.title
-      ? `Your manager is ${CAST.renata.name}, the ${CAST.renata.title.en}.`
-      : `Your manager is ${CAST.renata.name}.`,
-    es: CAST.renata.title
-      ? `Tu jefa es ${CAST.renata.name}, la ${CAST.renata.title.es}.`
-      : `Tu jefa es ${CAST.renata.name}.`,
+    en: CAST.maria.title
+      ? `Your manager is ${CAST.maria.name}, the ${CAST.maria.title.en}.`
+      : `Your manager is ${CAST.maria.name}.`,
+    es: CAST.maria.title
+      ? `Tu jefa es ${CAST.maria.name}, la ${CAST.maria.title.es}.`
+      : `Tu jefa es ${CAST.maria.name}.`,
   },
   bridge: {
     en: "The blue card in the corner tells you what to do next. Come back here any time you want to remember where you are.",

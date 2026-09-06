@@ -7,7 +7,7 @@ describe("welcomeHomeFor", () => {
   it("returns Act I home with cafe practice skills", () => {
     const home = welcomeHomeFor("act1");
     expect(home.role.en).toMatch(/new hire/i);
-    expect(home.manager.en).toMatch(/Renata/);
+    expect(home.manager.en).toMatch(/Maria/);
     expect(home.skills.length).toBeGreaterThanOrEqual(3);
     expect(home.packetTitle.en).toContain("Act I");
   });
