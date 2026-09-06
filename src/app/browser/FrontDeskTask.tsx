@@ -16,6 +16,7 @@ import {
 } from "@/lib/tasks/appointment-scheduling/content";
 import {
   INTAKE_COPY,
+  VERIFIED_ASSIGNMENT, RECIPIENT_LABEL, RECIPIENT_HINT, RECIPIENT_OPTIONS, recipientIsAuthorized,
   PATIENT,
   STARTERS as INTAKE_STARTERS,
   LESSONS as INTAKE_LESSONS,
@@ -213,13 +214,17 @@ function ScheduleDesk() {
 }
 
 function IntakeDesk() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, writing } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("patient-intake"));
   const [name, setName] = useState("");
   const [dob, setDob] = useState("");
   const [reason, setReason] = useState("");
   const [filed, setFiled] = useState(false);
-  const [reply, setReply] = useState("");
+  const [reply, setReply] = useState(() => writing['patient-intake']?.fields[0]?.value ?? '');
+  const [recipient, setRecipient] = useState(() => {
+    const saved = writing['patient-intake'];
+    return RECIPIENT_OPTIONS.find((option) => saved && option.label[saved.lang] === saved.fields[1]?.value)?.key ?? '';
+  });
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = INTAKE_COPY[lang];
@@ -230,11 +235,13 @@ function IntakeDesk() {
   };
 
   const trySend = () => {
+    if (!filed) return say(c.needFields);
+    if (!recipientIsAuthorized(recipient)) return say(RECIPIENT_HINT[lang]);
     if (!reply.trim()) return say(c.empty);
     if (/follow-?up|seguimiento/i.test(reply)) return say(c.shared);
     if (!declineIsSafe(reply)) return say(c.weak);
     setDone(true);
-    markComplete("patient-intake", "file_intake_do_not_overshare", describeIntake(reply, lang));
+    markComplete("patient-intake", "file_intake_do_not_overshare", describeIntake(reply, lang, recipient));
   };
 
   const restart = () => {
@@ -244,6 +251,7 @@ function IntakeDesk() {
     setReason("");
     setFiled(false);
     setReply("");
+    setRecipient("");
   };
 
   return (
@@ -251,9 +259,9 @@ function IntakeDesk() {
       {!done && (
         <RightNowBar
           icon={TASK_ICONS["patient-intake"]}
-          stepIndex={filed ? 2 : 0}
+          stepIndex={!filed ? 0 : recipientIsAuthorized(recipient) ? 2 : 1}
           stepCount={INTAKE_STEPS.length}
-          instruction={INTAKE_STEPS[filed ? 2 : 0]}
+          instruction={INTAKE_STEPS[!filed ? 0 : recipientIsAuthorized(recipient) ? 2 : 1]}
           lang={lang}
           rightNowLabel={INTAKE_LABEL}
           onHelp={() => setHelp(true)}
@@ -281,12 +289,19 @@ function IntakeDesk() {
             {filed && (
               <>
                 <div className="rounded-xl border border-[#c8e6c9] bg-[#e8f5e9] px-4 py-3">
+                  <p className="mb-3 text-[14px]">{VERIFIED_ASSIGNMENT[lang]}</p>
                   <div className="text-[12px] font-medium text-[#2e7d32]">{c.careTeamName}</div>
                   <p className="mt-1 text-[15px]">{c.careTeamAsk}</p>
                 </div>
                 <div className="rounded-xl border border-[#dadce0] bg-white p-4">
                   <div className="text-[12px] font-medium text-[#5f6368]">{c.coworkerName}</div>
                   <p className="mt-1 text-[15px]">{c.coworkerAsk}</p>
+                  <label className="mt-3 block text-[14px]">{RECIPIENT_LABEL[lang]}
+                    <select data-testid="intake-recipient" value={recipient} onChange={(e) => setRecipient(e.target.value)} className="mt-1 min-h-11 w-full rounded border bg-white px-3">
+                      <option value="">{lang === 'en' ? 'Select a recipient' : 'Elige un destinatario'}</option>
+                      {RECIPIENT_OPTIONS.map((option) => <option key={option.key} value={option.key}>{option.label[lang]}</option>)}
+                    </select>
+                  </label>
                   <textarea
                     value={reply}
                     onChange={(e) => setReply(e.target.value)}

@@ -21,6 +21,8 @@ Revised practice includes choosing an enrollment document, finding a syllabus de
 
 Completion demonstrates the bounded decision and tool actions in the scenario. It does not certify employment readiness, independent transfer, legal-form competence, or writing quality. Human learner testing remains required; see [launch pilot protocol](curriculum/launch-pilot.md).
 
+The remaining-issues implementation adds a verified chart-recipient choice, supported priority/reason choices, and a profile-evidence selection for performance reviews. Decisions are saved alongside writing; older submissions and earned completions remain valid. Review drafts can be reopened for revision. Portfolio copy and UTF-8 text download share one formatter, with clipboard failure recovery in the Job Card. See [the remaining-issues plan](curriculum/remaining-issues-plan.md) for the still-open learner checks.
+
 ## The one rule
 
 **The Job Card is the only thing that tells a learner what to do.** Everything else — the

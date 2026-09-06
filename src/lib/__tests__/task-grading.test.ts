@@ -136,12 +136,12 @@ describe("formula check: does the range cover the whole crew", () => {
 
 describe("formula check: does the email explain the fix", () => {
   it("accepts an email carrying the corrected total", () => {
-    expect(emailMentionsFix(`Hi Maria, the corrected total is ${CORRECT_WEEK_TOTAL}.`)).toBe(true);
+    expect(emailMentionsFix(`Hi Maria, the corrected total is ${CORRECT_WEEK_TOTAL}; Casey was missing.`)).toBe(true);
   });
 
-  it("accepts an email that names what went wrong instead of the number", () => {
-    expect(emailMentionsFix("Casey was missing from the range.")).toBe(true);
-    expect(emailMentionsFix("Faltaba una persona en el rango.")).toBe(true);
+  it("rejects an explanation that omits the corrected total", () => {
+    expect(emailMentionsFix("Casey was missing from the range.")).toBe(false);
+    expect(emailMentionsFix("Faltaba una persona en el rango.")).toBe(false);
   });
 
   it("rejects an email that says neither", () => {
@@ -210,9 +210,9 @@ describe("college offer: accept and flag the overlap", () => {
 describe("budget sheet: flag the over category", () => {
   it.each([
     "Labor is over budget by $450.",
-    "Labor actual is 2850 against 2400.",
+    "Labor actual is 2850 against 2400, a difference of 450.",
     "Mano de obra se pasó por 450.",
-    "La nómina está over.",
+    "La nómina está 450 sobre el presupuesto.",
   ])("accepts a real flag: %j", (body) => {
     expect(emailFlagsOver(body)).toBe(true);
   });
@@ -517,7 +517,7 @@ describe("performance review: one real strength, one real area to grow", () => {
   ])("accepts a specific strength and a constructive area: %j", (strength, area) => {
     expect(strengthIsSpecific(strength)).toBe(true);
     expect(areaToGrowIsConstructive(area)).toBe(true);
-    expect(performanceReviewPasses({ strength, area })).toBe(true);
+    expect(performanceReviewPasses({ strength, area, evidence: "training" })).toBe(true);
   });
 
   it("rejects vague praise or a one-word area", () => {

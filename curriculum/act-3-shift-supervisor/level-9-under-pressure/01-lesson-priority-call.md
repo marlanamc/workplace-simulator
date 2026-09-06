@@ -1,57 +1,16 @@
-# Lesson 1: Three Things at Once
+# Choose a supported priority
 
-**Time:** ~15-20 minutes · **Level:** 9 — Under Pressure · **Track:** 10 —
-Under Pressure
-**Task key:** `priority-call` · **Status:** implemented; learner pilot pending. This is the
-Act III capstone — finishing it is what earns the promotion into Assistant
-Manager.
-**Prerequisite:** Level 8 complete
+**Task:** `priority-call` · **Status:** implemented; learner pilot pending.
 
-## We will learn...
-- decide what to handle first when three real things are competing for
-  attention at once — a customer complaint, a shift that's short-staffed,
-  and a scheduling conflict — the way an actual shift supervisor has to.
+## Simulator practice
 
-## Before class (teacher prep)
-- [ ] Simulator: on opening the Browser, three things are already
-      waiting — an unhappy-customer email in Mail, a "we're short a
-      person tonight" alert tied to the team schedule (Level 6's tool),
-      and a meeting-invite conflict in Calendar. None has an objectively
-      "correct" order — the point is that all three get handled, with a
-      reasonable read on urgency, not a trick answer.
-- [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 9 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson (all of
-      Level 9) is done. Never a gate — a student who skips it still moves
-      on.
+1. Compare the waiting customer, the unstaffed 4 PM shift, and the 5 PM meeting.
+2. Choose a priority and its reason. Customer-first and coverage-first each have a supported consequence in this scenario.
+3. Optionally explain your choice in your own words.
+4. Complete the existing mail, coverage, and calendar work in a flexible order.
 
-## Simulator practice (~15-20 min)
-1. Open the **Browser** — notice all three things needing attention.
-2. Decide what to handle first and say why, in one sentence, before
-   starting (a short "what's most urgent and why" prompt captures this).
-3. Handle the customer email — acknowledge it and say what you'll do,
-   professionally, without over-promising.
-4. Cover the short-staffed shift — same pick-someone-with-room judgment
-   from Level 6.
-5. Resolve the calendar conflict — same skill from Level 3/6.
-6. Finishing all three awards the "Shift Supervisor" certificate and moves
-   the story into the promotion — a note from Maria about the Assistant
-   Manager opening waits in Mail once this is done.
+## Completion and support
 
-## Confidence check-in — end-of-act reflection
-This closes out Act III. Worth a real conversation, not just the usual
-three questions:
-- "Out of everything since becoming a Shift Supervisor (team scheduling,
-  formulas, leading a meeting, this), the thing I feel most ready for is:
-  ___________"
-- "When three things pile up at once at a real job, my instinct is to:
-  ___________"
-- "One thing I'd tell a friend starting this whole program is: ___________"
+Recognizing a supported priority/reason pairing and completing three work items. Ask for a fresh-example explanation to evaluate transfer.
 
-## Notes for next time
-- This is deliberately the hardest lesson so far — three competing demands
-  is the ceiling for what's reasonable in one 15-20 minute session
-  (cognitive-load research is why this doesn't go to four). If a student
-  finds this genuinely stressful rather than just challenging, that's
-  useful signal to slow down before Act IV, not a sign to add more
-  pressure later.
+Instructions, optional Help, and wrong-action recovery belong in the bilingual Job Card. Keep existing task IDs and earlier earned credit. No mandatory teacher approval or additional timed/word-count requirements.

@@ -125,7 +125,7 @@ export default function CollegeOfferTask() {
                 body: c.mailBody,
                 done: accepted,
                 cta: c.mailCta,
-                onOpen: () => setView(accepted ? "mail" : "mail"),
+                onOpen: () => setView("mail"),
               },
               {
                 key: "cal",

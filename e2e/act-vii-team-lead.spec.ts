@@ -137,6 +137,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   // --- Level 25: performance-review ---
   await openTask(page, "performance-review");
   await expect(page.getByText("Monthly review — one team member")).toBeVisible({ timeout: 20_000 });
+  await page.getByTestId('review-evidence').selectOption('training');
   await page.getByPlaceholder(/Something specific they actually did/).fill("Sam trained two new hires this month and stayed patient with both.");
   await page.getByPlaceholder(/What needs to change/).fill("The morning open needs Sam there by 6. Being on time every day would help the shift start clean.");
   await page.getByRole("button", { name: "Submit the review" }).click();

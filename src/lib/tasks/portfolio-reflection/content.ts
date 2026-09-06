@@ -30,6 +30,9 @@ export const REFLECTION_COPY: Record<Lang, {
   canDoHeading: string;
   reflectionHeading: string;
   copySummary: string;
+  downloadSummary: string;
+  downloadStarted: string;
+  downloadFailed: string;
   copied: string;
   copyFailed: string;
   sentKicker: string;
@@ -55,8 +58,11 @@ export const REFLECTION_COPY: Record<Lang, {
     canDoHeading: "What I can do now",
     reflectionHeading: "In my own words",
     copySummary: "Copy summary to share",
+    downloadSummary: "Download summary (.txt)",
+    downloadStarted: "Download requested. Check your browser’s downloads for the text file.",
+    downloadFailed: "The download could not start. Try again, or use Copy summary to share.",
     copied: "Copied. Paste it in an email or message to share it.",
-    copyFailed: "Couldn't copy automatically. Take a screenshot of this page instead.",
+    copyFailed: "Clipboard access is unavailable. Use Download summary (.txt) to keep a text copy.",
     sentKicker: "Summary ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -80,8 +86,11 @@ export const REFLECTION_COPY: Record<Lang, {
     canDoHeading: "Lo que ya puedo hacer",
     reflectionHeading: "En mis propias palabras",
     copySummary: "Copiar resumen para compartir",
+    downloadSummary: "Descargar resumen (.txt)",
+    downloadStarted: "Se solicitó la descarga. Busca el archivo de texto en las descargas de tu navegador.",
+    downloadFailed: "No se pudo iniciar la descarga. Inténtalo de nuevo o usa Copiar resumen para compartir.",
     copied: "Copiado. Pégalo en un correo o mensaje para compartirlo.",
-    copyFailed: "No se pudo copiar automáticamente. Toma una captura de esta pantalla en su lugar.",
+    copyFailed: "No hay acceso al portapapeles. Usa Descargar resumen (.txt) para guardar una copia de texto.",
     sentKicker: "Resumen listo",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",

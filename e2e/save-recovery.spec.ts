@@ -20,6 +20,7 @@ test('failed writing stays retryable across reload without claiming success', as
   await card.getByTestId('job-card-drag-handle').focus();
   await page.keyboard.press('ArrowRight');
   await page.keyboard.press('ArrowUp');
+  await page.getByTestId('review-evidence').selectOption('training');
   await page.getByPlaceholder(/Something specific they actually did/).fill('Sam trained two new hires patiently.');
   await page.getByPlaceholder(/What needs to change/).fill('Sam should arrive before opening time.');
   let blocked = false;

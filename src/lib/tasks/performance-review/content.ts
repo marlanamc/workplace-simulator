@@ -6,8 +6,8 @@ import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-type
  * constructive, not harsh or vague.
  *
  * The most personally vulnerable lesson since Level 2's incident report.
- * Teacher-check: the app checks that both halves are written and specific
- * enough — it does NOT try to detect "harsh". That is unscoreable, and a
+ * Teacher-check: the app checks a selected profile fact and draft completeness.
+ * It does not verify prose relevance or detect "harsh". That is unscoreable, and a
  * false reject here is the most damaging in the program.
  */
 
@@ -66,7 +66,7 @@ export const REVIEW_COPY: Record<Lang, {
     areaLabel: "An area to grow",
     areaPlaceholder: "What needs to change, and what better would look like…",
     submit: "Submit the review",
-    needStrength: "Name one specific thing they did well — not just \"good job\".",
+    needStrength: "Write a short draft about the profile fact you chose.",
     needArea: "Say what needs to change, and what better would look like.",
     vagueStrength: "Be specific. Point at something they actually did this month.",
     sentKicker: "Review submitted",
@@ -88,7 +88,7 @@ export const REVIEW_COPY: Record<Lang, {
     areaLabel: "Un área para mejorar",
     areaPlaceholder: "Qué necesita cambiar, y cómo se vería mejor…",
     submit: "Enviar la evaluación",
-    needStrength: "Nombra algo concreto que hizo bien — no solo \"buen trabajo\".",
+    needStrength: "Escribe un borrador corto sobre el dato del perfil que elegiste.",
     needArea: "Di qué necesita cambiar, y cómo se vería mejor.",
     vagueStrength: "Sé concreto. Señala algo que de verdad hizo este mes.",
     sentKicker: "Evaluación enviada",
@@ -128,7 +128,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "One real strength, one real area to grow",
       s: [
         "Skip \"good job\" and \"needs improvement\". Both are too vague to use.",
-        "For the strength, point at something concrete they did this month.",
+        "For the strength, choose a profile fact. Which action are you recognizing?",
         "For the area to grow, be clear about what needs to change — and say what better would look like, so it reads as help, not just a complaint.",
       ],
       tip: "There is no single right wording here. Fair and specific beats polished. If this feels hard, that's normal — being honest about someone else in writing is genuinely difficult.",
@@ -139,7 +139,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Una fortaleza real, un área real para mejorar",
       s: [
         "Evita \"buen trabajo\" y \"necesita mejorar\". Las dos son demasiado vagas para servir.",
-        "Para la fortaleza, señala algo concreto que hizo este mes.",
+        "Para la fortaleza, elige un dato del perfil. ¿Qué acción estás reconociendo?",
         "Para el área para mejorar, sé claro sobre qué necesita cambiar — y di cómo se vería mejor, para que se lea como ayuda y no solo como una queja.",
       ],
       tip: "Aquí no hay una sola forma correcta de decirlo. Justo y concreto vale más que pulido. Si se siente difícil, es normal — ser honesto por escrito sobre otra persona de verdad cuesta.",
@@ -150,31 +150,36 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the team member's profile.", es: "Lee el perfil de la persona del equipo." },
-  { en: "Write one specific strength — something they actually did.", es: "Escribe una fortaleza concreta — algo que de verdad hizo." },
+  { en: "Choose a profile fact, then write the strength it supports.", es: "Elige un dato del perfil y escribe la fortaleza que respalda." },
   { en: "Write one area to grow, and what better looks like. Then submit.", es: "Escribe un área para mejorar, y cómo se ve mejor. Luego envía." },
 ];
-
-const VAGUE_STRENGTH = /^(good job|great job|great work|good work|nice work|hard worker|team player|buen trabajo|muy bien|excelente|gran trabajo|trabaja bien)\.?$/i;
 
 function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+/** Legacy helper name: checks draft completeness, not specificity. */
 export function strengthIsSpecific(text: string): boolean {
-  return wordCount(text) >= 4 && !VAGUE_STRENGTH.test(text.trim());
+  return wordCount(text) >= 4;
 }
 
 export function areaToGrowIsConstructive(text: string): boolean {
   return wordCount(text) >= 4;
 }
 
+export const EVIDENCE_LABEL: Localized = { en: 'Profile evidence for this strength', es: 'Dato del perfil para esta fortaleza' };
+export const EVIDENCE_HINT: Localized = { en: 'Choose one action from Sam’s profile to support the strength you are writing about.', es: 'Elige una acción del perfil de Sam para respaldar la fortaleza que estás escribiendo.' };
+export const REVIEW_EVIDENCE = PROFILE.wins.map((label, i) => ({ key: ['training', 'delivery', 'coverage'][i], label }));
+export function evidenceIsFromProfile(key: string): boolean { return REVIEW_EVIDENCE.some((option) => option.key === key); }
+
 export interface PerformanceReviewInput {
+  evidence?: string;
   strength: string;
   area: string;
 }
 
 export function performanceReviewPasses(input: PerformanceReviewInput): boolean {
-  return strengthIsSpecific(input.strength) && areaToGrowIsConstructive(input.area);
+  return evidenceIsFromProfile(input.evidence ?? '') && strengthIsSpecific(input.strength) && areaToGrowIsConstructive(input.area);
 }
 
 /** What the teacher sees for this submission. */
@@ -185,6 +190,17 @@ export function describeSubmission(input: PerformanceReviewInput, lang: Lang): S
     fields: [
       { label: c.strengthLabel, value: input.strength },
       { label: c.areaLabel, value: input.area },
+      ...(REVIEW_EVIDENCE.find((option) => option.key === input.evidence) ? [{label: EVIDENCE_LABEL[lang], value: REVIEW_EVIDENCE.find((option) => option.key === input.evidence)!.label[lang]}] : []),
     ],
   };
+}
+
+
+/** Older submissions have only two fields. Keep their text; never infer missing evidence. */
+export function restoreReviewDraft(saved?: SubmissionContent) {
+ return {
+  strength: saved?.fields[0]?.value ?? '',
+  area: saved?.fields[1]?.value ?? '',
+  evidence: REVIEW_EVIDENCE.find((option) => saved && option.label[saved.lang] === saved.fields[2]?.value)?.key ?? '',
+ };
 }

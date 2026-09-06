@@ -1,3 +1,4 @@
+import { mentionsAmount } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -157,20 +158,20 @@ export const EMPTY_EMAIL_HINT: Record<Lang, string> = {
 };
 
 export const WRONG_EMAIL_HINT: Record<Lang, string> = {
-  en: "Name the over category (labor) and that it is over — the $450 helps.",
-  es: "Nombra la categoría que se pasó (mano de obra) y que se pasó — los $450 ayudan.",
+  en: "Name the category and how much it is over. Compare actual spending ($2,850) with the budget ($2,400).",
+  es: "Nombra la categoría y cuánto se pasó. Compara el gasto real ($2,850) con el presupuesto ($2,400).",
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "Hi Renata, labor is over budget by $450.",
-    "Labor actual is 2850 against a 2400 budget.",
-    "The IF flags labor as over. The chart shows the same bar.",
+    "Labor actual is 2850 against a 2400 budget, a difference of 450.",
+    "The IF flags labor as over by $450. The chart shows the same bar.",
   ],
   es: [
     "Hola Renata, mano de obra se pasó del presupuesto por $450.",
-    "Mano de obra real es 2850 contra un presupuesto de 2400.",
-    "El IF marca mano de obra como \"sobre\". El gráfico muestra la misma barra.",
+    "Mano de obra real es 2850 contra un presupuesto de 2400: una diferencia de 450.",
+    "El IF marca mano de obra como \"sobre\" por $450. El gráfico muestra la misma barra.",
   ],
 };
 
@@ -202,8 +203,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export function emailFlagsOver(body: string): boolean {
   const t = body.toLowerCase();
   const namesLabor = /labor|mano de obra|nómina|nomina|payroll/.test(t);
-  const namesOver = /over|sobre|pasó|paso|450|2850/.test(t);
-  return namesLabor && namesOver;
+  const labor = BUDGET_ROWS.find((row) => row.key === "labor")!;
+  return namesLabor && mentionsAmount(t, labor.actual - labor.budget);
 }
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };

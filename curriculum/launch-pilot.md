@@ -2,6 +2,8 @@
 
 Status: **not yet observed with learners**. Software verification is not a substitute for these sessions. Reserve the final week for observation and fixes; freeze new features at its start. No new levels before launch.
 
+Start with the [round 1 facilitator guide](pilot-round-1.md): four initial participant slots, a bilingual opening script, observation labels, and fresh examples. All observation boxes below remain pending until sessions happen.
+
 ## Week 1: opening experience
 
 Recruit beginners and confident computer users, with English and Spanish coverage. Observe short independent sessions through Acts I–II. Split the sequence across participants rather than asking everyone to finish the course. For every task, record a valid answer, a plausible wrong answer, Help use, keyboard access, leaving, returning, and whether a facilitator intervened. Preserve useful beginner repetition; remove an acknowledgment only when it adds no new decision.
@@ -52,3 +54,23 @@ Avoid storing participant names or real workplace/patient details in notes. Trea
 - [ ] README, scope and sequence, and the review’s current-status note match the release.
 
 If time is tight, defer decorative polish and extra variants. Protect route correctness, saved work, core usability, and this observation week.
+
+
+See the [remaining-issues plan](remaining-issues-plan.md) for proposed fixes and the evidence needed to close each concern.
+
+## Review-specific checks still open
+
+These correspond to P1–P12 in the [current full review](../scratchpad/full-curriculum-review.md#remaining-concerns-decisions-and-explicit-follow-up). Check each only after recording observations, a disposition, and any required recheck. Automated completion does not close these items.
+
+- [ ] P1 — Welcome reading, Help return, and moving/shrinking/recovering the Job Card in EN/ES.
+- [ ] P2 — Payday vocabulary/numeracy load and whether the short recall wrap-up helps.
+- [ ] P3 — A fresh scheduling example after each kind of comparison; especially adjacent meeting/triage tasks.
+- [ ] P4 — New code/file/source examples; evidence of comparing rather than memorizing or clicking for a highlight.
+- [ ] P5 — Exact valid rejected and irrelevant accepted writing; record language and starter use.
+- [ ] P6 — Learner explains authorized nurse versus unauthorized coworker access; now using the verified-recipient decision; test transfer to a fresh requester example.
+- [ ] P7 — Learner explains the urgency tradeoff after selecting a supported issue/reason pairing; change the facts in the fresh example.
+- [ ] P8 — Review writing uses the selected profile evidence; note fairness, specificity, comfort, and draft revision.
+- [ ] P9 — Learner consults the huddle/transcript, captures the changed assignment, and understands the workflow.
+- [ ] P10 — Every route’s ending, pause/reload, and switching back to partial progress are understandable.
+- [ ] P11 — Portfolio finish recognition, copying/pasting, and using the text download when clipboard permission is denied.
+- [ ] P12 — The full core task register has separate EN/ES wrong-action, Help, keyboard, and leave/return observations.

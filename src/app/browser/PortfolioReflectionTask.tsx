@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { earnedAwardsByAct } from "@/lib/tracks-content";
+import { actNumeral, formatPortfolioSummary } from "@/lib/portfolio-summary";
 import { TASK_INFO } from "@/lib/tracks-content";
 import type { Lang } from "@/lib/task-types";
 import {
@@ -23,10 +24,6 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 
 type View = "review" | "reflect" | "done";
-
-function actNumeral(title: string): string {
-  return title.match(/^Act ([IVX]+)/)?.[1] ?? title;
-}
 
 function AwardList({
   awards,
@@ -64,7 +61,7 @@ function AwardList({
 }
 
 export default function PortfolioReflectionTask() {
-  const { markComplete, completedTaskKeys, certificateTrackKeys, lang, writing } = useProgress();
+  const { markComplete, completedTaskKeys, certificateTrackKeys, lang, writing, saving, saveError } = useProgress();
   const [view, setView] = useState<View>(
     completedTaskKeys.includes("portfolio-reflection") ? "done" : "review",
   );
@@ -91,23 +88,28 @@ export default function PortfolioReflectionTask() {
     setAnswers(PROMPTS.map(() => ""));
   };
 
-  const copySummary = async () => {
-    const lines: string[] = [c.summaryTitle, lang === "en" ? "Simulated workplace practice — not employment history." : "Práctica laboral simulada — no es historial de empleo.", ""];
-    for (const { act, tracks } of awards) {
-      lines.push(`${lang === "en" ? "Act" : "Acto"} ${actNumeral(act.title)}`);
-      for (const track of tracks) {
-        for (const taskKey of track.taskKeys) lines.push(`- ${TASK_INFO[taskKey].label[lang]}`);
-      }
-      lines.push("");
-    }
-    lines.push(c.reflectionHeading, "");
-    PROMPTS.forEach((prompt, i) => {
-      lines.push(prompt[lang]);
-      lines.push(answers[i] ?? "");
-      lines.push("");
-    });
+  const summaryText = formatPortfolioSummary({certificateTrackKeys, completedTaskKeys, answers, lang});
+  const downloadSummary = () => {
+    let url: string | undefined;
+    let anchor: HTMLAnchorElement | undefined;
     try {
-      await navigator.clipboard.writeText(lines.join("\n").trim());
+      url = URL.createObjectURL(new Blob([summaryText], {type: 'text/plain;charset=utf-8'}));
+      anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = lang === 'en' ? 'workplace-practice-summary.txt' : 'resumen-practica-laboral.txt';
+      document.body.appendChild(anchor);
+      anchor.click();
+      say(c.downloadStarted);
+    } catch { say(c.downloadFailed); }
+    finally {
+      anchor?.remove();
+      if (url) { const objectUrl = url; setTimeout(() => URL.revokeObjectURL(objectUrl), 1000); }
+    }
+  };
+
+  const copySummary = async () => {
+    try {
+      await navigator.clipboard.writeText(summaryText);
       say(c.copied);
     } catch {
       say(c.copyFailed);
@@ -139,10 +141,14 @@ export default function PortfolioReflectionTask() {
                 ))}
               </dl>
               <button
+                disabled={saving || saveError}
                 onClick={copySummary}
                 className="mt-5 inline-flex min-h-[44px] w-fit items-center rounded-full border border-[#dadce0] bg-white px-5 text-[15px] font-medium text-accent hover:bg-surface-muted cursor-pointer"
               >
                 {c.copySummary}
+              </button>
+              <button disabled={saving || saveError} onClick={downloadSummary} className="mt-3 inline-flex min-h-11 items-center rounded-full border px-5 text-accent disabled:opacity-50">
+                {c.downloadSummary}
               </button>
             </div>
             <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />

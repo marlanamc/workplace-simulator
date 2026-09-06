@@ -86,7 +86,7 @@ curriculum, ready to build later.
 | **III — Shift Supervisor** | 9-12 | Stay and lead | Crew lead in this industry | Implemented; pilot pending |
 | **IV — Assistant Manager** | 13-15 | Stay and lead | Last stop if this industry is the goal | Implemented; pilot pending |
 | **V — Bridge (elective)** | 16-19 | Open after Act II | Path A college *or* Path B healthcare / front desk | Implemented; pilot pending |
-| **VI — Office Administrator** | 20-23 | Office path | Office / admin after Act II | Implemented; pilot pending |
+| **VI — Office Administrator** | 19h1–19h5, 20–23 | Office path | Office / admin after Act II | Implemented; pilot pending |
 | **VII — Team Lead (capstone)** | 24-27 | Office path | Office capstone; stay-and-lead can skip | Implemented; pilot pending |
 
 **After Act II, pick a door (do not wait for Assistant Manager):**
@@ -304,7 +304,7 @@ See `level-3-shift-lead/02-lesson-files.md`.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `spreadsheet` | Enter numbers into a shared weekly tally, read a formula's total, notice and flag one that's wrong | Browser → Sheets |
+| 1 | `spreadsheet` | Enter source amounts into a shared weekly tally, check the formula total, and report it | Browser → Sheets |
 
 See `level-3-shift-lead/03-lesson-spreadsheet.md`. After Level 6, a student
 already has the lead-tool pack. They may pick a door (stay / healthcare /

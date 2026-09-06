@@ -47,7 +47,7 @@ function cellRef(cell: Cell) {
 export default function BudgetSheetTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("budget-sheet") ? "done" : "home");
-  const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW + 1, col: "D" });
+  const [selected, setSelected] = useState<Cell>({ row: HEADER_ROW, col: "A" });
   const [openedOver, setOpenedOver] = useState(false);
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
@@ -78,7 +78,7 @@ export default function BudgetSheetTask() {
 
   const restart = () => {
     setView("home");
-    setSelected({ row: FIRST_DATA_ROW + 1, col: "D" });
+    setSelected({ row: HEADER_ROW, col: "A" });
     setOpenedOver(false);
     setBody("");
   };

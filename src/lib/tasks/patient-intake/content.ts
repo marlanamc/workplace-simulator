@@ -37,7 +37,7 @@ export const INTAKE_COPY: Record<Lang, {
     file: "File intake",
     needFields: "Fill name, date of birth, and reason first.",
     coworkerAsk: "Hey, can I peek at that form? I just want to see why she's here.",
-    careTeamAsk: "I'm on Maya's care team. I can take her chart when you're done.",
+    careTeamAsk: "May I collect Maya’s chart when it is ready?",
     coworkerName: "Sam Ortiz · kitchen (not care team)",
     careTeamName: "Nurse Jordan · care team",
     writeHere: "Reply to Sam…",
@@ -62,7 +62,7 @@ export const INTAKE_COPY: Record<Lang, {
     file: "Archivar ingreso",
     needFields: "Llena nombre, fecha de nacimiento y motivo primero.",
     coworkerAsk: "Oye, ¿puedo ver ese formulario? Solo quiero saber por qué está aquí.",
-    careTeamAsk: "Estoy en el equipo de cuidado de Maya. Puedo llevar su expediente cuando termines.",
+    careTeamAsk: "¿Puedo recoger el expediente de Maya cuando esté listo?",
     coworkerName: "Sam Ortiz · cocina (no es equipo de cuidado)",
     careTeamName: "Enfermera Jordan · equipo de cuidado",
     writeHere: "Responde a Sam…",
@@ -93,8 +93,10 @@ export const STARTERS: Record<Lang, string[]> = {
 };
 
 /** What the teacher sees: how the learner declined the coworker's request. */
-export function describeSubmission(reply: string, lang: Lang): SubmissionContent {
-  return { lang, fields: [{ label: INTAKE_COPY[lang].coworkerName, value: reply }] };
+export function describeSubmission(reply: string, lang: Lang, recipient?: string): SubmissionContent {
+  const choice = RECIPIENT_OPTIONS.find((option) => option.key === recipient);
+  return { lang, fields: [{ label: INTAKE_COPY[lang].coworkerName, value: reply },
+    ...(choice ? [{ label: RECIPIENT_LABEL[lang], value: choice.label[lang] }] : [])] };
 }
 
 export function declineIsSafe(body: string): boolean {
@@ -133,6 +135,21 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Fill in the intake form and file it.", es: "Llena el formulario de ingreso y archívalo." },
-  { en: "Read both requests. Only one person is on the care team.", es: "Lee los dos pedidos. Solo una persona está en el equipo de cuidado." },
+  { en: "Compare both requests with the verified assignment. Choose who may receive the chart.", es: "Compara ambos pedidos con la asignación verificada. Elige quién puede recibir el expediente." },
   { en: "Tell Sam no, without sharing the reason for the visit.", es: "Dile que no a Sam, sin compartir el motivo de la visita." },
 ];
+
+
+export const VERIFIED_ASSIGNMENT: Localized = {
+ en: "Fictional clinic assignment record: Nurse Jordan’s identity and assignment to Maya Rivera’s care team have been verified. Sam Ortiz works in the kitchen and has no care assignment for Maya. This is simplified practice.",
+ es: "Registro ficticio de la clínica: se verificaron la identidad de la enfermera Jordan y su asignación al equipo de atención de Maya Rivera. Sam Ortiz trabaja en la cocina y no tiene una asignación de atención para Maya. Esta es una práctica simplificada.",
+};
+export const RECIPIENT_LABEL: Localized = { en: 'Who may receive this chart?', es: '¿Quién puede recibir este expediente?' };
+export const RECIPIENT_HINT: Localized = { en: 'Compare the verified assignment with both requests. A request alone does not establish access.', es: 'Compara la asignación verificada con ambos pedidos. Pedir acceso no demuestra autorización.' };
+export const RECIPIENT_OPTIONS = [
+ {key:'nurse',label:{en:'Nurse Jordan only',es:'Solo la enfermera Jordan'}},
+ {key:'coworker',label:{en:'Sam Ortiz only',es:'Solo Sam Ortiz'}},
+ {key:'both',label:{en:'Both people',es:'Ambas personas'}},
+ {key:'neither',label:{en:'Neither person',es:'Ninguna persona'}},
+];
+export function recipientIsAuthorized(key: string): boolean { return key === 'nurse'; }

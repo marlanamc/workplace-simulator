@@ -107,3 +107,6 @@ Mail. Plus: choosing Español on the login page survives sign-in AND reload.
 The Playwright config loads local Next environment files for its database-backed teacher tests. Use the configured test cohort; never point tests at learners' accounts. Generated browser reports are ignored by lint.
 
 Automated tests do not demonstrate learner transfer. Track the remaining observed bilingual opening and route sessions in [curriculum/launch-pilot.md](curriculum/launch-pilot.md).
+
+
+The remaining-issues batch adds `decision-practice.test.ts` and `decision-practice.spec.ts`: requester authorization choices, multiple supported priorities, required review evidence, restoration of older/newer draft layouts, and identical clipboard/download summaries with denied-clipboard recovery. Browser tests also preserve previously earned review completion when no new evidence field was saved. Actual learner transfer and the full manual core coverage register remain separate, open pilot requirements.

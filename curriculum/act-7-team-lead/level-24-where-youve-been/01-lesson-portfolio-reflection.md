@@ -1,18 +1,16 @@
-# Reflect on completed simulated practice
+# Keep a record of simulated practice
 
-**Task key:** `portfolio-reflection` · **Status:** implemented; learner pilot pending.
-
-Use the selected course route and existing level. All references needed for this activity are supplied in the simulator; unrelated acts are not prerequisites. Instructions, Help, and recovery belong in the bilingual Job Card.
+**Task:** `portfolio-reflection` · **Status:** implemented; learner pilot pending.
 
 ## Simulator practice
 
-1. Review only the awards actually earned.
-2. Write and submit the reflection.
-3. Return after reload to review the saved answers.
-4. Copy the summary in English or Spanish. It identifies the work as simulated practice.
+1. Review earned awards and write the four reflections.
+2. Submit and return after reload to review the saved answers.
+3. Copy the summary or download the same text as a UTF-8 .txt file.
+4. If clipboard access is denied, use the download alternative described in the Job Card.
 
-## What completion demonstrates
+## Completion and support
 
-Reflecting on completed work and sharing an accurate practice summary.
+Reflecting on completed practice and retrieving an accurate shareable summary. This is simulated practice, not an employment history.
 
-Wrong choices should lead to useful Job Card recovery. There is no timer or mandatory teacher approval. Optional real-world practice is separate from simulator completion. Use a fresh example in the learner pilot to assess transfer.
+Instructions, optional Help, and wrong-action recovery belong in the bilingual Job Card. Keep existing task IDs and earlier earned credit. No mandatory teacher approval or additional timed/word-count requirements.

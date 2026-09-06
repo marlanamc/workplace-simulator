@@ -352,7 +352,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
           {
             n: "1",
             taskKey: "spreadsheet",
-            skill: "Enter numbers, read a formula total, flag one that's wrong",
+            skill: "Enter numbers from source slips, read the formula total, and report it",
             app: "Sheets",
             tab: "spreadsheet",
           },

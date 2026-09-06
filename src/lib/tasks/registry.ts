@@ -517,8 +517,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Three things at once", es: "Tres cosas a la vez" },
     dispatch: {
-      en: "Three things just landed. Name the first move.",
-      es: "Tres cosas acaban de llegar. Decide el primer paso.",
+      en: "Compare the three situations. Choose a priority and a supported reason.",
+      es: "Compara las tres situaciones. Elige una prioridad y un motivo basado en los datos.",
     },
     skill: "Handle three asks at once",
     bookmarkLabel: "Floor",
@@ -660,7 +660,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. Un paciente nuevo acaba de llegar.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "File it. Do not overshare.", es: "Archívalo. No compartas de más." },
+    jobCardLine: { en: "File it. Choose the verified recipient, then reply to Sam.", es: "Archívalo. Elige al destinatario verificado y responde a Sam." },
   },
 
   coursework: {
@@ -1034,7 +1034,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes. Hay una evaluación que entregar.",
     },
     location: browser("Open Forms from the bookmarks"),
-    jobCardLine: { en: "One strength, one area to grow.", es: "Una fortaleza, un área para mejorar." },
+    jobCardLine: { en: "Choose a profile fact. Write one strength and one area to grow.", es: "Elige un dato del perfil. Escribe una fortaleza y un área para mejorar." },
     jobCardDoneLine: { en: "The review is submitted.", es: "La evaluación está enviada." },
   },
 

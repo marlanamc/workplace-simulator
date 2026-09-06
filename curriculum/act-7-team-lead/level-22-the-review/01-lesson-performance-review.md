@@ -1,43 +1,16 @@
-# Lesson 1: Write a Fair, Kind Review
+# Write a review from evidence
 
-**Time:** ~15-20 minutes · **Level:** 22 — The Review · **Track:** 21 —
-The Review
-**Task key:** `performance-review` · **Status:** implemented; learner pilot pending.
-**Prerequisite:** Level 21 complete
+**Task:** `performance-review` · **Status:** implemented; learner pilot pending.
 
-## We will learn...
-- write a short, honest performance note for a team member — one real
-  strength, one real area to grow, in a tone that's constructive, not
-  harsh or vague.
+## Simulator practice
 
-## Before class (teacher prep)
-- [ ] Simulator: a short profile of a mock team member (a few things they
-      did well this month, one recurring issue) plus a two-part write-up
-      form (Strength / Area to Grow) with sentence starters for both.
-- [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 22 wrap-up assignment
-      (`real-practice-assignment.md`), offered after this lesson.
-      Never a gate — a student who skips it still moves on. If you do
-      offer it, have 2-3 example phrasings ready (one too vague, one too
-      harsh, one "just right") — like Level 2's incident report, this is
-      about calibration, not a single correct template.
+1. Read Sam’s profile and choose one actual win as evidence for the strength.
+2. Write the strength and a growth-area draft; the attendance issue remains visible.
+3. Submit both drafts and the selected fact.
+4. Reopen the saved draft to revise it, optionally using teacher feedback.
 
-## Simulator practice (~15-20 min)
-1. Read the mock team member's profile.
-2. Write one specific, genuine strength — not generic praise ("good job")
-   but something concrete they actually did.
-3. Write one specific area to grow — clear about what needs to change,
-   without being harsh, and paired with what "better" would look like.
-4. Submit it.
+## Completion and support
 
-## Confidence check-in
-- "I could give someone honest feedback without either sugarcoating it or
-  being harsh." 🙂 😐 🙁
-- "Giving feedback to someone I work with feels: ___________"
+Selecting actual profile evidence and producing draft text. Automatic completion does not assess relevance, fairness, or tone.
 
-## Notes for next time
-- This is the most personally vulnerable lesson since Level 2's incident
-  report — being fair to someone else, in writing, is genuinely hard for a
-  lot of people regardless of language background. Keep feedback on the
-  student's own write-up warm and specific, and don't rush past a student
-  who wants to talk through why this feels hard.
+Instructions, optional Help, and wrong-action recovery belong in the bilingual Job Card. Keep existing task IDs and earlier earned credit. No mandatory teacher approval or additional timed/word-count requirements.

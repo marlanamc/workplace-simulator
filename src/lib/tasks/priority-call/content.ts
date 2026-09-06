@@ -63,8 +63,8 @@ export const PRIORITY_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     urgencyKicker: "Before you click anything",
-    urgencyQ: "What is most urgent, and why? Answer in one sentence.",
-    urgencyPh: "The customer / the close / the meeting, because…",
+    urgencyQ: "Which priority and reason fit these facts?",
+    urgencyPh: "Optional: explain your choice in your own words…",
     urgencyCta: "That's what I'll do first",
     hubHeading: "Still open",
     mailTitle: "Customer complaint",
@@ -110,8 +110,8 @@ export const PRIORITY_COPY: Record<Lang, {
   es: {
     helpBtn: "Ayúdame con este paso",
     urgencyKicker: "Antes de hacer clic en algo",
-    urgencyQ: "¿Qué es lo más urgente, y por qué? Responde en una oración.",
-    urgencyPh: "El cliente / el cierre / la reunión, porque…",
+    urgencyQ: "¿Qué prioridad y motivo corresponden a estos datos?",
+    urgencyPh: "Opcional: explica tu elección con tus propias palabras…",
     urgencyCta: "Eso es lo que voy a hacer primero",
     hubHeading: "Siguen abiertas",
     mailTitle: "Queja de un cliente",
@@ -179,7 +179,7 @@ export const MAIL_STARTERS: Record<Lang, string[]> = {
 
 export const HINTS: Record<Lang, { urgency: string; overpromise: string; empty: string; cover: string; accept: string; no: string }> = {
   en: {
-    urgency: "In one sentence, say what you will do first and why.",
+    urgency: "Compare the waiting customer, the 4 PM staffing gap, and the 5 PM meeting. Which reason addresses an immediate consequence?",
     overpromise: "Don't promise a free drink or a refund here. Say you know it happened and that you will look into it.",
     empty: "Write a short reply first.",
     cover: "Pick Jordan. Jordan has room and is free Thursday night.",
@@ -187,7 +187,7 @@ export const HINTS: Record<Lang, { urgency: string; overpromise: string; empty: 
     no: "Renata still needs the huddle. Propose Saturday 10 AM.",
   },
   es: {
-    urgency: "En una oración, di qué vas a hacer primero y por qué.",
+    urgency: "Compara al cliente que espera, el turno sin cubrir de las 4 y la reunión de las 5. ¿Qué motivo responde a una consecuencia inmediata?",
     overpromise: "No prometas una bebida gratis ni un reembolso. Dile que sabes lo que pasó y que lo vas a revisar.",
     empty: "Primero escribe una respuesta corta.",
     cover: "Elige a Jordan. Jordan tiene espacio y está libre el jueves por la noche.",
@@ -201,7 +201,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Say which one you'll do first. Then finish all three",
       s: [
-        "There is no trick to the order. A customer who is still here, a gap in tonight's close, and a meeting on your shift are all real problems.",
+        "Both the waiting customer and the approaching staffing gap have a supported reason to come first. A customer who is still here, a gap in tonight's close, and a meeting on your shift are all real problems.",
         "Say which one you will do first. Then handle the other two before you leave the computer.",
         "The customer reply is short and honest. Do not offer free food or a refund. Picking who covers the shift is the same as Level 9. Moving the meeting is the same as Level 4.",
       ],
@@ -212,7 +212,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Di cuál vas a hacer primero. Luego termina las tres",
       s: [
-        "No hay ningún truco en el orden. Un cliente que sigue ahí, un hueco en el cierre de esta noche y una reunión en tu turno son problemas reales, los tres.",
+        "Tanto el cliente que espera como el próximo turno sin cubrir tienen motivos válidos para ir primero. Un cliente que sigue ahí, un hueco en el cierre de esta noche y una reunión en tu turno son problemas reales, los tres.",
         "Di cuál vas a hacer primero. Luego atiende las otras dos antes de dejar la computadora.",
         "La respuesta al cliente es corta y honesta. No ofrezcas comida gratis ni un reembolso. Elegir quién cubre el turno es lo mismo que el Nivel 9. Mover la reunión es lo mismo que el Nivel 4.",
       ],
@@ -243,7 +243,7 @@ export function replyIsSafe(body: string) {
 
 /** What the teacher sees: the "what's most urgent" call and the customer reply. */
 export function describeSubmission(
-  input: { urgency: string; reply: string },
+  input: { urgency: string; reply: string; priority?: string },
   lang: Lang,
 ): SubmissionContent {
   const c = PRIORITY_COPY[lang];
@@ -252,6 +252,7 @@ export function describeSubmission(
     fields: [
       { label: c.urgencyQ, value: input.urgency },
       { label: c.subject, value: input.reply },
+      ...(PRIORITY_OPTIONS.find((option) => option.key === input.priority) ? [{ label: PRIORITY_CHOICE_LABEL[lang], value: PRIORITY_OPTIONS.find((option) => option.key === input.priority)!.label[lang] }] : []),
     ],
   };
 }
@@ -280,3 +281,17 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Resuelve la reunión en tu turno de cierre.",
   },
 ];
+
+
+export const PRIORITY_REFERENCE: Localized = {
+ en: 'Thursday, 3:40 PM. Dana is still waiting after a wrong order and a 20-minute wait. The 4–10 PM shift has no one assigned. Renata’s meeting is at 5 PM, during your shift. Immediate customer needs and the approaching staffing gap are supported reasons to act first; the manager’s title alone is not. All three jobs still need handling.',
+ es: 'Jueves, 3:40 p. m. Dana sigue esperando después de un pedido incorrecto y una espera de 20 minutos. El turno de 4 a 10 p. m. no tiene a nadie asignado. La reunión de Renata es a las 5, durante tu turno. La necesidad inmediata del cliente y la falta de personal para el próximo turno justifican actuar primero; el cargo de la gerente por sí solo no. Hay que resolver las tres tareas.',
+};
+export const PRIORITY_OPTIONS = [
+ {key:'customer-wait',supported:true,label:{en:'Customer first: Dana is still waiting for a response.',es:'Primero el cliente: Dana sigue esperando una respuesta.'}},
+ {key:'cover-start',supported:true,label:{en:'Coverage first: the 4 PM shift is approaching with no one assigned.',es:'Primero la cobertura: se acerca el turno de las 4 y no hay nadie asignado.'}},
+ {key:'manager-title',supported:false,label:{en:'Meeting first: a manager’s title always outweighs customer and staffing needs.',es:'Primero la reunión: el cargo de gerente siempre importa más que el cliente y la cobertura.'}},
+ {key:'tomorrow',supported:false,label:{en:'Leave all three until tomorrow: none affects today’s work.',es:'Dejar las tres para mañana: ninguna afecta el trabajo de hoy.'}},
+];
+export const PRIORITY_CHOICE_LABEL: Localized = {en:'Priority and reason',es:'Prioridad y motivo'};
+export function priorityIsSupported(key: string): boolean { return PRIORITY_OPTIONS.some((option) => option.key === key && option.supported); }

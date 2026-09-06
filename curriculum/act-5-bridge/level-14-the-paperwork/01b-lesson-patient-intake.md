@@ -1,44 +1,16 @@
-# Lesson 1b: Handle a Patient Intake Form (Path B — Front Office / Healthcare Admin)
+# Choose the verified chart recipient
 
-**Time:** ~15-20 minutes (whole level) · **Level:** 14 — The Paperwork ·
-**Track:** 15 — Front Office / Healthcare Admin (Path B)
-**Task key:** `patient-intake` · **Status:** implemented; learner pilot pending. See
-`01a-lesson-financial-aid.md` for Path A — a student stays on whichever
-path they chose in Level 13.
-**Prerequisite:** Level 13's Path B lesson (`appointment-scheduling`)
+**Task:** `patient-intake` · **Status:** implemented; learner pilot pending.
 
-## We will learn...
-- process a digital patient intake form, and make a judgment call about
-  who's allowed to see what — the first real confidentiality/privacy
-  decision in the whole program.
+## Simulator practice
 
-## Before class (teacher prep)
-- [ ] Simulator: a short digital intake form (name, reason for visit, a
-      few basic questions) plus a scenario where a coworker who isn't on
-      that patient's care team asks to see the form "just to be helpful."
-- [ ] No Google Classroom post needed yet — this is optional, supplementary
-      practice bundled into the Level 14 wrap-up assignment
-      (`real-practice-assignment.md`), offered after this lesson.
-      Never a gate — a student who skips it still moves on.
+1. Fill and file the fictional intake.
+2. Compare both requests with the clinic assignment record, which verifies Nurse Jordan’s identity and assignment to Maya’s care team.
+3. Choose who may receive the chart. A request alone is not verification.
+4. Write the refusal to Sam without sharing the visit reason.
 
-## Simulator practice (~15-20 min)
-1. Open the **Browser** → **Front Desk** tab and process the new patient's
-   intake form — check it's complete, and file it correctly.
-2. A coworker message arrives asking to see the form, "just to check
-   something."
-3. Decide: does this coworker actually need to see it? (They don't — they're
-   not on this patient's care team.) Politely decline and explain why,
-   rather than just handing it over to be helpful.
-4. If a coworker who *is* on the care team asks instead, sharing it is the
-   right call — the skill is judging who needs it, not refusing everyone.
+## Completion and support
 
-## Confidence check-in
-- "I understand that being helpful and following privacy rules aren't
-  always the same thing." 🙂 😐 🙁
-- "If a coworker pushed back after I said no, I would: ___________"
+Verified-recipient recognition and refusal practice. Free-text checks are not a guarantee of confidentiality judgment.
 
-## Notes for next time
-- This is the first genuinely high-stakes judgment call in the program —
-  getting it wrong in a real job has real consequences (HIPAA violations,
-  in a real healthcare setting). Spend real time on the "why," not just
-  the click — this lesson is a discussion as much as a task.
+Instructions, optional Help, and wrong-action recovery belong in the bilingual Job Card. Keep existing task IDs and earlier earned credit. No mandatory teacher approval or additional timed/word-count requirements.

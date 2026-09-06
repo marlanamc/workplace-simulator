@@ -1,4 +1,5 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import { mentionsAmount } from "@/lib/text-facts";
 import { CORRECT_WEEK_TOTAL } from "../crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -220,9 +221,9 @@ export function parseRange(formula: string): { start: number; end: number } | nu
 
 export function emailMentionsFix(body: string): boolean {
   const t = body.toLowerCase();
-  const hasTotal = t.includes(String(CORRECT_WEEK_TOTAL));
-  const hasMiss = /casey|missing|faltaba|faltaba|omit|range|rango|sum/.test(t);
-  return hasTotal || hasMiss;
+  const hasTotal = mentionsAmount(t, CORRECT_WEEK_TOTAL);
+  const hasMiss = /casey|missing|missed|left out|excluded|skipped|falt|omit|no inclu|exclu|range|rango|sum|última fila|ultima fila|last row/.test(t);
+  return hasTotal && hasMiss;
 }
 
 /** The persistent "what to do right now" line, one per step of this job. */

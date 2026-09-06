@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   PRIORITY_COPY,
+  PRIORITY_REFERENCE, PRIORITY_OPTIONS, PRIORITY_CHOICE_LABEL, priorityIsSupported,
   COVER,
   MAIL_STARTERS,
   HINTS,
@@ -27,14 +28,18 @@ import { Calendar, Mail, Table2 } from "lucide-react";
 type View = "urgency" | "hub" | "mail" | "cover" | "calendar" | "done";
 
 export default function PriorityCallTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, writing } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("priority-call") ? "done" : "urgency");
-  const [urgency, setUrgency] = useState("");
+  const [urgency, setUrgency] = useState(() => writing['priority-call']?.fields[0]?.value ?? '');
+  const [priority, setPriority] = useState(() => {
+    const saved = writing['priority-call'];
+    return PRIORITY_OPTIONS.find((option) => saved && option.label[saved.lang] === saved.fields[2]?.value)?.key ?? '';
+  });
   const [named, setNamed] = useState(false);
   const [mailDone, setMailDone] = useState(false);
   const [coverDone, setCoverDone] = useState(false);
   const [calDone, setCalDone] = useState(false);
-  const [reply, setReply] = useState("");
+  const [reply, setReply] = useState(() => writing['priority-call']?.fields[1]?.value ?? '');
   const [coverKey, setCoverKey] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
@@ -44,14 +49,14 @@ export default function PriorityCallTask() {
   const finishIfReady = (mail: boolean, cover: boolean, cal: boolean) => {
     if (mail && cover && cal) {
       setView("done");
-      markComplete("priority-call", "handle_three_asks", describeSubmission({ urgency, reply }, lang));
+      markComplete("priority-call", "handle_three_asks", describeSubmission({ urgency, reply, priority }, lang));
     } else {
       setView("hub");
     }
   };
 
   const lockUrgency = () => {
-    if (urgency.trim().length < 12) return say(h.urgency);
+    if (!priorityIsSupported(priority)) return say(h.urgency);
     setNamed(true);
     setView("hub");
   };
@@ -80,6 +85,7 @@ export default function PriorityCallTask() {
   const restart = () => {
     setView("urgency");
     setUrgency("");
+    setPriority("");
     setNamed(false);
     setMailDone(false);
     setCoverDone(false);
@@ -114,7 +120,15 @@ export default function PriorityCallTask() {
           <div className="mx-auto max-w-[520px]">
             <div className="text-[12px] font-semibold uppercase tracking-wide text-warning">{c.urgencyKicker}</div>
             <h2 className="mt-2 text-[22px] font-medium leading-tight">{c.urgencyQ}</h2>
+            <p className="mt-3 text-[14px] leading-relaxed">{PRIORITY_REFERENCE[lang]}</p>
+            <label className="mt-4 block">{PRIORITY_CHOICE_LABEL[lang]}
+              <select data-testid="priority-choice" value={priority} onChange={(e) => setPriority(e.target.value)} className="mt-1 min-h-11 w-full rounded border bg-white px-3">
+                <option value="">{lang === 'en' ? 'Select a priority and reason' : 'Elige una prioridad y un motivo'}</option>
+                {PRIORITY_OPTIONS.map((option) => <option key={option.key} value={option.key}>{option.label[lang]}</option>)}
+              </select>
+            </label>
             <textarea
+              aria-label={c.urgencyPh}
               value={urgency}
               onChange={(e) => setUrgency(e.target.value)}
               placeholder={c.urgencyPh}
@@ -132,6 +146,7 @@ export default function PriorityCallTask() {
 
       {view === "hub" && named && (
         <div className="min-h-0 flex-1 overflow-auto">
+          <details className="mx-5 mt-4 rounded border p-3"><summary>{lang === 'en' ? 'Situation reference' : 'Referencia de la situación'}</summary><p className="mt-2">{PRIORITY_REFERENCE[lang]}</p></details>
           <TaskHub
             heading={c.hubHeading}
             items={[
@@ -166,7 +181,7 @@ export default function PriorityCallTask() {
               <button onClick={sendReply} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
                 {c.send}
               </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
+              <button aria-label={lang === "en" ? "Back to open jobs" : "Volver a las tareas pendientes"} onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
             </div>
           </div>
         </div>
@@ -187,6 +202,7 @@ export default function PriorityCallTask() {
                 <div className={`flex w-[72px] items-center border-b border-r border-[#c0c0c0] px-2 py-1.5 ${p.hours >= 40 ? "text-[#c5221f]" : ""}`}>{p.hours}</div>
                 <div className="flex w-[120px] items-center border-b border-[#c0c0c0] bg-[#fef7e0] px-1">
                   <select
+                    aria-label={`${p.name} · ${c.pickShift}`}
                     value={coverKey === p.key ? "4–10" : ""}
                     onChange={(e) => {
                       if (e.target.value) assignCover(p.key);
@@ -201,7 +217,7 @@ export default function PriorityCallTask() {
               </div>
             ))}
           </div>
-          <button onClick={() => setView("hub")} className="mt-4 block text-[13px] text-[#5f6368] cursor-pointer">←</button>
+          <button aria-label={lang === "en" ? "Back to open jobs" : "Volver a las tareas pendientes"} onClick={() => setView("hub")} className="mt-4 block text-[13px] text-[#5f6368] cursor-pointer">←</button>
         </div>
       )}
 
@@ -220,7 +236,7 @@ export default function PriorityCallTask() {
               <button onClick={proposeTime} className="mt-3 inline-flex min-h-[40px] items-center text-[14px] font-medium text-[#0b57d0] cursor-pointer">
                 {c.propose} · {c.slotLabel}
               </button>
-              <button onClick={() => setView("hub")} className="mt-4 block text-[13px] text-[#5f6368] cursor-pointer">←</button>
+              <button aria-label={lang === "en" ? "Back to open jobs" : "Volver a las tareas pendientes"} onClick={() => setView("hub")} className="mt-4 block text-[13px] text-[#5f6368] cursor-pointer">←</button>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   REVIEW_COPY,
+  REVIEW_EVIDENCE, EVIDENCE_LABEL, EVIDENCE_HINT, evidenceIsFromProfile, restoreReviewDraft,
   PROFILE,
   STRENGTH_STARTERS,
   AREA_STARTERS,
@@ -32,33 +33,32 @@ import {
 } from "@/components/task/FormsShell";
 
 export default function PerformanceReviewTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, writing } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("performance-review"));
-  const [strength, setStrength] = useState("");
-  const [area, setArea] = useState("");
-  const [touched, setTouched] = useState(false);
+  const [initialDraft] = useState(() => restoreReviewDraft(writing['performance-review']));
+  const [strength, setStrength] = useState(initialDraft.strength);
+  const [area, setArea] = useState(initialDraft.area);
+  const [evidence, setEvidence] = useState(initialDraft.evidence);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = REVIEW_COPY[lang];
 
-  const stepIndex = !touched ? 0 : !strengthIsSpecific(strength) ? 1 : 2;
+  const stepIndex = !evidenceIsFromProfile(evidence) ? 0 : !strengthIsSpecific(strength) ? 1 : 2;
 
   const submit = () => {
-    setTouched(true);
+    if (!evidenceIsFromProfile(evidence)) return say(EVIDENCE_HINT[lang]);
     if (!strengthIsSpecific(strength)) {
-      return say(strength.trim() ? c.vagueStrength : c.needStrength);
+      return say(c.needStrength);
     }
     if (!areaToGrowIsConstructive(area)) return say(c.needArea);
-    if (!performanceReviewPasses({ strength, area })) return say(c.needArea);
+    if (!performanceReviewPasses({ strength, area, evidence })) return say(c.needArea);
     setDone(true);
-    markComplete("performance-review", "write_a_fair_review", describeSubmission({ strength, area }, lang));
+    markComplete("performance-review", "write_a_fair_review", describeSubmission({ strength, area, evidence }, lang));
   };
 
   const restart = () => {
     setDone(false);
-    setStrength("");
-    setArea("");
-    setTouched(false);
+    // Reopen the saved draft for revision; do not erase the learner’s work.
   };
 
   if (done) {
@@ -104,6 +104,12 @@ export default function PerformanceReviewTask() {
           </div>
 
           <QuestionCard label={c.strengthLabel} required>
+            <label className="mb-3 block text-[14px]">{EVIDENCE_LABEL[lang]}
+              <select data-testid="review-evidence" value={evidence} onChange={(e) => setEvidence(e.target.value)} className="mt-1 min-h-11 w-full rounded border bg-white px-3">
+                <option value="">{lang === 'en' ? 'Select a profile fact' : 'Elige un dato del perfil'}</option>
+                {REVIEW_EVIDENCE.map((option) => <option key={option.key} value={option.key}>{option.label[lang]}</option>)}
+              </select>
+            </label>
             <FormTextarea
               value={strength}
               onChange={(e) => setStrength(e.target.value)}
@@ -115,6 +121,7 @@ export default function PerformanceReviewTask() {
           </QuestionCard>
 
           <QuestionCard label={c.areaLabel} required>
+            <p className="mb-3 text-[14px]">{PROFILE.issue[lang]}</p>
             <FormTextarea
               value={area}
               onChange={(e) => setArea(e.target.value)}
