@@ -16,7 +16,7 @@ import { logout } from "@/app/actions";
  * progress is already saved either way.
  */
 export default function LevelUpCelebration() {
-  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath } = useProgress();
+  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath, courseRoute } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp) return null;
   // At an act boundary (II–VII), the full-page ActIntro carries the promotion,
@@ -30,14 +30,14 @@ export default function LevelUpCelebration() {
   const kicker = levelUp.kicker[lang];
   const title = levelUp.title[lang];
   const body = levelUp.body[lang];
-  const handoff = nextHandoff(completedTaskKeys, bridgePath);
+  const handoff = nextHandoff(completedTaskKeys, bridgePath, courseRoute);
   const cta =
     celebrateLevel.freeTabbing && handoff
       ? HANDOFF_CTA[handoff.taskKey][lang]
       : levelUp.cta[lang];
 
   const keepGoing = () => {
-    const handoff = nextHandoff(completedTaskKeys, bridgePath);
+    const handoff = nextHandoff(completedTaskKeys, bridgePath, courseRoute);
     dismissLevelCelebration();
     if (!handoff) return;
     openApp(handoff.location.appKey, {

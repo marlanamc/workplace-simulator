@@ -2,7 +2,7 @@
 
 **Time:** ~8 minutes · **Level:** 4 — Reporting In ·
 **Track:** 5 — Reporting
-**Task key:** `make-a-copy` · **Status:** not built yet.
+**Task key:** `make-a-copy` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 3 complete (especially Lesson 2 — you already
 practiced *giving* someone view access. This is the other side: someone
 gave *you* view access, and you need to work without changing their file.)
@@ -12,7 +12,7 @@ gave *you* view access, and you need to work without changing their file.)
   a file is already open, and how to **File → Make a copy** so you can
   work without overwriting the original.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: Maria has shared a **Weekly Status Template** as view-only
       (Sheets — same menu exists in Docs). Typing in it does nothing except
       a nudge. **File → Make a copy** unlocks a personal copy the student
@@ -37,7 +37,7 @@ they are two real permissions, plus extra words people use for the same thing.
 "View only" at the top of Docs and Sheets. Coworkers often say "it's
 read-only."
 
-## Simulator practice (~8 min) — once built
+## Simulator practice (~8 min)
 1. Open **Drive** or the link in Maria's email and open **Weekly Status
    Template** in **Sheets**.
 2. Notice the file is **View only** — try to type in a cell. It should not

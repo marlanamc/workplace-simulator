@@ -5,6 +5,8 @@ import { useProgress } from "@/lib/progress-context";
 import {
   COURSEWORK_COPY,
   DUE,
+  DEADLINE_OPTIONS,
+  deadlineIsCorrect,
   STARTERS,
   LESSONS,
   responseIsComplete,
@@ -25,7 +27,8 @@ export default function CourseworkTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const done = completedTaskKeys.includes("coursework");
   const [submitted, setSubmitted] = useState(done);
-  const [acked, setAcked] = useState(false);
+  const [deadline, setDeadline] = useState("");
+  const acked = deadlineIsCorrect(deadline);
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
@@ -41,7 +44,7 @@ export default function CourseworkTask() {
 
   const restart = () => {
     setSubmitted(false);
-    setAcked(false);
+    setDeadline("");
     setBody("");
   };
 
@@ -80,9 +83,12 @@ export default function CourseworkTask() {
               <div className="mt-1 text-[18px] font-semibold text-[#1a73e8]">{DUE[lang]}</div>
               <p className="mt-3 text-[15px] leading-relaxed">{c.syllabus}</p>
             </div>
-            <label className="flex items-start gap-3 rounded-xl border border-[#dadce0] bg-white px-4 py-3 cursor-pointer">
-              <input type="checkbox" checked={acked} onChange={(e) => setAcked(e.target.checked)} className="mt-1 h-4 w-4" />
-              <span className="text-[15px]">{c.ackLabel}</span>
+            <label className="rounded-xl border border-[#dadce0] bg-white px-4 py-3">
+              <span>{lang === "en" ? "Submission deadline" : "Fecha límite de entrega"}</span>
+              <select aria-label={lang === "en" ? "Submission deadline" : "Fecha límite de entrega"} value={deadline} onChange={(e) => setDeadline(e.target.value)} className="mt-2 block min-h-11 w-full border p-2">
+                <option value="">{lang === "en" ? "Choose a deadline" : "Elige una fecha"}</option>
+                {DEADLINE_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label[lang]}</option>)}
+              </select>
             </label>
             <div className="rounded-xl border border-[#dadce0] bg-white p-4">
               <div className="text-[16px] font-medium">{c.assignment}</div>

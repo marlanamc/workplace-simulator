@@ -99,3 +99,11 @@ Mail. Plus: choosing Español on the login page survives sign-in AND reload.
   React), not inside components.
 - All learner-facing copy is `Localized` (`{ en, es }`) — the integrity
   suite enforces both halves are present.
+
+## First-release regression coverage
+
+`course-routes.test.ts` exercises each selected route, switching, boundaries, and absence of skipped-task credit. `release-redesign.test.ts` covers English/Spanish objective facts and plausible rejections. `writing-actions.test.ts` checks authenticated learner-only retrieval and failure propagation. Browser tests cover the route chooser across reload, direct office presets, portfolio restoration and copying, and a failed writing save followed by reload and retry.
+
+The Playwright config loads local Next environment files for its database-backed teacher tests. Use the configured test cohort; never point tests at learners' accounts. Generated browser reports are ignored by lint.
+
+Automated tests do not demonstrate learner transfer. Track the remaining observed bilingual opening and route sessions in [curriculum/launch-pilot.md](curriculum/launch-pilot.md).

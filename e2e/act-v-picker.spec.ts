@@ -19,28 +19,27 @@ async function signUp(page: Page, name: string) {
   await page.getByTestId("welcome-continue").click();
 }
 
-test("after Act IV the Job Card offers two equal doors", async ({ page }) => {
+test("after Act II the learner chooses a route and can change it without losing progress", async ({ page }) => {
   await signUp(page, `E2e Door ${Date.now()}`);
-  await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
-
-  // The "pick a door" preset lands at the end of Act IV — the door choice lives
-  // in the Job Card, ahead of Act V's own intro screen, so no act intro here.
   await page.goto("/studio");
-  await page.getByRole("button", { name: /pick a door/ }).click();
-
+  await page.getByRole("button", { name: /After Act II \(pick a direction\)/ }).click();
   const card = jobCard(page);
-  await expect(card.getByText("College, or the front desk.")).toBeVisible({ timeout: 20_000 });
-  await expect(card.getByTestId("job-card-pick-a")).toBeVisible();
-  await expect(card.getByTestId("job-card-pick-b")).toBeVisible();
-
-  await card.getByTestId("job-card-pick-a").click();
-
-  // Choosing a door moves the learner into Act V — its intro screen comes first.
-  const intro = page.getByTestId("act-intro");
-  await expect(intro).toBeVisible({ timeout: 20_000 });
-  await expect(intro).toHaveAttribute("data-act", "act5");
-  await page.getByTestId("act-intro-continue").click();
-  await expect(intro).toHaveCount(0);
-
-  await expect(card.getByText("Find the deadline. Then apply.")).toBeVisible({ timeout: 15_000 });
+  for (const route of ['lead', 'healthcare', 'office', 'college', 'pause']) {
+    await expect(card.getByTestId(`course-route-${route}`)).toBeVisible({timeout:20000});
+  }
+  await card.getByTestId('course-route-office').click();
+  await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', 'act6', {timeout:20000});
+  await page.getByTestId('act-intro-continue').click();
+  await expect(card.getByText('Read the posting. Do you fit?')).toBeVisible();
+  await page.reload();
+  await expect(card.getByText('Read the posting. Do you fit?')).toBeVisible({timeout:20000});
+  await card.getByRole('button',{name:'Change direction'}).click();
+  await card.getByTestId('course-route-healthcare').click();
+  await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act','act5',{timeout:20000});
+  await page.getByTestId('act-intro-continue').click();
+  await card.getByRole('button',{name:'Change direction'}).click();
+  await card.getByTestId('course-route-pause').click();
+  await expect(card.getByText('Core course complete')).toBeVisible({timeout:20000});
+  await page.reload();
+  await expect(card.getByText('Core course complete')).toBeVisible({timeout:20000});
 });

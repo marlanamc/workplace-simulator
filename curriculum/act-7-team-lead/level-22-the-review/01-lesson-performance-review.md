@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 22 — The Review · **Track:** 21 —
 The Review
-**Task key:** `performance-review` · **Status:** not built yet.
+**Task key:** `performance-review` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 21 complete
 
 ## We will learn...
@@ -10,19 +10,19 @@ The Review
   strength, one real area to grow, in a tone that's constructive, not
   harsh or vague.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a short profile of a mock team member (a few things they
       did well this month, one recurring issue) plus a two-part write-up
       form (Strength / Area to Grow) with sentence starters for both.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 22 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on. If you do
       offer it, have 2-3 example phrasings ready (one too vague, one too
       harsh, one "just right") — like Level 2's incident report, this is
       about calibration, not a single correct template.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Read the mock team member's profile.
 2. Write one specific, genuine strength — not generic praise ("good job")
    but something concrete they actually did.

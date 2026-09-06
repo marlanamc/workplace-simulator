@@ -9,6 +9,18 @@ accent color, generous spacing, and a persistent shelf/launcher — like the rea
 Chromebook a learner would actually use, since most workplace tools live inside one browser
 rather than as separate desktop apps.
 
+## First-release implementation (September 2026)
+
+Acts I–II are the shared core. The Job Card then offers **Stay and lead** (III–IV), **Healthcare/front desk** (V Path B), **Office/admin** (VI–VII), **College preparation** (V Path A), or **Stop here for now**. Direction is saved to the signed-in learner and can be changed at the desktop without erasing progress. Skipped tasks receive no credit. Route endings offer other directions as choices.
+
+The runtime contains **37 levels and 51 active tasks**; older folder numbers are editorial labels. `LEVELS` in `src/lib/tracks-content.ts` is authoritative. There are no new levels in this release. Studio can start after Act II or at a later level and seeds only that route’s prerequisites. Studio progress is simulated test setup, not learner assessment.
+
+Saved writing is retrieved for the authenticated learner. Portfolio reflections restore after reload; the copied summary uses the selected language and describes simulated practice. Application examples carry into résumé and interview drafts for editing. Suggested work history is limited to completed simulated roles. Submission failures keep a retryable payload on the learner’s device and report through the Job Card; success is shown only after persistence succeeds. Teacher review remains optional.
+
+Revised practice includes choosing an enrollment document, finding a syllabus deadline, identifying an appointment conflict, accepting the stated offer/start date, transferring fictional reference details into simplified forms, finding the receipted expense total and answering a coworker question, recording a changed meeting assignment, and reporting the correct sheet total and calendar commitment. Multi-person scheduling retains its comparison calendar. Video-call learners can recover by muting again.
+
+Completion demonstrates the bounded decision and tool actions in the scenario. It does not certify employment readiness, independent transfer, legal-form competence, or writing quality. Human learner testing remains required; see [launch pilot protocol](curriculum/launch-pilot.md).
+
 ## The one rule
 
 **The Job Card is the only thing that tells a learner what to do.** Everything else — the

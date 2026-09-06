@@ -19,22 +19,16 @@ async function signUp(page: Page, name: string) {
   await page.getByTestId("welcome-continue").click();
 }
 
-test("after one Act V path the Job Card starts HQ and keeps the other door", async ({ page }) => {
+test("the office preset starts HQ without an elective prerequisite", async ({ page }) => {
   await signUp(page, `E2e Hq ${Date.now()}`);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Welcome to HQ · College/ }).click();
+  await page.getByRole("button", { name: /Welcome to HQ/ }).click();
   await page.waitForURL(/from=studio/, { timeout: 20_000 });
 
-  // A Studio jump into an act's first level lands on the full-page act intro.
-  const intro = page.getByTestId("act-intro");
-  await expect(intro).toBeVisible({ timeout: 20_000 });
-  await page.getByTestId("act-intro-continue").click();
-  await expect(intro).toHaveCount(0);
-
   const card = jobCard(page);
-  await expect(card.getByTestId("job-card-hq-start")).toBeVisible({ timeout: 20_000 });
-  await expect(card.getByTestId("job-card-hq-other")).toBeVisible();
+  await expect(card.getByRole("button", { name: /^Open / })).toBeVisible({ timeout: 20_000 });
+  await expect(card.getByRole("button", {name: "Change direction"})).toBeVisible();
   await expect(card.getByText("Find the current file. Then share it.")).toBeVisible();
 });

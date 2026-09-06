@@ -1,3 +1,4 @@
+import { loadEnvConfig } from "@next/env";
 import { defineConfig, devices } from "@playwright/test";
 
 /**
@@ -8,6 +9,8 @@ import { defineConfig, devices } from "@playwright/test";
  * First time: npx playwright install chromium
  * Run:        npm run test:e2e
  */
+loadEnvConfig(process.cwd());
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 60_000,

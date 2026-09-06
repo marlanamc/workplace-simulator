@@ -2,7 +2,7 @@
 
 **Time:** ~10-12 minutes · **Level:** 4 — Reporting In ·
 **Track:** 5 — Reporting
-**Task key:** `status-report` · **Status:** not built yet.
+**Task key:** `status-report` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Lesson 1 (`make-a-copy`) — the numbers go in *your* copy
 of the weekly status sheet, not Maria's template.
 
@@ -11,7 +11,7 @@ of the weekly status sheet, not Maria's template.
   your own `=SUM(...)` formula instead of trusting one that's already
   there, and send a short status email that cc's a second person.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: the student's copy from Lesson 1 is waiting, with this
       week's numbers already in the rows and a blank total cell. They type
       the formula themselves this time, instead of just checking one that's
@@ -22,7 +22,7 @@ of the weekly status sheet, not Maria's template.
       Level 4) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~10-12 min) — once built
+## Simulator practice (~10-12 min)
 1. Open **Sheets** — your copy from Lesson 1 (`status-week-of-aug-24`),
    not the view-only template.
 2. Click the blank total cell and type `=SUM(` followed by the range of

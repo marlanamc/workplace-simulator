@@ -160,6 +160,8 @@ export const MEETING_SCRIPT: Record<Lang, string[]> = {
     "Alex: I'll call the supplier this morning and get a date.",
     "You: Good. Last, the new hire starts Thursday.",
     "Riley: I'll do the Thursday morning training.",
+    "Riley: Correction — I am away Thursday. Alex will handle the training Friday morning instead.",
+    "Alex: Confirmed. I will train the new hire Friday morning.",
     "You: That covers it. I'll send a summary.",
   ],
   es: [
@@ -170,6 +172,8 @@ export const MEETING_SCRIPT: Record<Lang, string[]> = {
     "Alex: Yo llamo al proveedor esta mañana y consigo una fecha.",
     "Tú: Bien. Por último, la persona nueva empieza el jueves.",
     "Riley: Yo hago la capacitación del jueves por la mañana.",
+    "Riley: Corrección — no estaré el jueves. Alex hará la capacitación el viernes por la mañana.",
+    "Alex: Confirmado. Capacitaré a la persona nueva el viernes por la mañana.",
     "Tú: Con eso está. Voy a enviar un resumen.",
   ],
 };
@@ -180,20 +184,20 @@ export const AGENDA_STARTERS: Record<Lang, string[]> = {
 };
 
 export const NOTE_STARTERS: Record<Lang, string[]> = {
-  en: ["Jordan takes Saturday close.", "Alex calls the supplier this morning.", "Riley trains the new hire Thursday morning."],
-  es: ["Jordan toma el cierre del sábado.", "Alex llama al proveedor esta mañana.", "Riley capacita a la persona nueva el jueves por la mañana."],
+  en: ["Jordan takes Saturday close.", "Alex calls the supplier this morning.", "Training owner and day changed — check the final decision."],
+  es: ["Jordan toma el cierre del sábado.", "Alex llama al proveedor esta mañana.", "Cambió el responsable y el día de capacitación — revisa la decisión final."],
 };
 
 export const FOLLOWUP_STARTERS: Record<Lang, string[]> = {
   en: [
     "Saturday close: Jordan, this Saturday.",
     "Supplier call: Alex, by end of day Monday.",
-    "New hire training: Riley, Thursday morning.",
+    "Here are the final assignments from our huddle.",
   ],
   es: [
     "Cierre del sábado: Jordan, este sábado.",
     "Llamada al proveedor: Alex, antes de que termine el lunes.",
-    "Capacitación de la persona nueva: Riley, el jueves por la mañana.",
+    "Estas son las asignaciones finales de nuestra reunión.",
   ],
 };
 
@@ -293,4 +297,23 @@ export function describeSubmission(input: MeetingMinutesInput, lang: Lang): Subm
       { label: `${c.followupLabel} — ${c.followupSubjectValue}`, value: input.followup },
     ],
   };
+}
+
+export const ACTION_ITEMS = [
+ { key: 'close', label: { en: 'Saturday close', es: 'Cierre del sábado' }, owner: 'Jordan', day: 'sat' },
+ { key: 'supplier', label: { en: 'Supplier call', es: 'Llamada al proveedor' }, owner: 'Alex', day: 'mon' },
+ { key: 'training', label: { en: 'New hire training', es: 'Capacitación de la persona nueva' }, owner: 'Alex', day: 'fri' },
+];
+export const ACTION_DAYS = [
+ { key: 'mon', label: { en: 'Monday', es: 'Lunes' } },
+ { key: 'thu', label: { en: 'Thursday', es: 'Jueves' } },
+ { key: 'fri', label: { en: 'Friday', es: 'Viernes' } },
+ { key: 'sat', label: { en: 'Saturday', es: 'Sábado' } },
+];
+export type ActionCommitments = Record<string, { owner: string; day: string }>;
+export function commitmentsMatchHuddle(values: ActionCommitments): boolean {
+  return ACTION_ITEMS.every((item) => values[item.key]?.owner === item.owner && values[item.key]?.day === item.day);
+}
+export function formatCommitments(values: ActionCommitments, lang: Lang): string {
+ return ACTION_ITEMS.map((item) => `${item.label[lang]}: ${values[item.key]?.owner ?? ''}, ${ACTION_DAYS.find((d) => d.key === values[item.key]?.day)?.label[lang] ?? ''}`).join('\n');
 }

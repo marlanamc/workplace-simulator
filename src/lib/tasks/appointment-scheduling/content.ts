@@ -134,3 +134,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Click the open 11:30 slot.", es: "Haz clic en el hueco de las 11:30." },
   { en: "Send a confirmation that says 11:30.", es: "Envía una confirmación que diga las 11:30." },
 ];
+
+export const CONFLICT_OPTIONS = [
+ { key: 'closed', label: { en: 'The clinic is closed at 10:00', es: 'La clínica está cerrada a las 10:00' } },
+ { key: 'booked', label: { en: '10:00 is already booked for Sam', es: 'Las 10:00 ya están reservadas para Sam' } },
+ { key: 'duration', label: { en: 'The appointment needs two hours', es: 'La cita necesita dos horas' } },
+];
+export function conflictIdentified(key: string): boolean { return key === 'booked'; }

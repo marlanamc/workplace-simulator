@@ -80,7 +80,7 @@ export default function OpsReportPacketTask() {
   };
 
   const sendPacket = () => {
-    if (!confirmed || !noted || !summarySaved) return say(c.needSend);
+    if (!confirmed || !noted || !summarySaved || !summaryPullsBoth(summary)) return say(c.needSend);
     finishIfReady(confirmed, noted, summarySaved, true);
   };
 

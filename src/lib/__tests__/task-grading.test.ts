@@ -476,14 +476,14 @@ describe("slide deck: title, planted number, takeaway, present", () => {
     "Marca lo que falta antes de enviar.",
   ])("accepts a real takeaway: %j", (takeaway) => {
     expect(takeawayIsASentence(takeaway)).toBe(true);
-    expect(slideDeckPasses({ title: "September expenses", takeaway, confirmedTotal: true, presented: true })).toBe(true);
+    expect(slideDeckPasses({ coworkerAnswer: "receipt", title: "September expenses", takeaway, confirmedTotal: true, presented: true })).toBe(true);
   });
 
   it("rejects a missing title, unconfirmed number, fragment, or skipped Present", () => {
-    expect(slideDeckPasses({ title: "", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: true })).toBe(false);
-    expect(slideDeckPasses({ title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: false, presented: true })).toBe(false);
-    expect(slideDeckPasses({ title: "September", takeaway: "ok", confirmedTotal: true, presented: true })).toBe(false);
-    expect(slideDeckPasses({ title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: false })).toBe(false);
+    expect(slideDeckPasses({ coworkerAnswer: "receipt", title: "", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: true })).toBe(false);
+    expect(slideDeckPasses({ coworkerAnswer: "receipt", title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: false, presented: true })).toBe(false);
+    expect(slideDeckPasses({ coworkerAnswer: "receipt", title: "September", takeaway: "ok", confirmedTotal: true, presented: true })).toBe(false);
+    expect(slideDeckPasses({ coworkerAnswer: "receipt", title: "September", takeaway: "Flag missing receipts before you send.", confirmedTotal: true, presented: false })).toBe(false);
   });
 });
 

@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 11 — The Budget · **Track:** 12 —
 The Budget
-**Task key:** `budget-sheet` · **Status:** not built yet.
+**Task key:** `budget-sheet` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 10 complete
 
 ## We will learn...
@@ -10,7 +10,7 @@ The Budget
   formula, and read a basic chart summarizing spending by category —
   the first lesson with both formula logic and a chart, not just a total.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a Sheets budget with a handful of spending categories
       (supplies, labor, etc.), a budgeted amount and an actual amount per
       row, and a status column using an `IF` formula (`=IF(actual>budget,
@@ -22,7 +22,7 @@ The Budget
       Level 11) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Sheets** → the budget tab.
 2. Read the status column — which category is flagged "over"?
 3. Click that cell's formula and read it — see how `IF` is comparing two

@@ -3,7 +3,7 @@ import { WORK_HISTORY } from "@/lib/tasks/job-application/content";
 
 /**
  * "Your Résumé" — the third step of the getting-hired arc. The learner turns
- * the Harborside work history they already have (New Hire → Assistant Manager)
+ * the completed simulated roles recorded for their selected path
  * into a one-page résumé: a short summary, one accomplishment bullet for each
  * of the top two roles, and the skills they've shown. Teacher-check: the app
  * confirms every part is filled; it does not grade the writing.
@@ -39,10 +39,10 @@ export const RESUME_COPY: Record<Lang, {
   en: {
     appName: "Docs — Résumé",
     heading: "Build your résumé",
-    intro: "Your jobs are already listed. Add a summary line, one accomplishment for each of your last two roles, and the skills you've shown.",
+    intro: "Your completed simulated roles are listed. Add a summary line, one accomplishment for each of your last two roles, and the skills you've shown.",
     contactLabel: "Contact",
     summaryLabel: "Summary — one or two sentences",
-    summaryHint: "Who you are and what you're good at. Example: \"Assistant Manager with 3 years at Harborside Cafe. Strong with schedules, budgets, and training.\"",
+    summaryHint: "Describe the skills you practiced here. This résumé is a simulation, not a record of paid employment.",
     experienceLabel: "Experience",
     bulletHint: "One thing you did well in this role. Start with an action word: ran, checked, trained, fixed.",
     skillsLabel: "Skills",
@@ -64,10 +64,10 @@ export const RESUME_COPY: Record<Lang, {
   es: {
     appName: "Docs — Currículum",
     heading: "Arma tu currículum",
-    intro: "Tus trabajos ya están en la lista. Agrega una línea de resumen, un logro por cada uno de tus últimos dos puestos, y las habilidades que has mostrado.",
+    intro: "Tus puestos simulados completados están en la lista. Agrega una línea de resumen, un logro por cada uno de tus últimos dos puestos, y las habilidades que has mostrado.",
     contactLabel: "Contacto",
     summaryLabel: "Resumen — una o dos oraciones",
-    summaryHint: "Quién eres y en qué eres bueno. Ejemplo: \"Asistente de gerencia con 3 años en Harborside Cafe. Fuerte con horarios, presupuestos y capacitación.\"",
+    summaryHint: "Describe las habilidades que practicaste aquí. Este currículum es una simulación, no un historial de empleo real.",
     experienceLabel: "Experiencia",
     bulletHint: "Una cosa que hiciste bien en este puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé.",
     skillsLabel: "Habilidades",
@@ -112,32 +112,22 @@ export function bulletLooksReal(bullet: string): boolean {
 
 export const SUMMARY_STARTERS: Record<Lang, string[]> = {
   en: [
-    "Assistant Manager with three years at Harborside Cafe.",
-    "Strong with schedules, budgets, and training a team.",
+    "I practiced workplace tools in the Harborside simulator.",
+    "I practiced checking schedules and sharing accurate information.",
     "Comfortable with email, calendars, and spreadsheets.",
     "Looking for a full-time office role.",
   ],
   es: [
-    "Asistente de gerencia con tres años en Harborside Cafe.",
-    "Fuerte con horarios, presupuestos y capacitar a un equipo.",
+    "Practiqué herramientas de trabajo en el simulador Harborside.",
+    "Practiqué revisar horarios y compartir información correcta.",
     "Cómodo con correo, calendarios y hojas de cálculo.",
     "Busco un puesto de oficina de tiempo completo.",
   ],
 };
 
 export const BULLET_STARTERS: Record<Lang, string[]> = {
-  en: [
-    "Ran the weekly crew schedule and filled coverage gaps.",
-    "Checked the weekly budget and flagged what was over.",
-    "Trained new hires on the register and opening steps.",
-    "Ran the team huddle and sent a follow-up with owners.",
-  ],
-  es: [
-    "Manejé el horario semanal del equipo y cubrí los huecos.",
-    "Revisé el presupuesto semanal y marqué lo que se pasó.",
-    "Capacité a nuevos empleados en la caja y en la apertura.",
-    "Dirigí la reunión del equipo y envié un seguimiento con responsables.",
-  ],
+  en: ['Found a schedule conflict and requested a swap in the simulator.', 'Entered figures and reported a spreadsheet total.', 'Shared a current file with view-only access.', 'Sent a clear message to a simulated coworker.'],
+  es: ['Encontré un conflicto de horario y pedí un cambio en el simulador.', 'Ingresé cifras y reporté el total de una hoja de cálculo.', 'Compartí un archivo actual con acceso de solo lectura.', 'Envié un mensaje claro a un compañero simulado.'],
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -181,6 +171,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 export function describeSubmission(
   fields: { summary: string; bullets: string[]; skills: string[] },
   lang: Lang,
+  roles = BULLET_ROLES,
 ): SubmissionContent {
   const c = RESUME_COPY[lang];
   const skillText = SKILL_CHOICES.filter((s) => fields.skills.includes(s.key))
@@ -190,7 +181,7 @@ export function describeSubmission(
     lang,
     fields: [
       { label: c.summaryLabel, value: fields.summary },
-      ...BULLET_ROLES.map((role, i) => ({
+      ...roles.map((role, i) => ({
         label: role.title[lang],
         value: fields.bullets[i] ?? "",
       })),

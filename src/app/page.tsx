@@ -1,6 +1,7 @@
+import { courseRouteFromBadges } from "@/lib/course-route";
 import { redirect } from "next/navigation";
 import { getSessionLearnerId } from "@/lib/auth";
-import { getBadges, getCompletions, getLearnerById, getSkillRungs, getUnseenFeedback } from "@/lib/db/queries";
+import { getBadges, getCompletions, getLearnerById, getSkillRungs, getUnseenFeedback, getLearnerSubmissions } from "@/lib/db/queries";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { SubmissionContent } from "@/lib/task-types";
 import type { Rung, RungMap } from "@/lib/release-ladder";
@@ -37,14 +38,19 @@ export default async function DesktopPage({
   const taskParam = Array.isArray(params.task) ? params.task[0] : params.task;
   const fromParam = Array.isArray(params.from) ? params.from[0] : params.from;
 
-  // 2. Resilience: settle each load independently — feedback/rungs (or a flaky
-  // completion read) must not 500 the whole desktop. Empty = "nothing yet."
-  const [completionsR, badgesR, feedbackR, rungsR] = await Promise.allSettled([
+  // Load independently so optional feedback/rungs may degrade gracefully.
+  // Required progress and writing must never fall back to a fresh account.
+  const [completionsR, badgesR, feedbackR, rungsR, writingR] = await Promise.allSettled([
     getCompletions(learnerId),
     getBadges(learnerId),
     getUnseenFeedback(learnerId),
     getSkillRungs(learnerId),
+    getLearnerSubmissions(learnerId),
   ]);
+  // Required state must not masquerade as a fresh account when a read fails.
+  for (const result of [completionsR, badgesR, writingR]) {
+    if (result.status === 'rejected') throw new Error('Unable to load saved progress. Please reload.');
+  }
   const completions = settledOrEmpty(completionsR, "getCompletions");
   const badges = settledOrEmpty(badgesR, "getBadges");
   const unseenFeedback = settledOrEmpty(feedbackR, "getUnseenFeedback");
@@ -68,6 +74,10 @@ export default async function DesktopPage({
     completedTaskKeys,
   );
 
+  const initialWriting: Record<string, SubmissionContent> = {};
+  for (const row of settledOrEmpty(writingR, "getLearnerSubmissions")) {
+    if (!initialWriting[row.taskKey]) initialWriting[row.taskKey] = row.content as SubmissionContent;
+  }
   const initialFeedback = unseenFeedback
     .filter((f) => f.teacherNote)
     .map((f) => ({
@@ -83,6 +93,8 @@ export default async function DesktopPage({
       displayName={learner.displayName}
       completedTaskKeys={completedTaskKeys}
       certificateTrackKeys={certificateTrackKeys}
+      initialCourseRoute={courseRouteFromBadges(badgeKeys)}
+      initialWriting={initialWriting}
       initialBridgePath={bridgePathFromBadgeKeys(badgeKeys)}
       initialFeedback={initialFeedback}
       initialRungs={initialRungs}

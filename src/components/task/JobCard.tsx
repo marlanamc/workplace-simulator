@@ -15,6 +15,8 @@ import {
   shouldShowListIntro,
 } from "@/lib/job-card-content";
 import {
+  coreComplete,
+  courseComplete,
   TASK_INFO,
   TASK_LOCATIONS,
   actForLevel,
@@ -23,7 +25,7 @@ import {
   nextTaskInTrack,
   taskKeysForLevel,
 } from "@/lib/tracks-content";
-import { BRIDGE_PATH_FLAG, needsBridgePicker, pathIsComplete } from "@/lib/bridge-path";
+import { COURSE_ROUTES, COURSE_ROUTE_LABELS } from "@/lib/course-route";
 import type { TaskKey } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import { dayLabel } from "@/lib/shift-spine";
@@ -42,6 +44,7 @@ const TONE = { blue: "#0b57d0", green: "#1e8e3e" } as const;
 type Tone = keyof typeof TONE;
 
 interface Script {
+  routeChoices?: boolean;
   badge: string;
   kicker: string;
   line: string;
@@ -73,7 +76,7 @@ interface Script {
  * its own; only its corner.
  */
 export default function JobCard() {
-  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag, bridgePath } =
+  const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag, bridgePath, courseRoute, chooseCourseRoute, routeSaving, saveError, saving, retrySave } =
     useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
   const {
@@ -93,6 +96,7 @@ export default function JobCard() {
   const level = levelForTrack(currentTrack.key);
   const act = actForLevel(level)?.key ?? "act1";
 
+  const [choosingRoute, setChoosingRoute] = useState(false);
   const [corner, setCorner] = useState<Corner>(HOME);
   const [collapsed, setCollapsed] = useState(false);
   const [heardVoice, setHeardVoice] = useState("");
@@ -224,6 +228,28 @@ export default function JobCard() {
       };
     }
 
+    if (saving || routeSaving || saveError) return {
+      badge: saveError ? "!" : "…", kicker: lang === "en" ? "Your progress" : "Tu progreso",
+      line: saveError ? (lang === "en" ? "Your work has not finished saving. Keep this tab open and retry." : "Tu trabajo no terminó de guardarse. Mantén esta pestaña abierta y vuelve a intentar.")
+        : (lang === "en" ? "Saving your work…" : "Guardando tu trabajo…"),
+      tone: "blue", step: -1,
+      primaryLabel: saveError ? (lang === "en" ? "Retry save" : "Intentar guardar de nuevo") : undefined,
+      onPrimary: retrySave,
+    };
+    if (active === null && courseRoute === 'pause' && !choosingRoute && coreComplete(completedTaskKeys)) return {
+      badge: '✓', kicker: lang === 'en' ? 'Core course complete' : 'Curso básico terminado',
+      line: lang === 'en' ? 'You can stop here. Your skills and progress are saved.' : 'Puedes terminar aquí. Tus habilidades y tu progreso están guardados.',
+      tone: 'green', step: -1,
+      primaryLabel: lang === 'en' ? 'Explore another direction' : 'Explorar otro camino', onPrimary: () => setChoosingRoute(true),
+    };
+    if (coreComplete(completedTaskKeys) && (choosingRoute || (active === null && courseComplete(completedTaskKeys, courseRoute)))) {
+      return {
+        badge: "✓", kicker: lang === "en" ? "Your next direction" : "Tu próximo camino",
+        line: lang === "en" ? "You have finished this part. Choose another direction, or stop here with the skills you earned."
+          : "Terminaste esta parte. Elige otro camino o termina aquí con las habilidades que ganaste.",
+        tone: "green", step: -1, routeChoices: true,
+      };
+    }
     // Finished a job. One green header, one button — no done screen, no
     // three-way choice, and the skill badge is banked silently.
     //
@@ -273,42 +299,6 @@ export default function JobCard() {
     // it names. This is what the desktop briefing used to do.
     if (active === null || !step) {
       if (!nextTaskKey) {
-        const picker = needsBridgePicker(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]);
-        if (picker === "choose") {
-          return {
-            badge: "→",
-            kicker: c.pickDoorKicker,
-            line: c.pickDoorLine,
-            tone: "blue",
-            step: 0,
-            primaryLabel: c.pickCollege,
-            onPrimary: () => {
-              setStoryFlag(BRIDGE_PATH_FLAG, "a");
-              openApp("browser");
-            },
-            secondaryLabel: c.pickFrontDesk,
-            onSecondary: () => {
-              setStoryFlag(BRIDGE_PATH_FLAG, "b");
-              openApp("browser");
-            },
-            equalPair: true,
-          };
-        }
-        if (picker === "other") {
-          const offerA = !pathIsComplete("a", completedTaskKeys);
-          return {
-            badge: "→",
-            kicker: c.otherDoorKicker,
-            line: c.otherDoorLine,
-            tone: "blue",
-            step: 4,
-            primaryLabel: offerA ? c.tryCollege : c.tryFrontDesk,
-            onPrimary: () => {
-              setStoryFlag(BRIDGE_PATH_FLAG, offerA ? "a" : "b");
-              openApp("browser");
-            },
-          };
-        }
         return { badge: "✓", kicker: c.dayDoneKicker, line: c.allDoneLine, tone: "green", step: 4 };
       }
       const location = TASK_LOCATIONS[nextTaskKey];
@@ -317,11 +307,6 @@ export default function JobCard() {
       if (!location) {
         return { badge, kicker, line: c.comingSoonLine, tone: "blue", step: 0 };
       }
-      const otherDoor =
-        nextTaskKey === "office-drive"
-          ? needsBridgePicker(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG])
-          : null;
-      const offerA = !pathIsComplete("a", completedTaskKeys);
       return {
         badge,
         kicker,
@@ -331,16 +316,7 @@ export default function JobCard() {
         primaryLabel: HANDOFF_CTA[nextTaskKey]?.[lang] ?? location.ctaLabel,
         onPrimary: () =>
           openApp(location.appKey, { tab: location.tab, section: location.section }),
-        primaryTestId: nextTaskKey === "office-drive" ? "job-card-hq-start" : undefined,
-        secondaryLabel: otherDoor === "other" ? (offerA ? c.tryCollege : c.tryFrontDesk) : undefined,
-        onSecondary:
-          otherDoor === "other"
-            ? () => {
-                setStoryFlag(BRIDGE_PATH_FLAG, offerA ? "a" : "b");
-                openApp("browser");
-              }
-            : undefined,
-        secondaryTestId: otherDoor === "other" ? "job-card-hq-other" : undefined,
+
       };
     }
 
@@ -559,6 +535,23 @@ export default function JobCard() {
           </div>
         )}
 
+        {script.routeChoices && (
+          <div className="mt-3 grid gap-2">
+            {COURSE_ROUTES.map((route) => (
+              <button key={route} type="button" data-testid={`course-route-${route}`}
+                disabled={routeSaving}
+                className="min-h-11 rounded-xl border border-[#dadce0] px-3 py-2 text-left text-[15px] font-medium hover:bg-[#e8f0fe] disabled:opacity-50"
+                onClick={async () => { await chooseCourseRoute(route); setChoosingRoute(false); }}>
+                {COURSE_ROUTE_LABELS[route][lang]}
+              </button>
+            ))}
+          </div>
+        )}
+        {active === null && coreComplete(completedTaskKeys) && !script.routeChoices && !saving && !saveError && (
+          <button type="button" className="mt-2 min-h-11 text-[14px] text-[#0b57d0]" onClick={() => setChoosingRoute(true)}>
+            {lang === "en" ? "Change direction" : "Cambiar de camino"}
+          </button>
+        )}
         {script.primaryLabel && (
           <button
             type="button"

@@ -117,21 +117,6 @@ export default function VideoCallTask() {
           youLabel={c.you}
           chatPlaceholder={c.chatPlaceholder}
           sendLabel={c.send}
-          scenario={
-            phase === "room" ? (
-              unmuted ? (
-                <div className="mx-4 mt-1 rounded-lg bg-[#DE382C]/20 px-3 py-2 text-[13px] text-[#ffd6d2]">
-                  <p className="m-0 font-medium">{c.unmutedBannerTitle}</p>
-                  <p className="m-0 mt-1 text-[#f0b8b3]">{c.unmutedBannerBody}</p>
-                </div>
-              ) : (
-                <div className="mx-4 mt-1 rounded-lg bg-[#2D8CFF]/15 px-3 py-2 text-[13px] text-[#d6e8ff]">
-                  <p className="m-0 font-medium">{c.latePrompt}</p>
-                  <p className="m-0 mt-1 text-[#bdbdbd]">{c.lateHint}</p>
-                </div>
-              )
-            ) : null
-          }
           onJoin={() => {
             setJoinedMuted(muted);
             if (!muted) {
@@ -141,14 +126,14 @@ export default function VideoCallTask() {
             setPhase("room");
           }}
           onToggleMute={() => {
-            setMuted((v) => {
-              const nextMuted = !v;
-              if (!nextMuted) {
-                setUnmuted(true);
-                say(c.unmuteHint);
-              }
-              return nextMuted;
-            });
+            const nextMuted = !muted;
+            setMuted(nextMuted);
+            setUnmuted(!nextMuted);
+            if (!nextMuted) say(c.unmuteHint);
+            if (nextMuted && phase === "room") {
+              setJoinedMuted(true);
+              finishIfReady({ joinedMuted: true, toggledCamera, sentChat, unmuted: false });
+            }
           }}
           onToggleCamera={() => {
             setCameraOn((v) => !v);

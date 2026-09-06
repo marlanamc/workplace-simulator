@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 9 — Under Pressure · **Track:** 10 —
 Under Pressure
-**Task key:** `priority-call` · **Status:** not built yet. This is the
+**Task key:** `priority-call` · **Status:** implemented; learner pilot pending. This is the
 Act III capstone — finishing it is what earns the promotion into Assistant
 Manager.
 **Prerequisite:** Level 8 complete
@@ -12,7 +12,7 @@ Manager.
   attention at once — a customer complaint, a shift that's short-staffed,
   and a scheduling conflict — the way an actual shift supervisor has to.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: on opening the Browser, three things are already
       waiting — an unhappy-customer email in Mail, a "we're short a
       person tonight" alert tied to the team schedule (Level 6's tool),
@@ -25,7 +25,7 @@ Manager.
       Level 9) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open the **Browser** — notice all three things needing attention.
 2. Decide what to handle first and say why, in one sentence, before
    starting (a short "what's most urgent and why" prompt captures this).

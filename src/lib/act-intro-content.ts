@@ -126,8 +126,8 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
       es: `Camino A: ${CAST.marcus.name}, un asesor universitario. Camino B: ${CAST.thuy.name}, una supervisora de recepción.`,
     },
     bridge: {
-      en: "One path is about getting ready for college. The other is a front desk at a health clinic. You choose after this screen.",
-      es: "Un camino es prepararte para la universidad. El otro es una recepción en una clínica de salud. Eliges después de esta pantalla.",
+      en: "One path is about getting ready for college. The other is a front desk at a health clinic. Your chosen path opens next.",
+      es: "Un camino es prepararte para la universidad. El otro es una recepción en una clínica de salud. Tu camino elegido se abre a continuación.",
     },
     skillsTitle: { en: "What each path builds:", es: "Lo que construye cada camino:" },
     skills: [
@@ -149,8 +149,8 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
     },
     manager: managerLine("anita"),
     bridge: {
-      en: "You've earned this with your cafe work. Once you're hired, the tools are ones you know — Drive, Calendar, Sheets — used at office scale.",
-      es: "Te lo ganaste con tu trabajo en el café. Cuando te contraten, las herramientas son las que conoces — Drive, Calendario, Sheets — a escala de oficina.",
+      en: "You can build on your simulated cafe practice. Once you're hired, the tools are ones you know — Drive, Calendar, Sheets — used at office scale.",
+      es: "Puedes aprovechar tu práctica en el café simulado. Cuando te contraten, las herramientas son las que conoces — Drive, Calendario, Sheets — a escala de oficina.",
     },
     skillsTitle: NEW_SKILLS_TITLE,
     skills: [

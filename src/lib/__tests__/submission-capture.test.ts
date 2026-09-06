@@ -74,7 +74,7 @@ const CAPTURED: Record<string, ((lang: Lang) => SubmissionContent) | "inline-in-
     opsReportPacket({ summary: "Sales were 4820 dollars this week and the Monday open needs coverage.", message: "Weekly report attached, see the summary." }, lang),
   "portfolio-reflection": (lang) =>
     portfolioReflection(["I learned to send a link", "The review was hard", "I feel ready", "Next I want a job"], lang),
-  "slide-deck": (lang) => slideDeck({ title: "Q3 travel spend", takeaway: "We came in under budget" }, lang),
+  "slide-deck": (lang) => slideDeck({ title: "Q3 travel spend", takeaway: "We came in under budget", coworkerAnswer: "We need the missing receipt" }, lang),
   coursework: (lang) => coursework("Thank you for telling me. I will look into this today and follow up.", lang),
   research: (lang) => research("database", "It is from the library database and names its authors.", lang),
   "team-meeting": (lang) => teamMeeting({ title: "Schedule huddle", agenda: "Coverage gap\nTime off requests" }, lang),

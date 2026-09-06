@@ -10,7 +10,7 @@ import {
   isTrackComplete,
   levelForTrack,
   isLevelComplete,
-  nextLevel,
+  nextCourseLevel,
   taskKeysForLevel,
   type Track,
   type Level,
@@ -19,14 +19,16 @@ import {
   completeTask,
   awardCertificate,
   persistBridgePath,
+  persistCourseRoute,
   recordWritingSubmission,
   markMyFeedbackSeen,
   restartLevelProgress,
   syncSkillRun,
   type Confidence,
 } from "@/app/actions";
+import { routeBridgePath, type CourseRoute } from "@/lib/course-route";
 import type { SubmissionContent, TeacherFeedback } from "@/lib/task-types";
-import { BRIDGE_PATH_FLAG, inferBridgePath, type BridgePath } from "@/lib/bridge-path";
+import { BRIDGE_PATH_FLAG, type BridgePath } from "@/lib/bridge-path";
 import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
 import { applyGapDecay, recordCleanRun, recordMissedRun, rungFor, type Rung, type RungMap } from "@/lib/release-ladder";
 import { DEVICE_KEY, learnerKey, storage } from "@/lib/storage";
@@ -51,7 +53,16 @@ const loadRungMap = (learnerId: string): RungMap =>
 const saveRungMap = (learnerId: string, map: RungMap) =>
   storage.setJSON(learnerKey.rungs(learnerId), map);
 
+type PendingSave = { taskKey: TaskKey; badgeKey?: string; submission?: SubmissionContent; confidence?: Confidence };
 interface ProgressValue {
+  courseRoute: CourseRoute | null;
+  chooseCourseRoute: (route: CourseRoute) => Promise<void>;
+  routeSaving: boolean;
+  saveError: boolean;
+  saving: boolean;
+  retrySave: () => void;
+  writing: Record<string, SubmissionContent>;
+
   learnerId: string;
   displayName: string;
   completedTaskKeys: TaskKey[];
@@ -98,6 +109,8 @@ export function ProgressProvider({
   initialCompletedTaskKeys,
   initialCertificateTrackKeys,
   initialBridgePath,
+  initialCourseRoute = null,
+  initialWriting = {},
   initialFeedback = [],
   initialRungs = {},
   children,
@@ -107,17 +120,44 @@ export function ProgressProvider({
   initialCompletedTaskKeys: TaskKey[];
   initialCertificateTrackKeys: string[];
   initialBridgePath?: BridgePath | null;
+  initialCourseRoute?: CourseRoute | null;
+  initialWriting?: Record<string, SubmissionContent>;
   initialFeedback?: TeacherFeedback[];
   /** Server-persisted skill rungs. Authoritative over the localStorage cache on load. */
   initialRungs?: RungMap;
   children: ReactNode;
 }) {
+  const [courseRoute, setCourseRoute] = useState<CourseRoute | null>(initialCourseRoute);
+  const [routeSaving, setRouteSaving] = useState(false);
+  const [routeError, setRouteError] = useState(false);
+  const routeAttempt = useRef<CourseRoute | null>(null);
+  const [writing, setWriting] = useState(initialWriting);
+  const queueKey = `workplace:pending-saves:${learnerId}`;
+  const [pending, setPending] = useState<PendingSave[]>(() => storage.getJSON<PendingSave[]>(queueKey, []));
+  const pendingRef = useRef(pending);
+  const [savingCount, setSavingCount] = useState(0);
+  const inFlight = useRef(new Set<TaskKey>());
   const [completedTaskKeys, setCompletedTaskKeys] = useState<TaskKey[]>(initialCompletedTaskKeys);
+  const completedRef = useRef(initialCompletedTaskKeys);
   const [certificateTrackKeys, setCertificateTrackKeys] = useState<string[]>(initialCertificateTrackKeys);
   const [justEarnedPoints, setJustEarnedPoints] = useState<number | null>(null);
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
   const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(null);
   const [progressEpoch, setProgressEpoch] = useState(0);
+  const chooseCourseRoute = useCallback(async (route: CourseRoute) => {
+    routeAttempt.current = route;
+    setRouteSaving(true);
+    setRouteError(false);
+    try {
+      const result = await persistCourseRoute(route);
+      if (!result.ok) throw new Error('Route not saved');
+      setCourseRoute(route);
+      setProgressEpoch((n) => n + 1);
+      setCelebrateLevel(null);
+      setCelebrateTrack(null);
+    } catch { setRouteError(true); }
+    finally { setRouteSaving(false); }
+  }, []);
   // 1. Hydration: story flags are localStorage-only. Reading them in a useState
   // initializer makes SSR paint Welcome/ActIntro while the client skips them.
   // Same pattern as LoginForm — server snapshot is empty (+ bridge path from
@@ -168,8 +208,10 @@ export function ProgressProvider({
     if (state) syncSkillRun(skillKey, state);
   }, [learnerId]);
 
-  const [lang, setLangState] = useState<Lang>(() => loadStoredLang());
-  const [bigText, setBigTextState] = useState<boolean>(() => loadStoredFlag(DEVICE_KEY.bigText));
+  const [langOverride, setLangState] = useState<Lang | null>(null);
+  const lang = langOverride ?? (isClient ? loadStoredLang() : "en");
+  const [bigTextOverride, setBigTextState] = useState<boolean | null>(null);
+  const bigText = bigTextOverride ?? (isClient ? loadStoredFlag(DEVICE_KEY.bigText) : false);
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
   const [pendingFeedback, setPendingFeedback] = useState<TeacherFeedback[]>(initialFeedback);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -210,32 +252,58 @@ export function ProgressProvider({
   // no server action or setState nested inside a setCompletedTaskKeys(prev =>)
   // callback, which would double-fire under StrictMode. The `includes` guard
   // makes a repeat call a no-op.
-  const markComplete = useCallback((
+  const markComplete = useCallback(async (
     taskKey: TaskKey,
     badgeKey?: string,
     submission?: SubmissionContent,
     confidence?: Confidence,
   ) => {
-    // The learner's written work is saved on every submit of a later-act task,
-    // even a repeat one (a revision after a teacher note), so this runs before
-    // the `includes` guard below.
-    if (submission) recordWritingSubmission(taskKey, submission);
+    if (inFlight.current.has(taskKey)) return;
+    const item = { taskKey, badgeKey, submission, confidence };
+    pendingRef.current = [...pendingRef.current.filter((p) => p.taskKey !== taskKey), item];
+    setPending(pendingRef.current);
+    storage.setJSON(queueKey, pendingRef.current);
+    inFlight.current.add(taskKey);
+    setSavingCount((n) => n + 1);
+    try {
+      if (submission) {
+        const saved = await recordWritingSubmission(taskKey, submission);
+        if (!saved.ok) throw new Error('Writing not saved');
+        setWriting((prev) => ({ ...prev, [taskKey]: submission }));
+      }
+      const saved = await completeTask(taskKey, badgeKey, confidence);
+      if (!saved.ok) throw new Error('Completion not saved');
+      const awardedTrack = findTrackForTask(taskKey);
+      if (awardedTrack && isTrackComplete(awardedTrack, [...completedRef.current, taskKey])) {
+        const awarded = await awardCertificate(awardedTrack.key);
+        if (!awarded.ok) throw new Error('Award not saved');
+      }
+      pendingRef.current = pendingRef.current.filter((p) => p.taskKey !== taskKey);
+      setPending(pendingRef.current);
+      storage.setJSON(queueKey, pendingRef.current);
+    } catch {
+      return; // Retain the payload and expose Retry in the Job Card, including after reload.
+    } finally {
+      inFlight.current.delete(taskKey);
+      setSavingCount((n) => n - 1);
+    }
 
-    if (completedTaskKeys.includes(taskKey)) return;
-    const next = [...completedTaskKeys, taskKey];
+    if (completedRef.current.includes(taskKey)) return;
+    const next = [...completedRef.current, taskKey];
+    completedRef.current = next;
     setCompletedTaskKeys(next);
 
     const track = findTrackForTask(taskKey);
     if (track && isTrackComplete(track, next)) {
       setCertificateTrackKeys((c) => (c.includes(track.key) ? c : [...c, track.key]));
-      awardCertificate(track.key);
+
 
       // A level-up moment (when this was the level's last track) takes
       // priority over the smaller per-track celebration - only one modal
       // shows for a task completion that finishes both at once.
       const level = levelForTrack(track.key);
-      const path = inferBridgePath(next, storyFlags[BRIDGE_PATH_FLAG]);
-      const upcoming = isLevelComplete(level, next, path) ? nextLevel(level) : null;
+      const path = routeBridgePath(courseRoute);
+      const upcoming = isLevelComplete(level, next, path) ? nextCourseLevel(level, courseRoute) : null;
       if (upcoming?.levelUp) setCelebrateLevel(upcoming);
       else setCelebrateTrack(track);
     }
@@ -246,19 +314,20 @@ export function ProgressProvider({
     if (pointsTimer.current) clearTimeout(pointsTimer.current);
     pointsTimer.current = setTimeout(() => setJustEarnedPoints(null), 2200);
 
-    completeTask(taskKey, badgeKey, confidence);
+
 
     // Every task feeds the release ladder. Tasks that ran `useSkillGuidance`
     // already reported their own clean/missed run; the rest get an automatic
     // clean run here (the ladder "only loosens, never punishes").
     if (!reportedSkillsRef.current.has(taskKey)) applySkillRun(taskKey, true);
-  }, [completedTaskKeys, storyFlags, applySkillRun]);
+  }, [courseRoute, applySkillRun, queueKey]);
 
   const restartLevel = useCallback((level: Level) => {
-    const path = inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]);
+    const path = routeBridgePath(courseRoute);
     const taskKeys = new Set(taskKeysForLevel(level, path));
     const trackKeys = new Set(path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys);
-    setCompletedTaskKeys((prev) => prev.filter((k) => !taskKeys.has(k)));
+    completedRef.current = completedRef.current.filter((k) => !taskKeys.has(k));
+    setCompletedTaskKeys(completedRef.current);
     setCertificateTrackKeys((prev) => prev.filter((k) => !trackKeys.has(k)));
 
     const clearedFlags = { ...storyFlags };
@@ -271,7 +340,7 @@ export function ProgressProvider({
     setMariaNoteTaskKey(null);
     setProgressEpoch((n) => n + 1);
     restartLevelProgress(level.key);
-  }, [learnerId, storyFlags, completedTaskKeys]);
+  }, [learnerId, storyFlags, courseRoute]);
 
   const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
 
@@ -288,6 +357,14 @@ export function ProgressProvider({
   // a brand-new value and re-renders all of them.
   const value = useMemo<ProgressValue>(
     () => ({
+      courseRoute, chooseCourseRoute, routeSaving,
+      saveError: isClient && (routeError || (pending.length > 0 && savingCount === 0)),
+      saving: savingCount > 0,
+      writing,
+      retrySave: async () => {
+        if (routeError && routeAttempt.current) void chooseCourseRoute(routeAttempt.current);
+        for (const item of [...pendingRef.current]) await markComplete(item.taskKey, item.badgeKey, item.submission, item.confidence);
+      },
       learnerId,
       displayName,
       completedTaskKeys,
@@ -296,8 +373,8 @@ export function ProgressProvider({
       certificateTrackKeys,
       celebrateTrack,
       celebrateLevel,
-      currentTrack: activeTrack(completedTaskKeys, inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG])),
-      bridgePath: inferBridgePath(completedTaskKeys, storyFlags[BRIDGE_PATH_FLAG]),
+      currentTrack: activeTrack(completedTaskKeys, routeBridgePath(courseRoute), courseRoute),
+      bridgePath: routeBridgePath(courseRoute),
       progressEpoch,
       storyFlags,
       setStoryFlag,
@@ -318,6 +395,7 @@ export function ProgressProvider({
       dismissFeedback,
     }),
     [
+      courseRoute, chooseCourseRoute, routeSaving, routeError, pending, savingCount, writing, isClient,
       learnerId,
       displayName,
       completedTaskKeys,

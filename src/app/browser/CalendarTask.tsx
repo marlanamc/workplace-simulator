@@ -154,7 +154,7 @@ function HqFindATime() {
                     return (
                       <td key={s.key} className="border border-[#dadce0] px-1 py-1.5 text-center">
                         {busy ? (
-                          <span className="inline-block h-6 w-full rounded-sm" style={{ background: p.color, opacity: 0.85 }} />
+                          <span className="inline-block h-6 w-full rounded-sm text-white" style={{ background: p.color }}>{c.busy}</span>
                         ) : (
                           <span className="text-[11px] text-[#137333]">{c.free}</span>
                         )}

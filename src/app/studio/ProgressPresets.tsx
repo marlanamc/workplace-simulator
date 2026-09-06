@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { LEVELS, TRACKS } from "@/lib/tracks-content";
+import { LEVELS } from "@/lib/tracks-content";
 import { dayTitle } from "@/lib/shift-spine";
-import { isAct6Task, isAct7Task, type BridgePath } from "@/lib/bridge-path";
+import { type BridgePath } from "@/lib/bridge-path";
 import { jumpToPreset } from "./jump-to-preset";
 
 /**
@@ -44,22 +44,17 @@ export default function ProgressPresets({ learnerId }: { learnerId: string }) {
         </button>
         {LEVELS.slice(1).map((level) => {
           const title = dayTitle(level, "en");
-          // HQ (Act VI) and Team Lead (Act VII) both sit on a chosen bridge
-          // path, so their presets carry the :a/:b door the way Act V's do.
-          const isHqOrAct7 = level.trackKeys.some((tk) =>
-            TRACKS.find((t) => t.key === tk)?.taskKeys.some((k) => isAct6Task(k) || isAct7Task(k)),
-          );
-          if (level.pathTracks || isHqOrAct7) {
+          if (level.pathTracks) {
             const pickerKey = level.pathTracks && level.key === "level16" ? level.key : null;
             return (
               <span key={level.key} className="contents">
                 {pickerKey ? (
                   <button
-                    onClick={() => apply(pickerKey)}
+                    onClick={() => apply("core-complete")}
                     disabled={busyKey !== null}
                     className={`${pill} bg-white/6 text-white/85 hover:bg-white/15`}
                   >
-                    {busyKey === pickerKey ? "…" : `Start of ${title} (pick a door)`}
+                    {busyKey === pickerKey ? "…" : "After Act II (pick a direction)"}
                   </button>
                 ) : null}
                 <button

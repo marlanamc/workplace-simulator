@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   APPOINTMENT_COPY,
+  CONFLICT_OPTIONS,
+  conflictIdentified,
   SLOTS,
   OPEN_SLOT,
   STARTERS as APPT_STARTERS,
@@ -87,6 +89,7 @@ export default function FrontDeskTask() {
 function ScheduleDesk() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("appointment-scheduling"));
+  const [conflict, setConflict] = useState("");
   const [slot, setSlot] = useState<string | null>(null);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [body, setBody] = useState("");
@@ -102,6 +105,7 @@ function ScheduleDesk() {
   };
 
   const tryOffer = () => {
+    if (!conflictIdentified(conflict)) return say(lang === "en" ? "Check the requested 10:00 appointment. Why can’t Maya take it?" : "Revisa la cita solicitada de las 10:00. ¿Por qué Maya no puede tomarla?");
     if (slot !== OPEN_SLOT) return say(c.needSlot);
     setCompose(true);
   };
@@ -116,6 +120,7 @@ function ScheduleDesk() {
   const restart = () => {
     setDone(false);
     setSlot(null);
+    setConflict("");
     setChecked(new Set());
     setBody("");
     setCompose(false);
@@ -140,7 +145,12 @@ function ScheduleDesk() {
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto flex max-w-[640px] flex-col gap-4">
             <h2 className="text-[20px] font-medium">{c.heading}</h2>
-            <p className="rounded-xl border border-[#dadce0] bg-white px-4 py-3 text-[15px] leading-relaxed">{c.request}</p>
+            <p className="rounded-xl border border-[#dadce0] bg-white px-4 py-3 text-[15px] leading-relaxed">{c.request}</p><label className="my-3 block text-[14px]">{lang === "en" ? "Why is the requested time unavailable?" : "¿Por qué no está disponible la hora solicitada?"}
+              <select value={conflict} onChange={(e) => setConflict(e.target.value)} className="mt-2 block min-h-11 w-full rounded border p-2">
+                <option value="">{lang === "en" ? "Choose a reason" : "Elige una razón"}</option>
+                {CONFLICT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label[lang]}</option>)}
+              </select>
+            </label>
             <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white">
               {SLOTS.map((s) => {
                 const selected = slot === s.time;

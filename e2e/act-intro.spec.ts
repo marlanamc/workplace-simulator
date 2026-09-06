@@ -66,7 +66,7 @@ test("Act VII intro: Team Lead role and Anita as manager", async ({ page }) => {
   await signUp(page, `E2e ActIntro7 ${Date.now()}`);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
-  await jumpTo(page, /Run the Meeting · College/);
+  await jumpTo(page, /Run the Meeting/);
 
   const intro = page.getByTestId("act-intro");
   await expect(intro).toBeVisible({ timeout: 20_000 });

@@ -86,7 +86,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Run the Meeting · College/ }).click();
+  await page.getByRole("button", { name: /Run the Meeting/ }).click();
   await page.waitForURL(/from=studio/, { timeout: 20_000 });
 
   // A Studio jump into an act's first level lands on the full-page act intro.
@@ -124,7 +124,11 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await page.getByRole("button", { name: "Write the email" }).click();
   await page
     .getByPlaceholder(/One line per action/)
-    .fill("Saturday close: Jordan, this Saturday. Supplier call: Alex, by end of day Monday. Training: Riley, Thursday morning.");
+    .fill("Saturday close: Jordan, this Saturday. Supplier call: Alex, by end of day Monday. Training: Alex, Friday morning.");
+  for (const [action, owner, day] of [['Saturday close','Jordan','sat'], ['Supplier call','Alex','mon'], ['New hire training','Alex','fri']]) {
+    await page.getByRole('combobox', {name: `${action} — Owner`, exact:true}).selectOption(owner);
+    await page.getByRole('combobox', {name: `${action} — Day`, exact:true}).selectOption(day);
+  }
   await page.getByRole("button", { name: "Send" }).click();
 
   await expect(page.getByText("Follow-up sent", { exact: false }).first()).toBeVisible({ timeout: 20_000 });
@@ -170,7 +174,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await openTask(page, "portfolio-reflection");
   await expect(page.getByRole("heading", { name: "Everything you've done" })).toBeVisible({ timeout: 20_000 });
   // The award list should show earned trophies grouped by act.
-  await expect(page.getByText(/New Hire/).first()).toBeVisible();
+  await expect(page.getByText("Act I", {exact: true})).toBeVisible();
 
   await page.getByRole("button", { name: /look back/ }).click();
   const boxes = page.getByPlaceholder("Your answer…");
@@ -182,4 +186,13 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
 
   await expect(page.getByText("Summary ready", { exact: false }).first()).toBeVisible({ timeout: 20_000 });
   await expect(page.getByText("What I can do now")).toBeVisible();
+  await page.goto('/?task=portfolio-reflection');
+  await expect(page.getByText('What I can do now')).toBeVisible({timeout:20000});
+  await expect(page.getByText('This is a real answer with enough words to count.',{exact:true})).toHaveCount(4);
+  await page.context().grantPermissions(['clipboard-read','clipboard-write']);
+  await page.getByRole('button',{name:'Copy summary to share'}).click();
+  const copied = await page.evaluate(() => navigator.clipboard.readText());
+  expect(copied).toContain('This is a real answer with enough words to count.');
+  expect(copied).toContain('Simulated workplace practice');
+
 });

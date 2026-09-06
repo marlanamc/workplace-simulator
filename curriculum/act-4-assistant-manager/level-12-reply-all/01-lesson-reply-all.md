@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 12 — Reply All · **Track:** 13 —
 Reply All
-**Task key:** `reply-all` · **Status:** not built yet. This is the Act IV
+**Task key:** `reply-all` · **Status:** implemented; learner pilot pending. This is the Act IV
 capstone — finishing it completes the Assistant Manager arc.
 **Prerequisite:** Level 11 complete
 
@@ -12,7 +12,7 @@ capstone — finishing it completes the Assistant Manager arc.
   needs a reply to one person, and edit a too-casual draft into a
   professional one before sending.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: an Mail thread with 4-5 people across two departments
       (the cafe crew and Harborside's HQ ops team), including one message
       that's genuinely FYI-only (no action needed) and one that needs a
@@ -25,7 +25,7 @@ capstone — finishing it completes the Assistant Manager arc.
       Level 12) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Mail** and read the whole thread, top to bottom.
 2. Decide: does the message that needs a response actually need
    **reply-all**, or just a reply to the one person who asked?

@@ -1,13 +1,15 @@
+import { EXPENSE_ROWS } from "@/lib/tasks/expense-report/content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
-/** Planted from the expense-report receipted total. Learners confirm it; they do not invent it. */
-export const PLANTED_TOTAL = 188;
+/** Planted from the expense-report receipted total. The total is derived from receipted rows. */
+export const PLANTED_TOTAL = EXPENSE_ROWS.filter((r) => r.receipt).reduce((sum, r) => sum + r.amount, 0);
 
 export interface SlideDeckInput {
   title: string;
   takeaway: string;
   confirmedTotal: boolean;
   presented: boolean;
+  coworkerAnswer: string;
 }
 
 export function takeawayIsASentence(text: string): boolean {
@@ -20,13 +22,13 @@ export function slideDeckPasses(input: SlideDeckInput): boolean {
     input.title.trim().length >= 2 &&
     takeawayIsASentence(input.takeaway) &&
     input.confirmedTotal &&
-    input.presented
+    input.presented && input.coworkerAnswer === "receipt"
   );
 }
 
 /** What the teacher sees: the slide title and the one-sentence takeaway. */
 export function describeSubmission(
-  input: { title: string; takeaway: string },
+  input: { title: string; takeaway: string; coworkerAnswer?: string },
   lang: Lang,
 ): SubmissionContent {
   const c = SLIDES_COPY[lang];
@@ -35,6 +37,7 @@ export function describeSubmission(
     fields: [
       { label: c.titleLabel, value: input.title },
       { label: c.takeawayLabel, value: input.takeaway },
+      { label: lang === "en" ? "Coworker question" : "Pregunta del compañero", value: input.coworkerAnswer ?? "" },
     ],
   };
 }
@@ -46,8 +49,6 @@ export const SLIDES_COPY: Record<Lang, {
   titleLabel: string;
   titlePlaceholder: string;
   numberKicker: string;
-  numberBody: string;
-  confirm: string;
   takeawayLabel: string;
   takeawayPlaceholder: string;
   next: string;
@@ -72,8 +73,6 @@ export const SLIDES_COPY: Record<Lang, {
     titleLabel: "Title",
     titlePlaceholder: "Give these slides a title…",
     numberKicker: "From the expense report",
-    numberBody: `Receipted total: $${PLANTED_TOTAL}`,
-    confirm: `Yes — the total is $${PLANTED_TOTAL}`,
     takeawayLabel: "Takeaway",
     takeawayPlaceholder: "One sentence the team should remember…",
     next: "Next slide",
@@ -81,7 +80,7 @@ export const SLIDES_COPY: Record<Lang, {
     present: "Present",
     slideLabels: ["Title", "The number", "Takeaway"],
     needTitle: "Put a title on the first slide first.",
-    needConfirm: "Confirm the total that is already there. Do not type a different number.",
+    needConfirm: "Compare the receipt rows and enter their total on slide two.",
     needTakeaway: "Write one full sentence — at least a few words.",
     presenting: "Presenting",
     sentKicker: "Presented",
@@ -98,8 +97,6 @@ export const SLIDES_COPY: Record<Lang, {
     titleLabel: "Título",
     titlePlaceholder: "Ponle un título a estas diapositivas…",
     numberKicker: "Del informe de gastos",
-    numberBody: `Total con recibo: $${PLANTED_TOTAL}`,
-    confirm: `Sí — el total es $${PLANTED_TOTAL}`,
     takeawayLabel: "Idea",
     takeawayPlaceholder: "Una oración que el equipo debe recordar…",
     next: "Siguiente",
@@ -107,7 +104,7 @@ export const SLIDES_COPY: Record<Lang, {
     present: "Presentar",
     slideLabels: ["Título", "El número", "Idea"],
     needTitle: "Pon un título en la primera diapositiva primero.",
-    needConfirm: "Confirma el total que ya está ahí. No escribas otro número.",
+    needConfirm: "Compara las filas con recibo e ingresa su total en la segunda diapositiva.",
     needTakeaway: "Escribe una oración completa — al menos unas palabras.",
     presenting: "Presentando",
     sentKicker: "Presentado",
@@ -124,20 +121,20 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "You need three slides, no more",
       s: [
-        "One slide for the title, one for the number that is already on the slide, one for your takeaway.",
-        "Confirm the $188. Do not add a fourth slide or change the total.",
+        "One slide for the title, one for the expense figure you find in the reference, one for your takeaway.",
+        "Use only expenses with receipts. Enter their total on slide two.",
       ],
-      tip: "Presenting is the last step. The number is already there for you, so you do not have to guess it.",
+      tip: "After presenting, answer Chris’s question using the expense reference.",
     },
   ],
   es: [
     {
       t: "Necesitas tres diapositivas, no más",
       s: [
-        "Una diapositiva para el título, una para el número que ya está en la diapositiva, y una para tu idea.",
-        "Confirma los $188. No agregues una cuarta diapositiva ni cambies el total.",
+        "Una diapositiva para el título, una para el gasto que encuentras en la referencia, y una para tu idea.",
+        "Usa solo los gastos con recibos. Escribe su total en la segunda diapositiva.",
       ],
-      tip: "Presentar es el último paso. El número ya está ahí para ti, así que no tienes que adivinarlo.",
+      tip: "Después de presentar, responde la pregunta de Chris usando la referencia de gastos.",
     },
   ],
 };
@@ -145,6 +142,13 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Title the first slide.", es: "Ponle título a la primera diapositiva." },
-  { en: "Confirm the expense total.", es: "Confirma el total de gastos." },
-  { en: "Write a takeaway. Then present.", es: "Escribe una idea. Luego presenta." },
+  { en: "Find and enter the expense total.", es: "Busca y escribe el total de gastos." },
+  { en: "Write a takeaway. Present and answer Chris.", es: "Escribe una idea. Presenta y responde a Chris." },
+];
+
+export const COWORKER_QUESTION: Localized = { en: 'Chris: Why is the dinner expense excluded from this total?', es: 'Chris: ¿Por qué el gasto de la cena no está incluido en este total?' };
+export const COWORKER_ANSWERS = [
+ { key: 'meal', label: { en: 'Meals never count as expenses.', es: 'Las comidas nunca cuentan como gastos.' } },
+ { key: 'receipt', label: { en: 'Its receipt is missing. We need it before including the expense.', es: 'Falta su recibo. Lo necesitamos antes de incluir el gasto.' } },
+ { key: 'small', label: { en: 'It is too small to report.', es: 'Es demasiado pequeño para reportarlo.' } },
 ];

@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes (whole level) · **Level:** 16 — Finding a Real
 Answer · **Track:** 15 — Front Office / Healthcare Admin (Path B)
-**Task key:** `confidentiality-call` · **Status:** not built yet. This is
+**Task key:** `confidentiality-call` · **Status:** implemented; learner pilot pending. This is
 the last Path B lesson, and closes out Act V either way. See
 `01a-lesson-research.md` for Path A.
 **Prerequisite:** Level 15's Path B lesson (`billing-sheet`)
@@ -12,16 +12,16 @@ the last Path B lesson, and closes out Act V either way. See
   this time the person asking has a plausible-sounding reason, and saying
   no takes more confidence.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a phone-call-style scenario — someone calls claiming to
       be a patient's family member, asking for details over the phone
       without any way to verify who they actually are.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 16 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Read the call scenario — the caller sounds reasonable and a little
    impatient.
 2. Decide what you can and can't share over the phone without verifying

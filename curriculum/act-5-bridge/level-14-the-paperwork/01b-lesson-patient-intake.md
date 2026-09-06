@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes (whole level) · **Level:** 14 — The Paperwork ·
 **Track:** 15 — Front Office / Healthcare Admin (Path B)
-**Task key:** `patient-intake` · **Status:** not built yet. See
+**Task key:** `patient-intake` · **Status:** implemented; learner pilot pending. See
 `01a-lesson-financial-aid.md` for Path A — a student stays on whichever
 path they chose in Level 13.
 **Prerequisite:** Level 13's Path B lesson (`appointment-scheduling`)
@@ -12,16 +12,16 @@ path they chose in Level 13.
   who's allowed to see what — the first real confidentiality/privacy
   decision in the whole program.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a short digital intake form (name, reason for visit, a
       few basic questions) plus a scenario where a coworker who isn't on
       that patient's care team asks to see the form "just to be helpful."
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 14 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open the **Browser** → **Front Desk** tab and process the new patient's
    intake form — check it's complete, and file it correctly.
 2. A coworker message arrives asking to see the form, "just to check

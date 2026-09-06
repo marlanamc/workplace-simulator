@@ -2,23 +2,23 @@
 
 **Time:** ~15-20 minutes · **Level:** 19 — The Expense Report ·
 **Track:** 18 — The Expense Report
-**Task key:** `expense-report` · **Status:** not built yet.
+**Task key:** `expense-report` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 18 complete
 
 ## We will learn...
 - match a few receipts to the right spending category on a simple expense
   report, and catch the one that's missing a receipt before submitting.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a short Sheets-style expense report (a handful of rows —
       supplies, travel, meals) plus a small stack of receipt images/PDFs in
       Drive. One row is missing its matching receipt.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 19 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Sheets** → the expense report.
 2. Open each receipt in **Drive** and match it to the right row and
    category.

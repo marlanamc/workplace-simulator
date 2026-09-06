@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 6 — Shift Supervisor, Scheduling the
 Team · **Track:** 7 — Scheduling the Team
-**Task key:** `team-schedule` · **Status:** not built yet.
+**Task key:** `team-schedule` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 5 complete (this is the promotion into Shift
 Supervisor — the environment refreshes here: new emails, a new week, new
 title)
@@ -11,7 +11,7 @@ title)
 - build a week's shift schedule for the whole crew — not just check your
   own — and resolve a coverage gap before it becomes a problem.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a Sheets-style weekly grid (crew names down the side,
       days across the top) with most shifts already filled in and one day
       left with a gap (nobody scheduled for a shift that needs coverage).
@@ -21,7 +21,7 @@ title)
       Level 6) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Sheets** → the team schedule grid.
 2. Find the day with the coverage gap.
 3. Check who's already scheduled fewer hours that week (a small "hours so

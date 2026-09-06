@@ -23,7 +23,7 @@ import {
 } from "@/lib/tasks/interview-practice/content";
 
 export default function InterviewTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, writing } = useProgress();
   const { browserTabToken } = useWindowManager();
 
   const [done, setDone] = useState(completedTaskKeys.includes("interview-practice"));
@@ -33,7 +33,7 @@ export default function InterviewTask() {
     setDone(completedTaskKeys.includes("interview-practice"));
   }
 
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>(() => Object.fromEntries(QUESTIONS.map((q, i) => [q.key, writing["interview-practice"]?.fields[i]?.value ?? (i === 0 ? writing["resume-build"]?.fields[0]?.value ?? "" : "")])));
   const [askBackKey, setAskBackKey] = useState<string | null>(null);
   const [askBackCustom, setAskBackCustom] = useState("");
   const [help, setHelp] = useState(false);

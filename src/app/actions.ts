@@ -8,16 +8,19 @@ import {
   deleteCompletions,
   deleteBadges,
   getBadges,
+  getLearnerSubmissions,
   getLearnerById,
   getSubmissionOwner,
   markFeedbackSeen,
   recordSubmission,
   replaceProgress,
+  replaceSettingBadge,
   setSubmissionNote,
   upsertSkillRung,
 } from "@/lib/db/queries";
+import { COURSE_ROUTES, COURSE_ROUTE_PREFIX, courseRouteFromBadges, isCourseRoute, routeForLevel, routeBridgePath, type CourseRoute } from "@/lib/course-route";
 import type { SubmissionContent } from "@/lib/db/schema";
-import { LEVELS, TRACKS, taskKeysForLevel, taskKeysBeforeLevel, trackKeysBeforeLevel } from "@/lib/tracks-content";
+import { courseLevels, LEVELS, TRACKS, taskKeysForLevel } from "@/lib/tracks-content";
 import {
   BRIDGE_PATH_BADGES,
   bridgePathBadge,
@@ -68,8 +71,8 @@ export async function syncSkillRun(
 
 /**
  * Saves what the learner wrote in a later-act task (the `TEACHER_CHECK_TASKS` set),
- * so the teacher can read it and suggest changes. Fire-and-forget alongside
- * `completeTask` — never blocks completion.
+ * so the teacher can read it and suggest changes. Completion awaits persistence;
+ * failed saves retain the writing for a learner-controlled retry.
  */
 export async function recordWritingSubmission(taskKey: string, content: SubmissionContent) {
   const learnerId = await getSessionLearnerId();
@@ -120,20 +123,22 @@ export async function setProgressPreset(presetKey: string | "all") {
 
   const { levelKey, path } = presetKey === "all" ? { levelKey: "all" as const, path: undefined } : parsePresetKey(presetKey);
 
-  if (levelKey !== "all" && !LEVELS.some((l) => l.key === levelKey)) {
+  if (levelKey !== "all" && levelKey !== "core-complete" && !LEVELS.some((l) => l.key === levelKey)) {
     return { ok: false as const };
   }
 
-  const taskKeys =
-    levelKey === "all"
-      ? LEVELS.flatMap((l) => taskKeysForLevel(l, null))
-      : taskKeysBeforeLevel(levelKey, path);
-  const trackKeys =
-    levelKey === "all" ? TRACKS.map((t) => t.key) : trackKeysBeforeLevel(levelKey, path);
-
+  const route = routeForLevel(levelKey, path);
+  const selectedPath = routeBridgePath(route);
+  const routeLevels = courseLevels(route);
+  const before = levelKey === "core-complete" ? courseLevels(null) : routeLevels.slice(0, routeLevels.findIndex((l) => l.key === levelKey));
+  const taskKeys = levelKey === "all" ? LEVELS.flatMap((l) => taskKeysForLevel(l, null))
+    : before.flatMap((l) => taskKeysForLevel(l, selectedPath));
+  const trackKeys = levelKey === "all" ? TRACKS.map((t) => t.key)
+    : before.flatMap((l) => selectedPath && l.pathTracks ? [l.pathTracks[selectedPath]] : l.trackKeys);
   const badgeKeys = [
     ...trackKeys.map((k) => `track:${k}`),
-    ...(path ? [bridgePathBadge(path)] : []),
+    ...(selectedPath ? [bridgePathBadge(selectedPath)] : []),
+    ...(route ? [COURSE_ROUTE_PREFIX + route] : []),
   ];
   await replaceProgress(learnerId, taskKeys, badgeKeys);
   return { ok: true as const };
@@ -155,7 +160,9 @@ export async function restartLevelProgress(levelKey: string) {
   const level = LEVELS.find((l) => l.key === levelKey);
   if (!level) return { ok: false as const };
   const badges = await getBadges(learnerId);
-  const path = bridgePathFromBadgeKeys(badges.map((b) => b.badgeKey));
+  const badgeKeys = badges.map((b) => b.badgeKey);
+  const route = courseRouteFromBadges(badgeKeys);
+  const path = route ? routeBridgePath(route) : bridgePathFromBadgeKeys(badgeKeys);
   await deleteCompletions(learnerId, taskKeysForLevel(level, path));
   const tracks = path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys;
   await deleteBadges(
@@ -163,4 +170,20 @@ export async function restartLevelProgress(levelKey: string) {
     tracks.map((k) => `track:${k}`),
   );
   return { ok: true as const };
+}
+
+/** Session-owned route selection: no caller-supplied learner identity. */
+export async function persistCourseRoute(route: CourseRoute) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId || !isCourseRoute(route)) return { ok: false as const };
+  await replaceSettingBadge(learnerId, COURSE_ROUTES.map((r) => COURSE_ROUTE_PREFIX + r), COURSE_ROUTE_PREFIX + route);
+  return { ok: true as const };
+}
+export async function getMyWriting() {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId) throw new Error('Sign in to load your writing');
+  const rows = await getLearnerSubmissions(learnerId);
+  const latest: Record<string, SubmissionContent> = {};
+  for (const row of rows) if (!latest[row.taskKey]) latest[row.taskKey] = row.content as SubmissionContent;
+  return latest;
 }

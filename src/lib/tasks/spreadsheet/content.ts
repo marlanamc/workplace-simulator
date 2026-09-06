@@ -1,3 +1,4 @@
+import { mentionsAmount } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -157,12 +158,7 @@ export const WRONG_ENTRY_HINT: Record<Lang, string> = {
  * Lenient about formatting ($241.50, 241.5, 241) — matches any number in
  * the message within a cent of the real total.
  */
-export function emailMentionsTotal(body: string): boolean {
-  const t = body.trim();
-  if (t.split(/\s+/).filter(Boolean).length < 4) return false;
-  const numbers = t.match(/\$?\d+(?:\.\d{1,2})?/g) ?? [];
-  return numbers.some((n) => Math.abs(parseFloat(n.replace("$", "")) - REAL_TOTAL) < 0.01);
-}
+export function emailMentionsTotal(body: string): boolean { return mentionsAmount(body, REAL_TOTAL); }
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [

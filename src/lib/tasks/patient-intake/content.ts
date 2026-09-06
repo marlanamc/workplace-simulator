@@ -102,7 +102,7 @@ export function declineIsSafe(body: string): boolean {
   if (t.trim().length < 12) return false;
   const shares = /follow-?up|seguimiento|she's here|esta aqu[ií]|why she|por qu[eé] est/.test(t);
   if (shares) return false;
-  return /can'?t|cannot|no puedo|not allowed|no (me )?est[aá] permitido|care team|equipo de cuidado|privacy|privacidad|sorry|perd[oó]n/.test(t);
+  return /can'?t|cannot|no puedo|not allowed|no (me )?est[aá] permitido|care team|equipo de cuidado|privacy|privacidad/.test(t);
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {

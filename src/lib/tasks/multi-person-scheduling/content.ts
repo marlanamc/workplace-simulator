@@ -86,6 +86,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "A slot that works for three people still fails if the fourth is busy.",
         "Invite only the time with no busy bars on anyone's calendar.",
+        "For example, at 10 Chris is busy; at 11 Anita is busy; at 1 Jordan is busy. Compare the remaining columns too.",
       ],
       tip: "If you can see a colored bar, that person cannot come.",
     },
@@ -96,6 +97,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Un horario que sirve para tres sigue fallando si el cuarto está ocupado.",
         "Invita solo la hora sin barras ocupadas en ningún calendario.",
+        "Por ejemplo, a las 10 Chris está ocupado; a las 11 Anita; a la 1 Jordan. Compara también las columnas restantes.",
       ],
       tip: "Si ves una barra de color, esa persona no puede.",
     },

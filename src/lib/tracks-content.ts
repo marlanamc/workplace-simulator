@@ -1,3 +1,4 @@
+import { routeIncludesLevel, routeBridgePath, type CourseRoute } from "./course-route";
 import type { TaskKey } from "./desktop-content";
 import type { Localized } from "./task-types";
 import { TASK_LIST, type PortalSection, type TaskLocation } from "./tasks/registry";
@@ -1239,7 +1240,15 @@ function hasStartedJob(completedTaskKeys: TaskKey[]): boolean {
 }
 
 /** The first track that isn't fully complete yet - where a learner should focus. */
-export function activeTrack(completedTaskKeys: TaskKey[], path?: BridgePath | null): Track {
+export function activeTrack(completedTaskKeys: TaskKey[], path?: BridgePath | null, route?: CourseRoute | null): Track {
+  if (route !== undefined) {
+    const tracks = courseLevels(route).flatMap((l) => {
+      const selected = routeBridgePath(route);
+      return (selected && l.pathTracks ? [l.pathTracks[selected]] : l.trackKeys)
+        .map((key) => TRACKS.find((t) => t.key === key)!);
+    }).filter((t) => t.key !== ORIENTATION_TRACK || !hasStartedJob(completedTaskKeys));
+    return tracks.find((t) => !isTrackComplete(t, completedTaskKeys)) ?? tracks[tracks.length - 1];
+  }
   // People who already have job progress should not be pulled back to Level 0.
   const inferred = path ?? inferBridgePath(completedTaskKeys);
   let tracks = hasStartedJob(completedTaskKeys)
@@ -1322,10 +1331,31 @@ export const TASK_LOCATIONS: Partial<Record<TaskKey, TaskLocation>> = Object.fro
 );
 
 /** The next built task a learner should open, or null if none is ready. */
-export function nextHandoff(completedTaskKeys: TaskKey[], path?: BridgePath | null): TaskHandoff | null {
-  const next = nextTaskInTrack(activeTrack(completedTaskKeys, path), completedTaskKeys);
+export function nextHandoff(completedTaskKeys: TaskKey[], path?: BridgePath | null, route?: CourseRoute | null): TaskHandoff | null {
+  const next = nextTaskInTrack(activeTrack(completedTaskKeys, path, route), completedTaskKeys);
   if (!next) return null;
   const location = TASK_LOCATIONS[next];
   if (!location) return null;
   return { taskKey: next, location };
+}
+
+/** The core plus one chosen route; skipped levels never become completed. */
+export function courseLevels(route: CourseRoute | null): Level[] {
+  return LEVELS.filter((l) => routeIncludesLevel(route, l.key));
+}
+export function coreComplete(done: readonly TaskKey[]): boolean {
+  return courseLevels(null).flatMap((l) => taskKeysForLevel(l)).every((k) => done.includes(k));
+}
+export function courseComplete(done: TaskKey[], route: CourseRoute | null): boolean {
+  return courseLevels(route).every((l) => isLevelComplete(l, done, routeBridgePath(route)));
+}
+export function nextCourseLevel(level: Level, route: CourseRoute | null): Level | null {
+  const levels = courseLevels(route);
+  return levels[levels.findIndex((l) => l.key === level.key) + 1] ?? null;
+}
+export function unlockedCourseLevels(done: TaskKey[], route: CourseRoute | null): Level[] {
+  const levels = courseLevels(route);
+  const path = routeBridgePath(route);
+  const nextIndex = levels.findIndex((l) => !isLevelComplete(l, done, path));
+  return levels.filter((l, i) => nextIndex === -1 || i <= nextIndex || taskKeysForLevel(l, path).some((k) => done.includes(k)));
 }

@@ -95,15 +95,15 @@ export const QUESTIONS: InterviewQuestion[] = [
     },
     starters: {
       en: [
-        "I started at Harborside Cafe as a team member two years ago.",
-        "I worked my way up to assistant manager.",
-        "Now I run schedules, check the budget, and train new hires.",
+        "I started with everyday tasks in the workplace simulator.",
+        "I practiced workplace tools in a simulated cafe.",
+        "I practiced reading schedules, checking totals, and sending clear messages.",
         "I'm looking for a full-time office role where I can keep growing.",
       ],
       es: [
-        "Empecé en Harborside Cafe como miembro del equipo hace dos años.",
-        "Fui subiendo hasta asistente de gerencia.",
-        "Ahora manejo horarios, reviso el presupuesto y capacito a nuevos empleados.",
+        "Empecé con tareas cotidianas en el simulador de trabajo.",
+        "Practiqué herramientas de trabajo en un café simulado.",
+        "Practiqué leer horarios, revisar totales y enviar mensajes claros.",
         "Busco un puesto de oficina de tiempo completo donde pueda seguir creciendo.",
       ],
     },

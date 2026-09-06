@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes (whole level) · **Level:** 15 — Staying On Top of
 It · **Track:** 15 — Front Office / Healthcare Admin (Path B)
-**Task key:** `billing-sheet` · **Status:** not built yet. See
+**Task key:** `billing-sheet` · **Status:** implemented; learner pilot pending. See
 `01a-lesson-coursework.md` for Path A — a student stays on whichever path
 they chose.
 **Prerequisite:** Level 14's Path B lesson (`patient-intake`)
@@ -12,16 +12,16 @@ they chose.
   one that doesn't match — the same "check before trusting it" skill from
   `spreadsheet`/`formula-check`, in a billing context.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a Sheets billing sheet with a handful of visits, each
       with a code and a charge, plus a reference list of what each code
       should cost. One row's charge doesn't match its code.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 15 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Sheets** → the billing sheet.
 2. Compare each row's code and charge against the reference list.
 3. Find the row that doesn't match.

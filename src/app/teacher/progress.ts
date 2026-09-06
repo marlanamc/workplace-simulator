@@ -1,3 +1,4 @@
+import { courseRouteFromBadges, routeBridgePath, routeIncludesLevel } from "@/lib/course-route";
 import { bridgePathFromBadgeKeys, type BridgePath } from "@/lib/bridge-path";
 import type { TaskKey } from "@/lib/desktop-content";
 import { SKILLS } from "@/lib/skills";
@@ -57,12 +58,13 @@ export function studentProgress(
   badgeKeys: string[],
 ): StudentProgress {
   const done = new Set(completedTaskKeys);
-  const path = bridgePathFromBadgeKeys(badgeKeys);
+  const route = courseRouteFromBadges(badgeKeys);
+  const path = routeBridgePath(route) ?? bridgePathFromBadgeKeys(badgeKeys);
 
   let whereActKey: string | null = null;
   let whereLabel = "Just started";
   if (done.size > 0) {
-    const track = activeTrack(Array.from(done) as TaskKey[], path);
+    const track = activeTrack(Array.from(done) as TaskKey[], path, route);
     const level = levelForTrack(track.key);
     const act = actForLevel(level);
     whereActKey = act?.key ?? null;
@@ -74,7 +76,7 @@ export function studentProgress(
   let seenCurrent = false;
 
   const map = ACTS.map((act, i) => {
-    const levels: LevelProgress[] = act.levelKeys.map((levelKey) => {
+    const levels: LevelProgress[] = act.levelKeys.filter((key) => routeIncludesLevel(route, key)).map((levelKey) => {
       const level = LEVELS.find((l) => l.key === levelKey);
       const taskKeys = level ? taskKeysForLevel(level, path) : [];
       return {

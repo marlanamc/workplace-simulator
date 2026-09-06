@@ -1,5 +1,17 @@
 # Ready for the Lead Role — Scope & Sequence
 
+## First-release implementation (September 2026)
+
+Acts I–II are the shared core. The Job Card then offers **Stay and lead** (III–IV), **Healthcare/front desk** (V Path B), **Office/admin** (VI–VII), **College preparation** (V Path A), or **Stop here for now**. Direction is saved to the signed-in learner and can be changed at the desktop without erasing progress. Skipped tasks receive no credit. Route endings offer other directions as choices.
+
+The runtime contains **37 levels and 51 active tasks**; older folder numbers are editorial labels. `LEVELS` in `src/lib/tracks-content.ts` is authoritative. There are no new levels in this release. Studio can start after Act II or at a later level and seeds only that route’s prerequisites. Studio progress is simulated test setup, not learner assessment.
+
+Saved writing is retrieved for the authenticated learner. Portfolio reflections restore after reload; the copied summary uses the selected language and describes simulated practice. Application examples carry into résumé and interview drafts for editing. Suggested work history is limited to completed simulated roles. Submission failures keep a retryable payload on the learner’s device and report through the Job Card; success is shown only after persistence succeeds. Teacher review remains optional.
+
+Revised practice includes choosing an enrollment document, finding a syllabus deadline, identifying an appointment conflict, accepting the stated offer/start date, transferring fictional reference details into simplified forms, finding the receipted expense total and answering a coworker question, recording a changed meeting assignment, and reporting the correct sheet total and calendar commitment. Multi-person scheduling retains its comparison calendar. Video-call learners can recover by muting again.
+
+Completion demonstrates the bounded decision and tool actions in the scenario. It does not certify employment readiness, independent transfer, legal-form competence, or writing quality. Human learner testing remains required; see [launch pilot protocol](launch-pilot.md).
+
 **Goal:** Help busy adult ESOL students get workplace-ready on a Chromebook
 in short sittings (about 20–45 minutes). The cafe story is the shared first
 world because many students work food service now. The *skills* are how a
@@ -13,7 +25,7 @@ This class has three equal goals, not one:
 
 **This is a micro-module program, not a bridge program.** Some students can
 spare 20 minutes a week, not 20 minutes a day. Acts I and II are the shared
-trunk. A student who only finishes Act I should already be more employable.
+trunk. A student who only finishes Act I has practiced useful everyday workplace tasks.
 After Act II they pick a door. Nobody has to finish all later acts. This
 isn't a substitute for a program like Bunker Hill's year-long Transitions
 to College Program. It's a fast, low-stakes on-ramp that can run alongside
@@ -25,8 +37,8 @@ one, or on its own.
 - **Simulator practice.** Practice the skill in the Workplace Simulator app.
   Nothing is real; nothing can be broken; wrong clicks get a friendly nudge, not
   an error. There's no step-by-step wizard inside the app itself — a dismissible
-  **Objectives panel** (🎯 tab, right edge of the screen) tells the student what
-  the current track and task are, and a **Help** button inside the task gives a
+  **Job Card** tells the student what
+  the current track and task are, and the Job Card’s **Help** button gives a
   short on-demand lesson if they get stuck. The apps otherwise look and behave
   like the real thing.
 - **Real-world practice is optional, per level, never a gate** — except
@@ -71,11 +83,11 @@ curriculum, ready to build later.
 |---|---|---|---|---|
 | **I — New Hire** | 1-3 | Shared trunk | Any hourly job | Written & built |
 | **II — Shift Lead tools** | 4-8 | Shared trunk | Lead tools in any industry | Written; 4-6 built, 7-8 not |
-| **III — Shift Supervisor** | 9-12 | Stay and lead | Crew lead in this industry | Written, not built |
-| **IV — Assistant Manager** | 13-15 | Stay and lead | Last stop if this industry is the goal | Written, not built |
-| **V — Bridge (elective)** | 16-19 | Open after Act II | Path A college *or* Path B healthcare / front desk | Written, not built |
-| **VI — Office Administrator** | 20-23 | Office path | Office / admin after Act II | Written, not built |
-| **VII — Team Lead (capstone)** | 24-27 | Office path | Office capstone; stay-and-lead can skip | Written, not built |
+| **III — Shift Supervisor** | 9-12 | Stay and lead | Crew lead in this industry | Implemented; pilot pending |
+| **IV — Assistant Manager** | 13-15 | Stay and lead | Last stop if this industry is the goal | Implemented; pilot pending |
+| **V — Bridge (elective)** | 16-19 | Open after Act II | Path A college *or* Path B healthcare / front desk | Implemented; pilot pending |
+| **VI — Office Administrator** | 20-23 | Office path | Office / admin after Act II | Implemented; pilot pending |
+| **VII — Team Lead (capstone)** | 24-27 | Office path | Office capstone; stay-and-lead can skip | Implemented; pilot pending |
 
 **After Act II, pick a door (do not wait for Assistant Manager):**
 - Stay and lead → Acts III–IV
@@ -524,7 +536,7 @@ The same lesson structure serves both without splitting into separate curricula:
 2. **Watch** — 1-minute teacher demo or short screen-recording, if available
 3. **Simulator practice** (~15-20 min per level) — do the task in the app,
    at least twice if it's quick; the Help button is available the whole
-   time, the Objectives panel shows what track/task is current
+   time, the Job Card shows what track/task is current
 4. **Confidence check-in** — 3 quick self-rating questions ("I could do this at
    work," "I would ask for help if," etc.) — not a graded quiz, alongside the
    points/certificate the app already awarded automatically

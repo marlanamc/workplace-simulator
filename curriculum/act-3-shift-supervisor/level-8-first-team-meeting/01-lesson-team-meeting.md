@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 8 — Your First Team Meeting ·
 **Track:** 9 — Leading a Meeting
-**Task key:** `team-meeting` · **Status:** not built yet.
+**Task key:** `team-meeting` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 7 complete
 
 ## We will learn...
@@ -10,7 +10,7 @@
   and write a short agenda so the meeting has a clear point before it
   starts.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a short prompt (e.g. "the team needs 15 minutes to go over
       next week's schedule before it's finalized") plus Calendar open to an
       empty invite-creation view and a blank one-page agenda doc in Docs.
@@ -20,7 +20,7 @@
       Level 8) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Read the prompt describing why the team needs to meet.
 2. Open **Calendar** and create a new invite — pick a day/time that doesn't
    conflict with anyone's shift (the same conflict-checking skill from

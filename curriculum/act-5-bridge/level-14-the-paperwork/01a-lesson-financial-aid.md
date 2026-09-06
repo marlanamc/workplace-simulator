@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes (whole level) · **Level:** 14 — The Paperwork ·
 **Track:** 14 — Prepping for BHCC (Path A)
-**Task key:** `financial-aid` · **Status:** not built yet — mirrors
+**Task key:** `financial-aid` · **Status:** implemented; learner pilot pending — mirrors
 `paystub`'s shape on purpose (open a real document, answer a "find it"
 check), reusing the PDF Reader. See `01b-lesson-patient-intake.md` for
 Path B (Front Office / Healthcare Admin) — a student stays on whichever
@@ -13,18 +13,18 @@ path they chose in Level 13.
 - find the amount and the accept-by deadline on a financial aid award
   letter — a real document, not a summary of one.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a financial aid award letter PDF (real-looking, like the
       pay stub and safety report already in PDF Reader) reachable from the
       College Portal tab, with a findable award amount and accept-by date.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 14 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on. Have the real
       FAFSA/financial-aid office contact info ready if you do offer it —
       this lesson can surface real needs.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open the **Browser** → **College Portal**, then open the award letter —
    it opens as a real document in **PDF Reader**, the same way a pay stub
    did in Level 2's Lesson 3.

@@ -1,3 +1,4 @@
+import { mentionsAmount } from "@/lib/text-facts";
 import { CAST } from "@/lib/cast";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
@@ -207,9 +208,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 };
 
 
-export function emailMentionsTotal(body: string) {
-  return body.includes(String(STATUS_TOTAL));
-}
+export function emailMentionsTotal(body: string): boolean { return mentionsAmount(body, STATUS_TOTAL); }
 
 /** What the teacher sees: the SUM formula and the status email. */
 export function describeSubmission(

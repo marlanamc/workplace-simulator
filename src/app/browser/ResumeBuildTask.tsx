@@ -1,5 +1,6 @@
 "use client";
 
+import { practicedHistory } from "@/lib/tasks/job-application/content";
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -13,9 +14,8 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import {
   RESUME_COPY,
-  WORK_HISTORY,
-  BULLET_ROLES,
-  SKILL_CHOICES,
+
+  SKILL_CHOICES as ALL_SKILL_CHOICES,
   SUMMARY_STARTERS,
   BULLET_STARTERS,
   LESSONS,
@@ -27,7 +27,7 @@ import {
 } from "@/lib/tasks/resume-build/content";
 
 export default function ResumeBuildTask() {
-  const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
+  const { markComplete, completedTaskKeys, lang, displayName, writing } = useProgress();
   const { browserTabToken } = useWindowManager();
 
   const [done, setDone] = useState(completedTaskKeys.includes("resume-build"));
@@ -37,9 +37,25 @@ export default function ResumeBuildTask() {
     setDone(completedTaskKeys.includes("resume-build"));
   }
 
-  const [summary, setSummary] = useState("");
-  const [bullets, setBullets] = useState<string[]>(BULLET_ROLES.map(() => ""));
-  const [skills, setSkills] = useState<string[]>([]);
+  const WORK_HISTORY = practicedHistory(completedTaskKeys);
+  const BULLET_ROLES = WORK_HISTORY.slice(0, 2);
+  const SKILL_CHOICES = ALL_SKILL_CHOICES.filter((skill) => {
+    if (skill.key === 'budget') return completedTaskKeys.includes('budget-sheet');
+    if (skill.key === 'training') return completedTaskKeys.includes('team-meeting');
+    if (skill.key === 'scheduling') return completedTaskKeys.includes('team-schedule');
+    if (skill.key === 'customer') return completedTaskKeys.includes('priority-call');
+    return true;
+  });
+  const [summary, setSummary] = useState(() => writing['resume-build']?.fields[0]?.value ?? writing['job-application']?.fields.at(-1)?.value ?? '');
+  const [bullets, setBullets] = useState<string[]>(() => {
+    const saved = writing['resume-build'];
+    return BULLET_ROLES.map((role) => saved?.fields.find((field) => field.label === role.title[saved.lang])?.value ?? '');
+  });
+  const [skills, setSkills] = useState<string[]>(() => {
+    const saved = writing['resume-build'];
+    const labels = saved?.fields.at(-1)?.value.split(', ') ?? [];
+    return ALL_SKILL_CHOICES.filter((skill) => saved && labels.includes(skill.label[saved.lang])).map((skill) => skill.key);
+  });
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
 
@@ -58,7 +74,7 @@ export default function ResumeBuildTask() {
     if (!bulletsReady) return say(c.needBullets);
     if (skills.length < 3) return say(c.needSkills);
     setDone(true);
-    markComplete("resume-build", "build_resume", describeSubmission({ summary, bullets, skills }, lang));
+    markComplete("resume-build", "build_resume", describeSubmission({ summary, bullets, skills }, lang, BULLET_ROLES));
   };
 
   const restart = () => {

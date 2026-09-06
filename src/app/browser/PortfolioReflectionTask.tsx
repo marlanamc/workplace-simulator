@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { earnedAwardsByAct } from "@/lib/tracks-content";
-import { SKILLS } from "@/lib/skills";
+import { TASK_INFO } from "@/lib/tracks-content";
+import type { Lang } from "@/lib/task-types";
 import {
   REFLECTION_COPY,
   PROMPTS,
@@ -30,9 +31,11 @@ function actNumeral(title: string): string {
 function AwardList({
   awards,
   emptyLabel,
+  lang,
 }: {
   awards: ReturnType<typeof earnedAwardsByAct>;
   emptyLabel: string;
+  lang: Lang;
 }) {
   if (awards.length === 0) {
     return <p className="text-[14px] text-[#5f6368]">{emptyLabel}</p>;
@@ -42,14 +45,14 @@ function AwardList({
       {awards.map(({ act, tracks }) => (
         <section key={act.key}>
           <div className="text-[11px] font-medium tracking-wide text-[#5f6368]">
-            {actNumeral(act.title)} · {act.title.replace(/^Act [IVX]+:\s*/, "")}
+            {lang === "en" ? "Act" : "Acto"} {actNumeral(act.title)}
           </div>
           <ul className="mt-1.5 flex flex-col gap-1.5">
             {tracks.map((track) =>
               track.taskKeys.map((taskKey) => (
                 <li key={taskKey} className="flex items-start gap-2 text-[14px] leading-snug">
                   <span aria-hidden>{track.awardEmoji}</span>
-                  <span>{SKILLS[taskKey]}</span>
+                  <span>{TASK_INFO[taskKey].label[lang]}</span>
                 </li>
               )),
             )}
@@ -61,11 +64,11 @@ function AwardList({
 }
 
 export default function PortfolioReflectionTask() {
-  const { markComplete, completedTaskKeys, certificateTrackKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, certificateTrackKeys, lang, writing } = useProgress();
   const [view, setView] = useState<View>(
     completedTaskKeys.includes("portfolio-reflection") ? "done" : "review",
   );
-  const [answers, setAnswers] = useState<string[]>(() => PROMPTS.map(() => ""));
+  const [answers, setAnswers] = useState<string[]>(() => PROMPTS.map((_, i) => writing["portfolio-reflection"]?.fields[i]?.value ?? ""));
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = REFLECTION_COPY[lang];
@@ -89,11 +92,11 @@ export default function PortfolioReflectionTask() {
   };
 
   const copySummary = async () => {
-    const lines: string[] = [c.summaryTitle, ""];
+    const lines: string[] = [c.summaryTitle, lang === "en" ? "Simulated workplace practice — not employment history." : "Práctica laboral simulada — no es historial de empleo.", ""];
     for (const { act, tracks } of awards) {
-      lines.push(`${actNumeral(act.title)} · ${act.title.replace(/^Act [IVX]+:\s*/, "")}`);
+      lines.push(`${lang === "en" ? "Act" : "Acto"} ${actNumeral(act.title)}`);
       for (const track of tracks) {
-        for (const taskKey of track.taskKeys) lines.push(`- ${SKILLS[taskKey]}`);
+        for (const taskKey of track.taskKeys) lines.push(`- ${TASK_INFO[taskKey].label[lang]}`);
       }
       lines.push("");
     }
@@ -123,7 +126,7 @@ export default function PortfolioReflectionTask() {
 
               <div className="mt-4 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.canDoHeading}</div>
               <div className="mt-2">
-                <AwardList awards={awards} emptyLabel={c.noAwardsYet} />
+                <AwardList lang={lang} awards={awards} emptyLabel={c.noAwardsYet} />
               </div>
 
               <div className="mt-5 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.reflectionHeading}</div>
@@ -180,7 +183,7 @@ export default function PortfolioReflectionTask() {
                 <p className="mt-1 text-[13px] leading-relaxed text-[#5f6368]">{c.reviewIntro}</p>
               </div>
               <div className="rounded-2xl border border-[#dadce0] bg-white p-5">
-                <AwardList awards={awards} emptyLabel={c.noAwardsYet} />
+                <AwardList lang={lang} awards={awards} emptyLabel={c.noAwardsYet} />
               </div>
               <button
                 onClick={() => setView("reflect")}

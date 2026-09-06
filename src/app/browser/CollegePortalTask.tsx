@@ -11,6 +11,8 @@ import {
   STARTERS as ENROLL_STARTERS,
   LESSONS as ENROLL_LESSONS,
   statementShowsInterest,
+  DOCUMENT_FILES,
+  documentMatchesMissing,
   describeSubmission as describeEnrollment,
   RIGHT_NOW_STEPS as ENROLL_STEPS,
   RIGHT_NOW_LABEL as ENROLL_LABEL,
@@ -59,6 +61,7 @@ function PortalChrome({ school, children }: { school: string; children: React.Re
 function EnrollmentPortal() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<EnrollView>(completedTaskKeys.includes("enrollment") ? "done" : "form");
+  const [pickingDocument, setPickingDocument] = useState(false);
   const [docReady, setDocReady] = useState(false);
   const [statement, setStatement] = useState("");
   const [help, setHelp] = useState(false);
@@ -112,7 +115,7 @@ function EnrollmentPortal() {
                       ) : (
                         <button
                           type="button"
-                          onClick={() => setDocReady(true)}
+                          onClick={() => setPickingDocument(true)}
                           className="min-h-[36px] rounded-full bg-[#004d40] px-3 text-[13px] font-medium text-white cursor-pointer"
                         >
                           {c.markReady}
@@ -122,6 +125,12 @@ function EnrollmentPortal() {
                   );
                 })}
               </ul>
+              {pickingDocument && <div className="mt-3 grid gap-2" aria-label={lang === 'en' ? 'Files' : 'Archivos'}>
+                {DOCUMENT_FILES.map((file) => <button key={file.key} type="button" className="rounded border p-3 text-left hover:bg-[#e8f0fe]" onClick={() => {
+                  if (!documentMatchesMissing(file.key)) return say(c.needDoc);
+                  setDocReady(true); setPickingDocument(false);
+                }}>{file.label[lang]}</button>)}
+              </div>}
             </div>
             <div className="rounded-xl border border-[#dadce0] bg-white p-4">
               <div className="text-[13px] font-medium text-[#5f6368]">{c.statementHeading}</div>

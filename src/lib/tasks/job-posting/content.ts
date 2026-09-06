@@ -49,7 +49,7 @@ export const JOB_POSTING_COPY: Record<Lang, {
     reqLabel: "What we're looking for",
     reqHint: "Check every one your cafe experience already covers.",
     fitLabel: "In one line: why are you a good fit?",
-    fitHint: "Name what you've done that matches. Example: \"I ran shift schedules and a weekly budget as Assistant Manager.\"",
+    fitHint: "Describe one example from your simulator practice that fits this role.",
     apply: "Apply for this job",
     needPicks: "Check at least three that your experience covers.",
     needFit: "Write one line about why you fit before you apply.",
@@ -77,7 +77,7 @@ export const JOB_POSTING_COPY: Record<Lang, {
     reqLabel: "Lo que buscamos",
     reqHint: "Marca cada punto que tu experiencia en el café ya cubre.",
     fitLabel: "En una línea: ¿por qué eres una buena opción?",
-    fitHint: "Di qué has hecho que coincide. Ejemplo: \"Manejé horarios de turnos y un presupuesto semanal como asistente de gerencia.\"",
+    fitHint: "Describe un ejemplo de tu práctica en el simulador que encaje con este puesto.",
     apply: "Aplicar a este trabajo",
     needPicks: "Marca al menos tres que tu experiencia cubra.",
     needFit: "Escribe una línea sobre por qué encajas antes de aplicar.",
@@ -96,7 +96,7 @@ export const JOB_POSTING_COPY: Record<Lang, {
 export interface PostingRequirement {
   key: string;
   text: Localized;
-  /** True when the learner's cafe arc (New Hire → Assistant Manager) covers it. */
+  /** True when the shared core supplies practice relevant to this requirement. */
   met: boolean;
 }
 
@@ -104,16 +104,16 @@ export const REQUIREMENTS: PostingRequirement[] = [
   {
     key: "customer-facing",
     text: {
-      en: "1+ year in a customer-facing job",
-      es: "1+ año en un trabajo de cara al cliente",
+      en: "Practice communicating with coworkers and supervisors",
+      es: "Práctica de comunicación con compañeros y supervisores",
     },
     met: true,
   },
   {
     key: "scheduling",
     text: {
-      en: "Experience with staff schedules and shift coverage",
-      es: "Experiencia con horarios de personal y cobertura de turnos",
+      en: "Practice reading schedules and resolving a conflict",
+      es: "Práctica de leer horarios y resolver un conflicto",
     },
     met: true,
   },
@@ -128,8 +128,8 @@ export const REQUIREMENTS: PostingRequirement[] = [
   {
     key: "budget",
     text: {
-      en: "Has tracked a budget or expenses",
-      es: "Ha manejado un presupuesto o gastos",
+      en: "Has entered and reported a spreadsheet total",
+      es: "Ha ingresado y reportado un total en una hoja de cálculo",
     },
     met: true,
   },
@@ -158,15 +158,15 @@ export function fitLooksReal(fit: string): boolean {
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "I ran shift schedules for the cafe crew.",
-    "I checked a weekly budget and flagged what was over.",
+    "I entered figures and reported a spreadsheet total.",
     "I use email, calendars, and spreadsheets every shift.",
-    "I have worked with customers for over a year.",
+    "I practiced professional messages in the simulator.",
   ],
   es: [
     "Manejé los horarios de turnos del equipo del café.",
-    "Revisé un presupuesto semanal y marqué lo que se pasó.",
+    "Ingresé cifras y reporté el total de una hoja de cálculo.",
     "Uso correo, calendarios y hojas de cálculo en cada turno.",
-    "He trabajado con clientes por más de un año.",
+    "Practiqué mensajes profesionales en el simulador.",
   ],
 };
 

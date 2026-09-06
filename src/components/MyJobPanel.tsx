@@ -9,9 +9,10 @@ import {
   TASK_LOCATIONS,
   isLevelComplete,
   levelForTrack,
-  nextLevel,
+  nextCourseLevel,
   nextTaskInTrack,
-  furthestLevelIndex,
+  unlockedCourseLevels,
+  courseLevels,
   taskKeysForLevel,
   firstTabForLevel,
   type Level,
@@ -40,6 +41,7 @@ export default function MyJobPanel({
     restartLevel,
     lang,
     bridgePath,
+    courseRoute,
   } = useProgress();
   const { openApp } = useWindowManager();
   const [levelsOpen, setLevelsOpen] = useState(false);
@@ -47,8 +49,9 @@ export default function MyJobPanel({
 
   const currentLevel = levelForTrack(currentTrack.key);
   const currentLevelIndex = LEVELS.findIndex((l) => l.key === currentLevel.key);
-  const reachedIndex = furthestLevelIndex(completedTaskKeys, bridgePath);
-  const upcoming = isLevelComplete(currentLevel, completedTaskKeys, bridgePath) ? nextLevel(currentLevel) : null;
+  const unlocked = unlockedCourseLevels(completedTaskKeys, courseRoute);
+  const visibleLevels = courseLevels(courseRoute);
+  const upcoming = isLevelComplete(currentLevel, completedTaskKeys, bridgePath) ? nextCourseLevel(currentLevel, courseRoute) : null;
 
   const scopedTrackKeys =
     bridgePath && currentLevel.pathTracks ? [currentLevel.pathTracks[bridgePath]] : currentLevel.trackKeys;
@@ -60,8 +63,8 @@ export default function MyJobPanel({
 
   if (!open) return null;
 
-  const goToLevel = (level: Level, index: number) => {
-    if (index > reachedIndex) return;
+  const goToLevel = (level: Level) => {
+    if (!unlocked.includes(level)) return;
     onOpenChange(false);
     openApp("browser", { tab: firstTabForLevel(level, bridgePath) });
     setLevelsOpen(false);
@@ -238,7 +241,7 @@ export default function MyJobPanel({
                 {ACTS.map((act) => {
                   const actLevels = act.levelKeys
                     .map((key) => LEVELS.findIndex((l) => l.key === key))
-                    .filter((i) => i !== -1);
+                    .filter((i) => i !== -1 && visibleLevels.includes(LEVELS[i]));
                   if (actLevels.length === 0) return null;
                   return (
                     <div key={act.key} className="mb-1 last:mb-0">
@@ -247,7 +250,7 @@ export default function MyJobPanel({
                       </div>
                       {actLevels.map((i) => {
                         const level = LEVELS[i];
-                        const locked = i > reachedIndex;
+                        const locked = !unlocked.includes(level);
                         const isCurrent = i === currentLevelIndex;
                         const complete = !locked && isLevelComplete(level, completedTaskKeys, bridgePath);
                         const canReplay =
@@ -256,7 +259,7 @@ export default function MyJobPanel({
                           <div key={level.key} className={`rounded-xl ${isCurrent ? "bg-accent-tint" : ""}`}>
                             <div className="flex items-center">
                               <button
-                                onClick={() => goToLevel(level, i)}
+                                onClick={() => goToLevel(level)}
                                 disabled={locked}
                                 className={`flex min-w-0 flex-1 items-center gap-2.5 rounded-xl px-2 py-2 text-left text-[14px] ${
                                   locked

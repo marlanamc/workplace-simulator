@@ -286,3 +286,15 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Llena cada casilla obligatoria, luego fírmalo y ponle la fecha.",
   },
 ];
+
+export const PRACTICE_PROFILE = {
+  name: 'Alex Rivera', dob: '04/12/1990', address: '123 Practice Lane', date: '10/01/2026',
+  status: 'single', dependents: '0', workStatus: 'citizen', bank: 'Practice Bank', routing: '000000000', account: '1234567890', accountType: 'checking',
+};
+export const PRACTICE_REFERENCE: Localized = {
+ en: 'Fictional applicant: Alex Rivera. Born 04/12/1990. Address: 123 Practice Lane. Form date: 10/01/2026. Single; no dependents. U.S. citizen. Practice Bank; routing 000000000; account 1234567890; checking. These are simplified practice forms, not real submissions.',
+ es: 'Solicitante ficticio: Alex Rivera. Nació el 04/12/1990 (mes/día/año). Dirección: 123 Practice Lane. Fecha del formulario: 10/01/2026. Soltero; sin dependientes. Ciudadano de EE. UU. Practice Bank; ruta 000000000; cuenta 1234567890; cuenta corriente. Son formularios simplificados de práctica, no trámites reales.',
+};
+export function practiceFieldsMatch(values: Partial<typeof PRACTICE_PROFILE>): boolean {
+ return Object.entries(values).every(([key, value]) => String(value).trim().toLowerCase().replace(/\s+/g, ' ') === PRACTICE_PROFILE[key as keyof typeof PRACTICE_PROFILE].toLowerCase());
+}

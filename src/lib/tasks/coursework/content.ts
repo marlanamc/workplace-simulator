@@ -124,3 +124,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Check that you saw Friday 11:59 PM.", es: "Marca que viste el viernes a las 11:59 PM." },
   { en: "Write a short reply and submit.", es: "Escribe una respuesta corta y entrega." },
 ];
+
+export const DEADLINE_OPTIONS = [
+  { key: 'thu', label: { en: 'Thursday, 11:59 PM', es: 'Jueves, 11:59 PM' } },
+  { key: 'fri', label: { en: 'Friday, 11:59 PM', es: 'Viernes, 11:59 PM' } },
+  { key: 'sat', label: { en: 'Saturday, 11:59 PM', es: 'Sábado, 11:59 PM' } },
+];
+export function deadlineIsCorrect(key: string): boolean { return key === 'fri'; }

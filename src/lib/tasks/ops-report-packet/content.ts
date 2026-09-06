@@ -1,3 +1,4 @@
+import { mentionsAmount } from "@/lib/text-facts";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -149,7 +150,7 @@ export const OPS_COPY: Record<Lang, {
     backHub: "Back to the report",
     needConfirm: "Confirm the total that's already there. Don't type a different number.",
     needNoted: "Open the calendar item and note it first.",
-    needSummary: "Write a short paragraph. Put the week's number in it.",
+    needSummary: "Report the sheet total and Thursday morning’s coverage gap. You can reopen both sources.",
     needSend: "Finish the other three parts, then send.",
     sentKicker: "Packet sent",
     tryAgain: "Do it again",
@@ -200,7 +201,7 @@ export const OPS_COPY: Record<Lang, {
     backHub: "Volver al reporte",
     needConfirm: "Confirma el total que ya está ahí. No escribas otro número.",
     needNoted: "Abre el punto del calendario y anótalo primero.",
-    needSummary: "Escribe un párrafo corto. Pon el número de la semana en él.",
+    needSummary: "Incluye el total y la falta de cobertura del jueves por la mañana. Puedes abrir ambas fuentes.",
     needSend: "Termina las otras tres partes, luego envía.",
     sentKicker: "Paquete enviado",
     tryAgain: "Hacerlo otra vez",
@@ -254,7 +255,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Four apps, one packet. Do them in order.", es: "Cuatro apps, un paquete. Hazlas en orden." },
+  { en: "A total and a calendar commitment, combined in one packet.", es: "Un total y un compromiso del calendario, juntos en un paquete." },
   { en: "Open Sheets. Check this week's total.", es: "Abre Sheets. Revisa el total de esta semana." },
   { en: "Open Calendar. Note what's coming up.", es: "Abre Calendar. Anota lo que viene." },
   { en: "Open Docs. Write a summary of both.", es: "Abre Docs. Escribe un resumen de las dos cosas." },
@@ -263,7 +264,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 
 export function summaryPullsBoth(text: string): boolean {
   const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return words >= 12 && /\d/.test(text);
+  return words >= 6 && mentionsAmount(text, PLANTED_WEEK_TOTAL)
+    && /thurs|jueves|jue\b/i.test(text)
+    && /open|morning|apertura|mañana|manana|6(?::00)?\s*(am|a\.?m)/i.test(text)
+    && /cover|staff|unassign|no one|nobody|vacan|need|gap|missing|assign|nadie|cubrir|cobertura|sin|falta|asign|necesit/i.test(text);
 }
 
 export interface OpsReportPacketInput {

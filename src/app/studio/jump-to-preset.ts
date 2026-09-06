@@ -36,7 +36,7 @@ export function presetForAct(actKey: string): { presetKey: string; path?: Bridge
   const act = ACTS.find((a) => a.key === actKey);
   if (!act) return null;
   const first = act.levelKeys[0];
-  if (actKey === "act5" || actKey === "act6" || actKey === "act7") {
+  if (actKey === "act5") {
     return { presetKey: `${first}:a`, path: "a" };
   }
   return { presetKey: first };

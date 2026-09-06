@@ -327,3 +327,13 @@ export async function upsertSkillRung(
     if (!isMissingTable(err)) console.error("upsertSkillRung failed", err);
   }
 }
+
+/** Replace one setting atomically; a failed insert must retain the previous route. */
+export async function replaceSettingBadge(learnerId: string, keys: string[], value: string) {
+  const db = getDb();
+  await db.batch([
+    db.select({ id: learners.id }).from(learners).where(eq(learners.id, learnerId)).for('update'),
+    db.delete(badges).where(and(eq(badges.learnerId, learnerId), inArray(badges.badgeKey, keys))),
+    db.insert(badges).values({ learnerId, badgeKey: value }),
+  ]);
+}

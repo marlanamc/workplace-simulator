@@ -2,7 +2,7 @@
 
 **Time:** ~10 minutes · **Level:** 18 — Get Everyone in the Room ·
 **Track:** 17 — Get Everyone in the Room
-**Task key:** `multi-person-scheduling` · **Status:** not built yet.
+**Task key:** `multi-person-scheduling` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 17 complete
 
 ## We will learn...
@@ -11,7 +11,7 @@
   schedules at once to find the one slot that's actually open for
   everyone.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: Calendar showing 3-4 people's calendars side by side (a
       standard "find a time" view), each with a few busy blocks, and
       exactly one slot in the week that's open for all of them.
@@ -21,7 +21,7 @@
       Lesson 2 are both done. Never a gate — a student who skips it still
       moves on.
 
-## Simulator practice (~10 min) — once built
+## Simulator practice (~10 min)
 1. Open **Calendar**'s multi-calendar view for the 3-4 people who need to
    meet.
 2. Scan across the week for a slot where nobody has a conflict.

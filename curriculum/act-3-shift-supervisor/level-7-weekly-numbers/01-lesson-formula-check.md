@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 7 — Weekly Numbers · **Track:** 8 —
 Weekly Numbers
-**Task key:** `formula-check` · **Status:** not built yet.
+**Task key:** `formula-check` · **Status:** implemented; learner pilot pending.
 **Prerequisite:** Level 6 complete
 
 ## We will learn...
@@ -11,7 +11,7 @@ Weekly Numbers
   a plain number looks off, like Level 3/4, but whether the *formula
   itself* is built correctly.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: reopen the team schedule sheet from Level 6, now with a
       week of hours filled in per person. A `SUM` and an `AVERAGE` cell are
       already there, but the `SUM` formula's range is one row short (it's
@@ -23,7 +23,7 @@ Weekly Numbers
       Level 7) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Sheets** → the week's hours grid.
 2. Click the `SUM` cell and look at what range it's actually adding up
    (not just what number it shows).

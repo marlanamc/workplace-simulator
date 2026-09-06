@@ -1,15 +1,34 @@
+# Implementation update — September 2026
+
+The evaluation below is a **historical baseline**, not a description of current behavior. The accepted first-release changes have now been implemented in this working tree. Read the current [scope and sequence](../curriculum/00-scope-and-sequence.md) and [pilot protocol](../curriculum/launch-pilot.md) before using the older ratings or action list.
+
+The main gaps addressed are route selection and switching after the core, direct-entry references and truthful simulated work history, saved writing and retry recovery, portfolio restoration and localized summaries, video-call mute recovery, and the weak enrollment, coursework, appointment, hiring, slide, meeting, report, and paperwork steps. Multi-person scheduling already had a comparison grid; it was retained and its busy labels made readable. An apology alone no longer passes the intake refusal check, although free-text checks still cannot prove confidentiality judgment.
+
+The per-level review below covers all 37 runtime levels (some table rows split their tasks or paths). Its predictions about boredom are hypotheses for observation, not measured dropout forecasts. Automated checks establish behavior, not learning transfer. The opening walkthrough and each route still need representative learner pilots in both languages. Do not interpret “implemented” as launch approval.
+
+---
+
 # Full curriculum review — every level, Acts I–VII
 
-Updated 2026-09-05. Scope: all 7 acts, all 32 levels currently in `src/lib/tracks-content.ts` (`ACTS`, `LEVELS`) — `level0` through `level27`, plus lettered levels `level3a`, `level3a2`, `level3b`, `level3c` and the `level19h1`–`level19h5` hiring sub-arc. Source of truth for level/task structure: `src/lib/tracks-content.ts` and `src/lib/tasks/registry.ts`. Source of truth for teacher-review coverage: `src/lib/curriculum-catalog.ts` (`TEACHER_CHECK_TASKS`).
+Updated 2026-09-05. Scope: all 7 acts, all 37 levels currently in `src/lib/tracks-content.ts` (`ACTS`, `LEVELS`) — `level0` through `level27`, plus lettered levels `level3a`, `level3a2`, `level3b`, `level3c` and the `level19h1`–`level19h5` hiring sub-arc. Source of truth for level/task structure: `src/lib/tracks-content.ts` and `src/lib/tasks/registry.ts`. Source of truth for teacher-review coverage: `src/lib/curriculum-catalog.ts` (`TEACHER_CHECK_TASKS`).
 
 This supersedes `scratchpad/act-1-review.md` as the live review document. `act-1-review.md` and `scratchpad/codex_revisions.md` (the implementation log for today's Act I changes) are kept as historical records — `codex_revisions.md` is not duplicated here, only referenced where it resolved something this review used to flag.
 
 ---
 
+
+## Evidence and limits of this review
+
+This is a source review, not a learner usability study or a certification of mastery. The runtime contains **37 levels and 51 active tasks (54 task keys including retired `mail`, `mail-read`, and `swap-request`)**; the table's `#` column numbers tasks, including both elective paths, rather than levels. One selected Act V path contains four of its eight tasks. Challenge scores are editorial estimates, not measured learner difficulty.
+
+“Fixed today” below refers to changes described in the 2026-09-05 review and visible in the checked-out source. Historical claims about test runs and human playtesting come from the earlier review/log; they are not new verification results from this documentation pass. Teacher-review **eligibility**, a saved submission, and an actual teacher assessment are separate things. Automatic completion does not wait for teacher approval (`progress-context.tsx`).
+
+Source checks corrected the level count, stale unresolved-fix claims, exact numeric validation, teacher-review coverage, portfolio persistence, and several overstatements about what clicks or regexes prove. Remaining proposals are recommendations, not changes implemented by this review.
+
 ## At a glance — every level
 
 **Challenge** is how hard the level is for a learner (1 = easiest, 5 = hardest — capstones and emotionally-loaded writing sit at 5). **Student-ready** is whether the mechanic actually tests what its own lesson/copy claims:
-✅ Ready — matches its stated skill, no open gap · ⚠️ Ready with a caveat — works, but has an open question or minor gap worth a playtest look · 🔧 Needs work — a real, source-confirmed gap between what it claims to check and what it actually checks.
+✅ Ready for playtesting — core mechanic matches the task; this is not proof of mastery · ⚠️ Ready with a caveat — works, but has an open question or minor gap worth a playtest look · 🔧 Needs work — a real, source-confirmed gap between what it claims to check and what it actually checks.
 
 | # | Level | Act | Task(s) | Challenge | Student-ready | Why |
 |---|---|---|---|:---:|:---:|---|
@@ -21,30 +40,30 @@ This supersedes `scratchpad/act-1-review.md` as the live review document. `act-1
 | 9 | L3a2 | I | call-out-sick | 2 | ✅ | Fixed today — now requires stating inability to attend today's shift, and is teacher-reviewed. |
 | 10–11 | L3b | II | incident, handbook | 3 | ✅ | Fixed today — narrative now requires an injury-status fact and an action/notification; teacher-reviewed. |
 | 12 | L3c | II | account-recovery | 2 | ✅ | Solid; fixed verification code risks rote memorization over transfer — watch in playtest. |
-| 13 | L4 | II | calendar | 2 | ✅ | Good bridge task; third appearance of the "check before agreeing" skill (see cross-cutting note). |
+| 13 | L4 | II | calendar | 2 | ✅ | Good bridge task; reuses the "check before agreeing" skill (see cross-cutting note). |
 | 14–15 | L5 | II | files, mail-send-link | 3 | ✅ | Best-designed task in Acts I–II — three real sub-skills, forgiving-but-real grading. |
 | 16 | L6 | II | spreadsheet | 2 | ✅ | Fixed today — sending now requires the message to state the correct total. |
 | 17–18 | L7 | II | make-a-copy, status-report | 3 | ✅ | `status-report` has real formula/Cc/content checks. |
 | 19 | L8 | II | triage | 4 | ✅ | Strong capstone — genuine order-independent synthesis of L4 + L5. |
 | 20 | L9 | III | team-schedule | 3 | ✅ | Model implementation — AND-based email content check others should copy. |
-| 21 | L10 | III | formula-check | 4 | ✅ | Best-built spreadsheet task; one small gap (OR instead of AND on the reported fix). |
+| 21 | L10 | III | formula-check | 4 | ⚠️ | Best-built spreadsheet task; one small gap (OR instead of AND on the reported fix). |
 | 22 | L11 | III | team-meeting | 3 | ✅ | First author-an-invite task; explicitly names its skill reuse. |
 | 23 | L12 | III | priority-call | 5 | ✅ | Best capstone reviewed — real overpromise-aware reply grading, order-independent. |
 | 24 | L13 | IV | college-offer | 4 | ✅ | Rigorously multi-gated; only a harmless dead-code cleanup found. |
-| 25 | L14 | IV | budget-sheet | 3 | ✅ | Deliberate read-only formula-literacy task; minor UX wrinkle (answer cell pre-selected). |
+| 25 | L14 | IV | budget-sheet | 3 | ⚠️ | Deliberate read-only formula-literacy task; minor UX wrinkle (answer cell pre-selected). |
 | 26 | L15 | IV | reply-all | 4 | ✅ | Most tightly validated free-text task in the game — a template for others. |
 | 27 | L16 (Path A) | V | enrollment | 2 | ✅ | Solid; document-ready click is unconditional but harmless. |
 | 28 | L17 (Path A) | V | financial-aid | 3 | ✅ | Best-built task in this path — real PDF-vs-summary discipline. |
 | 29 | L18 (Path A) | V | coursework | 3 | ✅ | Good pairing of academic + workplace skill; due-date checkbox gives away the date it's meant to teach finding. |
 | 30 | L19 (Path A) | V | research | 4 | ✅ | Clean, realistic source-credibility task. |
-| 31 | L16 (Path B) | V | appointment-scheduling | 2 | ✅ | Fixed today — slots no longer show status until clicked; finding the clash is now required. |
-| 32 | L17 (Path B) | V | patient-intake | 4 | ✅ | Best-built judgment task in either path — leak-proof confidentiality check. |
+| 31 | L16 (Path B) | V | appointment-scheduling | 2 | ⚠️ | Fixed today — slots no longer show status until clicked; the booked-slot inspection is still optional. |
+| 32 | L17 (Path B) | V | patient-intake | 4 | ⚠️ | Best-built judgment task in either path — keyword-based confidentiality check with bypass risks. |
 | 33 | L18 (Path B) | V | billing-sheet | 3 | ✅ | Fixed today — the mismatch no longer highlights until the learner selects that row. |
 | 34 | L19 (Path B) | V | confidentiality-call | 4 | ✅ | Fixed today — now a free-text compose step wired to the existing `replyIsSafe()` validator. |
 | 35–36 | L19h1 | VI | job-posting, job-application | 2 | ✅ | Honest "you don't need every box" lesson; pre-filled history is genuinely accurate. |
 | 37 | L19h2 | VI | resume-build | 3 | ✅ | Real word-count-and-structure checks; live preview is a nice touch. |
 | 38 | L19h3 | VI | interview-practice | 3 | ⚠️ | Word-count-only grading — the main remaining instance of the open grading question L3a/L3a2 used to share, now honestly scoped in source comments. |
-| 39 | L19h4 | VI | job-offer | 2 | ✅ | Clean "find the fact in the letter" pattern, consistent with paystub/financial-aid. |
+| 39 | L19h4 | VI | job-offer | 2 | ⚠️ | Clean "find the fact in the letter" pattern, consistent with paystub/financial-aid. |
 | 40–42 | L19h5 | VI | w4-form, i9-section1, direct-deposit | 3 | ⚠️ | `direct-deposit`'s routing-number check is rigorous; I-9's DOB/address fields only check non-emptiness. |
 | 43 | L20 | VI | office-drive | 3 | ✅ | Files-task pattern correctly leveled up for a much bigger drive. |
 | 44–45 | L21 | VI | multi-person-scheduling, video-call | 4 | ✅ | `video-call`'s stuck-unmute dead end fixed today; scheduling's one open slot could use a tighter near-miss. |
@@ -53,7 +72,37 @@ This supersedes `scratchpad/act-1-review.md` as the live review document. `act-1
 | 48 | L24 | VII | meeting-minutes | 5 | ⚠️ | Real owners-and-dates content check; notes can be saved without ever engaging the huddle script. |
 | 49 | L25 | VII | performance-review | 5 | ✅ | Best-reasoned tone-grading tradeoff in the game; area-to-grow field is checked less strictly than its sibling. |
 | 50 | L26 | VII | ops-report-packet | 4 | ⚠️ | Deliberate no-new-skills capstone; summary check accepts any digit, not the actual total. |
-| 51 | L27 | VII | portfolio-reflection | 1 | ✅ | Fixed today — added a real "Copy summary to share" button, so the sharing promise is now deliverable. |
+| 51 | L27 | VII | portfolio-reflection | 1 | ⚠️ | Fixed today — added a real "Copy summary to share" button, but answers are lost from the learner view after reload. |
+
+---
+
+## Candid learning-value and disengagement review
+
+**I would not call all 37 levels equally worth a learner's time in their current form.** The strongest tasks make learners find something, compare it, make a consequential choice, and communicate the result. The weakest substitute acknowledgment clicks or minimum-length writing for that decision. A different app skin and another completion award do not, by themselves, add a skill.
+
+The earlier “No change” and “best-built” judgments below describe local implementation strengths; they should not override the priorities here. These are source-based design judgments, not observed dropout predictions. A beginner may benefit from repetition that an experienced learner finds tedious. The aim is to remove empty repetition while preserving practice and accessible Help.
+
+| Priority | Level / task | Honest verdict and disengagement risk | Improvement I would make |
+|---|---|---|---|
+| High | L23 · slide-deck | **Too thin for a late-program presentation level.** A title, prefilled number checkbox, three-word takeaway, and Present click offer little evidence of presentation skill. The component marks completion at that click; it does not assess an explanation to an audience. | Keep three slides, but have the learner select the relevant figure from the expense report, explain what it means, and answer one coworker question. If that scope is unavailable, call it a short introduction to slides and shorten it. |
+| High | L26 · ops-report-packet | **Does not yet earn its “put it all together” claim.** The multi-app wrapper is useful, but any digit in a twelve-word summary can clear its central synthesis check. Late in the program this risks feeling like four more completion buttons. | Require the actual sheet total and the calendar commitment in one useful summary. Let learners navigate freely, keep sources available, and use teacher review for whether the two facts support the proposed next action. |
+| High | L16 Path A · enrollment | **Limited new skill as a full level.** Marking a missing document ready without finding or attaching it is largely a checklist acknowledgment, followed by another short writing box. | Supply a small simulated file set and require choosing the missing document, or combine this with L17 as a concise application-and-award sequence. Avoid an extra “Are you sure?” click; that adds friction without learning. |
+| High | L18 Path A · coursework | **The deadline task gives away its answer.** The complaint response has value, but the date checkbox adds little and another lightly checked reply may feel repetitive. | Ask the learner to find the deadline in the syllabus and select it in a submission plan; keep the syllabus open. Give one specific teacher/scenario revision note on the response rather than treating a keyword as evidence of quality. |
+| High | L19h1–h4 · hiring writing sequence | **Strong topic, repetitive interaction.** Fit statement → why-this-role → résumé summary/bullets → four typed interview answers → acceptance reply could become a long run of “type enough words, collect an award.” This is a plausible disengagement point despite the coherent story. | Carry one learner-written experience example into the résumé and interview. Make each step transform it for a different audience. Allow optional oral rehearsal with a teacher/partner; do not make speech technology a prerequisite. In the offer reply, check acceptance and the correct start date, not eight words alone. |
+| High | L24 · meeting-minutes | **A worthwhile new skill weakened by bypasses.** Generic notes and a long punctuated follow-up can pass without using the huddle. | Make a huddle decision consequential: an owner or deadline changes during discussion, and the follow-up must reflect it. Offer a readable transcript. Evaluate actual owner/action/date relationships through human review rather than merely finding one name and one day anywhere. |
+| Medium | L16 Path B · appointment-scheduling | **A hidden answer is not the same as a reasoning task.** Clicking slots until one is open can replace checking the caller's requested time. | Require identifying why the requested slot cannot work, then offer a compatible alternative. Reveal-on-click is fine as interface practice, but do not count it as demonstrated cross-referencing. |
+| Medium | L21 · multi-person-scheduling | **Useful escalation, partially pre-solved.** Named busy people on each slot reduce four-calendar comparison to reading a prepared availability summary. | Let the learner compare compact calendars and choose among plausible near-misses. Keep the summary as optional Help instead of removing support entirely. |
+| Medium | L21 · video-call | **Recovery currently teaches an artificial reset ritual.** Leaving and rejoining after testing Unmute can feel punitive and interrupt otherwise useful control practice. | Teach recovery by muting again and using chat appropriately. Preserve the “join muted” objective separately if necessary. Send recovery instructions through the Job Card; the persistent red instruction banner conflicts with the repo's single-instruction-surface rule. |
+| Medium | L19h5 · paperwork | **Useful orientation, shallow completion evidence.** Three forms can become clerical busywork if the learner only fills blanks. | Use supplied fictional applicant/bank details and ask learners to locate and transfer the relevant information. Explain one meaningful distinction per form. Label these as simplified simulations; the review does not establish real-form completeness or compliance. |
+| Medium | L3 · shift-review | **Useful retrieval practice, weak as an additional destination.** Three recognition questions can consolidate learning, but should not become another long instruction/celebration sequence. | Keep it brief. Use mistakes to offer targeted practice on the underlying schedule/clock/paystub action; do not add compulsory exposition for learners who already understand it. |
+| Medium | L4 → L9 → L11 → L12 · scheduling reuse | **Repetition is justified only if the decision changes.** These do add different responsibilities, but adjacent L11/L12 can still feel familiar enough to solve by interface habit. | Retain the progression from personal conflict to staffing to authoring to triage. In the capstone, change the data and remove answer-revealing defaults; assess whether the learner can explain the choice. Shorten repeated navigation coaching. |
+| High for final payoff | L27 · portfolio-reflection | **Worth keeping as closure, but its take-away promise is fragile.** An export missing answers after reload undermines the reward for finishing. | Restore saved reflections, localize exported skill labels, and offer a useful durable summary. Include selected authored work where feasible. Distinguish simulated role experience from real employment history in anything shared outside the app. |
+
+**Keep and protect:** L1's low-stakes start, L5's find/rename/share sequence, L7's formula-and-Cc practice, L10's live formula repair, L15's audience-and-draft editing, and L22's receipt reconciliation have clear workplace transfer. Their value comes from the action practiced, not the badge or strictness of the validator. L25's constructive-review task and L27's reflection also have value even though nuanced writing should not be graded by narrow regexes.
+
+**What I would do first:** strengthen L23 and L26, shorten or combine enrollment/coursework where they add acknowledgment rather than action, vary the hiring sequence, and fix the final artifact's persistence. I would do that before adding more levels or imposing more word-count gates.
+
+For playtesting, ask learners to solve one fresh example without the starter after a suspected weak level. Watch for indiscriminate clicking, copying starters unchanged, and inability to explain a correct choice. Ask whether the task felt useful, repetitive, confusing, or too easy. Those observations can distinguish boredom from language/reading burden; completion speed alone cannot. No dropout rate or learner finding is claimed here.
 
 ---
 
@@ -263,7 +312,7 @@ Cast: Renata Silva, General Manager (takes over from Maria at the promotion in L
 
 ### Concerns / could be better
 
-- None remaining — both gaps the original review flagged (no content check beyond length, no teacher visibility) are resolved. The completion copy's "in order" claim is now backed by real teacher review, not just a length check.
+- The previous missing-check and missing-review-path issues are resolved, but chronology and factual accuracy remain unverified automatically. The completion copy's "in order" claim is still stronger than automatic validation: teacher review is available, but no completed teacher assessment is required.
 
 ### Suggested change
 
@@ -317,12 +366,12 @@ Cast: Renata Silva, General Manager (takes over from Maria at the promotion in L
 
 ### Concerns / could be better
 
-- Third appearance of the same underlying "check X against your schedule before agreeing" skill (L2 schedule, L3 timeclock hours-check, now this) — reasonable for retention, but risks reading as "same puzzle, new skin" by this point. (Note: Act III's L9/L11/L12 repeat this pattern a fourth and fifth time — see the Act III section and the closing cross-cutting notes.)
+- Reuses L2's availability comparison; L3's clock discrepancy is related comparison practice, not the same scheduling decision. Later tasks add staffing, invite authoring, and multi-person coordination. Watch whether learners notice those differences.
 - The Calendar ring/spotlight here has no rendered reminder text; since L0 no longer introduces Calendar at all, this is effectively the *first* introduction to it, not a memory callback — check whether the Job Card's own goal line gives enough context on its own.
 
 ### Suggested change
 
-- Keep this as the explicit "same skill, new tool" bridge into Act II (the lesson text already says so). Make sure a later task (L9, reviewed below) does something genuinely new with the pattern rather than a fourth cold repeat — see Act III notes.
+- Keep this as the explicit "same skill, new tool" bridge into Act II (the lesson text already says so). Make sure a later task (L9, reviewed below) does something genuinely new with the pattern rather than only repeat the interface — see Act III notes.
 
 ---
 
@@ -352,7 +401,7 @@ Cast: Renata Silva, General Manager (takes over from Maria at the promotion in L
 ### What's working
 
 - Good continuity with the Act I mail shell; `sendsLinkNotFile()` is deliberately lenient (checks for link-language plus filename, rejects "attached"), appropriate for a free-text task aimed at non-fluent writers.
-- This task **is** in `TEACHER_CHECK_TASKS` — a teacher can actually read what was written here, unlike the Act I/II free-text tasks above.
+- This task **is** in `TEACHER_CHECK_TASKS` — a teacher can actually read what was written here, as are the earlier mail-etiquette, call-out-sick, and incident tasks.
 
 ### Concerns / could be better
 
@@ -371,7 +420,7 @@ Cast: Renata Silva, General Manager (takes over from Maria at the promotion in L
 ### What's working
 
 - Clean single-skill task: data entry → trust the tool's math → report the result in one sentence. `WRONG_ENTRY_HINT` catches a mismatched entry.
-- **Fixed today:** `emailMentionsTotal()` now requires the sent message to state the correct total (lenient about formatting — `$241.50`, `241.5`, `241` all match), following the pattern already proven in L9/L10 (Act III). A learner can no longer complete the task by sending an empty-of-content message.
+- **Fixed today:** `emailMentionsTotal()` now requires the sent message to state the correct total (requires at least four words and a numeric token within 0.01 of the actual $241.50 total — `$241.50` and `241.5` match; `241` does not), following the pattern already proven in L9/L10 (Act III). A learner can no longer complete the task by sending an empty-of-content message.
 
 ### Concerns / could be better
 
@@ -412,7 +461,7 @@ Cast: Renata Silva, General Manager (takes over from Maria at the promotion in L
 
 ### Concerns / could be better
 
-- Passing these checks demonstrates the required mechanics (formula, Cc, mentions the total), not the quality of the entire written report. Keep completion language proportional to what's actually checked — avoid describing it as fully teacher-graded without a review actually happening on it (it is at least eligible for one, unlike the Act I/II tasks above that aren't in `TEACHER_CHECK_TASKS` at all).
+- Passing these checks demonstrates the required mechanics (formula, Cc, mentions the total), not the quality of the entire written report. Keep completion language proportional to what's actually checked — avoid describing it as fully teacher-graded without a review actually happening on it (it is eligible for review, as are mail-etiquette, call-out-sick, and incident).
 
 ### Suggested change
 
@@ -440,8 +489,7 @@ Cast: Renata Silva, General Manager (takes over from Maria at the promotion in L
 
 > [!note] Acts I–II cross-cutting notes (updated)
 > - Today's changes resolved essentially every concrete, source-confirmed concern the original review raised for L0–L3 (tour wording, Help recovery instructions, bilingual completion copy, stale e2e expectations, the L2 stuck-learner escalation, the L3 shift-review overclaim, and the Day-3 clock-in restructure) — the residual work at those levels is now playtesting, not engineering.
-> - The two concerns that were **not** addressed today, and remain open in source: (1) `spreadsheet` (L6) still allows sending without reporting the correct total, despite L9/L10 (Act III, built more recently) showing the fix pattern already; (2) `incident` (L3b) still overclaims "in order" review without either a content check or teacher-review eligibility.
-> - A new, source-confirmed gap not previously flagged: `mail-etiquette` (L3a) and `call-out-sick` (L3a2) both got real Help-lesson upgrades today, but neither task is in `TEACHER_CHECK_TASKS` — meaning even though a teacher dashboard and writing-capture pipeline now exist (see Act VI notes), these two Act I writing tasks aren't wired into it. `incident` has the identical gap.
+> - The earlier L6 missing-total and L3a/L3a2/L3b teacher-visibility gaps are resolved in source. Incident completion still does not establish chronological accuracy: the validator checks length and keyword signals, and teacher review is available rather than required.
 > - The "check X before agreeing" skill now repeats across L2 → L3 (timeclock) → L4 → L9 → L11 → L12 (see Act III). By the third or fourth repetition this needs either explicit lesson-text callbacks (which L4, L11, and L12 already do) or a genuinely new wrinkle — worth a single cross-act decision rather than re-litigating it level by level.
 
 ---
@@ -484,7 +532,7 @@ Cast: Renata Silva. Levels L9–L12.
 
 ### Concerns / could be better
 
-- `emailMentionsFix()` passes on `hasTotal` **OR** `hasMiss` — a learner can satisfy the send-check with a vague message like "I fixed the range" (matches `range`) and never state the corrected total, which is looser than L9's AND-based check for the same "report the number" pattern one level earlier.
+- `emailMentionsFix()` passes on `hasTotal` **OR** `hasMiss` — a learner can satisfy the send-check with a vague message like "I fixed the range" (matches `range`) and never state the corrected total, which is looser than L9's AND-based check for the same multi-part communication pattern one level earlier (L9 checks a day and time, not a spreadsheet total).
 
 ### Suggested change
 
@@ -541,8 +589,8 @@ Cast: Renata Silva. Levels L9–L12.
 ---
 
 > [!note] Act III cross-cutting notes
-> - L9 introduces a real new skill (assign coverage by checking hours, not first-come), and its email-content validation (day **and** time, both required) is the strongest content check in the game so far — a good bar to hold every later free-text task to.
-> - L10 is the best-built spreadsheet task reviewed: a live-evaluated formula, not a static answer key. Its one gap (OR instead of AND on the reported total) is a one-line fix, not a design problem.
+> - L9 introduces a real new skill (assign coverage by checking hours, not first-come), and its email-content validation (day **and** time, both required) is a useful two-part content check — a good bar to hold every later free-text task to.
+> - L10 is the best-built spreadsheet task reviewed: a live-evaluated formula, not a static answer key. Its one gap (OR instead of AND on the reported total) needs a carefully tested change; an AND alone can also reject valid paraphrases.
 > - L11 and L12 both reuse the "time that doesn't conflict with a shift" pattern already used in L2 (schedule) and L4 (calendar) — by L12 this is the fourth appearance. The act handles this well by naming the reuse out loud in both lessons rather than pretending each is new, and L12 turns it into deliberate synthesis rather than a fifth cold repeat.
 > - The act's capstone (L12) is a genuine step up in validation rigor from anything in Acts I–II (real overpromise/acknowledgment content check vs. earlier non-empty checks) — arguably the best single task in the game reviewed to date.
 
@@ -569,7 +617,7 @@ Cast: Renata Silva. Levels L9–L12.
 ### L12 — Under Pressure (priority-call)
 
 - **Order effects despite order-independent code:** `finishIfReady()` doesn't care which order the three sub-tasks finish in, but the hub UI still presents them in a fixed visual order (mail, cover, calendar) — confirm learners actually feel free to work in a different order, not just that the code allows it.
-- **Meeting the character minimum without real reasoning:** a 12-character urgency answer like "the customer" would pass; check whether learners are asked to defend the choice anywhere else, since this is the only unchecked-for-content field in the level.
+- **Meeting the character minimum without real reasoning:** an urgency answer like "customer first" (14 characters) would pass; check whether learners are asked to defend the choice anywhere else, since this is the only unchecked-for-content field in the level.
 - **False rejection on an unmatched but professional reply:** because `ACKNOWLEDGES` requires one of a fixed list of words/stems, a technically excellent reply that avoids all of them could be told to try again with no specific guidance beyond the generic overpromise/empty hints — capture exact wording of any rejected-but-reasonable replies during playtesting.
 
 ---
@@ -593,7 +641,7 @@ Cast: Renata Silva. Levels L13–L15.
 
 - The hub's Mail item's `onOpen` handler is `() => setView(accepted ? "mail" : "mail")` — both branches are identical, dead code left over from a refactor. Harmless, just a small cleanup item.
 - Completion badge shows `badgeNumber="16"`, which collides with `PriorityCallTask.tsx`'s (Act III's capstone) badge number 16 — see the closing "Suggestions for all levels" section for the repo-wide badge-numbering pattern this belongs to.
-- `curriculum-catalog.ts`'s doc-level numbering is one lower than the runtime `level13`–`level15` throughout this act — doc-only, not learner-facing, but worth reconciling per the earlier game-structure research finding.
+- `curriculum-catalog.ts` correctly uses level keys/numbers 13–15. Its folder paths retain legacy numbers 10–12; these are directory identifiers, not evidence of a one-level runtime mismatch.
 
 ### Suggested change
 
@@ -637,7 +685,7 @@ Cast: Renata Silva. Levels L13–L15.
 
 ### Concerns / could be better
 
-- None significant found in source — this task's validation logic is more complete than most other free-text tasks in the game (compare to `incident`/`mail-etiquette`/`call-out-sick`, which only check length/non-emptiness). Worth using this task's validation pattern (`casualDraftUntouched` + `stillSoundsCasual` + content-match) as the template when tightening those other tasks — see the closing "Suggestions for all levels" section.
+- None significant found in source — this task's validation logic is more complete than most other free-text tasks in the game (compare to `incident`/`mail-etiquette`/`call-out-sick`, which now also check task-specific content signals). Worth using this task's validation pattern (`casualDraftUntouched` + `stillSoundsCasual` + content-match) as the template when tightening those other tasks — see the closing "Suggestions for all levels" section.
 
 ### Suggested change
 
@@ -648,7 +696,7 @@ Cast: Renata Silva. Levels L13–L15.
 > [!note] Act IV cross-cutting notes
 > - Act IV is a believable step up from Act III: L9–L12 (Shift Supervisor) are almost entirely mechanics/noticing tasks; L13–L15 add real interpersonal/tone judgment on top of the mechanics — accepting a formal offer while flagging a schedule conflict (L13), reading a manager's formula without writing one (L14, a deliberate ease-up before Act VI's expense-report), and the reply-vs-reply-all/tone-editing judgment call (L15) that has no earlier equivalent in the game. The progression reads as intentional, not just three more tasks.
 > - `college-offer` and `budget-sheet` both require the learner to notice and report a *specific number or fact* rather than just complete a mechanical step — consistent with the "you have to look" pattern already praised in Acts I–II.
-> - `reply-all`'s validation rigor is noticeably stronger than the free-text validation used in earlier acts' writing tasks (`incident`, `mail-etiquette`, `call-out-sick`, `handbook`'s narrative field). If a validation-tightening pass happens later, `reply-all`'s `MailClient.tsx` logic is the right reference implementation, not a from-scratch design.
+> - `reply-all`'s validation rigor is noticeably stronger than the free-text validation used in earlier acts' writing tasks (`incident`, `mail-etiquette`, `call-out-sick`). If a validation-tightening pass happens later, `reply-all`'s `MailClient.tsx` logic is the right reference implementation, not a from-scratch design.
 
 ## Things that can go wrong — Act IV
 
@@ -659,7 +707,7 @@ Cast: Renata Silva. Levels L13–L15.
 
 ### L14 — The Budget (budget-sheet)
 - **Clicking without reading:** because the Labor/Status cell is already the default-selected cell, a learner might click it reflexively to "unlock" the email button without actually reading the formula bar content. Ask them to explain the IF formula in their own words after finishing.
-- **Naming the wrong number:** the email check accepts either wording (labor/mano de obra/payroll) or numeric evidence (450/2850) — verify a learner who only writes "2850" without labeling it "labor" would actually pass, and whether that's sufficient evidence of understanding.
+- **Naming the wrong number:** the email check requires a labor-category term AND an over/amount signal. "2850" alone fails, but "labor is over" passes without stating how much. That leaves the exact-amount reporting objective unverified.
 - **Chart read as decoration:** since the chart auto-renders correctly regardless of what the learner clicks, check whether learners actually look at it or treat it as illustrative flavor.
 
 ### L15 — Reply-All (reply-all)
@@ -703,7 +751,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 - The PDF stays re-openable from inside the question screen, so a learner who forgets a detail isn't forced to restart.
 
 #### Concerns / could be better
-- None significant — tightly scoped, matches its own lesson content precisely, no validation gaps found.
+- None significant — tightly scoped, matches its own lesson content precisely, no additional validation gap identified in this source pass.
 
 #### Suggested change
 - No change.
@@ -752,10 +800,10 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 
 #### What's working
 - Confirmation validation (`confirmationOffersOpenSlot`) checks that the actual new time (11:30) appears in the reply, not just that something was sent.
-- **Fixed today:** slots no longer show "Booked · Name" or "Open" up front. Clicking a slot now reveals its status — taken or open — matching the "check first" pattern used in Act I's schedule task and Act II's calendar task. Finding the clash is now actually required, not pre-solved by the UI.
+- **Fixed today:** slots no longer show "Booked · Name" or "Open" up front. Clicking a slot now reveals its status — taken or open — matching the "check first" pattern used in Act I's schedule task and Act II's calendar task. The answer is no longer labeled on load, but inspecting the booked requested slot is not required: `tryOffer()` only checks `slot === OPEN_SLOT`. A learner can click 11:30 first and continue.
 
 #### Concerns / could be better
-- None remaining — the source-confirmed gap (every slot pre-labeled, no cross-referencing required) is resolved.
+- The labels no longer reveal the answer initially, but booked-slot inspection and genuine comparison remain unverified. See the learning-value review above.
 
 #### Suggested change
 - No change needed. Playtest whether "Click to check" reads clearly as an instruction to click each slot, rather than looking like a disabled button.
@@ -767,7 +815,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 **Task:** patient-intake — file a new-patient form, then decline a coworker's request to see it without disclosing the visit reason
 
 #### What's working
-- Strongest confidentiality task in the act. `declineIsSafe()` requires the reply to both (a) contain refusal/no-access language and (b) *not* contain the visit reason ("follow-up"/"seguimiento") — and `trySend()` adds a second, independent guard that catches leaks before the general check even runs. A learner can't accidentally pass by writing something generically polite that still leaks the reason.
+- Strongest confidentiality task in the act. `declineIsSafe()` requires the reply to both (a) contain refusal/no-access language and (b) *not* contain the visit reason ("follow-up"/"seguimiento") — and `trySend()` adds a second, independent guard that catches leaks before the general check even runs. These guards catch listed phrases, not every disclosure or paraphrase. `declineIsSafe()` also accepts “sorry” alone as its refusal signal; for example, “Sorry, you can see the chart” passes the pure validator. Teacher review remains important.
 - The two competing requests (an unauthorized coworker vs. an authorized care-team nurse) are placed side by side, and only the unauthorized one requires action — a realistic front-desk judgment call, not a fabricated puzzle.
 
 #### Concerns / could be better
@@ -786,7 +834,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 - Structurally close to Act II's spreadsheet task but with a real reference list to check against (the earlier spreadsheet task's Act I/II review flagged a similar feature as missing).
 - `emailFlagsMismatch()` is a solid two-part check: the message must name the mismatched row (EKG/93000/Okonkwo) **and** state the correct charge (85) while explicitly excluding a message that only repeats the wrong number (185) — stops a learner from passing by parroting the sheet back verbatim.
 - The email compose step is gated behind actually clicking into the mismatched row first, so the task can't be completed by emailing blind.
-- **Fixed today:** the mismatched cell no longer renders red until the learner has actually selected that row. Comparing against the reference list is now genuinely required to find it — the app no longer gives the answer away on load.
+- **Fixed today:** the mismatched cell no longer renders red until the learner has actually selected that row. Comparing against the reference list is now encouraged, though trial-and-error clicks can still reveal it — the app no longer gives the answer away on load.
 
 #### Concerns / could be better
 - None remaining — the source-confirmed gap (auto-highlighted answer) is resolved.
@@ -813,7 +861,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 ---
 
 > [!note] Comparing the two paths
-> Path A (college) was the more consistently finished of the two at review time: all four tasks matched their stated lesson exactly, with no gap between what the Job Card/Help text claimed and what the component actually checked. Path B (healthcare) had real strengths even then — `patient-intake`'s confidentiality check was already arguably the best-built judgment task in either path — but three source-confirmed gaps meant it lagged Path A in rigor: `billing-sheet`'s auto-highlighted mismatch cell, `confidentiality-call`'s easier-than-stated multiple-choice mechanic, and `appointment-scheduling`'s pre-solved clash. **All three were fixed today** (reveal-on-click slots, gated mismatch highlighting, and a free-text compose step wired to the existing validator), so the two paths are now comparably rigorous. Worth a playtest pass on Path B specifically, since these are same-day changes with only automated verification so far.
+> Path A (college) was the more consistently finished of the two at review time: its four tasks have coherent scenarios, but enrollment and coursework still have acknowledgment-versus-demonstration gaps. Path B (healthcare) had real strengths even then — `patient-intake`'s confidentiality check was already arguably the best-built judgment task in either path — but three source-confirmed gaps meant it lagged Path A in rigor: `billing-sheet`'s auto-highlighted mismatch cell, `confidentiality-call`'s easier-than-stated multiple-choice mechanic, and `appointment-scheduling`'s pre-solved clash. **All three were fixed today** (reveal-on-click slots, gated mismatch highlighting, and a free-text compose step wired to the existing validator), but those UI fixes do not establish equal rigor or eliminate validator bypasses. Worth a playtest pass on Path B specifically, since these are same-day changes with only automated verification so far.
 
 ## Things that can go wrong — Act V
 
@@ -822,7 +870,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 - **Starter-only statements:** a one-click starter plus nothing else still passes `statementShowsInterest()`. Check whether the learner can explain, in their own words, why they picked this school/program.
 
 ### L16 Path B — Appointment Scheduling
-- **Fixed today:** slots no longer reveal "Booked"/"Open" until clicked, so the cross-reference skill is now actually required. Confirm in playtest that learners understand they need to click each slot to check it.
+- **Fixed today:** slots no longer reveal "Booked"/"Open" until clicked, but this does not enforce inspecting the requested booked slot before choosing the open slot. Confirm in playtest that learners understand they need to click each slot to check it.
 - **Confirmation with the time but no context:** `confirmationOffersOpenSlot` only checks for "11:30" appearing anywhere — a message with just the number and nothing addressed to Maya still passes. Ask the learner to read their sent message aloud.
 
 ### L17 Path A — Financial Aid
@@ -838,7 +886,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 - **Passing on keyword match alone:** `responseIsComplete()` accepts any reply with a qualifying word at 28+ characters — a technically-passing reply could still be a poor professional response. Read a few actual learner replies during playtest, not just pass/fail.
 
 ### L18 Path B — Billing Sheet
-- **Fixed today:** the mismatch cell no longer highlights on load — it only reveals once the learner selects that row, so reading the reference list is now actually required. Confirm in playtest that learners use the list rather than clicking rows one by one to find the color change.
+- **Fixed today:** the mismatch cell no longer highlights on load — it only reveals once the learner selects that row, though clicking rows until one highlights can still bypass comparison. Confirm in playtest that learners use the list rather than clicking rows one by one to find the color change.
 - **Repeating the wrong number back:** the email check specifically guards against a message that just restates the wrong number without also giving the correct one — confirm this guard actually blocks that message in practice, not just in the regex.
 
 ### L19 Path A — Research
@@ -853,7 +901,7 @@ Levels L16–L19. Path A (college): Marcus Bell, Academic Advisor, Bunker Hill C
 
 # Act VI: Office Administrator
 
-Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ coworker). Levels L19h1–L23. This is the newest content in the whole game — the hiring sub-arc and L20–L23 all shipped in the same commit (`aa59453`) as this review.
+Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ coworker). Levels L19h1–L23. The hiring sub-arc and L20–L23 are covered here as implemented source; this pass does not establish their deployment date.
 
 ## 35. L19h1 — Applying
 
@@ -862,7 +910,7 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 ### What's working
 - The requirement list is honestly designed: 4 of 5 items are met (customer-facing, scheduling, tools, budget) and one — a bachelor's degree — is deliberately unmet, with a dedicated note ("You do not have a degree — and this job does not need one") that fires the moment the learner checks it. A real, well-aimed lesson about job postings being wish lists, not gates.
 - `pickingLooksReady()` requires 3+ of the *actually-met* requirements checked, not just any 3 checkboxes — a learner can't game it by checking the degree box plus two others.
-- `fitLooksReal()` (4+ words) plus sentence starters keeps the "why you fit" line accessible without being gradeable-in-name-only.
+- `fitLooksReal()` requires four words. Starters support accessible practice, but relevance and evidence of fit need teacher review.
 
 ### Concerns / could be better
 - None significant — tightly scoped, and the "you don't need every box" lesson is exactly the kind of hidden-curriculum content ESL/workplace-readiness learners usually don't get taught explicitly.
@@ -877,7 +925,7 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 **Task:** job-application — fill out a multi-section application (position, work history, availability, "why this role")
 
 ### What's working
-- Work history is genuinely pre-filled from the learner's own trunk story (New Hire → Shift Lead → Shift Supervisor → Assistant Manager at Harborside Cafe) rather than being aspirational filler — since every learner follows the identical fixed role progression through Act IV regardless of which Act V door they took, a static work-history array is actually accurate for 100% of learners reaching this point, not a shortcut that happens to look right.
+- Work history is genuinely pre-filled from the learner's own trunk story (New Hire → Shift Lead → Shift Supervisor → Assistant Manager at Harborside Cafe) rather than being aspirational filler — since every learner follows the identical fixed role progression through Act IV regardless of which Act V door they took, a static work-history array is actually consistent with the normal in-game progression (not evidence of real employment), not a shortcut that happens to look right.
 - `whyLooksReal()` (6+ words) plus starters mirrors the posting task's forgiving-but-real bar.
 - Copy explicitly tells the learner to check the pre-filled history for correctness ("From your Harborside record. Read it over.") — treats it as something to verify, not just admire.
 
@@ -911,15 +959,15 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 **Task:** interview-practice — answer 4 mock-interview questions, then ask one of your own
 
 ### What's working
-- This is content-checked, not just presence-checked, in the sense that matters most for a spoken-practice stand-in: `answerLooksReal()` requires 6+ words per answer for *all four* questions before finishing, and the "ask back" step is a hard separate gate — a learner can't finish by only answering the interviewer's questions.
+- This is length-checked, not semantically content-checked: `answerLooksReal()` requires 6+ words per answer for *all four* questions before finishing, and the "ask back" step is a hard separate gate — a learner can't finish by only answering the interviewer's questions.
 - Each question carries its own "what she's listening for" coaching line, visible before the learner answers — this is real interview-skills content (e.g. the weakness question explicitly models an ESL-appropriate honest answer: "English is my second language, and long emails still take me time").
 - The file's own header comment is transparent about scope: "the app confirms every answer is real; it does not grade them. A spoken mode is planned (Phase 4)." That's the correct claim to make — nothing here overstates what's checked.
 
 ### Concerns / could be better
-- Word-count-only grading means a learner could type six words of nonsense and pass. This is the same honestly-scoped tradeoff as the mail-etiquette/sick-call free-text tasks reviewed in Act I — worth the same "capture actual answers during playtesting before choosing grading rules" treatment rather than a fix now.
+- Word-count-only grading means a learner could type six words of nonsense and pass. This is an intentionally looser check than the task-specific validators now used for mail-etiquette/sick-call in Act I — worth the same "capture actual answers during playtesting before choosing grading rules" treatment rather than a fix now.
 
 ### Suggested change
-- No change yet — same open question as L3a/L3a2's free-text grading. Revisit together once playtest transcripts exist for both.
+- Keep the low-pressure practice framing and use the existing teacher-review path. Check relevance against the interview question through human review before proposing stricter automated grading.
 
 ---
 
@@ -933,10 +981,10 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 - Copy consistently reinforces the sequence, correctly foreshadowing the paperwork level that follows.
 
 ### Concerns / could be better
-- None significant.
+- The eight-word reply check does not verify acceptance or restating the start date.
 
 ### Suggested change
-- No change.
+- Add a lenient acceptance/date check and retain teacher review for communication quality.
 
 ---
 
@@ -946,8 +994,8 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 
 ### What's working
 - `signatureMatches()` normalizes case/whitespace and compares against the learner's actual display name — the same forgiving-but-real pattern as `normalizeRename()` in Act II's Files task. A learner isn't tripped up by capitalization but also can't sign as "asdf."
-- Dependents field explicitly requires typing "0" rather than accepting empty — matches the on-screen hint ("If none, enter 0") instead of silently treating blank as zero.
-- The form's own blurb explains *why* it exists ("tells payroll how much tax to hold back") before asking the learner to fill it — real financial/civic literacy content, appropriately scoped to Section-1-only.
+- The dependents hint asks for "0" if none; the submit handler only requires a nonempty value — matches the on-screen hint ("If none, enter 0") instead of silently treating blank as zero.
+- The form's own blurb explains *why* it exists ("tells payroll how much tax to hold back") before asking the learner to fill it — real financial/civic literacy content, scoped as simplified practice, not a complete real W-4.
 
 ### Concerns / could be better
 - None significant.
@@ -962,11 +1010,11 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 **Task:** i9-section1 — date of birth, address, work-authorization status, signature, date
 
 ### What's working
-- Same signature/date handling as the W-4. Status options correctly mirror the real I-9's four categories (citizen, non-citizen national, LPR, authorized non-citizen) without oversimplifying into a fake binary.
+- Same signature/date handling as the W-4. The simulation offers four work-status categories (citizen, non-citizen national, LPR, authorized non-citizen) without oversimplifying into a fake binary.
 - Blurb sets realistic expectations for what happens next ("You'll show ID documents on your first day") rather than implying this form alone completes work authorization.
 
 ### Concerns / could be better
-- Date-of-birth and address fields only check non-emptiness, with no format check at all — a learner could type "x" in the address field and pass. This is a deliberately lighter bar than the W-4's dependents field (which requires an actual digit), and it's a reasonable design choice, but the source comment describing this task as checking "the format" isn't quite accurate for these two fields specifically.
+- Date-of-birth and address fields only check non-emptiness, with no format check at all — a learner could type "x" in the address field and pass. This is a deliberately lighter bar than the W-4's dependents field (which uses a number input but whose submit handler checks only non-emptiness), and it's a reasonable design choice, but the source comment describing this task as checking "the format" isn't quite accurate for these two fields specifically.
 
 ### Suggested change
 - Low priority: either loosen the doc comment's "checks the format" claim to be accurate for this form specifically, or add a minimal date-of-birth shape check (e.g. contains digits) to match the rigor already present elsewhere in this same task.
@@ -978,8 +1026,8 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 **Task:** direct-deposit — bank name, routing number, account number, account type; no signature/date required
 
 ### What's working
-- `routingIsValid()` — exactly 9 digits via regex — is genuinely checked, and the hint tells the learner precisely where to find it on a real check ("first group of 9 digits along the bottom, on the left"). This is the most rigorously validated of the three onboarding forms.
-- Correctly omits the signature/date fields the other two forms require — this form doesn't need them, and the task doesn't force a pattern where it doesn't apply.
+- `routingIsValid()` — exactly 9 digits via regex — is genuinely checked, and the hint tells the learner precisely where to find it on a real check ("first group of 9 digits along the bottom, on the left"). This verifies shape only: it does not validate a routing checksum, a real bank, or ownership of an account.
+- Correctly omits the signature/date fields the other two forms require — this simulated form omits them, and the task doesn't force a pattern where it doesn't apply.
 - The completion copy ("Your pay will land in your account each payday. That's all the paperwork — day one is next.") closes the entire 5-level hiring arc with a clear "you're done, here's what's next" signal.
 
 ### Concerns / could be better
@@ -1036,7 +1084,7 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 - The camera-toggle completion also fires as soon as any camera toggle happens after the mic-off + chat conditions are met — not a bug, just worth confirming during playtest that finishing "mid-action" doesn't feel abrupt.
 
 ### Suggested change
-- No further engineering needed — verify in playtest that a learner who unmutes now understands to leave and rejoin, given both the toast and the persistent banner say so explicitly.
+- Recovery is now explained, but the instructional banner violates the Job Card-only rule. Move coaching to the Job Card and reconsider whether re-muting can be a sufficient recovery; see the learning-value review above.
 
 ---
 
@@ -1062,8 +1110,8 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 **Task:** slide-deck — build and "present" 3 slides (title, a real number, a takeaway)
 
 ### What's working
-- The planted expense total (188) is defined identically in both the expense-report and slide-deck content files, and it correctly equals the sum of the four *receipted* rows from L22 ($24+$42+$48+$74=$188) — so "use the expense total that is already on the slide" is a true claim, not a coincidence-of-copy. The slide requires the learner to *confirm* this number via checkbox rather than retype it, with an explicit warning not to change it — appropriately matched to a level that isn't teaching SUM-formula authoring (that's L7/L14's job).
-- Requires all four conditions together (title 2+ chars, takeaway 3+ words via a real sentence check, total confirmed, actually presented) — a learner can't skip straight to presenting.
+- The planted expense total (188) is defined identically in both the expense-report and slide-deck content files, and it correctly equals the sum of the four *receipted* rows from L22 ($24+$42+$48+$74=$188) — so "use the expense total that is already on the slide" is a true claim, not a coincidence-of-copy. The slide requires the learner to *confirm* this number via checkbox rather than retype it, with an explicit warning not to change it — appropriately matched to a level that isn't teaching SUM-formula authoring (that's L7/L10's job; L14 teaches reading IF).
+- Requires all four conditions together (title 2+ chars, takeaway 3+ words via a word-count check, total confirmed, actually presented) — a learner can't skip straight to presenting.
 - The 3-slide constraint is enforced structurally (only 3 thumbnail slots exist, and each slide gates on completing the prior one first) rather than just being a copy instruction — matches "Do not add a fourth slide" being backed by the actual UI, not just told to the learner.
 
 ### Concerns / could be better
@@ -1079,7 +1127,7 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 >
 > The `preHire` flag drives exactly one place in the UI — the Job Card, which shows "Applicant" / "Solicitante" instead of a job title during L19h1–h5 — and nothing elsewhere in the app (desktop, studio, teacher dashboard, portfolio) contradicts that during these levels.
 >
-> The hiring arc's task-completion path runs through the exact same generic skill-rung logic as every other task in the game — nothing about these five new levels is special-cased, so the stale-task-key bug that a recent commit fixed for the teacher dashboard (which was keyed off an outdated `/studio` catalog rather than runtime `ACTS`/`LEVELS`) cannot recur here: these tasks were added directly to the runtime task list and level map and inherit the corrected, runtime-derived progress mapping automatically.
+> The hiring arc's task-completion path runs through the exact same generic skill-rung logic as every other task in the game — nothing about these five new levels is special-cased, which reduces the specific stale-catalog risk described in the earlier review: these tasks were added directly to the runtime task list and level map and inherit the corrected, runtime-derived progress mapping automatically.
 
 ## Things that can go wrong — Act VI
 
@@ -1092,7 +1140,7 @@ Cast: Anita Raman, Operations Director at Harborside HQ; Chris Okafor (HQ cowork
 - **Skill-checking without evidence:** nothing stops checking a skill never actually demonstrated in-game. Low stakes here, but worth noting if this résumé is ever surfaced to a real teacher as evidence of the skill.
 
 ### L19h3 — The Interview (interview-practice)
-- **Passing on word count, not content:** six words of unrelated text clears every gate. This is the task most worth watching in playtest — see the open question already logged for L3a/L3a2's free-text grading.
+- **Passing on word count, not content:** six words of unrelated text clears every gate. This is the task most worth watching in playtest — use its existing teacher-review path to evaluate relevance.
 - **Ask-back as an afterthought:** a learner could rush through four real answers and then pick the first ask-back option without reading it. Confirm the four choices are distinct enough that picking blind is noticeably worse than reading them.
 
 ### L19h4 — The Offer (job-offer)
@@ -1193,14 +1241,14 @@ Cast: Anita Raman. Levels L24–L27.
 - This is the one place in Act VII that's real, not scripted: the awards list renders the learner's actual earned tracks by act, so the "everything you've done" screen is a genuine record, not a fictional scenario.
 - The source comment is explicit and honest about scope: "Teacher-check in name only... Nothing here is graded" — matches the completion check, which only requires each of the 4 answers to have 3+ words. This is correctly framed as reflection, not assessment.
 - The prompts are well-chosen and non-leading ("What are you still building confidence in?", "What would you tell a friend thinking about starting this program?") — genuinely open, no wrong answers, consistent with the stated design intent.
-- The completed view persists, so a learner can reopen it later and still see their awards and answers.
-- **Fixed today:** a "Copy summary to share" button now assembles the awards list and reflection answers into plain text and copies it to the clipboard, with a confirmation toast telling the learner to paste it into an email or message. The "share it with whoever's useful" copy is now something the app can actually deliver, not just say.
+- The completion flag and earned awards survive reload, but reflection answers do not rehydrate: `PortfolioReflectionTask.tsx` initializes them to empty strings on mount. Writing is submitted for teacher review, but the learner view does not load it back. After reload, copying the summary can therefore omit all four answers.
+- **Fixed today:** a "Copy summary to share" button now assembles the awards list and reflection answers into plain text and copies it to the clipboard, with feedback through `useNudge().say()` telling the learner to paste it into an email or message. The "share it with whoever's useful" copy is now something the app can actually deliver, not just say.
 
 ### Concerns / could be better
 - The end-of-program moment reuses the same "clock out vs. keep going" mechanism used for ordinary day boundaries elsewhere in the game; distinctiveness comes entirely from the copy ("The last day of the program"), not from a different completion experience. This is a minor, low-priority polish item, not a functional gap.
 
 ### Suggested change
-- No change needed for the sharing gap — resolved. Low priority: consider a visually distinct final-completion moment, separate from the reused day-boundary UI, given this is the only level in the game where "stopping point" means "the whole curriculum," not "today." Playtest the clipboard button on a device without clipboard permission granted, to confirm the fallback message is helpful rather than confusing.
+- The copy button closes the immediate sharing gap, but restoring saved answers is still needed for a durable take-away artifact. Also check the copied skills and act names in Spanish: `copySummary()` uses the unlocalized `SKILLS` and act title values. Low priority: consider a visually distinct final-completion moment, separate from the reused day-boundary UI, given this is the only level in the game where "stopping point" means "the whole curriculum," not "today." Playtest the clipboard button on a device without clipboard permission granted, to confirm the fallback message is helpful rather than confusing.
 
 ---
 
@@ -1237,7 +1285,7 @@ Cast: Anita Raman. Levels L24–L27.
 
 # Suggestions for all levels
 
-A single prioritized list across all 32 levels, pulled from the 51 task reviews above. Ranked within each group by how much it matters, not by level order.
+A single prioritized list across all 37 levels, pulled from the 51 task reviews above. Ranked within each group by how much it matters, not by level order.
 
 ## 1. Highest playtest priority
 
@@ -1253,7 +1301,12 @@ These follow one consistent shape: a task's own lesson/dispatch copy claims a sp
 | Level | Task | Gap |
 |---|---|---|
 | ~~L6~~ | ~~spreadsheet~~ | **Fixed today.** Sending now requires the message to state the correct total (`emailMentionsTotal()`), mirroring L9/L10's pattern. |
-| L10 | formula-check | The send-check accepts a vague message (matches "range" or "sum") without the corrected total — looser than L9's AND-based check for the identical "report the number" pattern one level earlier. |
+| L10 | formula-check | The send-check accepts a vague message (matches "range" or "sum") without the corrected total — looser than L9's AND-based check for the identical multi-part communication pattern one level earlier (L9 checks a day and time, not a spreadsheet total). |
+| L7 | status-report | `body.includes(String(STATUS_TOTAL))` checks a substring, not a numeric token; an unrelated larger number containing the total can pass. |
+| L14 | budget-sheet | Labor + “over” passes without an amount, despite the report-how-much objective. |
+| L17 Path B | patient-intake | Refusal signal accepts “sorry”; finite leak keywords do not make the response leak-proof. |
+| L19h4 | job-offer | Eight words do not verify acceptance or restating the selected start date. |
+| L24 | meeting-minutes | No per-action owner/date check; a twenty-word message with a colon or dash bypasses owner/day matching. |
 | L26 | ops-report-packet | The summary check only requires 12+ words and *any* digit — a summary with an unrelated number still passes; doesn't verify the actual total or that the calendar item is named. |
 | L25 | performance-review | The strength field blocks vague canned phrases; the area-to-grow field has no equivalent blocklist, so an equally vague answer passes there but not in the sibling field. |
 | L19h5 | i9-section1 | Date-of-birth and address fields only check non-emptiness, despite a source comment describing the task as checking "the format." |
@@ -1261,53 +1314,53 @@ These follow one consistent shape: a task's own lesson/dispatch copy claims a sp
 
 ## 3. Free-text tasks with no teacher-review path
 
-**Fixed today.** `mail-etiquette` (L3a), `call-out-sick` (L3a2), and `incident` (L3b) are now all in `TEACHER_CHECK_TASKS` (`src/lib/curriculum-catalog.ts`), so a teacher can actually read what a learner wrote in all three. The two mail tasks also gained real content checks — `mailEtiquetteAnswersDarnell()` requires the reply to actually name the storage room, and `callOutSickSaysCannotAttend()` requires stating inability to attend today's shift, not just "I'm sick." `incident`'s narrative check now requires stating both an injury-status fact and an action/notification, replacing the old 15-character-minimum check, and its completion copy's "in order" claim is now backed by real teacher visibility instead of nothing.
+**Fixed today.** `mail-etiquette` (L3a), `call-out-sick` (L3a2), and `incident` (L3b) are now all in `TEACHER_CHECK_TASKS` (`src/lib/curriculum-catalog.ts`), so a teacher can actually read what a learner wrote in all three. The two mail tasks also gained real content checks — `mailEtiquetteAnswersDarnell()` requires the reply to actually name the storage room, and `callOutSickSaysCannotAttend()` requires stating inability to attend today's shift, not just "I'm sick." `incident`'s narrative check now requires stating both an injury-status fact and an action/notification, replacing the old 15-character-minimum check, and teacher visibility now supports reviewing chronology, although automatic completion still does not verify it.
 
-Every writing task in the game is now either in `TEACHER_CHECK_TASKS` or has a real content-matching check (or both) — this was the last remaining gap.
+The three named tasks now have content checks and teacher-review eligibility. This does not establish universal writing assessment: early low-stakes mail and some short fields intentionally use minimal checks. Submission capture and a completed human review must be verified separately.
 
 ## 4. Copy / documentation drift (not learner-facing, but worth a cleanup pass)
 
-- `curriculum/00-scope-and-sequence.md` still describes Act VI as "Levels 20–23" and Act VII as "Levels 21–24," with no mention of the `level19h1`–`h5` hiring sub-arc added today — the doc is now one level-number off for the last two acts. Use runtime `tracks-content.ts` numbering as ground truth until this is reconciled.
+- `curriculum/00-scope-and-sequence.md` correctly labels Act VII 24–27, but its Act VI 20–23 outline omits the five hiring levels. Its built-status prose and README's 15-built/24-total claims are also stale relative to 37 runtime levels. Use `tracks-content.ts` for implemented structure.
 - `curriculum-catalog.ts` still describes L6 (`spreadsheet`) as "flag one that's wrong" — the shipped task checks transcription against five supplied amounts, with no deliberate bad-source-slip step. Align the description rather than building a new puzzle to match stale copy.
 - Two completion badges collide on the same number: `college-offer` (L13) and `priority-call` (L12) both render `badgeNumber="16"`; `budget-sheet` (L14) renders `"17"`. Worth a repo-wide check of every `badgeNumber` prop for other duplicates in one pass rather than fixing these two in isolation.
 
 ## 5. Pacing: the "check X against your own calendar/schedule before agreeing" skill
 
-This exact skill shape now appears **seven times** across the game: L2 (`schedule`) → L3 (`timeclock` hours-check) → L4 (`calendar`) → L9 (`team-schedule`) → L11 (`team-meeting`) → L12 (`priority-call`) → L21 (`multi-person-scheduling`). Most later appearances explicitly name the reuse in their own lesson text ("Same conflict skill. New side of it." / "Moving the meeting is the same as Level 4."), which is exactly the right way to handle intentional repetition — and L21 finally delivers a genuine mechanical escalation (4 calendars instead of 2, a slot only counts if *everyone* is free). The one soft spot is L11→L12 back-to-back (fourth and fifth appearances in two consecutive levels) — worth confirming in playtest that this specific pair still reads as synthesis rather than a retread, since every other appearance has at least one full act of distance from its predecessor.
+Related comparison skills recur, but they are not seven identical puzzles. L2 and L4 compare personal availability; L9 allocates coverage using availability and hours; L11 authors an invite; L12 synthesizes coverage and rescheduling; L21 compares four calendars. L3's timeclock task instead compares recorded and scheduled start times. L8's triage and L13's class commitment also reuse conflict handling. Evaluate the new decision and support level in each appearance rather than assigning inconsistent ordinal counts. L11–L12 are adjacent; other repetitions can also be close together, so the earlier claim of an act of separation was incorrect.
 
-## 6. What's already excellent and shouldn't be touched
+## 6. Strong patterns to retain, with limits
 
-Worth naming so a future pass doesn't "fix" what's working: `team-schedule` (L9) and `formula-check` (L10)'s live-evaluated formulas, `reply-all` (L15)'s three-layer validation (audience + edited-draft + content-match), `priority-call` (L12)'s overpromise-aware reply grading, `patient-intake` (Act V Path B)'s leak-proof decline check, and `expense-report`/`office-drive` (Act VI)'s gated multi-step completion are all strong reference implementations. When tightening the validation gaps in section 2 above, these are the patterns to copy rather than designing new ones from scratch.
+Retain the live formula evaluation in `formula-check`, the audience/draft/content gates in `reply-all`, and the multi-step file and receipt workflows in `office-drive` and `expense-report`. `team-schedule` is a staffing comparison task, not a formula-authoring task. All keyword validators, including `priority-call` and `patient-intake`, need false-accept and false-reject checks; none should be copied as a guarantee of semantic accuracy or confidentiality.
 
 ---
 
 # Complexity roadmap
 
-The "At a glance" table's Challenge column tells the real story: difficulty oscillates between 2 and 4 for almost the entire game, with only four levels (L12, L24, L25, and arguably no level in Acts IV–VI) ever reaching 5. There is no sustained rising curve across 27 levels — each act recycles the same difficulty band with an occasional capstone spike. The six ideas below add real complexity without adding stress, jargon, timers, or punitive failure states — all of which would cut against the plain-calm-bilingual, no-jargon design this game has been consistent about everywhere else. Each is tied to specific levels so it's actionable, not abstract.
+The editorial Challenge estimates suggest a pattern, not a measured difficulty curve: difficulty oscillates between 2 and 4 for almost the entire game, with three levels (L12, L24, and L25) rated 5. There is no sustained rising curve across 37 runtime levels — each act recycles the same difficulty band with an occasional capstone spike. The six ideas below add real complexity without adding stress, jargon, timers, or punitive failure states — all of which would cut against the plain-calm-bilingual, no-jargon design this game has been consistent about everywhere else. Each is tied to specific levels so it's actionable, not abstract.
 
 ### 1. Let choices carry forward instead of resetting each level
 
-Almost every task is self-contained today — a wrong pick in L9 has no echo in L12, even though L12 explicitly reuses L9's mechanic. A later level's inbox could reference an earlier mistake lightly ("Following up on the schedule mix-up from last week…") without blocking anything — it just makes the world remember the learner. Lowest-risk place to try this first: **L21 → L26** (multi-person-scheduling → ops-report-packet), since both already sit in the same HQ/Anita storyline and L26 is explicitly designed as a synthesis capstone with no new mechanics — a callback line costs nothing structurally.
+Almost every task is self-contained today — a wrong pick in L9 has no echo in L12, even though L12 explicitly reuses L9's mechanic. A later level's inbox could reference an earlier mistake lightly ("Following up on the schedule mix-up from last week…") without blocking anything — it just makes the world remember the learner. Lowest-risk place to try this first: **L21 → L26** (multi-person-scheduling → ops-report-packet), since both already sit in the same HQ/Anita storyline and L26 is explicitly designed as a synthesis capstone with no new mechanics — a factual callback would need saved state and careful replay/reset behavior.
 
 ### 2. Introduce real ambiguity — situations with more than one defensible answer
 
-Every task today has exactly one correct choice with decoys. `priority-call` (L12) already gestures at graded reasoning with its urgency-justification field, but it's validated as a 12-character minimum — any text passes. Strengthening that one field (require it to reference one of the three actual competing situations, per the existing Suggested Change for L12) is a safer first step than inventing a new "two good answers" task from scratch. Once that pattern is proven, `performance-review` (L25) is the next-best candidate — it already documents a deliberate no-tone-grading tradeoff, and its area-to-grow field (currently checked only for length, see the closing punch list's validation-gaps table) is the natural place to require *reasoning about a genuine tradeoff* rather than just more specificity.
+Many selection tasks have one keyed target with decoys; writing, reflection, and prioritization already allow multiple defensible responses. `priority-call` (L12) already gestures at graded reasoning with its urgency-justification field, but it's validated as a 12-character minimum — any text passes. Strengthening that one field (require it to reference one of the three actual competing situations, per the existing Suggested Change for L12) is a safer first step than inventing a new "two good answers" task from scratch. Once that pattern is proven, `performance-review` (L25) is the next-best candidate — it already documents a deliberate no-tone-grading tradeoff, and its area-to-grow field is a natural place for teacher feedback on reasoning and evidence.
 
 ### 3. Turn "order doesn't matter" into "order sometimes matters, and here's why"
 
-L8, L12, L21, and L26 all explicitly promise order-independence — a deliberately gentle design choice, and the right default. Rather than touching any of those, a *new* moment late in Act VII (after L26, before or alongside L27) could be the one deliberate exception, explicitly framed as a lesson rather than a trap: "This time, order changes the outcome — replying before checking the schedule means promising something you can't deliver." Placing it last means every earlier level's promise ("the only real mistake is forgetting one") stays true everywhere it was made.
+L8 and L12 explicitly allow their internal work items in either order; L26 also permits flexible navigation. This does not mean every task or every action in L21 is order-independent. These flexible hubs reflect a deliberately gentle design choice, and the right default. Rather than touching any of those, a *new* moment late in Act VII (after L26, before or alongside L27) could be the one deliberate exception, explicitly framed as a lesson rather than a trap: "This time, order changes the outcome — replying before checking the schedule means promising something you can't deliver." Placing it last means every earlier level's promise ("the only real mistake is forgetting one") stays true everywhere it was made.
 
 ### 4. Let validation strength do the escalating, not new content
 
-This is the cheapest lever, and it's already half-built — free-text checks go from pure non-emptiness (L1) → AND-based content checks (`team-schedule`, L9) → three-layer checks (`reply-all`, L15) → canned-phrase blocklists (`performance-review`, L25). That arc isn't consistent yet. The validation-gaps table in the closing section above is effectively a ready-made to-do list for this: tightening `ops-report-packet` (L26), `i9-section1` (L19h5), and `interview-practice` (L19h3) to match the rigor already proven at L9/L15/L25 raises the *real* difficulty of existing Act VI–VII levels for free — no new scenarios to write, playtest, or translate.
+This is the cheapest lever, and it's already half-built — free-text checks go from pure non-emptiness (L1) → AND-based content checks (`team-schedule`, L9) → three-layer checks (`reply-all`, L15) → canned-phrase blocklists (`performance-review`, L25). That arc isn't consistent yet. The validation-gaps table in the closing section above is effectively a ready-made to-do list for this: tightening `ops-report-packet` (L26), `i9-section1` (L19h5), and `interview-practice` (L19h3) to match the rigor already proven at L9/L15/L25 could improve evidence of the target skill, but requires bilingual acceptance/rejection tests, revised hints, and playtesting. Stricter regexes alone are not a reliable measure of learning.
 
 ### 5. Add a revise-and-resubmit loop somewhere in Acts VI–VII
 
-Every task today is one-shot pass/fail with hints. Receiving feedback and revising is a real, high-value workplace skill the game doesn't currently teach at all. `performance-review` (L25) is the best candidate: after the first submission, Anita (or a placeholder "reviewer" step) sends back one specific, plain-language note on the current draft, and the learner revises once before it's actually sent. Frame it explicitly as normal process — "First drafts get notes. That's normal here." — never as a failure state, and cap it at one revision round so it doesn't become a new source of stuck-ness.
+The app already supports teacher feedback and repeat writing submissions: `markComplete()` records writing before its already-completed guard. A mandatory, scripted in-task revision would be an extension of that existing pathway. `performance-review` (L25) is the best candidate: after the first submission, Anita (or a placeholder "reviewer" step) sends back one specific, plain-language note on the current draft, and the learner revises once before it's actually sent. Frame it explicitly as normal process — "First drafts get notes. That's normal here." — never as a failure state, and cap it at one revision round so it doesn't become a new source of stuck-ness.
 
 ### 6. Scale down scaffolding as acts progress, rather than scaling up difficulty
 
-Sentence starters and generous hints are appropriate early (L1, L3a, L3a2) and don't currently taper by design — the same starter-and-hint density is present as late as `interview-practice` (L19h3) and `meeting-minutes` (L24). A felt difficulty increase that reads as growth rather than punishment: fewer or no starters by Act VI–VII, and hints that ask a guiding question ("What does Anita need to know to act on this?") instead of naming the answer outright. This costs no new mechanics — it's a copy-only pass across the existing starter/hint arrays in the later acts' `content.ts` files.
+Sentence starters and generous hints are appropriate early (L1, L3a, L3a2) and don't currently taper by design — the same starter-and-hint density is present as late as `interview-practice` (L19h3) and `meeting-minutes` (L24). A felt difficulty increase that reads as growth rather than punishment: fewer or no starters by Act VI–VII, and hints that ask a guiding question ("What does Anita need to know to act on this?") instead of naming the answer outright. The project already has a performance-based release ladder (`release-ladder.ts`). Audit how each later task consumes it before adding act-based fading; preserve access to Help and bilingual support. Changing starter visibility may require UI work, so this is not necessarily a copy-only pass.
 
 ### What to avoid
 

@@ -44,7 +44,7 @@ export const JOB_OFFER_COPY: Record<Lang, {
     replyHint: "Short and warm. Thank her, say you accept, and confirm the start date.",
     send: "Send reply",
     needDate: "Pick the start date from the letter first.",
-    needReply: "Write a short reply accepting the offer.",
+    needReply: "Accept the offer and include your start date, October 6.",
     sentKicker: "Offer accepted",
     doneTitle: "You accepted the offer.",
     doneBody: "You read the letter, found the start date, and sent a clear reply. You have the office job. Last thing before day one: the new-hire paperwork.",
@@ -67,7 +67,7 @@ export const JOB_OFFER_COPY: Record<Lang, {
     replyHint: "Corto y amable. Agradécele, di que aceptas y confirma la fecha de inicio.",
     send: "Enviar respuesta",
     needDate: "Primero elige la fecha de inicio de la carta.",
-    needReply: "Escribe una respuesta corta aceptando la oferta.",
+    needReply: "Acepta la oferta e incluye tu fecha de inicio, el 6 de octubre.",
     sentKicker: "Oferta aceptada",
     doneTitle: "Aceptaste la oferta.",
     doneBody: "Leíste la carta, encontraste la fecha de inicio y enviaste una respuesta clara. Tienes el puesto de oficina. Lo último antes del primer día: el papeleo de nuevo empleado.",
@@ -101,7 +101,10 @@ export const DATE_CHOICES: { key: string; label: Localized; ok: boolean }[] = [
 ];
 
 export function replyLooksReal(reply: string): boolean {
-  return reply.trim().split(/\s+/).filter(Boolean).length >= 8;
+  const t = reply.toLowerCase();
+  return /\b(accept|acepto|aceptar|aceptamos)\b/.test(t)
+    && !/\b(not|don.t|cannot|can.t|no)\s+(\w+\s+){0,2}(accept|acept)/.test(t)
+    && /(?:oct(?:ober|ubre)?\.?\s+(?:the\s+)?6\b|\b6\s+(?:de\s+)?oct(?:ober|ubre)?\b|\b10[/-]0?6\b|\b0?6[/-]10\b)/.test(t);
 }
 
 export const REPLY_STARTERS: Record<Lang, string[]> = {

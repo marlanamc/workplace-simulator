@@ -1,3 +1,5 @@
+"use client";
+import { useProgress } from "@/lib/progress-context";
 /**
  * A finished job is a quiet moment, not a screen to read. The Job Card holds
  * the sentence and the one button; this is just the check the learner sees in
@@ -18,6 +20,8 @@ export default function TaskDoneCard({
   badgeWhere?: string;
   compact?: boolean;
 }) {
+  const { saving, saveError } = useProgress();
+  if (saving || saveError) return null;
   return (
     <div className="flex items-center gap-3 rounded-xl bg-success-tint px-4 py-3">
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success text-white">

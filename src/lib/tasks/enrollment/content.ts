@@ -133,3 +133,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Mark the missing document.", es: "Marca el documento que falta." },
   { en: "Write a short statement and submit.", es: "Escribe una carta corta y envía." },
 ];
+
+export const DOCUMENT_FILES = [
+  { key: 'vaccine', label: { en: 'Immunization record.pdf', es: 'Registro de vacunas.pdf' } },
+  { key: 'schedule', label: { en: 'Class schedule.pdf', es: 'Horario de clases.pdf' } },
+  { key: 'receipt', label: { en: 'Application receipt.pdf', es: 'Recibo de solicitud.pdf' } },
+];
+export function documentMatchesMissing(key: string): boolean { return key === 'vaccine'; }

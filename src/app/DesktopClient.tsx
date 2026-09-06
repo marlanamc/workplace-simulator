@@ -1,4 +1,6 @@
 "use client";
+import type { CourseRoute } from "@/lib/course-route";
+import type { SubmissionContent } from "@/lib/task-types";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
@@ -258,6 +260,8 @@ export default function DesktopClient(props: {
   displayName: string;
   completedTaskKeys: TaskKey[];
   certificateTrackKeys: string[];
+  initialCourseRoute?: CourseRoute | null;
+  initialWriting?: Record<string, SubmissionContent>;
   initialBridgePath?: BridgePath | null;
   initialFeedback?: TeacherFeedback[];
   initialRungs?: RungMap;
@@ -276,6 +280,8 @@ export default function DesktopClient(props: {
         displayName={props.displayName}
         initialCompletedTaskKeys={props.completedTaskKeys}
         initialCertificateTrackKeys={props.certificateTrackKeys}
+        initialCourseRoute={props.initialCourseRoute}
+        initialWriting={props.initialWriting}
         initialBridgePath={props.initialBridgePath}
         initialFeedback={props.initialFeedback}
         initialRungs={props.initialRungs}

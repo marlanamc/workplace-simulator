@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 10 — An Offer · **Track:** 11 — An
 Offer
-**Task key:** `college-offer` · **Status:** not built yet. This is the
+**Task key:** `college-offer` · **Status:** implemented; learner pilot pending. This is the
 promotion into Assistant Manager, and the story beat where Harborside
 offers to pay for a Bunker Hill Community College Business Essentials
 class.
@@ -15,7 +15,7 @@ title, new emails, an Assistant Manager's first week)
   work shifts — the first time work and outside-of-work responsibilities
   have to share the same calendar.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: an email in Mail from Maria/HR laying out the offer —
       Harborside will pay for one Business Essentials class at Bunker
       Hill Community College, with a specific day/time the class meets.
@@ -26,7 +26,7 @@ title, new emails, an Assistant Manager's first week)
       Level 10) is done. Never a gate — a student who skips it still moves
       on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Mail** and read the offer letter carefully — what's being
    offered, and what's expected in return (usually: keep your grades up,
    stay employed).

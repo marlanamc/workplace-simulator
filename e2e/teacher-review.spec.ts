@@ -39,7 +39,7 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
 
   // Teleport to "The Review" (Act VII, level 25).
   await page.goto("/studio");
-  await page.getByRole("button", { name: /The Review · College/ }).click();
+  await page.getByRole("button", { name: /The Review/ }).click();
   await page.waitForURL(/from=studio/, { timeout: 20_000 });
 
   const actIntro = page.getByTestId("act-intro");

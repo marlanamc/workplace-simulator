@@ -1,3 +1,4 @@
+import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -35,7 +36,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   en: {
     siteName: "Harborside Jobs",
     heading: "Application · Office Administrator",
-    intro: "Four short sections. Your work history is already filled in from your Harborside record — check that it's right.",
+    intro: "Four short sections. Your simulated experience is listed below — this is practice, not real employment history.",
     positionLabel: "Position you're applying for",
     position: "Office Administrator — Harborside HQ",
     historyLabel: "Work history",
@@ -59,7 +60,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   es: {
     siteName: "Empleos Harborside",
     heading: "Solicitud · Administrador de Oficina",
-    intro: "Cuatro secciones cortas. Tu historial de trabajo ya está lleno con tu registro de Harborside — revisa que esté bien.",
+    intro: "Cuatro secciones cortas. Tu experiencia simulada aparece abajo — es práctica, no historial de empleo real.",
     positionLabel: "Puesto al que aplicas",
     position: "Administrador de Oficina — Harborside HQ",
     historyLabel: "Historial de trabajo",
@@ -123,13 +124,13 @@ export function whyLooksReal(why: string): boolean {
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "I've grown from new hire to assistant manager at the cafe, and I'm ready for an office role.",
+    "In the simulator I practiced organizing work and sharing information.",
     "I like keeping things organized so the team can do their work.",
     "I already use the tools this job needs — calendars, spreadsheets, shared files.",
     "I want steady daytime hours and room to keep learning.",
   ],
   es: [
-    "Pasé de nuevo empleado a asistente de gerencia en el café, y estoy listo para un puesto de oficina.",
+    "En el simulador practiqué organizar el trabajo y compartir información.",
     "Me gusta mantener todo organizado para que el equipo pueda hacer su trabajo.",
     "Ya uso las herramientas que este trabajo necesita — calendarios, hojas de cálculo, archivos compartidos.",
     "Quiero un horario estable de día y espacio para seguir aprendiendo.",
@@ -187,4 +188,9 @@ export function describeSubmission(
       { label: c.whyLabel, value: fields.why },
     ],
   };
+}
+
+export function practicedHistory(done: readonly TaskKey[]): HistoryRow[] {
+  return WORK_HISTORY.filter((_, i) => done.includes((['reply-all', 'priority-call', 'triage', 'mail-reply'] as const)[i]))
+    .map((r) => ({ ...r, org: 'Harborside · Simulator', span: { en: 'Simulated practice', es: 'Práctica simulada' } }));
 }

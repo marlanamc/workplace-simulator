@@ -25,7 +25,7 @@ import {
 } from "@/lib/tasks/job-posting/content";
 import {
   JOB_APPLICATION_COPY,
-  WORK_HISTORY,
+  practicedHistory,
   AVAILABILITY_OPTIONS,
   STARTERS as APP_STARTERS,
   LESSONS as APP_LESSONS,
@@ -42,7 +42,7 @@ function activeJobTaskFor(completedTaskKeys: TaskKey[]): TaskKey {
 }
 
 export default function JobsTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, writing } = useProgress();
   const { browserTabToken } = useWindowManager();
 
   const [active, setActive] = useState<TaskKey>(() => activeJobTaskFor(completedTaskKeys));
@@ -62,7 +62,8 @@ export default function JobsTask() {
 
   // ---- job-application state ----
   const [availability, setAvailability] = useState<string | null>(null);
-  const [why, setWhy] = useState("");
+  const [whyOverride, setWhy] = useState<string | null>(null);
+  const why = whyOverride ?? (writing["job-application"]?.fields.at(-1)?.value ?? writing["job-posting"]?.fields.at(-1)?.value ?? "");
 
   const pc = JOB_POSTING_COPY[lang];
   const ac = JOB_APPLICATION_COPY[lang];
@@ -222,7 +223,7 @@ export default function JobsTask() {
                 <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{ac.historyLabel}</div>
                 <div className="mt-0.5 text-[12px] text-[#5f6368]">{ac.historyHint}</div>
                 <ul className="mt-3 flex flex-col gap-2.5">
-                  {WORK_HISTORY.map((row, i) => (
+                  {practicedHistory(completedTaskKeys).map((row, i) => (
                     <li key={i} className="border-l-2 border-[#dadce0] pl-3">
                       <div className="text-[14px] font-medium text-[#202124]">{row.title[lang]}</div>
                       <div className="text-[13px] text-[#5f6368]">{row.org} · {row.span[lang]}</div>

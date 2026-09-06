@@ -2,7 +2,7 @@
 
 **Time:** ~5–8 minutes · **Act II, Level 0** — comes BEFORE the incident report
 **Task key:** `guided-writing` (not in code yet)
-**Status:** not built yet
+**Status:** implemented; learner pilot pending
 **Prerequisite:** Act I complete (has typed short replies and form answers, most recently the sick call)
 
 ## Why this lesson exists
@@ -16,7 +16,7 @@ every sentence starts from a chip.
 *(read aloud / post on board — plain language, one idea)*
 - tell what happened in three short sentences, in order: first, then, now
 
-## Simulator practice (~5–8 min) — once built
+## Simulator practice (~5–8 min)
 1. A short scene plays out in text: a customer spilled a drink near the
    register. Nobody is hurt.
 2. Three boxes, in order, each with sentence-starter chips ("First…",

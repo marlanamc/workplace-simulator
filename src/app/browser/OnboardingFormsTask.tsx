@@ -32,6 +32,7 @@ import {
   RIGHT_NOW_STEPS,
   signatureMatches,
   dateLooksFilled,
+  PRACTICE_PROFILE, PRACTICE_REFERENCE, practiceFieldsMatch,
   routingIsValid,
 } from "@/lib/tasks/onboarding-paperwork/content";
 
@@ -75,7 +76,7 @@ function Radio({
 }
 
 export default function OnboardingFormsTask() {
-  const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
+  const { markComplete, completedTaskKeys, lang } = useProgress();
   const { browserTabToken } = useWindowManager();
 
   const [active, setActive] = useState<TaskKey>(() => activeFormFor(completedTaskKeys));
@@ -124,21 +125,25 @@ export default function OnboardingFormsTask() {
     setAccountType(null);
   };
 
+  const referenceHint = lang === 'en' ? 'Compare the form with Alex’s fictional reference details.' : 'Compara el formulario con los datos ficticios de Alex.';
   const submitW4 = () => {
+    if (!practiceFieldsMatch({status: w4Status ?? '', dependents, date})) return say(referenceHint);
     if (!w4Status || dependents.trim() === "") return say(s.needRequired);
-    if (!signatureMatches(signature, displayName)) return say(s.needSignature);
+    if (!signatureMatches(signature, PRACTICE_PROFILE.name)) return say(s.needSignature);
     if (!dateLooksFilled(date)) return say(s.needRequired);
     markComplete("w4-form", "submit_w4");
   };
 
   const submitI9 = () => {
+    if (!practiceFieldsMatch({dob, address, workStatus: i9Status ?? '', date})) return say(referenceHint);
     if (!dob.trim() || !address.trim() || !i9Status) return say(s.needRequired);
-    if (!signatureMatches(signature, displayName)) return say(s.needSignature);
+    if (!signatureMatches(signature, PRACTICE_PROFILE.name)) return say(s.needSignature);
     if (!dateLooksFilled(date)) return say(s.needRequired);
     markComplete("i9-section1", "submit_i9");
   };
 
   const submitDeposit = () => {
+    if (!practiceFieldsMatch({bank, routing, account, accountType: accountType ?? ''})) return say(referenceHint);
     if (!bank.trim() || !account.trim() || !accountType) return say(s.needRequired);
     if (!routingIsValid(routing)) return say(s.needRouting);
     markComplete("direct-deposit", "submit_direct_deposit");
@@ -162,6 +167,7 @@ export default function OnboardingFormsTask() {
         )}
 
         <div className="mx-auto flex w-full max-w-[640px] flex-col gap-3 px-4 py-6">
+          {!done && <article className="rounded-xl border border-[#dadce0] bg-white p-4 text-[14px] leading-relaxed">{PRACTICE_REFERENCE[lang]}</article>}
           {done ? (
             <div className="flex flex-col gap-5">
               <TaskDoneCard kicker={s.sentKicker} />
@@ -179,7 +185,7 @@ export default function OnboardingFormsTask() {
             <>
               <FormTitleCard title={W4_COPY[lang].formName} description={W4_COPY[lang].blurb} requiredLabel={s.requiredLabel} />
               <QuestionCard label={W4_COPY[lang].nameLabel}>
-                <FormInput value={displayName} readOnly className="text-[#5f6368]" />
+                <FormInput value={PRACTICE_PROFILE.name} readOnly className="text-[#5f6368]" />
               </QuestionCard>
               <QuestionCard label={W4_COPY[lang].statusLabel} required>
                 <Radio options={W4_STATUS_OPTIONS} value={w4Status} onChange={setW4Status} lang={lang} />
@@ -194,7 +200,7 @@ export default function OnboardingFormsTask() {
                 <p className="mt-1 text-[12px] text-[#5f6368]">{W4_COPY[lang].dependentsHint}</p>
               </QuestionCard>
               <QuestionCard label={s.signLabel} required>
-                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={displayName} />
+                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={PRACTICE_PROFILE.name} />
               </QuestionCard>
               <QuestionCard label={s.dateLabel} required>
                 <FormInput value={date} onChange={(e) => setDate(e.target.value)} placeholder={s.datePlaceholder} />
@@ -205,7 +211,7 @@ export default function OnboardingFormsTask() {
             <>
               <FormTitleCard title={I9_COPY[lang].formName} description={I9_COPY[lang].blurb} requiredLabel={s.requiredLabel} />
               <QuestionCard label={I9_COPY[lang].nameLabel}>
-                <FormInput value={displayName} readOnly className="text-[#5f6368]" />
+                <FormInput value={PRACTICE_PROFILE.name} readOnly className="text-[#5f6368]" />
               </QuestionCard>
               <QuestionCard label={I9_COPY[lang].dobLabel} required>
                 <FormInput value={dob} onChange={(e) => setDob(e.target.value)} placeholder={s.datePlaceholder} />
@@ -217,7 +223,7 @@ export default function OnboardingFormsTask() {
                 <Radio options={I9_STATUS_OPTIONS} value={i9Status} onChange={setI9Status} lang={lang} />
               </QuestionCard>
               <QuestionCard label={s.signLabel} required>
-                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={displayName} />
+                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={PRACTICE_PROFILE.name} />
               </QuestionCard>
               <QuestionCard label={s.dateLabel} required>
                 <FormInput value={date} onChange={(e) => setDate(e.target.value)} placeholder={s.datePlaceholder} />

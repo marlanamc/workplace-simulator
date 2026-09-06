@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes (whole level) · **Level:** 16 — Finding a Real
 Answer · **Track:** 14 — Prepping for BHCC (Path A)
-**Task key:** `research` · **Status:** not built yet — the last lesson in
+**Task key:** `research` · **Status:** implemented; learner pilot pending — the last lesson in
 Path A, and the one genuinely new judgment skill in it. See
 `01b-lesson-confidentiality-call.md` for Path B (Front Office / Healthcare
 Admin) — this closes out Act V either way.
@@ -13,21 +13,21 @@ Admin) — this closes out Act V either way.
   unreliable one — the same "spot it, don't guess" move as `handbook`,
   aimed at a new kind of judgment call.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: a library-style search tool with 3–4 planted results for a
       given topic — one obviously promotional, one clearly outdated, one a
       forum/opinion post, one a real-looking library database entry — and a
       prompt to pick which one to cite.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 16 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on. If you do
       offer it, have 2–3 quick "why" talking points ready for this skill's
       decoys (why the promotional one is weak, why outdated matters, why a
       forum post isn't a citable source) — this is a discussion skill as
       much as a click skill.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open the **Browser** → **Library Search** tab.
 2. Search for the given topic.
 3. Look at the 3–4 results — notice what's promotional, outdated, informal,

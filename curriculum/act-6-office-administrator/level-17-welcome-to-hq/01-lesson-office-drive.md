@@ -2,7 +2,7 @@
 
 **Time:** ~15-20 minutes · **Level:** 17 — Welcome to HQ · **Track:** 16 —
 Getting Oriented at HQ
-**Task key:** `office-drive` · **Status:** not built yet. This is the
+**Task key:** `office-drive` · **Status:** implemented; learner pilot pending. This is the
 promotion into Office Administrator — the environment refreshes here: new
 building, new title, new team.
 **Prerequisite:** Act V complete (either path, or skipped) — the
@@ -14,16 +14,16 @@ office, not the cafe), a new wallpaper.
   deeply nested than the one from Level 3 — folders inside folders, several
   similarly-named files — using search, not just browsing.
 
-## Before class (teacher prep) — once built
+## Before class (teacher prep)
 - [ ] Simulator: an HQ-scale Drive with several folders, sub-folders
       inside those, and 3-4 similarly-named files (different dates or
       versions) so the student has to read carefully, not just guess.
 - [ ] No Google Classroom post needed yet — this is optional, supplementary
       practice bundled into the Level 17 wrap-up assignment
-      (`real-practice-assignment.md`), offered once this lesson is done.
+      (`real-practice-assignment.md`), offered after this lesson.
       Never a gate — a student who skips it still moves on.
 
-## Simulator practice (~15-20 min) — once built
+## Simulator practice (~15-20 min)
 1. Open **Drive** at HQ — notice it's much bigger than Level 3's shared
    drive.
 2. Use the search bar rather than clicking through every folder — the same

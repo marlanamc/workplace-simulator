@@ -4,7 +4,7 @@ import { useProgress } from "@/lib/progress-context";
 import Confetti from "@/components/task/Confetti";
 
 export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => void }) {
-  const { celebrateTrack, dismissCelebration } = useProgress();
+  const { celebrateTrack, dismissCelebration, lang } = useProgress();
   if (!celebrateTrack) return null;
 
   return (
@@ -20,13 +20,13 @@ export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => voi
         <div className="animate-pop-in mb-4 text-[48px] leading-none">{celebrateTrack.awardEmoji}</div>
         <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title}</h2>
         <p className="mb-6 text-[15px] leading-relaxed text-text-secondary">
-          Award unlocked. It&rsquo;s in your trophy case.
+          {lang === "en" ? "Award unlocked. It is in your trophy case." : "Premio obtenido. Está en tu vitrina."}
         </p>
         <button
           onClick={onSeeAward}
           className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-accent px-6 text-[16px] font-medium text-white hover:bg-accent-hover cursor-pointer"
         >
-          See award
+          {lang === "en" ? "See award" : "Ver premio"}
         </button>
       </div>
     </div>
