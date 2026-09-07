@@ -169,6 +169,7 @@ export default function JobsTask() {
                         key={r.key}
                         type="button"
                         onClick={() => togglePick(r.key)}
+                        aria-pressed={on}
                         className={`flex items-start gap-3 rounded-lg border px-3 py-2.5 text-left cursor-pointer ${
                           on ? "border-[#1a73e8] bg-[#e8f0fe]" : "border-[#dadce0] bg-white hover:bg-[#f8f9fa]"
                         }`}
@@ -189,8 +190,9 @@ export default function JobsTask() {
               </div>
 
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
-                <label className="text-[14px] font-medium text-[#202124]">{pc.fitLabel}</label>
+                <label htmlFor="posting-fit" className="text-[14px] font-medium text-[#202124]">{pc.fitLabel}</label>
                 <textarea
+                  id="posting-fit"
                   value={fit}
                   onChange={(e) => setFit(e.target.value)}
                   placeholder={pc.fitHint}

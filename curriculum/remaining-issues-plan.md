@@ -164,3 +164,13 @@ User update: the facilitator has walked through the course and changed wording/o
 The full browser run also reproduced save recovery being hidden by a Studio arrival celebration after reload. Level/track celebration cards now yield to pending-save status and the Job Card remains available for Retry. The existing failed-save/reload regression verifies this path.
 
 Verification: `npm run check` passed lint, typecheck, and 1,007 unit tests. The full browser run passed the 22 existing tests, including failed-save/reload/retry; the two new meeting tests initially failed because of test setup/name matching, then both passed in the corrected EN/ES targeted rerun. All 24 browser cases have passing results across those runs; this is not a claim of one clean 24-test run. Rerun the full suite on the release candidate.
+
+## Batch 2 follow-up — bilingual route resume and posting accessibility
+
+New browser coverage earns `job-posting` through the learner UI after the Studio core preset, switches through lead, healthcare, college, pause, and office, and reloads each direction. Read-only database assertions are restricted to the fresh test learner: the route setting is correct and the exact completion set remains core plus the earned posting task. Returning to office resumes `job-application`. Both EN and ES passed this targeted check. Studio-seeded core credit is setup, not learner performance.
+
+The posting’s requirement buttons now expose their selected state (`aria-pressed`), and the fit-response field has an associated label. Keyboard Space toggling is covered in both languages. Wording and task order are preserved.
+
+The [coverage register](pilot-coverage.csv) records these bounded technical results. These checks do not complete every route activity, prove all route endings understandable, or establish preservation of unsubmitted drafts through route switching. P10 learner observation and the broader P12 register remain open.
+
+**Verification recorded 2026-09-07:** `npm run check` passed lint, typecheck, and 1,007 unit tests. The full `npm run test:e2e -- --workers=2` run passed all 26 browser tests in one run, including both route-resume cases, both meeting-recovery cases, and failed-save recovery after reload. This supersedes the earlier split-run browser result. No learner sessions were added by this technical verification.
