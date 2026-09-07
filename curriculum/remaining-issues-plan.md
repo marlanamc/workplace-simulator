@@ -174,3 +174,11 @@ The posting’s requirement buttons now expose their selected state (`aria-press
 The [coverage register](pilot-coverage.csv) records these bounded technical results. These checks do not complete every route activity, prove all route endings understandable, or establish preservation of unsubmitted drafts through route switching. P10 learner observation and the broader P12 register remain open.
 
 **Verification recorded 2026-09-07:** `npm run check` passed lint, typecheck, and 1,007 unit tests. The full `npm run test:e2e -- --workers=2` run passed all 26 browser tests in one run, including both route-resume cases, both meeting-recovery cases, and failed-save recovery after reload. This supersedes the earlier split-run browser result. No learner sessions were added by this technical verification.
+
+## Batch 2 follow-up — short absence messages (P5)
+
+**Implemented 2026-09-07.** A technical case review reproduced nine valid replies rejected by the absence grader: short English/Spanish replies, smart apostrophes, line wrapping, and “unable to work.” The six-word minimum was not needed to communicate the intended absence. The grader now checks its absence and shift-context signals without that quota, normalizes apostrophes/whitespace, and accepts the specific “unable to” construction. Other writing checks and task order are unchanged.
+
+Eighteen regression cases cover clear absence replies and messages that lack the required signal. Bilingual browser tests reject sickness-only replies, retain the draft through Job Card recovery, and complete with “I can’t work today” / “No puedo trabajar hoy.” These are authored technical cases, not learner observations. The grader still uses bounded text patterns; this does not close general free-writing relevance, contradictory dates, or tone concerns.
+
+Verification for the absence batch: `npm run check` passed lint, typecheck, and **1,025 unit tests**. The full `npm run test:e2e -- --workers=2` run passed **all 28 browser tests** in one run. The initial browser setup incorrectly expected a separate Open button after the early-act arrival had already opened Mail; correcting that test setup required no learner-flow change.

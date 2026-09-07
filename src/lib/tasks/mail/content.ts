@@ -578,10 +578,11 @@ export function mailEtiquetteAnswersDarnell(body: string): boolean {
  * can't-attend signal plus a reference to today/the shift passes.
  */
 export function callOutSickSaysCannotAttend(body: string): boolean {
-  const t = body.trim().toLowerCase();
-  if (t.split(/\s+/).filter(Boolean).length < 6) return false;
+  // Phone punctuation and line wrapping must not turn a clear absence into a failure.
+  // Judge the absence signal, not a minimum word count.
+  const t = body.trim().toLowerCase().replace(/[’‘]/g, "'").replace(/\s+/g, " ");
   const cannotAttend =
-    /can'?t (come|make it|work|be there)|cannot (come|make it|work|be there)|won'?t be able|not (going to|able to) (come|make it|work)|no puedo (ir|trabajar|asistir|llegar)|no podr[eé]|no voy a poder/.test(
+    /can'?t (come|make it|work|be there)|cannot (come|make it|work|be there)|unable to (come|make it|work|be there)|won'?t be able|not (going to|able to) (come|make it|work)|no puedo (ir|trabajar|asistir|llegar)|no podr[eé]|no voy a poder/.test(
       t,
     );
   const aboutShift = /today|shift|work|turno|hoy|trabajo/.test(t);

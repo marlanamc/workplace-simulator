@@ -36,6 +36,12 @@ at 10" scenario. Written in the real Mail app, not a separate portal form.
    Sentence starters are there if you want them.
 4. Click **Send**.
 
+## Automatic completion boundary
+
+The absence check looks for inability to attend plus a reference to today or work/the shift. There is no six-word minimum: “I can’t work today” and “No puedo trabajar hoy” are sufficient. Smart apostrophes and line wrapping do not cause rejection. Saying only “I feel sick today” still receives Job Card guidance to clarify attendance, with the draft preserved.
+
+These bounded text checks do not assess tone, every paraphrase, or all contradictory statements. The regression examples are technical QA, not evidence of learner transfer.
+
 ## Confidence check-in
 - "I could tell my manager I'm sick, in writing, before my shift starts." 🙂 😐 🙁
 - "The part that felt hardest was: ___________"

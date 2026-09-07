@@ -15,8 +15,8 @@ shift-review,en,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
 shift-review,es,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
 mail-etiquette,en,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
 mail-etiquette,es,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
-call-out-sick,en,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
-call-out-sick,es,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
+call-out-sick,en,Passed: short explicit absence reply,Passed: sickness-only reply rejected; draft retained; corrected reply completes,Pending,Pending,Pending,Pending,Pending,Pending,2026-09-07 e2e/absence-writing.spec.ts; EN smart apostrophe and ES four-word reply; other coverage pending
+call-out-sick,es,Passed: short explicit absence reply,Passed: sickness-only reply rejected; draft retained; corrected reply completes,Pending,Pending,Pending,Pending,Pending,Pending,2026-09-07 e2e/absence-writing.spec.ts; EN smart apostrophe and ES four-word reply; other coverage pending
 incident,en,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
 incident,es,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
 handbook,en,Pending,Pending,Pending,Pending,Pending,Pending,Pending,Pending,
