@@ -8,7 +8,7 @@ Start with the [round 1 facilitator guide](pilot-round-1.md): four initial parti
 
 Recruit beginners and confident computer users, with English and Spanish coverage. Observe short independent sessions through Acts I–II. Split the sequence across participants rather than asking everyone to finish the course. For every task, record a valid answer, a plausible wrong answer, Help use, keyboard access, leaving, returning, and whether a facilitator intervened. Preserve useful beginner repetition; remove an acknowledgment only when it adds no new decision.
 
-Use this coverage register; an unchecked task is still pending:
+Use the [task-by-language coverage register](pilot-coverage.csv) for separate technical and learner evidence. Existing suite coverage does not automatically close a manual observation cell. Record a dated test/session reference for every status change; an unchecked task is still pending. The grouped checklist below is a summary:
 
 - [ ] tour
 - [ ] mail-reply / mail-attach

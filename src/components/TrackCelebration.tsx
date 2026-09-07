@@ -4,8 +4,8 @@ import { useProgress } from "@/lib/progress-context";
 import Confetti from "@/components/task/Confetti";
 
 export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => void }) {
-  const { celebrateTrack, dismissCelebration, lang } = useProgress();
-  if (!celebrateTrack) return null;
+  const { celebrateTrack, dismissCelebration, lang, saving, saveError } = useProgress();
+  if (!celebrateTrack || saving || saveError) return null;
 
   return (
     <div

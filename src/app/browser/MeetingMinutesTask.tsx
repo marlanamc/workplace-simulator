@@ -141,8 +141,9 @@ export default function MeetingMinutesTask() {
       {view === "agenda" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
           <div className="mx-auto max-w-[560px]">
-            <label className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.agendaLabel}</label>
+            <label htmlFor="meeting-agenda" className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.agendaLabel}</label>
             <textarea
+              id="meeting-agenda"
               value={agenda}
               onChange={(e) => setAgenda(e.target.value)}
               placeholder={c.agendaPlaceholder}
@@ -156,7 +157,7 @@ export default function MeetingMinutesTask() {
               <button onClick={saveAgenda} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
                 {c.agendaSave}
               </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
+              <button onClick={() => setView("hub")} className="min-h-11 text-[13px] text-[#5f6368] cursor-pointer">← {c.backHub}</button>
             </div>
           </div>
         </div>
@@ -193,8 +194,10 @@ export default function MeetingMinutesTask() {
             ) : (
               <p className="mt-3 text-[13px] text-[#5f6368]">{c.meetingDone}</p>
             )}
-            <label className="mt-5 block text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.notesLabel}</label>
+            <HuddleTranscript lines={script} label={c.transcriptLabel} />
+            <label htmlFor="meeting-notes" className="mt-5 block text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.notesLabel}</label>
             <textarea
+              id="meeting-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder={c.notesPlaceholder}
@@ -208,7 +211,7 @@ export default function MeetingMinutesTask() {
               <button onClick={saveNotes} className="inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer">
                 {c.notesSave}
               </button>
-              <button onClick={() => setView("hub")} className="text-[13px] text-[#5f6368] cursor-pointer">←</button>
+              <button onClick={() => setView("hub")} className="min-h-11 text-[13px] text-[#5f6368] cursor-pointer">← {c.backHub}</button>
             </div>
           </div>
         </div>
@@ -217,7 +220,7 @@ export default function MeetingMinutesTask() {
       {view === "followup" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
           <div className="mx-auto max-w-[560px]">
-            <details className="mb-3 rounded border bg-white p-3"><summary>{lang === 'en' ? 'Huddle transcript' : 'Transcripción de la reunión'}</summary>{script.map((line, i) => <p className="mt-2" key={i}>{line}</p>)}</details>
+            <HuddleTranscript lines={script} label={c.transcriptLabel} />
             <fieldset className="mb-4 space-y-3"><legend>{lang === 'en' ? 'Action list attached to the email' : 'Lista de acciones adjunta al correo'}</legend>
               {ACTION_ITEMS.map((item) => <div key={item.key} className="grid grid-cols-3 gap-2 items-center"><span>{item.label[lang]}</span>
                 <select aria-label={`${item.label[lang]}: ${lang === 'en' ? 'Owner' : 'Responsable'}`} className="min-h-11 border bg-white p-2" value={commitments[item.key]?.owner ?? ''} onChange={(e) => setCommitments((prev) => ({...prev, [item.key]: {day: prev[item.key]?.day ?? '', owner: e.target.value}}))}>
@@ -277,4 +280,11 @@ function ParticipantTile({ initials, name, color }: { initials: string; name: st
       <span className="max-w-full truncate text-[11px]">{name}</span>
     </div>
   );
+}
+
+function HuddleTranscript({ lines, label }: { lines: readonly string[]; label: string }) {
+  return <details className="my-3 rounded border bg-white p-3">
+    <summary className="cursor-pointer">{label}</summary>
+    {lines.map((line, i) => <p className="mt-2" key={i}>{line}</p>)}
+  </details>;
 }

@@ -381,7 +381,7 @@ export default function JobCard() {
   // A celebration owns the whole screen for a moment. The card stepping back
   // is the same rule as everywhere else: one voice at a time, and right now
   // the level screen is the one talking.
-  if (celebrateLevel?.levelUp || celebrateTrack) return null;
+  if ((celebrateLevel?.levelUp || celebrateTrack) && !saving && !saveError) return null;
 
   const position: React.CSSProperties = drag
     ? {

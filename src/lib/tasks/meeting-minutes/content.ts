@@ -45,6 +45,7 @@ export const MEETING_COPY: Record<Lang, {
   followupPlaceholder: string;
   send: string;
   backHub: string;
+  transcriptLabel: string;
   needAgenda: string;
   needNotes: string;
   needFollowup: string;
@@ -88,9 +89,10 @@ export const MEETING_COPY: Record<Lang, {
     followupPlaceholder: "One line per action: what, who, by when…",
     send: "Send",
     backHub: "Back to the meeting",
+    transcriptLabel: "Huddle transcript",
     needAgenda: "Write at least two points, one per line.",
     needNotes: "Write a couple of lines on what got decided.",
-    needFollowup: "List each action with a name and a day. One line each.",
+    needFollowup: "Check the transcript’s final decisions. In the action list, select the final owner and day for every action.",
     sentKicker: "Follow-up sent",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -131,9 +133,10 @@ export const MEETING_COPY: Record<Lang, {
     followupPlaceholder: "Una línea por tarea: qué, quién, para cuándo…",
     send: "Enviar",
     backHub: "Volver a la reunión",
+    transcriptLabel: "Transcripción de la reunión",
     needAgenda: "Escribe al menos dos puntos, uno por línea.",
     needNotes: "Escribe un par de líneas sobre lo que se decidió.",
-    needFollowup: "Anota cada tarea con un nombre y un día. Una línea cada una.",
+    needFollowup: "Revisa las decisiones finales en la transcripción. En la lista de acciones, elige el responsable y el día finales de cada tarea.",
     sentKicker: "Seguimiento enviado",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",

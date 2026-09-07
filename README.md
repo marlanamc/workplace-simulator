@@ -88,13 +88,13 @@ intact, and the shelf can show a "running" indicator for open apps.
 | `src/lib/db/` | Neon Postgres via Drizzle: `schema.ts`, `client.ts`, `queries.ts`. |
 | `src/lib/auth.ts` | Signed session cookie (HMAC) and `scrypt` PIN hashing. No auth library. |
 | `src/components/task/` | Task-agnostic UI reused everywhere: `JobCard`, `HelpDrawer`, `PickerModal`, `ShowMeHighlight`. |
-| `curriculum/` | The written curriculum (24 levels across 7 acts), independent of what's built. |
+| `curriculum/` | Curriculum guidance for 37 runtime levels across 7 acts; older folder numbers are editorial. |
 
 ## Content and progress
 
 Learners move through **levels**, grouped into **acts**, each level a small group of tasks
-that unlock in order. 15 levels are wired in `tracks-content.ts` today (Acts I–III); the
-`curriculum/` folder documents all 24, including levels not yet built in code. See
+that unlock according to the shared core and selected route. All 37 runtime levels and
+51 active tasks are wired in `tracks-content.ts` (Acts I–VII, including both Act V paths). See
 [`curriculum/00-scope-and-sequence.md`](curriculum/00-scope-and-sequence.md) for the roadmap.
 
 - `progress-context.tsx` holds `completedTaskKeys` client-side and seeds from the server —

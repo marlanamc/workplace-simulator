@@ -150,3 +150,17 @@ Future practice should cover:
 5. Recheck with a fresh file, account context, error, or sharing request. Record independent explanation and recovery separately from assistance and memorized clicks. No speed targets or new word-count quotas.
 
 **Scope boundary:** these additions are a curriculum backlog, not shipped features or closed pilot findings. Preserve the final launch-testing week and address demonstrated blockers first.
+
+## Batch 2 technical work — meeting recovery and coverage tracking
+
+Implemented in the working tree: agenda and notes return buttons now have visible bilingual destination labels; both textareas have associated labels; the full transcript is available beside notes as well as follow-up. Follow-up recovery now names the owner/day selection controls instead of incorrectly asking for one written line per action. Flexible order is preserved. A bilingual browser regression checks transcript access without stepping through the script, Help return, keyboard activation of transcript/return controls, and in-session agenda/notes retention across views. This does not claim full keyboard coverage or unfinished-draft persistence across reload.
+
+P12 now has a [task-by-language register](pilot-coverage.csv) separating technical checks, actual learner observations, and fresh-example evidence. Pending cells deliberately remain pending until evidence is recorded. README runtime counts and the meeting lesson’s unsupported listening/assessment wording were corrected.
+
+P1–P5 and P10–P12 still require the targeted checks and observations above. P9 has a concrete accessibility/source-access improvement; whether the workflow makes sense to learners remains open.
+
+User update: the facilitator has walked through the course and changed wording/order; no learner sessions have occurred yet. Preserve that editing work and keep facilitator QA distinct from learner evidence.
+
+The full browser run also reproduced save recovery being hidden by a Studio arrival celebration after reload. Level/track celebration cards now yield to pending-save status and the Job Card remains available for Retry. The existing failed-save/reload regression verifies this path.
+
+Verification: `npm run check` passed lint, typecheck, and 1,007 unit tests. The full browser run passed the 22 existing tests, including failed-save/reload/retry; the two new meeting tests initially failed because of test setup/name matching, then both passed in the corrected EN/ES targeted rerun. All 24 browser cases have passing results across those runs; this is not a claim of one clean 24-test run. Rerun the full suite on the release candidate.

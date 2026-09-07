@@ -16,9 +16,9 @@ import { logout } from "@/app/actions";
  * progress is already saved either way.
  */
 export default function LevelUpCelebration() {
-  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath, courseRoute } = useProgress();
+  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath, courseRoute, saving, saveError } = useProgress();
   const { openApp } = useWindowManager();
-  if (!celebrateLevel?.levelUp) return null;
+  if (!celebrateLevel?.levelUp || saving || saveError) return null;
   // At an act boundary (II–VII), the full-page ActIntro carries the promotion,
   // the new manager, and the new skills — this small modal would just be a
   // second, thinner version of the same beat, so stand down here.
