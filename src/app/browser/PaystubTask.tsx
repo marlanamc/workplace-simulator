@@ -32,8 +32,10 @@ export default function PaystubTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
-  const showMeId = view === "list" ? "target-stub" : "correct-option";
-  const { openApp } = useWindowManager();
+  const { openApp, active } = useWindowManager();
+  const lookingAtStub = view !== "list" && view !== "done" && active !== "browser";
+  const showMeId = view === "list" ? "target-stub" : lookingAtStub ? "stub-net-pay" : "paystub-choices";
+  const stepIndex = view === "list" ? 0 : view === "check1" ? (lookingAtStub ? 1 : 2) : 3;
 
   const c = PAYSTUB_COPY[lang];
   const myName = displayName.trim() || (lang === "en" ? "You" : "Tú");
@@ -63,15 +65,21 @@ export default function PaystubTask() {
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
       </div>
 
+      <span data-showme="stub-net-pay" className="sr-only" />
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS.paystub}
-          stepIndex={view === "list" ? 0 : view === "check1" ? 1 : 2}
+          stepIndex={stepIndex}
           stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[view === "list" ? 0 : view === "check1" ? 1 : 2]}
+          instruction={RIGHT_NOW_STEPS[stepIndex]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={() => showMe.toggleFor(showMeId)}
+          onShowMe={() => {
+            if (!lookingAtStub && (view === "check1" || view === "check2")) {
+              openApp("browser", { tab: "portal", section: "paystubs" });
+            }
+            showMe.toggleFor(showMeId);
+          }}
           showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
@@ -109,11 +117,10 @@ export default function PaystubTask() {
           <div className="mb-2.5 text-[15px] font-medium">
             {view === "check1" ? netCheck.question : hoursCheck.question}
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" data-showme="paystub-choices">
             {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
               <button
                 key={opt.label}
-                data-showme={opt.isTarget ? "correct-option" : undefined}
                 onClick={() =>
                   answer(opt, () => {
                     if (view === "check1") {
@@ -163,7 +170,21 @@ export default function PaystubTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
-      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
+      <ShowMeHighlight
+        targetId={showMe.targetId}
+        label={
+          showMe.targetId === "paystub-choices"
+            ? lang === "en"
+              ? "Pick one here."
+              : "Elige uno aquí."
+            : showMe.targetId === "stub-net-pay"
+              ? lang === "en"
+                ? "Net pay."
+                : "Pago neto."
+              : SHOW_ME_POINTER[lang]
+        }
+        onDismiss={showMe.clear}
+      />
     </div>
   );
 }

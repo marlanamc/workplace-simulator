@@ -18,7 +18,7 @@ import NudgeToast from "@/components/task/NudgeToast";
 import { APP_ICONS, TAB_ICONS, Briefcase, ChromeIcon, Languages, Lock, PdfIcon } from "@/lib/icons";
 import Link from "next/link";
 import { logout } from "@/app/actions";
-import { levelForTrack } from "@/lib/tracks-content";
+import { levelForTrack, previousCourseLevel } from "@/lib/tracks-content";
 import { dayTitle, remainingTasksInLevel } from "@/lib/shift-spine";
 
 /** Height of the taskbar. */
@@ -111,6 +111,7 @@ function ShelfPin({
   badge,
   onClick,
   testId,
+  showMe,
   children,
 }: {
   label: string;
@@ -119,12 +120,15 @@ function ShelfPin({
   onClick: () => void;
   /** Lets the walkthrough spotlight this pin. */
   testId?: string;
+  /** Job Card Show me target. Primary so a same-id wiring span cannot steal it. */
+  showMe?: string;
   children: ReactNode;
 }) {
   return (
     <button
       data-testid={testId}
-      data-showme={testId === "shelf-my-job" ? "my-job" : undefined}
+      data-showme={showMe ?? (testId === "shelf-my-job" ? "my-job" : undefined)}
+      data-showme-primary={showMe ? "" : undefined}
       title={label}
       aria-label={label}
       aria-pressed={active}
@@ -160,7 +164,8 @@ export default function Shelf({
   myJobOpen: boolean;
   onMyJobOpenChange: (open: boolean) => void;
 }) {
-  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath } = useProgress();
+  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath, celebrateLevel, courseRoute } =
+    useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
@@ -168,7 +173,13 @@ export default function Shelf({
   const [brightness, setBrightness] = useState(80);
   const { nudge, say, dismiss } = useNudge();
   const { openApp, toggleFromShelf, isOpen } = useWindowManager();
-  const currentLevel = levelForTrack(currentTrack.key);
+  // While a level-up / clock-out card is up, celebrateLevel is the *next* sitting.
+  // Keep the shelf on the day they just finished until they proceed.
+  const liveLevel = levelForTrack(currentTrack.key);
+  const currentLevel =
+    celebrateLevel?.levelUp
+      ? (previousCourseLevel(celebrateLevel, courseRoute) ?? liveLevel)
+      : liveLevel;
   const leftover = remainingTasksInLevel(currentLevel, completedTaskKeys, bridgePath);
   // Level 0's walkthrough is the one thing on screen for a brand-new learner —
   // Start (the app list) and My Job would open a second map of the same computer.
@@ -277,6 +288,7 @@ export default function Shelf({
           return (
           <ShelfPin
             key={a.key}
+            testId={a.key === "pdf" ? "shelf-pdf" : undefined}
             label={
               pinLocked
                 ? lang === "en"

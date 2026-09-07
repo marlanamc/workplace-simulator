@@ -168,9 +168,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Opening your pay stub",
       s: [
-        "Open your stub from the list. It opens in PDF Reader, just like any downloaded file.",
+        "This is PDF Reader. Downloaded files like pay stubs and reports open here, not in the Browser.",
         "Read from top to bottom. First earnings, then money taken out, then net pay at the bottom.",
-        "Compare the hours to what you remember working.",
+        "Go back to the Browser and pick that number. You do not type it.",
       ],
       tip: "Net pay is what actually goes into your account. It is always smaller than gross pay.",
     },
@@ -188,9 +188,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Abrir tu recibo de pago",
       s: [
-        "Abre tu recibo de la lista. Se abre en el Lector de PDF, como cualquier archivo descargado.",
+        "Esto es el Lector de PDF. Los archivos descargados, como recibos y reportes, se abren aquí, no en el Navegador.",
         "Lee de arriba a abajo. Ingresos, luego deducciones, y el pago neto al final.",
-        "Compara las horas con lo que recuerdas haber trabajado.",
+        "Vuelve al Navegador y elige ese número. No lo tienes que escribir.",
       ],
       tip: "El pago neto es lo que realmente llega a tu cuenta. Siempre es menor que el pago bruto.",
     },
@@ -214,11 +214,15 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Abre tu recibo de la lista.",
   },
   {
-    en: "Find the net pay: the amount that actually reaches the bank.",
-    es: "Busca el pago neto: la cantidad que de verdad llega al banco.",
+    en: "Find the net pay on this stub, then open the Browser.",
+    es: "Encuentra el pago neto en este recibo y abre el Navegador.",
   },
   {
-    en: "Now find the hours this stub was paid for.",
-    es: "Ahora busca las horas por las que pagaron este recibo.",
+    en: "Pick the net pay.",
+    es: "Elige el pago neto.",
+  },
+  {
+    en: "Pick the hours.",
+    es: "Elige las horas.",
   },
 ];

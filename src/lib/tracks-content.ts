@@ -535,15 +535,19 @@ export const LEVELS: Level[] = [
     title: "When Something Happens",
     trackKeys: ["judgment"],
     firstTabKey: "incident",
+    // Shown when First Paycheck finishes — a clock-out pause before ActIntro
+    // (Act II's full orientation). Studio jumps to this day skip this card
+    // via `arrivalLevelUp` and land on ActIntro directly.
     levelUp: {
-      emoji: "⭐",
-      kicker: { en: "A promotion", es: "Un ascenso" },
-      title: { en: "You are a Shift Lead now!", es: "¡Ahora eres líder de turno!" },
+      emoji: "💵",
+      kicker: { en: "Day 6: complete", es: "Día 6: listo" },
+      title: { en: "You checked your first paycheck.", es: "Revisaste tu primer recibo." },
       body: {
-        en: "New title, new pay, and a new manager, Renata Silva, the GM. Someone just slipped on the floor.",
-        es: "Nuevo puesto, nueva paga y una nueva gerente, Renata Silva, la gerente general. Alguien se acaba de resbalar en el piso.",
+        en: "Net pay and hours look right. Clock out for today. Your progress is saved. Next time you sign in, you're a Shift Lead.",
+        es: "El pago neto y las horas están bien. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, serás líder de turno.",
       },
-      cta: { en: "Handle it", es: "Encargarme" },
+      cta: { en: "See what's next", es: "Ver qué sigue" },
+      stoppingPoint: true,
     },
   },
   {
@@ -1110,7 +1114,9 @@ export function actForLevel(level: Level): Act | undefined {
 /**
  * The level-up card a learner sees when first arriving at this level.
  * Act II+ openers use `ActIntro` instead — return null so Studio jumps do
- * not stack a second modal on top of that screen.
+ * not stack a second modal on top of that screen. (An act opener may still
+ * carry a `stoppingPoint` levelUp for the *previous* day's clock-out; that
+ * card is shown after task completion, not on Studio arrival.)
  */
 export function arrivalLevelUp(level: Level): Level | null {
   if (!level.levelUp) return null;
@@ -1391,6 +1397,12 @@ export function courseComplete(done: TaskKey[], route: CourseRoute | null): bool
 export function nextCourseLevel(level: Level, route: CourseRoute | null): Level | null {
   const levels = courseLevels(route);
   return levels[levels.findIndex((l) => l.key === level.key) + 1] ?? null;
+}
+/** The sitting just before this one — used to hold the shelf day label during a level-up card. */
+export function previousCourseLevel(level: Level, route: CourseRoute | null): Level | null {
+  const levels = courseLevels(route);
+  const i = levels.findIndex((l) => l.key === level.key);
+  return i > 0 ? levels[i - 1]! : null;
 }
 export function unlockedCourseLevels(done: TaskKey[], route: CourseRoute | null): Level[] {
   const levels = courseLevels(route);

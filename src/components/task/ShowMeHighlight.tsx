@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { MoveUp } from "lucide-react";
 
 /**
@@ -18,15 +19,25 @@ export default function ShowMeHighlight({
   onDismiss?: () => void;
 }) {
   const [rect, setRect] = useState<DOMRect | null>(null);
+  const [oval, setOval] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const measure = () => {
       if (!targetId) {
         setRect(null);
+        setOval(false);
         return;
       }
-      const el = document.querySelector(`[data-showme="${targetId}"]`);
+      const el =
+        document.querySelector(`[data-showme="${targetId}"][data-showme-primary]`) ??
+        document.querySelector(`[data-showme="${targetId}"]`);
       setRect(el ? el.getBoundingClientRect() : null);
+      setOval(Boolean(el?.hasAttribute("data-showme-oval")));
     };
 
     const raf = requestAnimationFrame(measure);
@@ -55,40 +66,50 @@ export default function ShowMeHighlight({
     };
   }, [targetId, onDismiss]);
 
-  if (!targetId || !rect) return null;
+  if (!mounted || !targetId || !rect) return null;
 
+  const padX = oval ? 10 : 6;
+  const padY = oval ? 8 : 6;
+  // Keep the ring symmetric around the target. Clamping one edge (e.g. against
+  // the shelf) made the cutout look lopsided.
   const hole = {
-    left: rect.left - 6,
-    top: rect.top - 6,
-    width: rect.width + 12,
-    height: rect.height + 12,
+    left: rect.left - padX,
+    top: rect.top - padY,
+    width: rect.width + padX * 2,
+    height: rect.height + padY * 2,
   };
+  const radius = oval ? "rounded-full" : "rounded-xl";
+  // Near the shelf, keep the bubble snug so it reads as attached to the pin.
+  const nearShelf = rect.bottom > window.innerHeight - 80;
   const bubbleAbove = rect.top > 120;
-  const bubbleTop = bubbleAbove ? rect.top - 16 : rect.bottom + 16;
+  const bubbleGap = nearShelf ? 8 : 16;
+  const bubbleTop = bubbleAbove ? rect.top - bubbleGap : rect.bottom + bubbleGap;
+  const bubbleCenterX = rect.left + rect.width / 2;
 
-  return (
+  return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[70]" aria-hidden>
       {/* Dim the screen with a cutout over the real control. */}
       <div
-        className="absolute rounded-xl"
+        className={`absolute ${radius}`}
         style={{
           ...hole,
           boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.6)",
         }}
       />
-      <div className="animate-showme-pulse absolute rounded-xl" style={hole} />
+      <div className={`animate-showme-pulse absolute ${radius}`} style={hole} />
       <div
         className={`absolute flex items-center gap-2 rounded-xl bg-[#202124] px-4 py-3 text-white shadow-[0_12px_30px_rgba(0,0,0,0.4)] animate-fade-up ${
-          bubbleAbove ? "-translate-y-full" : ""
+          bubbleAbove ? "-translate-x-1/2 -translate-y-full" : "-translate-x-1/2"
         }`}
         style={{
-          left: Math.max(16, rect.left + rect.width / 2 - 120),
+          left: bubbleCenterX,
           top: bubbleTop,
         }}
       >
         <MoveUp size={20} strokeWidth={2.25} aria-hidden className={bubbleAbove ? "rotate-180" : ""} />
         <span className="text-[16px] font-medium leading-tight">{label}</span>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

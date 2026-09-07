@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { PDF_DOCUMENTS, type PdfDocument } from "@/lib/pdf-content";
+import { APP_COPY } from "@/lib/desktop-content";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useNudge } from "@/lib/use-nudge";
@@ -172,13 +173,27 @@ function PayStubPage({
           </tr>
         </thead>
         <tbody>
-          {doc.earnings.map((e) => (
+          {doc.earnings.map((e) => {
+            const hours = e.label === "Regular hours" ? e.detail.split(/ (.+)/) : null;
+            return (
             <tr key={e.label}>
               <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">{e.label}</td>
-              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">{e.detail}</td>
+              <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">
+                {hours ? (
+                  <>
+                    <span className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.45em] py-[0.08em]">
+                      {hours[0]}
+                    </span>
+                    {hours[1] ? ` ${hours[1]}` : null}
+                  </>
+                ) : (
+                  e.detail
+                )}
+              </td>
               <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] text-right tabular-nums">{e.amount}</td>
             </tr>
-          ))}
+            );
+          })}
           <tr>
             <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em] font-bold" colSpan={2}>
               Gross pay
@@ -205,7 +220,14 @@ function PayStubPage({
           <tr>
             <td className="border-[2px] border-[#1a1a1a] px-[0.7em] py-[0.45em] font-bold">Net pay</td>
             <td className="border-[2px] border-[#1a1a1a] px-[0.7em] py-[0.45em] text-right text-[1.25em] font-bold tabular-nums">
-              {doc.netPay}
+              <span
+                data-showme="stub-net-pay"
+                data-showme-primary=""
+                data-showme-oval=""
+                className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.55em] py-[0.12em]"
+              >
+                {doc.netPay}
+              </span>
             </td>
           </tr>
         </tbody>
@@ -216,7 +238,7 @@ function PayStubPage({
 
 export default function PdfReaderClient() {
   const { pdfDocId, pdfDocToken } = useWindowManager();
-  const { displayName } = useProgress();
+  const { displayName, lang } = useProgress();
   const [activeId, setActiveId] = useState(
     pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
   );
@@ -242,7 +264,9 @@ export default function PdfReaderClient() {
     <div className="flex min-h-0 flex-1 flex-col bg-surface-muted">
       <div className="flex items-center gap-3 border-b border-border bg-white px-4 py-2">
         <PdfIcon size={28} />
-        <span className="text-[15px] font-medium">PDF Reader</span>
+        <span className="text-[15px] font-medium">
+          {APP_COPY[lang].pdf.name}
+        </span>
         <div className="flex-1" />
         <WindowControls appKey="pdf" />
       </div>

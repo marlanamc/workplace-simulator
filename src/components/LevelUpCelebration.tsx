@@ -19,14 +19,18 @@ export default function LevelUpCelebration() {
   const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath, courseRoute, saving, saveError } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp || saving || saveError) return null;
-  // At an act boundary (II–VII), the full-page ActIntro carries the promotion,
-  // the new manager, and the new skills — this small modal would just be a
-  // second, thinner version of the same beat, so stand down here.
+  const { levelUp } = celebrateLevel;
+  // Act II+ openers normally defer to ActIntro. A stoppingPoint card is the
+  // clock-out pause before that screen (end of Act I → Day 6 complete).
   const boundaryAct = actForLevel(celebrateLevel);
-  if (boundaryAct && boundaryAct.key !== "act1" && boundaryAct.levelKeys[0] === celebrateLevel.key) {
+  if (
+    boundaryAct &&
+    boundaryAct.key !== "act1" &&
+    boundaryAct.levelKeys[0] === celebrateLevel.key &&
+    !levelUp.stoppingPoint
+  ) {
     return null;
   }
-  const { levelUp } = celebrateLevel;
   const kicker = levelUp.kicker[lang];
   const title = levelUp.title[lang];
   const body = levelUp.body[lang];

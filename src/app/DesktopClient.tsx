@@ -95,7 +95,7 @@ function DesignerJumpBanner() {
 const INTRO_FLAG = "job-card-intro-seen";
 
 function JobCardHost({ children }: { children: ReactNode }) {
-  const { storyFlags, setStoryFlag, completedTaskKeys, currentTrack, bridgePath } = useProgress();
+  const { storyFlags, setStoryFlag, completedTaskKeys, currentTrack, bridgePath, celebrateLevel } = useProgress();
   if (completedTaskKeys.length === 0 && storyFlags[INTRO_FLAG] !== "true" && storyFlags[WELCOME_FLAG] !== "true") {
     return <SimulatorWelcome onContinue={() => setStoryFlag(WELCOME_FLAG, "true")} />;
   }
@@ -106,6 +106,8 @@ function JobCardHost({ children }: { children: ReactNode }) {
   // brand-new learner (currentTrack = orientation) on `SimulatorWelcome`; a
   // Studio time-machine jump wipes story flags, so this also (correctly)
   // re-shows the intro for the act you land in.
+  // Wait out any clock-out celebration first (e.g. end of Act I) so the day
+  // can end before the next act's full-page intro.
   const currentLevel = levelForTrack(currentTrack.key);
   const act = actForLevel(currentLevel);
   if (
@@ -113,7 +115,8 @@ function JobCardHost({ children }: { children: ReactNode }) {
     act.key !== "act1" &&
     act.levelKeys[0] === currentLevel.key &&
     !isLevelComplete(currentLevel, completedTaskKeys, bridgePath) &&
-    storyFlags[actIntroFlag(act.key)] !== "true"
+    storyFlags[actIntroFlag(act.key)] !== "true" &&
+    !celebrateLevel?.levelUp
   ) {
     return <ActIntro act={act} onContinue={() => setStoryFlag(actIntroFlag(act.key), "true")} />;
   }

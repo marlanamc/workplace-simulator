@@ -19,5 +19,9 @@ describe("Studio day arrival", () => {
 
     const act2Open = LEVELS.find((l) => l.key === "level3b")!;
     expect(arrivalLevelUp(act2Open)).toBeNull();
+    // Completing First Paycheck still gets a clock-out card via this levelUp;
+    // Studio arrival skips it so ActIntro stays the Act II opener.
+    expect(act2Open.levelUp?.stoppingPoint).toBe(true);
+    expect(act2Open.levelUp?.cta.en).toMatch(/next|sigue/i);
   });
 });
