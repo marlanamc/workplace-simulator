@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { MoveUp } from "lucide-react";
 
@@ -20,11 +20,12 @@ export default function ShowMeHighlight({
 }) {
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [oval, setOval] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // Portal needs document.body — same client gate as LoginForm / ProgressProvider.
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
     const measure = () => {
@@ -66,7 +67,7 @@ export default function ShowMeHighlight({
     };
   }, [targetId, onDismiss]);
 
-  if (!mounted || !targetId || !rect) return null;
+  if (!isClient || !targetId || !rect) return null;
 
   const padX = oval ? 10 : 6;
   const padY = oval ? 8 : 6;
