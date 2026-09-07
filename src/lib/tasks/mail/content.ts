@@ -1,5 +1,6 @@
 import { CAST, inboxSender } from "@/lib/cast";
 import { mailGreeting } from "@/lib/mail-greeting";
+import { sentOnForTask } from "@/lib/story-calendar";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 
 /** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
@@ -23,11 +24,11 @@ export type PlayableMailTask =
 export const PLAYABLE_MAIL_TASKS: PlayableMailTask[] = ["mail-reply", "mail-attach", "mail-send-link", "mail-etiquette", "call-out-sick", "reply-all"];
 
 /**
- * Tasks where the learner writes to Maria (or a coworker) from scratch
- * rather than replying to something in the inbox. There is no email to open
- * first, so Mail starts on the compose window instead of the message list.
+ * Tasks where the learner writes from scratch rather than replying to
+ * something in the inbox. There is no email to open first, so Mail starts
+ * on the compose window instead of the message list.
  */
-export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-send-link", "mail-etiquette", "call-out-sick"];
+export const COMPOSE_ONLY_TASKS: PlayableMailTask[] = ["mail-send-link", "call-out-sick"];
 
 /** Who the compose pane addresses — reply tasks pre-fill the manager; compose-only tasks pick their recipient. */
 export const DANA_EMAIL = "dana.ortiz@harborsidecafe.com";
@@ -85,15 +86,15 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       emoji: "📧",
       kicker: "Saturday morning",
       headline: "Reply to your coworker, Darnell.",
-      body: "Maria said you found extra aprons in the storage room. Darnell asked about them on your first day. Write him back and tell him where they are.",
-      cta: "Reply to Darnell",
+      body: "Maria said you found extra aprons in the storage room. Darnell asked about them on your first day. Open his email and tell him where they are.",
+      cta: "Open Darnell's email",
     },
     es: {
       emoji: "📧",
       kicker: "Sábado por la mañana",
       headline: "Responde a tu compañero, Darnell.",
-      body: "Maria dijo que encontraste delantales de más en el almacén. Darnell preguntó por ellos tu primer día. Escríbele y dile dónde están.",
-      cta: "Responderle a Darnell",
+      body: "Maria dijo que encontraste delantales de más en el almacén. Darnell preguntó por ellos tu primer día. Abre su correo y dile dónde están.",
+      cta: "Abrir el correo de Darnell",
     },
   },
   "call-out-sick": {
@@ -301,14 +302,14 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
   },
   "mail-etiquette": {
     en: {
-      subject: "Extra aprons",
-      reSubject: "Extra aprons",
-      preview: "Answering Darnell's question from Day One.",
+      subject: "Extra aprons?",
+      reSubject: "Re: Extra aprons?",
+      preview: "Do we still have extras in the back?",
     },
     es: {
-      subject: "Delantales de más",
-      reSubject: "Delantales de más",
-      preview: "Respondiendo la pregunta de Darnell del primer día.",
+      subject: "¿Delantales de más?",
+      reSubject: "Re: ¿Delantales de más?",
+      preview: "¿Todavía hay extras atrás?",
     },
   },
   "call-out-sick": {
@@ -567,9 +568,9 @@ export function replyAllAnswersDana(body: string): boolean {
  * storage room passes in either language.
  */
 export function mailEtiquetteAnswersDarnell(body: string): boolean {
-  const t = body.trim().toLowerCase();
-  if (t.split(/\s+/).filter(Boolean).length < 6) return false;
-  return /storage|store ?room|back room|supply|almac[eé]n|bodega/.test(t);
+  const t = body.trim().toLowerCase().replace(/\s+/g, " ");
+  // A concise location answers the question; a supply order does not.
+  return /\b(?:storage|store ?room|back room|supply room|almac[eé]n|bodega)\b/.test(t);
 }
 
 /**
@@ -614,7 +615,7 @@ export function sendsLinkNotFile(body: string): boolean {
 
 type ReadableMailTask = Exclude<
   PlayableMailTask,
-  "call-out-sick" | "mail-etiquette" | "mail-send-link" | "reply-all"
+  "call-out-sick" | "mail-send-link" | "reply-all"
 >;
 
 const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; full: string[] }>> = {
@@ -681,6 +682,41 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
         "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
         "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
         "Gracias,",
+      ],
+    },
+  },
+  // Saturday: Darnell's unanswered Day One question — reply with the location.
+  "mail-etiquette": {
+    en: {
+      plain: [
+        GREETING,
+        "Do we still have extra aprons? I looked in the back this morning and didn't see any.",
+        "If you find them, can you tell me where they are?",
+        "Thanks,",
+        "Darnell",
+      ],
+      full: [
+        GREETING,
+        "Do we still have extra aprons in the back? I checked by the sink this morning and didn't see any.",
+        "If you find them, can you tell me where they are?",
+        "Thanks,",
+        "Darnell",
+      ],
+    },
+    es: {
+      plain: [
+        GREETING,
+        "¿Todavía hay delantales de más? Busqué atrás esta mañana y no vi ninguno.",
+        "Si los encuentras, ¿me dices dónde están?",
+        "Gracias,",
+        "Darnell",
+      ],
+      full: [
+        GREETING,
+        "¿Todavía hay delantales de más atrás? Revisé junto al fregadero esta mañana y no vi ninguno.",
+        "Si los encuentras, ¿me dices dónde están?",
+        "Gracias,",
+        "Darnell",
       ],
     },
   },
@@ -836,15 +872,15 @@ export const FILES: PickableItem[] = [
  *    that Friday afternoon, not to Day One's "7:41 AM".
  *  - The wrong-click hint names what the job actually is, so the clutter never
  *    fights the task's framing (a compose-only job says "there's nothing to
- *    open here — click Compose").
+ *    open here — click Compose"; a reply job names the sender to open).
  * Story mail (the manager's replies, filtered to the right day by
  * `storyMailsUpTo`) shows alongside these regardless.
  */
 const DAY_ONE_DECOYS: DecoyEmail[] = [
-  { key: "darnell", ...inboxSender(CAST.darnell), time: "7:41 AM", isTarget: false, unread: true,
-    subject: { en: "Extra aprons?", es: "¿Delantales de más?" },
-    preview: { en: "Do we still have extras in the back?", es: "¿Todavía hay extras atrás?" },
-    wrongHint: wrongHint("Darnell is a coworker. Look for Maria Delgado.", "Darnell es un compañero. Busca a Maria Delgado.") },
+  { key: "dairy", from: "Harbor Dairy", initials: "HD", color: "#1a73e8", time: "7:41 AM", isTarget: false, unread: true,
+    subject: { en: "Milk delivery confirmation", es: "Confirmación de entrega de leche" },
+    preview: { en: "Tomorrow's order is on the truck. No action needed.", es: "El pedido de mañana ya va en el camión. No hay que hacer nada." },
+    wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
   { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
     subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
     preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },
@@ -892,20 +928,22 @@ const SEND_LINK_DECOYS: DecoyEmail[] = [
     wrongHint: wrongHint("That's the weekly team note. You need to email Jordan the link.", "Esa es la nota semanal del equipo. Tienes que enviarle el enlace a Jordan.") },
 ];
 
-/** Saturday of week one — you're writing Darnell, not opening anything. */
+/** Saturday of week one — open Darnell's unanswered Day One question. */
+const OPEN_DARNELL_EN = "That one is not the job. Open Darnell's email about extra aprons.";
+const OPEN_DARNELL_ES = "Ese no es el trabajo. Abre el correo de Darnell sobre los delantales.";
 const ETIQUETTE_DECOYS: DecoyEmail[] = [
   { key: "fridge", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "9:12 AM", isTarget: false,
     subject: { en: "Fridge gets cleaned out Monday", es: "El refrigerador se vacía el lunes" },
     preview: { en: "Take your food home this weekend.", es: "Llévate tu comida este fin de semana." },
-    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+    wrongHint: wrongHint(OPEN_DARNELL_EN, OPEN_DARNELL_ES) },
   { key: "payroll-note", ...inboxSender(CAST.hr), time: "8:40 AM", isTarget: false,
     subject: { en: "Direct deposit posts Friday", es: "El depósito directo entra el viernes" },
     preview: { en: "Nothing to do. Just a heads up.", es: "No hay que hacer nada. Solo un aviso." },
-    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+    wrongHint: wrongHint(OPEN_DARNELL_EN, OPEN_DARNELL_ES) },
   { key: "it-survey", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Fri", isTarget: false,
     subject: { en: "2-minute survey: the new tablets", es: "Encuesta de 2 minutos: las tabletas nuevas" },
     preview: { en: "Optional. Closes next week.", es: "Opcional. Cierra la próxima semana." },
-    wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
+    wrongHint: wrongHint(OPEN_DARNELL_EN, OPEN_DARNELL_ES) },
 ];
 
 /** Monday morning of week two, before your shift — you're writing Maria that you're sick. */
@@ -958,6 +996,12 @@ type InboxEmail = DecoyEmail | {
   preview: Localized;
   wrongHint?: Localized;
 };
+
+/** Saturday sitting — later than the same-day decoys so Darnell is on top. */
+export const DARNELL_APRON_STAMP = {
+  time: "9:48 AM",
+  sentOn: sentOnForTask("mail-etiquette"),
+} as const;
 
 /** Inbox rows for the active Day One job. Job 2 keeps the welcome mail as a non-target. */
 export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
@@ -1014,8 +1058,23 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
       ...decoys,
     ];
   }
-  // Compose-only jobs (mail-etiquette, call-out-sick, mail-send-link): nothing
-  // to open, but the inbox still isn't empty.
+  if (task === "mail-etiquette") {
+    const meta = SUBJECT_BY_TASK["mail-etiquette"];
+    return [
+      {
+        key: "darnell-aprons",
+        ...inboxSender(CAST.darnell),
+        ...DARNELL_APRON_STAMP,
+        isTarget: true,
+        unread: true,
+        subject: { en: meta.en.subject, es: meta.es.subject },
+        preview: { en: meta.en.preview, es: meta.es.preview },
+      },
+      ...decoys,
+    ];
+  }
+  // Compose-only jobs (call-out-sick, mail-send-link): nothing to open, but
+  // the inbox still isn't empty.
   return decoys;
 }
 
@@ -1024,12 +1083,12 @@ export const COMPOSE_LESSONS: Partial<Record<PlayableMailTask, Record<Lang, Less
   "mail-etiquette": {
     en: {
       t: "A clear work email",
-      s: ["Check that the To line says Darnell.", "Answer his question first: there are extra aprons in the storage room.", "Add where to find them, then a short closing. Use your own words."],
+      s: ["Open Darnell's email about extra aprons.", "Click Reply.", "Tell him the extra aprons are in the storage room. Use your own words."],
       tip: "A short, useful answer is enough. You do not need to copy a sentence starter exactly.",
     },
     es: {
       t: "Un correo de trabajo claro",
-      s: ["Revisa que la línea Para diga Darnell.", "Responde primero su pregunta: hay delantales de más en el almacén.", "Agrega dónde encontrarlos y una despedida corta. Usa tus propias palabras."],
+      s: ["Abre el correo de Darnell sobre los delantales.", "Haz clic en Responder.", "Dile que los delantales de más están en el almacén. Usa tus propias palabras."],
       tip: "Basta con una respuesta breve y útil. No necesitas copiar exactamente una frase de ayuda.",
     },
   },

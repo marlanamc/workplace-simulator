@@ -116,3 +116,5 @@ The remaining-issues batch adds `decision-practice.test.ts` and `decision-practi
 `route-resume.spec.ts` earns the first office task through the UI, switches through all directions and pause with reloads in EN/ES, and checks the exact persisted completion set for that fresh test learner. It verifies return to the next office task and keyboard-selected requirement states; Studio supplies only the core setup. It does not substitute for completing every route or observing learner understanding.
 
 `absence-writing.test.ts` covers short EN/ES absence replies, smart apostrophes, whitespace, and rejection of messages missing absence/shift context. `absence-writing.spec.ts` checks sickness-only rejection, retained text, Job Card recovery, and successful short replies in both languages. These authored cases do not establish unrestricted language understanding.
+
+`coworker-location.test.ts` covers short EN/ES storage-location replies and unrelated/wrong-location rejections. `coworker-location.spec.ts` checks Job Card correction, retained text, and successful concise replies. Location-term recognition does not establish complete semantic or tone assessment.

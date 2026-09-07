@@ -23,9 +23,9 @@ export default function NudgeToast({
 }) {
   const card = useJobCardOptional();
   const correct = card?.correct;
-  // The body carries the actual coaching ("Darnell is a coworker. Look for
-  // Maria Delgado."); the title is the "Not that one." framing the card's
-  // warning styling already supplies.
+  // The body carries the actual coaching ("That is a vendor, not your
+  // manager. Look for Maria Delgado."); the title is the "Not that one."
+  // framing the card's warning styling already supplies.
   const message = typeof text === "string" ? text : [text.body, text.title].find(Boolean) ?? "";
 
   useEffect(() => {

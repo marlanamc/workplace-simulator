@@ -182,3 +182,9 @@ The [coverage register](pilot-coverage.csv) records these bounded technical resu
 Eighteen regression cases cover clear absence replies and messages that lack the required signal. Bilingual browser tests reject sickness-only replies, retain the draft through Job Card recovery, and complete with “I can’t work today” / “No puedo trabajar hoy.” These are authored technical cases, not learner observations. The grader still uses bounded text patterns; this does not close general free-writing relevance, contradictory dates, or tone concerns.
 
 Verification for the absence batch: `npm run check` passed lint, typecheck, and **1,025 unit tests**. The full `npm run test:e2e -- --workers=2` run passed **all 28 browser tests** in one run. The initial browser setup incorrectly expected a separate Open button after the early-act arrival had already opened Mail; correcting that test setup required no learner-flow change.
+
+## Batch 2 follow-up — concise coworker location replies (P5)
+
+**Implemented 2026-09-07.** The coworker-email grader no longer requires six words to name the storage location. It accepts concise EN/ES answers such as “In the storage room” and “En el almacén,” including line-wrapped room names. The bare `supply` match is replaced with a room reference, so “I placed a supply order this morning” no longer passes as a location answer. Other task wording, ordering, and completion identities are preserved.
+
+Eighteen authored unit cases cover concise locations and unrelated/wrong-location replies. Bilingual browser tests verify a correction through the Job Card, retention of the rejected draft, and successful short replies. The check recognizes location terms; it does not verify all negations, contradictory statements, email structure, or tone. Those broader writing and learner-transfer concerns remain open.

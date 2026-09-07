@@ -10,6 +10,7 @@ import {
   COMPOSE_LESSONS,
   FILES,
   emailsForTask,
+  DARNELL_APRON_STAMP,
   SUBJECT_BY_TASK,
   CONFIRM_COPY,
   DONE_COPY,
@@ -83,15 +84,19 @@ const STEP_LINE = {
   openMail: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
-    // Compose-only: there is no email to open, so these lines are never shown.
+    // Compose-only jobs have no email to open, so their openMail lines are unused.
     "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
-    "mail-etiquette": { en: "Reply to Darnell.", es: "Respóndele a Darnell." },
+    "mail-etiquette": { en: "Open Darnell's email.", es: "Abre el correo de Darnell." },
     "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
     "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
   } as Record<MailTask, Localized<string>>,
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
   attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
   write: { en: "Write one short line.", es: "Escribe una línea corta." },
+  writeEtiquette: {
+    en: "Tell Darnell the extra aprons are in the storage room.",
+    es: "Dile a Darnell que los delantales de más están en el almacén.",
+  },
   send: { en: "Click Send.", es: "Haz clic en Enviar." },
 } as const;
 
@@ -116,7 +121,7 @@ const STEP_COUNT: Record<MailTask, number> = {
   "mail-reply": 3,
   "mail-attach": 4,
   "mail-send-link": 2,
-  "mail-etiquette": 2,
+  "mail-etiquette": 3,
   "call-out-sick": 2,
   "reply-all": 3,
 };
@@ -188,7 +193,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const c = MAIL_COPY[lang];
   const cc = CONFIRM_COPY[lang];
   const subjectMeta = SUBJECT_BY_TASK[activeMailTask][lang];
-  // Writing to Maria from scratch: no email to find, no Reply button to press.
+  // Writing from scratch: no email to find, no Reply button to press.
   // Mail opens straight into the compose window.
   const composeOnly = isComposeOnly(activeMailTask);
   // Day One's two emails are both from Maria, so her signature is fixed here
@@ -235,7 +240,17 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const wrongMail = (hint?: { en: string; es: string }) =>
     recordWrong({
       title: T("Not that one.", "Ese no es."),
-      body: hint?.[lang] ?? T("That one isn't from your manager. Look for the email from Maria Delgado.", "Ese no es de tu gerente. Busca el correo de Maria Delgado."),
+      body:
+        hint?.[lang] ??
+        (activeMailTask === "mail-etiquette"
+          ? T(
+              "That one isn't from Darnell. Look for Extra aprons.",
+              "Ese no es de Darnell. Busca Delantales de más.",
+            )
+          : T(
+              "That one isn't from your manager. Look for the email from Maria Delgado.",
+              "Ese no es de tu gerente. Busca el correo de Maria Delgado.",
+            )),
     });
 
   const startReply = () => {
@@ -268,7 +283,16 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const wrongCompose = () =>
     recordWrong({
       title: T("Not that one. That is Compose.", "Ese no es. Es Redactar."),
-      body: T("That is Compose. It starts a new email. Open Maria's and click Reply.", "Eso es Redactar. Empieza un correo nuevo. Abre el de Maria y haz clic en Responder."),
+      body:
+        activeMailTask === "mail-etiquette"
+          ? T(
+              "That is Compose. It starts a new email. Open Darnell's and click Reply.",
+              "Eso es Redactar. Empieza un correo nuevo. Abre el de Darnell y haz clic en Responder.",
+            )
+          : T(
+              "That is Compose. It starts a new email. Open Maria's and click Reply.",
+              "Eso es Redactar. Empieza un correo nuevo. Abre el de Maria y haz clic en Responder.",
+            ),
     });
 
   const finish = (badgeKey: string) => {
@@ -623,7 +647,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
                   ? { en: "Edit the casual draft.", es: "Edita el borrador informal." }
                   : !body.trim()
-                    ? STEP_LINE.write
+                    ? activeMailTask === "mail-etiquette"
+                      ? STEP_LINE.writeEtiquette
+                      : STEP_LINE.write
                     : STEP_LINE.send;
               const confirmAnswered =
                 Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
@@ -711,34 +737,46 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   ))}
                 </div>
                 )}
-                {!composeOnly && activeMailTask !== "reply-all" && (
+                {!composeOnly && activeMailTask !== "reply-all" && (() => {
+                  const darnellRead = activeMailTask === "mail-etiquette";
+                  const sender = darnellRead ? CAST.darnell : CAST.maria;
+                  const senderSig = darnellRead ? undefined : mariaSignature;
+                  return (
                 <div className="flex items-start gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1a73e8] text-[14px] font-medium text-white">
-                    MD
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[14px] font-medium text-white"
+                    style={{ background: darnellRead ? sender.color : "#1a73e8" }}
+                  >
+                    {sender.initials}
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline justify-between gap-2">
                       <div>
-                        <span className="text-[14px] font-medium">{mariaSignature?.name}</span>
-                        <span className="ml-1 text-[12px] text-[#5f6368]">&lt;{mariaSignature?.email}&gt;</span>
+                        <span className="text-[14px] font-medium">{sender.name}</span>
+                        <span className="ml-1 text-[12px] text-[#5f6368]">&lt;{sender.email}&gt;</span>
                       </div>
                       <div className="text-[12px] text-[#5f6368]">
-                        {stamp({
-                          time: activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM",
-                          sentOn: 18,
-                        })}
+                        {stamp(
+                          darnellRead
+                            ? DARNELL_APRON_STAMP
+                            : {
+                                time: activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM",
+                                sentOn: 18,
+                              },
+                        )}
                       </div>
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-etiquette" | "mail-send-link" | "reply-all">, lang, displayName).plain.map((p, i) => (
+                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain.map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
-                    {mariaSignature && <MailSignature sig={mariaSignature} lang={lang} />}
+                    {senderSig && <MailSignature sig={senderSig} lang={lang} />}
                   </div>
                 </div>
-                )}
+                  );
+                })()}
 
                 {view === "read" && (
                   <div className="mt-6 flex flex-wrap gap-2 pl-[52px]">

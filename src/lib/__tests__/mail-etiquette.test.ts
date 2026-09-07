@@ -19,7 +19,7 @@ import type { Lang } from "@/lib/task-types";
  */
 
 const LANGS: Lang[] = ["en", "es"];
-// Only tasks that HAVE an email to read; call-out-sick is composed from scratch.
+// Manager mail: the name lives in the signature block, not the body.
 const MAIL_TASKS = ["mail-reply", "mail-attach"] as const;
 const ALL_TASKS = LEVELS.flatMap((l) => taskKeysForLevel(l, null));
 
@@ -100,6 +100,17 @@ describe("Day One mail bodies", () => {
       });
     }
   }
+});
+
+describe("Darnell's coworker note", () => {
+  it.each(LANGS)("greets by name and signs Thanks, / Darnell (%s)", (lang) => {
+    const { plain, full } = bodyForTask("mail-etiquette", lang, "Ana Ramirez");
+    for (const version of [plain, full]) {
+      expect(version[0]).toBe(mailGreeting(lang, "Ana Ramirez"));
+      expect(version[version.length - 2]).toBe(lang === "en" ? "Thanks," : "Gracias,");
+      expect(version[version.length - 1]).toBe("Darnell");
+    }
+  });
 });
 
 describe("story mail bodies", () => {
