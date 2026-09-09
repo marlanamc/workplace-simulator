@@ -237,7 +237,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "La celda del total está vacía. Escribe =SUM y revisa el número.",
   },
   {
-    en: "Email Renata the report, and cc Jordan.",
-    es: "Envíale el reporte a Renata, con copia a Jordan.",
+    en: "Email Renata the total from the report, and cc Jordan.",
+    es: "Envía a Renata el total del reporte, con copia a Jordan.",
   },
 ];

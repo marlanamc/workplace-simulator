@@ -131,7 +131,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Find the apply-by date.", es: "Encuentra la fecha para aplicar." },
   { en: "Mark the missing document.", es: "Marca el documento que falta." },
-  { en: "Write a short statement and submit.", es: "Escribe una carta corta y envía." },
+  { en: "Write a short statement that names BHCC or the program, then submit.", es: "Escribe una carta corta que nombre BHCC o el programa; luego envía." },
 ];
 
 export const DOCUMENT_FILES = [

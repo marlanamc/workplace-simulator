@@ -162,5 +162,5 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the four results.", es: "Lee los cuatro resultados." },
   { en: "Pick the library database.", es: "Elige la base de datos." },
-  { en: "Write one line on why you can trust it.", es: "Escribe una línea sobre por qué puedes confiar en él." },
+  { en: "Write one reason you can trust it, like its authors or library database.", es: "Escribe una razón para confiar en ella, como sus autores o la base de datos de la biblioteca." },
 ];

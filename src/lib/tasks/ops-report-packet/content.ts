@@ -258,7 +258,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "A total and a calendar commitment, combined in one packet.", es: "Un total y un compromiso del calendario, juntos en un paquete." },
   { en: "Open Sheets. Check this week's total.", es: "Abre Sheets. Revisa el total de esta semana." },
   { en: "Open Calendar. Note what's coming up.", es: "Abre Calendar. Anota lo que viene." },
-  { en: "Open Docs. Write a summary of both.", es: "Abre Docs. Escribe un resumen de las dos cosas." },
+  { en: "Open Docs. Include the weekly total and Thursday's uncovered morning opening.", es: "Abre Docs. Incluye el total semanal y la apertura de la mañana del jueves sin cobertura." },
   { en: "Open Mail. Send the summary as one packet.", es: "Abre Mail. Envía el resumen como un solo paquete." },
 ];
 

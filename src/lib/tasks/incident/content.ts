@@ -170,7 +170,7 @@ export function describeSubmission(when: string, where: string, what: string, la
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Fill in the report: what happened, when, and where.",
-    es: "Llena el reporte: qué pasó, cuándo, y dónde.",
+    en: "Fill in what happened, when, and where. Say if anyone was hurt and what you did.",
+    es: "Llena qué pasó, cuándo y dónde. Di si alguien se lastimó y qué hiciste.",
   },
 ];

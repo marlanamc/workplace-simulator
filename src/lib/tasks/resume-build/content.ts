@@ -162,8 +162,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Escribe una línea de resumen, luego un logro por cada uno de tus dos puestos principales.",
   },
   {
-    en: "Check the skills you've shown, then save.",
-    es: "Marca las habilidades que has mostrado, luego guarda.",
+    en: "Choose at least three skills you have shown, then save.",
+    es: "Elige al menos tres habilidades que has demostrado, luego guarda.",
   },
 ];
 

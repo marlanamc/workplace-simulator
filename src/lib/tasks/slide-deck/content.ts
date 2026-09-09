@@ -143,7 +143,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Title the first slide.", es: "Ponle título a la primera diapositiva." },
   { en: "Find and enter the expense total.", es: "Busca y escribe el total de gastos." },
-  { en: "Write a main point. Present and answer Chris.", es: "Escribe una idea. Presenta y responde a Chris." },
+  { en: "Write your main point as a full sentence. Present and answer Chris.", es: "Escribe tu idea principal como una oración completa. Presenta y responde a Chris." },
 ];
 
 export const COWORKER_QUESTION: Localized = { en: 'Chris: Why is the dinner expense excluded from this total?', es: 'Chris: ¿Por qué el gasto de la cena no está incluido en este total?' };

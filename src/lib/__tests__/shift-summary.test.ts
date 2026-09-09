@@ -2,28 +2,28 @@ import { describe, expect, it } from "vitest";
 import { shiftSummaryIsComplete, STARTERS } from "@/lib/tasks/shift-review/content";
 
 describe("end-of-shift note", () => {
-  it("accepts a note that restates the planted facts", () => {
+  it("accepts a substantive note that mentions 11 in either language", () => {
     expect(
       shiftSummaryIsComplete(
-        "Hi Maria,\nToday's shift ran smoothly. It got a little busy around 11 AM.",
+        "Hi Maria,\nAt 11 AM I checked on the front counter before I left. Thanks.",
       ),
     ).toBe(true);
     expect(
       shiftSummaryIsComplete(
-        "Hola Maria,\nEl turno de hoy salió bien. Se puso un poco ocupado alrededor de las 11 AM.",
+        "Hola Maria,\nA las once revisé el mostrador antes de salir. Gracias.",
       ),
     ).toBe(true);
   });
 
-  it("rejects notes that skip a planted fact", () => {
+  it("rejects notes that omit the 11 AM moment", () => {
     expect(shiftSummaryIsComplete("ok")).toBe(false);
     expect(shiftSummaryIsComplete("The shift ran smoothly today with no issues at all.")).toBe(false);
-    expect(shiftSummaryIsComplete("It got busy around 11 AM and that was it.")).toBe(false);
+    expect(shiftSummaryIsComplete("El turno salió bien y no hubo nada más que reportar hoy.")).toBe(false);
   });
 
-  it("has bilingual starters that name the facts", () => {
-    expect(STARTERS.en.join(" ")).toMatch(/smoothly|busy|11/i);
-    expect(STARTERS.es.join(" ")).toMatch(/bien|ocupado|11/i);
+  it("has bilingual starters that mention 11", () => {
+    expect(STARTERS.en.join(" ")).toMatch(/11/i);
+    expect(STARTERS.es.join(" ")).toMatch(/11/i);
     expect(STARTERS.es.length).toBe(STARTERS.en.length);
   });
 });

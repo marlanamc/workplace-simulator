@@ -269,8 +269,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Ahora resuelve las tres. No te olvides de ninguna.",
   },
   {
-    en: "Handle the unhappy customer.",
-    es: "Atiende al cliente molesto.",
+    en: "Acknowledge the customer and say you will check on it. Do not promise a free item or refund.",
+    es: "Reconoce al cliente y di que lo revisarás. No prometas algo gratis ni un reembolso.",
   },
   {
     en: "Find someone to cover tonight's close.",

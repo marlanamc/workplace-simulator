@@ -122,7 +122,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the syllabus due date.", es: "Lee la fecha del temario." },
   { en: "Check that you saw Friday 11:59 PM.", es: "Marca que viste el viernes a las 11:59 PM." },
-  { en: "Write a short reply and submit.", es: "Escribe una respuesta corta y entrega." },
+  { en: "Reply that you heard the concern and will check on it, then submit.", es: "Responde que escuchaste la preocupación y que la revisarás; luego entrega." },
 ];
 
 export const DEADLINE_OPTIONS = [

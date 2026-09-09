@@ -1,6 +1,6 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
-/** Planted facts for the note — students restate these; they do not invent a day. */
+/** Context for the note — students do not need to invent a day. */
 export const SHIFT_FACTS = {
   en: {
     overall: "ran smoothly",
@@ -17,14 +17,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "📝",
     kicker: "Friday, end of shift.",
     headline: "Maria has to leave early.",
-    body: "Write a short note about the shift for her to read. It ran smoothly and got a little busy around 11 AM. You don't need to invent anything else.",
+    body: "Write a short note about the shift for her to read. Include that something happened around 11 AM. You don't need to invent anything else.",
     cta: "Write the note",
   },
   es: {
     emoji: "📝",
     kicker: "Viernes, fin de turno.",
     headline: "Maria tiene que irse temprano.",
-    body: "Escríbele una nota corta del turno para que la lea. Salió bien y se puso un poco ocupado alrededor de las 11 AM. No hace falta inventar nada más.",
+    body: "Escríbele una nota corta del turno para que la lea. Incluye que algo pasó alrededor de las 11 AM. No hace falta inventar nada más.",
     cta: "Escribir la nota",
   },
 };
@@ -69,8 +69,7 @@ export const REVIEW_COPY: Record<Lang, {
     tipLabel: "Tip",
     gotIt: "I understand. Back to my task",
     shortNudge: "Add a little more. A couple of sentences is enough.",
-    factsNudge:
-      "Include both facts: the shift ran smoothly, and it got a little busy around 11 AM.",
+    factsNudge: "Mention 11 in your note. The rest can be in your own words.",
   },
   es: {
     heading: "Notas del turno",
@@ -91,20 +90,19 @@ export const REVIEW_COPY: Record<Lang, {
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
     shortNudge: "Agrega un poco más. Un par de frases bastan.",
-    factsNudge:
-      "Incluye los dos datos: el turno salió bien, y se puso un poco ocupado alrededor de las 11 AM.",
+    factsNudge: "Menciona las 11 en tu nota. Lo demás puede estar en tus propias palabras.",
   },
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Maria,\nToday's shift ran smoothly.",
-    "It got a little busy around 11 AM.",
+    "Hi Maria,\nI am leaving a note about the 11 AM part of the shift.",
+    "Around 11 AM, things needed my attention.",
     "Nothing else unusual to report. Thanks.",
   ],
   es: [
-    "Hola Maria,\nEl turno de hoy salió bien.",
-    "Se puso un poco ocupado alrededor de las 11 AM.",
+    "Hola Maria,\nDejo una nota sobre la parte del turno de las 11 AM.",
+    "Alrededor de las 11 AM, las cosas necesitaron mi atención.",
     "Nada más raro que reportar. Gracias.",
   ],
 };
@@ -114,40 +112,33 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "End-of-shift notes",
       s: [
-        "Use the facts you were given. You do not need to invent a story.",
+        "Write only what you know. You do not need to invent a story.",
         "Two or three sentences is enough.",
-        "Say the pace and when the busy moment was.",
+        "Make sure your note mentions 11 AM.",
       ],
-      tip: "Leads skim these. Restating the facts clearly beats making something up.",
+      tip: "Leads skim these. A clear note that mentions 11 AM is enough.",
     },
   ],
   es: [
     {
       t: "Notas de fin de turno",
       s: [
-        "Usa los datos que te dieron. No hace falta inventar una historia.",
+        "Escribe solo lo que sabes. No hace falta inventar una historia.",
         "Dos o tres frases bastan.",
-        "Di el ritmo y cuándo fue el momento ocupado.",
+        "Asegúrate de mencionar las 11 AM.",
       ],
-      tip: "Los líderes leen esto de pasada. Repetir los datos con claridad gana a inventar.",
+      tip: "Los líderes leen esto de pasada. Una nota clara que menciona las 11 AM basta.",
     },
   ],
 };
 
 /**
- * Lenient: the note should include the planted pace (smooth/fine) and the
- * busy moment around 11.
+ * Lenient: a substantive note only needs to mention the 11 AM moment.
  */
 export function shiftSummaryIsComplete(text: string): boolean {
   const t = text.trim().toLowerCase();
   if (t.length < 28) return false;
-  const smooth =
-    /\b(smooth|fine|normal|quiet|well|ok|okay|good|sali[oó]|bien|tranquil|normal)\w*\b/.test(t) ||
-    /ran\s+smooth/.test(t);
-  const busyRush =
-    /\b(busy|ocupad|rush|pico|movid)\w*\b/.test(t) &&
-    /\b(11|eleven|once|11\s*am|11:00)\b/.test(t);
-  return smooth && busyRush;
+  return /\b(11|eleven|once|11\s*am|11:00)\b/.test(t);
 }
 
 export function describeSubmission(summary: string, lang: Lang): SubmissionContent {
@@ -165,7 +156,7 @@ export function describeSubmission(summary: string, lang: Lang): SubmissionConte
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "The shift ran smoothly and got a little busy around 11 AM. Write a short summary.",
-    es: "El turno salió bien y se puso un poco ocupado alrededor de las 11 AM. Escribe un resumen corto.",
+    en: "Write a short shift summary. Make sure it mentions 11 AM.",
+    es: "Escribe un resumen corto del turno. Asegúrate de mencionar las 11 AM.",
   },
 ];

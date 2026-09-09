@@ -238,7 +238,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Haz clic en el total de Horas y mira qué filas suma.",
   },
   {
-    en: "Someone is missing. Fix the formula, then tell Renata.",
-    es: "Falta alguien. Arregla la fórmula y avísale a Renata.",
+    en: "Fix both formulas to include every crew row. Email Renata the corrected total.",
+    es: "Arregla las dos fórmulas para incluir cada fila del equipo. Envía a Renata el total corregido.",
   },
 ];

@@ -48,6 +48,53 @@ export function isComposeOnly(task: PlayableMailTask): boolean {
   return COMPOSE_ONLY_TASKS.includes(task);
 }
 
+/**
+ * The Job Card lines for Mail live with Mail's completion rules so that a
+ * checked writing requirement cannot drift away from the learner direction.
+ */
+export const MAIL_JOB_CARD_STEPS: {
+  openMail: Record<PlayableMailTask, Localized>;
+  confirm: Localized;
+  attach: Localized;
+  write: Localized;
+  writeEtiquette: Localized;
+  writeForTask: Partial<Record<PlayableMailTask, Localized>>;
+  replyAllEdit: Localized;
+  send: Localized;
+} = {
+  openMail: {
+    "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
+    "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
+    // Compose-only jobs have no email to open, so their openMail lines are unused.
+    "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
+    "mail-etiquette": { en: "Open Darnell's email.", es: "Abre el correo de Darnell." },
+    "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
+    "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
+  },
+  confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
+  attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
+  write: { en: "Write one short line.", es: "Escribe una línea corta." },
+  writeEtiquette: {
+    en: "Tell Darnell the extra aprons are in the storage room.",
+    es: "Dile a Darnell que los delantales de más están en el almacén.",
+  },
+  writeForTask: {
+    "mail-send-link": {
+      en: "Tell Jordan this is the schedule and point to its link. Do not attach a copy.",
+      es: "Dile a Jordan que es el horario y señala su enlace. No adjuntes una copia.",
+    },
+    "call-out-sick": {
+      en: "Tell Maria you cannot work today's shift.",
+      es: "Dile a Maria que no puedes trabajar el turno de hoy.",
+    },
+  },
+  replyAllEdit: {
+    en: "Make the draft professional. Say yes or no about Friday's 6 AM delivery.",
+    es: "Haz profesional el borrador. Di sí o no sobre la entrega del viernes a las 6 AM.",
+  },
+  send: { en: "Click Send.", es: "Haz clic en Enviar." },
+};
+
 export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventIntroCopy>> = {
   "mail-reply": {
     en: {

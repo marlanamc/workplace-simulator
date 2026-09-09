@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   MAIL_COPY,
+  MAIL_JOB_CARD_STEPS,
   bodyForTask,
   STARTERS,
   LESSONS,
@@ -75,30 +76,6 @@ type MailTask = PlayableMailTask;
 const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap((l) => taskKeysForLevel(l, null)) as string[]).filter(
   (k): k is MailTask => (PLAYABLE_MAIL_TASKS as string[]).includes(k),
 );
-
-/**
- * One short sentence per step - the Job Card's hard rule. Anything longer is
- * a lesson, and lessons live in the Help drawer.
- */
-const STEP_LINE = {
-  openMail: {
-    "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
-    "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
-    // Compose-only jobs have no email to open, so their openMail lines are unused.
-    "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
-    "mail-etiquette": { en: "Open Darnell's email.", es: "Abre el correo de Darnell." },
-    "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
-    "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
-  } as Record<MailTask, Localized<string>>,
-  confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
-  attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
-  write: { en: "Write one short line.", es: "Escribe una línea corta." },
-  writeEtiquette: {
-    en: "Tell Darnell the extra aprons are in the storage room.",
-    es: "Dile a Darnell que los delantales de más están en el almacén.",
-  },
-  send: { en: "Click Send.", es: "Haz clic en Enviar." },
-} as const;
 
 /**
  * "Click <the words actually on the button>." Built from the same copy the
@@ -585,7 +562,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   icon={TASK_ICONS.timeclock}
                   stepIndex={2}
                   stepCount={TIMECLOCK_STEPS.length}
-                  instruction={!body.trim() ? TIMECLOCK_STEPS[2] : STEP_LINE.send}
+                  instruction={!body.trim() ? TIMECLOCK_STEPS[2] : MAIL_JOB_CARD_STEPS.send}
                   lang={lang}
                   rightNowLabel={TIMECLOCK_RIGHT_NOW_LABEL}
                   onShowMe={() => setShowMeTarget(showMeTargetId === "send-button" ? null : "send-button")}
@@ -643,19 +620,19 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               // The compose step is really three moments in one pane, and the
               // card names whichever one the learner is actually on.
               const composeLine = needsAttach && !attached
-                ? STEP_LINE.attach
+                ? MAIL_JOB_CARD_STEPS.attach
                 : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
-                  ? { en: "Edit the casual draft.", es: "Edita el borrador informal." }
+                  ? MAIL_JOB_CARD_STEPS.replyAllEdit
                   : !body.trim()
                     ? activeMailTask === "mail-etiquette"
-                      ? STEP_LINE.writeEtiquette
-                      : STEP_LINE.write
-                    : STEP_LINE.send;
+                      ? MAIL_JOB_CARD_STEPS.writeEtiquette
+                      : MAIL_JOB_CARD_STEPS.writeForTask[activeMailTask] ?? MAIL_JOB_CARD_STEPS.write
+                    : MAIL_JOB_CARD_STEPS.send;
               const confirmAnswered =
                 Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
               const instruction =
                 view === "empty"
-                  ? STEP_LINE.openMail[activeMailTask]
+                  ? MAIL_JOB_CARD_STEPS.openMail[activeMailTask]
                   : view === "read"
                     // Job 2 goes through a comprehension check first, so its
                     // button here says Continue, not Reply. Reply-all names
@@ -666,7 +643,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     : view === "confirm"
                       ? confirmAnswered
                         ? clickLine(BUTTON_LABEL.replyAfterConfirm)
-                        : STEP_LINE.confirm
+                        : MAIL_JOB_CARD_STEPS.confirm
                       : composeLine;
               const stepIndex =
                 view === "empty" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
