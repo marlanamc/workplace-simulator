@@ -1,13 +1,36 @@
-import { and, desc, eq, inArray, isNotNull, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { getDb } from "./client";
 import { badges, learners, skillRungs, submissions, taskCompletions, type SubmissionContent } from "./schema";
+
+/**
+ * How two spellings of a learner's name count as the same person: trim the
+ * ends, ignore case. Nothing more — the SQL below applies `lower(trim(...))`
+ * to the stored side, and anything this function did that SQL does not (say,
+ * collapsing internal spaces) would silently stop matching.
+ *
+ * Exists because `findLearner` used to compare the raw strings. A learner who
+ * typed "ana" one morning after signing up as "Ana" did not get an error; they
+ * got a brand-new account with no progress, on a shared classroom Chromebook,
+ * with nothing on screen to say what had happened.
+ */
+export function normalizeLearnerName(displayName: string): string {
+  return displayName.trim().toLowerCase();
+}
 
 export async function findLearner(displayName: string, classCode: string) {
   const db = getDb();
   const rows = await db
     .select()
     .from(learners)
-    .where(and(eq(learners.displayName, displayName), eq(learners.classCode, classCode)));
+    .where(
+      and(
+        sql`lower(trim(${learners.displayName})) = ${normalizeLearnerName(displayName)}`,
+        eq(learners.classCode, classCode),
+      ),
+    )
+    // Duplicates from before this matched case-insensitively still exist, and
+    // the earliest row is the one carrying the learner's real progress.
+    .orderBy(asc(learners.createdAt));
   return rows[0] ?? null;
 }
 

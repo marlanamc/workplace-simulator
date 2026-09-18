@@ -1,16 +1,21 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
-/** Context for the note — students do not need to invent a day. */
-export const SHIFT_FACTS = {
+/**
+ * What actually happened on the shift, shown on the form itself (see
+ * `ShiftReviewTask`). This used to be defined here and read by nothing, so the
+ * Job Card asked the learner to "make sure it mentions 11 AM" about an 11 AM
+ * that appeared nowhere on screen — a note about a shift they never saw.
+ */
+export const SHIFT_FACTS: Record<Lang, { heading: string; lines: string[] }> = {
   en: {
-    overall: "ran smoothly",
-    rush: "a little busy around 11 AM",
+    heading: "What happened on your shift",
+    lines: ["The shift ran smoothly.", "It got a little busy around 11 AM."],
   },
   es: {
-    overall: "salió bien",
-    rush: "un poco ocupado alrededor de las 11 AM",
+    heading: "Lo que pasó en tu turno",
+    lines: ["El turno salió bien.", "Se puso un poco ocupado alrededor de las 11 AM."],
   },
-} as const;
+};
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -68,7 +73,7 @@ export const REVIEW_COPY: Record<Lang, {
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
     gotIt: "I understand. Back to my task",
-    shortNudge: "Add a little more. A couple of sentences is enough.",
+    shortNudge: "Write a full sentence. One or two is enough.",
     factsNudge: "Mention 11 in your note. The rest can be in your own words.",
   },
   es: {
@@ -89,7 +94,7 @@ export const REVIEW_COPY: Record<Lang, {
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
-    shortNudge: "Agrega un poco más. Un par de frases bastan.",
+    shortNudge: "Escribe una oración completa. Una o dos bastan.",
     factsNudge: "Menciona las 11 en tu nota. Lo demás puede estar en tus propias palabras.",
   },
 };
@@ -133,12 +138,23 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 };
 
 /**
- * Lenient: a substantive note only needs to mention the 11 AM moment.
+ * Lenient by design: a note passes once it is a real sentence and names the
+ * 11 AM moment.
+ *
+ * There used to be a 28-character floor that nothing on screen mentioned, so
+ * "Busy at 11 am." — which follows the instruction exactly — was rejected with
+ * "Add a little more." The floor is a word count now, low enough that any real
+ * sentence clears it and only a bare "11" does not.
+ *
+ * `once` is Spanish for eleven and an ordinary English word, so it only counts
+ * as the hour in Spanish. Before this, "It got busy once around lunch" passed
+ * without mentioning 11 at all.
  */
-export function shiftSummaryIsComplete(text: string): boolean {
+export function shiftSummaryIsComplete(text: string, lang: Lang): boolean {
   const t = text.trim().toLowerCase();
-  if (t.length < 28) return false;
-  return /\b(11|eleven|once|11\s*am|11:00)\b/.test(t);
+  if (t.split(/\s+/).filter(Boolean).length < 3) return false;
+  const eleven = lang === "es" ? /\b(11|11:00|once)\b/ : /\b(11|11:00|eleven)\b/;
+  return eleven.test(t);
 }
 
 export function describeSubmission(summary: string, lang: Lang): SubmissionContent {

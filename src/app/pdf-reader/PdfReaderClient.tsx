@@ -181,7 +181,12 @@ function PayStubPage({
               <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">
                 {hours ? (
                   <>
-                    <span className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.45em] py-[0.08em]">
+                    <span
+                      data-showme="stub-hours"
+                      data-showme-primary=""
+                      data-showme-oval=""
+                      className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.45em] py-[0.08em]"
+                    >
                       {hours[0]}
                     </span>
                     {hours[1] ? ` ${hours[1]}` : null}

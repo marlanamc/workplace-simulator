@@ -8,6 +8,7 @@ import {
   LESSONS,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
+  SHIFT_FACTS,
   shiftSummaryIsComplete,
   describeSubmission,
 } from "@/lib/tasks/shift-review/content";
@@ -34,12 +35,13 @@ export default function ShiftReviewTask() {
   const showMe = useShowMe();
 
   const c = REVIEW_COPY[lang];
+  const facts = SHIFT_FACTS[lang];
 
   const trySubmit = () => {
-    if (summary.trim().length < 28) {
+    if (summary.trim().split(/\s+/).filter(Boolean).length < 3) {
       return say(c.shortNudge);
     }
-    if (!shiftSummaryIsComplete(summary)) {
+    if (!shiftSummaryIsComplete(summary, lang)) {
       return say(c.factsNudge);
     }
     setView("done");
@@ -78,6 +80,18 @@ export default function ShiftReviewTask() {
             <div className="mb-4">
               <div className="text-[13px] font-medium text-text-secondary">{c.dateLabel}</div>
               <div className="mt-0.5 text-[15px] text-text-primary">{c.date}</div>
+            </div>
+            {/* The learner did not live this shift. Without these two lines the
+                card's "make sure it mentions 11 AM" refers to nothing. */}
+            <div className="mb-4 rounded-xl bg-surface-muted px-4 py-3">
+              <div className="text-[13px] font-medium text-text-secondary">{facts.heading}</div>
+              <ul className="mt-1.5 flex flex-col gap-1">
+                {facts.lines.map((line) => (
+                  <li key={line} className="text-[15px] leading-snug text-text-primary">
+                    {line}
+                  </li>
+                ))}
+              </ul>
             </div>
             <label className="mb-2 block text-[13px] font-medium text-text-secondary">{c.summaryLabel}</label>
             <textarea
