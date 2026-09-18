@@ -37,6 +37,7 @@ export const JUMP_TABS = [
   "performance-review",
   "ops-report-packet",
   "portfolio-reflection",
+  "account-recovery",
 ] as const;
 export type JumpTab = (typeof JUMP_TABS)[number];
 
@@ -214,6 +215,10 @@ export const CATALOG_ACTS: CatalogAct[] = [
     color: "#1a73e8",
     path: "trunk",
     blurb: "Shared start. The story is a cafe, but the moves are any hourly job: email, schedule, hours, pay, speak up.",
+    // Mirrors the seven Act I levels in `LEVELS`. This drifted badly: it used
+    // to list four levels, the retired bundled `mail` task, and incident and
+    // handbook (which are Act II at runtime), and it pointed at three folders
+    // that do not exist on disk.
     levels: [
       {
         key: "level0",
@@ -233,13 +238,20 @@ export const CATALOG_ACTS: CatalogAct[] = [
       {
         key: "level1",
         n: 1,
-        title: "New Hire, Day One",
-        folder: "act-1-new-hire/level-1-new-hire",
+        title: "Day One",
+        folder: "act-1-new-hire/level-1-day-one",
         lessons: [
           {
             n: "1",
-            taskKey: "mail",
-            skill: "Read a supervisor's email, reply, and attach the right file",
+            taskKey: "mail-reply",
+            skill: "Find a manager's email in a full inbox and write a short thank-you back",
+            app: "Mail",
+            tab: "mail",
+          },
+          {
+            n: "2",
+            taskKey: "mail-attach",
+            skill: "Confirm what was asked for, then reply with the right file attached",
             app: "Mail",
             tab: "mail",
           },
@@ -248,8 +260,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
       {
         key: "level2",
         n: 2,
-        title: "Settling In",
-        folder: "act-1-new-hire/level-2-settling-in",
+        title: "The First Week",
+        folder: "act-1-new-hire/level-2-the-first-week",
         lessons: [
           {
             n: "1",
@@ -258,27 +270,92 @@ export const CATALOG_ACTS: CatalogAct[] = [
             app: "Portal",
             tab: "portal",
           },
-          {
-            n: "2",
-            taskKey: "timeclock",
-            skill: "Clock in and confirm the time looks right",
-            app: "Portal",
-            tab: "portal",
-          },
-          {
-            n: "3",
-            taskKey: "paystub",
-            skill: "Find the right person's stub, then confirm net pay and hours",
-            app: "Portal + PDF",
-            tab: "portal",
-          },
         ],
       },
       {
         key: "level3",
         n: 3,
+        title: "Clock-In Fix",
+        folder: "act-1-new-hire/level-3-payday-and-trouble",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "timeclock",
+            skill: "Clock in, notice the time is wrong, and tell a supervisor",
+            app: "Portal + Mail",
+            tab: "portal",
+          },
+          {
+            n: "2",
+            taskKey: "shift-review",
+            skill: "Leave a short end-of-shift note a lead can act on",
+            app: "Portal",
+            tab: "portal",
+          },
+        ],
+      },
+      {
+        key: "level3a",
+        n: 3,
+        title: "Write to a Coworker",
+        folder: "act-1-new-hire/level-3a-one-more-thing",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "mail-etiquette",
+            skill: "Answer a coworker's actual question instead of just acknowledging it",
+            app: "Mail",
+            tab: "mail",
+          },
+        ],
+      },
+      {
+        key: "level3a2",
+        n: 3,
+        title: "The Sick Call",
+        folder: "act-1-new-hire/level-3a2-the-sick-call",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "call-out-sick",
+            skill: "Tell a manager you cannot work today's shift, before it starts",
+            app: "Mail",
+            tab: "mail",
+          },
+        ],
+      },
+      {
+        key: "level3a3",
+        n: 3,
+        title: "First Paycheck",
+        // The paystub lesson lives with the rest of the payday material; the
+        // runtime moved the task to its own level without moving the folder.
+        folder: "act-1-new-hire/level-3-payday-and-trouble",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "paystub",
+            skill: "Open a pay stub as a real document, then confirm net pay and hours",
+            app: "Portal + PDF",
+            tab: "portal",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    key: "act2",
+    title: "Act II: Shift Lead",
+    jobTitle: "Shift Lead",
+    color: "#e37400",
+    path: "trunk",
+    blurb: "Lead tools: Calendar, Drive, Sheets. After this, pick a door: stay and lead, healthcare, or office.",
+    levels: [
+      {
+        key: "level3b",
+        n: 3,
         title: "When Something Happens",
-        folder: "act-1-new-hire/level-3-when-something-happens",
+        folder: "act-2-shift-lead/level-0-when-something-happens",
         lessons: [
           {
             n: "1",
@@ -296,16 +373,21 @@ export const CATALOG_ACTS: CatalogAct[] = [
           },
         ],
       },
-    ],
-  },
-  {
-    key: "act2",
-    title: "Act II: Shift Lead",
-    jobTitle: "Shift Lead",
-    color: "#e37400",
-    path: "trunk",
-    blurb: "Lead tools: Calendar, Drive, Sheets. After this, pick a door: stay and lead, healthcare, or office.",
-    levels: [
+      {
+        key: "level3c",
+        n: 3,
+        title: "Locked Out",
+        folder: "act-2-shift-lead/level-0-when-something-happens",
+        lessons: [
+          {
+            n: "1",
+            taskKey: "account-recovery",
+            skill: "Get back into a locked account without handing your PIN to anyone",
+            app: "Sign In",
+            tab: "account-recovery",
+          },
+        ],
+      },
       {
         key: "level4",
         n: 4,

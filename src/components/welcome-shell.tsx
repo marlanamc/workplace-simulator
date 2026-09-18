@@ -2,9 +2,11 @@
 
 import type { ReactNode } from "react";
 import { useProgress } from "@/lib/progress-context";
+import { speakText } from "@/lib/read-aloud";
 import type { Lang, Localized } from "@/lib/task-types";
 import {
   CalendarDays,
+  Volume2,
   ClipboardList,
   GraduationCap,
   Mail,
@@ -124,10 +126,17 @@ export function SkillRow({ skills, lang }: { skills: SkillTile[]; lang: Lang }) 
 export function WelcomeShell({
   testId,
   dataAct,
+  speak,
   children,
 }: {
   testId: string;
   dataAct?: string;
+  /**
+   * The screen read out loud. These two full-page screens carry the most new
+   * words in the product and had no audio at all — the Job Card's speaker does
+   * not exist yet on the welcome, and never covered the act intros.
+   */
+  speak?: string;
   children: ReactNode;
 }) {
   const { lang, setLang } = useProgress();
@@ -139,7 +148,18 @@ export function WelcomeShell({
       className="min-h-screen bg-[#f6f1e8] px-5 py-5 text-[#202124] sm:px-10 sm:py-8"
     >
       <div className="mx-auto max-w-[680px]">
-        <div className="mb-5 flex justify-end sm:mb-6">
+        <div className="mb-5 flex justify-end gap-2 sm:mb-6">
+          {speak && (
+            <button
+              type="button"
+              data-testid="welcome-read-aloud"
+              onClick={() => speakText(speak, lang)}
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[#747775] bg-white px-4 text-base font-medium focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0b57d0]"
+            >
+              <Volume2 size={20} strokeWidth={2.25} aria-hidden />
+              {lang === "en" ? "Read this out loud" : "Léelo en voz alta"}
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setLang(lang === "en" ? "es" : "en")}

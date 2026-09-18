@@ -16,7 +16,6 @@ import { QuickSettingsClock, ShelfClock } from "@/components/LiveClock";
 import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { APP_ICONS, TAB_ICONS, Briefcase, ChromeIcon, Languages, Lock, PdfIcon } from "@/lib/icons";
-import Link from "next/link";
 import { logout } from "@/app/actions";
 import { levelForTrack, previousCourseLevel } from "@/lib/tracks-content";
 import { dayTitle, remainingTasksInLevel } from "@/lib/shift-spine";
@@ -164,7 +163,7 @@ export default function Shelf({
   myJobOpen: boolean;
   onMyJobOpenChange: (open: boolean) => void;
 }) {
-  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath, celebrateLevel, courseRoute } =
+  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath, celebrateLevel, courseRoute, bigText, setBigText } =
     useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -452,12 +451,20 @@ export default function Shelf({
                     <span className="text-[10px] leading-none text-white/60">{c.langBtn}</span>
                   </button>
                   <button
-                    onClick={() => say(lang === "en" ? "Accessibility options aren't part of this practice space." : "Las opciones de accesibilidad no son parte de este espacio de práctica.")}
+                    onClick={() => setBigText(!bigText)}
+                    role="switch"
+                    aria-checked={bigText}
+                    data-testid="quick-big-text"
                     className="flex flex-col items-center gap-1.5 rounded-xl bg-white/8 py-2.5 hover:bg-white/12 cursor-pointer"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-[13px]">♿</span>
-                    <span className="text-[11px] font-medium leading-none">{lang === "en" ? "Accessibility" : "Accesibilidad"}</span>
-                    <span className="text-[10px] leading-none text-white/60">{lang === "en" ? "Off" : "Inactivo"}</span>
+                    <span
+                      className="flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-semibold"
+                      style={bigText ? undefined : { background: "rgba(255,255,255,0.15)" }}
+                    >
+                      <span className={bigText ? "flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white" : ""}>Aa</span>
+                    </span>
+                    <span className="text-[11px] font-medium leading-none">{c.bigTextTile}</span>
+                    <span className="text-[10px] leading-none text-white/60">{bigText ? c.bigTextOn : c.bigTextOff}</span>
                   </button>
                 </div>
 
@@ -476,14 +483,8 @@ export default function Shelf({
                 </div>
 
                 {/* footer */}
-                <div className="flex items-center justify-between border-t border-white/10 pt-2.5 text-[12px] text-white/70">
+                <div className="flex items-center border-t border-white/10 pt-2.5 text-[12px] text-white/70">
                   <span><QuickSettingsClock lang={lang} /></span>
-                  <Link
-                    href="/studio"
-                    className="rounded-full px-2 py-0.5 text-white/70 hover:bg-white/10 hover:text-white"
-                  >
-                    Studio
-                  </Link>
                 </div>
         </div>
       )}

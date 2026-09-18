@@ -1,6 +1,6 @@
 import { routeIncludesLevel, routeBridgePath, type CourseRoute } from "./course-route";
 import type { TaskKey } from "./desktop-content";
-import type { Localized } from "./task-types";
+import type { Lang, Localized } from "./task-types";
 import { TASK_LIST, type PortalSection, type TaskLocation } from "./tasks/registry";
 import {
   inferBridgePath,
@@ -21,8 +21,8 @@ export const POINTS_PER_TASK = 100;
 
 export interface Track {
   key: string;
-  title: string;
-  subtitle: string;
+  title: Localized<string>;
+  subtitle: Localized<string>;
   taskKeys: TaskKey[];
   /** Emoji shown in the in-game awards case for this track. */
   awardEmoji: string;
@@ -31,295 +31,295 @@ export interface Track {
 export const TRACKS: Track[] = [
   {
     key: "orientation",
-    title: "How this works",
-    subtitle: "Find the lights before the shift",
+    title: { en: "How this works", es: "Cómo funciona esto" },
+    subtitle: { en: "Look around before your first shift", es: "Conoce la computadora antes del turno" },
     taskKeys: ["tour"],
     awardEmoji: "💡",
   },
   {
     key: "starter",
-    title: "Getting Started",
-    subtitle: "Your first jobs on shift",
+    title: { en: "Getting Started", es: "Para empezar" },
+    subtitle: { en: "Your first jobs on shift", es: "Tus primeras tareas del turno" },
     taskKeys: ["mail-reply", "mail-attach"],
     awardEmoji: "☕",
   },
   {
     key: "first-week",
-    title: "The First Week",
-    subtitle: "Life happens on a schedule too",
+    title: { en: "The First Week", es: "La primera semana" },
+    subtitle: { en: "Life happens on a schedule too", es: "La vida también tiene horario" },
     taskKeys: ["schedule"],
     awardEmoji: "🗓️",
   },
   {
     key: "payday-trouble",
-    title: "Payday",
-    subtitle: "Hours, a late punch, and a shift note",
+    title: { en: "Payday", es: "Día de pago" },
+    subtitle: { en: "Hours, a late punch, and a shift note", es: "Horas, una entrada tarde y una nota del turno" },
     taskKeys: ["timeclock", "shift-review"],
     awardEmoji: "💳",
   },
   {
     key: "mail-etiquette",
-    title: "Write to a Coworker",
-    subtitle: "The shape every short work email follows",
+    title: { en: "Write to a Coworker", es: "Escríbele a un compañero" },
+    subtitle: { en: "The shape every short work email follows", es: "La forma que sigue todo correo corto de trabajo" },
     taskKeys: ["mail-etiquette"],
     awardEmoji: "📧",
   },
   {
     key: "sick-day",
-    title: "The Sick Call",
-    subtitle: "Give notice well, not just on time",
+    title: { en: "The Sick Call", es: "El aviso de enfermedad" },
+    subtitle: { en: "Give notice well, not just on time", es: "Avisa bien, no solo a tiempo" },
     taskKeys: ["call-out-sick"],
     awardEmoji: "🤒",
   },
   {
     key: "first-paycheck",
-    title: "First Paycheck",
-    subtitle: "Your stub is here. Check it",
+    title: { en: "First Paycheck", es: "Primer pago" },
+    subtitle: { en: "Your stub is here. Check it", es: "Ya está tu recibo. Revísalo" },
     taskKeys: ["paystub"],
     awardEmoji: "💵",
   },
   {
     key: "judgment",
-    title: "Think It Through",
-    subtitle: "Handle it like a team lead",
+    title: { en: "Think It Through", es: "Piénsalo bien" },
+    subtitle: { en: "Handle it like a team lead", es: "Manéjalo como líder de equipo" },
     taskKeys: ["incident", "handbook"],
     awardEmoji: "🧭",
   },
   {
     key: "account-security",
-    title: "Locked Out",
-    subtitle: "Get back in, the right way",
+    title: { en: "Locked Out", es: "Sin acceso" },
+    subtitle: { en: "Get back in, the right way", es: "Recupera el acceso, de la forma correcta" },
     taskKeys: ["account-recovery"],
     awardEmoji: "🔐",
   },
   {
     key: "calendar",
-    title: "The Calendar",
-    subtitle: "Meetings that fit your shift",
+    title: { en: "The Calendar", es: "El calendario" },
+    subtitle: { en: "Meetings that fit your shift", es: "Reuniones que caben en tu turno" },
     taskKeys: ["calendar"],
     awardEmoji: "📅",
   },
   {
     key: "files",
-    title: "Shared Files",
-    subtitle: "Send the right file, the right way",
+    title: { en: "Shared Files", es: "Archivos compartidos" },
+    subtitle: { en: "Send the right file, the right way", es: "Envía el archivo correcto, de la forma correcta" },
     taskKeys: ["files", "mail-send-link"],
     awardEmoji: "📁",
   },
   {
     key: "spreadsheet",
-    title: "The Numbers",
-    subtitle: "Enter them, then check the total",
+    title: { en: "The Numbers", es: "Los números" },
+    subtitle: { en: "Enter them, then check the total", es: "Escríbelos y luego revisa el total" },
     taskKeys: ["spreadsheet"],
     awardEmoji: "📊",
   },
   {
     key: "reporting",
-    title: "Reporting In",
-    subtitle: "Copy the template, then send the number",
+    title: { en: "Reporting In", es: "Reportar" },
+    subtitle: { en: "Copy the template, then send the number", es: "Copia la plantilla y envía el número" },
     taskKeys: ["make-a-copy", "status-report"],
     awardEmoji: "📝",
   },
   {
     key: "triage",
-    title: "Covering More Ground",
-    subtitle: "Two things open. Drop neither.",
+    title: { en: "Covering More Ground", es: "Abarcar más" },
+    subtitle: { en: "Two things open. Drop neither.", es: "Dos cosas abiertas. No sueltes ninguna." },
     taskKeys: ["triage"],
     awardEmoji: "🔔",
   },
   {
     key: "team-schedule",
-    title: "Scheduling the Team",
-    subtitle: "Write the week for the crew",
+    title: { en: "Scheduling the Team", es: "El horario del equipo" },
+    subtitle: { en: "Write the week for the crew", es: "Escribe la semana del equipo" },
     taskKeys: ["team-schedule"],
     awardEmoji: "📋",
   },
   {
     key: "formula-check",
-    title: "Weekly Numbers",
-    subtitle: "Open the formula, not just the total",
+    title: { en: "Weekly Numbers", es: "Números de la semana" },
+    subtitle: { en: "Open the formula, not just the total", es: "Abre la fórmula, no solo el total" },
     taskKeys: ["formula-check"],
     awardEmoji: "🧮",
   },
   {
     key: "team-meeting",
-    title: "First Team Meeting",
-    subtitle: "You call the huddle",
+    title: { en: "First Team Meeting", es: "Primera reunión de equipo" },
+    subtitle: { en: "You call the huddle", es: "Tú convocas la reunión" },
     taskKeys: ["team-meeting"],
     awardEmoji: "🗣️",
   },
   {
     key: "priority-call",
-    title: "Under Pressure",
-    subtitle: "Three things. All of them.",
+    title: { en: "Under Pressure", es: "Bajo presión" },
+    subtitle: { en: "Three things. All of them.", es: "Tres cosas. Todas." },
     taskKeys: ["priority-call"],
     awardEmoji: "🚨",
   },
   {
     key: "college-offer",
-    title: "An Offer",
-    subtitle: "Read it, accept it, make it fit",
+    title: { en: "An Offer", es: "Una oferta" },
+    subtitle: { en: "Read it, accept it, make it fit", es: "Léela, acéptala, hazla caber" },
     taskKeys: ["college-offer"],
     awardEmoji: "🎓",
   },
   {
     key: "budget-sheet",
-    title: "The Budget",
-    subtitle: "Read the IF, then the chart",
+    title: { en: "The Budget", es: "El presupuesto" },
+    subtitle: { en: "Read the IF, then the chart", es: "Lee el SI, luego la gráfica" },
     taskKeys: ["budget-sheet"],
     awardEmoji: "📈",
   },
   {
     key: "reply-all",
-    title: "Reply-All",
-    subtitle: "Who actually needs this",
+    title: { en: "Reply-All", es: "Responder a todos" },
+    subtitle: { en: "Who actually needs this", es: "Quién necesita esto de verdad" },
     taskKeys: ["reply-all"],
     awardEmoji: "📬",
   },
   {
     key: "enrollment",
-    title: "Getting Ready",
-    subtitle: "Find the deadline. Then apply.",
+    title: { en: "Getting Ready", es: "Preparándote" },
+    subtitle: { en: "Find the deadline. Then apply.", es: "Encuentra la fecha límite. Luego solicita." },
     taskKeys: ["enrollment"],
     awardEmoji: "🏫",
   },
   {
     key: "appointment-scheduling",
-    title: "Getting Ready",
-    subtitle: "Book the visit without a clash",
+    title: { en: "Getting Ready", es: "Preparándote" },
+    subtitle: { en: "Book the visit without a clash", es: "Agenda la cita sin choques" },
     taskKeys: ["appointment-scheduling"],
     awardEmoji: "🗓️",
   },
   {
     key: "financial-aid",
-    title: "The Paperwork",
-    subtitle: "Find the amount and the date",
+    title: { en: "The Paperwork", es: "Los papeles" },
+    subtitle: { en: "Find the amount and the date", es: "Encuentra el monto y la fecha" },
     taskKeys: ["financial-aid"],
     awardEmoji: "📄",
   },
   {
     key: "patient-intake",
-    title: "The Paperwork",
-    subtitle: "File it. Do not overshare.",
+    title: { en: "The Paperwork", es: "Los papeles" },
+    subtitle: { en: "File it. Do not overshare.", es: "Archívalo. No compartas de más." },
     taskKeys: ["patient-intake"],
     awardEmoji: "🩺",
   },
   {
     key: "coursework",
-    title: "Staying On Top of It",
-    subtitle: "Read the syllabus. Submit on time.",
+    title: { en: "Staying On Top of It", es: "Mantenerte al día" },
+    subtitle: { en: "Read the syllabus. Submit on time.", es: "Lee el temario. Entrega a tiempo." },
     taskKeys: ["coursework"],
     awardEmoji: "📚",
   },
   {
     key: "billing-sheet",
-    title: "Staying On Top of It",
-    subtitle: "Match the code to the charge",
+    title: { en: "Staying On Top of It", es: "Mantenerte al día" },
+    subtitle: { en: "Match the code to the charge", es: "Empareja el código con el cargo" },
     taskKeys: ["billing-sheet"],
     awardEmoji: "💵",
   },
   {
     key: "research",
-    title: "Finding a Real Answer",
-    subtitle: "Cite the source that holds up",
+    title: { en: "Finding a Real Answer", es: "Encontrar una respuesta real" },
+    subtitle: { en: "Cite the source that holds up", es: "Cita la fuente que se sostiene" },
     taskKeys: ["research"],
     awardEmoji: "🔎",
   },
   {
     key: "confidentiality-call",
-    title: "Finding a Real Answer",
-    subtitle: "Stay polite. Do not confirm.",
+    title: { en: "Finding a Real Answer", es: "Encontrar una respuesta real" },
+    subtitle: { en: "Stay polite. Do not confirm.", es: "Sé amable. No confirmes nada." },
     taskKeys: ["confidentiality-call"],
     awardEmoji: "📞",
   },
   {
     key: "getting-hired-apply",
-    title: "Applying",
-    subtitle: "Read the posting, fill the application",
+    title: { en: "Applying", es: "Solicitar el puesto" },
+    subtitle: { en: "Read the posting, fill the application", es: "Lee el anuncio, llena la solicitud" },
     taskKeys: ["job-posting", "job-application"],
     awardEmoji: "📰",
   },
   {
     key: "getting-hired-resume",
-    title: "Your Résumé",
-    subtitle: "One page from your cafe history",
+    title: { en: "Your Résumé", es: "Tu currículum" },
+    subtitle: { en: "One page from your cafe history", es: "Una página con tu historia en el café" },
     taskKeys: ["resume-build"],
     awardEmoji: "📄",
   },
   {
     key: "getting-hired-interview",
-    title: "The Interview",
-    subtitle: "Four questions, and one of your own",
+    title: { en: "The Interview", es: "La entrevista" },
+    subtitle: { en: "Four questions, and one of your own", es: "Cuatro preguntas, y una tuya" },
     taskKeys: ["interview-practice"],
     awardEmoji: "💬",
   },
   {
     key: "getting-hired-offer",
-    title: "The Offer",
-    subtitle: "Read it, find the date, accept",
+    title: { en: "The Offer", es: "La oferta" },
+    subtitle: { en: "Read it, find the date, accept", es: "Léela, busca la fecha, acepta" },
     taskKeys: ["job-offer"],
     awardEmoji: "🎉",
   },
   {
     key: "getting-hired-paperwork",
-    title: "New-Hire Paperwork",
-    subtitle: "W-4, I-9, direct deposit",
+    title: { en: "New-Hire Paperwork", es: "Papeles de personal nuevo" },
+    subtitle: { en: "W-4, I-9, direct deposit", es: "W-4, I-9, depósito directo" },
     taskKeys: ["w4-form", "i9-section1", "direct-deposit"],
     awardEmoji: "🖊️",
   },
   {
     key: "office-drive",
-    title: "Welcome to HQ",
-    subtitle: "Find the current file. Then share it.",
+    title: { en: "Welcome to HQ", es: "Bienvenida a la oficina central" },
+    subtitle: { en: "Find the current file. Then share it.", es: "Encuentra el archivo actual. Luego compártelo." },
     taskKeys: ["office-drive"],
     awardEmoji: "🏢",
   },
   {
     key: "get-everyone-in-the-room",
-    title: "Get Everyone in the Room",
-    subtitle: "Find a time. Then join the meeting.",
+    title: { en: "Get Everyone in the Room", es: "Reunir a todos" },
+    subtitle: { en: "Find a time. Then join the meeting.", es: "Encuentra una hora. Luego entra a la reunión." },
     taskKeys: ["multi-person-scheduling", "video-call"],
     awardEmoji: "🤝",
   },
   {
     key: "expense-report",
-    title: "The Expense Report",
-    subtitle: "Match the receipts. Flag what is missing.",
+    title: { en: "The Expense Report", es: "El reporte de gastos" },
+    subtitle: { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Señala lo que falta." },
     taskKeys: ["expense-report"],
     awardEmoji: "🧾",
   },
   {
     key: "slide-deck",
-    title: "Presenting to the Team",
-    subtitle: "Three slides. One real number.",
+    title: { en: "Presenting to the Team", es: "Presentar al equipo" },
+    subtitle: { en: "Three slides. One real number.", es: "Tres diapositivas. Un número real." },
     taskKeys: ["slide-deck"],
     awardEmoji: "📊",
   },
   {
     key: "meeting-minutes",
-    title: "Run the Meeting",
-    subtitle: "Agenda, notes, follow-up: the whole loop",
+    title: { en: "Run the Meeting", es: "Dirigir la reunión" },
+    subtitle: { en: "Agenda, notes, follow-up: the whole loop", es: "Agenda, notas, seguimiento: el ciclo completo" },
     taskKeys: ["meeting-minutes"],
     awardEmoji: "📋",
   },
   {
     key: "performance-review",
-    title: "The Review",
-    subtitle: "One strength, one area to grow",
+    title: { en: "The Review", es: "La evaluación" },
+    subtitle: { en: "One strength, one area to grow", es: "Una fortaleza, un área por mejorar" },
     taskKeys: ["performance-review"],
     awardEmoji: "📝",
   },
   {
     key: "ops-report-packet",
-    title: "Put It All Together",
-    subtitle: "Every app, one packet",
+    title: { en: "Put It All Together", es: "Júntalo todo" },
+    subtitle: { en: "Every app, one packet", es: "Todas las apps, un solo paquete" },
     taskKeys: ["ops-report-packet"],
     awardEmoji: "📦",
   },
   {
     key: "portfolio-reflection",
-    title: "Where You've Been",
-    subtitle: "Look back at the whole program",
+    title: { en: "Where You've Been", es: "Todo lo que lograste" },
+    subtitle: { en: "Look back at the whole program", es: "Mira todo el programa" },
     taskKeys: ["portfolio-reflection"],
     awardEmoji: "🎓",
   },
@@ -346,7 +346,7 @@ export interface LevelUpCopy {
 
 export interface Level {
   key: string;
-  title: string;
+  title: Localized<string>;
   /** Which tracks (by Track.key) belong to this level - the environment stays constant across all of them. */
   trackKeys: string[];
   /** The Browser tab to land on when a learner opens or revisits this level. */
@@ -422,13 +422,13 @@ export function isEarlyLevel(level: Level): boolean {
 export const LEVELS: Level[] = [
   {
     key: "level0",
-    title: "How this works",
+    title: { en: "How this works", es: "Cómo funciona esto" },
     trackKeys: ["orientation"],
     firstTabKey: "tour",
   },
   {
     key: "level1",
-    title: "Day One",
+    title: { en: "Day One", es: "Primer día" },
     trackKeys: ["starter"],
     // Still the Mail app - Day One is 2 jobs in the same inbox (welcome
     // thank-you, then safety report with attach). If a future build
@@ -447,7 +447,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level2",
-    title: "The First Week",
+    title: { en: "The First Week", es: "La primera semana" },
     trackKeys: ["first-week"],
     firstTabKey: "portal",
     levelUp: {
@@ -464,7 +464,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3",
-    title: "Clock-In Fix",
+    title: { en: "Clock-In Fix", es: "Arreglar la entrada" },
     trackKeys: ["payday-trouble"],
     firstTabKey: "portal",
     levelUp: {
@@ -480,7 +480,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3a",
-    title: "Write to a Coworker",
+    title: { en: "Write to a Coworker", es: "Escríbele a un compañero" },
     trackKeys: ["mail-etiquette"],
     firstTabKey: "mail",
     levelUp: {
@@ -500,7 +500,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3a2",
-    title: "The Sick Call",
+    title: { en: "The Sick Call", es: "El aviso de enfermedad" },
     trackKeys: ["sick-day"],
     firstTabKey: "mail",
     levelUp: {
@@ -516,7 +516,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3a3",
-    title: "First Paycheck",
+    title: { en: "First Paycheck", es: "Primer pago" },
     trackKeys: ["first-paycheck"],
     firstTabKey: "portal",
     levelUp: {
@@ -532,7 +532,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3b",
-    title: "When Something Happens",
+    title: { en: "When Something Happens", es: "Cuando algo pasa" },
     trackKeys: ["judgment"],
     firstTabKey: "incident",
     // Shown when First Paycheck finishes — a clock-out pause before ActIntro
@@ -552,7 +552,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level3c",
-    title: "Locked Out",
+    title: { en: "Locked Out", es: "Sin acceso" },
     trackKeys: ["account-security"],
     firstTabKey: "account-recovery",
     levelUp: {
@@ -568,7 +568,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level4",
-    title: "The Calendar",
+    title: { en: "The Calendar", es: "El calendario" },
     trackKeys: ["calendar"],
     firstTabKey: "calendar",
     freeTabbing: true,
@@ -585,7 +585,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level5",
-    title: "Shared Files",
+    title: { en: "Shared Files", es: "Archivos compartidos" },
     trackKeys: ["files"],
     firstTabKey: "files",
     freeTabbing: true,
@@ -606,7 +606,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level6",
-    title: "The Numbers",
+    title: { en: "The Numbers", es: "Los números" },
     trackKeys: ["spreadsheet"],
     firstTabKey: "spreadsheet",
     freeTabbing: true,
@@ -623,7 +623,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level7",
-    title: "Reporting In",
+    title: { en: "Reporting In", es: "Reportar" },
     trackKeys: ["reporting"],
     firstTabKey: "make-a-copy",
     freeTabbing: true,
@@ -640,7 +640,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level8",
-    title: "Covering More Ground",
+    title: { en: "Covering More Ground", es: "Abarcar más" },
     trackKeys: ["triage"],
     firstTabKey: "triage",
     freeTabbing: true,
@@ -657,7 +657,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level9",
-    title: "Scheduling the Team",
+    title: { en: "Scheduling the Team", es: "El horario del equipo" },
     trackKeys: ["team-schedule"],
     firstTabKey: "team-schedule",
     freeTabbing: true,
@@ -674,7 +674,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level10",
-    title: "Weekly Numbers",
+    title: { en: "Weekly Numbers", es: "Números de la semana" },
     trackKeys: ["formula-check"],
     firstTabKey: "formula-check",
     freeTabbing: true,
@@ -691,7 +691,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level11",
-    title: "First Team Meeting",
+    title: { en: "First Team Meeting", es: "Primera reunión de equipo" },
     trackKeys: ["team-meeting"],
     firstTabKey: "team-meeting",
     freeTabbing: true,
@@ -708,7 +708,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level12",
-    title: "Under Pressure",
+    title: { en: "Under Pressure", es: "Bajo presión" },
     trackKeys: ["priority-call"],
     firstTabKey: "priority-call",
     freeTabbing: true,
@@ -725,7 +725,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level13",
-    title: "An Offer",
+    title: { en: "An Offer", es: "Una oferta" },
     trackKeys: ["college-offer"],
     firstTabKey: "college-offer",
     freeTabbing: true,
@@ -742,7 +742,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level14",
-    title: "The Budget",
+    title: { en: "The Budget", es: "El presupuesto" },
     trackKeys: ["budget-sheet"],
     firstTabKey: "budget-sheet",
     freeTabbing: true,
@@ -759,7 +759,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level15",
-    title: "Reply-All",
+    title: { en: "Reply-All", es: "Responder a todos" },
     trackKeys: ["reply-all"],
     firstTabKey: "mail",
     freeTabbing: true,
@@ -776,7 +776,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level16",
-    title: "Getting Ready",
+    title: { en: "Getting Ready", es: "Preparándote" },
     trackKeys: ["enrollment", "appointment-scheduling"],
     firstTabKey: "college-portal",
     pathTracks: { a: "enrollment", b: "appointment-scheduling" },
@@ -795,7 +795,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level17",
-    title: "The Paperwork",
+    title: { en: "The Paperwork", es: "Los papeles" },
     trackKeys: ["financial-aid", "patient-intake"],
     firstTabKey: "college-portal",
     pathTracks: { a: "financial-aid", b: "patient-intake" },
@@ -814,7 +814,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level18",
-    title: "Staying On Top of It",
+    title: { en: "Staying On Top of It", es: "Mantenerte al día" },
     trackKeys: ["coursework", "billing-sheet"],
     firstTabKey: "coursework",
     pathTracks: { a: "coursework", b: "billing-sheet" },
@@ -833,7 +833,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level19",
-    title: "Finding a Real Answer",
+    title: { en: "Finding a Real Answer", es: "Encontrar una respuesta real" },
     trackKeys: ["research", "confidentiality-call"],
     firstTabKey: "library",
     pathTracks: { a: "research", b: "confidentiality-call" },
@@ -852,7 +852,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level19h1",
-    title: "Applying",
+    title: { en: "Applying", es: "Solicitar el puesto" },
     trackKeys: ["getting-hired-apply"],
     firstTabKey: "jobs",
     freeTabbing: true,
@@ -870,7 +870,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level19h2",
-    title: "Your Résumé",
+    title: { en: "Your Résumé", es: "Tu currículum" },
     trackKeys: ["getting-hired-resume"],
     firstTabKey: "resume",
     freeTabbing: true,
@@ -888,7 +888,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level19h3",
-    title: "The Interview",
+    title: { en: "The Interview", es: "La entrevista" },
     trackKeys: ["getting-hired-interview"],
     firstTabKey: "interview",
     freeTabbing: true,
@@ -906,7 +906,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level19h4",
-    title: "The Offer",
+    title: { en: "The Offer", es: "La oferta" },
     trackKeys: ["getting-hired-offer"],
     firstTabKey: "offer",
     freeTabbing: true,
@@ -924,7 +924,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level19h5",
-    title: "New-Hire Paperwork",
+    title: { en: "New-Hire Paperwork", es: "Papeles de personal nuevo" },
     trackKeys: ["getting-hired-paperwork"],
     firstTabKey: "onboarding",
     freeTabbing: true,
@@ -942,7 +942,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level20",
-    title: "Welcome to HQ",
+    title: { en: "Welcome to HQ", es: "Bienvenida a la oficina central" },
     trackKeys: ["office-drive"],
     firstTabKey: "files",
     freeTabbing: true,
@@ -959,7 +959,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level21",
-    title: "Get Everyone in the Room",
+    title: { en: "Get Everyone in the Room", es: "Reunir a todos" },
     trackKeys: ["get-everyone-in-the-room"],
     firstTabKey: "calendar",
     freeTabbing: true,
@@ -976,7 +976,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level22",
-    title: "The Expense Report",
+    title: { en: "The Expense Report", es: "El reporte de gastos" },
     trackKeys: ["expense-report"],
     firstTabKey: "expense-report",
     freeTabbing: true,
@@ -993,7 +993,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level23",
-    title: "Presenting to the Team",
+    title: { en: "Presenting to the Team", es: "Presentar al equipo" },
     trackKeys: ["slide-deck"],
     firstTabKey: "slides",
     freeTabbing: true,
@@ -1010,7 +1010,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level24",
-    title: "Run the Meeting",
+    title: { en: "Run the Meeting", es: "Dirigir la reunión" },
     trackKeys: ["meeting-minutes"],
     firstTabKey: "meeting-minutes",
     freeTabbing: true,
@@ -1027,7 +1027,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level25",
-    title: "The Review",
+    title: { en: "The Review", es: "La evaluación" },
     trackKeys: ["performance-review"],
     firstTabKey: "performance-review",
     freeTabbing: true,
@@ -1044,7 +1044,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level26",
-    title: "Put It All Together",
+    title: { en: "Put It All Together", es: "Júntalo todo" },
     trackKeys: ["ops-report-packet"],
     firstTabKey: "ops-report-packet",
     freeTabbing: true,
@@ -1061,7 +1061,7 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level27",
-    title: "Where You've Been",
+    title: { en: "Where You've Been", es: "Todo lo que lograste" },
     trackKeys: ["portfolio-reflection"],
     firstTabKey: "portfolio-reflection",
     freeTabbing: true,
@@ -1082,7 +1082,14 @@ export const LEVELS: Level[] = [
 /** A group of levels sharing one job title, story arc, and desktop place. */
 export interface Act {
   key: string;
-  title: string;
+  /**
+   * The roman numeral alone ("I", "II"). Kept separate from `role` because
+   * every consumer used to parse it back out of a combined "Act I: New Hire"
+   * string with its own regex, and those regexes cannot survive translation.
+   */
+  numeral: string;
+  /** The job the learner holds during this act. */
+  role: Localized<string>;
   levelKeys: string[];
   /** Which room the Chromebook is sitting in for this act. */
   scene: DesktopScene;
@@ -1098,14 +1105,19 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
  * `curriculum/00-scope-and-sequence.md`.
  */
 export const ACTS: Act[] = [
-  { key: "act1", title: "Act I: New Hire", levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3a3"], scene: "harborside-open" },
-  { key: "act2", title: "Act II: Shift Lead", levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
-  { key: "act3", title: "Act III: Shift Supervisor", levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
-  { key: "act4", title: "Act IV: Assistant Manager", levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
-  { key: "act5", title: "Act V: Bridge", levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
-  { key: "act6", title: "Act VI: Office Administrator", levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
-  { key: "act7", title: "Act VII: Team Lead", levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
+  { key: "act1", numeral: "I", role: { en: "New Hire", es: "Personal nuevo" }, levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3a3"], scene: "harborside-open" },
+  { key: "act2", numeral: "II", role: { en: "Shift Lead", es: "Líder de turno" }, levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
+  { key: "act3", numeral: "III", role: { en: "Shift Supervisor", es: "Supervisor" }, levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
+  { key: "act4", numeral: "IV", role: { en: "Assistant Manager", es: "Gerente asistente" }, levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
+  { key: "act5", numeral: "V", role: { en: "Bridge", es: "Puente" }, levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
+  { key: "act6", numeral: "VI", role: { en: "Office Administrator", es: "Administración" }, levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
+  { key: "act7", numeral: "VII", role: { en: "Team Lead", es: "Líder de equipo" }, levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
 ];
+
+/** "Act I: New Hire" / "Acto I: Personal nuevo" — the act's full learner-facing name. */
+export function actLabel(act: Act, lang: Lang): string {
+  return `${lang === "en" ? "Act" : "Acto"} ${act.numeral}: ${act.role[lang]}`;
+}
 
 export function actForLevel(level: Level): Act | undefined {
   return ACTS.find((a) => a.levelKeys.includes(level.key));

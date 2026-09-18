@@ -19,6 +19,14 @@ export interface IntroBeat {
   tryCollapse?: boolean;
   /** Advance after moving to a different corner, by pointer or keyboard. */
   tryDrag?: boolean;
+  /**
+   * A quieter second line, shown only after the learner has been sitting on
+   * this beat for a while. The drag beat needs one: a trackpad drag is among
+   * the hardest motions for this audience and it is the second thing they ever
+   * do here, with no skip. Arrow keys always worked, but the only place that
+   * said so was the handle's tooltip and a Help lesson they have not reached.
+   */
+  stuckHint?: Localized<string>;
 }
 
 /**
@@ -53,6 +61,10 @@ export const INTRO_BEATS: IntroBeat[] = [
       es: "Arrastra la parte azul de esta tarjeta a una esquina.",
     },
     tryDrag: true,
+    stuckHint: {
+      en: "Or press the arrow keys.",
+      es: "O usa las flechas del teclado.",
+    },
   },
   {
     kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },

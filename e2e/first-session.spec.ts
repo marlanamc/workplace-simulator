@@ -82,9 +82,11 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   // Start would open a second map of the same computer. Keep them on the card.
   await page.getByTestId("shelf-start").click();
   await expect(page.getByPlaceholder("Search your apps and tasks")).toHaveCount(0);
-  await expect(card.getByText("looking around", { exact: false })).toBeVisible();
+  await expect(
+    card.getByText("That menu opens after you finish looking around.", { exact: false }),
+  ).toBeVisible();
 
-  await card.getByRole("button", { name: "Open the Web Browser" }).click();
+  await card.getByRole("button", { name: "Start looking around" }).click();
 
   // First a look beat: the address bar and back arrow are display-only here;
   // you navigate with the bookmarks.
@@ -178,7 +180,9 @@ test("studio time machine teleports one account to a later level", async ({ page
   await continuePastStudioArrival(page, /Write to Maria|Escribirle a Maria/);
 
   // Celebration opens Mail into compose; Job Card is already on the write step.
-  await expect(jobCard(page).getByText("Write one short line.")).toBeVisible({ timeout: 20_000 });
+  await expect(
+    jobCard(page).getByText("Tell Maria you cannot work today's shift."),
+  ).toBeVisible({ timeout: 20_000 });
   await expect(page.getByRole("heading", { name: "Can't come in today" })).toBeVisible();
 });
 
@@ -225,7 +229,7 @@ test("language choice on the login page sticks after signing in and reloading", 
   await card.getByTestId("job-card-collapse").click();
   await expect(card.getByTestId("job-card-collapse")).toHaveAttribute("aria-expanded", "false");
   await card.getByTestId("job-card-collapse").click();
-  await card.getByRole("button", { name: "Abrir el navegador web", exact: true }).click();
+  await card.getByRole("button", { name: "Empezar a mirar", exact: true }).click();
   await expect(card.getByText("Estos son tus marcadores.", { exact: false })).toBeVisible();
   await card.getByRole("button", { name: "Muéstramelos", exact: true }).click();
   await page.getByTestId("bookmark-mail").click();
@@ -248,11 +252,11 @@ test("schedule: repeated wrong days get specific help and the correct day still 
   await page.getByRole("button", { name: "Start of Day 2: The First Week", exact: true }).click();
   await continuePastStudioArrival(page, /See my schedule|Ver mi horario/);
   // Arrival CTA already opens Portal — the Job Card is on the schedule step.
-  await expect(jobCard(page).getByText("personal calendar on your phone", { exact: false })).toBeVisible();
+  await expect(jobCard(page).getByText("something on your phone", { exact: false })).toBeVisible();
   await expect(page.getByText("Your personal calendar")).toBeVisible();
   await expect(page.getByRole("heading", { name: "My Calendar" })).toBeVisible();
   await page.getByTitle("Cambiar a español").click();
-  await expect(jobCard(page).getByText("calendario personal de tu teléfono", { exact: false })).toBeVisible();
+  await expect(jobCard(page).getByText("algo de tu teléfono", { exact: false })).toBeVisible();
   await expect(page.getByText("Tu calendario personal")).toBeVisible();
   await page.getByTitle("Switch to English").click();
   const swaps = page.getByRole("button", { name: "Request a swap", exact: true });
@@ -262,7 +266,11 @@ test("schedule: repeated wrong days get specific help and the correct day still 
   await swaps.nth(1).click();
   await expect(jobCard(page).getByText("Look at Thursday, Aug 27.", { exact: false }).first()).toBeVisible();
   await swaps.nth(2).click();
-  await expect(page.getByRole("combobox").first()).toHaveValue("Thu");
+  // The select carries a stable key, not the day's label — the label is
+  // translated, and it used to double as the identity, which is why the
+  // schedule could not be shown in Spanish.
+  await expect(page.getByRole("combobox").first()).toHaveValue("thu");
+  await expect(page.getByRole("combobox").first()).toContainText("Thu Aug 27");
   await expect(jobCard(page).getByText("Look at Thursday, Aug 27.", { exact: false })).toHaveCount(0);
   await expect(jobCard(page).getByText("personal calendar on your phone", { exact: false })).toBeVisible();
   await expect(page.getByRole("heading", { name: "My Calendar" })).toBeVisible();

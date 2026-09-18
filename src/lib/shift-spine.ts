@@ -21,8 +21,8 @@ import { TASK_LIST } from "./tasks/registry";
  * by "3b" and "3c") and a title that carries its own number drifts again the
  * next time a level is inserted.
  */
-export function sittingTitle(level: Level): string {
-  return level.title;
+export function sittingTitle(level: Level, lang: Lang): string {
+  return level.title[lang];
 }
 
 /**
@@ -45,7 +45,7 @@ export function dayNumber(level: Level): number {
 /** "Day 4: Payday & Trouble" — the level's learner-facing title. */
 export function dayTitle(level: Level, lang: Lang): string {
   const n = dayNumber(level);
-  const name = sittingTitle(level);
+  const name = sittingTitle(level, lang);
   if (n <= 0) return name;
   return lang === "en" ? `Day ${n}: ${name}` : `Día ${n}: ${name}`;
 }
@@ -70,7 +70,7 @@ export function workdaysInAct(level: Level): Level[] {
  */
 export function roleLabel(level: Level, lang: Lang): string {
   if (level.preHire) return lang === "en" ? "Applicant" : "Solicitante";
-  return jobTitle(level);
+  return jobTitle(level, lang);
 }
 
 /**
@@ -89,17 +89,17 @@ export function dayInAct(level: Level): number {
 export function dayLabel(level: Level, lang: Lang): string {
   const n = dayInAct(level);
   const total = workdaysInAct(level).length;
-  if (n <= 0) return sittingTitle(level);
+  if (n <= 0) return sittingTitle(level, lang);
   if (total > 0) {
     return lang === "en" ? `Day ${n} of ${total}` : `Día ${n} de ${total}`;
   }
   return lang === "en" ? `Day ${n}` : `Día ${n}`;
 }
 
-/** Act title without the "Act I:" prefix — the job they hold. */
-export function jobTitle(level: Level): string {
+/** The job the learner holds on this level, without the act numeral. */
+export function jobTitle(level: Level, lang: Lang): string {
   const act = actForLevel(level);
-  return act ? act.title.replace(/^Act [IVXL]+:\s*/, "") : sittingTitle(level);
+  return act ? act.role[lang] : sittingTitle(level, lang);
 }
 
 /** Built tasks still open in this level. */
@@ -126,7 +126,7 @@ export const BOOKMARK_LABEL: Record<TaskKey, string> = Object.fromEntries(
 ) as Record<TaskKey, string>;
 
 export function newTabHint(level: Level, taskKey: TaskKey | null, lang: Lang): string {
-  const sitting = sittingTitle(level);
+  const sitting = sittingTitle(level, lang);
   if (!taskKey) {
     return lang === "en"
       ? `${sitting}. Use the bookmarks bar to open your apps.`

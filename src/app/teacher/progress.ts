@@ -3,7 +3,7 @@ import { bridgePathFromBadgeKeys, type BridgePath } from "@/lib/bridge-path";
 import type { TaskKey } from "@/lib/desktop-content";
 import { SKILLS } from "@/lib/skills";
 import { taskNeedsTeacherReview } from "@/lib/curriculum-catalog";
-import { ACTS, LEVELS, activeTrack, actForLevel, levelForTrack, taskKeysForLevel } from "@/lib/tracks-content";
+import { ACTS, LEVELS, actLabel, activeTrack, actForLevel, levelForTrack, taskKeysForLevel } from "@/lib/tracks-content";
 
 /**
  * Built from the same runtime source the simulator itself plays from
@@ -40,7 +40,6 @@ export interface StudentProgress {
   map: { act: ActProgress; levels: LevelProgress[] }[];
 }
 
-const NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 
 /** A rough color per act, since the runtime `ACTS` (unlike the studio catalog) doesn't carry one. */
 const ACT_COLORS: Record<string, string> = {
@@ -68,23 +67,23 @@ export function studentProgress(
     const level = levelForTrack(track.key);
     const act = actForLevel(level);
     whereActKey = act?.key ?? null;
-    whereLabel = act ? `${act.title.replace(/:.*$/, "")} · ${level.title}` : level.title;
+    whereLabel = act ? `Act ${act.numeral} · ${level.title.en}` : level.title.en;
   }
 
   let tasksDone = 0;
   let tasksTotal = 0;
   let seenCurrent = false;
 
-  const map = ACTS.map((act, i) => {
+  const map = ACTS.map((act) => {
     const levels: LevelProgress[] = act.levelKeys.filter((key) => routeIncludesLevel(route, key)).map((levelKey) => {
       const level = LEVELS.find((l) => l.key === levelKey);
       const taskKeys = level ? taskKeysForLevel(level, path) : [];
       return {
         key: levelKey,
-        title: level?.title ?? levelKey,
+        title: level?.title.en ?? levelKey,
         lessons: taskKeys.map((tk) => ({
           taskKey: tk,
-          skill: SKILLS[tk] ?? tk,
+          skill: SKILLS[tk]?.en ?? tk,
           done: done.has(tk),
           teacherCheck: taskNeedsTeacherReview(tk),
         })),
@@ -112,9 +111,9 @@ export function studentProgress(
 
     const actProg: ActProgress = {
       key: act.key,
-      numeral: NUMERALS[i] ?? String(i + 1),
-      title: act.title,
-      shortTitle: act.title.replace(/^Act [IVX]+:\s*/, ""),
+      numeral: act.numeral,
+      title: actLabel(act, "en"),
+      shortTitle: act.role.en,
       color: ACT_COLORS[act.key] ?? "#8ab4f8",
       done: actDone,
       total: allLessons.length,

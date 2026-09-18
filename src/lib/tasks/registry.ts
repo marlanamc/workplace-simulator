@@ -41,8 +41,12 @@ export interface TaskDescriptor {
   label: Localized;
   /** One-line dispatch for the desktop briefing — what just happened, not a tutorial. */
   dispatch: Localized;
-  /** The named skill shown on this task's own done-screen badge (see `firstPersonSkill`). */
-  skill: string;
+  /**
+   * The named skill shown on this task's own done-screen badge (see
+   * `firstPersonSkill`). The Spanish half is an infinitive phrase so both
+   * languages can be framed the same way ("I can …" / "Puedo …").
+   */
+  skill: Localized<string>;
   /** Bookmark-bar label for this task's home — matches BrowserClient's tab definitions. */
   bookmarkLabel: string;
   /**
@@ -88,11 +92,11 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "This is a practice computer. Let's see how it works.",
       es: "Esta es una computadora de práctica. Veamos cómo funciona.",
     },
-    skill: "Find Help, your shift list, and Next",
+    skill: { en: "Find Help, your shift list, and Next", es: "encontrar la Ayuda, mi lista de tareas y el botón Siguiente" },
     bookmarkLabel: "Welcome",
-    handoffCta: { en: "Open the Web Browser", es: "Abrir el navegador web" },
+    handoffCta: { en: "Start looking around", es: "Empezar a mirar" },
     shiftMoment: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
-    location: browser("Open the Web Browser", "tour"),
+    location: browser("Start looking around", "tour"),
     jobCardLine: { en: "Look around this computer.", es: "Conoce esta computadora." },
   },
 
@@ -107,7 +111,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Maria already needs something. First shift, first email.",
       es: "Maria ya necesita algo. Primer turno, primer correo.",
     },
-    skill: "Reply with an attachment",
+    skill: { en: "Reply with an attachment", es: "responder con un archivo adjunto" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail", es: "Abrir correo" },
     shiftMoment: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
@@ -124,7 +128,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Maria already needs something. Find it and read it.",
       es: "Maria ya necesita algo. Encuéntralo y léelo.",
     },
-    skill: "Find and read a message from a manager",
+    skill: { en: "Find and read a message from a manager", es: "encontrar y leer un mensaje de mi gerente" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail", es: "Abrir correo" },
     shiftMoment: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
@@ -139,7 +143,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Maria says welcome. Write her a short thank-you.",
       es: "Maria te da la bienvenida. Escríbele un agradecimiento corto.",
     },
-    skill: "Write a short thank-you to my manager",
+    skill: { en: "Write a short thank-you to my manager", es: "escribirle un agradecimiento corto a mi gerente" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail", es: "Abrir correo" },
     shiftMoment: {
@@ -159,7 +163,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Maria needs the July safety report. Read what she asks, then attach it.",
       es: "Maria necesita el reporte de julio. Lee qué pide y adjúntalo.",
     },
-    skill: "Send a reply with a file attached",
+    skill: { en: "Send a reply with a file attached", es: "responder con un archivo adjunto" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Next: Send the report", es: "Siguiente: Envía el reporte" },
     shiftMoment: { en: "Tuesday, 8:20 AM. She needs a file.", es: "Martes, 8:20 AM. Necesita un archivo." },
@@ -176,7 +180,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Your schedule is posted. Check it against the calendar on your phone.",
       es: "Tu horario ya está publicado. Compáralo con el calendario de tu teléfono.",
     },
-    skill: "Find a shift conflict and ask for a swap",
+    skill: { en: "Find a shift conflict and ask for a swap", es: "encontrar un choque de horario y pedir un cambio" },
     bookmarkLabel: "Portal",
     handoffCta: { en: "Next: Open Portal", es: "Siguiente: Abrir Portal" },
     shiftMoment: {
@@ -197,7 +201,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Two shifts overlap. Somebody has to swap.",
       es: "Dos turnos chocan. Alguien tiene que cambiar.",
     },
-    skill: "Ask for a shift swap in writing",
+    skill: { en: "Ask for a shift swap in writing", es: "pedir un cambio de turno por escrito" },
     bookmarkLabel: "Portal",
     handoffCta: { en: "Next: Ask for a swap", es: "Siguiente: Pide un cambio" },
     shiftMoment: {
@@ -215,7 +219,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "You got here at 7. Clock in, then check the time.",
       es: "Llegaste a las 7. Marca tu entrada y revisa la hora.",
     },
-    skill: "Check your hours and speak up",
+    skill: { en: "Check your hours and speak up", es: "revisar mis horas y avisar cuando algo está mal" },
     bookmarkLabel: "Portal",
     handoffCta: { en: "Next: Clock in", es: "Siguiente: Marcar entrada" },
     shiftMoment: { en: "Friday, 8:15 AM.", es: "Viernes, 8:15 AM." },
@@ -230,7 +234,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Your first stub is here. Open it and check the numbers.",
       es: "Ya está tu primer recibo. Ábrelo y revisa los números.",
     },
-    skill: "Read a pay stub",
+    skill: { en: "Read a pay stub", es: "leer un talón de pago" },
     bookmarkLabel: "Portal",
     handoffCta: { en: "Next: Check my pay stub", es: "Siguiente: Revisar mi recibo" },
     shiftMoment: {
@@ -252,7 +256,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Maria has to leave early. Write a short note about the shift for her to read.",
       es: "Maria tiene que irse temprano. Escríbele una nota corta del turno para que la lea.",
     },
-    skill: "Write a short end-of-shift summary",
+    skill: { en: "Write a short end-of-shift summary", es: "escribir un resumen corto al final del turno" },
     bookmarkLabel: "Portal",
     handoffCta: { en: "Next: Write a shift note", es: "Siguiente: Escribir nota del turno" },
     shiftMoment: { en: "Friday, 6 PM. End of shift.", es: "Viernes, 6 PM. Fin de turno." },
@@ -271,7 +275,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Reply to your coworker, Darnell.",
       es: "Responde a tu compañero, Darnell.",
     },
-    skill: "Write a work email that gets straight to the point",
+    skill: { en: "Write a work email that gets straight to the point", es: "escribir un correo de trabajo que va al grano" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Next: Reply to Darnell", es: "Siguiente: Respóndele a Darnell" },
     shiftMoment: {
@@ -289,7 +293,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "You're sick and you're on at 10. Write Maria now.",
       es: "Estás enfermo y entras a las 10. Escríbele a Maria ya.",
     },
-    skill: "Tell my manager I can't come in",
+    skill: { en: "Tell my manager I can't come in", es: "avisarle a mi gerente que no puedo ir" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
     shiftMoment: { en: "Monday, 6:12 AM. You feel sick.", es: "Lunes, 6:12 AM. Te sientes mal." },
@@ -304,7 +308,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "You're signed out. Get back in before your shift.",
       es: "Tu sesión se cerró. Vuelve a entrar antes de tu turno.",
     },
-    skill: "Get back into a locked account",
+    skill: { en: "Get back into a locked account", es: "recuperar una cuenta bloqueada" },
     bookmarkLabel: "Sign In",
     handoffCta: { en: "Next: Sign back in", es: "Siguiente: Vuelve a entrar" },
     shiftMoment: {
@@ -322,7 +326,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Someone slipped. Write it up before you forget.",
       es: "Alguien se resbaló. Escríbelo antes de que se te olvide.",
     },
-    skill: "Write an incident report",
+    skill: { en: "Write an incident report", es: "escribir un reporte de incidente" },
     bookmarkLabel: "Forms",
     handoffCta: { en: "Next: Open Forms", es: "Siguiente: Abrir Formularios" },
     shiftMoment: { en: "Tuesday. The floor is busy.", es: "Martes. El piso está lleno." },
@@ -337,7 +341,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "They need an answer. The handbook is on your desk.",
       es: "Necesitan una respuesta. El manual está en tu escritorio.",
     },
-    skill: "Look something up when you feel rushed",
+    skill: { en: "Look something up when you feel rushed", es: "buscar información aunque tenga prisa" },
     bookmarkLabel: "Docs",
     handoffCta: { en: "Next: Open Docs", es: "Siguiente: Abrir Docs" },
     shiftMoment: { en: "Tuesday night.", es: "Martes por la noche." },
@@ -352,7 +356,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The meeting is at the same time as your shift. Pick a time that works.",
       es: "La reunión es a la misma hora que tu turno. Elige una hora que funcione.",
     },
-    skill: "Handle a meeting invite the right way",
+    skill: { en: "Handle a meeting invite the right way", es: "responder bien a una invitación de reunión" },
     bookmarkLabel: "Calendar",
     handoffCta: {
       en: "Open Calendar from the bookmarks",
@@ -370,7 +374,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "They need the file. Share the file, not the whole folder.",
       es: "Necesitan el archivo. Comparte el archivo, no toda la carpeta.",
     },
-    skill: "Share a file with the right access",
+    skill: { en: "Share a file with the right access", es: "compartir un archivo con el acceso correcto" },
     bookmarkLabel: "Drive",
     handoffCta: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
     shiftMoment: {
@@ -388,7 +392,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "You shared the file. Now email Jordan the link, not an attached copy.",
       es: "Compartiste el archivo. Ahora envíale el enlace a Jordan por correo, no una copia adjunta.",
     },
-    skill: "Send a link to a file instead of a copy",
+    skill: { en: "Send a link to a file instead of a copy", es: "enviar el enlace de un archivo en vez de una copia" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail", es: "Abrir correo" },
     shiftMoment: {
@@ -407,7 +411,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "This week's numbers. Total them and send it up.",
       es: "Los números de esta semana. Súmalos y envía el total.",
     },
-    skill: "Read and trust a spreadsheet total",
+    skill: { en: "Read and trust a spreadsheet total", es: "leer y confiar en el total de una hoja de cálculo" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -425,7 +429,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The template is view only. Copy it before you type.",
       es: "La plantilla es de solo ver. Cópiala antes de escribir.",
     },
-    skill: "Copy a view-only file before you type",
+    skill: { en: "Copy a view-only file before you type", es: "copiar un archivo de solo lectura antes de escribir" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: { en: "Monday. Renata shared a template.", es: "Lunes. Renata compartió una plantilla." },
@@ -440,7 +444,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Your copy is waiting. Write the total. Cc Jordan.",
       es: "Tu copia está lista. Escribe el total. Pon a Jordan en Cc.",
     },
-    skill: "Write a SUM and cc a co-lead",
+    skill: { en: "Write a SUM and cc a co-lead", es: "escribir una SUMA y poner en copia a un colíder" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: { en: "Monday, 11 AM. Your copy is ready.", es: "Lunes, 11 AM. Tu copia está lista." },
@@ -455,7 +459,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Two things are already waiting. Drop neither.",
       es: "Dos cosas ya están esperando. No dejes caer ninguna.",
     },
-    skill: "Handle two requests at once",
+    skill: { en: "Handle two requests at once", es: "atender dos peticiones a la vez" },
     bookmarkLabel: "Today",
     handoffCta: { en: "Open Today from the bookmarks", es: "Abre Today en los marcadores" },
     shiftMoment: {
@@ -473,7 +477,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Saturday close has nobody on it. Pick someone with room.",
       es: "El cierre del sábado no tiene a nadie. Elige a alguien con espacio.",
     },
-    skill: "Build a crew schedule",
+    skill: { en: "Build a crew schedule", es: "armar el horario del equipo" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -491,7 +495,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The hours total looks fine. The formula does not.",
       es: "El total de horas se ve bien. La fórmula no.",
     },
-    skill: "Fix a formula range",
+    skill: { en: "Fix a formula range", es: "corregir el rango de una fórmula" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -509,7 +513,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The crew needs 15 minutes on next week's schedule.",
       es: "El equipo necesita 15 minutos para el horario de la próxima semana.",
     },
-    skill: "Create a meeting with an agenda",
+    skill: { en: "Create a meeting with an agenda", es: "crear una reunión con agenda" },
     bookmarkLabel: "Huddle",
     handoffCta: { en: "Open Huddle from the bookmarks", es: "Abre Huddle en los marcadores" },
     shiftMoment: {
@@ -527,7 +531,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Compare the three situations. Choose a priority and a supported reason.",
       es: "Compara las tres situaciones. Elige una prioridad y un motivo basado en los datos.",
     },
-    skill: "Handle three asks at once",
+    skill: { en: "Handle three asks at once", es: "atender tres peticiones a la vez" },
     bookmarkLabel: "Floor",
     handoffCta: { en: "Open Floor from the bookmarks", es: "Abre Floor en los marcadores" },
     shiftMoment: {
@@ -545,7 +549,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Harborside will pay for a class. Read the offer, then make it fit your week.",
       es: "Harborside pagará una clase. Lee la oferta y haz que quepa en tu semana.",
     },
-    skill: "Accept an offer and put it on a full calendar",
+    skill: { en: "Accept an offer and put it on a full calendar", es: "aceptar una oferta y acomodarla en un calendario lleno" },
     bookmarkLabel: "Offer",
     handoffCta: { en: "Open Offer from the bookmarks", es: "Abre Oferta en los marcadores" },
     shiftMoment: {
@@ -564,7 +568,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "One category is over. Open the formula, then tell Renata.",
       es: "Una categoría se pasó. Abre la fórmula y avísale a Renata.",
     },
-    skill: "Read a budget IF and a chart",
+    skill: { en: "Read a budget IF and a chart", es: "leer un SI de presupuesto y una gráfica" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -583,7 +587,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "HQ asked a question. Not everyone on the thread needs your answer.",
       es: "HQ hizo una pregunta. No todos en el hilo necesitan tu respuesta.",
     },
-    skill: "Choose reply instead of reply-all",
+    skill: { en: "Choose reply instead of reply-all", es: "elegir responder en vez de responder a todos" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail from the bookmarks", es: "Abre Correo en los marcadores" },
     shiftMoment: {
@@ -602,7 +606,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The college portal has a deadline and a list. Find both. Then write.",
       es: "El portal de la universidad tiene una fecha y una lista. Encuentra las dos. Luego escribe.",
     },
-    skill: "Navigate a college portal under a deadline",
+    skill: { en: "Navigate a college portal under a deadline", es: "usar un portal universitario con fecha límite" },
     bookmarkLabel: "College",
     handoffCta: { en: "Open College from the bookmarks", es: "Abre Universidad en los marcadores" },
     shiftMoment: {
@@ -621,7 +625,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "A patient asked for a time that is already taken. Offer the open slot.",
       es: "Un paciente pidió una hora que ya está ocupada. Ofrece el hueco libre.",
     },
-    skill: "Book an appointment without double-booking",
+    skill: { en: "Book an appointment without double-booking", es: "agendar una cita sin encimarla con otra" },
     bookmarkLabel: "Front Desk",
     handoffCta: { en: "Open Front Desk from the bookmarks", es: "Abre Recepción en los marcadores" },
     shiftMoment: {
@@ -640,7 +644,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The award letter is in the portal. Find the amount and the accept-by date.",
       es: "La carta de ayuda está en el portal. Encuentra el monto y la fecha para aceptar.",
     },
-    skill: "Find the amount and deadline on an award letter",
+    skill: { en: "Find the amount and deadline on an award letter", es: "encontrar el monto y la fecha en una carta de ayuda financiera" },
     bookmarkLabel: "College",
     handoffCta: { en: "Open College from the bookmarks", es: "Abre Universidad en los marcadores" },
     shiftMoment: {
@@ -659,7 +663,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "A new patient form is in. File it. A coworker will ask to see it.",
       es: "Hay un formulario de un paciente nuevo. Archívalo. Un compañero va a pedir verlo.",
     },
-    skill: "Judge who may see a patient form",
+    skill: { en: "Judge who may see a patient form", es: "decidir quién puede ver el formulario de un paciente" },
     bookmarkLabel: "Front Desk",
     handoffCta: { en: "Open Front Desk from the bookmarks", es: "Abre Recepción en los marcadores" },
     shiftMoment: {
@@ -678,7 +682,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The syllabus has a due date. Read it. Write a short answer. Submit.",
       es: "El temario tiene una fecha. Léelo. Escribe una respuesta corta. Entrégala.",
     },
-    skill: "Read a syllabus and submit on time",
+    skill: { en: "Read a syllabus and submit on time", es: "leer un temario y entregar a tiempo" },
     bookmarkLabel: "Coursework",
     handoffCta: { en: "Open Coursework from the bookmarks", es: "Abre Curso en los marcadores" },
     shiftMoment: {
@@ -697,7 +701,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "One visit code does not match its charge. Find it and tell the office.",
       es: "Un código de visita no coincide con el cargo. Encuéntralo y avisa a la oficina.",
     },
-    skill: "Match visit codes to charges",
+    skill: { en: "Match visit codes to charges", es: "emparejar códigos de visita con los cargos" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -716,7 +720,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Four results came back. Pick the one you would cite, and say why.",
       es: "Salieron cuatro resultados. Elige el que citarías, y di por qué.",
     },
-    skill: "Tell a credible source from an unreliable one",
+    skill: { en: "Tell a credible source from an unreliable one", es: "distinguir una fuente confiable de una que no lo es" },
     bookmarkLabel: "Library",
     handoffCta: { en: "Open Library from the bookmarks", es: "Abre Biblioteca en los marcadores" },
     shiftMoment: {
@@ -735,7 +739,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Someone called claiming to be family. You cannot verify who they are.",
       es: "Alguien llamó diciendo ser familia. No puedes verificar quién es.",
     },
-    skill: "Decline a plausible request for private information",
+    skill: { en: "Decline a plausible request for private information", es: "rechazar una petición creíble de información privada" },
     bookmarkLabel: "Front Desk",
     handoffCta: { en: "Open Front Desk from the bookmarks", es: "Abre Recepción en los marcadores" },
     shiftMoment: {
@@ -756,7 +760,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Anita shared an opening at HQ. Read it and check it against what you've done.",
       es: "Anita compartió una vacante en HQ. Léela y compárala con lo que has hecho.",
     },
-    skill: "Read a job posting and match it to my experience",
+    skill: { en: "Read a job posting and match it to my experience", es: "leer un anuncio de empleo y compararlo con mi experiencia" },
     bookmarkLabel: "Jobs",
     handoffCta: { en: "Open Jobs from the bookmarks", es: "Abre Empleos en los marcadores" },
     shiftMoment: {
@@ -776,7 +780,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The application has a few sections. Fill each one, then submit.",
       es: "La solicitud tiene varias secciones. Llena cada una y envíala.",
     },
-    skill: "Fill out a job application",
+    skill: { en: "Fill out a job application", es: "llenar una solicitud de empleo" },
     bookmarkLabel: "Jobs",
     handoffCta: { en: "Open Jobs from the bookmarks", es: "Abre Empleos en los marcadores" },
     shiftMoment: {
@@ -796,7 +800,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Turn your Harborside jobs into a one-page résumé: summary, roles, skills.",
       es: "Convierte tus trabajos en Harborside en un currículum de una página: resumen, puestos, habilidades.",
     },
-    skill: "Build a one-page résumé from my work history",
+    skill: { en: "Build a one-page résumé from my work history", es: "armar un currículum de una página con mi historial" },
     bookmarkLabel: "Résumé",
     handoffCta: { en: "Open Résumé from the bookmarks", es: "Abre Currículum en los marcadores" },
     shiftMoment: {
@@ -816,7 +820,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Anita has four questions. Answer each one, then ask one of your own.",
       es: "Anita tiene cuatro preguntas. Responde cada una, luego haz una tuya.",
     },
-    skill: "Answer common interview questions",
+    skill: { en: "Answer common interview questions", es: "responder preguntas comunes de entrevista" },
     bookmarkLabel: "Interview",
     handoffCta: { en: "Open Interview from the bookmarks", es: "Abre Entrevista en los marcadores" },
     shiftMoment: {
@@ -836,7 +840,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The offer came from Anita. Find your start date, then reply that you accept.",
       es: "Llegó la oferta de Anita. Encuentra tu fecha de inicio y responde que aceptas.",
     },
-    skill: "Read an offer letter and accept it",
+    skill: { en: "Read an offer letter and accept it", es: "leer una carta de oferta y aceptarla" },
     bookmarkLabel: "Offer",
     handoffCta: { en: "Open Offer from the bookmarks", es: "Abre Oferta en los marcadores" },
     shiftMoment: {
@@ -856,7 +860,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "First new-hire form: the W-4. It sets your tax withholding. Pick a status, sign, date.",
       es: "Primer formulario de nuevo empleado: el W-4. Fija tu retención de impuestos. Elige un estado, firma, fecha.",
     },
-    skill: "Fill out a W-4",
+    skill: { en: "Fill out a W-4", es: "llenar un formulario W-4" },
     bookmarkLabel: "Onboarding",
     handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
     shiftMoment: {
@@ -876,7 +880,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "The I-9 Section 1. It says you're allowed to work in the U.S. Fill it in and sign.",
       es: "El I-9 Sección 1. Dice que tienes permiso para trabajar en EE. UU. Llénalo y firma.",
     },
-    skill: "Fill out I-9 Section 1",
+    skill: { en: "Fill out I-9 Section 1", es: "llenar la Sección 1 del I-9" },
     bookmarkLabel: "Onboarding",
     handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
     shiftMoment: {
@@ -896,7 +900,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Last form: direct deposit. You need your bank's routing number (9 digits) and your account number.",
       es: "Último formulario: depósito directo. Necesitas el número de ruta de tu banco (9 dígitos) y tu número de cuenta.",
     },
-    skill: "Set up direct deposit",
+    skill: { en: "Set up direct deposit", es: "configurar el depósito directo" },
     bookmarkLabel: "Onboarding",
     handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
     shiftMoment: {
@@ -916,7 +920,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "HQ Drive is nested. Search, then share the current version, view only.",
       es: "El Drive de HQ está anidado. Busca, luego comparte la versión actual, solo ver.",
     },
-    skill: "Search a nested drive for the right file version",
+    skill: { en: "Search a nested drive for the right file version", es: "buscar en carpetas anidadas la versión correcta de un archivo" },
     bookmarkLabel: "Drive",
     handoffCta: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
     shiftMoment: {
@@ -935,7 +939,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Four calendars. One slot is open for all of them.",
       es: "Cuatro calendarios. Un hueco está libre para todos.",
     },
-    skill: "Find a meeting time across several calendars",
+    skill: { en: "Find a meeting time across several calendars", es: "encontrar una hora de reunión entre varios calendarios" },
     bookmarkLabel: "Calendar",
     handoffCta: { en: "Open Calendar from the bookmarks", es: "Abre Calendar en los marcadores" },
     shiftMoment: {
@@ -954,7 +958,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "You are a few minutes late. Join muted. Ask in chat.",
       es: "Llegas unos minutos tarde. Entra en silencio. Pregunta en el chat.",
     },
-    skill: "Join a video meeting with workplace etiquette",
+    skill: { en: "Join a video meeting with workplace etiquette", es: "entrar a una videollamada con buenos modales de trabajo" },
     bookmarkLabel: "Zoom",
     handoffCta: { en: "Open Zoom from the bookmarks", es: "Abre Zoom en los marcadores" },
     shiftMoment: {
@@ -973,7 +977,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Match the receipts. One row has none. Flag it before you send.",
       es: "Empareja los recibos. Una fila no tiene. Márcala antes de enviar.",
     },
-    skill: "Match receipts and notice a missing one",
+    skill: { en: "Match receipts and notice a missing one", es: "emparejar recibos y notar cuál falta" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
     shiftMoment: {
@@ -992,7 +996,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Title, the expense total, one main point. Then present it.",
       es: "Título, el total de gastos, una idea. Luego preséntalo.",
     },
-    skill: "Build a short deck with a real number",
+    skill: { en: "Build a short deck with a real number", es: "armar una presentación corta con un número real" },
     bookmarkLabel: "Slides",
     handoffCta: { en: "Open Slides from the bookmarks", es: "Abre Diapositivas en los marcadores" },
     shiftMoment: {
@@ -1013,7 +1017,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Agenda first, notes during, a follow-up with owners after.",
       es: "Agenda primero, notas durante, y un seguimiento con responsables después.",
     },
-    skill: "Run a meeting: agenda, notes, and a follow-up with owners",
+    skill: { en: "Run a meeting: agenda, notes, and a follow-up with owners", es: "dirigir una reunión: agenda, notas y seguimiento con responsables" },
     bookmarkLabel: "Meeting",
     handoffCta: { en: "Open Meeting from the bookmarks", es: "Abre Reunión en los marcadores" },
     shiftMoment: {
@@ -1033,7 +1037,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "One real strength, one real area to grow. Honest and kind.",
       es: "Una fortaleza real, un área real para mejorar. Con honestidad y amabilidad.",
     },
-    skill: "Write a specific, constructive performance note",
+    skill: { en: "Write a specific, constructive performance note", es: "escribir una nota de desempeño concreta y constructiva" },
     bookmarkLabel: "Review",
     handoffCta: { en: "Open Review from the bookmarks", es: "Abre Evaluación en los marcadores" },
     shiftMoment: {
@@ -1053,7 +1057,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "A number, a calendar note, a summary. Sent as one packet.",
       es: "Un número, una nota del calendario, un resumen. Enviado como un solo paquete.",
     },
-    skill: "Combine a sheet number, a calendar note, and a summary into one packet",
+    skill: { en: "Combine a sheet number, a calendar note, and a summary into one packet", es: "juntar un número de hoja, una nota del calendario y un resumen en un solo paquete" },
     bookmarkLabel: "Report",
     handoffCta: { en: "Open Report from the bookmarks", es: "Abre Reporte en los marcadores" },
     shiftMoment: {
@@ -1073,7 +1077,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Every award, a few questions, and a summary that's yours to keep.",
       es: "Cada premio, unas preguntas, y un resumen que es tuyo para guardar.",
     },
-    skill: "Review everything I've learned and reflect on it",
+    skill: { en: "Review everything I've learned and reflect on it", es: "repasar todo lo que aprendí y reflexionar sobre ello" },
     bookmarkLabel: "Recap",
     handoffCta: { en: "Open Recap from the bookmarks", es: "Abre Resumen en los marcadores" },
     shiftMoment: {

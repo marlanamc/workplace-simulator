@@ -34,11 +34,21 @@ export default function PaystubTask() {
   const showMe = useShowMe();
   const { openApp, active } = useWindowManager();
   const lookingAtStub = view !== "list" && view !== "done" && active !== "browser";
-  const showMeId = view === "list" ? "target-stub" : lookingAtStub ? "stub-net-pay" : "paystub-choices";
-  const stepIndex = view === "list" ? 0 : view === "check1" ? (lookingAtStub ? 1 : 2) : 3;
+  const showMeId =
+    view === "list"
+      ? "target-stub"
+      : lookingAtStub
+        ? view === "check2"
+          ? "stub-hours"
+          : "stub-net-pay"
+        : "paystub-choices";
+  const stepIndex =
+    view === "list" ? 0 : view === "check1" ? (lookingAtStub ? 1 : 2) : lookingAtStub ? 3 : 4;
 
   const c = PAYSTUB_COPY[lang];
   const myName = displayName.trim() || (lang === "en" ? "You" : "Tú");
+
+  const backToBrowser = () => openApp("browser", { tab: "portal", section: "paystubs" });
 
   const openStub = (p: (typeof PAY_STUBS)[number]) => {
     if (p.pdfDocId) {
@@ -65,7 +75,10 @@ export default function PaystubTask() {
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
       </div>
 
+      {/* Fallbacks so a Show me raised while the stub is hidden still resolves;
+          the PDF Reader marks the real, circled figures `data-showme-primary`. */}
       <span data-showme="stub-net-pay" className="sr-only" />
+      <span data-showme="stub-hours" className="sr-only" />
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS.paystub}
@@ -74,13 +87,18 @@ export default function PaystubTask() {
           instruction={RIGHT_NOW_STEPS[stepIndex]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={() => {
-            if (!lookingAtStub && (view === "check1" || view === "check2")) {
-              openApp("browser", { tab: "portal", section: "paystubs" });
-            }
-            showMe.toggleFor(showMeId);
-          }}
+          // While the stub is in front, Show me rings the number this step is
+          // asking for; getting back to the questions is the button's job, not
+          // Show me's. (The old `openApp` here was guarded by `!lookingAtStub`,
+          // so it only ever fired when the Browser was already in front.)
+          onShowMe={() => showMe.toggleFor(showMeId)}
           showMeActive={showMe.targetId === showMeId}
+          // The only step in Act I that names a destination the card cannot
+          // open for them: the PDF Reader is full-screen over the answers, and
+          // finding the Browser pin on the shelf is the hardest thing the act
+          // asks for. Give them the button.
+          primaryLabel={lookingAtStub ? c.backToBrowser : undefined}
+          onPrimary={lookingAtStub ? backToBrowser : undefined}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -181,7 +199,11 @@ export default function PaystubTask() {
               ? lang === "en"
                 ? "Net pay."
                 : "Pago neto."
-              : SHOW_ME_POINTER[lang]
+              : showMe.targetId === "stub-hours"
+                ? lang === "en"
+                  ? "Regular hours."
+                  : "Horas regulares."
+                : SHOW_ME_POINTER[lang]
         }
         onDismiss={showMe.clear}
       />

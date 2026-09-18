@@ -1,6 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useProgress } from "@/lib/progress-context";
+import type { Lang } from "@/lib/task-types";
+
+const COPY: Record<Lang, { title: string; body: string; dismiss: string }> = {
+  en: {
+    title: "Built for a computer",
+    body: "This practice space uses real computer skills: mouse clicks, right-click menus, and windows. You will get more out of it on a laptop or desktop. Ask staff about a rental if you need one.",
+    dismiss: "Continue on this device",
+  },
+  es: {
+    title: "Hecho para una computadora",
+    body: "Este espacio de práctica usa habilidades reales de computación: clics del ratón, menús con clic derecho y ventanas. Vas a aprovecharlo más en una laptop o computadora de escritorio. Pregunta al personal si necesitas prestada una.",
+    dismiss: "Seguir en este dispositivo",
+  },
+};
 
 const DISMISS_KEY = "mobileNudgeDismissed";
 // Below this width, mouse/keyboard interactions (right-click, drag, window
@@ -8,6 +23,8 @@ const DISMISS_KEY = "mobileNudgeDismissed";
 const SMALL_SCREEN_PX = 820;
 
 export default function MobileNudge() {
+  const { lang } = useProgress();
+  const c = COPY[lang];
   const [shouldShow, setShouldShow] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -45,18 +62,15 @@ export default function MobileNudge() {
       <div className="w-full max-w-[380px] rounded-2xl bg-white p-7 text-center shadow-2xl animate-fade-up">
         <div className="mb-4 text-[40px]">💻</div>
         <h2 className="mb-2 text-[20px] font-medium leading-tight text-text-primary">
-          Built for a computer
+          {c.title}
         </h2>
-        <p className="mb-6 text-[15px] leading-relaxed text-text-secondary">
-          This practice space uses real computer skills: mouse clicks, right-click menus, and windows.
-          You will get more out of it on a laptop or desktop. Ask staff about a rental if you need one.
-        </p>
+        <p className="mb-6 text-[15px] leading-relaxed text-text-secondary">{c.body}</p>
         <div className="flex flex-col gap-2">
           <button
             onClick={dismiss}
             className="inline-flex min-h-[48px] w-full items-center justify-center rounded-full bg-surface-muted px-6 text-[15px] font-medium text-text-secondary hover:bg-border cursor-pointer"
           >
-            Continue on this device
+            {c.dismiss}
           </button>
         </div>
       </div>

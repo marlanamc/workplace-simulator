@@ -8,7 +8,7 @@ import {
   type FormEvent,
   type RefObject,
 } from "react";
-import { loginOrSignup, type LoginResult } from "./actions";
+import { loginOrSignup, type LoginErrorKey, type LoginResult } from "./actions";
 import type { Lang } from "@/lib/task-types";
 import { DEVICE_KEY, storage } from "@/lib/storage";
 import { DesktopClock } from "@/components/LiveClock";
@@ -43,6 +43,7 @@ const COPY: Record<
     battery: string;
     switchLabel: string;
     removeUser: string;
+    errors: Record<LoginErrorKey, string>;
   }
 > = {
   en: {
@@ -63,6 +64,12 @@ const COPY: Record<
     battery: "Battery is charged",
     switchLabel: "Español",
     removeUser: "Remove {name}",
+    errors: {
+      name: "Enter your first name.",
+      pin: "Your PIN is 4 numbers.",
+      classCode: "Enter your class code.",
+      wrongPin: "That PIN doesn't match. Try again, or ask your teacher.",
+    },
   },
   es: {
     banner: "Chromebook de práctica. Nada aquí es real.",
@@ -82,6 +89,12 @@ const COPY: Record<
     battery: "La batería está cargada",
     switchLabel: "English",
     removeUser: "Quitar a {name}",
+    errors: {
+      name: "Escribe tu nombre.",
+      pin: "Tu PIN son 4 números.",
+      classCode: "Escribe el código de clase.",
+      wrongPin: "Ese PIN no coincide. Inténtalo otra vez, o pregúntale a tu maestra.",
+    },
   },
 };
 
@@ -432,7 +445,7 @@ export default function LoginForm({ next }: { next: string }) {
               </div>
               {state.error && (
                 <p className="mt-4 max-w-[28ch] text-center text-[14px] leading-snug text-[#ffd2d0]">
-                  {state.error}
+                  {c.errors[state.error]}
                 </p>
               )}
             </form>
@@ -487,7 +500,7 @@ export default function LoginForm({ next }: { next: string }) {
                 />
               </label>
               {state.error && (
-                <p className="mt-3 text-[14px] leading-snug text-[#ffd2d0]">{state.error}</p>
+                <p className="mt-3 text-[14px] leading-snug text-[#ffd2d0]">{c.errors[state.error]}</p>
               )}
               <div className="mt-5 flex justify-end gap-2">
                 <button

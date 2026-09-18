@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { earnedAwardsByAct } from "@/lib/tracks-content";
-import { actNumeral, formatPortfolioSummary } from "@/lib/portfolio-summary";
+import { formatPortfolioSummary } from "@/lib/portfolio-summary";
 import { TASK_INFO } from "@/lib/tracks-content";
 import type { Lang } from "@/lib/task-types";
 import {
@@ -42,7 +42,7 @@ function AwardList({
       {awards.map(({ act, tracks }) => (
         <section key={act.key}>
           <div className="text-[11px] font-medium tracking-wide text-[#5f6368]">
-            {lang === "en" ? "Act" : "Acto"} {actNumeral(act.title)}
+            {lang === "en" ? "Act" : "Acto"} {act.numeral}
           </div>
           <ul className="mt-1.5 flex flex-col gap-1.5">
             {tracks.map((track) =>

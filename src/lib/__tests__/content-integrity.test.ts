@@ -52,7 +52,7 @@ describe("the task registry is the single source of truth", () => {
     if (d.jobCardDoneLine) expectBilingual(d.jobCardDoneLine, `TASKS[${key}].jobCardDoneLine`);
     expectBilingual(d.handoffCta, `TASKS[${key}].handoffCta`);
     expectBilingual(d.shiftMoment, `TASKS[${key}].shiftMoment`);
-    expect(d.skill.trim(), `TASKS[${key}].skill`).not.toBe("");
+    expectBilingual(d.skill, `TASKS[${key}].skill`);
     expect(d.bookmarkLabel.trim(), `TASKS[${key}].bookmarkLabel`).not.toBe("");
     if (d.built) {
       expect(d.location, `TASKS[${key}].location — a built task needs a home`).toBeDefined();
@@ -92,7 +92,8 @@ describe("every reachable task is fully wired", () => {
 
   it.each(reachableTaskKeys)("%s has a bookmark label and a first-person skill line", (key) => {
     expect(BOOKMARK_LABEL[key], `BOOKMARK_LABEL[${key}]`).toBeTruthy();
-    expect(firstPersonSkill(key), `firstPersonSkill(${key})`).toBeTruthy();
+    expect(firstPersonSkill(key, "en"), `firstPersonSkill(${key}, "en")`).toMatch(/^I can .+\.$/);
+    expect(firstPersonSkill(key, "es"), `firstPersonSkill(${key}, "es")`).toMatch(/^Puedo .+\.$/);
   });
 
   it("every reachable task key is a real TaskKey", () => {
@@ -113,6 +114,24 @@ describe("every reachable task is fully wired", () => {
 });
 
 describe("levels and acts stay consistent", () => {
+  // These four fields used to be plain strings, so an English name could ride
+  // straight into Spanish mode and no test could see it: the Job Card kicker
+  // on level0, "Día 1: Day One" on the shelf, the awards case, the done
+  // screens. Typing them Localized is what makes the gap visible here.
+  it.each(LEVELS.map((l) => [l.key, l] as const))("level %s has a bilingual title", (_key, level) => {
+    expectBilingual(level.title, `LEVELS["${level.key}"].title`);
+  });
+
+  it.each(TRACKS.map((t) => [t.key, t] as const))("track %s has a bilingual title and subtitle", (_key, track) => {
+    expectBilingual(track.title, `TRACKS["${track.key}"].title`);
+    expectBilingual(track.subtitle, `TRACKS["${track.key}"].subtitle`);
+  });
+
+  it.each(ACTS.map((a) => [a.key, a] as const))("act %s has a numeral and a bilingual role", (_key, act) => {
+    expect(act.numeral, `ACTS["${act.key}"].numeral is empty`).toMatch(/^[IVXL]+$/);
+    expectBilingual(act.role, `ACTS["${act.key}"].role`);
+  });
+
   it("every level's tracks exist, and no track is claimed by two levels", () => {
     const trackKeys = new Set(TRACKS.map((t) => t.key));
     const claimed = new Map<string, string>();

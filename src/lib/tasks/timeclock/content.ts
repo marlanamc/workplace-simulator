@@ -46,6 +46,9 @@ export const TIMECLOCK_COPY: Record<Lang, {
   looksRight: string;
   somethingOff: string;
   recentHeading: string;
+  /** Row prefixes in the recent-shifts table. Were inline English. */
+  recentIn: string;
+  recentOut: string;
   to: string;
   subjectLabel: string;
   subject: string;
@@ -80,6 +83,8 @@ export const TIMECLOCK_COPY: Record<Lang, {
     looksRight: "Looks right",
     somethingOff: "Something looks wrong. Message my supervisor",
     recentHeading: "Recent shifts",
+    recentIn: "In",
+    recentOut: "Out",
     to: "To",
     subjectLabel: "Subject",
     subject: "Request: clock-in correction for today’s shift",
@@ -114,6 +119,8 @@ export const TIMECLOCK_COPY: Record<Lang, {
     looksRight: "Se ve bien",
     somethingOff: "Algo está mal. Avisar a mi supervisor",
     recentHeading: "Turnos recientes",
+    recentIn: "Entrada",
+    recentOut: "Salida",
     to: "Para",
     subjectLabel: "Asunto",
     subject: "Solicitud: corrección de entrada del turno de hoy",

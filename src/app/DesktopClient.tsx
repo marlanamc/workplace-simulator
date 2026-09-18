@@ -41,10 +41,12 @@ import PdfReaderClient from "./pdf-reader/PdfReaderClient";
 function AppWindow({
   active,
   topOffset,
+  bigText,
   children,
 }: {
   active: boolean;
   topOffset: number;
+  bigText: boolean;
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -66,7 +68,13 @@ function AppWindow({
       className={active ? "fixed flex flex-col overflow-hidden rounded-[12px] shadow-[0_12px_40px_rgba(0,0,0,0.28)]" : "hidden"}
       style={
         active
-          ? { top: topOffset, left: SHELF_INSET, right: SHELF_INSET, bottom: SHELF_RESERVE + 8 }
+          ? {
+              top: topOffset,
+              left: SHELF_INSET,
+              right: SHELF_INSET,
+              bottom: SHELF_RESERVE + 8,
+              zoom: bigText ? 1.15 : undefined,
+            }
           : undefined
       }
     >
@@ -140,7 +148,7 @@ function DesktopShell({
   displayName: string;
   fromStudio: boolean;
 }) {
-  const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack, bridgePath } = useProgress();
+  const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack, bridgePath, bigText } = useProgress();
   const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const [teacherNotesOpen, setTeacherNotesOpen] = useState(false);
@@ -210,12 +218,12 @@ function DesktopShell({
       {/* app windows - mounted once opened, visible only while active, so
           minimizing preserves state (e.g. which mail step you're on) */}
       {apps.browser && (
-        <AppWindow active={active === "browser"} topOffset={windowTop}>
+        <AppWindow active={active === "browser"} topOffset={windowTop} bigText={bigText}>
           <BrowserClient key={progressEpoch} />
         </AppWindow>
       )}
       {apps.pdf && (
-        <AppWindow active={active === "pdf"} topOffset={windowTop}>
+        <AppWindow active={active === "pdf"} topOffset={windowTop} bigText={bigText}>
           <PdfReaderClient />
         </AppWindow>
       )}

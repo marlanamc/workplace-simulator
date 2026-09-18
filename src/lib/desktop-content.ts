@@ -60,6 +60,10 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
 export const DESKTOP_COPY: Record<Lang, {
   practiceBanner: string;
   langBtn: string;
+  /** The quick-settings tile that turns bigger text on. */
+  bigTextTile: string;
+  bigTextOn: string;
+  bigTextOff: string;
   nextLabel: string;
   progressWord: string;
   appsBtn: string;
@@ -94,6 +98,9 @@ export const DESKTOP_COPY: Record<Lang, {
   en: {
     practiceBanner: "Practice space. Nothing here is real.",
     langBtn: "Español",
+    bigTextTile: "Bigger text",
+    bigTextOn: "On",
+    bigTextOff: "Off",
     nextLabel: "Do this next",
     progressWord: "tasks done",
     appsBtn: "Start",
@@ -127,6 +134,9 @@ export const DESKTOP_COPY: Record<Lang, {
   es: {
     practiceBanner: "Espacio de práctica. Nada aquí es real.",
     langBtn: "English",
+    bigTextTile: "Texto más grande",
+    bigTextOn: "Activado",
+    bigTextOff: "Inactivo",
     nextLabel: "Haz esto ahora",
     progressWord: "tareas hechas",
     appsBtn: "Inicio",

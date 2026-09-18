@@ -181,7 +181,12 @@ function PayStubPage({
               <td className="border border-[#1a1a1a] px-[0.7em] py-[0.3em]">
                 {hours ? (
                   <>
-                    <span className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.45em] py-[0.08em]">
+                    <span
+                      data-showme="stub-hours"
+                      data-showme-primary=""
+                      data-showme-oval=""
+                      className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.45em] py-[0.08em]"
+                    >
                       {hours[0]}
                     </span>
                     {hours[1] ? ` ${hours[1]}` : null}
@@ -258,7 +263,12 @@ export default function PdfReaderClient() {
 
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
   const scale = zoom / 100;
-  const notAvailable = () => say("That's not available in this practice space. Just look and read here.");
+  const notAvailable = () =>
+    say(
+      lang === "en"
+        ? "That's not available in this practice space. Just look and read here."
+        : "Eso no está disponible en este espacio de práctica. Solo mira y lee aquí.",
+    );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface-muted">

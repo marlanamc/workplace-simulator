@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from "vitest";
+import { normalizeLearnerName } from "@/lib/db/queries";
 
 /**
  * The session cookie and PIN hashing are hand-rolled (no auth library), so the
@@ -76,5 +77,24 @@ describe("PIN hashing", () => {
     for (const stored of ["", "nosalt", "only.one.extra"]) {
       expect(await verifyPin("1234", stored), stored).toBe(false);
     }
+  });
+});
+
+describe("matching a learner to their existing account", () => {
+  it("treats a differently-cased or padded name as the same person", () => {
+    // The whole point: signing up as "Ana" and later typing "ana" used to
+    // create a second, empty account instead of unlocking the first.
+    for (const typed of ["Ana", "ana", "ANA", " Ana ", "\tana\n"]) {
+      expect(normalizeLearnerName(typed), typed).toBe("ana");
+    }
+  });
+
+  it("still keeps genuinely different names apart", () => {
+    expect(normalizeLearnerName("Ana")).not.toBe(normalizeLearnerName("Anna"));
+    expect(normalizeLearnerName("Jo")).not.toBe(normalizeLearnerName("Joe"));
+    // Two words stay two words — SQL `trim()` does not collapse the middle,
+    // so neither may this, or the two sides of the comparison would disagree.
+    expect(normalizeLearnerName("Ana Maria")).toBe("ana maria");
+    expect(normalizeLearnerName("Ana  Maria")).not.toBe("ana maria");
   });
 });

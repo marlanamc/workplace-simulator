@@ -97,6 +97,8 @@ export const PAYSTUB_COPY: Record<Lang, {
   netLabel: string;
   paidLabel: string;
   openInPdfHint: string;
+  /** Card button on the step where the PDF Reader covers the questions. */
+  backToBrowser: string;
   close: string;
   payDate: string;
   grossPay: string;
@@ -121,6 +123,7 @@ export const PAYSTUB_COPY: Record<Lang, {
     netLabel: "net pay",
     paidLabel: "Paid",
     openInPdfHint: "Opens as a real document in PDF Reader",
+    backToBrowser: "Back to the Browser",
     close: "Close",
     payDate: "Pay date",
     grossPay: "Gross pay",
@@ -145,6 +148,7 @@ export const PAYSTUB_COPY: Record<Lang, {
     netLabel: "pago neto",
     paidLabel: "Pagado",
     openInPdfHint: "Se abre como un documento real en el Lector de PDF",
+    backToBrowser: "Volver al Navegador",
     close: "Cerrar",
     payDate: "Fecha de pago",
     grossPay: "Pago bruto",
@@ -214,12 +218,16 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Abre tu recibo de la lista.",
   },
   {
-    en: "Find the net pay on this stub, then open the Browser.",
-    es: "Encuentra el pago neto en este recibo y abre el Navegador.",
+    en: "Find the net pay on this stub.",
+    es: "Encuentra el pago neto en este recibo.",
   },
   {
     en: "Pick the net pay.",
     es: "Elige el pago neto.",
+  },
+  {
+    en: "Find the hours on this stub.",
+    es: "Encuentra las horas en este recibo.",
   },
   {
     en: "Pick the hours.",

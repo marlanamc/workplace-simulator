@@ -86,10 +86,12 @@ describe("meeting follow-up forgiveness", () => {
 });
 
 describe("shift-spine naming", () => {
-  it("strips 'Level N:' and 'Act X:' prefixes", () => {
+  it("names the sitting and the job in both languages", () => {
     const level1 = LEVELS.find((l) => l.key === "level1")!;
-    expect(sittingTitle(level1)).toBe("Day One");
-    expect(jobTitle(level1)).toBe("New Hire");
+    expect(sittingTitle(level1, "en")).toBe("Day One");
+    expect(sittingTitle(level1, "es")).toBe("Primer día");
+    expect(jobTitle(level1, "en")).toBe("New Hire");
+    expect(jobTitle(level1, "es")).toBe("Personal nuevo");
   });
 
   it("newTabHint names the right bookmark in both languages", () => {

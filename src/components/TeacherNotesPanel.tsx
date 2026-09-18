@@ -55,7 +55,7 @@ export default function TeacherNotesPanel({
           {pendingFeedback.map((f) => (
             <article key={f.id} className="rounded-xl border border-[#dadce0] p-4">
               <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">
-                {SKILLS[f.taskKey as TaskKey] ?? f.taskKey}
+                {SKILLS[f.taskKey as TaskKey]?.[lang] ?? f.taskKey}
               </div>
 
               <div className="mt-3 text-[11px] font-medium uppercase tracking-wide text-[#80868b]">{c.youWrote}</div>

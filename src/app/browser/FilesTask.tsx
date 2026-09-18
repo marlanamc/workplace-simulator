@@ -186,7 +186,7 @@ function CafeFilesTask() {
   return (
     <div
       className="flex h-full min-h-0 flex-col bg-white text-[14px] text-[#1f1f1f]"
-      style={{ fontFamily: "Roboto, Arial, sans-serif", zoom: bigText ? 1.15 : undefined }}
+      style={{ fontFamily: "Roboto, Arial, sans-serif" }}
     >
       <div className="flex items-center gap-3 px-3 py-2">
         <div className="flex w-[220px] shrink-0 items-center gap-2 px-2">

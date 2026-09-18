@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useProgress } from "@/lib/progress-context";
+import type { Localized } from "@/lib/task-types";
 import ScheduleTask from "./ScheduleTask";
 import TimeclockTask from "./TimeclockTask";
 import PaystubTask from "./PaystubTask";
@@ -12,12 +14,16 @@ import type { PortalSection } from "@/lib/tracks-content";
 
 type Section = PortalSection;
 
-const SECTIONS: { key: Section; label: string }[] = [
-  { key: "schedule", label: "Schedule" },
-  { key: "swap-request", label: "Shift Swap" },
-  { key: "timeclock", label: "Time Clock" },
-  { key: "paystubs", label: "Pay Stubs" },
-  { key: "shift-review", label: "Shift notes" },
+/** The Portal's own chrome. Every Act I Portal task is reached through this
+ *  strip, and it was English in Spanish mode. */
+const PORTAL_TITLE: Localized<string> = { en: "Employee Portal", es: "Portal del empleado" };
+
+const SECTIONS: { key: Section; label: Localized<string> }[] = [
+  { key: "schedule", label: { en: "Schedule", es: "Horario" } },
+  { key: "swap-request", label: { en: "Shift Swap", es: "Cambio de turno" } },
+  { key: "timeclock", label: { en: "Time Clock", es: "Reloj checador" } },
+  { key: "paystubs", label: { en: "Pay Stubs", es: "Recibos de pago" } },
+  { key: "shift-review", label: { en: "Shift notes", es: "Notas del turno" } },
 ];
 
 const PORTAL_SECTIONS = new Set<string>(SECTIONS.map((s) => s.key));
@@ -27,6 +33,7 @@ function isPortalSection(value: string | null): value is Section {
 }
 
 export default function PortalPage() {
+  const { lang } = useProgress();
   const { portalSection, portalSectionToken } = useWindowManager();
   const [section, setSection] = useState<Section>(() =>
     isPortalSection(portalSection) ? portalSection : "schedule",
@@ -44,7 +51,7 @@ export default function PortalPage() {
     <div className="flex h-full min-h-0 flex-col bg-surface-muted text-[15px] text-text-primary">
       <div className="flex items-center gap-3 border-b border-border bg-white px-4 py-3">
         <CircleGlyph icon={TAB_ICONS.portal} color="#8430ce" size={28} />
-        <span className="text-[15px] font-medium">Employee Portal</span>
+        <span className="text-[15px] font-medium">{PORTAL_TITLE[lang]}</span>
       </div>
 
       <div className="flex gap-1 border-b border-border bg-white px-4 pt-2">
@@ -58,7 +65,7 @@ export default function PortalPage() {
                 : "text-text-secondary hover:text-text-primary"
             }`}
           >
-            {s.label}
+            {s.label[lang]}
           </button>
         ))}
       </div>

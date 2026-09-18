@@ -1,7 +1,11 @@
 # Lesson 1: Read Your Supervisor's Email
 
 **Time:** ~4 minutes · **Level:** 1 — Day One · **Track:** 1 — Getting Started
-**Task key:** `mail-read` · **Status:** built and playable today
+**Task key:** `mail-read` · **Status:** retired — not playable
+> Day One is two granular jobs now (`mail-reply`, then `mail-attach`), and
+> finding Maria's email in the full inbox is the first half of lesson 2.
+> Kept for the reading and vocabulary work; do not send learners looking
+> for a separate "read" task in the simulator.
 **Prerequisite:** Level 0 (`tour`) so they have seen Help, Next, and the
 shift list. Track 0, including 0.5 login safety, if they are new to a
 work login (or teacher confirms they can open a browser tab, type, and
