@@ -10,7 +10,10 @@ export default function SimulatorWelcome({ onContinue }: { onContinue: () => voi
   const c = WELCOME_COPY;
 
   return (
-    <WelcomeShell testId="simulator-welcome">
+    <WelcomeShell
+      testId="simulator-welcome"
+      speak={[c.title[lang], c.purposeLine1[lang], c.purposeLine2[lang], c.jobTitle[lang], c.jobLine1[lang], c.jobLine2[lang], c.reassurance[lang]].join(" ")}
+    >
       {/* Row 1 — the pitch */}
       <div>
         <h1 className="text-[30px] leading-[1.1] font-semibold tracking-tight sm:text-[38px]">

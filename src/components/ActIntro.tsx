@@ -21,7 +21,11 @@ export default function ActIntro({ act, onContinue }: { act: Act; onContinue: ()
   }
 
   return (
-    <WelcomeShell testId="act-intro" dataAct={act.key}>
+    <WelcomeShell
+      testId="act-intro"
+      dataAct={act.key}
+      speak={[intro.actLabel[lang], intro.role[lang], intro.roleLine[lang], intro.manager[lang], intro.bridge[lang]].join(" ")}
+    >
       {/* Row 1 — the new role */}
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-warning">{intro.actLabel[lang]}</p>

@@ -201,7 +201,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Leer tu horario",
       s: [
         "Cada fila es un día. La hora a la derecha es tu turno.",
-        "\"Off\" significa que no trabajas ese día.",
+        "\"Libre\" significa que no trabajas ese día.",
         "Mira también el calendario personal de tu teléfono. Si un turno cae a la misma hora que algo que ya tienes, pide un cambio.",
       ],
       tip: "Hazlo en cuanto se publique un horario nuevo. Mientras antes veas el conflicto, más fácil es resolverlo.",
@@ -212,9 +212,13 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
+  // One short sentence, per the Job Card rule: this was two sentences and 25
+  // words, four times the ceiling, on the first task that asks a learner to
+  // read two things at once. The long explanation is in the Help lesson, and a
+  // wrong pick already escalates through WRONG_SWAP_HINT then STUCK_SWAP_HINT.
   {
-    en: "Compare next week's shifts to the personal calendar on your phone. Find a shift that is at the same time as something you already have scheduled.",
-    es: "Compara los turnos de la próxima semana con el calendario personal de tu teléfono. Busca un turno que cae a la misma hora que algo que ya tienes agendado.",
+    en: "Find the shift at the same time as something on your phone.",
+    es: "Busca el turno que cae a la misma hora que algo de tu teléfono.",
   },
 ];
 

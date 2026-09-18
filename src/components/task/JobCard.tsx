@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertCircle, Check, ChevronDown, ChevronUp, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -43,8 +43,13 @@ const CARD_W = 420;
 const TONE = { blue: "#0b57d0", green: "#1e8e3e" } as const;
 type Tone = keyof typeof TONE;
 
+/** How long to let a learner work at a practice beat before offering a way round it. */
+const STUCK_MS = 8000;
+
 interface Script {
   routeChoices?: boolean;
+  /** A quieter second line under `line` (see `IntroBeat.stuckHint`). */
+  hint?: string;
   badge: string;
   kicker: string;
   line: string;
@@ -101,7 +106,10 @@ export default function JobCard() {
   const [collapsed, setCollapsed] = useState(false);
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
+  /** Which beat the learner has been sitting on long enough to be offered a way round. */
+  const [stuckBeat, setStuckBeat] = useState<number | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<HTMLDivElement>(null);
 
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
   const levelTaskKeys = taskKeysForLevel(level, bridgePath);
@@ -146,6 +154,10 @@ export default function JobCard() {
     liveStep ?? (active !== null && heldStep ? heldStep : null);
 
   const script = buildScript();
+  // What the speaker button reads: the instruction, plus the hint and the
+  // correction when they are up, because those are the words a learner who
+  // needs the audio is most likely stuck on.
+  const spokenLine = [script.line, script.hint, correction].filter(Boolean).join(". ");
   // A new sentence or a correction is the card talking again — open it so
   // the learner cannot miss the line they just hid.
   const voice = `${script.line}\0${correction}\0${help?.lesson.t ?? ""}`;
@@ -153,6 +165,22 @@ export default function JobCard() {
     setHeardVoice(voice);
     setCollapsed(false);
   }
+
+  // A practice beat the learner has not got past. After a while the card
+  // offers the keyboard route and focuses the handle, so "press the arrow
+  // keys" is true without them having to find and Tab to it first.
+  // Derived rather than reset in the effect, so nothing writes state from an
+  // effect body: a stale `stuckBeat` from an earlier beat simply stops matching.
+  const beatHint = INTRO_BEATS[introBeat]?.stuckHint;
+  const stuckOnBeat = stuckBeat === introBeat;
+  useEffect(() => {
+    if (!beatHint) return;
+    const t = window.setTimeout(() => {
+      setStuckBeat(introBeat);
+      handleRef.current?.focus();
+    }, STUCK_MS);
+    return () => window.clearTimeout(t);
+  }, [beatHint, introBeat]);
 
   // A real move completes the practice; a tap or a drop in the same corner does not.
   const moveToCorner = useCallback((next: Corner) => {
@@ -222,6 +250,7 @@ export default function JobCard() {
         badge: String(introBeat + 1),
         kicker: beat.kicker[lang],
         line: beat.line[lang].replace("{name}", name),
+        hint: stuckOnBeat ? beat.stuckHint?.[lang] : undefined,
         tone: "blue",
         step: -1,
         primaryLabel: beat.tryCollapse || beat.tryDrag ? undefined : beat.cta?.[lang],
@@ -406,6 +435,7 @@ export default function JobCard() {
       style={{ width: CARD_W, maxWidth: "calc(100vw - 32px)", touchAction: "none", ...position }}
     >
       <div
+        ref={handleRef}
         data-testid="job-card-drag-handle"
         onPointerDown={startDrag}
         onKeyDown={nudgeCorner}
@@ -551,6 +581,12 @@ export default function JobCard() {
           {script.line}
         </p>
 
+        {script.hint && (
+          <p role="status" aria-live="polite" className="mt-2 mb-0 text-[17px] leading-[1.35] text-[#5f6368]">
+            {script.hint}
+          </p>
+        )}
+
         {correction && (
           <div
             role="status"
@@ -597,10 +633,13 @@ export default function JobCard() {
           </button>
         )}
 
-        {/* Only ever appears alongside Show me. A lone read-aloud button is
-            clutter on a card whose whole job is one sentence. */}
-        {script.help && (
-          <div className="mt-3.5 flex gap-2.5">
+        {/* Read-aloud used to live inside the Show-me row, which meant it was
+            on screen only mid-task in Act I — gone from the intro beats, every
+            desktop briefing, every correction and every finish card, i.e. most
+            of what a learner who can barely read has to get through. It reads
+            whatever the card is currently saying, correction included. */}
+        <div className="mt-3.5 flex gap-2.5">
+          {script.help && (
             <button
               type="button"
               onClick={toggleShowMe}
@@ -614,18 +653,22 @@ export default function JobCard() {
               <MapPin size={20} strokeWidth={2.25} aria-hidden />
               {liveStep?.showMeActive ? c.hide : c.showMe}
             </button>
-            <button
-              type="button"
-              onClick={() => speakText(script.line, lang)}
-              aria-label={c.readAloud}
-              title={c.readAloud}
-              className="flex min-h-[56px] w-14 shrink-0 cursor-pointer items-center justify-center rounded-[16px] bg-white text-[#3c4043]"
-              style={{ border: "2px solid var(--border)" }}
-            >
-              <Volume2 size={22} strokeWidth={2.25} aria-hidden />
-            </button>
-          </div>
-        )}
+          )}
+          <button
+            type="button"
+            data-testid="job-card-read-aloud"
+            onClick={() => speakText(spokenLine, lang)}
+            aria-label={c.readAloud}
+            title={c.readAloud}
+            className={`flex min-h-[56px] cursor-pointer items-center justify-center gap-2.5 rounded-[16px] bg-white text-[17px] font-medium text-[#3c4043] ${
+              script.help ? "w-14 shrink-0" : "flex-1"
+            }`}
+            style={{ border: "2px solid var(--border)" }}
+          >
+            <Volume2 size={22} strokeWidth={2.25} aria-hidden />
+            {!script.help && c.readAloud}
+          </button>
+        </div>
 
         {script.secondaryLabel && (
           <button
