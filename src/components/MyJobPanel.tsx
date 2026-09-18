@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ACTS,
   LEVELS,
+  actLabel,
   TRACKS,
   TASK_INFO,
   TASK_LOCATIONS,
@@ -97,7 +98,7 @@ export default function MyJobPanel({
               </div>
               {upcoming && (
                 <div className="mt-1 text-[13px] text-white/70">
-                  {lang === "en" ? `Next: ${sittingTitle(upcoming)}` : `Siguiente: ${sittingTitle(upcoming)}`}
+                  {lang === "en" ? `Next: ${sittingTitle(upcoming, lang)}` : `Siguiente: ${sittingTitle(upcoming, lang)}`}
                 </div>
               )}
               {actWorkdays.length > 0 && (
@@ -246,7 +247,7 @@ export default function MyJobPanel({
                   return (
                     <div key={act.key} className="mb-1 last:mb-0">
                       <div className="px-1 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wide text-text-tertiary">
-                        {act.title}
+                        {actLabel(act, lang)}
                       </div>
                       {actLevels.map((i) => {
                         const level = LEVELS[i];

@@ -4,7 +4,7 @@ import { SKILLS } from "@/lib/skills";
 import NoteForm from "./NoteForm";
 
 export function taskTitle(taskKey: string): string {
-  return SKILLS[taskKey as TaskKey] ?? taskKey;
+  return SKILLS[taskKey as TaskKey]?.en ?? taskKey;
 }
 
 export function fmtDate(d: Date | string): string {

@@ -110,7 +110,7 @@ export default function ShiftReviewTask() {
         <div className="flex flex-col gap-5">
           <TaskDoneCard
             kicker={c.sentKicker}
-            title={firstPersonSkill("shift-review")}
+            title={firstPersonSkill("shift-review", lang)}
             body={c.doneBody}
             badgeNumber="09"
             badgeName={c.badgeName}

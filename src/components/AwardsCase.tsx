@@ -5,7 +5,7 @@ import { ACTS, LEVELS, TRACKS, type Track } from "@/lib/tracks-content";
 import { SKILLS } from "@/lib/skills";
 import { useProgress } from "@/lib/progress-context";
 import { SHELF_RESERVE } from "@/components/Shelf";
-import type { Localized } from "@/lib/task-types";
+import type { Lang, Localized } from "@/lib/task-types";
 
 const COPY: Localized<{
   title: string;
@@ -36,21 +36,7 @@ const COPY: Localized<{
   },
 };
 
-const ACT_SHELF: Record<string, Localized<string>> = {
-  act1: { en: "New Hire", es: "Nuevo ingreso" },
-  act2: { en: "Shift Lead", es: "Líder de turno" },
-  act3: { en: "Shift Supervisor", es: "Supervisor" },
-  act4: { en: "Assistant Manager", es: "Gerente asistente" },
-  act5: { en: "Bridge", es: "Puente" },
-  act6: { en: "Office Administrator", es: "Administración" },
-  act7: { en: "Team Lead", es: "Líder de equipo" },
-};
-
 type ShelfRow = { label?: string; tracks: Track[] };
-
-function actNumeral(title: string): string {
-  return title.match(/^Act ([IVX]+)/)?.[1] ?? title;
-}
 
 function pathTrackKeys(side: "a" | "b"): string[] {
   return LEVELS.flatMap((level) => (level.pathTracks ? [level.pathTracks[side]] : []));
@@ -84,8 +70,8 @@ function shelvesFromActs(lang: "en" | "es"): { key: string; numeral: string; nam
 
     return {
       key: act.key,
-      numeral: actNumeral(act.title),
-      name: ACT_SHELF[act.key]?.[lang] ?? act.title,
+      numeral: act.numeral,
+      name: act.role[lang],
       rows,
     };
   }).filter((shelf) => shelf.rows.some((row) => row.tracks.length > 0));
@@ -93,11 +79,13 @@ function shelvesFromActs(lang: "en" | "es"): { key: string; numeral: string; nam
 
 function TrophyButton({
   track,
+  lang,
   unlocked,
   selected,
   onSelect,
 }: {
   track: Track;
+  lang: Lang;
   unlocked: boolean;
   selected: boolean;
   onSelect: () => void;
@@ -107,7 +95,7 @@ function TrophyButton({
       type="button"
       role="option"
       aria-selected={selected}
-      aria-label={track.title}
+      aria-label={track.title[lang]}
       onClick={onSelect}
       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-[22px] leading-none cursor-pointer ${
         selected ? "bg-white/16 ring-2 ring-[#8ec0ff]" : "hover:bg-white/8"
@@ -212,6 +200,7 @@ export default function AwardsCase({
                               <TrophyButton
                                 key={track.key}
                                 track={track}
+                                lang={lang}
                                 unlocked={earned.has(track.key)}
                                 selected={activeKey === track.key}
                                 onSelect={() => setSelectedKey(track.key)}
@@ -238,8 +227,8 @@ export default function AwardsCase({
                 {selected.awardEmoji}
               </span>
               <div className="min-w-0">
-                <h3 className="text-[17px] font-medium text-white">{selected.title}</h3>
-                <p className="mt-0.5 text-[13px] leading-relaxed text-[#d4b896]">{selected.subtitle}</p>
+                <h3 className="text-[17px] font-medium text-white">{selected.title[lang]}</h3>
+                <p className="mt-0.5 text-[13px] leading-relaxed text-[#d4b896]">{selected.subtitle[lang]}</p>
               </div>
             </div>
             {selectedEarned ? (
@@ -249,7 +238,7 @@ export default function AwardsCase({
                     <span className="mt-0.5 text-[#c9a227]" aria-hidden>
                       ★
                     </span>
-                    {SKILLS[taskKey]}
+                    {SKILLS[taskKey][lang]}
                   </li>
                 ))}
               </ul>

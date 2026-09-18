@@ -195,7 +195,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
         <div className="flex flex-col gap-5">
           <TaskDoneCard
             kicker={c.sentKicker}
-            title={firstPersonSkill("schedule")}
+            title={firstPersonSkill("schedule", lang)}
             body={c.doneBody}
             badgeNumber="02"
             badgeName={c.badgeName}

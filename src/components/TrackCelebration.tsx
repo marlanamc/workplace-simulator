@@ -18,7 +18,7 @@ export default function TrackCelebration({ onSeeAward }: { onSeeAward: () => voi
       >
         <Confetti count={26} />
         <div className="animate-pop-in mb-4 text-[48px] leading-none">{celebrateTrack.awardEmoji}</div>
-        <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title}</h2>
+        <h2 className="mb-2 text-[22px] font-medium leading-tight">{celebrateTrack.title[lang]}</h2>
         <p className="mb-6 text-[15px] leading-relaxed text-text-secondary">
           {lang === "en" ? "Award unlocked. It is in your trophy case." : "Premio obtenido. Está en tu vitrina."}
         </p>

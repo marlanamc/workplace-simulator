@@ -164,7 +164,7 @@ export default function AccountRecoveryTask() {
         <div className="flex flex-col gap-5">
           <TaskDoneCard
             kicker={c.sentKicker}
-            title={firstPersonSkill("account-recovery")}
+            title={firstPersonSkill("account-recovery", lang)}
             body={c.doneBody}
             badgeNumber="10"
             badgeName={c.badgeName}

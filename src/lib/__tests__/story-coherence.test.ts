@@ -55,18 +55,24 @@ describe("day numbering", () => {
     });
   });
 
-  it("never bakes a number into a level title", () => {
+  it("never bakes a number into a level title, in either language", () => {
     for (const level of LEVELS) {
-      expect(
-        level.title,
-        `"${level.title}" carries its own number — numbering comes from LEVELS order`,
-      ).not.toMatch(/^(Level|Day)\s*\d/i);
+      for (const lang of ["en", "es"] as const) {
+        expect(
+          level.title[lang],
+          `"${level.title[lang]}" carries its own number — numbering comes from LEVELS order`,
+        ).not.toMatch(/^(Level|Day|Nivel|D[ií]a)\s*\d/i);
+      }
     }
   });
 
   it("labels the orientation level by name, not as a day", () => {
     expect(dayTitle(LEVELS[0], "en")).toBe("How this works");
     expect(dayLabel(LEVELS[0], "en")).toBe("How this works");
+    // The very first Job Card kicker a Spanish learner sees. It used to read
+    // "How this works" because Level.title was an English-only string.
+    expect(dayTitle(LEVELS[0], "es")).toBe("Cómo funciona esto");
+    expect(dayLabel(LEVELS[0], "es")).toBe("Cómo funciona esto");
   });
 
   it("numbers the first real level Day 1, in both languages", () => {
