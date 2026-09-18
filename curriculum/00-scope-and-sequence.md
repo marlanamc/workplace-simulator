@@ -145,7 +145,7 @@ already have later progress are not pulled back here.
 
 ---
 
-## Act I: Levels 1-3 (+2 coda levels) — New Hire (shared trunk)
+## Act I: Levels 0-3 (+3 coda levels) — New Hire (shared trunk)
 
 **Restructured twice.** First pass: was 3 levels / 6 lessons bundling 2-3
 skills each; became 3 levels / 9 short jobs, one skill each, ~4-5 minutes
@@ -217,18 +217,19 @@ completes Level 2. Picking the clashing day hands it straight to the swap
 form, already filled in — noticing and asking are one motion, not two
 separate badges.
 
-### Level 3: Payday
+### Level 3: Clock-In Fix
 
-Hours and pay, then a no-new-tools review.
+Hours, then a no-new-tools review. Pay itself is its own sitting later
+(Level 3a3) — two weeks have to pass in the story before a stub exists.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `timeclock` | Clock out and confirm your hours look right | Browser → Portal |
-| 2 | `paystub` | Find the right person's stub, then confirm net pay and hours | Browser → Portal + PDF Reader |
-| 3 | `shift-review` | No new tool — three earlier skills, mixed, back to back | Browser → Portal |
+| 1 | `timeclock` | Clock in, notice the punch is wrong, and say so to your supervisor | Browser → Portal + Mail |
+| 2 | `shift-review` | No new tool — leave a short note a lead can act on | Browser → Portal |
 
-See `level-3-payday-and-trouble/01-lesson-timeclock.md` through
+See `level-3-payday-and-trouble/01-lesson-timeclock.md` and
 `03-lesson-shift-review.md`. Finishing `shift-review` completes Level 3.
+(`02-lesson-paystub.md` lives in the same folder but belongs to Level 3a3.)
 
 ### Level 3a: One More Thing (coda)
 
@@ -238,8 +239,8 @@ One lesson, Friday afternoon, before the weekend.
 |---|---|---|---|
 | 1 | `mail-etiquette` | Write a short work email that gets straight to the point — named explicitly for the first time | Browser → Mail |
 
-New folder needed: `level-3a-one-more-thing/`. Finishing `mail-etiquette`
-completes this level.
+See `level-3a-one-more-thing/01-lesson-mail-etiquette.md`. Finishing
+`mail-etiquette` completes this level.
 
 ### Level 3a2: The Sick Call (coda)
 
@@ -250,16 +251,27 @@ promotion.
 |---|---|---|---|
 | 1 | `call-out-sick` | Tell your manager you can't come in, before your shift starts | Browser → Mail |
 
-New folder needed: `level-3a2-the-sick-call/` (renumber
-`04-lesson-call-out-sick.md` from `level-3-payday-and-trouble/` into it).
-Finishing `call-out-sick` completes Level 3a2 and Act I, and triggers the
-Shift Lead promotion.
+See `level-3a2-the-sick-call/01-lesson-call-out-sick.md`. Finishing
+`call-out-sick` completes Level 3a2.
+
+### Level 3a3: First Paycheck (coda)
+
+One lesson, Friday of week 2 — the last sitting of Act I. The stub opens
+in the PDF Reader, so this is also the first time a learner has two apps
+on screen and has to get back to the one holding the questions.
+
+| Lesson | Task key | Skill focus | Simulator app |
+|---|---|---|---|
+| 1 | `paystub` | Open a pay stub as a real document, then confirm net pay and hours | Browser → Portal + PDF Reader |
+
+See `level-3-payday-and-trouble/02-lesson-paystub.md`. Finishing `paystub`
+completes Level 3a3 and Act I, and triggers the Shift Lead promotion.
 
 ---
 
 ## Act II: Levels 4-8 — Shift Lead tools (shared trunk)
 
-**Story bridge:** finishing Act I's `shift-review` earns the promotion.
+**Story bridge:** finishing Act I's `paystub` earns the promotion.
 Act II opens with one more shared-trunk level before the tool levels
 begin — `incident`/`handbook`, moved here from the old Act I (see the Act
 I section's restructuring note above) — then the environment refreshes.

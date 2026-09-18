@@ -13,27 +13,34 @@ works.
   the blue button; the target on the bottom bar is your list for this shift.
 
 ## Before class (teacher prep)
-- [ ] Simulator: nothing to set up. A new sign-in lands on the desktop
-      briefing "This is a practice computer." Click **Open the Web Browser**.
+- [ ] Simulator: nothing to set up. A new sign-in lands on the welcome page,
+      then on an empty desktop with the blue Job Card.
 - [ ] People who already finished later levels are not pulled back here.
       They can still open Level 0 from the levels list if they want the boost.
 
 ## Simulator practice (~5 min)
 1. Sign in with name, PIN, and class code.
-2. Read the desktop briefing. Click **Open the Web Browser**.
-3. Read the first card. Click **Show me around**.
-4. Tap all three facts (nothing is real; the white button is next; Help and
-   your list). Click **I have these**.
-5. Tap the **?** on the blue card. Read Help. Click **Got it**.
-6. Click **I'm ready for the job**.
-7. On the done screen, the blue button is **Open Mail** — that is Level 1.
+2. On the welcome page, click **Start my first day**.
+3. Three card beats on an empty desktop: click **OK**, then drag the blue top
+   of the card to another corner, then click the arrow to shrink it. The drag
+   is the one that takes people time. If someone is stuck for a few seconds the
+   card offers the arrow keys and focuses the handle for them — either way
+   counts.
+4. The card says "Look around this computer." Click **Start looking around**.
+5. The browser opens on the Welcome tab and the spotlight walkthrough starts.
+   Four beats, one at a time: **Show me** (the bookmarks), click **Mail**,
+   **I understand** (this is your work email), then tap the **?** on the card.
+6. Read Help. Click **I understand. Back to my task**.
+7. Click **I'm ready for the task**. The level-up card follows, and its button
+   opens Level 1.
 
-Help is the **?** on the blue card — there is not a second one in the
-window header. They can skip it and still move on; the point is knowing
-where it lives.
+Help is the **?** on the blue card — there is not a second one in the window
+header. They can skip it and still move on; the point is knowing where it
+lives. The card also has a speaker button on every screen, which reads the
+current instruction out loud.
 
 ## Confidence check-in
-The app asks this on the done screen. Worth a glance:
+Ask it out loud before they move on:
 - "Do you know where to look if you get stuck?"
 
 ## Notes for the teacher
