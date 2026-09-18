@@ -263,7 +263,12 @@ export default function PdfReaderClient() {
 
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
   const scale = zoom / 100;
-  const notAvailable = () => say("That's not available in this practice space. Just look and read here.");
+  const notAvailable = () =>
+    say(
+      lang === "en"
+        ? "That's not available in this practice space. Just look and read here."
+        : "Eso no está disponible en este espacio de práctica. Solo mira y lee aquí.",
+    );
 
   return (
     <div className="flex min-h-0 flex-1 flex-col bg-surface-muted">

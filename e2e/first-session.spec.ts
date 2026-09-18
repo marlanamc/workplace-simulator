@@ -84,7 +84,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   await expect(page.getByPlaceholder("Search your apps and tasks")).toHaveCount(0);
   await expect(card.getByText("looking around", { exact: false })).toBeVisible();
 
-  await card.getByRole("button", { name: "Open the Web Browser" }).click();
+  await card.getByRole("button", { name: "Start looking around" }).click();
 
   // First a look beat: the address bar and back arrow are display-only here;
   // you navigate with the bookmarks.

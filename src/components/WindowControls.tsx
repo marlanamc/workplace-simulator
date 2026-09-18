@@ -2,6 +2,7 @@
 
 import type { AppKey } from "@/lib/desktop-content";
 import { useWindowManager } from "@/lib/window-manager";
+import { useProgress } from "@/lib/progress-context";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { SHELF_RESERVE } from "@/components/Shelf";
@@ -33,6 +34,7 @@ function CloseIcon() {
 /** The minimize/maximize/close trio real app windows have, for visual realism. */
 export default function WindowControls({ appKey, dark = false }: { appKey: AppKey; dark?: boolean }) {
   const { minimizeActive, closeApp } = useWindowManager();
+  const { lang } = useProgress();
   const { nudge, say, dismiss } = useNudge();
   const iconColor = dark ? "text-white/70" : "text-[#5f6368]";
 
@@ -47,7 +49,13 @@ export default function WindowControls({ appKey, dark = false }: { appKey: AppKe
           <MinimizeIcon />
         </button>
         <button
-          onClick={() => say("This window is already full screen.")}
+          onClick={() =>
+            say(
+              lang === "en"
+                ? "This window is already full screen."
+                : "Esta ventana ya está en pantalla completa.",
+            )
+          }
           aria-label="Maximize"
           className={`flex h-8 w-9 items-center justify-center hover:bg-black/8 cursor-pointer ${iconColor}`}
         >

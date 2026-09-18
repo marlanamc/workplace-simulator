@@ -94,9 +94,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Find Help, your shift list, and Next", es: "encontrar la Ayuda, mi lista de tareas y el botón Siguiente" },
     bookmarkLabel: "Welcome",
-    handoffCta: { en: "Open the Web Browser", es: "Abrir el navegador web" },
+    handoffCta: { en: "Start looking around", es: "Empezar a mirar" },
     shiftMoment: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
-    location: browser("Open the Web Browser", "tour"),
+    location: browser("Start looking around", "tour"),
     jobCardLine: { en: "Look around this computer.", es: "Conoce esta computadora." },
   },
 
