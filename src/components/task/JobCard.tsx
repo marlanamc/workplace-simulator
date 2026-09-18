@@ -153,6 +153,19 @@ export default function JobCard() {
   const effectiveStep =
     liveStep ?? (active !== null && heldStep ? heldStep : null);
 
+  // Derived rather than reset in the effect, so nothing writes state from an
+  // effect body: a stale `stuckBeat` from an earlier beat simply stops matching.
+  const beatHint = INTRO_BEATS[introBeat]?.stuckHint;
+  const stuckOnBeat = stuckBeat === introBeat;
+  useEffect(() => {
+    if (!beatHint) return;
+    const t = window.setTimeout(() => {
+      setStuckBeat(introBeat);
+      handleRef.current?.focus();
+    }, STUCK_MS);
+    return () => window.clearTimeout(t);
+  }, [beatHint, introBeat]);
+
   const script = buildScript();
   // What the speaker button reads: the instruction, plus the hint and the
   // correction when they are up, because those are the words a learner who
@@ -169,19 +182,6 @@ export default function JobCard() {
   // A practice beat the learner has not got past. After a while the card
   // offers the keyboard route and focuses the handle, so "press the arrow
   // keys" is true without them having to find and Tab to it first.
-  // Derived rather than reset in the effect, so nothing writes state from an
-  // effect body: a stale `stuckBeat` from an earlier beat simply stops matching.
-  const beatHint = INTRO_BEATS[introBeat]?.stuckHint;
-  const stuckOnBeat = stuckBeat === introBeat;
-  useEffect(() => {
-    if (!beatHint) return;
-    const t = window.setTimeout(() => {
-      setStuckBeat(introBeat);
-      handleRef.current?.focus();
-    }, STUCK_MS);
-    return () => window.clearTimeout(t);
-  }, [beatHint, introBeat]);
-
   // A real move completes the practice; a tap or a drop in the same corner does not.
   const moveToCorner = useCallback((next: Corner) => {
     if (next === corner) return;
