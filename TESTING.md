@@ -76,6 +76,40 @@ Mail. Plus: choosing Español on the login page survives sign-in AND reload.
 - On failure it saves a trace: `npx playwright show-trace <path>` replays
   the whole session frame by frame.
 
+### The e2e database (set up once)
+
+The suite needs a database of its own, and CI applies the schema to it before
+every run. This is not optional tidiness — it is the fix for a real outage of
+the suite. The `role` column was added to `schema.ts` on 2026-09-05 and never
+pushed to the e2e database; the first full CI run of the browser suite failed
+**all 30 tests** on `column "role" does not exist`, months later, because
+`findLearner` selects every column the schema declares. There are no migration
+artifacts in this repo, so a database only has what someone last pushed to it.
+
+One-time setup:
+
+1. In Neon, create a database named **`workplace_e2e`** (a new branch is fine,
+   but the *database* name is what matters). Do not reuse the production
+   database, and do not keep Neon's default `neondb` name — the workflow
+   refuses to run unless the name contains `e2e` or `test`, because the step
+   that applies the schema can drop columns.
+2. Add two repository secrets under **Settings → Secrets and variables →
+   Actions**:
+   - `E2E_DATABASE_URL` — the connection string for that database.
+   - `E2E_SESSION_SECRET` — any random string. Generate one with
+     `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`.
+3. That is all. `.github/workflows/e2e.yml` runs `drizzle-kit push` against it
+   before the tests, so the database can never drift behind the branch again.
+
+The workflow deliberately does **not** read `secrets.DATABASE_URL`. Since it
+applies schema changes, a separate secret makes pointing it at production a
+deliberate act rather than a typo.
+
+To run the suite locally against that same database:
+`DATABASE_URL="<E2E_DATABASE_URL>" SESSION_SECRET=anything npm run test:e2e`,
+or put both in `.env.local` (see `.env.example`) and run `npm run db:push`
+first.
+
 ## What to test when adding a new task (the recipe)
 
 1. Wire the content → `npm test` tells you what's missing (layer 1 is
