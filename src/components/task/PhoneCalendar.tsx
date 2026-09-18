@@ -13,7 +13,7 @@ export default function PhoneCalendar({
   heading: string;
   lang: Lang;
 }) {
-  const eventDates = new Set(PERSONAL_CALENDAR.map((event) => event.date));
+  const eventDays = new Set(PERSONAL_CALENDAR.map((event) => event.dayKey));
 
   return (
     <figure className="mx-auto w-[236px]">
@@ -69,14 +69,13 @@ export default function PhoneCalendar({
 
             <div aria-hidden className="mt-[12px] grid grid-cols-7 px-[8px]">
               {SCHEDULE.map((d) => {
-                const hasEvent = eventDates.has(d.date);
-                const num = d.date.split(" ").pop();
+                const hasEvent = eventDays.has(d.key);
                 return (
-                  <div key={d.day} className="flex flex-col items-center gap-[3px]">
+                  <div key={d.key} className="flex flex-col items-center gap-[3px]">
                     <span className="text-[10px] font-medium text-[#6e6e73]">
-                      {d.day.charAt(0)}
+                      {d.day[lang].charAt(0)}
                     </span>
-                    <span className="text-[13px] font-semibold tabular-nums">{num}</span>
+                    <span className="text-[13px] font-semibold tabular-nums">{d.dayNum}</span>
                     <span
                       className={`h-[4px] w-[4px] rounded-full ${
                         hasEvent ? "bg-[#ff3b30]" : "bg-transparent"
@@ -90,15 +89,15 @@ export default function PhoneCalendar({
             <ul className="mt-[4px] pb-[2px]">
               {PERSONAL_CALENDAR.map((event) => (
                 <li
-                  key={event.date}
+                  key={event.dayKey}
                   className="flex items-start gap-[10px] border-t border-black/10 px-[14px] py-[10px]"
                 >
                   <div className="w-[36px] shrink-0 pt-[1px] text-center">
                     <div className="text-[18px] font-semibold leading-none tabular-nums">
-                      {event.date.split(" ").pop()}
+                      {event.dayNum}
                     </div>
                     <div className="mt-[3px] text-[10px] font-medium uppercase tracking-wide text-[#6e6e73]">
-                      {event.day}
+                      {event.day[lang]}
                     </div>
                   </div>
                   <span

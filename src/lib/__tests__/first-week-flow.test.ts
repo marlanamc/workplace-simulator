@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SCHEDULE, SWAP_OPTIONS, PERSONAL_CALENDAR, RIGHT_NOW_STEPS, SCHEDULE_COPY } from "@/lib/tasks/schedule/content";
+import { SCHEDULE, SWAP_OPTIONS, PERSONAL_CALENDAR, RIGHT_NOW_STEPS, SCHEDULE_COPY, STUCK_SWAP_HINT } from "@/lib/tasks/schedule/content";
 import { TIMECLOCK } from "@/lib/tasks/timeclock/content";
 import { RIGHT_NOW_STEPS as SWAP_STEPS } from "@/lib/tasks/swap-request/content";
 import { TRACKS, TASK_LOCATIONS, type PortalSection } from "@/lib/tracks-content";
@@ -30,7 +30,7 @@ describe("the schedule/swap content", () => {
   it("exactly one shift clashes, and the personal calendar explains why", () => {
     const clashing = SCHEDULE.filter((d) => d.conflict);
     expect(clashing).toHaveLength(1);
-    const event = PERSONAL_CALENDAR.find((e) => e.date === clashing[0].date);
+    const event = PERSONAL_CALENDAR.find((e) => e.dayKey === clashing[0].key);
     expect(event, "the clashing shift needs a personal event on the same date").toBeDefined();
   });
 
@@ -41,10 +41,22 @@ describe("the schedule/swap content", () => {
   it("the working option is a later shift on the SAME day as the clash", () => {
     const clashing = SCHEDULE.find((d) => d.conflict)!;
     const works = SWAP_OPTIONS.find((o) => o.works)!;
-    // Same day: the cafe still needs Thursday covered.
-    expect(works.label.en).toContain(clashing.day);
+    // Same day: the cafe still needs Thursday covered. Checked in BOTH
+    // languages, because the swap form already said "Jue 27 ago" while the
+    // schedule beside it still said "Thu Aug 27" — a learner comparing the two
+    // had no way to tell they named the same day.
+    expect(works.label.en).toContain(clashing.day.en);
+    expect(works.label.es).toContain(clashing.day.es);
     // Later: the doctor is at 11 AM, so a PM start is the whole point.
     expect(works.label.en).toMatch(/\b\d{1,2}:\d{2} PM –/);
+  });
+
+  it("names the clashing day the same way on the schedule and in the rescue hint", () => {
+    const clashing = SCHEDULE.find((d) => d.conflict)!;
+    // STUCK_SWAP_HINT tells a stuck learner which day to look at. It has to
+    // name a word that is actually on the screen in that language.
+    expect(STUCK_SWAP_HINT.en.toLowerCase()).toContain(clashing.day.en.toLowerCase());
+    expect(STUCK_SWAP_HINT.es.toLowerCase()).toContain(clashing.day.es.toLowerCase());
   });
 
   it("every wrong swap option says why it is wrong, in both languages", () => {

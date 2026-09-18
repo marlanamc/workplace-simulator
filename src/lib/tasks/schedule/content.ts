@@ -18,26 +18,44 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 };
 
 export interface ShiftDay {
-  day: string;
-  date: string;
+  /**
+   * Stable identity, never rendered: the swap form's select value, the
+   * conflict check, and the join to `PERSONAL_CALENDAR`. `day`/`date` used to
+   * carry this job, which is why they could not be translated — the rescue
+   * hint told a Spanish learner to look at "jueves" on a screen that only ever
+   * said "Thu".
+   */
+  key: string;
+  /** Day of the month on its own, for the phone's date strip. */
+  dayNum: string;
+  day: Localized<string>;
+  date: Localized<string>;
   shift: string | null;
   /** True on the one shift that overlaps a personal calendar event. Never shown as a warning on the row. */
   conflict?: boolean;
 }
 
 export const SCHEDULE: ShiftDay[] = [
-  { day: "Mon", date: "Aug 24", shift: "7:00 AM – 3:00 PM" },
-  { day: "Tue", date: "Aug 25", shift: "7:00 AM – 3:00 PM" },
-  { day: "Wed", date: "Aug 26", shift: null },
-  { day: "Thu", date: "Aug 27", shift: "10:00 AM – 6:00 PM", conflict: true },
-  { day: "Fri", date: "Aug 28", shift: "10:00 AM – 6:00 PM" },
-  { day: "Sat", date: "Aug 29", shift: "8:00 AM – 4:00 PM" },
-  { day: "Sun", date: "Aug 30", shift: null },
+  { key: "mon", dayNum: "24", day: { en: "Mon", es: "Lun" }, date: { en: "Aug 24", es: "24 ago" }, shift: "7:00 AM – 3:00 PM" },
+  { key: "tue", dayNum: "25", day: { en: "Tue", es: "Mar" }, date: { en: "Aug 25", es: "25 ago" }, shift: "7:00 AM – 3:00 PM" },
+  { key: "wed", dayNum: "26", day: { en: "Wed", es: "Mié" }, date: { en: "Aug 26", es: "26 ago" }, shift: null },
+  { key: "thu", dayNum: "27", day: { en: "Thu", es: "Jue" }, date: { en: "Aug 27", es: "27 ago" }, shift: "10:00 AM – 6:00 PM", conflict: true },
+  { key: "fri", dayNum: "28", day: { en: "Fri", es: "Vie" }, date: { en: "Aug 28", es: "28 ago" }, shift: "10:00 AM – 6:00 PM" },
+  { key: "sat", dayNum: "29", day: { en: "Sat", es: "Sáb" }, date: { en: "Aug 29", es: "29 ago" }, shift: "8:00 AM – 4:00 PM" },
+  { key: "sun", dayNum: "30", day: { en: "Sun", es: "Dom" }, date: { en: "Aug 30", es: "30 ago" }, shift: null },
 ];
 
+/** "Thu Aug 27" / "Jue 27 ago" — the row label, in one place. */
+export function shiftDayLabel(d: ShiftDay | PersonalEvent, lang: Lang): string {
+  return `${d.day[lang]} ${d.date[lang]}`;
+}
+
 export interface PersonalEvent {
-  day: string;
-  date: string;
+  /** Matches a `ShiftDay.key` — how the phone strip marks a day with an event. */
+  dayKey: string;
+  dayNum: string;
+  day: Localized<string>;
+  date: Localized<string>;
   time: string;
   title: Localized;
 }
@@ -93,9 +111,9 @@ export const SWAP_OPTIONS: SwapOption[] = [
 
 /** Sits next to the work schedule. The student has to match days and times. */
 export const PERSONAL_CALENDAR: PersonalEvent[] = [
-  { day: "Tue", date: "Aug 25", time: "7:30 PM", title: { en: "Call the school", es: "Llamar a la escuela" } },
-  { day: "Thu", date: "Aug 27", time: "11:00 AM", title: { en: "Doctor", es: "Doctor" } },
-  { day: "Sat", date: "Aug 29", time: "6:00 PM", title: { en: "Soccer", es: "Fútbol" } },
+  { dayKey: "tue", dayNum: "25", day: { en: "Tue", es: "Mar" }, date: { en: "Aug 25", es: "25 ago" }, time: "7:30 PM", title: { en: "Call the school", es: "Llamar a la escuela" } },
+  { dayKey: "thu", dayNum: "27", day: { en: "Thu", es: "Jue" }, date: { en: "Aug 27", es: "27 ago" }, time: "11:00 AM", title: { en: "Doctor", es: "Doctor" } },
+  { dayKey: "sat", dayNum: "29", day: { en: "Sat", es: "Sáb" }, date: { en: "Aug 29", es: "29 ago" }, time: "6:00 PM", title: { en: "Soccer", es: "Fútbol" } },
 ];
 
 export const SCHEDULE_COPY: Record<Lang, {
@@ -104,6 +122,8 @@ export const SCHEDULE_COPY: Record<Lang, {
   helpBtn: string;
   langBtn: string;
   pickConflict: string;
+  /** No shift that day. Was inline English in ScheduleTask and SwapRequestTask. */
+  off: string;
   phoneLabel: string;
   phoneHeading: string;
   doneTitle: string;
@@ -123,6 +143,7 @@ export const SCHEDULE_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     pickConflict: "Request a swap",
+    off: "Off",
     phoneLabel: "Your personal calendar",
     phoneHeading: "My Calendar",
     doneTitle: "You noticed the conflict and asked for a swap.",
@@ -142,6 +163,7 @@ export const SCHEDULE_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     pickConflict: "Pedir un cambio",
+    off: "Libre",
     phoneLabel: "Tu calendario personal",
     phoneHeading: "Mi calendario",
     doneTitle: "Notaste el conflicto y pediste un cambio.",

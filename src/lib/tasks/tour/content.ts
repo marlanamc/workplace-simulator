@@ -38,8 +38,6 @@ export const TOUR_COPY: Record<Lang, {
   helpOpened: string;
   helpReady: string;
   sentKicker: string;
-  doneTitle: string;
-  doneBody: string;
   badgeName: string;
   badgeWhere: string;
   tryAgain: string;
@@ -58,8 +56,6 @@ export const TOUR_COPY: Record<Lang, {
     helpOpened: "Good. Come back any time you get lost.",
     helpReady: "I'm ready for the task",
     sentKicker: "You're set",
-    doneTitle: "You found the lights.",
-    doneBody: "Head back to the desktop and we will finish the tour there.",
     badgeName: "Find your way around",
     badgeWhere: "Counts toward: getting started",
     tryAgain: "Do it again",
@@ -78,8 +74,6 @@ export const TOUR_COPY: Record<Lang, {
     helpOpened: "Bien. Vuelve aquí cada vez que te pierdas.",
     helpReady: "Estoy listo para la tarea",
     sentKicker: "Listo",
-    doneTitle: "Encontraste las luces.",
-    doneBody: "Vuelve al escritorio y terminaremos el recorrido allí.",
     badgeName: "Orientarte",
     badgeWhere: "Cuenta para: empezar",
     tryAgain: "Hacerlo otra vez",

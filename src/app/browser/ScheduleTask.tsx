@@ -47,7 +47,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
       say((wrongDays >= 1 ? STUCK_SWAP_HINT : WRONG_SWAP_HINT)[lang]);
       return;
     }
-    onRequestSwap(d.day);
+    onRequestSwap(d.key);
   };
 
   const restart = () => {
@@ -82,12 +82,12 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
           <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-white">
             {SCHEDULE.map((d, i) => (
               <div
-                key={d.day}
+                key={d.key}
                 className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-border" : ""}`}
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <span className="w-11 shrink-0 text-[14px] font-semibold text-text-primary">{d.day}</span>
-                  <span className="shrink-0 text-[13px] text-text-tertiary">{d.date}</span>
+                  <span className="w-11 shrink-0 text-[14px] font-semibold text-text-primary">{d.day[lang]}</span>
+                  <span className="shrink-0 text-[13px] text-text-tertiary">{d.date[lang]}</span>
                   <div
                     className={
                       d.shift
@@ -95,7 +95,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
                         : "text-[14px] text-text-tertiary"
                     }
                   >
-                    {d.shift ?? "Off"}
+                    {d.shift ?? c.off}
                   </div>
                 </div>
                 {d.shift && (

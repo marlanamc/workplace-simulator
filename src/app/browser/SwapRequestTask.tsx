@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { SCHEDULE, SCHEDULE_COPY, SWAP_OPTIONS } from "@/lib/tasks/schedule/content";
+import { SCHEDULE, SCHEDULE_COPY, SWAP_OPTIONS, shiftDayLabel } from "@/lib/tasks/schedule/content";
 import { SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -33,6 +33,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
   const showMeId = "submit-button";
 
   const c = SWAP_COPY[lang];
+  const sc = SCHEDULE_COPY[lang];
 
   const submit = () => {
     if (!shift) {
@@ -45,7 +46,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
     // The swap is only real if it is the shift that actually clashes. Asking
     // to move a shift that was never a problem leaves Thursday untouched.
     const clashing = SCHEDULE.find((d) => d.conflict);
-    if (shift !== clashing?.day) {
+    if (shift !== clashing?.key) {
       recordWrong({
         title: lang === "en" ? "That shift is fine." : "Ese turno está bien.",
         body:
@@ -119,13 +120,13 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
           <div className="mb-4 overflow-hidden rounded-lg border border-border">
             {SCHEDULE.map((d, i) => (
               <div
-                key={d.day}
+                key={d.key}
                 className={`flex items-center justify-between px-3 py-2 text-[13px] ${i !== 0 ? "border-t border-border" : ""} ${
                   d.conflict ? "bg-warning-tint" : ""
                 }`}
               >
-                <span className="font-medium">{d.day} {d.date}</span>
-                <span className={d.shift ? "text-text-primary" : "text-text-tertiary"}>{d.shift ?? "Off"}</span>
+                <span className="font-medium">{shiftDayLabel(d, lang)}</span>
+                <span className={d.shift ? "text-text-primary" : "text-text-tertiary"}>{d.shift ?? sc.off}</span>
               </div>
             ))}
           </div>
@@ -140,8 +141,8 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             >
               <option value="">{c.shiftPlaceholder}</option>
               {SHIFTS.map((d) => (
-                <option key={d.day} value={d.day}>
-                  {d.day} {d.date} · {d.shift}
+                <option key={d.key} value={d.key}>
+                  {shiftDayLabel(d, lang)} · {d.shift}
                 </option>
               ))}
             </select>
@@ -186,7 +187,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             </button>
           </div>
           <aside className="w-full shrink-0 lg:w-[260px]">
-            <PhoneCalendar label={SCHEDULE_COPY[lang].phoneLabel} heading={SCHEDULE_COPY[lang].phoneHeading} lang={lang} />
+            <PhoneCalendar label={sc.phoneLabel} heading={sc.phoneHeading} lang={lang} />
           </aside>
         </div>
       )}
