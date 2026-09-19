@@ -1,9 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 import { continuePastStudioArrivalIfPresent } from './studio-arrival';
 import { MEETING_COPY, MEETING_SCRIPT } from '../src/lib/tasks/meeting-minutes/content';
+import { clickIntoPage, waitForInteractive } from './interactive';
 
 async function signup(page: Page, lang: 'en'|'es') {
  await page.goto('/login');
+ await waitForInteractive(page);
  if(lang==='es') await page.getByRole('button',{name:'Español'}).click();
  await page.getByRole('button',{name:/Add user|Agregar usuario/}).click();
  await page.getByPlaceholder('Jordan').fill(`Decisions ${lang} ${Date.now()}`);
@@ -15,8 +17,8 @@ async function signup(page: Page, lang: 'en'|'es') {
 }
 async function preset(page:Page, name:RegExp, tab:string) {
  await page.goto('/studio');
- await page.getByRole('button',{name}).click();
- await page.waitForURL(/from=studio/);
+ await waitForInteractive(page);
+ await clickIntoPage(page, () => page.getByRole('button',{name}).click());
  const intro=page.getByTestId('act-intro');
  if(await intro.isVisible()) await page.getByTestId('act-intro-continue').click();
  await continuePastStudioArrivalIfPresent(page);

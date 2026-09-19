@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrival } from "./studio-arrival";
+import { clickIntoPage, waitForInteractive } from "./interactive";
 
 /**
  * The golden path a brand-new learner walks in their first minutes:
@@ -56,6 +57,7 @@ async function clearIntroBeats(page: Page, firstName: string) {
 
 async function signUp(page: Page, name: string, enterDesktop = true) {
   await page.goto("/login");
+  await waitForInteractive(page);
   // The lock screen shows a user picker first; new learners go through Add user.
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder("Jordan").fill(name);
@@ -160,7 +162,8 @@ test("the job card follows the learner into the app and drives the job", async (
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 3: Clock-In Fix" }).click();
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: "Start of Day 3: Clock-In Fix" }).click());
   await continuePastStudioArrival(page, /^Clock in$|^Marcar entrada$/);
 
   // The card is still there once an app window is open - that is the whole
@@ -176,7 +179,8 @@ test("studio time machine teleports one account to a later level", async ({ page
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 5: The Sick Call" }).click();
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: "Start of Day 5: The Sick Call" }).click());
   await continuePastStudioArrival(page, /Write to Maria|Escribirle a Maria/);
 
   // Celebration opens Mail into compose; Job Card is already on the write step.
@@ -189,6 +193,7 @@ test("studio time machine teleports one account to a later level", async ({ page
 test("language choice on the login page sticks after signing in and reloading", async ({ page }) => {
   const name = `E2e Es ${Date.now()}`;
   await page.goto("/login");
+  await waitForInteractive(page);
   await page.getByRole("button", { name: "Español" }).click();
   await expect(page.getByText("Chromebook de práctica. Nada aquí es real.")).toBeVisible();
 
@@ -200,6 +205,7 @@ test("language choice on the login page sticks after signing in and reloading", 
   await page.getByRole("button", { name: "Agregar", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Te damos la bienvenida al Simulador de Trabajo" })).toBeVisible();
   await page.reload();
+  await waitForInteractive(page);
   await expect(page.getByTestId("simulator-welcome")).toBeVisible();
   await page.getByTestId("welcome-continue").click();
 
@@ -210,6 +216,7 @@ test("language choice on the login page sticks after signing in and reloading", 
 
   // ...and a reload does NOT silently reset them to English.
   await page.reload();
+  await waitForInteractive(page);
   await expect(spanishIntro).toBeVisible({ timeout: 20_000 });
 
   // Exercise the full translated tour and manual card recovery at Chromebook size.
@@ -249,7 +256,8 @@ test("schedule: repeated wrong days get specific help and the correct day still 
   await signUp(page, `E2e Schedule ${Date.now()}`);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 2: The First Week", exact: true }).click();
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: "Start of Day 2: The First Week", exact: true }).click());
   await continuePastStudioArrival(page, /See my schedule|Ver mi horario/);
   // Arrival CTA already opens Portal — the Job Card is on the schedule step.
   await expect(jobCard(page).getByText("something on your phone", { exact: false })).toBeVisible();
@@ -282,7 +290,8 @@ test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) 
   await signUp(page, `E2e Timeclock ${Date.now()}`);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
   await page.goto("/studio");
-  await page.getByRole("button", { name: "Start of Day 3: Clock-In Fix", exact: true }).click();
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: "Start of Day 3: Clock-In Fix", exact: true }).click());
   await continuePastStudioArrival(page, /^Clock in$|^Marcar entrada$/);
   // Arrival CTA already opens the Time Clock — no separate "Next: Clock in" handoff.
   await expect(jobCard(page).getByText("You got here at 7.", { exact: false })).toBeVisible();
@@ -319,6 +328,7 @@ test("welcome explains the purpose, supports language choice, and stays dismisse
   await page.getByTestId("welcome-continue").click();
   await expect(jobCard(page)).toBeVisible();
   await page.reload();
+  await waitForInteractive(page);
   await expect(page.getByTestId("simulator-welcome")).toHaveCount(0);
   await expect(jobCard(page)).toBeVisible();
 });

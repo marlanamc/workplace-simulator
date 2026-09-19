@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { clickIntoPage, waitForInteractive } from "./interactive";
 
 const CLASS_CODE = "TEST-E2E";
 
@@ -8,6 +9,7 @@ function jobCard(page: Page) {
 
 async function signUp(page: Page, name: string) {
   await page.goto("/login");
+  await waitForInteractive(page);
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder("Jordan").fill(name);
   await page.getByPlaceholder("HARBOR-24").fill(CLASS_CODE);
@@ -22,7 +24,10 @@ async function signUp(page: Page, name: string) {
 test("after Act II the learner chooses a route and can change it without losing progress", async ({ page }) => {
   await signUp(page, `E2e Door ${Date.now()}`);
   await page.goto("/studio");
-  await page.getByRole("button", { name: /After Act II \(pick a direction\)/ }).click();
+  await waitForInteractive(page);
+  // The Studio jump is a full page load, so the route buttons are painted
+  // before React can hear them.
+  await clickIntoPage(page, () => page.getByRole("button", { name: /After Act II \(pick a direction\)/ }).click());
   const card = jobCard(page);
   for (const route of ['lead', 'healthcare', 'office', 'college', 'pause']) {
     await expect(card.getByTestId(`course-route-${route}`)).toBeVisible({timeout:20000});
@@ -32,6 +37,7 @@ test("after Act II the learner chooses a route and can change it without losing 
   await page.getByTestId('act-intro-continue').click();
   await expect(card.getByText('Read the posting. Do you fit?')).toBeVisible();
   await page.reload();
+  await waitForInteractive(page);
   await expect(card.getByText('Read the posting. Do you fit?')).toBeVisible({timeout:20000});
   await card.getByRole('button',{name:'Change direction'}).click();
   await card.getByTestId('course-route-healthcare').click();
@@ -41,5 +47,6 @@ test("after Act II the learner chooses a route and can change it without losing 
   await card.getByTestId('course-route-pause').click();
   await expect(card.getByText('Core course complete')).toBeVisible({timeout:20000});
   await page.reload();
+  await waitForInteractive(page);
   await expect(card.getByText('Core course complete')).toBeVisible({timeout:20000});
 });

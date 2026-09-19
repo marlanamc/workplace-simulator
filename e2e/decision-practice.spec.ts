@@ -1,9 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 import { continuePastStudioArrivalIfPresent } from './studio-arrival';
+import { clickIntoPage, waitForInteractive } from './interactive';
 
 async function signup(page: Page, lang: 'en'|'es') {
  await page.goto('/login');
+ await waitForInteractive(page);
  if(lang==='es') await page.getByRole('button',{name:'Español'}).click();
  await page.getByRole('button',{name:/Add user|Agregar usuario/}).click();
  await page.getByPlaceholder('Jordan').fill(`Decisions ${lang} ${Date.now()}`);
@@ -15,8 +17,8 @@ async function signup(page: Page, lang: 'en'|'es') {
 }
 async function preset(page:Page, name:RegExp, tab:string) {
  await page.goto('/studio');
- await page.getByRole('button',{name}).click();
- await page.waitForURL(/from=studio/);
+ await waitForInteractive(page);
+ await clickIntoPage(page, () => page.getByRole('button',{name}).click());
  const intro=page.getByTestId('act-intro');
  if(await intro.isVisible()) await page.getByTestId('act-intro-continue').click();
  await continuePastStudioArrivalIfPresent(page);
@@ -68,6 +70,7 @@ for(const lang of ['en','es'] as const) {
   await page.getByRole('button',{name:/^Submit the review$|^Enviar la evaluación$/}).click();
   await expect(page.getByText(/Review submitted|Evaluación enviada/).first()).toBeVisible({timeout:20000});
   await page.goto('/?task=performance-review');
+  await waitForInteractive(page);
   await page.locator('[data-job-card]').getByRole('button',{name:/Do it again|Hazlo otra vez/}).click();
   await expect(page.getByTestId('review-evidence')).toHaveValue('training');
   await expect(page.getByPlaceholder(/Something specific they actually did|Algo concreto que de verdad hizo/)).toHaveValue(strength);
@@ -85,6 +88,7 @@ for(const lang of ['en','es'] as const) {
   await page.getByRole('button',{name:/See my summary|Ver mi resumen/}).click();
   await expect(page.getByRole('button',{name:/Download summary|Descargar resumen/})).toBeEnabled({timeout:20000});
   await page.goto('/?task=portfolio-reflection');
+  await waitForInteractive(page);
   await context.grantPermissions(['clipboard-read','clipboard-write']);
   await page.getByRole('button',{name:/Copy summary to share|Copiar resumen para compartir/}).click();
   const copied=await page.evaluate(()=>navigator.clipboard.readText());
@@ -105,9 +109,10 @@ for(const lang of ['en','es'] as const) {
 test('older earned review completion does not require newly introduced evidence',async({page})=>{
  await signup(page,'en');
  await page.goto('/studio');
- await page.getByRole('button',{name:'Everything done',exact:true}).click();
- await page.waitForURL(/from=studio/);
+ await waitForInteractive(page);
+ await clickIntoPage(page, () => page.getByRole('button',{name:'Everything done',exact:true}).click());
  await page.goto('/?task=performance-review');
+ await waitForInteractive(page);
  await expect(page.getByText('Review submitted',{exact:true}).first()).toBeVisible({timeout:20000});
  await expect(page.getByTestId('review-evidence')).toHaveCount(0);
 });

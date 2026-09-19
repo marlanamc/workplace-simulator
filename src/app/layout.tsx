@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
+import { MarkHydrated } from "./MarkHydrated";
 import { RegisterServiceWorker } from "./RegisterServiceWorker";
 
 const roboto = Roboto({
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${roboto.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         {children}
+        <MarkHydrated />
         <RegisterServiceWorker />
       </body>
     </html>

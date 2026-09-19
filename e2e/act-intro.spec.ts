@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { clickIntoPage, waitForInteractive } from "./interactive";
 
 /**
  * The orientation screen before each later act (II–VII): a Studio jump into an
@@ -14,6 +15,7 @@ function jobCard(page: Page) {
 
 async function signUp(page: Page, name: string) {
   await page.goto("/login");
+  await waitForInteractive(page);
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder("Jordan").fill(name);
   await page.getByPlaceholder("HARBOR-24").fill(CLASS_CODE);
@@ -26,8 +28,8 @@ async function signUp(page: Page, name: string) {
 
 async function jumpTo(page: Page, presetName: RegExp) {
   await page.goto("/studio");
-  await page.getByRole("button", { name: presetName }).click();
-  await page.waitForURL(/from=studio/, { timeout: 20_000 });
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: presetName }).click());
 }
 
 test("Act II intro: Shift Lead role, Renata as manager, new skills, stays dismissed", async ({ page }) => {
@@ -68,6 +70,7 @@ test("Act II intro: Shift Lead role, Renata as manager, new skills, stays dismis
   await expect(home.getByRole("button", { name: /Start Act/ })).toHaveCount(0);
 
   await page.reload();
+  await waitForInteractive(page);
   await expect(page.getByTestId("act-intro")).toHaveCount(0);
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 });

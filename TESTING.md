@@ -74,7 +74,32 @@ Mail. Plus: choosing Español on the login page survives sign-in AND reload.
   never touches real progress. Occasionally clear that class code's rows
   from the DB if you care about tidiness.
 - On failure it saves a trace: `npx playwright show-trace <path>` replays
-  the whole session frame by frame.
+  the whole session frame by frame. CI uploads the report *and* the traces
+  as the `playwright-report` artifact.
+
+### Wait for the page to be alive before clicking it (`e2e/interactive.ts`)
+
+Every page here is server-rendered, so its buttons are painted — and, to
+Playwright's actionability checks, perfectly clickable — a beat before React
+attaches their handlers. A click in that window is dropped in silence: the
+click "succeeds", nothing happens, and the test fails much later on a screen
+that was never coming. That is exactly how `route-resume` and `act-v-picker`
+went red on CI while passing on a fast laptop; the trace showed no server
+action at all after the click.
+
+So `MarkHydrated` (root layout) sets `data-hydrated` on `<html>` from an
+effect — which runs on the commit that attaches the handlers — and tests wait
+for it:
+
+- `await waitForInteractive(page)` after every `page.goto` / `page.reload`
+  that a click follows. It is instant once the page is live, so use it freely.
+- `await clickIntoPage(page, () => button.click())` for a click that loads a
+  whole new document — a **Studio jump**, which navigates with
+  `window.location.assign` on purpose (see `jump-to-preset.ts`). A plain wait
+  would be answered by the page being left behind; this one drops the flag
+  first, so only the new page's own hydration can satisfy it.
+- Not for clicks that stay in the app (signing in, opening a task): those
+  re-render client-side and are interactive as soon as they paint.
 
 ### The e2e database (set up once)
 

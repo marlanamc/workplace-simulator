@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
+import { clickIntoPage, waitForInteractive } from "./interactive";
 
 const CLASS_CODE = "TEST-E2E";
 
@@ -9,6 +10,7 @@ function jobCard(page: Page) {
 
 async function signUp(page: Page, name: string) {
   await page.goto("/login");
+  await waitForInteractive(page);
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder("Jordan").fill(name);
   await page.getByPlaceholder("HARBOR-24").fill(CLASS_CODE);
@@ -25,8 +27,8 @@ test("the office preset starts HQ without an elective prerequisite", async ({ pa
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Welcome to HQ/ }).click();
-  await page.waitForURL(/from=studio/, { timeout: 20_000 });
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: /Welcome to HQ/ }).click());
   await continuePastStudioArrivalIfPresent(page);
 
   const card = jobCard(page);

@@ -15,6 +15,10 @@ export default defineConfig({
   testDir: "./e2e",
   timeout: 60_000,
   retries: 0,
+  // A CI failure is only as useful as what the job can upload afterwards. The
+  // HTML report plus the traces under `test-results/` are the whole record —
+  // without a reporter that writes one, the upload step found nothing.
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL: "http://localhost:3000",
     trace: "retain-on-failure",
