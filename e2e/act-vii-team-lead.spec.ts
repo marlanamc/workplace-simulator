@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { clickIntoPage, waitForInteractive } from "./interactive";
 
 /**
  * Act VII — Team Lead. The office-path capstone: run a meeting, write a
@@ -15,6 +16,7 @@ function jobCard(page: Page) {
 
 async function signUp(page: Page, name: string) {
   await page.goto("/login");
+  await waitForInteractive(page);
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder("Jordan").fill(name);
   await page.getByPlaceholder("HARBOR-24").fill(CLASS_CODE);
@@ -86,8 +88,8 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await expect(jobCard(page)).toBeVisible({ timeout: 20_000 });
 
   await page.goto("/studio");
-  await page.getByRole("button", { name: /Run the Meeting/ }).click();
-  await page.waitForURL(/from=studio/, { timeout: 20_000 });
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: /Run the Meeting/ }).click());
 
   // A Studio jump into an act's first level lands on the full-page act intro.
   const actIntro = page.getByTestId("act-intro");
@@ -188,6 +190,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await expect(page.getByText("Summary ready", { exact: false }).first()).toBeVisible({ timeout: 20_000 });
   await expect(page.getByText("What I can do now")).toBeVisible();
   await page.goto('/?task=portfolio-reflection');
+  await waitForInteractive(page);
   await expect(page.getByText('What I can do now')).toBeVisible({timeout:20000});
   await expect(page.getByText('This is a real answer with enough words to count.',{exact:true})).toHaveCount(4);
   await page.context().grantPermissions(['clipboard-read','clipboard-write']);

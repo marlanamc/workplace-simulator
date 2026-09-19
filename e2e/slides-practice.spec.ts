@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { continuePastStudioArrivalIfPresent } from './studio-arrival';
+import { clickIntoPage, waitForInteractive } from './interactive';
 
 for (const lang of ['en', 'es'] as const) {
  test(`slides require source data and a coworker answer (${lang})`, async ({page}) => {
   await page.goto('/login');
+  await waitForInteractive(page);
   if (lang === 'es') await page.getByRole('button', {name:'Español'}).click();
   await page.getByRole('button', {name:/Add user|Agregar usuario/}).click();
   await page.getByPlaceholder('Jordan').fill(`Slides ${lang} ${Date.now()}`);
@@ -13,8 +15,8 @@ for (const lang of ['en', 'es'] as const) {
   await page.getByRole('button',{name:/^(Add|Agregar)$/}).click();
   await page.getByTestId('welcome-continue').click();
   await page.goto('/studio');
-  await page.getByRole('button',{name:/Presenting to the Team/}).click();
-  await page.waitForURL(/from=studio/);
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole('button',{name:/Presenting to the Team/}).click());
   await continuePastStudioArrivalIfPresent(page);
   const card=page.locator('[data-job-card]');
   await card.getByRole('button',{name:/^Open |^Abrir |^Abre /}).click();

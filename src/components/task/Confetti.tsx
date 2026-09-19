@@ -6,18 +6,28 @@ function pseudoRandom(seed: number): number {
   return x - Math.floor(x);
 }
 
+/**
+ * Two decimals, because the browser rounds what it parses out of a style
+ * attribute: React writes `26.169890576420585%`, the DOM reads back `26.1699%`,
+ * and hydration reports a mismatch on every piece even though both sides
+ * computed the same number. Rounding first makes the value round-trip.
+ */
+function round(value: number): number {
+  return Math.round(value * 100) / 100;
+}
+
 /** A short confetti burst. Pieces use deterministic "randomness" (seeded by index) instead of Math.random(), so server-rendered and client-hydrated markup always match. */
 export default function Confetti({ count = 32 }: { count?: number }) {
   const pieces = Array.from({ length: count }, (_, i) => {
     const r = (n: number) => pseudoRandom(i * 7.13 + n);
     return {
-      left: r(1) * 100,
-      delay: r(2) * 0.3,
-      duration: 1.4 + r(3) * 1.1,
+      left: round(r(1) * 100),
+      delay: round(r(2) * 0.3),
+      duration: round(1.4 + r(3) * 1.1),
       color: COLORS[Math.floor(r(4) * COLORS.length)],
-      width: 6 + r(5) * 5,
-      height: 10 + r(6) * 6,
-      rotate: r(7) * 360,
+      width: round(6 + r(5) * 5),
+      height: round(10 + r(6) * 6),
+      rotate: round(r(7) * 360),
     };
   });
 
