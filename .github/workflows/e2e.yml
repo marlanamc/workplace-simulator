@@ -6,6 +6,16 @@ on:
 jobs:
   playwright:
     runs-on: ubuntu-latest
+
+    # Deliberately NOT secrets.DATABASE_URL. This job applies the schema before
+    # it runs tests, and `drizzle-kit push` will drop columns the schema no
+    # longer declares — so it must never be able to reach the live database.
+    # A separate secret makes pointing it at production a deliberate act rather
+    # than an accident.
+    env:
+      DATABASE_URL: ${{ secrets.E2E_DATABASE_URL }}
+      SESSION_SECRET: ${{ secrets.E2E_SESSION_SECRET }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -16,13 +26,46 @@ jobs:
 
       - run: npm ci
 
+      # Two guards, because the next step mutates whatever it is pointed at.
+      - name: Check this points at a throwaway database
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::E2E_DATABASE_URL is not set. Create a throwaway Neon branch"
+            echo "::error::with a database named so the URL ends in e2e or test, then add"
+            echo "::error::it as the E2E_DATABASE_URL repository secret. See TESTING.md."
+            exit 1
+          fi
+          # Strip any ?params, then read the database name after the last "/".
+          db_name="${DATABASE_URL%%\?*}"
+          db_name="${db_name##*/}"
+          case "$db_name" in
+            *e2e*|*E2E*|*test*|*TEST*)
+              echo "Target database: $db_name" ;;
+            *)
+              echo "::error::Refusing to run: the database is named '$db_name', which does"
+              echo "::error::not look like a test database. This step applies schema changes"
+              echo "::error::and can drop columns. Name the e2e database so it contains 'e2e'"
+              echo "::error::or 'test' (see TESTING.md), or fix E2E_DATABASE_URL."
+              exit 1 ;;
+          esac
+          if [ -z "$SESSION_SECRET" ]; then
+            echo "::error::E2E_SESSION_SECRET is not set. Sign-in throws without it and"
+            echo "::error::every test fails at the login screen. See TESTING.md."
+            exit 1
+          fi
+
+      # The suite has to own its schema. The `role` column was added to
+      # schema.ts on 2026-09-05 and never pushed to the e2e database; the first
+      # full CI run of this suite failed all 30 tests on
+      # `column "role" does not exist`, months later. Pushing here means the
+      # database can never drift behind the branch under test again.
+      - name: Apply the schema to the test database
+        run: npx drizzle-kit push --force
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run e2e tests
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
         run: npm run test:e2e
 
       - name: Upload Playwright report

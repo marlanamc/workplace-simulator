@@ -115,7 +115,11 @@ function JobCardHost({ children }: { children: ReactNode }) {
   // Studio time-machine jump wipes story flags, so this also (correctly)
   // re-shows the intro for the act you land in.
   // Wait out any clock-out celebration first (e.g. end of Act I) so the day
-  // can end before the next act's full-page intro.
+  // can end before the next act's full-page intro. Only a `stoppingPoint` card
+  // actually renders at an act boundary: `LevelUpCelebration` returns null for
+  // an act-opening level precisely so it can defer to this screen. Waiting on a
+  // card that renders nothing would strand the learner on a finished desktop
+  // with neither the celebration nor the intro.
   const currentLevel = levelForTrack(currentTrack.key);
   const act = actForLevel(currentLevel);
   if (
@@ -124,7 +128,7 @@ function JobCardHost({ children }: { children: ReactNode }) {
     act.levelKeys[0] === currentLevel.key &&
     !isLevelComplete(currentLevel, completedTaskKeys, bridgePath) &&
     storyFlags[actIntroFlag(act.key)] !== "true" &&
-    !celebrateLevel?.levelUp
+    !celebrateLevel?.levelUp?.stoppingPoint
   ) {
     return <ActIntro act={act} onContinue={() => setStoryFlag(actIntroFlag(act.key), "true")} />;
   }
