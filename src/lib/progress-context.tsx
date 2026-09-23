@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import type { OpeningReply } from "@/lib/tasks/mail/opening";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import {
@@ -64,6 +65,8 @@ interface ProgressValue {
   saving: boolean;
   retrySave: () => void;
   writing: Record<string, SubmissionContent>;
+  openingReplies: OpeningReply[];
+  setOpeningReplies: (replies: OpeningReply[]) => void;
 
   learnerId: string;
   displayName: string;
@@ -83,7 +86,7 @@ interface ProgressValue {
     badgeKey?: string,
     submission?: SubmissionContent,
     confidence?: Confidence,
-  ) => void;
+  ) => Promise<boolean>;
   restartLevel: (level: Level) => void;
   dismissCelebration: () => void;
   dismissLevelCelebration: () => void;
@@ -113,6 +116,7 @@ export function ProgressProvider({
   initialBridgePath,
   initialCourseRoute = null,
   initialWriting = {},
+  initialOpeningReplies = [],
   initialFeedback = [],
   initialRungs = {},
   initialArriveLevelKey = null,
@@ -124,6 +128,7 @@ export function ProgressProvider({
   initialCertificateTrackKeys: string[];
   initialBridgePath?: BridgePath | null;
   initialCourseRoute?: CourseRoute | null;
+  initialOpeningReplies?: OpeningReply[];
   initialWriting?: Record<string, SubmissionContent>;
   initialFeedback?: TeacherFeedback[];
   /** Server-persisted skill rungs. Authoritative over the localStorage cache on load. */
@@ -139,6 +144,7 @@ export function ProgressProvider({
   const [routeSaving, setRouteSaving] = useState(false);
   const [routeError, setRouteError] = useState(false);
   const routeAttempt = useRef<CourseRoute | null>(null);
+  const [openingReplies, setOpeningReplies] = useState(initialOpeningReplies);
   const [writing, setWriting] = useState(initialWriting);
   const queueKey = `workplace:pending-saves:${learnerId}`;
   const [pending, setPending] = useState<PendingSave[]>(() => storage.getJSON<PendingSave[]>(queueKey, []));
@@ -270,7 +276,7 @@ export function ProgressProvider({
     submission?: SubmissionContent,
     confidence?: Confidence,
   ) => {
-    if (inFlight.current.has(taskKey)) return;
+    if (inFlight.current.has(taskKey)) return false;
     const item = { taskKey, badgeKey, submission, confidence };
     pendingRef.current = [...pendingRef.current.filter((p) => p.taskKey !== taskKey), item];
     setPending(pendingRef.current);
@@ -294,13 +300,13 @@ export function ProgressProvider({
       setPending(pendingRef.current);
       storage.setJSON(queueKey, pendingRef.current);
     } catch {
-      return; // Retain the payload and expose Retry in the Job Card, including after reload.
+      return false; // Retain the payload and expose Retry in the Job Card, including after reload.
     } finally {
       inFlight.current.delete(taskKey);
       setSavingCount((n) => n - 1);
     }
 
-    if (completedRef.current.includes(taskKey)) return;
+    if (completedRef.current.includes(taskKey)) return true;
     const next = [...completedRef.current, taskKey];
     completedRef.current = next;
     setCompletedTaskKeys(next);
@@ -331,13 +337,24 @@ export function ProgressProvider({
     // Every task feeds the release ladder. Tasks that ran `useSkillGuidance`
     // already reported their own clean/missed run; the rest get an automatic
     // clean run here (the ladder "only loosens, never punishes").
-    if (!reportedSkillsRef.current.has(taskKey)) applySkillRun(taskKey, true);
+    // Adjacent opening practice is not evidence of independent mastery.
+    if (taskKey !== 'mail-reply' && !reportedSkillsRef.current.has(taskKey)) applySkillRun(taskKey, true);
+    return true;
   }, [courseRoute, applySkillRun, queueKey]);
 
-  const restartLevel = useCallback((level: Level) => {
+  const restartLevel = useCallback(async (level: Level) => {
+    const result = await restartLevelProgress(level.key);
+    if (!result.ok) return;
+    if (level.key === 'level1') {
+      setOpeningReplies([]);
+      storage.remove(`ws-opening-draft:${learnerId}`);
+    }
     const path = routeBridgePath(courseRoute);
     const taskKeys = new Set(taskKeysForLevel(level, path));
     const trackKeys = new Set(path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys);
+    pendingRef.current = pendingRef.current.filter(item => !taskKeys.has(item.taskKey));
+    setPending(pendingRef.current);
+    storage.setJSON(queueKey, pendingRef.current);
     completedRef.current = completedRef.current.filter((k) => !taskKeys.has(k));
     setCompletedTaskKeys(completedRef.current);
     setCertificateTrackKeys((prev) => prev.filter((k) => !trackKeys.has(k)));
@@ -351,8 +368,8 @@ export function ProgressProvider({
     setCelebrateLevel(null);
     setMariaNoteTaskKey(null);
     setProgressEpoch((n) => n + 1);
-    restartLevelProgress(level.key);
-  }, [learnerId, storyFlags, courseRoute]);
+
+  }, [learnerId, storyFlags, courseRoute, queueKey]);
 
   const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
 
@@ -372,7 +389,7 @@ export function ProgressProvider({
       courseRoute, chooseCourseRoute, routeSaving,
       saveError: isClient && (routeError || (pending.length > 0 && savingCount === 0)),
       saving: savingCount > 0,
-      writing,
+      writing, openingReplies, setOpeningReplies,
       retrySave: async () => {
         if (routeError && routeAttempt.current) void chooseCourseRoute(routeAttempt.current);
         for (const item of [...pendingRef.current]) await markComplete(item.taskKey, item.badgeKey, item.submission, item.confidence);
@@ -407,7 +424,7 @@ export function ProgressProvider({
       dismissFeedback,
     }),
     [
-      courseRoute, chooseCourseRoute, routeSaving, routeError, pending, savingCount, writing, isClient,
+      courseRoute, chooseCourseRoute, routeSaving, routeError, pending, savingCount, writing, openingReplies, isClient,
       learnerId,
       displayName,
       completedTaskKeys,

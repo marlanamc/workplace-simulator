@@ -6,7 +6,7 @@ import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/li
 /** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
 const GREETING = "__GREETING__";
 
-/** Day One is 2 jobs in the same inbox: welcome thank-you, then safety report with a file. */
+/** Day One practices three replies; the attachment task follows the schedule on Day Two. */
 export type PlayableMailTask =
   | "mail-reply"
   | "mail-attach"
@@ -163,14 +163,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
   "mail-attach": {
     en: {
       emoji: "📎",
-      kicker: "Tuesday, 8:20 AM",
+      kicker: "Wednesday, 10:10 AM",
       headline: "Maria needs a file.",
       body: "She asked for the July safety report today. First make sure you know what she needs. Then reply and attach the file.",
       cta: "Open my inbox",
     },
     es: {
       emoji: "📎",
-      kicker: "Martes, 8:20 AM",
+      kicker: "Miércoles, 10:10 AM",
       headline: "Maria necesita un archivo.",
       body: "Pidió el reporte de seguridad de julio para hoy. Primero confirma qué necesita. Luego responde y adjunta el archivo.",
       cta: "Abrir mi bandeja",
@@ -239,13 +239,13 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
   "mail-reply": {
     en: {
       kicker: "Message sent",
-      body: "You thanked Maria. Next she will ask for a file. Read what she needs, then send it attached.",
+      body: "You replied to Maria, confirmed your start time, and helped a coworker. Your three replies are saved.",
       badgeNumber: "01",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
     es: {
       kicker: "Mensaje enviado",
-      body: "Le agradeciste a Maria. Después te pedirá un archivo: lee qué necesita y envíalo adjunto.",
+      body: "Saludaste a Maria, confirmaste tu hora de entrada y ayudaste a un compañero. Tus tres respuestas están guardadas.",
       badgeNumber: "01",
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
@@ -1074,8 +1074,8 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   const safety: InboxEmail = {
     key: "maria-safety",
     ...inboxSender(CAST.maria),
-    time: "8:20 AM",
-    sentOn: 18,
+    time: "10:10 AM",
+    sentOn: 19,
     isTarget: true,
     unread: true,
     subject: { en: safetyMeta.en.subject, es: safetyMeta.es.subject },

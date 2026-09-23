@@ -43,7 +43,7 @@ describe("the cafe calendar follows the story", () => {
 });
 
 describe("inbox stamps follow the sitting", () => {
-  const day1 = { sentOn: sentOnForTask("mail-attach"), clock: "8:22 AM" };
+  const day1 = { sentOn: sentOnForTask("mail-reply"), clock: "8:22 AM" };
   const day2 = { sentOn: sentOnForTask("schedule"), clock: "10:04 AM" };
   const day3 = { sentOn: sentOnForTask("timeclock"), clock: "8:22 AM" };
 

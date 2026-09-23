@@ -40,14 +40,14 @@ export const TRACKS: Track[] = [
     key: "starter",
     title: { en: "Getting Started", es: "Para empezar" },
     subtitle: { en: "Your first jobs on shift", es: "Tus primeras tareas del turno" },
-    taskKeys: ["mail-reply", "mail-attach"],
+    taskKeys: ["mail-reply"],
     awardEmoji: "☕",
   },
   {
     key: "first-week",
     title: { en: "The First Week", es: "La primera semana" },
     subtitle: { en: "Life happens on a schedule too", es: "La vida también tiene horario" },
-    taskKeys: ["schedule"],
+    taskKeys: ["schedule", "mail-attach"],
     awardEmoji: "🗓️",
   },
   {
@@ -430,9 +430,7 @@ export const LEVELS: Level[] = [
     key: "level1",
     title: { en: "Day One", es: "Primer día" },
     trackKeys: ["starter"],
-    // Still the Mail app - Day One is 2 jobs in the same inbox (welcome
-    // thank-you, then safety report with attach). If a future build
-    // splits mail into separate simulated moments, revisit this.
+    // Three purposeful replies in one inbox, saved within mail-reply.
     firstTabKey: "mail",
     levelUp: {
       emoji: "👋",
@@ -455,8 +453,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Day one: complete", es: "Primer día: completo" },
       title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
       body: {
-        en: "You replied and sent the report. Clock out for today. Your progress is saved. Next time you sign in, your schedule will be waiting.",
-        es: "Respondiste y enviaste el reporte. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
+        en: "You sent three replies. Clock out for today. Your progress is saved. Next time you sign in, your schedule will be waiting.",
+        es: "Enviaste tres respuestas. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
       },
       cta: { en: "See my schedule", es: "Ver mi horario" },
       stoppingPoint: true,
@@ -470,7 +468,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "✅",
       kicker: { en: "Day 2: done", es: "Día 2: listo" },
-      title: { en: "You checked your schedule.", es: "Revisaste tu horario." },
+      title: { en: "You checked your schedule and sent the report.", es: "Revisaste tu horario y enviaste el reporte." },
       body: {
         en: "Today is payday for the crew. Clock in when you arrive, then check your hours.",
         es: "Hoy es día de pago del equipo. Marca entrada al llegar, luego revisa tus horas.",

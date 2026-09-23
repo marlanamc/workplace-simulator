@@ -138,12 +138,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   "mail-reply": {
     key: "mail-reply",
     built: true,
-    label: { en: "Thank your manager", es: "Agradece a tu gerente" },
+    label: { en: "Reply to three messages", es: "Responde a tres mensajes" },
     dispatch: {
       en: "Maria says welcome. Write her a short thank-you.",
       es: "Maria te da la bienvenida. Escríbele un agradecimiento corto.",
     },
-    skill: { en: "Write a short thank-you to my manager", es: "escribirle un agradecimiento corto a mi gerente" },
+    skill: { en: "Read and reply to short work emails", es: "leer y responder correos cortos de trabajo" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail", es: "Abrir correo" },
     shiftMoment: {
@@ -152,7 +152,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria said welcome. Write her back.", es: "Maria te dio la bienvenida. Contéstale." },
-    jobCardDoneLine: { en: "Message sent. One more task for today.", es: "Mensaje enviado. Queda una tarea más por hoy." },
+    jobCardDoneLine: { en: "Three replies sent. Day one is complete.", es: "Tres respuestas enviadas. Completaste el primer día." },
   },
 
   "mail-attach": {
@@ -166,7 +166,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     skill: { en: "Send a reply with a file attached", es: "responder con un archivo adjunto" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Next: Send the report", es: "Siguiente: Envía el reporte" },
-    shiftMoment: { en: "Tuesday, 8:20 AM. She needs a file.", es: "Martes, 8:20 AM. Necesita un archivo." },
+    shiftMoment: { en: "Wednesday, 10:10 AM. She needs a file.", es: "Miércoles, 10:10 AM. Necesita un archivo." },
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria needs the July safety report.", es: "Maria necesita el reporte de julio." },
     jobCardDoneLine: { en: "Sent, with the file.", es: "Enviado, con el archivo." },

@@ -41,17 +41,17 @@ describe("storyMailsUpTo", () => {
     }
   });
 
-  it("stamps Day 1 and Day 2 Maria mail on different August days", () => {
+  it("stamps schedule and attachment follow-ups on Day Two in chronological order", () => {
     const throughSchedule = LEVELS.flatMap((l) => taskKeysForLevel(l, null)).slice(
       0,
-      LEVELS.flatMap((l) => taskKeysForLevel(l, null)).indexOf("schedule") + 1,
+      LEVELS.flatMap((l) => taskKeysForLevel(l, null)).indexOf("mail-attach") + 1,
     );
     const mails = storyMailsFor(throughSchedule, {});
     const thankYou = mails.find((m) => m.key === "story-mail");
     const swap = mails.find((m) => m.key === "story-schedule");
-    expect(thankYou?.sentOn).toBe(18);
+    expect(thankYou?.sentOn).toBe(19);
     expect(swap?.sentOn).toBe(19);
     const sorted = sortInboxByTime([thankYou!, swap!], 21);
-    expect(sorted.map((m) => m.key)).toEqual(["story-schedule", "story-mail"]);
+    expect(sorted.map((m) => m.key)).toEqual(["story-mail", "story-schedule"]);
   });
 });

@@ -104,10 +104,10 @@ const STORY_MAILS: InboxRow[] = [
   {
     key: "story-mail",
     ...MARIA,
-    time: "8:22 AM",
+    time: "10:12 AM",
     unread: true,
     story: true,
-    // Fires after the last Day One mail job (welcome thank-you + safety attach).
+    // Follows the Day Two attachment, after the schedule task.
     unlockAfter: "mail-attach",
     subject: { en: "Got it. Thank you", es: "Lo tengo. Gracias" },
     preview: { en: "Thanks for sending this so fast.", es: "Gracias por enviarlo tan rápido." },
@@ -115,12 +115,12 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Got it. Thank you for sending the July report so fast.",
         "See you on the floor.",
-        "Next I need you to check your schedule.",
+        "Your schedule is settled and the report is here. Thank you.",
       ],
       es: [
         "Lo tengo. Gracias por enviar el reporte de julio tan rápido.",
         "Nos vemos en el piso.",
-        "Ahora necesito que revises tu horario. Dos turnos se cruzan.",
+        "Tu horario está resuelto y ya tengo el reporte. Gracias.",
       ],
     },
   },
@@ -137,12 +137,12 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Approved. You're on 2 to 10 Thursday, so go to your appointment.",
         "Thanks for catching it when the schedule went up instead of that morning.",
-        "In the morning, clock in when you arrive. Check the time.",
+        "I will send you a request for the July safety report next.",
       ],
       es: [
         "Aprobado. El jueves entras de 2 a 10, así que ve a tu cita.",
         "Gracias por verlo cuando salió el horario y no esa misma mañana.",
-        "Por la mañana, marca entrada cuando llegues. Revisa la hora.",
+        "Ahora te enviaré una solicitud del reporte de seguridad de julio.",
       ],
     },
   },

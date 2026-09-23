@@ -14,6 +14,12 @@ loadEnvConfig(process.cwd());
 export default defineConfig({
   testDir: "./e2e",
   timeout: 60_000,
+  // Playwright's 5s default assumes the assertion is about the page. Much of
+  // this suite waits on a server round-trip instead — a route saved before the
+  // next screen renders, or `expect.poll` reading the database back. Those are
+  // comfortably under a second locally and occasionally several times that on
+  // a loaded CI runner, which showed up as act-intro and course-route flakes.
+  expect: { timeout: 20_000 },
   retries: 0,
   use: {
     baseURL: "http://localhost:3000",

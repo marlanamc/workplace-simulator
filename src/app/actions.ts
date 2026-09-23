@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 import { clearSessionCookie, getSessionLearnerId } from "@/lib/auth";
 import {
+  getOpeningReplies,
+  saveOpeningReply,
+  getCompletions,
   awardBadge,
   recordCompletion,
   deleteCompletions,
@@ -28,6 +31,8 @@ import {
   type BridgePath,
 } from "@/lib/bridge-path";
 
+import { OPENING_IDS, nextOpeningIndex, openingReplyAccepted, type OpeningReply } from '@/lib/tasks/mail/opening';
+
 function parsePresetKey(presetKey: string): { levelKey: string; path?: BridgePath } {
   const colon = presetKey.indexOf(":");
   if (colon === -1) return { levelKey: presetKey };
@@ -49,6 +54,15 @@ export type Confidence = "low" | "mid" | "high";
 export async function completeTask(taskKey: string, badgeKey?: string, confidence?: Confidence) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) return { ok: false as const };
+  if (taskKey === 'mail-reply') {
+    const existing = await getCompletions(learnerId);
+    if (existing.some(row => row.taskKey === taskKey)) {
+      if (badgeKey) await awardBadge(learnerId, badgeKey);
+      return { ok: true as const };
+    }
+    const replies = await getOpeningReplies(learnerId);
+    if (nextOpeningIndex(replies as OpeningReply[]) !== OPENING_IDS.length) return { ok: false as const };
+  }
   await recordCompletion(learnerId, taskKey, confidence ?? null);
   if (badgeKey) await awardBadge(learnerId, badgeKey);
   return { ok: true as const };
@@ -186,4 +200,17 @@ export async function getMyWriting() {
   const latest: Record<string, SubmissionContent> = {};
   for (const row of rows) if (!latest[row.taskKey]) latest[row.taskKey] = row.content as SubmissionContent;
   return latest;
+}
+
+/** Identity comes exclusively from the session. Retries preserve the first saved response. */
+export async function recordOpeningReply(reply: OpeningReply) {
+  const learnerId = await getSessionLearnerId();
+  if (!learnerId || !reply || !OPENING_IDS.includes(reply.messageId)
+    || !['en', 'es'].includes(reply.lang) || typeof reply.response !== 'string'
+    || reply.response.length > 10000 || !openingReplyAccepted(reply.messageId, reply.response)) return { ok: false as const };
+  const saved = await getOpeningReplies(learnerId) as OpeningReply[];
+  if (!saved.some(row => row.messageId === reply.messageId)
+    && OPENING_IDS[nextOpeningIndex(saved)] !== reply.messageId) return { ok: false as const };
+  await saveOpeningReply(learnerId, { messageId: reply.messageId, response: reply.response.trim(), lang: reply.lang });
+  return { ok: true as const };
 }
