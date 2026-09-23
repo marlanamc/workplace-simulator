@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertCircle, Check, ChevronDown, ChevronUp, MapPin, Shrink, Volume2 } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
+import { AlertCircle, Check, ChevronDown, ChevronUp, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
 import {
   INTRO_BEATS,
+  CARD_PRACTICE,
   LIST_INTRO,
   LIST_INTRO_FLAG,
   JOB_CARD_COPY,
@@ -43,12 +44,10 @@ const CARD_W = 420;
 const TONE = { blue: "#0b57d0", green: "#1e8e3e" } as const;
 type Tone = keyof typeof TONE;
 
-/** How long to let a learner work at a practice beat before offering a way round it. */
-const STUCK_MS = 8000;
 
 interface Script {
   routeChoices?: boolean;
-  /** A quieter second line under `line` (see `IntroBeat.stuckHint`). */
+  /** A quieter second line under `line` (when needed). */
   hint?: string;
   badge: string;
   kicker: string;
@@ -95,9 +94,18 @@ export default function JobCard() {
     help,
     introBeat,
     advanceIntro,
+    practice,
+    setPractice,
   } = useJobCard();
 
   const c = JOB_CARD_COPY[lang];
+  const pc = CARD_PRACTICE;
+  const taskSave = active !== null && step?.priority === "save";
+  const busy = Boolean(saving || routeSaving || saveError || taskSave);
+  const practicing = practice.stage !== "inactive";
+  const showPractice = practicing && !busy;
+  const visibleHelp = !practicing && !busy ? help : null;
+  const visibleCorrection = practicing || busy ? "" : correction;
   const level = levelForTrack(currentTrack.key);
   const act = actForLevel(level)?.key ?? "act1";
 
@@ -106,10 +114,39 @@ export default function JobCard() {
   const [collapsed, setCollapsed] = useState(false);
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
-  /** Which beat the learner has been sitting on long enough to be offered a way round. */
-  const [stuckBeat, setStuckBeat] = useState<number | null>(null);
+  const [optionsOpen, setOptionsOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
+  const optionsRef = useRef<HTMLButtonElement>(null);
+  const practiceReturn = useRef<{ corner: Corner; focus: HTMLElement | null }>({ corner: HOME, focus: null });
+
+  function startOrientation() {
+    advanceIntro();
+    openApp("browser", { tab: "tour" });
+  }
+  function startPractice() {
+    if (practicing || busy) return;
+    practiceReturn.current = {
+      corner,
+      focus: document.activeElement instanceof HTMLElement ? document.activeElement : null,
+    };
+    setOptionsOpen(false);
+    setCollapsed(false);
+    setPractice({ stage: "click", origin: introBeat < INTRO_BEATS.length ? "onboarding" : "task" });
+    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>('[data-practice-focus]')?.focus());
+  }
+  function exitPractice() {
+    setOptionsOpen(false);
+    setPractice({ ...practice, stage: "inactive" });
+    setCorner(practiceReturn.current.corner);
+    setCollapsed(false);
+    if (practice.origin === "onboarding") startOrientation();
+    requestAnimationFrame(() => {
+      const previous = practiceReturn.current.focus;
+      if (practice.origin === "task" && previous?.isConnected) previous.focus();
+      else optionsRef.current?.focus();
+    });
+  }
 
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
   const levelTaskKeys = taskKeysForLevel(level, bridgePath);
@@ -147,47 +184,27 @@ export default function JobCard() {
       heldStep.stepIndex === liveStep.stepIndex &&
       heldStep.canShowMe === liveStep.canShowMe &&
       heldStep.canHelp === liveStep.canHelp &&
-      heldStep.primaryLabel === liveStep.primaryLabel;
+      heldStep.primaryLabel === liveStep.primaryLabel &&
+      heldStep.priority === liveStep.priority;
     if (!same) setHeldStep(liveStep);
   }
   const effectiveStep =
     liveStep ?? (active !== null && heldStep ? heldStep : null);
 
-  // Derived rather than reset in the effect, so nothing writes state from an
-  // effect body: a stale `stuckBeat` from an earlier beat simply stops matching.
-  const beatHint = INTRO_BEATS[introBeat]?.stuckHint;
-  const stuckOnBeat = stuckBeat === introBeat;
-  useEffect(() => {
-    if (!beatHint) return;
-    const t = window.setTimeout(() => {
-      setStuckBeat(introBeat);
-      handleRef.current?.focus();
-    }, STUCK_MS);
-    return () => window.clearTimeout(t);
-  }, [beatHint, introBeat]);
-
   const script = buildScript();
   // What the speaker button reads: the instruction, plus the hint and the
   // correction when they are up, because those are the words a learner who
   // needs the audio is most likely stuck on.
-  const spokenLine = [script.line, script.hint, correction].filter(Boolean).join(". ");
+  const spokenLine = [script.line, script.hint, visibleCorrection].filter(Boolean).join(". ");
   // A new sentence or a correction is the card talking again — open it so
   // the learner cannot miss the line they just hid.
-  const voice = `${script.line}\0${correction}\0${help?.lesson.t ?? ""}`;
+  const voice = `${script.line}\0${visibleCorrection}\0${visibleHelp?.lesson.t ?? ""}`;
   if (heardVoice !== voice) {
     setHeardVoice(voice);
     setCollapsed(false);
   }
 
-  // A practice beat the learner has not got past. After a while the card
-  // offers the keyboard route and focuses the handle, so "press the arrow
-  // keys" is true without them having to find and Tab to it first.
-  // A real move completes the practice; a tap or a drop in the same corner does not.
-  const moveToCorner = useCallback((next: Corner) => {
-    if (next === corner) return;
-    setCorner(next);
-    if (INTRO_BEATS[introBeat]?.tryDrag) advanceIntro();
-  }, [corner, introBeat, advanceIntro, setCorner]);
+  const moveToCorner = useCallback((next: Corner) => setCorner(next), [setCorner]);
 
   // ─── dragging ────────────────────────────────────────────────────────────
   const startDrag = useCallback((e: React.PointerEvent) => {
@@ -229,6 +246,7 @@ export default function JobCard() {
   }, [moveToCorner]);
 
   const nudgeCorner = (e: React.KeyboardEvent) => {
+    if (e.target !== e.currentTarget) return;
     const set = (next: Corner) => {
       e.preventDefault();
       moveToCorner(next);
@@ -241,20 +259,33 @@ export default function JobCard() {
 
   // ─── the one instruction, derived from state ─────────────────────────────
   function buildScript(): Script {
-    // First run: welcome, move, then shrink. The two practice beats
-    // advance on their real actions rather than an acknowledgment.
+    if (saving || routeSaving || saveError) return {
+      badge: saveError ? "!" : "…", kicker: lang === "en" ? "Your progress" : "Tu progreso",
+      line: saveError ? (lang === "en" ? "Your work has not finished saving. Keep this tab open and retry." : "Tu trabajo no terminó de guardarse. Mantén esta pestaña abierta y vuelve a intentar.")
+        : (lang === "en" ? "Saving your work…" : "Guardando tu trabajo…"),
+      tone: "blue", step: -1,
+      primaryLabel: saveError ? (lang === "en" ? "Retry save" : "Intentar guardar de nuevo") : undefined,
+      onPrimary: retrySave,
+    };
+    if (taskSave && step) return {
+      badge: "!", kicker: lang === "en" ? "Your progress" : "Tu progreso",
+      line: step.line[lang], tone: "blue", step: -1,
+      primaryLabel: step.primaryLabel, onPrimary: pressPrimary,
+    };
+    if (showPractice) return {
+      badge: "✉", kicker: pc.label[lang],
+      line: pc[practice.stage === "inactive" ? "click" : practice.stage][lang],
+      tone: "blue", step: -1,
+    };
     if (introBeat < INTRO_BEATS.length) {
       const beat = INTRO_BEATS[introBeat];
       const name = displayName.trim() || (lang === "en" ? "friend" : "amiga");
       return {
-        badge: String(introBeat + 1),
-        kicker: beat.kicker[lang],
+        badge: "1", kicker: beat.kicker[lang],
         line: beat.line[lang].replace("{name}", name),
-        hint: stuckOnBeat ? beat.stuckHint?.[lang] : undefined,
-        tone: "blue",
-        step: -1,
-        primaryLabel: beat.tryCollapse || beat.tryDrag ? undefined : beat.cta?.[lang],
-        onPrimary: beat.tryCollapse || beat.tryDrag ? undefined : advanceIntro,
+        tone: "blue", step: -1,
+        primaryLabel: beat.cta?.[lang], onPrimary: startOrientation,
+        secondaryLabel: pc.title[lang],
       };
     }
 
@@ -279,14 +310,6 @@ export default function JobCard() {
       };
     }
 
-    if (saving || routeSaving || saveError) return {
-      badge: saveError ? "!" : "…", kicker: lang === "en" ? "Your progress" : "Tu progreso",
-      line: saveError ? (lang === "en" ? "Your work has not finished saving. Keep this tab open and retry." : "Tu trabajo no terminó de guardarse. Mantén esta pestaña abierta y vuelve a intentar.")
-        : (lang === "en" ? "Saving your work…" : "Guardando tu trabajo…"),
-      tone: "blue", step: -1,
-      primaryLabel: saveError ? (lang === "en" ? "Retry save" : "Intentar guardar de nuevo") : undefined,
-      onPrimary: retrySave,
-    };
     if (active === null && courseRoute === 'pause' && !choosingRoute && coreComplete(completedTaskKeys)) return {
       badge: '✓', kicker: lang === 'en' ? 'Core course complete' : 'Curso básico terminado',
       line: lang === 'en' ? 'You can stop here. Your skills and progress are saved.' : 'Puedes terminar aquí. Tus habilidades y tu progreso están guardados.',
@@ -431,8 +454,16 @@ export default function JobCard() {
       ref={cardRef}
       data-job-card
       data-corner={corner}
-      className="animate-card-pop fixed z-[72] overflow-hidden rounded-[24px] bg-white"
-      style={{ width: CARD_W, maxWidth: "calc(100vw - 32px)", touchAction: "none", ...position }}
+      data-practice={practice.stage}
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && optionsOpen) {
+          e.stopPropagation();
+          setOptionsOpen(false);
+          optionsRef.current?.focus();
+        }
+      }}
+      className="animate-card-pop fixed z-[72] flex flex-col overflow-hidden rounded-[24px] bg-white"
+      style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div
         ref={handleRef}
@@ -443,10 +474,8 @@ export default function JobCard() {
         role="button"
         aria-label={c.dragHint}
         title={c.dragHint}
-        className={`flex items-center gap-2.5 px-5 py-3 text-white${
-          INTRO_BEATS[introBeat]?.tryDrag ? " animate-showme-pulse-compact" : ""
-        }`}
-        style={{ background: tone, cursor: drag ? "grabbing" : "grab" }}
+        className="flex shrink-0 items-center gap-2.5 px-5 py-2 text-white"
+        style={{ background: tone, cursor: drag ? "grabbing" : "grab", touchAction: "none" }}
       >
         <span
           className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[14px] font-bold"
@@ -456,9 +485,9 @@ export default function JobCard() {
           {script.badge === "✓" ? <Check size={15} strokeWidth={3} /> : script.badge}
         </span>
         <span className="min-w-0 flex-1 truncate text-[15px] font-medium">
-          {help && !finish ? help.kicker : script.kicker}
+          {visibleHelp && !finish ? visibleHelp.kicker : script.kicker}
         </span>
-        {liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
+        {!practicing && !busy && liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
           <button
             type="button"
             data-testid="job-card-help"
@@ -467,7 +496,7 @@ export default function JobCard() {
             title={help ? c.hideHelp : c.help}
             onPointerDown={(e) => e.stopPropagation()}
             onClick={pressHelp}
-            className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold${
+            className={`flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold${
               liveStep?.pulseHelp && !help ? " animate-showme-pulse-compact" : ""
             }`}
             style={{
@@ -481,10 +510,11 @@ export default function JobCard() {
         {corner !== HOME && (
           <button
             type="button"
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={() => setCorner(HOME)}
             aria-label={c.snapBack}
             title={c.snapBack}
-            className="flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-white"
+            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-white"
             style={{ background: "rgba(255,255,255,0.18)" }}
           >
             <Shrink size={15} strokeWidth={2.25} aria-hidden />
@@ -497,23 +527,8 @@ export default function JobCard() {
           aria-label={collapsed ? c.expand : c.collapse}
           title={collapsed ? c.expand : c.collapse}
           onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => {
-            const shrinking = !collapsed;
-            setCollapsed(shrinking);
-            // Let them see it shrink, then the next line opens it again —
-            // that is the whole lesson: hide it, and it comes back.
-            if (shrinking && INTRO_BEATS[introBeat]?.tryCollapse) {
-              window.setTimeout(() => {
-                // Start the first job at home, like every later job. A top
-                // corner used for drag practice would cover the bookmarks.
-                setCorner(HOME);
-                advanceIntro();
-              }, 550);
-            }
-          }}
-          className={`flex h-7 w-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-white${
-            INTRO_BEATS[introBeat]?.tryCollapse && !collapsed ? " animate-showme-pulse-compact" : ""
-          }`}
+          onClick={() => setCollapsed(!collapsed)}
+          className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-white"
           style={{ background: "rgba(255,255,255,0.18)" }}
         >
           {collapsed ? (
@@ -533,19 +548,72 @@ export default function JobCard() {
         </span>
       </div>
 
-      {!collapsed && (
-      <div className="p-5">
-        {help && !finish ? (
+      <button ref={optionsRef} type="button" aria-expanded={optionsOpen && !busy}
+        aria-controls="job-card-options" data-testid="job-card-options"
+        className="min-h-12 shrink-0 border-b border-[#dadce0] px-5 text-left font-medium text-[#0b57d0]"
+        onClick={() => setOptionsOpen(!optionsOpen)}>
+        {pc.options[lang]}
+      </button>
+      {optionsOpen && !busy && (
+        <div id="job-card-options" className="min-h-0 overflow-y-auto p-3" aria-label={pc.options[lang]}>
+          <div className="grid grid-cols-2 gap-2">
+            {(Object.keys(pc.corners) as Corner[]).map((spot) => (
+              <button key={spot} type="button" aria-pressed={corner === spot}
+                className="min-h-12 rounded-lg border border-[#dadce0] px-2 text-[#202124] aria-pressed:bg-[#e8f0fe]"
+                onClick={() => moveToCorner(spot)}>{pc.corners[spot][lang]}</button>
+            ))}
+          </div>
+          <button type="button" className="mt-2 min-h-12 w-full rounded-lg border px-2 text-[#202124]"
+            onClick={() => { setCollapsed(!collapsed); setOptionsOpen(false); optionsRef.current?.focus(); }}>
+            {collapsed ? pc.show[lang] : pc.hide[lang]}
+          </button>
+          <button type="button" disabled={practicing || busy} className="mt-2 min-h-12 w-full rounded-lg border px-2 text-[#202124] disabled:opacity-50"
+            onClick={startPractice}>{pc.title[lang]}</button>
+        </div>
+      )}
+      {!collapsed && (!optionsOpen || busy) && (
+      <div className="min-h-0 overflow-y-auto p-5">
+        {showPractice ? (
+          <>
+            <p role="status" className="m-0 text-[22px] font-medium leading-tight text-[#202124]">{script.line}</p>
+            {practice.stage === "click" && (
+              <div className="mt-3 rounded-xl bg-[#f1f3f4] p-3">
+                <button data-practice-focus type="button" className="flex min-h-16 w-full items-center justify-center gap-3 rounded-xl border-2 border-[#0b57d0] bg-white px-3 text-[#0b57d0]"
+                  onClick={() => {
+                    setPractice({ ...practice, stage: "scroll" });
+                    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>('[data-practice-notice]')?.focus());
+                  }}>
+                  <Mail aria-hidden size={28} />{pc.envelope[lang]}
+                </button>
+              </div>
+            )}
+            {practice.stage === "scroll" && (
+              <div data-practice-notice tabIndex={0} role="region" aria-label={pc.notice[lang]}
+                className="mt-3 h-36 overflow-y-auto overscroll-contain rounded-xl bg-[#f1f3f4] p-3 text-[#202124]" style={{ touchAction: "pan-y" }}>
+                <p className="font-semibold">{pc.notice[lang]}</p>
+                {pc.paragraphs.map((line, index) => <p key={index} className="my-6">{line[lang]}</p>)}
+                <button type="button" className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 text-white"
+                  onClick={() => {
+                    setPractice({ ...practice, stage: "complete" });
+                    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>('[data-practice-exit]')?.focus());
+                  }}>{pc.ready[lang]}</button>
+              </div>
+            )}
+            <button type="button" data-testid="job-card-read-aloud" className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border text-[#3c4043]"
+              onClick={() => speakText(script.line, lang)}><Volume2 aria-hidden size={22} />{c.readAloud}</button>
+          </>
+        ) : visibleHelp && !finish ? (
+
           <>
             <p
               role="status"
               aria-live="polite"
               className="m-0 text-[22px] font-medium leading-[1.2] tracking-[-0.01em] text-[#202124]"
             >
-              {help.lesson.t}
+              {visibleHelp.lesson.t}
             </p>
             <ol className="mt-3.5 m-0 flex list-none flex-col gap-2 p-0">
-              {help.lesson.s.map((text, i) => (
+              {visibleHelp.lesson.s.map((text, i) => (
                 <li key={i} className="flex items-start gap-2.5">
                   <span
                     className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[13px] font-semibold text-white"
@@ -559,16 +627,16 @@ export default function JobCard() {
               ))}
             </ol>
             <p className="mt-3.5 mb-0 rounded-[14px] bg-[#f1f3f4] px-3.5 py-3 text-[15px] leading-[1.35] text-[#3c4043]">
-              <span className="font-semibold text-[#202124]">{help.tipLabel}: </span>
-              {help.lesson.tip}
+              <span className="font-semibold text-[#202124]">{visibleHelp.tipLabel}: </span>
+              {visibleHelp.lesson.tip}
             </p>
             <button
               type="button"
-              onClick={help.onClose}
+              onClick={visibleHelp.onClose}
               className="job-card-primary mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
               style={{ background: tone }}
             >
-              {help.gotItLabel}
+              {visibleHelp.gotItLabel}
             </button>
           </>
         ) : (
@@ -587,7 +655,7 @@ export default function JobCard() {
           </p>
         )}
 
-        {correction && (
+        {visibleCorrection && (
           <div
             role="status"
             aria-live="polite"
@@ -596,7 +664,7 @@ export default function JobCard() {
           >
             <AlertCircle size={22} strokeWidth={2.25} className="shrink-0" style={{ color: "var(--warning)" }} aria-hidden />
             <p className="m-0 text-[17px] font-medium leading-[1.3]" style={{ color: "#8a5000" }}>
-              {correction}
+              {visibleCorrection}
             </p>
           </div>
         )}
@@ -673,12 +741,12 @@ export default function JobCard() {
         {script.secondaryLabel && (
           <button
             type="button"
-            onClick={script.onSecondary}
+            onClick={() => { if (introBeat < INTRO_BEATS.length) startPractice(); else script.onSecondary?.(); }}
             data-testid={script.equalPair ? "job-card-pick-b" : script.secondaryTestId}
             className={
               script.equalPair
                 ? "job-card-primary mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
-                : "mt-2.5 flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
+                : "mt-2.5 flex min-h-[48px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
             }
             style={script.equalPair ? { background: tone } : { color: "var(--text-secondary)" }}
           >
@@ -703,6 +771,13 @@ export default function JobCard() {
           </>
         )}
       </div>
+      )}
+      {showPractice && (
+        <div className="shrink-0 border-t border-[#dadce0] bg-white p-2">
+          <button type="button" data-practice-exit className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 font-medium text-white" onClick={exitPractice}>
+            {practice.stage === "complete" ? (practice.origin === "onboarding" ? INTRO_BEATS[0].cta?.[lang] : pc.back[lang]) : pc.skip[lang]}
+          </button>
+        </div>
       )}
     </div>
   );

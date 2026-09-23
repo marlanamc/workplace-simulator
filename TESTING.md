@@ -64,7 +64,7 @@ exactly which wiring is missing.
 ## 3. End-to-end (Playwright)
 
 `e2e/first-session.spec.ts` drives a real browser through the real app:
-sign-up → auto-opened tour → walkthrough clicks → level-up celebration →
+sign-up → welcome choice → walkthrough clicks → level-up celebration →
 Mail. Plus: choosing Español on the login page survives sign-in AND reload.
 
 - One-time setup: `npx playwright install chromium`
@@ -163,3 +163,19 @@ recovery, Help, one final completion, Studio reset, and legacy progress.
 Apply the additive opening-replies migration before using this app revision.
 Use a dedicated test database for the browser suite, including schema setup;
 a test learner alone does not isolate schema changes from classroom data.
+
+
+## Optional pointer practice
+
+`e2e/pointer-practice.spec.ts` covers the bilingual welcome choice, optional
+click/scroll practice, keyboard completion, corner controls, reload behavior,
+draft preservation, and a Chromebook viewport with the CSS space available at
+200% browser zoom. Practice is transient Job Card state; it earns no credit and
+uses the existing introduction flag. No database migration is needed.
+
+Before release, pilot with a small group of learners on actual Chromebooks:
+observe whether they begin without teacher intervention, discover practice,
+reach Ready using their preferred input, and recover from a misplaced click.
+Try the browser's real 200% zoom and Bigger text setting. Record assistance
+needed and any confusing language; do not score speed or infer mastery from
+practice completion. Automated viewport checks do not replace this pilot.

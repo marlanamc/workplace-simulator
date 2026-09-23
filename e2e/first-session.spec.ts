@@ -17,41 +17,11 @@ function jobCard(page: Page) {
   return page.locator("[data-job-card]");
 }
 
-/**
- * A brand-new learner lands on the desktop and meets the Job Card first.
- * Three beats: welcome, drag, then shrink. Moving to another corner and
- * clicking the collapse arrow advance the two practice beats.
- */
+/** A new learner can start orientation with a single click. */
 async function clearIntroBeats(page: Page, firstName: string) {
   const card = jobCard(page);
-  await expect(card.getByText(`Welcome, ${firstName}`, { exact: false })).toBeVisible({
-    timeout: 20_000,
-  });
-  await card.getByRole("button", { name: "OK", exact: true }).click();
-  await expect(card.getByText("Drag the blue top of this card to a corner.")).toBeVisible();
-  await expect(card.getByRole("button", { name: "I understand", exact: true })).toHaveCount(0);
-  const handle = card.getByTestId("job-card-drag-handle");
-  const box = await handle.boundingBox();
-  if (!box) throw new Error("Job Card drag handle is not visible");
-  // A click and a short drag within the same corner must not skip practice.
-  const x = box.x + 35;
-  const y = box.y + box.height / 2;
-  await page.mouse.click(x, y);
-  await page.mouse.move(x, y);
-  await page.mouse.down();
-  await page.mouse.move(x + 15, y - 15, { steps: 3 });
-  await page.mouse.up();
-  await expect(card.getByText("Drag the blue top of this card to a corner.")).toBeVisible();
-  await expect(card).toHaveAttribute("data-corner", "bl");
-  const current = await handle.boundingBox();
-  if (!current) throw new Error("Job Card drag handle is not visible");
-  await page.mouse.move(current.x + 35, current.y + current.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(current.x + 35, 50, { steps: 12 });
-  await page.mouse.up();
-  await expect(card).toHaveAttribute("data-corner", "tl");
-  await expect(card.getByText("Click the arrow to shrink it.")).toBeVisible();
-  await card.getByTestId("job-card-collapse").click();
+  await expect(card.getByText(`Welcome, ${firstName}`, { exact: false })).toBeVisible({ timeout: 20_000 });
+  await card.getByRole("button", { name: "Start looking around", exact: true }).click();
 }
 
 async function signUp(page: Page, name: string, enterDesktop = true) {
@@ -77,7 +47,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   // The card names the first job and its button is what opens the Browser —
   // the desktop → job → desktop loop, learned on the very first tap.
   const card = jobCard(page);
-  await expect(card.getByText("Look around this computer.")).toBeVisible();
+  await expect(card.getByText("These are your bookmarks.", { exact: false })).toBeVisible();
 
   // Start would open a second map of the same computer. Keep them on the card.
   await page.getByTestId("shelf-start").click();
@@ -86,7 +56,6 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
     card.getByText("That menu opens after you finish looking around.", { exact: false }),
   ).toBeVisible();
 
-  await card.getByRole("button", { name: "Start looking around" }).click();
 
   // First a look beat: the address bar and back arrow are display-only here;
   // you navigate with the bookmarks.
@@ -215,17 +184,6 @@ test("language choice on the login page sticks after signing in and reloading", 
   // Exercise the full translated tour and manual card recovery at Chromebook size.
   await page.setViewportSize({ width: 1024, height: 768 });
   const card = jobCard(page);
-  await card.getByRole("button", { name: "OK", exact: true }).click();
-  await expect(card.getByText("Arrastra la parte azul de esta tarjeta a una esquina.")).toBeVisible();
-  const handle = card.getByTestId("job-card-drag-handle");
-  await handle.focus();
-  await page.keyboard.press("ArrowLeft");
-  await expect(card.getByText("Arrastra la parte azul de esta tarjeta a una esquina.")).toBeVisible();
-  await page.keyboard.press("ArrowUp");
-  await expect(card).toHaveAttribute("data-corner", "tl");
-  await expect(card.getByText("Haz clic en la flecha para encogerla.")).toBeVisible();
-  await card.getByTestId("job-card-collapse").click();
-  await expect(card.getByText("Conoce esta computadora.")).toBeVisible();
   await card.getByTestId("job-card-collapse").click();
   await expect(card.getByTestId("job-card-collapse")).toHaveAttribute("aria-expanded", "false");
   await card.getByTestId("job-card-collapse").click();
@@ -296,6 +254,9 @@ test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) 
   await expect(page.getByText("8:15 AM").first()).toBeVisible();
   await expect(page.getByText("You arrived", { exact: true })).toHaveCount(0);
   await jobCard(page).getByTestId("job-card-collapse").click();
+  await jobCard(page).getByTestId("job-card-options").click();
+  await jobCard(page).getByRole("button", { name: "Top right", exact: true }).click();
+  await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Looks right", exact: true }).click();
   await expect(jobCard(page).getByText("You got here at 7:00 AM", { exact: false })).toBeVisible();
   await expect(page.getByRole("button", { name: "Something looks wrong. Message my supervisor", exact: true })).toBeVisible();

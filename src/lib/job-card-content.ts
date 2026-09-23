@@ -15,66 +15,41 @@ export interface IntroBeat {
   /** `{name}` is replaced with the learner's first name. */
   line: Localized<string>;
   cta?: Localized<string>;
-  /** Advance when they collapse the card, so this beat is a try, not a read. */
-  tryCollapse?: boolean;
-  /** Advance after moving to a different corner, by pointer or keyboard. */
-  tryDrag?: boolean;
-  /**
-   * A quieter second line, shown only after the learner has been sitting on
-   * this beat for a while. The drag beat needs one: a trackpad drag is among
-   * the hardest motions for this audience and it is the second thing they ever
-   * do here, with no skip. Arrow keys always worked, but the only place that
-   * said so was the handle's tooltip and a Help lesson they have not reached.
-   */
-  stuckHint?: Localized<string>;
 }
 
-/**
- * First run, on an empty desktop: welcome, move, then shrink,
- * before any app window exists.
- *
- * The welcome and the "you cannot break it" reassurance live here rather than
- * in a separate full-screen card inside the Welcome tab. That card used to be
- * the very first thing a learner saw, talking over this one — two voices on
- * screen one, which is the thing this whole design exists to remove. The
- * browser now opens because the learner presses this card's button, which is
- * also the loop the rest of the product teaches.
- */
-export const INTRO_BEATS: IntroBeat[] = [
-  {
-    kicker: { en: "Your first day", es: "Tu primer día" },
-    // The greeting rides along with the card's first promise rather than
-    // taking a beat of its own. The "practice computer, nothing is real"
-    // reassurance is already on the login screen and is not repeated here.
-    line: {
-      en: "Welcome, {name}. This card tells you what to do.",
-      es: "Bienvenida, {name}. Esta tarjeta te dice qué hacer.",
-    },
-    cta: { en: "OK", es: "OK" },
+export const INTRO_BEATS: IntroBeat[] = [{
+  kicker: { en: "Your first day", es: "Tu primer día" },
+  line: { en: "Welcome, {name}. This card tells you what to do.", es: "Bienvenida, {name}. Esta tarjeta te dice qué hacer." },
+  cta: { en: "Start looking around", es: "Empezar a mirar" },
+}];
+
+export const CARD_PRACTICE = {
+  options: { en: "Card options", es: "Opciones de la tarjeta" },
+  title: { en: "Practice clicking and scrolling", es: "Practicar clics y desplazamiento" },
+  label: { en: "Practice only", es: "Solo práctica" },
+  click: { en: "Open the practice envelope.", es: "Abre el sobre de práctica." },
+  scroll: { en: "Scroll down to find Ready.", es: "Desplázate hacia abajo hasta Listo." },
+  complete: { en: "Practice complete. You're ready to continue.", es: "Práctica terminada. Puedes continuar." },
+  envelope: { en: "Open practice notice", es: "Abrir aviso de práctica" },
+  notice: { en: "A little break", es: "Una pequeña pausa" },
+  paragraphs: [
+    { en: "This is a sample notice.", es: "Este es un aviso de ejemplo." },
+    { en: "There is a sunny spot by the window.", es: "Hay un lugar soleado junto a la ventana." },
+    { en: "A plant sits on the table.", es: "Hay una planta sobre la mesa." },
+    { en: "Nothing here sends a message or changes your work.", es: "Nada aquí envía mensajes ni cambia tu trabajo." },
+  ],
+  ready: { en: "Ready", es: "Listo" },
+  skip: { en: "Skip practice", es: "Omitir práctica" },
+  back: { en: "Back to my task", es: "Volver a mi tarea" },
+  hide: { en: "Hide instructions", es: "Ocultar instrucciones" },
+  show: { en: "Show instructions", es: "Mostrar instrucciones" },
+  corners: {
+    tl: { en: "Top left", es: "Arriba a la izquierda" },
+    tr: { en: "Top right", es: "Arriba a la derecha" },
+    bl: { en: "Bottom left", es: "Abajo a la izquierda" },
+    br: { en: "Bottom right", es: "Abajo a la derecha" },
   },
-  {
-    kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
-    // Name the blue top so learners do not try the white body. The header
-    // also pulses on this beat — same pattern as the shrink arrow below.
-    line: {
-      en: "Drag the blue top of this card to a corner.",
-      es: "Arrastra la parte azul de esta tarjeta a una esquina.",
-    },
-    tryDrag: true,
-    stuckHint: {
-      en: "Or press the arrow keys.",
-      es: "O usa las flechas del teclado.",
-    },
-  },
-  {
-    kicker: { en: "Your task card", es: "Tu tarjeta de tarea" },
-    line: {
-      en: "Click the arrow to shrink it.",
-      es: "Haz clic en la flecha para encogerla.",
-    },
-    tryCollapse: true,
-  },
-];
+};
 
 /**
  * Day One, once: the Job Card points at the orange shelf pin so nobody has

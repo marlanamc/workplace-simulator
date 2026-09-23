@@ -17,6 +17,7 @@ import { useJobCardOptional, useReporterId } from "@/lib/job-card-context";
  */
 export default function RightNowBar({
   taskKey,
+  priority,
   stepIndex,
   stepCount,
   instruction,
@@ -31,6 +32,7 @@ export default function RightNowBar({
   icon?: LucideIcon;
   /** Curriculum task this report belongs to — see JobCardStep.taskKey. */
   taskKey?: import("@/lib/desktop-content").TaskKey;
+  priority?: "save";
   stepIndex: number;
   /**
    * The task's full step list. When given, `instruction` and `stepCount` are
@@ -80,6 +82,7 @@ export default function RightNowBar({
     reportStep({
       id,
       taskKey,
+      priority,
       stepIndex,
       stepCount: count,
       line: { en, es },
@@ -89,7 +92,7 @@ export default function RightNowBar({
       primaryLabel,
     });
     return () => reportStep(null, id);
-  }, [reportStep, id, taskKey, stepIndex, count, en, es, lit, canShowMe, canHelp, primaryLabel]);
+  }, [reportStep, id, taskKey, priority, stepIndex, count, en, es, lit, canShowMe, canHelp, primaryLabel]);
 
   return null;
 }
