@@ -77,3 +77,12 @@ export type SkillRung = typeof skillRungs.$inferSelect;
 export type Badge = typeof badges.$inferSelect;
 export type Submission = typeof submissions.$inferSelect;
 export type { SubmissionContent, SubmissionField } from "../task-types";
+
+/** Each opening reply is saved once; task credit remains on mail-reply. */
+export const openingReplies = pgTable('opening_replies', {
+  learnerId: uuid('learner_id').notNull().references(() => learners.id, { onDelete: 'cascade' }),
+  messageId: text('message_id').notNull(),
+  response: text('response').notNull(),
+  lang: text('lang').notNull(),
+  savedAt: timestamp('saved_at', { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [unique('opening_replies_learner_message_uq').on(t.learnerId, t.messageId)]);

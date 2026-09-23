@@ -1,7 +1,7 @@
 import { courseRouteFromBadges } from "@/lib/course-route";
 import { redirect } from "next/navigation";
 import { getSessionLearnerId } from "@/lib/auth";
-import { getBadges, getCompletions, getLearnerById, getSkillRungs, getUnseenFeedback, getLearnerSubmissions } from "@/lib/db/queries";
+import { getOpeningReplies, getBadges, getCompletions, getLearnerById, getSkillRungs, getUnseenFeedback, getLearnerSubmissions } from "@/lib/db/queries";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { SubmissionContent } from "@/lib/task-types";
 import type { Rung, RungMap } from "@/lib/release-ladder";
@@ -41,15 +41,16 @@ export default async function DesktopPage({
 
   // Load independently so optional feedback/rungs may degrade gracefully.
   // Required progress and writing must never fall back to a fresh account.
-  const [completionsR, badgesR, feedbackR, rungsR, writingR] = await Promise.allSettled([
+  const [completionsR, badgesR, feedbackR, rungsR, writingR, openingR] = await Promise.allSettled([
     getCompletions(learnerId),
     getBadges(learnerId),
     getUnseenFeedback(learnerId),
     getSkillRungs(learnerId),
     getLearnerSubmissions(learnerId),
+    getOpeningReplies(learnerId),
   ]);
   // Required state must not masquerade as a fresh account when a read fails.
-  for (const result of [completionsR, badgesR, writingR]) {
+  for (const result of [completionsR, badgesR, writingR, openingR]) {
     if (result.status === 'rejected') throw new Error('Unable to load saved progress. Please reload.');
   }
   const completions = settledOrEmpty(completionsR, "getCompletions");
@@ -96,6 +97,7 @@ export default async function DesktopPage({
       certificateTrackKeys={certificateTrackKeys}
       initialCourseRoute={courseRouteFromBadges(badgeKeys)}
       initialWriting={initialWriting}
+      initialOpeningReplies={settledOrEmpty(openingR, "getOpeningReplies") as import("@/lib/tasks/mail/opening").OpeningReply[]}
       initialBridgePath={bridgePathFromBadgeKeys(badgeKeys)}
       initialFeedback={initialFeedback}
       initialRungs={initialRungs}

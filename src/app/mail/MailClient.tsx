@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   MAIL_COPY,
@@ -64,9 +64,13 @@ import {
 } from "@/lib/tasks/timeclock/content";
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
+import { OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
+import { recordOpeningReply } from '@/app/actions';
+import { storage } from '@/lib/storage';
+
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
 
-type View = "empty" | "read" | "confirm" | "compose" | "done" | "story";
+type View = "empty" | "read" | "confirm" | "compose" | "done" | "story" | "opening-sent";
 type MailTask = PlayableMailTask;
 /**
  * Every mail task, in curriculum order - derived from the level/track
@@ -109,11 +113,14 @@ function isStoryMail(m: { key: string }): m is InboxRow {
 
 /** Every mail job shares one Mail app - whichever isn't done yet is the one running now. */
 function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
-  return MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
+  const next = MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
+  // Mail remains browsable during the schedule job, but its next challenge
+  // must wait until that job is finished.
+  return next === 'mail-attach' && !completedTaskKeys.includes('schedule') ? 'mail-reply' : next;
 }
 
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
-  const { markComplete, completedTaskKeys, currentTrack, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
+  const { learnerId, openingReplies, setOpeningReplies, restartLevel, markComplete, completedTaskKeys, currentTrack, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
   const { browserTabToken, openApp } = useWindowManager();
   const timeclockMailActive =
     !completedTaskKeys.includes("timeclock") && storyFlags[TIMECLOCK_MAIL_FLAG] === "true";
@@ -123,7 +130,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // completedTaskKeys immediately, and Mail's window stays mounted (hidden,
   // not unmounted) across desktop navigation, so a reactive lookup here would
   // yank the done screen out from under whichever job just finished. The
-  // learner moves to the next of Day One's 2 jobs by explicitly reopening
+  // learner moves to the next mail task by explicitly reopening
   // Mail (the "Next job" button on the done screen, same as any other task) -
   // that's the `browserTabToken` bump below, mirroring PortalPage's own
   // `portalSectionToken` re-open pattern.
@@ -131,11 +138,24 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // Mail stays browsable while another job (shift notes, etc.) owns the day —
   // only coach on the card when this window *is* that job.
   const ownsJobCard = timeclockMailActive || (nextKey !== null && nextKey === activeMailTask);
+  const opening = activeMailTask === 'mail-reply';
+  const draftKey = `ws-opening-draft:${learnerId}`;
+  const [openingIndex, setOpeningIndex] = useState(() => Math.min(nextOpeningIndex(openingReplies), 2));
+  const openingMessage = OPENING_MESSAGES[openingIndex];
+  const [explicitOpeningHelp, setExplicitOpeningHelp] = useState(false);
+  const [openingSaving, setOpeningSaving] = useState(false);
+  const openingInFlight = useRef(false);
+  const [openingSaveError, setOpeningSaveError] = useState(false);
   const [step, setStep] = useState(0);
   const [view, setView] = useState<View>(
-    completedTaskKeys.includes(activeMailTask) ? "done" : isComposeOnly(activeMailTask) ? "compose" : "empty",
+    completedTaskKeys.includes(activeMailTask) ? "done" : opening && nextOpeningIndex(openingReplies) === 3 ? "opening-sent" : isComposeOnly(activeMailTask) ? "compose" : "empty",
   );
-  const [body, setBody] = useState("");
+  const [body, setBody] = useState(() => {
+    const saved = openingReplies.find(r => r.messageId === openingMessage.id);
+    if (opening && saved) return saved.response;
+    const draft = storage.getJSON<OpeningReply | null>(draftKey, null);
+    return opening && draft?.messageId === openingMessage.id ? draft.response : '';
+  });
   const [attached, setAttached] = useState(false);
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
@@ -154,12 +174,12 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     if (timeclockMailActive) {
       setBody("");
       setShowMeTarget(null);
-    } else {
+    } else if (!(opening && !completedTaskKeys.includes("mail-reply"))) {
       const next = activeMailTaskFor(completedTaskKeys);
       setActiveMailTask(next);
-      setView(completedTaskKeys.includes(next) ? "done" : isComposeOnly(next) ? "compose" : "empty");
+      setView(completedTaskKeys.includes(next) ? "done" : next === 'mail-reply' && nextOpeningIndex(openingReplies) === 3 ? 'opening-sent' : isComposeOnly(next) ? "compose" : "empty");
       setStep(0);
-      setBody(next === "reply-all" ? "" : "");
+      if (next !== activeMailTask) setBody('');
       setAttached(false);
       setConfirmPick(null);
       setBridgeOutEligible(false);
@@ -169,13 +189,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
 
   const c = MAIL_COPY[lang];
   const cc = CONFIRM_COPY[lang];
-  const subjectMeta = SUBJECT_BY_TASK[activeMailTask][lang];
+  const subjectMeta = opening ? { subject: openingMessage.subject[lang], reSubject: `Re: ${openingMessage.subject[lang]}`, preview: openingMessage.body[lang] } : SUBJECT_BY_TASK[activeMailTask][lang];
   // Writing from scratch: no email to find, no Reply button to press.
   // Mail opens straight into the compose window.
   const composeOnly = isComposeOnly(activeMailTask);
-  // Day One's two emails are both from Maria, so her signature is fixed here
-  // rather than looked up per row the way the story mails do it.
-  const mariaSignature = signatureFor("Maria Delgado");
   const T = (en: string, es: string) => (lang === "en" ? en : es);
   const mailDone = completedTaskKeys.includes(activeMailTask);
   const storyTodayDay = inboxToday(levelForTrack(currentTrack.key));
@@ -188,7 +205,12 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const rawInbox = sortInboxByTime(
     [
       ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
-      ...emailsForTask(activeMailTask),
+      ...(opening ? OPENING_MESSAGES.slice(0, openingIndex + 1).map((message, index) => ({
+        key: `opening-${message.id}`, from: message.sender.name, initials: message.sender.initials, color: message.sender.color,
+        time: message.time, sentOn: 18, subject: message.subject, preview: message.body,
+        isTarget: index === openingIndex, unread: index === openingIndex, wrongHint: undefined,
+        ...(index < openingIndex ? { story: true, body: { en: [message.body.en], es: [message.body.es] } } : {}),
+      })) : emailsForTask(activeMailTask)),
     ],
     storyTodayDay,
   );
@@ -208,7 +230,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const advance = (n: number) => setStep((s) => (s < n ? n : s));
 
   const lessonIdx = Math.min(step, 4);
-  const lesson = COMPOSE_LESSONS[activeMailTask]?.[lang] ?? LESSONS[lang][lessonIdx];
+  const lesson = opening ? { t: openingMessage.subject[lang], s: [
+    T(`Open ${openingMessage.sender.name}'s email.`, `Abre el correo de ${openingMessage.sender.name}.`),
+    T('Click Reply.', 'Haz clic en Responder.'), openingMessage.objective[lang], T('Click Send.', 'Haz clic en Enviar.'),
+  ], tip: openingMessage.starter[lang] } : COMPOSE_LESSONS[activeMailTask]?.[lang] ?? LESSONS[lang][lessonIdx];
 
   const openMail = () => {
     setView("read");
@@ -218,7 +243,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     recordWrong({
       title: T("Not that one.", "Ese no es."),
       body:
-        hint?.[lang] ??
+        opening ? T(`Look for ${openingMessage.subject.en}.`, `Busca ${openingMessage.subject.es}.`) : hint?.[lang] ??
         (activeMailTask === "mail-etiquette"
           ? T(
               "That one isn't from Darnell. Look for Extra aprons.",
@@ -261,7 +286,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     recordWrong({
       title: T("Not that one. That is Compose.", "Ese no es. Es Redactar."),
       body:
-        activeMailTask === "mail-etiquette"
+        opening ? T(`Open ${openingMessage.sender.name}'s message and click Reply.`, `Abre el mensaje de ${openingMessage.sender.name} y haz clic en Responder.`) : activeMailTask === "mail-etiquette"
           ? T(
               "That is Compose. It starts a new email. Open Darnell's and click Reply.",
               "Eso es Redactar. Empieza un correo nuevo. Abre el de Darnell y haz clic en Responder.",
@@ -309,7 +334,51 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     advance(3);
   };
 
+  const sendOpening = async () => {
+    if (openingInFlight.current) return;
+    if (!openingReplyAccepted(openingMessage.id, body)) {
+      recordWrong({ title: T('One short reply.', 'Una respuesta corta.'), body: openingMessage.objective[lang] });
+      return;
+    }
+    openingInFlight.current = true;
+    dismiss();
+    setHelp(false);
+    setOpeningSaving(true);
+    setOpeningSaveError(false);
+    const reply: OpeningReply = { messageId: openingMessage.id, response: body, lang };
+    storage.setJSON(draftKey, reply);
+    try {
+      const result = await recordOpeningReply(reply);
+      if (!result.ok) throw new Error('Reply not saved');
+      setOpeningReplies([...openingReplies.filter(r => r.messageId !== reply.messageId), reply]);
+      storage.remove(draftKey);
+      dismiss();
+      setShowMeTarget(null);
+      setView('opening-sent');
+      if (openingIndex === 2) {
+        const completed = await markComplete('mail-reply', 'answer_own_words');
+        if (completed) { setView('done'); setStep(5); }
+      }
+    } catch {
+      setOpeningSaveError(true);
+    } finally {
+      openingInFlight.current = false;
+      setOpeningSaving(false);
+    }
+  };
+  const continueOpening = async () => {
+    if (openingIndex === 2) {
+      if (await markComplete('mail-reply', 'answer_own_words')) { setView('done'); setStep(5); }
+      return;
+    }
+    setOpeningIndex(openingIndex + 1);
+    setBody(''); setStep(0); setView('empty'); setOpenStory(null);
+    setExplicitOpeningHelp(false); setHelp(false); setShowMeTarget(null); dismiss();
+    setOpeningSaveError(false);
+  };
+
   const trySend = () => {
+    if (opening) { void sendOpening(); return; }
     if (!body.trim())
       return recordWrong({
         title: T("Almost.", "Casi."),
@@ -416,6 +485,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   };
 
   const restart = () => {
+    if (opening) { void restartLevel(LEVELS.find(l => l.key === 'level1')!); return; }
     setStep(0);
     setView("empty");
     setBody("");
@@ -567,7 +637,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   rightNowLabel={TIMECLOCK_RIGHT_NOW_LABEL}
                   onShowMe={() => setShowMeTarget(showMeTargetId === "send-button" ? null : "send-button")}
                   showMeActive={showMeTargetId === "send-button"}
-                  onHelp={() => setHelp(true)}
+                  onHelp={() => { setExplicitOpeningHelp(true); setHelp(true); }}
                 />
                 )}
                 <div className="px-6 py-4 sm:px-8">
@@ -581,6 +651,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       <span>{tc.subject}</span>
                     </div>
                     <textarea
+                      aria-label={T("Your reply", "Tu respuesta")}
+                      maxLength={opening ? 10000 : undefined}
+                      disabled={openingSaving}
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
                       placeholder={tc.writeHere}
@@ -614,7 +687,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               </>
             ) : (
               <>
-            {(view === "empty" || view === "read" || view === "confirm" || view === "compose") && (() => {
+            {(view === "empty" || view === "read" || view === "confirm" || view === "compose" || (opening && view === "story")) && (() => {
               const stepCount = STEP_COUNT[activeMailTask];
               const needsAttach = activeMailTask === "mail-attach";
               // The compose step is really three moments in one pane, and the
@@ -648,7 +721,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               const stepIndex =
                 view === "empty" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
               const showMeId =
-                view === "empty"
+                (view === "empty" || view === "story")
                   ? "maria-row"
                   : view === "read"
                     ? "reply-button"
@@ -666,12 +739,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   icon={TASK_ICONS.mail}
                   stepIndex={stepIndex}
                   stepCount={stepCount}
-                  instruction={instruction}
+                  instruction={opening ? openingSaving ? { en: 'Saving your reply…', es: 'Guardando tu respuesta…' } : openingSaveError ? { en: 'Your reply could not be saved. Try again.', es: 'No se pudo guardar tu respuesta. Inténtalo de nuevo.' } : openingInstruction(openingIndex, view, Boolean(body.trim()), explicitOpeningHelp) : instruction}
+                  primaryLabel={opening && openingSaveError ? T('Retry save', 'Reintentar guardado') : undefined}
+                  onPrimary={opening && openingSaveError ? () => void sendOpening() : undefined}
                   lang={lang}
                   rightNowLabel={RIGHT_NOW_LABEL}
-                  onShowMe={() => setShowMeTarget(showMeTargetId === showMeId ? null : showMeId)}
+                  onShowMe={() => { setExplicitOpeningHelp(true); setShowMeTarget(showMeTargetId === showMeId ? null : showMeId); }}
                   showMeActive={showMeTargetId === showMeId}
-                  onHelp={() => setHelp(true)}
+                  onHelp={() => { setExplicitOpeningHelp(true); setHelp(true); }}
                 />
                 ) : null
               );
@@ -679,7 +754,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
             {view === "empty" && (
               <div className="flex h-full flex-col items-center justify-center gap-2 p-10 text-center">
                 <Inbox size={40} strokeWidth={1.25} className="text-[#dadce0]" />
-                <p className="max-w-[280px] text-[14px] text-[#5f6368]">{c.emptyPane}</p>
+                {!opening && <p className="max-w-[280px] text-[14px] text-[#5f6368]">{c.emptyPane}</p>}
               </div>
             )}
 
@@ -716,8 +791,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 )}
                 {!composeOnly && activeMailTask !== "reply-all" && (() => {
                   const darnellRead = activeMailTask === "mail-etiquette";
-                  const sender = darnellRead ? CAST.darnell : CAST.maria;
-                  const senderSig = darnellRead ? undefined : mariaSignature;
+                  const sender = opening ? openingMessage.sender : darnellRead ? CAST.darnell : CAST.maria;
+                  const senderSig = signatureFor(sender.name);
                   return (
                 <div className="flex items-start gap-3">
                   <div
@@ -734,18 +809,18 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       </div>
                       <div className="text-[12px] text-[#5f6368]">
                         {stamp(
-                          darnellRead
+                          opening ? { time: openingMessage.time, sentOn: 18 } : darnellRead
                             ? DARNELL_APRON_STAMP
                             : {
-                                time: activeMailTask === "mail-attach" ? "8:20 AM" : "8:14 AM",
-                                sentOn: 18,
+                                time: activeMailTask === "mail-attach" ? "10:10 AM" : "8:14 AM",
+                                sentOn: 19,
                               },
                         )}
                       </div>
                     </div>
                     <div className="text-[12px] text-[#5f6368]">to me</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain.map((p, i) => (
+                      {(opening ? [openingMessage.body[lang]] : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
@@ -823,16 +898,20 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   <div className="mt-6 ml-[52px] overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.to}</span>
-                      <span>{activeMailTask === "reply-all" && replyAudience === "all" ? REPLY_ALL_RECIPIENTS : COMPOSE_RECIPIENT[activeMailTask]}</span>
+                      <span>{activeMailTask === "reply-all" && replyAudience === "all" ? REPLY_ALL_RECIPIENTS : opening ? openingMessage.sender.email : COMPOSE_RECIPIENT[activeMailTask]}</span>
                     </div>
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>
                       <span>{subjectMeta.reSubject}</span>
                     </div>
                     <textarea
+                      aria-label={T("Your reply", "Tu respuesta")}
+                      maxLength={opening ? 10000 : undefined}
+                      disabled={openingSaving}
                       value={body}
                       onChange={(e) => {
                         setBody(e.target.value);
+                        if (opening) storage.setJSON(draftKey, { messageId: openingMessage.id, response: e.target.value, lang });
                         if (e.target.value.trim().length > 3) advance(3);
                       }}
                       placeholder={c.writeHere}
@@ -841,9 +920,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     <div className="flex flex-wrap items-center gap-2 px-4 pb-2">
                       <NeedAStart
                         lang={lang}
-                        starters={STARTERS[activeMailTask][lang]}
+                        starters={opening ? [openingMessage.starter[lang]] : STARTERS[activeMailTask][lang]}
                         onPick={(s) => {
-                          setBody((b) => (b ? b + " " : "") + s);
+                          const draft = (body ? body + ' ' : '') + s;
+                          setBody(draft);
+                          if (opening) storage.setJSON(draftKey, { messageId: openingMessage.id, response: draft, lang });
                           advance(3);
                         }}
                       />
@@ -867,6 +948,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     <div className="flex flex-wrap items-center gap-1 px-3 py-2">
                       <button
                         data-showme="send-button"
+                        disabled={openingSaving}
                         onClick={trySend}
                         className="inline-flex min-h-[36px] items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
                       >
@@ -888,6 +970,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                           setView("read");
                           setStep(2);
                           setBody("");
+                          if (opening) storage.remove(draftKey);
                           setAttached(false);
                         }}
                         className="min-h-[36px] px-3 text-[13px] text-[#5f6368] hover:bg-[#f2f6fc] rounded-full cursor-pointer"
@@ -900,6 +983,13 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               </div>
             )}
 
+            {opening && view === 'opening-sent' && ownsJobCard && <RightNowBar
+              taskKey="mail-reply" stepIndex={openingIndex} stepCount={3}
+              instruction={{ en: 'Reply saved.', es: 'Respuesta guardada.' }}
+              primaryLabel={openingIndex === 2 ? T('Finish', 'Terminar') : T('Next message', 'Siguiente mensaje')}
+              onPrimary={() => void continueOpening()}
+            />}
+            {opening && view === 'opening-sent' && <p className="px-8 py-6 text-[#1e8e3e]" role="status">{T('Message sent', 'Mensaje enviado')}</p>}
             {view === "story" && openStory?.body && (() => {
               const storySig = signatureFor(openStory.from);
               return (

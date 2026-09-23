@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { getDb } from "./client";
-import { badges, learners, skillRungs, submissions, taskCompletions, type SubmissionContent } from "./schema";
+import { openingReplies, badges, learners, skillRungs, submissions, taskCompletions, type SubmissionContent } from "./schema";
 
 /**
  * How two spellings of a learner's name count as the same person: trim the
@@ -55,6 +55,17 @@ export async function recordCompletion(
   confidence: string | null = null,
 ) {
   const db = getDb();
+  if (taskKey === 'mail-reply') {
+    // Serialize concurrent tabs and retries without changing historical rows.
+    await db.batch([
+      db.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${learnerId}), hashtext('mail-reply'))`),
+      db.execute(sql`INSERT INTO ${taskCompletions} (learner_id, task_key, confidence)
+        SELECT ${learnerId}::uuid, ${taskKey}, ${confidence}
+        WHERE NOT EXISTS (SELECT 1 FROM ${taskCompletions}
+          WHERE learner_id = ${learnerId}::uuid AND task_key = ${taskKey})`),
+    ]);
+    return;
+  }
   const rows = await db
     .insert(taskCompletions)
     .values({ learnerId, taskKey, confidence })
@@ -94,6 +105,7 @@ export async function getBadges(learnerId: string) {
 export async function deleteCompletions(learnerId: string, taskKeys: string[]) {
   if (taskKeys.length === 0) return;
   const db = getDb();
+  if (taskKeys.includes('mail-reply')) await clearOpeningReplies(learnerId);
   await db
     .delete(taskCompletions)
     .where(and(eq(taskCompletions.learnerId, learnerId), inArray(taskCompletions.taskKey, taskKeys)));
@@ -106,6 +118,7 @@ export async function deleteCompletions(learnerId: string, taskKeys: string[]) {
  */
 export async function replaceProgress(learnerId: string, taskKeys: string[], badgeKeys: string[]) {
   const db = getDb();
+  await clearOpeningReplies(learnerId);
   await db.delete(taskCompletions).where(eq(taskCompletions.learnerId, learnerId));
   await db.delete(badges).where(eq(badges.learnerId, learnerId));
   if (taskKeys.length) {
@@ -359,4 +372,16 @@ export async function replaceSettingBadge(learnerId: string, keys: string[], val
     db.delete(badges).where(and(eq(badges.learnerId, learnerId), inArray(badges.badgeKey, keys))),
     db.insert(badges).values({ learnerId, badgeKey: value }),
   ]);
+}
+
+export async function getOpeningReplies(learnerId: string) {
+  return getDb().select({ messageId: openingReplies.messageId, response: openingReplies.response, lang: openingReplies.lang })
+    .from(openingReplies).where(eq(openingReplies.learnerId, learnerId));
+}
+export async function saveOpeningReply(learnerId: string, reply: import('../tasks/mail/opening').OpeningReply) {
+  await getDb().insert(openingReplies).values({ learnerId, ...reply })
+    .onConflictDoNothing({ target: [openingReplies.learnerId, openingReplies.messageId] });
+}
+export async function clearOpeningReplies(learnerId: string) {
+  await getDb().delete(openingReplies).where(eq(openingReplies.learnerId, learnerId));
 }

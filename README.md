@@ -118,3 +118,16 @@ that unlock according to the shared core and selected route. All 37 runtime leve
   self-chosen 4-digit PIN + class code. No email, no password rules.
 - Shared logic takes `now` as a parameter (see `release-ladder.ts`) rather than calling
   `Date.now()` internally, so it stays testable.
+
+## Opening email practice
+
+Level 1 is one scored `mail-reply` task containing three independently saved
+replies: a welcome, a start-time confirmation, and a coworker's cup-location
+question. Level 2 runs `schedule` then `mail-attach`. Existing task completions
+remain valid; replaying Level 1 clears its saved replies. See
+[curriculum/opening-email-practice.md](curriculum/opening-email-practice.md).
+
+Before deploying this revision, apply the additive SQL in
+`src/lib/db/migrations/20260923-opening-replies.sql` to the target database.
+The desktop deliberately fails to load rather than treating a failed opening
+progress read as a fresh account. This migration does not rewrite old progress.

@@ -280,6 +280,7 @@ export default function DesktopClient(props: {
   completedTaskKeys: TaskKey[];
   certificateTrackKeys: string[];
   initialCourseRoute?: CourseRoute | null;
+  initialOpeningReplies?: import("@/lib/tasks/mail/opening").OpeningReply[];
   initialWriting?: Record<string, SubmissionContent>;
   initialBridgePath?: BridgePath | null;
   initialFeedback?: TeacherFeedback[];
@@ -303,6 +304,7 @@ export default function DesktopClient(props: {
         initialCertificateTrackKeys={props.certificateTrackKeys}
         initialCourseRoute={props.initialCourseRoute}
         initialWriting={props.initialWriting}
+        initialOpeningReplies={props.initialOpeningReplies}
         initialBridgePath={props.initialBridgePath}
         initialFeedback={props.initialFeedback}
         initialRungs={props.initialRungs}

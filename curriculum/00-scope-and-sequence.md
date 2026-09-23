@@ -190,32 +190,34 @@ named email lesson, then the sick call.
 
 ### Level 1: Day One
 
-One inbox, two short jobs — reading comes first inside each one, then
-replying, then attaching. Splitting them means a wrong answer tells you
-*which* of the two is missing, not just "mail didn't work." Single tab,
-auto-opened — no tab-hunting yet.
+One inbox, three purposeful replies within one scored task. The learner
+welcomes Maria, confirms tomorrow's 10 AM start, and tells Darnell where
+the clean cups are stored. Repeat open → read → reply → write → send,
+with quieter Job Card guidance on each message. Help remains available.
+Each reply saves independently; the level completes after all three.
+There are no attachments or recipient choices in this level.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `mail-reply` | Read a message from a manager, then answer in your own words | Browser → Mail |
-| 2 | `mail-attach` | Send the same reply again, this time with the file in it | Browser → Mail |
+| 1 | `mail-reply` | Read and answer three short workplace messages | Browser → Mail |
 
-See `level-1-day-one/02-lesson-mail-reply.md` and
-`03-lesson-mail-attach.md`. Finishing `mail-attach` completes Level 1.
+Finishing `mail-reply` completes Level 1. Existing earned completions remain
+valid. See [opening practice](opening-email-practice.md) for the detailed
+sequence, compatibility behavior, and pilot observations.
 
 ### Level 2: The First Week
 
-One app, one job — the Employee Portal, now covering "life happening on a
-schedule," not just reading it.
+First compare the Employee Portal schedule with a personal appointment;
+then return to familiar Mail and add one new skill: attaching a file.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `schedule` | Spot a schedule clash against your own calendar, then ask for the swap through Harborside's real form | Browser → Portal |
+| 1 | `schedule` | Spot a schedule clash against your own calendar, then ask for a swap | Browser → Portal |
+| 2 | `mail-attach` | Read Maria's request and reply with the safety report attached | Browser → Mail |
 
-See `level-2-the-first-week/01-lesson-schedule.md`. Finishing `schedule`
-completes Level 2. Picking the clashing day hands it straight to the swap
-form, already filled in — noticing and asking are one motion, not two
-separate badges.
+Finishing `mail-attach` completes Level 2. The schedule conflict and swap
+form remain one task. Later coworker email practice still asks about
+aprons, returning to short replies after intervening work.
 
 ### Level 3: Clock-In Fix
 

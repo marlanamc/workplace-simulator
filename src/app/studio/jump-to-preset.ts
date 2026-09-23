@@ -18,6 +18,7 @@ export async function jumpToPreset(
   if (!result.ok) return false;
   storage.remove(learnerKey.storyFlags(learnerId));
   storage.remove(learnerKey.rungs(learnerId));
+  storage.remove(`ws-opening-draft:${learnerId}`);
   if (path) {
     storage.setJSON(learnerKey.storyFlags(learnerId), { [BRIDGE_PATH_FLAG]: path });
   }

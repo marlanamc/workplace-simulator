@@ -85,8 +85,8 @@ describe("one voice for messaging the manager", () => {
 describe("Level 2 and Level 3 membership", () => {
   const track = (key: string) => TRACKS.find((t) => t.key === key)!;
 
-  it("the first week is one task: notice it, then ask", () => {
-    expect(track("first-week").taskKeys).toEqual(["schedule"]);
+  it("the first week checks the schedule before introducing attachments", () => {
+    expect(track("first-week").taskKeys).toEqual(["schedule", "mail-attach"]);
   });
 
   it("the sick day waits until the learner has a track record", () => {

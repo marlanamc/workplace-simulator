@@ -152,3 +152,14 @@ The remaining-issues batch adds `decision-practice.test.ts` and `decision-practi
 `absence-writing.test.ts` covers short EN/ES absence replies, smart apostrophes, whitespace, and rejection of messages missing absence/shift context. `absence-writing.spec.ts` checks sickness-only rejection, retained text, Job Card recovery, and successful short replies in both languages. These authored cases do not establish unrestricted language understanding.
 
 `coworker-location.test.ts` covers short EN/ES storage-location replies and unrelated/wrong-location rejections. `coworker-location.spec.ts` checks Job Card correction, retained text, and successful concise replies. Location-term recognition does not establish complete semantic or tone assessment.
+
+## Opening email sequence
+
+`opening-mail.test.ts` covers the three purposes, bilingual bounded response
+checks, guidance reduction, and curriculum transitions. `opening-actions.test.ts`
+covers session ownership, sequential saving, failure propagation, and old
+completion compatibility. `opening-mail.spec.ts` covers EN/ES saving, reload,
+recovery, Help, one final completion, Studio reset, and legacy progress.
+Apply the additive opening-replies migration before using this app revision.
+Use a dedicated test database for the browser suite, including schema setup;
+a test learner alone does not isolate schema changes from classroom data.
