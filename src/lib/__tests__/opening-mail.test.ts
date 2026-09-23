@@ -28,11 +28,23 @@ describe('opening reply practice', () => {
   it.each(['No', "I won't be there", 'No puedo ir', 'Where is it?', 'Coffee'])('rejects missing or negative confirmation: %s', text => {
     expect(openingReplyAccepted('start-time',text)).toBe(false);
   });
-  it.each(['Under the counter.', 'On the shelf beneath the counter', 'Debajo del mostrador', 'En el estante bajo la barra'])('accepts a short location: %s', text => {
+  it.each(['Under the counter.', 'On the shelf beneath the counter', 'I will put it under the counter', 'Debajo del mostrador', 'En el estante bajo la barra', 'La dejare debajo del mostrador'])('accepts a short location: %s', text => {
     expect(openingReplyAccepted('cups',text)).toBe(true);
   });
-  it.each(['In the storage room', 'On the counter', 'En el almacén', 'No están debajo del mostrador', ''])('rejects the wrong location: %s', text => {
+  it.each(['In the storage room', 'On the counter', 'En el almacén', 'No están debajo del mostrador', "I won't put it under the counter", 'I cannot leave it under the counter', ''])('rejects the wrong location: %s', text => {
     expect(openingReplyAccepted('cups',text)).toBe(false);
+  });
+  it('reads as the night before the first shift, asking nothing a new hire could not know', () => {
+    // Every message lands the evening before Day One, so none of them may
+    // depend on having already worked a shift.
+    for (const m of OPENING_MESSAGES) expect(m.time).toMatch(/PM$/);
+    expect(OPENING_MESSAGES[0].body.en).toContain('tomorrow');
+    // Darnell states where the bag goes; the learner confirms it back rather
+    // than supplying a cafe fact they have had no chance to learn.
+    const bag = OPENING_MESSAGES[2];
+    expect(bag.body.en).toContain('under the counter');
+    expect(bag.body.es).toContain('debajo del mostrador');
+    expect(bag.body.en).not.toMatch(/where do we keep/i);
   });
   it('fades to an objective and restores step instructions on request', () => {
     expect(openingInstruction(0,'read',false,false).en).toBe('Click Reply.');

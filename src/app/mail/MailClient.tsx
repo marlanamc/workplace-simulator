@@ -30,7 +30,7 @@ import {
   callOutSickSaysCannotAttend,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
-import { formatInboxTime, inboxToday } from "@/lib/story-calendar";
+import { formatInboxTime, inboxToday, HIRE_DAY } from "@/lib/story-calendar";
 import { LEVELS, levelForTrack, taskKeysForLevel, nextTaskInTrack } from "@/lib/tracks-content";
 import type { TaskKey } from "@/lib/desktop-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
@@ -207,7 +207,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
       ...(opening ? OPENING_MESSAGES.slice(0, openingIndex + 1).map((message, index) => ({
         key: `opening-${message.id}`, from: message.sender.name, initials: message.sender.initials, color: message.sender.color,
-        time: message.time, sentOn: 18, subject: message.subject, preview: message.body,
+        // Sent the evening before Day One, so the inbox stamps them Yesterday.
+        time: message.time, sentOn: HIRE_DAY - 1, subject: message.subject, preview: message.body,
         isTarget: index === openingIndex, unread: index === openingIndex, wrongHint: undefined,
         ...(index < openingIndex ? { story: true, body: { en: [message.body.en], es: [message.body.es] } } : {}),
       })) : emailsForTask(activeMailTask)),
