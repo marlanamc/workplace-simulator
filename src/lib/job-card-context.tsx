@@ -33,6 +33,7 @@ import type { Lesson, Localized } from "@/lib/task-types";
 
 /** What a running task reports about the step the learner is on. */
 export interface JobCardStep {
+  priority?: "save";
   /** Stable id of the reporter, so a mounted-but-hidden task can't win. */
   id: string;
   /**
@@ -79,7 +80,11 @@ export interface JobCardFinish {
   onTryAgain?: () => void;
 }
 
+export type CardPractice = { stage: "inactive" | "click" | "scroll" | "complete"; origin: "onboarding" | "task" };
+
 interface JobCardValue {
+  practice: CardPractice;
+  setPractice: (practice: CardPractice) => void;
   /** The most recently reported step, or null when no task is talking. */
   step: JobCardStep | null;
   reportStep: (step: JobCardStep | null, id?: string) => void;
@@ -132,6 +137,7 @@ export function JobCardProvider({
   introSeen: boolean;
   onIntroDone: () => void;
 }) {
+  const [practice, setPractice] = useState<CardPractice>({ stage: "inactive", origin: "task" });
   const [step, setStep] = useState<JobCardStep | null>(null);
   const [finish, setFinish] = useState<JobCardFinish | null>(null);
   const [raised, setRaised] = useState<{ message: string; onStep: string } | null>(null);
@@ -246,6 +252,8 @@ export function JobCardProvider({
       reportHelp,
       introBeat,
       advanceIntro,
+      practice,
+      setPractice,
     }),
     [
       step,
@@ -265,6 +273,8 @@ export function JobCardProvider({
       reportHelp,
       introBeat,
       advanceIntro,
+      practice,
+      setPractice,
     ],
   );
 

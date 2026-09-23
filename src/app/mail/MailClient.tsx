@@ -736,6 +736,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 ownsJobCard ? (
                 <RightNowBar
                   taskKey={activeMailTask}
+                  priority={opening && (openingSaving || openingSaveError) ? "save" : undefined}
                   icon={TASK_ICONS.mail}
                   stepIndex={stepIndex}
                   stepCount={stepCount}
