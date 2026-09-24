@@ -1,16 +1,24 @@
-import { getTableColumns, getTableName, sql } from "drizzle-orm";
+import { getTableColumns, getTableName, is, sql } from "drizzle-orm";
+import { PgTable } from "drizzle-orm/pg-core";
 import { NextResponse } from "next/server";
 import { getDb } from "@/lib/db/client";
-import { badges, learners, skillRungs, submissions, taskCompletions } from "@/lib/db/schema";
+import * as schema from "@/lib/db/schema";
 
 export const dynamic = "force-dynamic";
 
 /**
- * Tables whose shape the app depends on. Derived from the Drizzle schema
- * rather than hand-listed, so adding a column to `schema.ts` automatically
- * makes this probe require it.
+ * Every table the app declares, read off `schema.ts` itself.
+ *
+ * This list used to be written out by hand, which quietly undid the point of
+ * the probe: `opening_replies` was added to the schema on 2026-09-23 and never
+ * added here, so when the table was missing from production this endpoint
+ * still answered `db: ok` while every signed-in learner got a 500. Enumerating
+ * the module means a new table is covered the moment it is declared, with
+ * nothing to remember.
  */
-const TABLES = [learners, taskCompletions, skillRungs, badges, submissions];
+const TABLES = (Object.values(schema) as unknown[]).filter((value): value is PgTable =>
+  is(value, PgTable),
+);
 
 /** `{ learners: ["id", "display_name", …], … }` straight from the schema. */
 function expectedShape(): Map<string, Set<string>> {
