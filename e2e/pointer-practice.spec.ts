@@ -1,5 +1,4 @@
 import { test, expect, type Page } from '@playwright/test';
-import { continuePastStudioArrivalIfPresent } from './studio-arrival';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 async function signup(page: Page, lang: 'en' | 'es') {
@@ -18,7 +17,7 @@ const startName = /Start looking around|Empezar a mirar/;
 const skipName = /Skip practice|Omitir práctica/;
 
 for (const lang of ['en', 'es'] as const) {
-  test(`optional practice, keyboard, scrolling, reload and card options (${lang})`, async ({ page }) => {
+  test(`optional practice, keyboard, scrolling and reload (${lang})`, async ({ page }) => {
     test.slow();
     await signup(page, lang);
     const card = page.locator('[data-job-card]');
@@ -46,102 +45,23 @@ for (const lang of ['en', 'es'] as const) {
     await expect(card).toHaveAttribute('data-practice', 'complete');
     await card.getByRole('button', { name: startName }).click();
     await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
-    const options = card.getByTestId('job-card-options');
-    await options.click();
-    for (const [corner, name] of [
-      ['tl', /Top left|Arriba a la izquierda/],
-      ['tr', /Top right|Arriba a la derecha/],
-      ['br', /Bottom right|Abajo a la derecha/],
-      ['bl', /Bottom left|Abajo a la izquierda/],
-    ] as const) {
-      const button = card.getByRole('button', { name });
-      await button.click();
-      await expect(card).toHaveAttribute('data-corner', corner);
-      await expect(button).toBeFocused();
-    }
-    await page.keyboard.press('Escape');
-    await expect(options).toBeFocused();
-    await expect(options).toHaveAttribute('aria-expanded', 'false');
+    await expect(card.getByTestId('job-card-collapse')).toBeFocused();
+    // Practice is offered once, at the welcome; it never comes back mid-task.
+    await expect(card.getByRole('button', { name: practiceName })).toHaveCount(0);
     const handle = card.getByTestId('job-card-drag-handle');
     await handle.focus();
     await page.keyboard.press('ArrowRight');
     await page.keyboard.press('ArrowUp');
     await expect(card).toHaveAttribute('data-corner', 'tr');
-    await options.click();
-    await card.getByRole('button', { name: /Hide instructions|Ocultar instrucciones/ }).click();
-    await expect(card.getByTestId('job-card-collapse')).toHaveAttribute('aria-expanded', 'false');
-    await options.click();
-    await card.getByRole('button', { name: /Show instructions|Mostrar instrucciones/ }).click();
-    await expect(card.getByTestId('job-card-collapse')).toHaveAttribute('aria-expanded', 'true');
-    await options.click();
-    await card.getByRole('button', { name: practiceName }).click();
-    await card.getByRole('button', { name: /Open practice notice|Abrir aviso de práctica/ }).click();
-    await notice.hover();
-    await page.mouse.wheel(0, 600);
-    await expect.poll(() => notice.evaluate(el => el.scrollTop)).toBeGreaterThan(0);
-    await ready.click();
-    await card.getByRole('button', { name: /Back to my task|Volver a mi tarea/ }).click();
-    await expect(card).toHaveAttribute('data-corner', 'tr');
-    await expect(options).toBeFocused();
-    await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
-    await options.click();
-    await card.getByRole('button', { name: practiceName }).click();
-    await page.reload();
-    await expect(card).toHaveAttribute('data-practice', 'inactive');
-    await expect(card.getByRole('button', { name: practiceName })).toHaveCount(0);
   });
 
-  test(`skip startup and task practice preserves an email draft (${lang})`, async ({ page }) => {
+  test(`skip startup practice goes straight to orientation (${lang})`, async ({ page }) => {
     await signup(page, lang);
     const card = page.locator('[data-job-card]');
     await card.getByRole('button', { name: practiceName }).click();
     await card.getByRole('button', { name: skipName }).click();
+    await expect(card).toHaveAttribute('data-practice', 'inactive');
     await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
-    await page.goto('/studio');
-    await page.getByRole('button', { name: /Start of The Night Before/ }).click();
-    await page.waitForURL(/from=studio/);
-    await continuePastStudioArrivalIfPresent(page);
-    await card.getByRole('button', { name: /^I understand$|^Entiendo$/ }).click();
-    await card.getByTestId('job-card-drag-handle').focus();
-    await page.keyboard.press('ArrowRight');
-    await page.keyboard.press('ArrowUp');
-    await page.locator('[data-showme="maria-row"]').click();
-    await page.locator('[data-showme="reply-button"]').click();
-    const draft = page.getByRole('textbox', { name: /Your reply|Tu respuesta/ });
-    await draft.fill('Hello Maria / Hola Maria');
-    const line = await card.getByRole('status').first().textContent();
-    await card.getByTestId('job-card-options').click();
-    await card.getByRole('button', { name: practiceName }).click();
-    await card.getByTestId('job-card-options').click();
-    await card.getByRole('button', { name: /Bottom left|Abajo a la izquierda/ }).click();
-    await page.keyboard.press('Escape');
-    await card.getByRole('button', { name: skipName }).click();
-    await expect(draft).toHaveValue('Hello Maria / Hola Maria');
-    await expect(card).toHaveAttribute('data-corner', 'tr');
-    await expect(card.getByRole('status').first()).toHaveText(line!);
-    let blocked = false;
-    await page.route('**/*', async route => {
-      const req = route.request();
-      if (!blocked && req.method() === 'POST' && req.headers()['next-action'] && req.postData()?.includes('"welcome"')) {
-        blocked = true;
-        await route.abort('failed');
-      } else await route.continue();
-    });
-    await card.getByTestId('job-card-options').click();
-    await card.getByRole('button', { name: practiceName }).click();
-    await page.locator('[data-showme="send-button"]').click();
-    const retry = card.getByRole('button', { name: /Retry save|Reintentar guardado/ });
-    await expect(retry).toBeVisible();
-    await expect(card.getByRole('button', { name: skipName })).toHaveCount(0);
-    await expect(draft).toHaveValue('Hello Maria / Hola Maria');
-    await card.getByTestId('job-card-options').click();
-    await expect(retry).toBeVisible();
-    await retry.click();
-    await expect(card.getByRole('button', { name: skipName })).toBeVisible();
-    await card.getByRole('button', { name: skipName }).click();
-    // Exit always restores the task, even if options were open when saving finished.
-    if (await card.getByTestId('job-card-options').getAttribute('aria-expanded') === 'true') await page.keyboard.press('Escape');
-    await expect(card.getByRole('button', { name: /Next message|Siguiente mensaje/ })).toBeVisible();
   });
 }
 
@@ -166,10 +86,9 @@ test('practice exit remains reachable at a 200% equivalent Chromebook viewport',
 test('drag remains available and Studio fresh start restores the welcome choice', async ({ page }) => {
   await signup(page, 'en');
   const card = page.locator('[data-job-card]');
-  await card.getByTestId('job-card-options').click();
-  await card.getByRole('button', { name: 'Top left', exact: true }).click();
-  await page.keyboard.press('Escape');
   const handle = card.getByTestId('job-card-drag-handle');
+  await handle.focus();
+  await page.keyboard.press('ArrowUp');
   await expect(card).toHaveAttribute('data-corner', 'tl');
   const box = await handle.boundingBox();
   await page.mouse.move(box!.x + 30, box!.y + 20);
