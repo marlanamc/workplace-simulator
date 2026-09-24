@@ -24,7 +24,6 @@ export const INTRO_BEATS: IntroBeat[] = [{
 }];
 
 export const CARD_PRACTICE = {
-  options: { en: "Card options", es: "Opciones de la tarjeta" },
   title: { en: "Practice clicking and scrolling", es: "Practicar clics y desplazamiento" },
   label: { en: "Practice only", es: "Solo práctica" },
   click: { en: "Open the practice envelope.", es: "Abre el sobre de práctica." },
@@ -40,15 +39,6 @@ export const CARD_PRACTICE = {
   ],
   ready: { en: "Ready", es: "Listo" },
   skip: { en: "Skip practice", es: "Omitir práctica" },
-  back: { en: "Back to my task", es: "Volver a mi tarea" },
-  hide: { en: "Hide instructions", es: "Ocultar instrucciones" },
-  show: { en: "Show instructions", es: "Mostrar instrucciones" },
-  corners: {
-    tl: { en: "Top left", es: "Arriba a la izquierda" },
-    tr: { en: "Top right", es: "Arriba a la derecha" },
-    bl: { en: "Bottom left", es: "Abajo a la izquierda" },
-    br: { en: "Bottom right", es: "Abajo a la derecha" },
-  },
 };
 
 /**

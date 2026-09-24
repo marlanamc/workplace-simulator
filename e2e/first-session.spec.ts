@@ -254,9 +254,9 @@ test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) 
   await expect(page.getByText("8:15 AM").first()).toBeVisible();
   await expect(page.getByText("You arrived", { exact: true })).toHaveCount(0);
   await jobCard(page).getByTestId("job-card-collapse").click();
-  await jobCard(page).getByTestId("job-card-options").click();
-  await jobCard(page).getByRole("button", { name: "Top right", exact: true }).click();
-  await page.keyboard.press("Escape");
+  await jobCard(page).getByTestId("job-card-drag-handle").focus();
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowUp");
   await page.getByRole("button", { name: "Looks right", exact: true }).click();
   await expect(jobCard(page).getByText("You got here at 7:00 AM", { exact: false })).toBeVisible();
   await expect(page.getByRole("button", { name: "Something looks wrong. Message my supervisor", exact: true })).toBeVisible();

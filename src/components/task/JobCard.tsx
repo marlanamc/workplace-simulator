@@ -114,11 +114,9 @@ export default function JobCard() {
   const [collapsed, setCollapsed] = useState(false);
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
-  const [optionsOpen, setOptionsOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
-  const optionsRef = useRef<HTMLButtonElement>(null);
-  const practiceReturn = useRef<{ corner: Corner; focus: HTMLElement | null }>({ corner: HOME, focus: null });
+  const collapseRef = useRef<HTMLButtonElement>(null);
 
   function startOrientation() {
     advanceIntro();
@@ -126,26 +124,15 @@ export default function JobCard() {
   }
   function startPractice() {
     if (practicing || busy) return;
-    practiceReturn.current = {
-      corner,
-      focus: document.activeElement instanceof HTMLElement ? document.activeElement : null,
-    };
-    setOptionsOpen(false);
     setCollapsed(false);
-    setPractice({ stage: "click", origin: introBeat < INTRO_BEATS.length ? "onboarding" : "task" });
+    setPractice({ stage: "click" });
     requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>('[data-practice-focus]')?.focus());
   }
   function exitPractice() {
-    setOptionsOpen(false);
-    setPractice({ ...practice, stage: "inactive" });
-    setCorner(practiceReturn.current.corner);
+    setPractice({ stage: "inactive" });
     setCollapsed(false);
-    if (practice.origin === "onboarding") startOrientation();
-    requestAnimationFrame(() => {
-      const previous = practiceReturn.current.focus;
-      if (practice.origin === "task" && previous?.isConnected) previous.focus();
-      else optionsRef.current?.focus();
-    });
+    startOrientation();
+    requestAnimationFrame(() => collapseRef.current?.focus());
   }
 
   const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
@@ -455,13 +442,6 @@ export default function JobCard() {
       data-job-card
       data-corner={corner}
       data-practice={practice.stage}
-      onKeyDown={(e) => {
-        if (e.key === "Escape" && optionsOpen) {
-          e.stopPropagation();
-          setOptionsOpen(false);
-          optionsRef.current?.focus();
-        }
-      }}
       className="animate-card-pop fixed z-[72] flex flex-col overflow-hidden rounded-[24px] bg-white"
       style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
@@ -521,6 +501,7 @@ export default function JobCard() {
           </button>
         )}
         <button
+          ref={collapseRef}
           type="button"
           data-testid="job-card-collapse"
           aria-expanded={!collapsed}
@@ -548,30 +529,7 @@ export default function JobCard() {
         </span>
       </div>
 
-      <button ref={optionsRef} type="button" aria-expanded={optionsOpen && !busy}
-        aria-controls="job-card-options" data-testid="job-card-options"
-        className="min-h-12 shrink-0 border-b border-[#dadce0] px-5 text-left font-medium text-[#0b57d0]"
-        onClick={() => setOptionsOpen(!optionsOpen)}>
-        {pc.options[lang]}
-      </button>
-      {optionsOpen && !busy && (
-        <div id="job-card-options" className="min-h-0 overflow-y-auto p-3" aria-label={pc.options[lang]}>
-          <div className="grid grid-cols-2 gap-2">
-            {(Object.keys(pc.corners) as Corner[]).map((spot) => (
-              <button key={spot} type="button" aria-pressed={corner === spot}
-                className="min-h-12 rounded-lg border border-[#dadce0] px-2 text-[#202124] aria-pressed:bg-[#e8f0fe]"
-                onClick={() => moveToCorner(spot)}>{pc.corners[spot][lang]}</button>
-            ))}
-          </div>
-          <button type="button" className="mt-2 min-h-12 w-full rounded-lg border px-2 text-[#202124]"
-            onClick={() => { setCollapsed(!collapsed); setOptionsOpen(false); optionsRef.current?.focus(); }}>
-            {collapsed ? pc.show[lang] : pc.hide[lang]}
-          </button>
-          <button type="button" disabled={practicing || busy} className="mt-2 min-h-12 w-full rounded-lg border px-2 text-[#202124] disabled:opacity-50"
-            onClick={startPractice}>{pc.title[lang]}</button>
-        </div>
-      )}
-      {!collapsed && (!optionsOpen || busy) && (
+      {!collapsed && (
       <div className="min-h-0 overflow-y-auto p-5">
         {showPractice ? (
           <>
@@ -775,7 +733,7 @@ export default function JobCard() {
       {showPractice && (
         <div className="shrink-0 border-t border-[#dadce0] bg-white p-2">
           <button type="button" data-practice-exit className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 font-medium text-white" onClick={exitPractice}>
-            {practice.stage === "complete" ? (practice.origin === "onboarding" ? INTRO_BEATS[0].cta?.[lang] : pc.back[lang]) : pc.skip[lang]}
+            {practice.stage === "complete" ? INTRO_BEATS[0].cta?.[lang] : pc.skip[lang]}
           </button>
         </div>
       )}

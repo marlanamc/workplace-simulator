@@ -80,7 +80,7 @@ export interface JobCardFinish {
   onTryAgain?: () => void;
 }
 
-export type CardPractice = { stage: "inactive" | "click" | "scroll" | "complete"; origin: "onboarding" | "task" };
+export type CardPractice = { stage: "inactive" | "click" | "scroll" | "complete" };
 
 interface JobCardValue {
   practice: CardPractice;
@@ -137,7 +137,7 @@ export function JobCardProvider({
   introSeen: boolean;
   onIntroDone: () => void;
 }) {
-  const [practice, setPractice] = useState<CardPractice>({ stage: "inactive", origin: "task" });
+  const [practice, setPractice] = useState<CardPractice>({ stage: "inactive" });
   const [step, setStep] = useState<JobCardStep | null>(null);
   const [finish, setFinish] = useState<JobCardFinish | null>(null);
   const [raised, setRaised] = useState<{ message: string; onStep: string } | null>(null);
