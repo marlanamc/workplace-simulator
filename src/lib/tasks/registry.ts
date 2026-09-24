@@ -400,7 +400,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes, 10:15 AM. Jordan necesita el horario.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Email Jordan the schedule link.", es: "Envíale a Jordan el enlace del horario." },
+    // Jordan's first card. Names the role inline the way mail-etiquette does
+    // for Darnell — no act intro introduces a peer, only managers.
+    jobCardLine: {
+      en: "Email the new lead, Jordan, the schedule link.",
+      es: "Envíale el enlace del horario a Jordan, el nuevo líder.",
+    },
   },
 
   spreadsheet: {

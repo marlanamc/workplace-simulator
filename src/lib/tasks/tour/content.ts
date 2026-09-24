@@ -1,4 +1,23 @@
+import { CAFE_NAME, CAST } from "@/lib/cast";
 import type { EventIntroCopy, Lang, Lesson } from "@/lib/task-types";
+
+/**
+ * The first screen of the story, and so the first place anyone is named. Every
+ * later act introduces its manager on a full-page ActIntro before that manager
+ * turns up on a Job Card; Act I has no such screen, so the introduction has to
+ * happen here. Without it the opening Job Card ("Maria said welcome") is the
+ * learner's first encounter with the name, and it lands on a stranger.
+ */
+function managerLine(lang: Lang): string {
+  const m = CAST.maria;
+  if (lang === "es") {
+    // CAST titles are capitalized for display in signature blocks; Spanish
+    // does not capitalize a job title mid-sentence.
+    const title = m.title && m.title.es.charAt(0).toLowerCase() + m.title.es.slice(1);
+    return title ? `Tu jefa es ${m.name}, la ${title}.` : `Tu jefa es ${m.name}.`;
+  }
+  return m.title ? `Your manager is ${m.name}, the ${m.title.en}.` : `Your manager is ${m.name}.`;
+}
 
 /** First-day welcome, personalized with the learner's first name. */
 export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy {
@@ -8,7 +27,7 @@ export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy 
       emoji: "☕",
       kicker: "Tu primer día",
       headline: `¡Bienvenida ${name}!`,
-      subheadline: "Eres personal nuevo en Harborside Cafe. Esta semana tienes 5 turnos. Me alegra que estés aquí.",
+      subheadline: `Eres personal nuevo en ${CAFE_NAME}. Esta semana tienes 5 turnos. ${managerLine("es")}`,
       body: "Tómate tu tiempo para aprender cómo funciona. No puedes romper nada.",
       cta: "Enséñame",
     };
@@ -17,8 +36,8 @@ export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy 
     emoji: "☕",
     kicker: "Your first day",
     headline: `Welcome ${name}!`,
-      subheadline: "You're a new hire at Harborside Cafe. This week you have 5 shifts. Glad you're here.",
-      body: "Take your time learning how things work. You cannot break anything.",
+    subheadline: `You're a new hire at ${CAFE_NAME}. This week you have 5 shifts. ${managerLine("en")}`,
+    body: "Take your time learning how things work. You cannot break anything.",
     cta: "Show me around",
   };
 }

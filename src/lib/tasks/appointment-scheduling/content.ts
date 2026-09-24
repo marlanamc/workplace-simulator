@@ -2,12 +2,12 @@ import type { Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const REQUESTED_SLOT = "10:00";
 export const OPEN_SLOT = "11:30";
-export const PATIENT = { en: "Maya Rivera", es: "Maya Rivera" };
+export const PATIENT = { en: "Maya Ansari", es: "Maya Ansari" };
 
 export const SLOTS = [
   { time: "9:00", taken: true, name: "Alex Chen" },
   { time: "9:30", taken: true, name: "Jordan Kim" },
-  { time: "10:00", taken: true, name: "Sam Ortiz" },
+  { time: "10:00", taken: true, name: "Tomás Ortiz" },
   { time: "10:30", taken: true, name: "Priya Shah" },
   { time: "11:00", taken: true, name: "Dana Lee" },
   { time: "11:30", taken: false, name: null },
@@ -41,7 +41,7 @@ export const APPOINTMENT_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     clinic: "Harborside Health · Front desk",
     heading: "Monday morning",
-    request: "Maya Rivera called. She wants 10:00 today. Check the schedule before you say yes.",
+    request: "Maya Ansari called. She wants 10:00 today. Check the schedule before you say yes.",
     offerCta: "Offer the open slot",
     confirmHeading: "Confirmation to Maya",
     writeHere: "Confirm the time you can actually give her…",
@@ -64,7 +64,7 @@ export const APPOINTMENT_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     clinic: "Harborside Health · Recepción",
     heading: "Lunes por la mañana",
-    request: "Llamó Maya Rivera. Quiere las 10:00 hoy. Revisa la agenda antes de decir que sí.",
+    request: "Llamó Maya Ansari. Quiere las 10:00 hoy. Revisa la agenda antes de decir que sí.",
     offerCta: "Ofrecer el hueco libre",
     confirmHeading: "Confirmación para Maya",
     writeHere: "Confirma la hora que de verdad le puedes dar…",

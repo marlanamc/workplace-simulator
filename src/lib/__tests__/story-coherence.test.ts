@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { LEVELS, taskKeysForLevel, TASK_INFO, actForLevel } from "@/lib/tracks-content";
+import { CAST } from "@/lib/cast";
+import { ACT_INTROS, type ActIntroActKey } from "@/lib/act-intro-content";
+import { PATIENT, INTAKE_COPY } from "@/lib/tasks/patient-intake/content";
+import { PATIENT as APPOINTMENT_PATIENT } from "@/lib/tasks/appointment-scheduling/content";
+import { BILLING_ROWS } from "@/lib/tasks/billing-sheet/content";
+import { PRACTICE_PROFILE } from "@/lib/tasks/onboarding-paperwork/content";
 import { SHIFT_MOMENT } from "@/lib/story-beats";
 import { dayNumber, dayTitle, dayLabel, dayInAct, workdaysInAct } from "@/lib/shift-spine";
-import { JOB_CARD_COPY, shouldShowListIntro } from "@/lib/job-card-content";
+import { JOB_CARD_COPY, JOB_CARD_LINE, shouldShowListIntro } from "@/lib/job-card-content";
 import { tourEventIntro } from "@/lib/tasks/tour/content";
 import { bodyForTask } from "@/lib/tasks/mail/content";
 
@@ -141,5 +147,142 @@ describe("the Day One list intro", () => {
   it("does not talk over the level-up card, and does not repeat", () => {
     expect(shouldShowListIntro({ ...base, celebrating: true })).toBe(false);
     expect(shouldShowListIntro({ ...base, storyFlags: { "list-intro-seen": "true" } })).toBe(false);
+  });
+});
+
+/**
+ * The fourth way the story fell apart: a Job Card said "Maria said welcome"
+ * on the very first day, when nothing had yet said who Maria was. A name with
+ * no role attached is just a stranger, and the learner is left wondering who
+ * they are supposed to be writing to.
+ *
+ * A person is "introduced" when some screen the learner sees *before* that
+ * card attaches a role to the name — a manager line, an act intro, a story
+ * beat that says what they do.
+ */
+describe("the cast", () => {
+  /** First names, which is how the cards refer to people. */
+  const firstNameOf = (full: string) => full.split(" ")[0];
+
+  it("never names a person on a Job Card before introducing them", () => {
+    // Surfaces that introduce someone with a role, and the earliest level
+    // index by which the learner has seen them.
+    const introducedBy = new Map<string, number>();
+
+    // The level-0 first-day screen names the Act I manager with her title.
+    for (const lang of ["en", "es"] as const) {
+      const intro = tourEventIntro(lang, "Ana").subheadline ?? "";
+      for (const m of Object.values(CAST)) {
+        if (m.title && intro.includes(m.name)) introducedBy.set(firstNameOf(m.name), 0);
+      }
+    }
+
+    // Each act intro names that act's manager before any of its levels run.
+    for (const level of LEVELS) {
+      const act = actForLevel(level);
+      const actKey = act?.key;
+      if (!actKey || !(actKey in ACT_INTROS)) continue;
+      const idx = LEVELS.findIndex((l) => l.key === act.levelKeys[0]);
+      const line = ACT_INTROS[actKey as ActIntroActKey].manager.en;
+      for (const m of Object.values(CAST)) {
+        if (!line.includes(m.name)) continue;
+        const prev = introducedBy.get(firstNameOf(m.name));
+        if (prev === undefined || idx < prev) introducedBy.set(firstNameOf(m.name), idx);
+      }
+    }
+
+    const problems: string[] = [];
+    LEVELS.forEach((level, levelIdx) => {
+      for (const key of taskKeysForLevel(level)) {
+        const line = JOB_CARD_LINE[key]?.en ?? TASK_INFO[key]?.dispatch.en;
+        if (!line) continue;
+        for (const m of Object.values(CAST)) {
+          const first = firstNameOf(m.name);
+          if (!new RegExp(`\\b${first}\\b`).test(line)) continue;
+          // A line that names the relationship right next to the name
+          // introduces the person on the spot — "Reply to your coworker,
+          // Darnell." That is the pattern we want, not a violation.
+          const rolePrefix = new RegExp(
+            `\\b(your|our|the|a|new)\\b[^.]{0,24}\\b${first}\\b`,
+            "i",
+          );
+          if (rolePrefix.test(line)) {
+            // This card introduces them; everyone downstream may use the
+            // bare name.
+            const prev = introducedBy.get(first);
+            if (prev === undefined || levelIdx < prev) introducedBy.set(first, levelIdx);
+            continue;
+          }
+          const known = introducedBy.get(first);
+          if (known === undefined || known > levelIdx) {
+            problems.push(
+              `${dayTitle(level, "en")} (${key}): "${line}" names ${first}, ` +
+                `but no screen before this level says who ${first} is`,
+            );
+          }
+        }
+      }
+    });
+
+    expect(problems, problems.join("\n")).toEqual([]);
+  });
+
+  it("does not reuse a first name for two different people", () => {
+    // cast.test.ts already pins *full* names as unique — which is precisely
+    // how two Sams and two Jordans once coexisted. Learners see first names.
+    const byFirst = new Map<string, string[]>();
+    for (const m of Object.values(CAST)) {
+      const first = firstNameOf(m.name);
+      byFirst.set(first, [...(byFirst.get(first) ?? []), m.name]);
+    }
+    for (const [first, fulls] of byFirst) {
+      expect(fulls, `${fulls.join(" and ")} share the first name ${first}`).toHaveLength(1);
+    }
+  });
+
+  it("keeps walk-on characters clear of the cast's names", () => {
+    // Walk-ons are hardcoded in task content rather than CAST. A walk-on that
+    // borrows a cast name reads as the same person turning up in a new job —
+    // either half of the name is enough to cause it.
+    const castFirst = new Set(Object.values(CAST).map((m) => firstNameOf(m.name)));
+    const castLast = new Set(
+      Object.values(CAST)
+        .map((m) => m.name.split(" ").slice(1).join(" "))
+        .filter(Boolean),
+    );
+    // Strip a leading honorific so "Nurse Elena" is compared as "Elena".
+    const bare = (w: string) => w.replace(/^(Nurse|Dr\.?)\s+/i, "").split(" · ")[0];
+    const walkOns = [
+      PATIENT.name,
+      INTAKE_COPY.en.coworkerName,
+      INTAKE_COPY.en.careTeamName,
+      APPOINTMENT_PATIENT.en,
+      PRACTICE_PROFILE.name,
+      // Clinic billing once listed cafe coworkers as patients.
+      ...BILLING_ROWS.map((r) => r.patient),
+    ];
+    for (const w of walkOns) {
+      const parts = bare(w).split(" ");
+      const first = parts[0];
+      const last = parts.slice(1).join(" ");
+      expect(
+        castFirst.has(first),
+        `walk-on "${w}" reuses the cast first name ${first}`,
+      ).toBe(false);
+      if (last) {
+        expect(
+          castLast.has(last),
+          `walk-on "${w}" reuses the cast surname ${last}`,
+        ).toBe(false);
+      }
+    }
+  });
+
+  it("keeps the two clinic patients as one person", () => {
+    // The same patient is named in patient-intake, appointment-scheduling and
+    // billing-sheet. They drifted apart once already.
+    expect(APPOINTMENT_PATIENT.en).toBe(PATIENT.name);
+    expect(APPOINTMENT_PATIENT.es).toBe(PATIENT.name);
+    expect(BILLING_ROWS.some((r) => r.patient === PATIENT.name)).toBe(true);
   });
 });

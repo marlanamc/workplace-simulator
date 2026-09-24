@@ -31,12 +31,12 @@ for(const lang of ['en','es'] as const) {
   test.slow();
   await signup(page,lang);
   await preset(page,/Paperwork.*Front desk/,'front-desk');
-  await page.getByPlaceholder('Maya Rivera').fill('Maya Rivera');
+  await page.getByPlaceholder('Maya Ansari').fill('Maya Ansari');
   await page.getByPlaceholder('03/12/1998').fill('03/12/1998');
   await page.getByPlaceholder(/^Follow-up$|^Seguimiento$/).fill(lang==='en'?'Follow-up':'Seguimiento');
   await page.getByRole('button',{name:/^File intake$|^Archivar ingreso$/}).click();
   await page.getByTestId('intake-recipient').selectOption('both');
-  await page.getByPlaceholder(/Reply to Sam|Responde a Sam/).fill(lang==='en'?'I cannot share patient forms.':'No puedo compartir formularios de pacientes.');
+  await page.getByPlaceholder(/Reply to Tomás|Responde a Tomás/).fill(lang==='en'?'I cannot share patient forms.':'No puedo compartir formularios de pacientes.');
   await page.getByRole('button',{name:/^Send reply$|^Enviar respuesta$/}).click();
   await expect(page.locator('[data-job-card]')).toContainText(lang==='en'?'verified assignment':'asignación verificada');
   await expect(page.getByTestId('intake-recipient')).toBeVisible();

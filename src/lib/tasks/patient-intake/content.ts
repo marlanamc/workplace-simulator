@@ -1,6 +1,6 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
-export const PATIENT = { name: "Maya Rivera", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
+export const PATIENT = { name: "Maya Ansari", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
 
 export const INTAKE_COPY: Record<Lang, {
   helpBtn: string;
@@ -38,13 +38,13 @@ export const INTAKE_COPY: Record<Lang, {
     needFields: "Fill name, date of birth, and reason first.",
     coworkerAsk: "Hey, can I peek at that form? I just want to see why she's here.",
     careTeamAsk: "May I collect Maya’s chart when it is ready?",
-    coworkerName: "Sam Ortiz · kitchen (not care team)",
-    careTeamName: "Nurse Jordan · care team",
-    writeHere: "Reply to Sam…",
+    coworkerName: "Tomás Ortiz · kitchen (not care team)",
+    careTeamName: "Nurse Elena · care team",
+    writeHere: "Reply to Tomás…",
     send: "Send reply",
-    empty: "Write a short reply to Sam first.",
-    weak: "Say no, and that the form is only for the care team. Do not tell Sam why she is here.",
-    shared: "Do not tell Sam the reason for the visit. Just say you cannot share it.",
+    empty: "Write a short reply to Tomás first.",
+    weak: "Say no, and that the form is only for the care team. Do not tell Tomás why she is here.",
+    shared: "Do not tell Tomás the reason for the visit. Just say you cannot share it.",
     sentKicker: "Intake filed",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -63,13 +63,13 @@ export const INTAKE_COPY: Record<Lang, {
     needFields: "Llena nombre, fecha de nacimiento y motivo primero.",
     coworkerAsk: "Oye, ¿puedo ver ese formulario? Solo quiero saber por qué está aquí.",
     careTeamAsk: "¿Puedo recoger el expediente de Maya cuando esté listo?",
-    coworkerName: "Sam Ortiz · cocina (no es equipo de cuidado)",
-    careTeamName: "Enfermera Jordan · equipo de cuidado",
-    writeHere: "Responde a Sam…",
+    coworkerName: "Tomás Ortiz · cocina (no es equipo de cuidado)",
+    careTeamName: "Enfermera Elena · equipo de cuidado",
+    writeHere: "Responde a Tomás…",
     send: "Enviar respuesta",
-    empty: "Primero escribe una respuesta corta a Sam.",
-    weak: "Di que no, y que el formulario es solo para el equipo de cuidado. No le digas a Sam por qué está aquí.",
-    shared: "No le digas a Sam el motivo de la visita. Solo dile que no lo puedes compartir.",
+    empty: "Primero escribe una respuesta corta a Tomás.",
+    weak: "Di que no, y que el formulario es solo para el equipo de cuidado. No le digas a Tomás por qué está aquí.",
+    shared: "No le digas a Tomás el motivo de la visita. Solo dile que no lo puedes compartir.",
     sentKicker: "Ingreso archivado",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -82,12 +82,12 @@ export const INTAKE_COPY: Record<Lang, {
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "I can't share that. It stays with the care team.",
-    "Sorry Sam,\nI'm not allowed to show patient forms.",
+    "Sorry Tomás,\nI'm not allowed to show patient forms.",
     "No puedo compartirlo. Se queda con el equipo de cuidado.",
   ],
   es: [
     "No puedo compartirlo. Se queda con el equipo de cuidado.",
-    "Perdón Sam,\nNo puedo mostrar formularios de pacientes.",
+    "Perdón Tomás,\nNo puedo mostrar formularios de pacientes.",
     "I can't share that. It stays with the care team.",
   ],
 };
@@ -114,9 +114,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Fill in the form and file it. That is your job here.",
         "A coworker who is not on the care team does not get to look at it.",
-        "The nurse is different. She is on the care team, so she can take the chart. Sam cannot.",
+        "The nurse is different. She is on the care team, so she can take the chart. Tomás cannot.",
       ],
-      tip: "If you told Sam the reason for the visit in your reply, you shared too much.",
+      tip: "If you told Tomás the reason for the visit in your reply, you shared too much.",
     },
   ],
   es: [
@@ -125,9 +125,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Llena el formulario y archívalo. Ese es tu trabajo aquí.",
         "Un compañero que no está en el equipo de cuidado no puede verlo.",
-        "La enfermera es distinta. Ella sí está en el equipo de cuidado, así que puede llevar el expediente. Sam no.",
+        "La enfermera es distinta. Ella sí está en el equipo de cuidado, así que puede llevar el expediente. Tomás no.",
       ],
-      tip: "Si le dijiste a Sam el motivo de la visita en tu respuesta, compartiste de más.",
+      tip: "Si le dijiste a Tomás el motivo de la visita en tu respuesta, compartiste de más.",
     },
   ],
 };
@@ -136,19 +136,19 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Fill in the intake form and file it.", es: "Llena el formulario de ingreso y archívalo." },
   { en: "Compare both requests with the verified assignment. Choose who may receive the chart.", es: "Compara ambos pedidos con la asignación verificada. Elige quién puede recibir el expediente." },
-  { en: "Tell Sam no, without sharing the reason for the visit.", es: "Dile que no a Sam, sin compartir el motivo de la visita." },
+  { en: "Tell Tomás no, without sharing the reason for the visit.", es: "Dile que no a Tomás, sin compartir el motivo de la visita." },
 ];
 
 
 export const VERIFIED_ASSIGNMENT: Localized = {
- en: "Fictional clinic assignment record: Nurse Jordan’s identity and assignment to Maya Rivera’s care team have been verified. Sam Ortiz works in the kitchen and has no care assignment for Maya. This is simplified practice.",
- es: "Registro ficticio de la clínica: se verificaron la identidad de la enfermera Jordan y su asignación al equipo de atención de Maya Rivera. Sam Ortiz trabaja en la cocina y no tiene una asignación de atención para Maya. Esta es una práctica simplificada.",
+ en: "Fictional clinic assignment record: Nurse Elena’s identity and assignment to Maya Ansari’s care team have been verified. Tomás Ortiz works in the kitchen and has no care assignment for Maya. This is simplified practice.",
+ es: "Registro ficticio de la clínica: se verificaron la identidad de la enfermera Elena y su asignación al equipo de atención de Maya Ansari. Tomás Ortiz trabaja en la cocina y no tiene una asignación de atención para Maya. Esta es una práctica simplificada.",
 };
 export const RECIPIENT_LABEL: Localized = { en: 'Who may receive this chart?', es: '¿Quién puede recibir este expediente?' };
 export const RECIPIENT_HINT: Localized = { en: 'Compare the verified assignment with both requests. A request alone does not establish access.', es: 'Compara la asignación verificada con ambos pedidos. Pedir acceso no demuestra autorización.' };
 export const RECIPIENT_OPTIONS = [
- {key:'nurse',label:{en:'Nurse Jordan only',es:'Solo la enfermera Jordan'}},
- {key:'coworker',label:{en:'Sam Ortiz only',es:'Solo Sam Ortiz'}},
+ {key:'nurse',label:{en:'Nurse Elena only',es:'Solo la enfermera Elena'}},
+ {key:'coworker',label:{en:'Tomás Ortiz only',es:'Solo Tomás Ortiz'}},
  {key:'both',label:{en:'Both people',es:'Ambas personas'}},
  {key:'neither',label:{en:'Neither person',es:'Ninguna persona'}},
 ];
