@@ -20,17 +20,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const execute = vi.fn();
 vi.mock("@/lib/db/client", () => ({ getDb: () => ({ execute }) }));
 
+/** Every table `schema.ts` declares — enumerated, never hand-listed (see below). */
+async function schemaTables() {
+  const { is } = await import("drizzle-orm");
+  const { PgTable } = await import("drizzle-orm/pg-core");
+  const schema = await import("@/lib/db/schema");
+  return (Object.values(schema) as unknown[]).filter(
+    (value): value is InstanceType<typeof PgTable> => is(value, PgTable),
+  );
+}
+
 /** Every column the app's schema declares, as information_schema would report it. */
 async function fullSchemaRows() {
   const { getTableColumns, getTableName } = await import("drizzle-orm");
-  const schema = await import("@/lib/db/schema");
-  const tables = [
-    schema.learners,
-    schema.taskCompletions,
-    schema.skillRungs,
-    schema.badges,
-    schema.submissions,
-  ];
+  const tables = await schemaTables();
   return tables.flatMap((table) =>
     Object.values(getTableColumns(table)).map((column) => ({
       table_name: getTableName(table),
@@ -85,6 +88,27 @@ describe("the health probe", () => {
     const { status, body } = await probe();
     expect(status).toBe(503);
     expect(body.missing).toContain("submissions (table missing)");
+  });
+
+  it("covers every table in the schema, including ones added after it was written", async () => {
+    // The outage this pins: `opening_replies` was declared in schema.ts and
+    // left out of the probe's hand-written table list, so a production
+    // database missing that table answered `db: ok` while every signed-in
+    // learner got a 500. Both the probe and this test's fixture now enumerate
+    // schema.ts, so a new table cannot be omitted from either.
+    const { getTableName } = await import("drizzle-orm");
+    const declared = (await schemaTables()).map(getTableName);
+    expect(declared).toContain("opening_replies");
+
+    for (const table of declared) {
+      execute.mockResolvedValue({
+        rows: (await fullSchemaRows()).filter((r) => r.table_name !== table),
+      });
+      const { status, body } = await probe();
+      expect(status, `a missing ${table} table must fail the probe`).toBe(503);
+      expect(body.missing).toContain(`${table} (table missing)`);
+      vi.resetModules();
+    }
   });
 
   it("fails when SESSION_SECRET is missing, without touching the database", async () => {

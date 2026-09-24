@@ -160,9 +160,31 @@ checks, guidance reduction, and curriculum transitions. `opening-actions.test.ts
 covers session ownership, sequential saving, failure propagation, and old
 completion compatibility. `opening-mail.spec.ts` covers EN/ES saving, reload,
 recovery, Help, one final completion, Studio reset, and legacy progress.
-Apply the additive opening-replies migration before using this app revision.
 Use a dedicated test database for the browser suite, including schema setup;
 a test learner alone does not isolate schema changes from classroom data.
+
+
+## Migrations
+
+`npm run build` runs `scripts/migrate.mjs` first, so every deploy applies
+`src/lib/db/migrations/*.sql` against that environment's `DATABASE_URL` before
+the new code goes live. A failed migration fails the build, which is the point:
+shipping code whose tables do not exist took the site down for every signed-in
+learner on 2026-09-23, because the migration's own "apply before deploying"
+comment was the only thing enforcing it.
+
+Write migrations additive and idempotent — `CREATE TABLE IF NOT EXISTS`,
+`ADD COLUMN IF NOT EXISTS`. They re-run on every build, so anything
+destructive would be destructive repeatedly. Adding a table to `schema.ts`
+means adding a migration for it; `drizzle-kit push` is for local iteration and
+cannot be relied on in CI, where it has silently no-opped on an interactive
+prompt.
+
+`npm run db:migrate` applies them by hand against whatever `DATABASE_URL`
+points at. `/api/health` enumerates `schema.ts` and returns 503 naming any
+table or column the database is missing, so a drifted deploy is visible within
+the 30 minutes between production-health pings rather than when a learner
+hits it.
 
 
 ## Optional pointer practice
