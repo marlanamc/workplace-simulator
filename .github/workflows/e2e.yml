@@ -54,13 +54,62 @@ jobs:
             exit 1
           fi
 
+      # Rows left behind by previous runs. Every test signs up its own
+      # throwaway learner, so none of it is worth keeping — and accumulated
+      # rows make the next step stop to ask whether it may truncate a table it
+      # is adding a constraint to. That prompt has no TTY to render into, so
+      # the step died on it while npx still exited 0, and the whole run then
+      # went ahead against a stale schema. Emptying first leaves nothing to ask
+      # about.
+      - name: Empty the throwaway test database
+        run: |
+          node --input-type=module -e '
+            import { neon } from "@neondatabase/serverless";
+            const sql = neon(process.env.DATABASE_URL);
+            const rows = await sql`select tablename from pg_tables where schemaname = current_schema()`;
+            if (!rows.length) { console.log("empty database, nothing to clear"); process.exit(0); }
+            const list = rows.map((r) => `"${r.tablename}"`).join(", ");
+            await sql.query(`TRUNCATE TABLE ${list} RESTART IDENTITY CASCADE`);
+            console.log("cleared:", list);
+          '
+
       # The suite has to own its schema. The `role` column was added to
       # schema.ts on 2026-09-05 and never pushed to the e2e database; the first
       # full CI run of this suite failed all 30 tests on
       # `column "role" does not exist`, months later. Pushing here means the
       # database can never drift behind the branch under test again.
+      #
+      # The explicit table check is the backstop: drizzle-kit has failed here
+      # while npx still reported success, which is how a no-op push once passed
+      # and left every test failing on a table that was never created.
       - name: Apply the schema to the test database
-        run: npx drizzle-kit push --force
+        run: |
+          # < /dev/null so a prompt closes the stream and exits instead of
+          # waiting on a TTY that will never arrive.
+          npx drizzle-kit push --force < /dev/null || echo "::warning::drizzle-kit push did not succeed; falling back to the SQL migrations"
+          # Additive migrations, applied whatever push did. Each is written
+          # CREATE TABLE IF NOT EXISTS, so re-running one is a no-op.
+          for file in src/lib/db/migrations/*.sql; do
+            echo "applying $file"
+            DATABASE_URL="$DATABASE_URL" node --input-type=module -e '
+              import { neon } from "@neondatabase/serverless";
+              import { readFileSync } from "node:fs";
+              await neon(process.env.DATABASE_URL).query(readFileSync(process.argv[1], "utf8"));
+            ' "$file"
+          done
+          node --input-type=module -e '
+            import { neon } from "@neondatabase/serverless";
+            const sql = neon(process.env.DATABASE_URL);
+            const rows = await sql`select tablename from pg_tables where schemaname = current_schema()`;
+            const have = new Set(rows.map((r) => r.tablename));
+            const need = ["learners", "task_completions", "badges", "submissions", "skill_rungs", "opening_replies"];
+            const missing = need.filter((t) => !have.has(t));
+            if (missing.length) {
+              console.error(`::error::Schema push left these tables missing: ${missing.join(", ")}`);
+              process.exit(1);
+            }
+            console.log("schema applied:", [...have].sort().join(", "));
+          '
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
