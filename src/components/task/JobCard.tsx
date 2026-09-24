@@ -626,7 +626,7 @@ export default function JobCard() {
                 </li>
               ))}
             </ol>
-            <p className="mt-3.5 mb-0 rounded-[14px] bg-[#f1f3f4] px-3.5 py-3 text-[15px] leading-[1.35] text-[#3c4043]">
+            <p className="mt-3.5 mb-0 whitespace-pre-line rounded-[14px] bg-[#f1f3f4] px-3.5 py-3 text-[15px] leading-[1.35] text-[#3c4043]">
               <span className="font-semibold text-[#202124]">{visibleHelp.tipLabel}: </span>
               {visibleHelp.lesson.tip}
             </p>

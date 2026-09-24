@@ -64,7 +64,7 @@ import {
 } from "@/lib/tasks/timeclock/content";
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
-import { OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
+import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { recordOpeningReply } from '@/app/actions';
 import { storage } from '@/lib/storage';
 
@@ -233,8 +233,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const lessonIdx = Math.min(step, 4);
   const lesson = opening ? { t: openingMessage.subject[lang], s: [
     T(`Open ${openingMessage.sender.name}'s email.`, `Abre el correo de ${openingMessage.sender.name}.`),
-    T('Click Reply.', 'Haz clic en Responder.'), openingMessage.objective[lang], T('Click Send.', 'Haz clic en Enviar.'),
-  ], tip: openingMessage.starter[lang] } : COMPOSE_LESSONS[activeMailTask]?.[lang] ?? LESSONS[lang][lessonIdx];
+    T('Click Reply.', 'Haz clic en Responder.'), openingIndex === 0 ? FIRST_REPLY_GUIDANCE[lang] : openingMessage.objective[lang], ...(openingIndex === 0 ? [] : [T('Click Send.', 'Haz clic en Enviar.')]),
+  ], tip: openingIndex === 0 ? FIRST_REPLY_EXAMPLE[lang] : openingMessage.starter[lang] } : COMPOSE_LESSONS[activeMailTask]?.[lang] ?? LESSONS[lang][lessonIdx];
 
   const openMail = () => {
     setView("read");

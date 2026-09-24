@@ -1,6 +1,6 @@
 import { test, expect, type Page } from '@playwright/test';
 import { getOpeningReplies, saveOpeningReply, recordCompletion } from '../src/lib/db/queries';
-import { OPENING_MESSAGES } from '../src/lib/tasks/mail/opening';
+import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES } from '../src/lib/tasks/mail/opening';
 import { neon } from '@neondatabase/serverless';
 import { continuePastStudioArrivalIfPresent } from './studio-arrival';
 
@@ -46,7 +46,33 @@ for (const lang of ['en','es'] as const) {
     const completions = async () => (await sql`SELECT task_key FROM task_completions WHERE learner_id=${id}`).map(r => r.task_key).sort();
     await startOpening(page);
     const card = page.locator('[data-job-card]');
-    await reply(page, lang === 'en' ? 'Hi Maria!' : '¡Hola Maria!');
+    const subject = OPENING_MESSAGES[0].subject[lang];
+    const guidance = FIRST_REPLY_GUIDANCE[lang];
+    await expect(page.locator('[data-showme="maria-row"]')).toContainText(subject);
+    await page.locator('[data-showme="maria-row"]').click();
+    await expect(page.getByText(subject, {exact:true}).last()).toBeVisible();
+    await expect(card).not.toContainText(guidance);
+    await page.locator('[data-showme="reply-button"]').click();
+    await expect(page.getByText('Re: ' + subject, {exact:true})).toBeVisible();
+    const draft = page.getByRole('textbox', {name:/Your reply|Tu respuesta/});
+    await expect(draft).toHaveValue('');
+    await expect(card).toContainText(guidance);
+    await draft.fill(lang === 'en' ? 'Thanks!' : '¡Gracias!');
+    await expect(card).toContainText(guidance);
+    await card.getByTestId('job-card-help').click();
+    await expect(card).toContainText(FIRST_REPLY_EXAMPLE[lang]);
+    const example = card.locator('p').filter({hasText: FIRST_REPLY_EXAMPLE[lang]});
+    await expect(example).toHaveCSS('white-space', 'pre-line');
+    await card.getByRole('button', {name:/Back to my task|Volver a mi tarea/}).click();
+    await expect(draft).toHaveValue(lang === 'en' ? 'Thanks!' : '¡Gracias!');
+    await page.reload();
+    await continuePastStudioArrivalIfPresent(page);
+    await parkCard(page);
+    await page.locator('[data-showme="maria-row"]').click();
+    await page.locator('[data-showme="reply-button"]').click();
+    await expect(draft).toHaveValue(lang === 'en' ? 'Thanks!' : '¡Gracias!');
+    await expect(card).toContainText(guidance);
+    await page.locator('[data-showme="send-button"]').click();
     await expect(card.getByRole('button',{name:/Next message|Siguiente mensaje/})).toBeVisible();
     await expect.poll(saved).toEqual(['welcome']);
     await expect.poll(completions).toEqual(['tour']);
@@ -56,6 +82,7 @@ for (const lang of ['en','es'] as const) {
     await parkCard(page);
     await expect(page.locator('[data-showme="maria-row"]')).toContainText(lang === 'en' ? 'Tomorrow at 10 AM' : 'Mañana a las 10');
     await reply(page, 'No');
+    await expect(card).not.toContainText(guidance);
     await expect(page.getByRole('textbox',{name:/Your reply|Tu respuesta/})).toHaveValue('No');
     await expect.poll(saved).toEqual(['welcome']);
     await page.getByRole('textbox',{name:/Your reply|Tu respuesta/}).fill(lang === 'en' ? 'Yes, see you tomorrow!' : 'Sí, allí estaré.');
@@ -102,7 +129,7 @@ for (const lang of ['en','es'] as const) {
     // Explicit Studio replay clears only the opening steps.
     await startOpening(page);
     await expect.poll(saved).toEqual([]);
-    await expect(page.locator('[data-showme="maria-row"]')).toContainText(lang === 'en' ? 'Welcome to Harborside' : 'Bienvenido a Harborside');
+    await expect(page.locator('[data-showme="maria-row"]')).toContainText(lang === 'en' ? 'Welcome to Harborside Cafe' : 'Bienvenido a Harborside Cafe');
   });
 }
 

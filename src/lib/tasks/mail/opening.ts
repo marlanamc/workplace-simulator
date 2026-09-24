@@ -6,10 +6,19 @@ export type OpeningMessageId = typeof OPENING_IDS[number];
 export type OpeningReply = { messageId: OpeningMessageId; response: string; lang: Lang };
 const copy = (en: string, es: string): Localized => ({ en, es });
 
+export const FIRST_REPLY_GUIDANCE = copy(
+  'Say hello, write your short reply, and finish with your name. Then click Send.',
+  'Saluda, escribe una respuesta corta y termina con tu nombre. Luego haz clic en Enviar.',
+);
+export const FIRST_REPLY_EXAMPLE = copy(
+  'Example (Ana is an example name):\n\nHi Maria,\nThank you for the welcome. See you tomorrow!\nAna',
+  'Ejemplo (Ana es un nombre de ejemplo):\n\nHola Maria,\nGracias por la bienvenida. ¡Nos vemos mañana!\nAna',
+);
+
 export const OPENING_MESSAGES = [
   {
     id: 'welcome', sender: CAST.maria, time: '6:02 PM',
-    subject: copy('Welcome to Harborside', 'Bienvenido a Harborside'),
+    subject: copy('Welcome to Harborside Cafe', 'Bienvenido a Harborside Cafe'),
     body: copy('Welcome to the team! Your first day is tomorrow. Please reply to let me know you received this message.', '¡Bienvenido al equipo! Tu primer día es mañana. Responde para avisarme que recibiste este mensaje.'),
     objective: copy('Reply to Maria with a short hello.', 'Responde a Maria con un saludo corto.'),
     starter: copy('Hi Maria, thank you!', '¡Hola Maria, gracias!'),
@@ -56,5 +65,6 @@ export function openingInstruction(index: number, view: string, hasText: boolean
   if (index === 2 && !explicit) return message.objective;
   if (view === 'empty' || view === 'story') return copy(`Open ${message.sender.name}'s email: ${message.subject.en}.`, `Abre el correo de ${message.sender.name}: ${message.subject.es}.`);
   if (view === 'read') return copy(index === 0 || explicit ? 'Click Reply.' : 'Reply to Maria.', index === 0 || explicit ? 'Haz clic en Responder.' : 'Responde a Maria.');
+  if (index === 0 && view === 'compose') return FIRST_REPLY_GUIDANCE;
   return hasText ? copy('Click Send.', 'Haz clic en Enviar.') : message.objective;
 }

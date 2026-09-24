@@ -1,9 +1,23 @@
 import { describe, expect, it } from 'vitest';
-import { OPENING_MESSAGES, nextOpeningIndex, openingInstruction, openingReplyAccepted } from '../tasks/mail/opening';
+import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingInstruction, openingReplyAccepted } from '../tasks/mail/opening';
 import { LEVELS, taskKeysForLevel, nextHandoff } from '../tracks-content';
 import { SHIFT_TIMES } from '../story-calendar';
 
 describe('opening reply practice', () => {
+  it('keeps first-reply structure guidance throughout composition in both languages', () => {
+    expect(OPENING_MESSAGES[0].subject).toEqual({ en: 'Welcome to Harborside Cafe', es: 'Bienvenido a Harborside Cafe' });
+    for (const lang of ['en', 'es'] as const) {
+      for (const hasText of [false, true]) for (const explicit of [false, true]) {
+        expect(openingInstruction(0, 'compose', hasText, explicit)[lang]).toBe(FIRST_REPLY_GUIDANCE[lang]);
+        expect(openingInstruction(1, 'compose', hasText, explicit)[lang]).not.toBe(FIRST_REPLY_GUIDANCE[lang]);
+        expect(openingInstruction(2, 'compose', hasText, explicit)[lang]).not.toBe(FIRST_REPLY_GUIDANCE[lang]);
+      }
+      expect(FIRST_REPLY_EXAMPLE[lang]).toContain('\nAna');
+      expect(openingInstruction(0, 'read', false, false)[lang]).not.toBe(FIRST_REPLY_GUIDANCE[lang]);
+    }
+    expect(openingReplyAccepted('welcome', 'x')).toBe(true);
+    expect(openingReplyAccepted('welcome', '   ')).toBe(false);
+  });
   it('resumes the first missing reply, never counting duplicates or later replies as earlier ones', () => {
     expect(nextOpeningIndex([])).toBe(0);
     expect(nextOpeningIndex([{messageId:'welcome'}, {messageId:'welcome'}])).toBe(1);
