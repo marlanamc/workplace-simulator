@@ -57,9 +57,12 @@ export default function DemoTour({ learnerId }: { learnerId: string }) {
 
   const go = async (presetKey: string) => {
     if (busyKey) return;
+    // Open the tab now, while this is still the click: a tab opened after the
+    // await would be blocked as a pop-up. Studio stays put in this tab.
+    const tab = window.open("about:blank", "_blank");
     setBusyKey(presetKey);
-    const ok = await jumpToPreset(learnerId, presetKey);
-    if (!ok) setBusyKey(null);
+    await jumpToPreset(learnerId, presetKey, undefined, tab);
+    setBusyKey(null);
   };
 
   return (
@@ -67,7 +70,7 @@ export default function DemoTour({ learnerId }: { learnerId: string }) {
       <h2 className="text-[15px] font-medium">Demo tour</h2>
       <p className="mt-1 max-w-[640px] text-[13px] leading-relaxed text-[#9aa0a6]">
         Six stops, first login to capstone. Each button sets this account to that moment and
-        opens the desktop. Use the browser back button to come back here.
+        opens the desktop in a new tab, so this list stays open here.
       </p>
       <ol className="mt-3 flex flex-col divide-y divide-white/6">
         {STOPS.map((stop, i) => {

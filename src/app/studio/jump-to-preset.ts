@@ -13,9 +13,14 @@ export async function jumpToPreset(
   learnerId: string,
   presetKey: string,
   path?: BridgePath,
+  /** A tab opened synchronously in the click handler; the desktop loads there instead. */
+  tab?: Window | null,
 ): Promise<boolean> {
   const result = await setProgressPreset(presetKey);
-  if (!result.ok) return false;
+  if (!result.ok) {
+    tab?.close();
+    return false;
+  }
   storage.remove(learnerKey.storyFlags(learnerId));
   storage.remove(learnerKey.rungs(learnerId));
   storage.remove(`ws-opening-draft:${learnerId}`);
@@ -29,8 +34,13 @@ export async function jumpToPreset(
   const arrive = arriveLevelKey(presetKey);
   const qs = new URLSearchParams({ from: "studio" });
   if (arrive) qs.set("arrive", arrive);
+  const href = `/?${qs.toString()}`;
+  if (tab) {
+    tab.location.href = href;
+    return true;
+  }
   // eslint-disable-next-line @next/next/no-location-assign-relative-destination
-  window.location.assign(`/?${qs.toString()}`);
+  window.location.assign(href);
   return true;
 }
 
