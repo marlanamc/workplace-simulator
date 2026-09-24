@@ -1,5 +1,6 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { COPY_NAME } from "../status-sheet";
+import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -190,10 +191,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open the status template Renata shared.",
-    es: "Abre la plantilla de estado que Renata compartió.",
-  },
+  openFileStep(MAKE_COPY_COPY, (c) => c.templateName),
   {
     en: "It is view only. Make your own copy.",
     es: "Es solo para ver. Haz tu propia copia.",

@@ -1,5 +1,6 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { GAP_SHIFT_LABEL } from "../crew-week";
+import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -207,10 +208,7 @@ export function describeSubmission(body: string, lang: Lang): SubmissionContent 
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open the crew schedule.",
-    es: "Abre el horario del equipo.",
-  },
+  openFileStep(TEAM_SCHEDULE_COPY, (c) => c.sheetName),
   {
     en: "Find Saturday's gap, then pick someone who has room.",
     es: "Busca el hueco del sábado y elige a alguien con espacio.",

@@ -1,6 +1,7 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { mentionsAmount } from "@/lib/text-facts";
 import { CORRECT_WEEK_TOTAL } from "../crew-week";
+import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -229,10 +230,7 @@ export function emailMentionsFix(body: string): boolean {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open the hours sheet.",
-    es: "Abre la hoja de horas.",
-  },
+  openFileStep(FORMULA_CHECK_COPY, (c) => c.sheetName),
   {
     en: "Click the Hours total and read which rows it adds.",
     es: "Haz clic en el total de Horas y mira qué filas suma.",

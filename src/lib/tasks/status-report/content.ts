@@ -2,6 +2,7 @@ import { mentionsAmount } from "@/lib/text-facts";
 import { CAST } from "@/lib/cast";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
+import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -228,10 +229,7 @@ export function describeSubmission(
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open your copy of the status report.",
-    es: "Abre tu copia del reporte de estado.",
-  },
+  openFileStep(STATUS_REPORT_COPY, (c) => c.sheetName),
   {
     en: "The total cell is empty. Type =SUM and check the number.",
     es: "La celda del total está vacía. Escribe =SUM y revisa el número.",

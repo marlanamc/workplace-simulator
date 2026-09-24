@@ -1,4 +1,5 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import { openFileStep } from "../open-file-step";
 
 export const PLANTED_TOTAL = 188;
 export const MISSING_KEY = "dinner";
@@ -199,7 +200,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Open the expense sheet.", es: "Abre la hoja de gastos." },
+  openFileStep(EXPENSE_COPY, (c) => c.sheetName),
   { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Marca lo que falta." },
   { en: "Submit the report.", es: "Envía el informe." },
 ];

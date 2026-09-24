@@ -1,4 +1,5 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import { openFileStep } from "../open-file-step";
 
 export const MISMATCH_KEY = "ekg";
 export const CORRECT_CHARGE = 85;
@@ -166,7 +167,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Open today's billing sheet.", es: "Abre la hoja de facturación de hoy." },
+  openFileStep(BILLING_COPY, (c) => c.sheetName),
   { en: "Click the row that does not match the list.", es: "Haz clic en la fila que no cuadra con la lista." },
   { en: "Email Pat the row and the correct charge.", es: "Escríbele a Pat la fila y el cargo correcto." },
 ];

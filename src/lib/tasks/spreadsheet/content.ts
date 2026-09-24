@@ -1,5 +1,6 @@
 import { mentionsAmount } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -219,10 +220,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open this week's tips sheet.",
-    es: "Abre la hoja de propinas de esta semana.",
-  },
+  openFileStep(SPREADSHEET_COPY, (c) => c.sheetName),
   {
     en: "Enter each slip, then read the total.",
     es: "Ingresa cada recibo y luego lee el total.",

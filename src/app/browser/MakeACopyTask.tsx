@@ -17,6 +17,8 @@ import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
 type View = "home" | "template" | "copy" | "done";
 
@@ -29,6 +31,7 @@ export default function MakeACopyTask() {
   const [typed, setTyped] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
   const c = MAKE_COPY_COPY[lang];
 
   const tryCopy = () => {
@@ -78,9 +81,12 @@ export default function MakeACopyTask() {
             steps={RIGHT_NOW_STEPS}
             lang={lang}
             rightNowLabel={RIGHT_NOW_LABEL}
+            onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
+            showMeActive={showMe.targetId === "open-file"}
             onHelp={() => setHelp(true)}
           />
         )}
+        <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
 
         {(view === "template" || view === "copy") && (
           <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-medium ${view === "template" ? "bg-[#fef7e0] text-[#b06000]" : "bg-[#e6f4ea] text-[#137333]"}`}>
@@ -131,6 +137,7 @@ export default function MakeACopyTask() {
             <h3 className="mb-3 text-[14px] font-medium text-[#3c4043]">{c.recentHeading}</h3>
             <button
               onClick={() => setView("template")}
+              data-showme="open-file"
               className="flex w-full items-center gap-3 rounded-xl border border-border bg-white p-4 text-left hover:bg-surface-muted cursor-pointer"
             >
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-[#0f9d58] text-white">

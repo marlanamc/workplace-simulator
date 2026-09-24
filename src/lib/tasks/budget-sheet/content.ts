@@ -1,5 +1,6 @@
 import { mentionsAmount } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -209,10 +210,7 @@ export function emailFlagsOver(body: string): boolean {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open this week's budget sheet.",
-    es: "Abre la hoja de presupuesto de esta semana.",
-  },
+  openFileStep(BUDGET_SHEET_COPY, (c) => c.sheetName),
   {
     en: "Click the over status cell and read the IF.",
     es: "Haz clic en la celda de estado sobre y lee el IF.",
