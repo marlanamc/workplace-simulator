@@ -238,7 +238,7 @@ export const CATALOG_ACTS: CatalogAct[] = [
       {
         key: "level1",
         n: 1,
-        title: "Day One",
+        title: "The Night Before",
         folder: "act-1-new-hire/level-1-day-one",
         lessons: [
           {

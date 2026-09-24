@@ -428,13 +428,13 @@ export const LEVELS: Level[] = [
   },
   {
     key: "level1",
-    title: { en: "Day One", es: "Primer día" },
+    title: { en: "The Night Before", es: "La noche anterior" },
     trackKeys: ["starter"],
     // Three purposeful replies in one inbox, saved within mail-reply.
     firstTabKey: "mail",
     levelUp: {
       emoji: "👋",
-      kicker: { en: "Ready for the floor", es: "Listo para el piso" },
+      kicker: { en: "Your first shift is tomorrow", es: "Tu primer turno es mañana" },
       title: { en: "You know how this computer works.", es: "Ya sabes cómo funciona esta computadora." },
       body: {
         en: "Maria Delgado runs the cafe, and she already emailed you.",
@@ -450,11 +450,11 @@ export const LEVELS: Level[] = [
     firstTabKey: "portal",
     levelUp: {
       emoji: "🎉",
-      kicker: { en: "Day one: complete", es: "Primer día: completo" },
+      kicker: { en: "Ready for tomorrow", es: "Listo para mañana" },
       title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
       body: {
-        en: "You sent three replies. Clock out for today. Your progress is saved. Next time you sign in, your schedule will be waiting.",
-        es: "Enviaste tres respuestas. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
+        en: "You sent three replies. You are ready for tomorrow. Your progress is saved. Next time you sign in, your schedule will be waiting.",
+        es: "Enviaste tres respuestas. Estás listo para mañana. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
       },
       cta: { en: "See my schedule", es: "Ver mi horario" },
       stoppingPoint: true,

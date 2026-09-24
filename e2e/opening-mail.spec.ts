@@ -21,7 +21,7 @@ async function signup(page: Page, lang: 'en' | 'es') {
 }
 async function startOpening(page: Page) {
   await page.goto('/studio');
-  await page.getByRole('button', {name:/Start of Day 1: Day One/}).click();
+  await page.getByRole('button', {name:/Start of The Night Before/}).click();
   await page.waitForURL(/from=studio/);
   await continuePastStudioArrivalIfPresent(page);
   const card = page.locator('[data-job-card]');

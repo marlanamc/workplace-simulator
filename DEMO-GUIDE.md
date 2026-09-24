@@ -9,7 +9,7 @@ code, and PIN. Matching details sign into the existing account.
 | Account | Purpose | Starting point |
 | --- | --- | --- |
 | Demo Start | Show a new student's experience | Fresh welcome; no completed tasks |
-| Demo Tour | Preview different parts of the course | Day One, before the first email reply |
+| Demo Tour | Preview different parts of the course | The Night Before, before the first email reply |
 
 Both have learner permissions, showing the student experience without access
 to real students' work.
@@ -35,7 +35,7 @@ yourself during the presentation; students follow the Job Card.
 ## Reset and rehearse
 
 - On **Demo Start**, `/studio` → **Fresh account** restores the opening.
-- On **Demo Tour**, `/studio` → **Start of Day 1: Day One** restores the email
+- On **Demo Tour**, `/studio` → **Start of The Night Before** restores the email
   opening. This replaces that demo account's later progress.
 - Studio changes the signed-in account. Check the account name first.
 - Use separate browser profiles or a normal window and a private window to keep

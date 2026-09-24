@@ -181,18 +181,18 @@ The story is Harborside Cafe. Name out loud that the same moves show up in
 a store, a cleaning job, a job site, or a front desk: email a lead, check
 hours and pay, ask for help, look up the rule.
 
-Level 1 (Day One) is deliberately tiny so the very first session in the
+Level 1 (The Night Before) is deliberately tiny so the very first session in the
 app is low-stakes. Level 2 (The First Week) adds "life happening on the
 schedule" — spotting a clash, then asking for the swap — not just
 mechanics. Level 3 (Payday) covers hours and pay and closes with the
 no-new-tools review. Two short coda levels follow before the promotion: the
 named email lesson, then the sick call.
 
-### Level 1: Day One
+### Level 1: The Night Before
 
 One inbox, three purposeful replies within one scored task. The learner
-welcomes Maria, confirms tomorrow's 10 AM start, and tells Darnell where
-the clean cups are stored. Repeat open → read → reply → write → send,
+greets Maria, confirms tomorrow's 10 AM start, and tells Darnell where
+they will put their bag. All three emails arrive the evening before the first shift. Repeat open → read → reply → write → send,
 with quieter Job Card guidance on each message. Help remains available.
 Each reply saves independently; the level completes after all three.
 There are no attachments or recipient choices in this level.

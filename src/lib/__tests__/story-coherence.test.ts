@@ -75,10 +75,10 @@ describe("day numbering", () => {
     expect(dayLabel(LEVELS[0], "es")).toBe("Cómo funciona esto");
   });
 
-  it("numbers the first real level Day 1, in both languages", () => {
-    expect(dayTitle(LEVELS[1], "en")).toBe("Day 1: Day One");
-    expect(dayLabel(LEVELS[1], "en")).toBe("Day 1 of 6");
-    expect(dayLabel(LEVELS[1], "es")).toBe("Día 1 de 6");
+  it("labels the opening as the night before, in both languages", () => {
+    expect(dayTitle(LEVELS[1], "en")).toBe("The Night Before");
+    expect(dayLabel(LEVELS[1], "en")).toBe("The Night Before");
+    expect(dayLabel(LEVELS[1], "es")).toBe("La noche anterior");
   });
 
   it("labels Act I workdays as Day N of 6 in both languages", () => {
@@ -88,15 +88,15 @@ describe("day numbering", () => {
     act1Workdays.forEach((level, i) => {
       const n = i + 1;
       expect(dayInAct(level)).toBe(n);
-      expect(dayLabel(level, "en")).toBe(`Day ${n} of 6`);
-      expect(dayLabel(level, "es")).toBe(`Día ${n} de 6`);
+      expect(dayLabel(level, "en")).toBe(level.key === "level1" ? "The Night Before" : `Day ${n} of 6`);
+      expect(dayLabel(level, "es")).toBe(level.key === "level1" ? "La noche anterior" : `Día ${n} de 6`);
     });
   });
 
   it("keeps the Job Card meter aligned with Act I workday count", () => {
     const shifts = workdaysInAct(LEVELS[1]).length;
     expect(shifts).toBe(6);
-    expect(dayLabel(LEVELS[1], "en")).toContain(`of ${shifts}`);
+    expect(dayLabel(LEVELS[2], "en")).toContain(`of ${shifts}`);
   });
 
   it("still tells a new hire this week has 5 cafe shifts (schedule flavor, not sitting count)", () => {

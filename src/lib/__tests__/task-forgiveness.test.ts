@@ -88,8 +88,8 @@ describe("meeting follow-up forgiveness", () => {
 describe("shift-spine naming", () => {
   it("names the sitting and the job in both languages", () => {
     const level1 = LEVELS.find((l) => l.key === "level1")!;
-    expect(sittingTitle(level1, "en")).toBe("Day One");
-    expect(sittingTitle(level1, "es")).toBe("Primer día");
+    expect(sittingTitle(level1, "en")).toBe("The Night Before");
+    expect(sittingTitle(level1, "es")).toBe("La noche anterior");
     expect(jobTitle(level1, "en")).toBe("New Hire");
     expect(jobTitle(level1, "es")).toBe("Personal nuevo");
   });

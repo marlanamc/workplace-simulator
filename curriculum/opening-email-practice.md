@@ -1,13 +1,15 @@
 # Opening email practice
 
-Day One stays in Mail. Three brief messages repeat the same action sequence
-with different purposes, not progressively harder writing requirements.
+The Night Before stays in Mail. All three messages arrive the evening before
+the first shift. Three brief messages repeat the same action sequence with
+different purposes, not progressively harder writing requirements.
 
 1. Maria welcomes the learner: any nonempty short reply is accepted.
 2. Maria asks for confirmation of Wednesday's 10 AM start: a brief affirmative
    response is enough; no copied time, salutation, or signature is required.
-3. Darnell asks where clean cups are stored: the Job Card supplies the shelf
-   under the counter. Accept a short location reply in English or Spanish.
+3. Darnell explains where to leave a bag tomorrow: the shelf under the counter.
+   The learner replies to confirm the location. Accept a short location reply
+   in English or Spanish.
 
 The third message uses an objective instead of repeated click instructions.
 Help and Show me restore explicit guidance for that message. Errors keep the

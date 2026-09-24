@@ -98,7 +98,7 @@ for (const lang of ['en', 'es'] as const) {
     await card.getByRole('button', { name: skipName }).click();
     await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
     await page.goto('/studio');
-    await page.getByRole('button', { name: /Start of Day 1: Day One/ }).click();
+    await page.getByRole('button', { name: /Start of The Night Before/ }).click();
     await page.waitForURL(/from=studio/);
     await continuePastStudioArrivalIfPresent(page);
     await card.getByRole('button', { name: /^I understand$|^Entiendo$/ }).click();

@@ -46,7 +46,7 @@ export function dayNumber(level: Level): number {
 export function dayTitle(level: Level, lang: Lang): string {
   const n = dayNumber(level);
   const name = sittingTitle(level, lang);
-  if (n <= 0) return name;
+  if (n <= 0 || level.key === "level1") return name;
   return lang === "en" ? `Day ${n}: ${name}` : `Día ${n}: ${name}`;
 }
 
@@ -89,7 +89,7 @@ export function dayInAct(level: Level): number {
 export function dayLabel(level: Level, lang: Lang): string {
   const n = dayInAct(level);
   const total = workdaysInAct(level).length;
-  if (n <= 0) return sittingTitle(level, lang);
+  if (n <= 0 || level.key === "level1") return sittingTitle(level, lang);
   if (total > 0) {
     return lang === "en" ? `Day ${n} of ${total}` : `Día ${n} de ${total}`;
   }
