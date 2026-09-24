@@ -15,14 +15,21 @@ import {
 } from "@/lib/curriculum-catalog";
 import ProgressPresets from "./ProgressPresets";
 import ActJumpNav from "./ActJumpNav";
+import DemoTour from "./DemoTour";
 
 export const metadata: Metadata = {
   title: "Studio · Workplace Simulator",
 };
 
-export default async function StudioPage() {
+export default async function StudioPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string | string[] }>;
+}) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) redirect("/login?next=/studio");
+  // Demo view is for showing the game to staff: same page, minus designer detail.
+  const demo = (await searchParams).view === "demo";
 
   const stats = catalogStats();
 
@@ -33,6 +40,12 @@ export default async function StudioPage() {
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h1 className="text-[22px] font-medium leading-tight">Studio</h1>
+              {demo ? (
+                <p className="mt-1 max-w-[540px] text-[14px] leading-relaxed text-[#9aa0a6]">
+                  Learners practice real job tech, one workday at a time, from first login to
+                  team lead.
+                </p>
+              ) : (
               <p className="mt-1 max-w-[540px] text-[14px] leading-relaxed text-[#9aa0a6]">
                 Acts I and II are the shared trunk. Early levels are scaffolded;
                 the app can check the click. Later, they write their own emails
@@ -40,8 +53,25 @@ export default async function StudioPage() {
                 This page is for designers — don&apos;t send students here. Time
                 machine jumps keep the same in-day locks as a learner.
               </p>
+              )}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex rounded-full bg-white/6 p-0.5 text-[12px] font-medium">
+                <Link
+                  href="/studio?view=demo"
+                  aria-current={demo ? "page" : undefined}
+                  className={`rounded-full px-3 py-1 ${demo ? "bg-white text-[#202124]" : "text-white/70 hover:text-white"}`}
+                >
+                  Demo
+                </Link>
+                <Link
+                  href="/studio"
+                  aria-current={demo ? undefined : "page"}
+                  className={`rounded-full px-3 py-1 ${demo ? "text-white/70 hover:text-white" : "bg-white text-[#202124]"}`}
+                >
+                  Dev
+                </Link>
+              </div>
               <p className="text-[13px] tabular-nums text-[#9aa0a6]">
                 <span className="font-medium text-[#81c995]">{stats.built}</span> playable
                 <span className="mx-1.5 text-white/20">·</span>
@@ -63,8 +93,11 @@ export default async function StudioPage() {
       </header>
 
       <main className="mx-auto flex max-w-[920px] flex-col gap-10 px-5 py-8">
-        <ProgressPresets learnerId={learnerId} />
+        <DemoTour learnerId={learnerId} />
 
+        {!demo && <ProgressPresets learnerId={learnerId} />}
+
+        {!demo && (
         <section className="rounded-2xl border border-white/8 bg-white/[0.03] px-5 py-4">
           <h2 className="text-[15px] font-medium">Track 0: Foundations</h2>
           <p className="mt-1 text-[13px] leading-relaxed text-[#9aa0a6]">
@@ -88,6 +121,7 @@ export default async function StudioPage() {
             curriculum/track-0/05-lesson-login-safety.md
           </p>
         </section>
+        )}
 
         {CATALOG_ACTS.map((act) => {
           const actLessons = act.levels.flatMap((l) => l.lessons);
@@ -140,9 +174,11 @@ export default async function StudioPage() {
                               {level.title}
                             </h3>
                           </div>
-                          <p className="mt-1 pl-[38px] font-mono text-[11px] text-[#80868b]">
-                            curriculum/{level.folder}
-                          </p>
+                          {!demo && (
+                            <p className="mt-1 pl-[38px] font-mono text-[11px] text-[#80868b]">
+                              curriculum/{level.folder}
+                            </p>
+                          )}
                         </div>
                         {openHref ? (
                           <Link
@@ -186,8 +222,12 @@ export default async function StudioPage() {
                                 <p className="mt-0.5 text-[12px] text-[#80868b]">
                                   <span className="tabular-nums">{lesson.n}</span>
                                   <span className="mx-1.5 text-white/20">·</span>
-                                  <code className="text-[11px] text-[#9aa0a6]">{lesson.taskKey}</code>
-                                  <span className="mx-1.5 text-white/20">·</span>
+                                  {!demo && (
+                                    <>
+                                      <code className="text-[11px] text-[#9aa0a6]">{lesson.taskKey}</code>
+                                      <span className="mx-1.5 text-white/20">·</span>
+                                    </>
+                                  )}
                                   {lesson.app}
                                   <span className="mx-1.5 text-white/20">·</span>
                                   {teacherCheck ? (
@@ -208,7 +248,7 @@ export default async function StudioPage() {
                                 <span className="mt-0.5 shrink-0 text-[12px] text-[#81c995]">Built</span>
                               ) : (
                                 <span className="mt-0.5 shrink-0 text-[12px] text-[#80868b]">
-                                  Stub
+                                  {demo ? "Coming soon" : "Stub"}
                                 </span>
                               )}
                             </li>
