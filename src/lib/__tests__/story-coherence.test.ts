@@ -5,6 +5,7 @@ import { ACT_INTROS, type ActIntroActKey } from "@/lib/act-intro-content";
 import { PATIENT, INTAKE_COPY } from "@/lib/tasks/patient-intake/content";
 import { PATIENT as APPOINTMENT_PATIENT } from "@/lib/tasks/appointment-scheduling/content";
 import { BILLING_ROWS } from "@/lib/tasks/billing-sheet/content";
+import { PRACTICE_PROFILE } from "@/lib/tasks/onboarding-paperwork/content";
 import { SHIFT_MOMENT } from "@/lib/story-beats";
 import { dayNumber, dayTitle, dayLabel, dayInAct, workdaysInAct } from "@/lib/shift-spine";
 import { JOB_CARD_COPY, JOB_CARD_LINE, shouldShowListIntro } from "@/lib/job-card-content";
@@ -256,6 +257,9 @@ describe("the cast", () => {
       INTAKE_COPY.en.coworkerName,
       INTAKE_COPY.en.careTeamName,
       APPOINTMENT_PATIENT.en,
+      PRACTICE_PROFILE.name,
+      // Clinic billing once listed cafe coworkers as patients.
+      ...BILLING_ROWS.map((r) => r.patient),
     ];
     for (const w of walkOns) {
       const parts = bare(w).split(" ");

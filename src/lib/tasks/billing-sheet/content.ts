@@ -14,9 +14,9 @@ export const REFERENCE = [
 
 export const BILLING_ROWS = [
   { key: "visit", patient: "Maya Ansari", code: "99213", charge: 145 },
-  { key: "shot", patient: "Alex Chen", code: "90471", charge: 40 },
+  { key: "shot", patient: "Nadia Halloran", code: "90471", charge: 40 },
   { key: "ekg", patient: "Pat Okonkwo", code: "93000", charge: 185 },
-  { key: "labs", patient: "Jordan Kim", code: "36415", charge: 22 },
+  { key: "labs", patient: "Omar Whitfield", code: "36415", charge: 22 },
 ] as const;
 
 export const BILLING_COPY: Record<Lang, {
