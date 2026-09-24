@@ -7,7 +7,7 @@ export const PATIENT = { en: "Maya Rivera", es: "Maya Rivera" };
 export const SLOTS = [
   { time: "9:00", taken: true, name: "Alex Chen" },
   { time: "9:30", taken: true, name: "Jordan Kim" },
-  { time: "10:00", taken: true, name: "Sam Ortiz" },
+  { time: "10:00", taken: true, name: "Tomás Ortiz" },
   { time: "10:30", taken: true, name: "Priya Shah" },
   { time: "11:00", taken: true, name: "Dana Lee" },
   { time: "11:30", taken: false, name: null },
