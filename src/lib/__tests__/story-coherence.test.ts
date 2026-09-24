@@ -3,6 +3,8 @@ import { LEVELS, taskKeysForLevel, TASK_INFO, actForLevel } from "@/lib/tracks-c
 import { CAST } from "@/lib/cast";
 import { ACT_INTROS, type ActIntroActKey } from "@/lib/act-intro-content";
 import { PATIENT, INTAKE_COPY } from "@/lib/tasks/patient-intake/content";
+import { PATIENT as APPOINTMENT_PATIENT } from "@/lib/tasks/appointment-scheduling/content";
+import { BILLING_ROWS } from "@/lib/tasks/billing-sheet/content";
 import { SHIFT_MOMENT } from "@/lib/story-beats";
 import { dayNumber, dayTitle, dayLabel, dayInAct, workdaysInAct } from "@/lib/shift-spine";
 import { JOB_CARD_COPY, JOB_CARD_LINE, shouldShowListIntro } from "@/lib/job-card-content";
@@ -237,17 +239,46 @@ describe("the cast", () => {
     }
   });
 
-  it("keeps walk-on characters clear of the cast's first names", () => {
+  it("keeps walk-on characters clear of the cast's names", () => {
     // Walk-ons are hardcoded in task content rather than CAST. A walk-on that
-    // borrows a cast first name reads as the same person in a new job.
+    // borrows a cast name reads as the same person turning up in a new job —
+    // either half of the name is enough to cause it.
     const castFirst = new Set(Object.values(CAST).map((m) => firstNameOf(m.name)));
-    const walkOns = [PATIENT.name, INTAKE_COPY.en.coworkerName, INTAKE_COPY.en.careTeamName];
+    const castLast = new Set(
+      Object.values(CAST)
+        .map((m) => m.name.split(" ").slice(1).join(" "))
+        .filter(Boolean),
+    );
+    // Strip a leading honorific so "Nurse Elena" is compared as "Elena".
+    const bare = (w: string) => w.replace(/^(Nurse|Dr\.?)\s+/i, "").split(" · ")[0];
+    const walkOns = [
+      PATIENT.name,
+      INTAKE_COPY.en.coworkerName,
+      INTAKE_COPY.en.careTeamName,
+      APPOINTMENT_PATIENT.en,
+    ];
     for (const w of walkOns) {
-      const first = firstNameOf(w.replace(/^Nurse /, ""));
+      const parts = bare(w).split(" ");
+      const first = parts[0];
+      const last = parts.slice(1).join(" ");
       expect(
         castFirst.has(first),
         `walk-on "${w}" reuses the cast first name ${first}`,
       ).toBe(false);
+      if (last) {
+        expect(
+          castLast.has(last),
+          `walk-on "${w}" reuses the cast surname ${last}`,
+        ).toBe(false);
+      }
     }
+  });
+
+  it("keeps the two clinic patients as one person", () => {
+    // The same patient is named in patient-intake, appointment-scheduling and
+    // billing-sheet. They drifted apart once already.
+    expect(APPOINTMENT_PATIENT.en).toBe(PATIENT.name);
+    expect(APPOINTMENT_PATIENT.es).toBe(PATIENT.name);
+    expect(BILLING_ROWS.some((r) => r.patient === PATIENT.name)).toBe(true);
   });
 });

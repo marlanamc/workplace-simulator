@@ -1,6 +1,6 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
-export const PATIENT = { name: "Maya Rivera", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
+export const PATIENT = { name: "Maya Ansari", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
 
 export const INTAKE_COPY: Record<Lang, {
   helpBtn: string;
@@ -141,8 +141,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 
 
 export const VERIFIED_ASSIGNMENT: Localized = {
- en: "Fictional clinic assignment record: Nurse Elena’s identity and assignment to Maya Rivera’s care team have been verified. Tomás Ortiz works in the kitchen and has no care assignment for Maya. This is simplified practice.",
- es: "Registro ficticio de la clínica: se verificaron la identidad de la enfermera Elena y su asignación al equipo de atención de Maya Rivera. Tomás Ortiz trabaja en la cocina y no tiene una asignación de atención para Maya. Esta es una práctica simplificada.",
+ en: "Fictional clinic assignment record: Nurse Elena’s identity and assignment to Maya Ansari’s care team have been verified. Tomás Ortiz works in the kitchen and has no care assignment for Maya. This is simplified practice.",
+ es: "Registro ficticio de la clínica: se verificaron la identidad de la enfermera Elena y su asignación al equipo de atención de Maya Ansari. Tomás Ortiz trabaja en la cocina y no tiene una asignación de atención para Maya. Esta es una práctica simplificada.",
 };
 export const RECIPIENT_LABEL: Localized = { en: 'Who may receive this chart?', es: '¿Quién puede recibir este expediente?' };
 export const RECIPIENT_HINT: Localized = { en: 'Compare the verified assignment with both requests. A request alone does not establish access.', es: 'Compara la asignación verificada con ambos pedidos. Pedir acceso no demuestra autorización.' };

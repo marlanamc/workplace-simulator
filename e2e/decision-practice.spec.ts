@@ -31,7 +31,7 @@ for(const lang of ['en','es'] as const) {
   test.slow();
   await signup(page,lang);
   await preset(page,/Paperwork.*Front desk/,'front-desk');
-  await page.getByPlaceholder('Maya Rivera').fill('Maya Rivera');
+  await page.getByPlaceholder('Maya Ansari').fill('Maya Ansari');
   await page.getByPlaceholder('03/12/1998').fill('03/12/1998');
   await page.getByPlaceholder(/^Follow-up$|^Seguimiento$/).fill(lang==='en'?'Follow-up':'Seguimiento');
   await page.getByRole('button',{name:/^File intake$|^Archivar ingreso$/}).click();
