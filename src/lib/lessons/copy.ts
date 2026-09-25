@@ -18,6 +18,8 @@ export const LESSON_COPY = {
   guided: { en: "Guided", es: "Con guía" },
   independent: { en: "On my own", es: "Por mi cuenta" },
   supportLabel: { en: "Help level", es: "Nivel de ayuda" },
+  fewerHints: { en: "Fewer hints", es: "Menos pistas" },
+  moreHints: { en: "More hints", es: "Más pistas" },
   signInToSave: { en: "Sign in to save", es: "Inicia sesión para guardar" },
   savedHere: {
     en: "This computer remembers it. Sign in so your teacher can see it.",
@@ -41,6 +43,9 @@ export const LESSON_COPY = {
   infoOpen: { en: "Your info", es: "Tu información" },
   infoClose: { en: "Close", es: "Cerrar" },
 } satisfies Record<string, Localized>;
+
+/** How the Job Card sends a learner to the info card. Its copy always says it this way. */
+export const MENTIONS_INFO_CARD = /info card|tarjeta de información/i;
 
 /** Teacher-facing words: the preview bar and the guide. Never shown to a student. */
 export const TEACHER_COPY = {

@@ -23,7 +23,7 @@ for (const key of keys) {
 
     await page.goto(`/lessons/${key}?smoke=1`);
     const card = page.locator("[data-job-card]");
-    await expect(card).toContainText("Lesson ·");
+    await expect(card).toContainText(entry!.title.en);
     await expect(page.getByTestId(`bookmark-${entry!.tabs[0]}`)).toBeVisible();
     await expect(page.getByTestId("simulator-welcome")).toHaveCount(0);
     // Mid-task, the card is reporting the task's own step, not the desktop's "open it" line.

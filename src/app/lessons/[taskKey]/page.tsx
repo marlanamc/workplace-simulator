@@ -20,8 +20,10 @@ export default async function LessonPage({
 }) {
   const { taskKey } = await params;
   const query = await searchParams;
-  // The smoke sweep opens tasks that are not lessons yet. Never in production.
-  const draft = process.env.NODE_ENV !== "production" && first(query.smoke) === "1";
+  // The smoke sweep opens tasks that are not lessons yet. Never in a deployed
+  // app: only in development, or in CI's production build (LESSON_SMOKE=1).
+  const smokeAllowed = process.env.NODE_ENV !== "production" || process.env.LESSON_SMOKE === "1";
+  const draft = smokeAllowed && first(query.smoke) === "1";
   if (!lessonByKey(taskKey) && !(draft && draftLessonFor(taskKey))) notFound();
   return (
     <LessonRunner

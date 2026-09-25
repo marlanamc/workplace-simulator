@@ -11,6 +11,15 @@ import { defineConfig, devices } from "@playwright/test";
  */
 loadEnvConfig(process.cwd());
 
+// CI runs against a production build (E2E_PROD=1, built in its own workflow
+// step). Under `next dev` every page compiles on its first request, and on a
+// shared runner that compile could stall a navigation past its timeout:
+// a different test timed out on waitForURL each run. Locally, the dev
+// server you already have running is reused.
+const prod = process.env.E2E_PROD === "1";
+const port = Number(process.env.E2E_PORT ?? 3000);
+const baseURL = `http://localhost:${port}`;
+
 export default defineConfig({
   testDir: "./e2e",
   timeout: 60_000,
@@ -20,15 +29,17 @@ export default defineConfig({
   // comfortably under a second locally and occasionally several times that on
   // a loaded CI runner, which showed up as act-intro and course-route flakes.
   expect: { timeout: 20_000 },
-  retries: 0,
+  // One retry on CI only, for a dropped connection to the hosted test
+  // database. A test that passes on retry is still reported as flaky.
+  retries: process.env.CI ? 1 : 0,
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL,
     trace: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000/login",
+    command: prod ? `npx next start -p ${port}` : "npm run dev",
+    url: `${baseURL}/login`,
     reuseExistingServer: true,
     timeout: 120_000,
   },

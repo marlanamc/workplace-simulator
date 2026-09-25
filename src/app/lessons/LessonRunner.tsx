@@ -62,6 +62,7 @@ export default function LessonRunner({
   // The scene comes first. A smoke-sweep draft has no scene worth reading,
   // and a learner back from signing in has already read it.
   const [started, setStarted] = useState(draft || transfer);
+  const [infoOpen, setInfoOpen] = useState(false);
   const modeRef = useRef(mode);
   // A smoke-sweep draft is not a real lesson, so it has nowhere to save.
   const save = useLessonSave(taskKey, { preview: preview || draft, transfer, mode, returnTo });
@@ -86,12 +87,14 @@ export default function LessonRunner({
       persona: entry.persona,
       mode,
       setMode,
+      infoOpen,
+      setInfoOpen,
       preview,
       save: { status: save.status, retry: save.retry, signIn: save.signIn },
       tabs: entry.tabs,
       onFinish: (lang = initialLang) => router.push(libraryReturn(returnTo, lang)),
     }),
-    [taskKey, entry, mode, setMode, preview, save.status, save.retry, save.signIn, router, initialLang, returnTo],
+    [taskKey, entry, mode, setMode, infoOpen, preview, save.status, save.retry, save.signIn, router, initialLang, returnTo],
   );
 
   return (
