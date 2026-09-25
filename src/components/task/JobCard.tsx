@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { AlertCircle, Check, ChevronDown, ChevronUp, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
+import { AlertCircle, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
 import { useLesson } from "@/lib/lesson-context";
-import { LESSON_COPY } from "@/lib/lessons/copy";
+import { LESSON_COPY, MENTIONS_INFO_CARD } from "@/lib/lessons/copy";
 import {
   INTRO_BEATS,
   CARD_PRACTICE,
@@ -309,7 +309,7 @@ export default function JobCard() {
     if (lesson && (completedTaskKeys.includes(lesson.taskKey) || (finish && active !== null))) {
       return {
         badge: "✓",
-        kicker: `${LESSON_COPY.kicker[lang]} · ${lesson.title[lang]}`,
+        kicker: lesson.title[lang],
         tone: "green",
         step: 4,
         line: JOB_CARD_DONE_LINE[lesson.taskKey]?.[lang] ?? LESSON_COPY.doneLine[lang],
@@ -387,7 +387,7 @@ export default function JobCard() {
     // here: the header is a tight bar and a third clause always truncates.
     // `jobOf` returns "" on a one-task day, so orientation is just the name.
     const kicker = lesson
-      ? `${LESSON_COPY.kicker[lang]} · ${lesson.title[lang]}`
+      ? lesson.title[lang]
       : nextTaskKey
       ? [dayLabel(level, lang), c.jobOf(jobNumber, levelTaskKeys.length)].filter(Boolean).join(" · ")
       : c.dayDoneKicker;
@@ -783,17 +783,35 @@ export default function JobCard() {
             competes with the step above it. */}
         {lesson && script.tone !== "green" && (() => {
           const other = lesson.mode === "guided" ? "independent" : "guided";
+          const hintLabel = LESSON_COPY[other === "independent" ? "fewerHints" : "moreHints"][lang];
+          // Narrow screens have no docked info card, so the card offers it.
+          // It glows when the step or correction sends the learner there.
+          const pointedAt = MENTIONS_INFO_CARD.test(`${script.line} ${visibleCorrection}`);
+          const quiet =
+            "flex min-h-10 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[14px] font-medium text-[#5f6368] underline-offset-4 hover:text-[#1f1f1f] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b57d0]";
           return (
-            <button
-              type="button"
-              data-testid={`lesson-mode-${other}`}
-              onClick={() => lesson.setMode(other)}
-              aria-label={`${LESSON_COPY.supportLabel[lang]}: ${LESSON_COPY[lesson.mode][lang]}. ${LESSON_COPY[other === "independent" ? "fewerHints" : "moreHints"][lang]}`}
-              className="mx-auto mt-2 flex min-h-10 cursor-pointer items-center gap-1 rounded-full px-3 text-[14px] font-medium text-[#5f6368] underline-offset-4 hover:text-[#1f1f1f] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b57d0]"
-            >
-              {LESSON_COPY[other === "independent" ? "fewerHints" : "moreHints"][lang]}
-              <span aria-hidden>&rarr;</span>
-            </button>
+            <div className="mt-2 flex items-center justify-center gap-2">
+              <button
+                type="button"
+                data-testid="lesson-info-open"
+                aria-expanded={lesson.infoOpen}
+                onClick={() => lesson.setInfoOpen(!lesson.infoOpen)}
+                className={`${quiet} xl:hidden ${pointedAt && !lesson.infoOpen ? "animate-showme-pulse-compact text-[#5b3a1e]" : ""}`}
+              >
+                <IdCard size={16} aria-hidden />
+                {LESSON_COPY.infoOpen[lang]}
+              </button>
+              <button
+                type="button"
+                data-testid={`lesson-mode-${other}`}
+                onClick={() => lesson.setMode(other)}
+                aria-label={`${LESSON_COPY.supportLabel[lang]}: ${LESSON_COPY[lesson.mode][lang]}. ${hintLabel}`}
+                className={quiet}
+              >
+                {hintLabel}
+                <span aria-hidden>&rarr;</span>
+              </button>
+            </div>
           );
         })()}
 

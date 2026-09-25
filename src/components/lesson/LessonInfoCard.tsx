@@ -1,14 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { IdCard, X } from "lucide-react";
 import { useLesson } from "@/lib/lesson-context";
 import { useJobCardOptional } from "@/lib/job-card-context";
 import type { LessonFact, LessonScene } from "@/lib/lessons/types";
 import type { Lang } from "@/lib/task-types";
 import { useProgress } from "@/lib/progress-context";
-import { LESSON_COPY } from "@/lib/lessons/copy";
-import { SHELF_RESERVE } from "@/components/Shelf";
+import { LESSON_COPY, MENTIONS_INFO_CARD } from "@/lib/lessons/copy";
 import { CARD_W, EDGE } from "@/components/task/JobCard";
 
 /**
@@ -95,20 +93,17 @@ export const INFO_PAPER = {
   boxShadow: "0 1px 0 rgba(255,255,255,0.55) inset, 0 10px 22px rgba(28,16,10,0.22), 0 2px 4px rgba(28,16,10,0.12)",
 };
 
-/** How the Job Card sends the learner here. Its copy always says it this way. */
-const MENTIONS_CARD = /info card|tarjeta de información/i;
 
 export default function LessonInfoCard({ top }: { top: number }) {
   const lesson = useLesson();
   const { lang } = useProgress();
   const card = useJobCardOptional();
-  const [open, setOpen] = useState(false);
   if (!lesson) return null;
 
   // When the Job Card's step or correction sends the learner here ("Type the
   // password from your info card"), the card glows until they move on. It
   // also pulses a few times on arrival, so the eye finds it once.
-  const pointedAt = MENTIONS_CARD.test(`${card?.step?.line.en ?? ""} ${card?.step?.line.es ?? ""} ${card?.correction ?? ""}`);
+  const pointedAt = MENTIONS_INFO_CARD.test(`${card?.step?.line.en ?? ""} ${card?.step?.line.es ?? ""} ${card?.correction ?? ""}`);
   const glow = pointedAt ? "animate-showme-pulse" : "animate-[showme-pulse_1.6s_ease-in-out_3]";
 
   const body = <InfoCardBody scene={lesson.scene} reference={lesson.reference} lang={lang} />;
@@ -126,37 +121,26 @@ export default function LessonInfoCard({ top }: { top: number }) {
         {body}
       </aside>
 
-      {/* Narrow screens: a tab above the shelf, on the right because the Job Card is home on the left. */}
-      <div className="xl:hidden">
-        {open ? (
-          <aside
-            aria-label={LESSON_COPY.infoTitle[lang]}
-            className="fixed right-2 z-[74] max-h-[calc(100vh-120px)] w-[300px] overflow-y-auto rounded-[8px]"
-            style={{ ...paper, bottom: SHELF_RESERVE + 16 }}
-          >
-            <button
-              type="button"
-              onClick={() => setOpen(false)}
-              aria-label={LESSON_COPY.infoClose[lang]}
-              className="absolute right-1.5 top-1 flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/15"
-            >
-              <X size={18} aria-hidden />
-            </button>
-            {body}
-          </aside>
-        ) : (
+      {/* Narrow screens: opened from the Job Card's "Your info" link, so no
+          floating button can ever sit under the card. Above the card while
+          open, with its own Close. */}
+      {lesson.infoOpen && (
+        <aside
+          aria-label={LESSON_COPY.infoTitle[lang]}
+          className="fixed right-2 z-[84] max-h-[calc(100vh-140px)] w-[min(340px,calc(100vw-16px))] overflow-y-auto rounded-[8px] xl:hidden"
+          style={{ ...paper, top: top + 52 }}
+        >
           <button
             type="button"
-            data-testid="lesson-info-open"
-            onClick={() => setOpen(true)}
-            className={`fixed right-2 z-[74] flex min-h-12 items-center gap-2 rounded-full bg-[#5b3a1e] px-5 text-[16px] font-semibold text-white ${glow}`}
-            style={{ bottom: SHELF_RESERVE + 16 }}
+            onClick={() => lesson.setInfoOpen(false)}
+            aria-label={LESSON_COPY.infoClose[lang]}
+            className="absolute right-1.5 top-1 flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/15"
           >
-            <IdCard size={18} aria-hidden />
-            {LESSON_COPY.infoOpen[lang]}
+            <X size={18} aria-hidden />
           </button>
-        )}
-      </div>
+          {body}
+        </aside>
+      )}
     </>
   );
 }

@@ -44,6 +44,9 @@ export const LESSON_COPY = {
   infoClose: { en: "Close", es: "Cerrar" },
 } satisfies Record<string, Localized>;
 
+/** How the Job Card sends a learner to the info card. Its copy always says it this way. */
+export const MENTIONS_INFO_CARD = /info card|tarjeta de información/i;
+
 /** Teacher-facing words: the preview bar and the guide. Never shown to a student. */
 export const TEACHER_COPY = {
   preview: { en: "Teacher preview", es: "Vista del docente" },

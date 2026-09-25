@@ -33,6 +33,9 @@ export interface LessonValue {
   onFinish: (lang?: Lang) => void;
   /** Start the same lesson again from a clean slate. */
   onRestart: () => void;
+  /** Narrow screens: whether the info card is open (the Job Card's "Your info" link toggles it). */
+  infoOpen: boolean;
+  setInfoOpen: (open: boolean) => void;
   /** Where this lesson's finishes are kept, for the card's finish line. */
   save: Pick<LessonSave, "status" | "retry" | "signIn">;
 }

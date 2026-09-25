@@ -40,7 +40,7 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   await expect(page.getByTestId("shelf-my-job")).toHaveCount(0);
 
   const card = jobCard(page);
-  await expect(card).toContainText("Lesson · Sign in with a text code");
+  await expect(card).toContainText("Sign in with a text code");
   // Guided spells out the step.
   await expect(card).toContainText("Type the password from your info card.");
 
@@ -50,7 +50,7 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   await expect(card).toContainText("That is not the password.");
 
   await finishAccountRecovery(page);
-  await expect(card).toContainText("Lesson · Sign in with a text code");
+  await expect(card).toContainText("Sign in with a text code");
   const again = card.getByTestId("lesson-practice-again");
   await expect(again).toBeVisible();
   await expect(card.getByTestId("lesson-back")).toBeVisible();
@@ -66,7 +66,7 @@ test("independent mode states the goal instead of each click", async ({ page }) 
   await page.goto("/lessons/account-recovery?mode=independent");
   await startLesson(page);
   const card = jobCard(page);
-  await expect(card).toContainText("Lesson · Sign in with a text code");
+  await expect(card).toContainText("Sign in with a text code");
   await expect(card).toContainText("Sign back in. Use the code from your phone.");
   await expect(card).not.toContainText("Type the password from your info card.");
   await expect(card.getByRole("button", { name: "Show me" })).toHaveCount(0);
@@ -76,7 +76,7 @@ test("a Spanish link opens the lesson in Spanish", async ({ page }) => {
   await page.goto("/lessons/account-recovery?lang=es");
   await expect(page.getByTestId("lesson-intro")).toContainText("Tu cuenta del trabajo cerró tu sesión.");
   await page.getByTestId("lesson-intro-start").click();
-  await expect(jobCard(page)).toContainText("Lección · Iniciar sesión con un código de texto");
+  await expect(jobCard(page)).toContainText("Iniciar sesión con un código de texto");
 });
 
 test("an unknown or non-lesson task is a 404", async ({ page }) => {
