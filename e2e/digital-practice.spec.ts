@@ -12,7 +12,9 @@ test("guest can correct, review, edit, submit, resume, and clear", async ({
   page,
 }) => {
   await page.goto("/practice");
-  await page.getByRole("link", { name: "Start practice" }).click();
+  await page
+    .getByRole("link", { name: "Start practice: Register for a workshop" })
+    .click();
   await page
     .getByRole("link", { name: "Register for the computer workshop" })
     .click();
@@ -75,7 +77,7 @@ test("preview never touches saved progress and shares a student link", async ({
   page,
 }) => {
   let calls = 0;
-  await page.route("**/api/practice", (route) => {
+  await page.route(/\/api\/practice\?activity=workshop$/, (route) => {
     calls++;
     return route.abort();
   });
@@ -104,7 +106,7 @@ test("account saves retry and resume without writing game progress (mock account
 }) => {
   let saved: unknown = null;
   let fail = false;
-  await page.route("**/api/practice", async (route) => {
+  await page.route(/\/api\/practice\?activity=workshop$/, async (route) => {
     if (route.request().method() === "GET")
       return route.fulfill({
         json: { signedIn: true, owner: "test-owner", state: saved },
@@ -176,7 +178,7 @@ test("explicit guest transfer is acknowledged once (mock account service)", asyn
       JSON.stringify(s),
     );
   }, state);
-  await page.route("**/api/practice", (route) => {
+  await page.route(/\/api\/practice\?activity=workshop$/, (route) => {
     if (route.request().method() === "GET")
       return route.fulfill({
         json: { signedIn: true, owner: "transfer-owner", state: null },
@@ -225,7 +227,7 @@ test("mobile and enlarged text fit without horizontal scrolling", async ({
 
 test("failed loading preserves saved work until retry", async ({ page }) => {
   let fail = true;
-  await page.route("**/api/practice", (route) =>
+  await page.route(/\/api\/practice\?activity=workshop$/, (route) =>
     fail
       ? route.fulfill({ status: 503 })
       : route.fulfill({ json: { signedIn: false } }),
@@ -265,4 +267,104 @@ test("sign in explicitly carries the current guest attempt and safe return path"
         ).firstName,
     ),
   ).toBe("Maya");
+});
+
+async function turnInHomework(page: Page) {
+  await page.getByRole("button", { name: "My weekly schedule" }).click();
+  await page.getByRole("link", { name: "View assignment" }).click();
+  await page.getByRole("button", { name: "Turn in" }).click();
+  // Wording follows the help language; the file names are the same in both.
+  await expect(page.locator(".field-error")).toContainText("My schedule.docx");
+  await page.getByRole("button", { name: "+ Add or create" }).click();
+  await page.getByRole("menuitem", { name: "Google Drive" }).click();
+  const drive = page.getByRole("dialog", { name: "Google Drive" });
+  await drive.getByLabel("My schedule (old).docx").check();
+  await drive.getByRole("button", { name: "Add" }).click();
+  await page.getByRole("button", { name: "Turn in" }).click();
+  await expect(page.locator(".field-error").first()).toContainText(
+    "My schedule (old).docx",
+  );
+  await page
+    .getByRole("button", { name: "Remove My schedule (old).docx" })
+    .click();
+  await page.getByRole("button", { name: "+ Add or create" }).click();
+  await page.getByRole("menuitem", { name: "File from this computer" }).click();
+  const files = page.getByRole("dialog", { name: "Open a file" });
+  await files.getByRole("radio", { name: /^My schedule\.docx/ }).check();
+  await files.getByRole("button", { name: "Add" }).click();
+  await page.getByRole("button", { name: "Turn in" }).click();
+  const confirm = page.getByRole("dialog", { name: "Turn in your work?" });
+  await expect(confirm).toContainText("1 attachment will be submitted");
+  await confirm.getByRole("button", { name: "Turn in" }).click();
+  await expect(page.getByText("Turned in", { exact: true })).toBeVisible();
+}
+test("homework: find, attach the right file, turn in, comment, resume", async ({
+  page,
+}) => {
+  await page.goto("/practice");
+  await page
+    .getByRole("link", { name: "Start practice: Turn in homework" })
+    .click();
+  await expect(page.getByRole("heading", { name: "Classwork" })).toBeVisible();
+  await turnInHomework(page);
+  await page.reload();
+  await expect(page.getByText("Turned in", { exact: true })).toBeVisible();
+  await page.getByLabel("Add class comment").fill("Monday");
+  await page.getByRole("button", { name: "Post" }).click();
+  await expect(page.getByText(/four words or more/)).toBeVisible();
+  await page
+    .getByLabel("Add class comment")
+    .fill("My busiest day is Saturday because I work.");
+  await page.getByRole("button", { name: "Post" }).click();
+  await expect(
+    page.getByText("Maya Torres · My busiest day is Saturday because I work."),
+  ).toBeVisible();
+  expect(
+    await page.evaluate(() =>
+      JSON.parse(
+        localStorage.getItem("digital-practice:assignment:v1:guest") || "null",
+      ),
+    ),
+  ).toMatchObject({ stage: "complete", attached: ["schedule"] });
+  await page.getByRole("button", { name: "Practice again" }).click();
+  await expect(page.getByRole("heading", { name: "Classwork" })).toBeVisible();
+});
+test("homework: Unsubmit returns to editing; Spanish help, English class", async ({
+  page,
+}) => {
+  await page.goto("/practice/assignment?lang=es");
+  await expect(
+    page.getByText(/Busca la tarea “My weekly schedule”/),
+  ).toBeVisible();
+  await turnInHomework(page);
+  await page.getByRole("button", { name: "Unsubmit" }).click();
+  await expect(
+    page.getByRole("button", { name: "Remove My schedule.docx" }),
+  ).toBeVisible();
+});
+test("teacher preview shows the guide and saves nothing", async ({ page }) => {
+  let calls = 0;
+  await page.route(/\/api\/practice/, (route) => {
+    calls++;
+    return route.abort();
+  });
+  await page.goto("/practice/assignment?preview=1");
+  await page.getByText("Teacher guide").click();
+  await expect(page.getByText("Common sticking points")).toBeVisible();
+  await expect(
+    page.getByText(/Choosing “My schedule \(old\)\.docx\.”/),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "My weekly schedule" }).click();
+  await page.getByRole("link", { name: "View assignment" }).click();
+  expect(calls).toBe(0);
+});
+test("homework fits a phone screen", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/practice/assignment");
+  await turnInHomework(page);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
 });

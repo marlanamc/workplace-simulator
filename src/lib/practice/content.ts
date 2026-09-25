@@ -1,5 +1,6 @@
 import type { Localized } from "@/lib/task-types";
-export type Mode = "guided" | "independent";
+import type { Mode, PracticeActivity } from "./types";
+export type { Mode } from "./types";
 export type Stage = "email" | "form" | "review" | "complete";
 export type Draft = {
   version: 1;
@@ -94,26 +95,95 @@ export function parseDraft(value: unknown): Draft | null {
     session: d.session,
   };
 }
-export function practiceReturn(raw: string): string {
-  if (raw === "/teacher" || raw === "/studio") return raw;
-  try {
-    const u = new URL(raw, "https://practice.invalid");
-    if (
-      u.origin !== "https://practice.invalid" ||
-      u.pathname !== "/practice/workshop"
-    )
-      return "/";
-    const q = new URLSearchParams();
-    for (const [key, choices] of Object.entries({
-      mode: ["guided", "independent"],
-      lang: ["en", "es"],
-      transfer: ["1"],
-    })) {
-      const v = u.searchParams.get(key);
-      if (v && choices.includes(v)) q.set(key, v);
-    }
-    return "/practice/workshop" + (q.size ? "?" + q : "");
-  } catch {
-    return "/";
-  }
-}
+const HELP: Localized = {
+  en: "The underlined registration link opens the form. Type the details below into the matching fields. You can go back and edit before submitting.",
+  es: "El enlace subrayado abre el formulario. Escribe los datos de abajo en los campos correspondientes. Puedes volver y corregir antes de enviar.",
+};
+export const workshop: PracticeActivity<Draft> = {
+  id: "workshop",
+  version: 1,
+  eyebrow: { en: "EMAIL · ONLINE FORMS", es: "CORREO · FORMULARIOS" },
+  title: { en: "Register for a workshop", es: "Inscribirse en un taller" },
+  summary: {
+    en: "Read an invitation, complete a form, and check your confirmation.",
+    es: "Lee una invitación, completa un formulario y revisa la confirmación.",
+  },
+  minutes: {
+    en: "About 5–10 minutes · No account needed",
+    es: "Aproximadamente 5–10 minutos · Sin cuenta",
+  },
+  stages: ["email", "form", "review", "complete"],
+  blank,
+  parseDraft,
+  instructions,
+  help: { email: HELP, form: HELP, review: HELP, complete: HELP },
+  goal,
+  details: [
+    { label: { en: "First name", es: "Nombre" }, value: "Maya" },
+    { label: { en: "Last name", es: "Apellido" }, value: "Torres" },
+    { label: { en: "Email", es: "Correo" }, value: "maya.torres@example.com" },
+    {
+      label: { en: "Requested session", es: "Sesión solicitada" },
+      value: { en: "Tuesday · 6:00 PM", es: "Martes · 6:00 PM" },
+    },
+  ],
+  guide: {
+    skills: [
+      {
+        en: "Open a link inside an email",
+        es: "Abrir un enlace dentro de un correo",
+      },
+      {
+        en: "Type into form fields and choose from a list",
+        es: "Escribir en campos de un formulario y elegir de una lista",
+      },
+      {
+        en: "Review answers and fix mistakes before submitting",
+        es: "Revisar respuestas y corregir errores antes de enviar",
+      },
+      { en: "Read a confirmation page", es: "Leer una página de confirmación" },
+    ],
+    prepare: [
+      {
+        en: "Project the invitation and point out what a link looks like (underlined, a different color).",
+        es: "Proyecta la invitación y muestra cómo se ve un enlace (subrayado, de otro color).",
+      },
+      {
+        en: "Choose support by computer experience, not English level: new computer users start with Guided.",
+        es: "Elige el apoyo según la experiencia con computadoras, no el nivel de inglés: quienes usan poco la computadora empiezan con Con guía.",
+      },
+    ],
+    stickingPoints: [
+      {
+        en: "Typing the email address: the dot and the @ sign.",
+        es: "Escribir el correo: el punto y la arroba (@).",
+      },
+      {
+        en: "Choosing Saturday instead of Tuesday — the form says what is wrong.",
+        es: "Elegir el sábado en vez del martes — el formulario dice qué está mal.",
+      },
+      {
+        en: "Worrying that Review sends the form. Show the Edit answers button.",
+        es: "Pensar que Revisar envía el formulario. Muestra el botón Edit answers.",
+      },
+    ],
+    followUp: [
+      {
+        en: "Where do you see links like this in your real email or text messages?",
+        es: "¿Dónde ves enlaces así en tu correo o mensajes reales?",
+      },
+      {
+        en: "What do you check before you press Submit on a real form?",
+        es: "¿Qué revisas antes de presionar Enviar en un formulario real?",
+      },
+      {
+        en: "How do you know the registration worked?",
+        es: "¿Cómo sabes que la inscripción funcionó?",
+      },
+    ],
+    peerHelp: {
+      en: "Students who finish early can sit beside a classmate and point to the screen — the classmate does the clicking.",
+      es: "Quienes terminen antes pueden sentarse junto a un compañero y señalar la pantalla — el compañero hace los clics.",
+    },
+  },
+};

@@ -14,6 +14,7 @@ vi.mock("@/lib/db/client", () => ({
 }));
 import { GET, PUT } from "@/app/api/practice/route";
 import { blank } from "../practice/content";
+import { blankAssignment } from "../practice/assignment";
 beforeEach(() => {
   vi.resetAllMocks();
   m.session.mockResolvedValue("authenticated-owner");
@@ -24,15 +25,21 @@ beforeEach(() => {
   m.values.mockReturnValue({ onConflictDoUpdate: m.upsert });
   m.upsert.mockResolvedValue(undefined);
 });
-const req = (body: unknown, origin = "https://practice.test") =>
-  new Request("https://practice.test/api/practice", {
+const req = (
+  body: unknown,
+  origin = "https://practice.test",
+  activity = "workshop",
+) =>
+  new Request(`https://practice.test/api/practice?activity=${activity}`, {
     method: "PUT",
     headers: { origin, "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
+const get = (activity = "workshop") =>
+  new Request(`https://practice.test/api/practice?activity=${activity}`);
 it("serves guests without querying the database", async () => {
   m.session.mockResolvedValue(null);
-  expect(await (await GET()).json()).toEqual({ signedIn: false });
+  expect(await (await GET(get())).json()).toEqual({ signedIn: false });
   expect(m.select).not.toHaveBeenCalled();
 });
 it("rejects unsigned writes and cross-origin requests", async () => {
@@ -62,5 +69,20 @@ it("reports database errors rather than false success", async () => {
   m.upsert.mockRejectedValue(new Error("offline"));
   expect((await PUT(req(blank()))).status).toBe(503);
   m.where.mockRejectedValue(new Error("offline"));
-  expect((await GET()).status).toBe(503);
+  expect((await GET(get())).status).toBe(503);
+});
+it("rejects unknown activities before touching the database", async () => {
+  expect((await GET(get("missing"))).status).toBe(400);
+  expect((await PUT(req(blank(), undefined, "missing"))).status).toBe(400);
+  expect(m.select).not.toHaveBeenCalled();
+  expect(m.insert).not.toHaveBeenCalled();
+});
+it("validates and stores each activity under its own id", async () => {
+  expect((await PUT(req(blank(), undefined, "assignment"))).status).toBe(400);
+  expect(
+    (await PUT(req(blankAssignment(), undefined, "assignment"))).status,
+  ).toBe(200);
+  expect(m.values).toHaveBeenCalledWith(
+    expect.objectContaining({ activityId: "assignment", version: 1 }),
+  );
 });

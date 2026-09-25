@@ -134,9 +134,19 @@ progress read as a fresh account. This migration does not rewrite old progress.
 
 ## Digital Practice (separate from the game)
 
-`/practice` is a public activity library. `/practice/workshop` rehearses an email invitation,
-fictional registration, review, and confirmation without game state or credit. `?preview=1`
-is an ephemeral teacher preview; its share button removes preview mode. `mode=guided` or
+`/practice` is a public activity library built from `ACTIVITIES` in
+`src/lib/practice/activities.ts`. `/practice/workshop` rehearses an email invitation,
+fictional registration, review, and confirmation; `/practice/assignment` rehearses finding a
+Classroom assignment, attaching the right file (not an old copy), turning it in, and posting a
+class comment. Neither touches game state or credit. `?preview=1` is an ephemeral teacher
+preview that also shows the activity's teacher guide; its share button removes preview mode.
+
+To add an activity: define a `PracticeActivity` (stages, bilingual instructions/help, goal,
+fictional details, teacher guide, pure `parseDraft`) in `src/lib/practice/`, register it in
+`ACTIVITIES`, and add `src/app/practice/<id>/` whose component calls `usePracticeDraft` and
+renders only the simulated app inside `PracticeShell`. Registration also opens its login
+return path and its `/api/practice?activity=<id>` key; `digital-practice.test.ts` checks
+every registered activity is bilingual. `mode=guided` or
 `mode=independent` and `lang=en` or `lang=es` configure a shared link.
 
 The Practice Card is this experience’s single instruction surface, independent of the
