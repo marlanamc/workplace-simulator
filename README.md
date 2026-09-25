@@ -135,7 +135,8 @@ progress read as a fresh account. This migration does not rewrite old progress.
 ## Lesson mode (every task as a classroom lesson)
 
 `/lessons` is a public library of game tasks a teacher can run on their own in class
-(filter with `?skill=`, switch language with `?lang=es`). `/lessons/<taskKey>` runs one task
+(topics at `/lessons`, one topic at `?skill=`, search at `?q=`, Spanish with `?lang=es`,
+teacher preview links with `?teacher=1`). `/lessons/<taskKey>` runs one task
 on the same computer as the game: `<Desktop>` (`src/components/desktop/Desktop.tsx`), the
 Browser, and the Job Card, with no account needed. The hand-built `/practice` activities
 retired into this; their old URLs redirect (`next.config.ts`).

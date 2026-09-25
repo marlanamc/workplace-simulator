@@ -219,9 +219,11 @@ practice completion. Automated viewport checks do not replace this pilot.
 
 ## Lesson library discovery
 
-`lesson-library.test.ts` covers bilingual, accent-insensitive search, combined skill
-filters, starter membership, and validated library return URLs. `lesson-library.spec.ts`
-covers search with and without JavaScript, empty results, language changes, teacher
-preview, repeat practice, returning to filtered results, and phone/Chromebook widths.
+`lesson-library.test.ts` covers any-word, accent-insensitive search in both languages,
+synonyms, quick searches, combined skill filters, topic looks, and validated library
+return URLs. `lesson-library.spec.ts` covers topic tiles, search with and without
+JavaScript, empty results, language changes, teacher links (`?teacher=1` only), repeat
+practice, done badges after a finish, returning to filtered results, and
+phone/Chromebook widths for every view.
 The lesson suite also checks that sign-in preserves library context and shared student
 links omit it. Run these with `e2e/lessons.spec.ts` and `e2e/lessons-smoke.spec.ts`.

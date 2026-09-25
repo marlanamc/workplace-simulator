@@ -63,7 +63,7 @@ export default async function TeacherPage() {
           </div>
           <div className="flex gap-2">
           <Link
-            href="/lessons"
+            href="/lessons?teacher=1"
             className="inline-flex h-9 items-center rounded-full bg-white/10 px-3.5 text-[13px] font-medium text-white hover:bg-white/20"
           >
             Lessons
