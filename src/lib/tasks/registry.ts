@@ -576,8 +576,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Share a file the right way", es: "Comparte un archivo de la forma correcta" },
     dispatch: {
-      en: "They need the file. Share the file, not the whole folder.",
-      es: "Necesitan el archivo. Comparte el archivo, no toda la carpeta.",
+      en: "A new coworker starts today. Rename this week's schedule, then share it with them.",
+      es: "Hoy empieza un compañero nuevo. Cambia el nombre del horario de esta semana y compártelo con esa persona.",
+    },
+    jobCardLine: {
+      en: "Rename this week's schedule. Then share it with the new coworker, view only.",
+      es: "Cambia el nombre del horario de esta semana. Después compártelo con el compañero nuevo, solo para ver.",
     },
     skill: { en: "Share a file with the right access", es: "compartir un archivo con el acceso correcto" },
     bookmarkLabel: "Drive",

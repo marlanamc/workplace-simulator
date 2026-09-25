@@ -20,6 +20,11 @@ describe("Files rename forgiveness", () => {
     "  schedule-week-of-aug-24.pdf ",
     "SCHEDULE-WEEK-OF-AUG-24",
     "schedule week of aug 24.pdf",
+    "schedule_week_of_aug_24",
+    "schedule - week - of - aug - 24",
+    "schedule-week-of-aug24",
+    "schedule-week-of-august-24",
+    "schedule-week-of-aug-24.",
   ])("accepts %j", (input) => {
     expect(normalizeRename(input)).toBe(RENAME_TARGET);
   });

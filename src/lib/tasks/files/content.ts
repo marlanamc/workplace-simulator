@@ -117,27 +117,42 @@ export const MESSY_FILES: DriveFile[] = [
 export const RENAME_TARGET = "schedule-week-of-aug-24";
 
 /**
- * How FilesTask forgives a rename: case, extra spaces, space-vs-hyphen, and
- * a kept ".pdf" all normalize away before comparing to RENAME_TARGET.
+ * How FilesTask forgives a rename: case, spaces or underscores instead of
+ * dashes, doubled or spaced dashes, "August" or "aug24", a kept ".pdf", and a
+ * stray period all normalize away before comparing to RENAME_TARGET. The
+ * skill is finding and renaming the file, not dash placement.
  */
 export function normalizeRename(value: string) {
-  return value.trim().toLowerCase().replace(/\s+/g, "-").replace(/\.pdf$/, "");
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\.pdf$/, "")
+    .replace(/\.+$/, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/august/g, "aug")
+    .replace(/aug\.?-?(\d)/g, "aug-$1")
+    .replace(/^-|-$/g, "");
 }
 
 /** The single in-window instruction voice (RightNowBar), one step at a time. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Find this week's schedule (Aug 24). Click it.",
-    es: "Busca el horario de esta semana (24 de agosto). Haz clic en él.",
+    en: "Click Cafe Shared Drive. The schedules are there.",
+    es: "Haz clic en Unidad compartida del café. Ahí están los horarios.",
   },
   {
-    en: "Type the new name: schedule-week-of-aug-24",
-    es: "Escribe el nombre nuevo: schedule-week-of-aug-24",
+    en: "Find this week's schedule. Its date is Aug 24. Click it.",
+    es: "Busca el horario de esta semana. Su fecha es Aug 24. Haz clic en él.",
   },
   {
-    en: "Choose \"Can view\", then click Share.",
-    es: "Elige \"Puede ver\" y luego haz clic en Compartir.",
+    en: "Type the new name: schedule-week-of-aug-24. Then click Continue.",
+    es: "Escribe el nombre nuevo: schedule-week-of-aug-24. Después haz clic en Continuar.",
+  },
+  {
+    en: "Choose Can view. Then click Share.",
+    es: "Elige Puede ver. Después haz clic en Compartir.",
   },
 ];
 
@@ -195,8 +210,8 @@ export const FILES_COPY: Record<Lang, {
     scenario: "Renata asked you to share this week's schedule with Jordan Kim, a new hire. Give view only. Jordan does not need to edit it. She also asked you to rename it like this: schedule-week-of-[date].",
     searchPlaceholder: "Search files…",
     allFolders: "All folders",
-    renameLabel: "Rename this file to match the naming rule",
-    renameHint: "Format: schedule-week-of-aug-24",
+    renameLabel: "Rename this file",
+    renameHint: "New name: schedule-week-of-aug-24",
     renamePlaceholder: "Type the new file name…",
     renameContinue: "Continue",
     shareWith: "Share with",
@@ -233,8 +248,8 @@ export const FILES_COPY: Record<Lang, {
     scenario: "Renata te pidió compartir el horario de esta semana con Jordan Kim, un nuevo empleado. Solo para ver. Jordan no necesita editarlo. También te pidió renombrarlo así: schedule-week-of-[fecha].",
     searchPlaceholder: "Buscar archivos…",
     allFolders: "Todas las carpetas",
-    renameLabel: "Renombra este archivo según la convención",
-    renameHint: "Formato: schedule-week-of-aug-24",
+    renameLabel: "Cambia el nombre de este archivo",
+    renameHint: "Nombre nuevo: schedule-week-of-aug-24",
     renamePlaceholder: "Escribe el nuevo nombre…",
     renameContinue: "Continuar",
     shareWith: "Compartir con",
@@ -258,8 +273,13 @@ export const FILES_COPY: Record<Lang, {
 };
 
 export const WRONG_RENAME_HINT: Record<Lang, string> = {
-  en: "Not quite the right name. Try: schedule-week-of-aug-24",
-  es: "No es el formato correcto. Intenta: schedule-week-of-aug-24",
+  en: "Check the name. Type these words with a dash - between them: schedule-week-of-aug-24",
+  es: "Revisa el nombre. Escribe estas palabras con un guion - entre ellas: schedule-week-of-aug-24",
+};
+
+export const COMMENT_HINT: Record<Lang, string> = {
+  en: "Jordan only needs to look at the schedule. Choose Can view.",
+  es: "Jordan solo necesita mirar el horario. Elige Puede ver.",
 };
 
 export const WRONG_EDIT_HINT: Record<Lang, string> = {
@@ -272,40 +292,58 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Finding the right file",
       s: [
-        "Use the folder tabs to narrow things down, or search by name.",
-        "Match the file to the task. The date matters as much as the name.",
-        "A similar-looking file from a different week or a different topic is a common mix-up.",
+        "Open the folder. You can also type part of a name in Search.",
+        "Look at the Date column. The date tells you which week a schedule is for.",
+        "Some files look almost the same. Read the date before you click.",
       ],
-      tip: "When in doubt, the date column is the fastest way to tell files apart.",
+      tip: "If two names look the same, the date is the fastest way to tell them apart.",
     },
     {
       t: "View access vs. edit access",
       s: [
-        "\"Can view\" means the person can look, but not change anything.",
-        "\"Can edit\" means they can change the file. Only give this when someone really needs it.",
-        "When you're not sure which one to give, view is almost always the safer default.",
+        "\"Can view\" means the person can look at the file, but not change it.",
+        "\"Can edit\" means they can change the file. Give it only when they need to change it.",
+        "If you are not sure, choose \"Can view\".",
       ],
-      tip: "Giving edit access by accident is an easy real-world mistake. Always check twice.",
+      tip: "It is easy to give \"Can edit\" by mistake. Look again before you click Share.",
+    },
+    {
+      t: "Renaming a file",
+      s: [
+        "The old name is already in the box, and it is selected. Just start typing to replace it.",
+        "Type the new name exactly: schedule-week-of-aug-24",
+        "The dash - is next to the 0 key. Then click Continue.",
+      ],
+      tip: "A clear name helps the next person find the file.",
     },
   ],
   es: [
     {
       t: "Encontrar el archivo correcto",
       s: [
-        "Usa las pestañas de carpetas para reducir opciones, o busca por nombre.",
-        "Relaciona el archivo con la situación. La fecha importa tanto como el nombre.",
-        "Un archivo parecido de otra semana o de otro tema es un error común.",
+        "Abre la carpeta. También puedes escribir parte de un nombre en Buscar.",
+        "Mira la columna Fecha. La fecha te dice de qué semana es un horario.",
+        "Algunos archivos se ven casi iguales. Lee la fecha antes de hacer clic.",
       ],
-      tip: "Si tienes duda, la columna de fecha es la forma más rápida de distinguir archivos.",
+      tip: "Si dos nombres se ven iguales, la fecha es la forma más rápida de distinguirlos.",
     },
     {
       t: "Acceso de ver vs. editar",
       s: [
-        "\"Puede ver\" significa que la persona puede mirar, pero no cambiar nada.",
-        "\"Puede editar\" significa que puede cambiar el archivo. Dalo solo cuando alguien realmente lo necesite.",
-        "Cuando no estés seguro, \"puede ver\" casi siempre es la opción más segura.",
+        "\"Puede ver\" quiere decir que la persona puede mirar el archivo, pero no cambiarlo.",
+        "\"Puede editar\" quiere decir que puede cambiar el archivo. Dalo solo si necesita cambiarlo.",
+        "Si no estás seguro, elige \"Puede ver\".",
       ],
-      tip: "Dar acceso de edición por accidente es uno de los errores reales más fáciles de cometer. Siempre revisa dos veces.",
+      tip: "Es fácil dar \"Puede editar\" por error. Revisa otra vez antes de hacer clic en Compartir.",
+    },
+    {
+      t: "Cambiar el nombre de un archivo",
+      s: [
+        "El nombre viejo ya está en la casilla, y está seleccionado. Empieza a escribir para reemplazarlo.",
+        "Escribe el nombre nuevo tal cual: schedule-week-of-aug-24",
+        "El guion - está al lado de la tecla 0. Después haz clic en Continuar.",
+      ],
+      tip: "Un nombre claro ayuda a la próxima persona a encontrar el archivo.",
     },
   ],
 };
