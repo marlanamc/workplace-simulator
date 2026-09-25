@@ -28,6 +28,9 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Separate practice must never fall back to the game’s cached desktop.
+  if (url.pathname === "/practice" || url.pathname.startsWith("/practice/")) return;
+
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request).catch(() => caches.match(OFFLINE_URL))

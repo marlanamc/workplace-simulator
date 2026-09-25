@@ -131,3 +131,26 @@ Before deploying this revision, apply the additive SQL in
 `src/lib/db/migrations/20260923-opening-replies.sql` to the target database.
 The desktop deliberately fails to load rather than treating a failed opening
 progress read as a fresh account. This migration does not rewrite old progress.
+
+## Digital Practice (separate from the game)
+
+`/practice` is a public activity library. `/practice/workshop` rehearses an email invitation,
+fictional registration, review, and confirmation without game state or credit. `?preview=1`
+is an ephemeral teacher preview; its share button removes preview mode. `mode=guided` or
+`mode=independent` and `lang=en` or `lang=es` configure a shared link.
+
+The Practice Card is this experience’s single instruction surface, independent of the
+story-dependent Job Card provider. Its help is bilingual; simulated email/form content
+intentionally remains simple English. English level does not select a support mode.
+
+Guests save locally and can clear their work on shared devices. Account drafts live in
+`practice_attempts`, keyed by authenticated learner, activity, and version, never in game
+completion tables. The JSON state includes support mode and completion stage. Guest transfer
+requires the explicit sign-in-to-save action; preview never reads or writes saved attempts.
+An account-local retry buffer survives failed saves and is removed after server acknowledgement.
+Clearing replaces the current attempt; this version does not keep assessment history.
+
+The additive `20260924-practice.sql` migration runs through the existing migration pipeline.
+Apply it before deploying these routes. No production migration is needed to test guest mode.
+Run `npm run check`, then `npx playwright test e2e/digital-practice.spec.ts` for public flows.
+The focused browser tests stub account storage where noted; they do not modify real learners.

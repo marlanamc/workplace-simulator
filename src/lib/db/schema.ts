@@ -86,3 +86,12 @@ export const openingReplies = pgTable('opening_replies', {
   lang: text('lang').notNull(),
   savedAt: timestamp('saved_at', { withTimezone: true }).notNull().defaultNow(),
 }, (t) => [unique('opening_replies_learner_message_uq').on(t.learnerId, t.messageId)]);
+
+/** Separate from game credit; one resumable activity per learner and version. */
+export const practiceAttempts = pgTable('practice_attempts', {
+ learnerId: uuid('learner_id').notNull().references(()=>learners.id,{onDelete:'cascade'}),
+ activityId: text('activity_id').notNull(),
+ version: integer('version').notNull(),
+ state: jsonb('state').notNull(),
+ updatedAt: timestamp('updated_at',{withTimezone:true}).notNull().defaultNow(),
+}, t=>[unique('practice_attempts_owner_activity_version').on(t.learnerId,t.activityId,t.version)]);
