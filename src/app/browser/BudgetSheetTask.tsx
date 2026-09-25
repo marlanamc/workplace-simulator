@@ -9,6 +9,7 @@ import {
   OVER_KEY,
   statusFor,
   statusFormula,
+  dollars,
   STARTERS,
   LESSONS,
   EMPTY_EMAIL_HINT,
@@ -56,7 +57,9 @@ export default function BudgetSheetTask() {
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
   const c = BUDGET_SHEET_COPY[lang];
-  const maxActual = Math.max(...BUDGET_ROWS.map((r) => r.actual));
+  const chartMax = Math.max(...BUDGET_ROWS.flatMap((r) => [r.actual, r.budget]));
+  const stepIndex = view === "home" ? 0 : view === "sheet" ? (openedOver ? 2 : 1) : 3;
+  const showMeIds = ["open-file", "over-cell", "email-cta", "compose-body"];
 
   const select = (cell: Cell) => {
     setSelected(cell);
@@ -68,6 +71,7 @@ export default function BudgetSheetTask() {
   };
 
   const tryEmail = () => {
+    showMe.clear();
     if (!openedOver) return say(c.readFirst);
     setView("compose");
   };
@@ -101,7 +105,7 @@ export default function BudgetSheetTask() {
     if (selected.col === "A") return row.label[lang];
     if (selected.col === "B") return String(row.budget);
     if (selected.col === "C") return String(row.actual);
-    return statusFormula(selected.row);
+    return statusFormula(selected.row, lang);
   })();
 
   const headerFor = (col: Col) =>
@@ -131,12 +135,12 @@ export default function BudgetSheetTask() {
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["budget-sheet"]}
-          stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
+          stepIndex={stepIndex}
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
-          showMeActive={showMe.targetId === "open-file"}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -249,8 +253,8 @@ export default function BudgetSheetTask() {
                         const status = statusFor(row.actual, row.budget);
                         let text = "";
                         if (col === "A") text = row.label[lang];
-                        else if (col === "B") text = String(row.budget);
-                        else if (col === "C") text = String(row.actual);
+                        else if (col === "B") text = dollars(row.budget);
+                        else if (col === "C") text = dollars(row.actual);
                         else text = status === "over" ? c.overLabel : c.underLabel;
                         const cellStyle: CSSProperties = {
                           width: COL_WIDTH[col],
@@ -262,7 +266,8 @@ export default function BudgetSheetTask() {
                         return (
                           <button
                             key={col}
-                            onClick={() => select({ row: r, col })}
+                            data-showme={col === "D" && over ? "over-cell" : undefined}
+                            onClick={() => { showMe.clear(); select({ row: r, col }); }}
                             className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer"
                             style={cellStyle}
                           >
@@ -277,26 +282,33 @@ export default function BudgetSheetTask() {
 
               <div className="min-w-[220px] rounded-xl border border-[#dadce0] bg-[#f8f9fa] p-4">
                 <div className="mb-3 text-[12px] font-medium text-[#5f6368]">{c.chartTitle}</div>
-                <svg viewBox="0 0 220 140" className="h-[140px] w-[220px]" aria-hidden>
+                {/* Each bar is what was spent; the dashed line across it is its
+                    budget. The one bar that passes its line is the answer. */}
+                <svg viewBox="0 0 320 150" className="h-[150px] w-[320px]" aria-hidden>
                   {BUDGET_ROWS.map((row, i) => {
-                    const h = Math.max(8, (row.actual / maxActual) * 100);
-                    const x = 20 + i * 50;
+                    const h = Math.max(8, (row.actual / chartMax) * 100);
+                    const budgetY = 110 - (row.budget / chartMax) * 100;
+                    const x = 22 + i * 76;
                     const over = row.key === OVER_KEY;
                     return (
                       <g key={row.key}>
-                        <rect x={x} y={110 - h} width={28} height={h} fill={over ? "#c5221f" : "#1a73e8"} rx={2} />
-                        <text x={x + 14} y={128} textAnchor="middle" fontSize="9" fill="#5f6368">
-                          {row.label[lang].slice(0, 6)}
+                        <rect x={x} y={110 - h} width={32} height={h} fill={over ? "#c5221f" : "#1a73e8"} rx={2} />
+                        <line x1={x - 6} x2={x + 38} y1={budgetY} y2={budgetY} stroke="#202124" strokeWidth="1.5" strokeDasharray="4 3" />
+                        <text x={x + 16} y={128} textAnchor="middle" fontSize="10" fill="#3c4043">
+                          {row.label[lang]}
                         </text>
                       </g>
                     );
                   })}
+                  <line x1="22" x2="42" y1="144" y2="144" stroke="#202124" strokeWidth="1.5" strokeDasharray="4 3" />
+                  <text x="48" y="147" fontSize="10" fill="#3c4043">{c.budgetHeader}</text>
                 </svg>
               </div>
             </div>
 
             <button
               onClick={tryEmail}
+              data-showme="email-cta"
               className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.emailCta}
@@ -306,7 +318,8 @@ export default function BudgetSheetTask() {
       )}
 
       {view === "compose" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-6">
+        // Docked right with a light scrim, so the table stays readable while writing.
+        <div className="absolute inset-0 flex items-center justify-end bg-black/15 p-6">
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
@@ -317,6 +330,7 @@ export default function BudgetSheetTask() {
               <span>{c.subject}</span>
             </div>
             <textarea
+              data-showme="compose-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder={c.writeHere}

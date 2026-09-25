@@ -33,9 +33,14 @@ export function statusFor(actual: number, budget: number): "over" | "under" {
   return actual > budget ? "over" : "under";
 }
 
-export function statusFormula(row: number): string {
-  return `=IF(C${row}>B${row},"over","under")`;
+/** The formula as the sheet shows it, with the same words the cells show. */
+export function statusFormula(row: number, lang: Lang = "en"): string {
+  const [over, under] = lang === "en" ? ["over", "under"] : ["sobre", "bajo"];
+  return `=IF(C${row}>B${row},"${over}","${under}")`;
 }
+
+/** Money as the sheet and the corrections both write it: $2,850. */
+export const dollars = (n: number) => `$${n.toLocaleString("en-US")}`;
 
 export const BUDGET_SHEET_COPY: Record<Lang, {
   helpBtn: string;
@@ -86,7 +91,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     recentHeading: "Recent spreadsheets",
     openedLabel: "Opened today",
     noteHeading: "Renata's note",
-    noteBody: "Click a status cell. Read the IF. Then look at the chart. It should tell the same story.",
+    noteBody: "One kind of cost went over the budget this week. Which one, and by how much? Please email me.",
     categoryHeader: "Category",
     budgetHeader: "Budget",
     actualHeader: "Actual",
@@ -95,7 +100,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     underLabel: "under",
     chartTitle: "Actual by category",
     emailCta: "Email Renata what is over",
-    readFirst: "First, click the status cell that says \"over\" and read its formula.",
+    readFirst: "First, find the Status cell that says \"over\". Click it and read its formula.",
     to: "To",
     subjectLabel: "Subject",
     subject: "This week's budget: one category over",
@@ -124,7 +129,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     recentHeading: "Hojas de cálculo recientes",
     openedLabel: "Abierta hoy",
     noteHeading: "Nota de Renata",
-    noteBody: "Haz clic en una celda de estado. Lee el IF. Luego mira el gráfico. Debe contar lo mismo.",
+    noteBody: "Un tipo de gasto se pasó del presupuesto esta semana. ¿Cuál, y por cuánto? Por favor escríbeme.",
     categoryHeader: "Categoría",
     budgetHeader: "Presupuesto",
     actualHeader: "Real",
@@ -133,7 +138,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     underLabel: "bajo",
     chartTitle: "Real por categoría",
     emailCta: "Escribirle a Renata qué se pasó",
-    readFirst: "Primero, haz clic en la celda de estado que dice \"sobre\" y lee su fórmula.",
+    readFirst: "Primero busca la celda de Estado que dice \"sobre\". Haz clic en ella y lee su fórmula.",
     to: "Para",
     subjectLabel: "Asunto",
     subject: "Presupuesto de esta semana: una categoría se pasó",
@@ -181,9 +186,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "An IF formula is a yes-or-no question in a cell",
       s: [
-        "Click the status cell. The formula bar shows =IF(actual>budget,\"over\",\"under\").",
-        "In plain words: if this number is bigger than that one, the cell says \"over.\" If not, it says \"under.\"",
-        "The chart next to the table shows the same thing as bars. Find the tall bar that went past its budget line.",
+        "Click the Status cell. The formula bar shows =IF(C3>B3,\"over\",\"under\").",
+        "In plain words: if Actual (column C) is bigger than Budget (column B), the cell says \"over\". If not, it says \"under\".",
+        "The chart shows the same thing. The red bar goes past its dashed budget line.",
+        "To find how much over, subtract: Actual minus Budget.",
       ],
       tip: "In this lesson you only read the formula. You do not write one. Once you can read an IF, writing one later is easier.",
     },
@@ -192,9 +198,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Una fórmula IF es una pregunta de sí o no dentro de una celda",
       s: [
-        "Haz clic en la celda de estado. La barra de fórmulas muestra =IF(real>presupuesto,\"sobre\",\"bajo\").",
-        "En palabras simples: si este número es más grande que aquel, la celda dice \"sobre.\" Si no, dice \"bajo.\"",
-        "El gráfico al lado de la tabla muestra lo mismo en barras. Busca la barra alta que pasó su línea de presupuesto.",
+        "Haz clic en la celda de Estado. La barra de fórmulas muestra =IF(C3>B3,\"sobre\",\"bajo\").",
+        "En palabras simples: si Real (columna C) es más grande que Presupuesto (columna B), la celda dice \"sobre\". Si no, dice \"bajo\".",
+        "El gráfico muestra lo mismo. La barra roja pasa su línea punteada de presupuesto.",
+        "Para saber por cuánto se pasó, resta: Real menos Presupuesto.",
       ],
       tip: "En esta lección solo lees la fórmula. No escribes ninguna. Cuando puedas leer un IF, escribir uno después es más fácil.",
     },
@@ -203,7 +210,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export function emailFlagsOver(body: string): boolean {
   const t = body.toLowerCase();
-  const namesLabor = /labor|mano de obra|nómina|nomina|payroll/.test(t);
+  const namesLabor = /labou?r|mano de obra|nómina|nomina|payroll|staff|wages|salarios|sueldos/.test(t);
   const labor = BUDGET_ROWS.find((row) => row.key === "labor")!;
   return namesLabor && mentionsAmount(t, labor.actual - labor.budget);
 }
@@ -212,11 +219,15 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(BUDGET_SHEET_COPY, (c) => c.sheetName),
   {
-    en: "Click the over status cell and read the IF.",
-    es: "Haz clic en la celda de estado sobre y lee el IF.",
+    en: "Find the Status cell that says over. Click it and read the formula.",
+    es: "Busca la celda de Estado que dice sobre. Haz clic en ella y lee la fórmula.",
   },
   {
-    en: "Email Renata the category and how much it is over.",
-    es: "Escríbele a Renata la categoría y por cuánto se pasó.",
+    en: "Click Email Renata what is over.",
+    es: "Haz clic en Escribirle a Renata qué se pasó.",
+  },
+  {
+    en: "Write Renata the category and how much it is over. Subtract: Actual minus Budget.",
+    es: "Escríbele a Renata la categoría y por cuánto se pasó. Resta: Real menos Presupuesto.",
   },
 ];

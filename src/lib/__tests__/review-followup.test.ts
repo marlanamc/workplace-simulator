@@ -14,6 +14,6 @@ describe('remaining review concerns: report objective facts', () => {
   `The total is ${CORRECT_WEEK_TOTAL}.`,
   `Casey was missing; the total is 1${CORRECT_WEEK_TOTAL}.`,
  ])('rejects missing explanation or wrong total: %s', (body) => expect(emailMentionsFix(body)).toBe(false));
- it.each(['Labor is $450 over budget.', 'La nómina excedió el presupuesto por 450.', 'Mano de obra: diferencia de 450,00.'])('accepts the category and difference: %s', (body) => expect(emailFlagsOver(body)).toBe(true));
+ it.each(['Labor is $450 over budget.', 'Labour went over by 450.', 'La nómina excedió el presupuesto por 450.', 'Mano de obra: diferencia de 450,00.'])('accepts the category and difference: %s', (body) => expect(emailFlagsOver(body)).toBe(true));
  it.each(['Labor is over.', 'La nómina se pasó.', 'Labor was 1450 over.', 'Labor actual: 2850.', 'Supplies were 450 over.'])('rejects a missing or wrong budget fact: %s', (body) => expect(emailFlagsOver(body)).toBe(false));
 });
