@@ -45,10 +45,13 @@ const WindowManagerContext = createContext<WindowManagerValue | null>(null);
 export function WindowManagerProvider({
   children,
   jumpTab,
+  jumpSection,
 }: {
   children: ReactNode;
-  /** Open the Browser on this tab immediately - used by the designer studio. */
+  /** Open the Browser on this tab immediately - used by the designer studio and lessons. */
   jumpTab?: string;
+  /** With `jumpTab: "portal"`, the Portal page to open on (defaults to Schedule). */
+  jumpSection?: PortalSection;
 }) {
   const [state, setState] = useState<WindowManagerState>(() => ({
     apps: jumpTab ? { browser: { minimized: false } } : {},
@@ -56,7 +59,7 @@ export function WindowManagerProvider({
     browserTab: jumpTab ?? "mail",
     browserTabExplicit: !!jumpTab,
     browserTabToken: jumpTab ? 1 : 0,
-    portalSection: jumpTab === "portal" ? "schedule" : null,
+    portalSection: jumpTab === "portal" ? (jumpSection ?? "schedule") : null,
     portalSectionToken: jumpTab === "portal" ? 1 : 0,
     pdfDocId: null,
     pdfDocToken: 0,

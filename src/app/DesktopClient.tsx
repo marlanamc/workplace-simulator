@@ -2,18 +2,14 @@
 import type { CourseRoute } from "@/lib/course-route";
 import type { SubmissionContent } from "@/lib/task-types";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { type TaskKey } from "@/lib/desktop-content";
 import type { BridgePath } from "@/lib/bridge-path";
 import type { TeacherFeedback } from "@/lib/task-types";
 import type { RungMap } from "@/lib/release-ladder";
-import { DesktopClock } from "@/components/LiveClock";
-import DesktopIdentity from "@/components/DesktopIdentity";
-import { deskIdentityFor } from "@/lib/desk-identity";
-import { actForLevel, isLevelComplete, levelForTrack, sceneForLevel } from "@/lib/tracks-content";
-import DesktopWallpaper from "@/components/DesktopWallpaper";
-import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
+import { actForLevel, isLevelComplete, levelForTrack } from "@/lib/tracks-content";
+import Desktop from "@/components/desktop/Desktop";
 import MyJobPanel from "@/components/MyJobPanel";
 import AwardsCase from "@/components/AwardsCase";
 import TrackCelebration from "@/components/TrackCelebration";
@@ -26,62 +22,11 @@ import SimulatorWelcome from "@/components/SimulatorWelcome";
 import ActIntro from "@/components/ActIntro";
 import { WELCOME_FLAG } from "@/lib/welcome-content";
 import { actIntroFlag } from "@/lib/act-intro-content";
-import JobCard from "@/components/task/JobCard";
 import ListIntroSpotlight from "@/components/task/ListIntroSpotlight";
 import { LIST_INTRO_FLAG, shouldShowListIntro } from "@/lib/job-card-content";
-import { WindowManagerProvider, useWindowManager } from "@/lib/window-manager";
+import { WindowManagerProvider } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import { JobCardProvider } from "@/lib/job-card-context";
-import BrowserClient from "./browser/BrowserClient";
-import PdfReaderClient from "./pdf-reader/PdfReaderClient";
-
-/** Wraps a window's content so it replays a subtle "open" animation each time
- *  it becomes the active window (first open or restore from minimize), while
- *  staying mounted (and its state intact) whenever it's minimized in the background. */
-function AppWindow({
-  active,
-  topOffset,
-  bigText,
-  children,
-}: {
-  active: boolean;
-  topOffset: number;
-  bigText: boolean;
-  children: ReactNode;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const wasActive = useRef(false);
-
-  useEffect(() => {
-    if (active && !wasActive.current && ref.current) {
-      const el = ref.current;
-      el.classList.remove("animate-window-in");
-      void el.offsetWidth; // force reflow so the animation restarts
-      el.classList.add("animate-window-in");
-    }
-    wasActive.current = active;
-  }, [active]);
-
-  return (
-    <div
-      ref={ref}
-      className={active ? "fixed flex flex-col overflow-hidden rounded-[12px] shadow-[0_12px_40px_rgba(0,0,0,0.28)]" : "hidden"}
-      style={
-        active
-          ? {
-              top: topOffset,
-              left: SHELF_INSET,
-              right: SHELF_INSET,
-              bottom: SHELF_RESERVE + 8,
-              zoom: bigText ? 1.15 : undefined,
-            }
-          : undefined
-      }
-    >
-      {children}
-    </div>
-  );
-}
 
 function DesignerJumpBanner() {
   return (
@@ -152,125 +97,66 @@ function DesktopShell({
   displayName: string;
   fromStudio: boolean;
 }) {
-  const { lang, currentTrack, dismissCelebration, progressEpoch, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack, bridgePath, bigText } = useProgress();
+  const { currentTrack, dismissCelebration, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack } = useProgress();
   const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const [teacherNotesOpen, setTeacherNotesOpen] = useState(false);
-  const { apps, active } = useWindowManager();
-
-  const anyAppActive = active !== null;
 
   const currentLevel = levelForTrack(currentTrack.key);
-  const actKey = actForLevel(currentLevel)?.key ?? "act1";
-  const identity = deskIdentityFor(actKey, bridgePath);
   const showListIntro = shouldShowListIntro({
     storyFlags,
     completedTaskKeys,
     levelKey: currentLevel.key,
     celebrating: Boolean(celebrateLevel?.levelUp || celebrateTrack),
   });
-  const scene = sceneForLevel(currentLevel);
-  const windowTop = fromStudio ? 44 : 8;
-
-  // Wallpaper follows the act (the room), not the individual level. The
-  // outgoing scene stays mounted just long enough to fade out over the new
-  // one. Adjusted during render (React's recommended pattern), not in an effect.
-  const [lastScene, setLastScene] = useState(scene);
-  const [outgoingScene, setOutgoingScene] = useState<typeof scene | null>(null);
-  const [wallpaperFadeKey, setWallpaperFadeKey] = useState(0);
-  if (lastScene !== scene) {
-    setOutgoingScene(lastScene);
-    setWallpaperFadeKey((k) => k + 1);
-    setLastScene(scene);
-  }
 
   return (
-    <div
-      className="relative min-h-screen overflow-hidden text-[15px]"
-      style={{ color: "var(--text-primary)" }}
-    >
-      {/* wallpaper - the room of the current act, so New Hire is the cafe floor */}
-      <div className="fixed inset-0 -z-10">
-        <DesktopWallpaper scene={scene} />
-      </div>
-      {outgoingScene && (
-        <div
-          key={wallpaperFadeKey}
-          className="fixed inset-0 -z-10 animate-wallpaper-fade-out pointer-events-none"
-          onAnimationEnd={() => setOutgoingScene(null)}
-        >
-          <DesktopWallpaper scene={outgoingScene} />
-        </div>
-      )}
-
-      {/* desktop content - hidden while an app window is active, but never unmounted */}
-      <div
-        className={anyAppActive ? "hidden" : "flex min-h-screen flex-col"}
-        aria-hidden={anyAppActive}
-        style={{ paddingBottom: SHELF_RESERVE, paddingTop: fromStudio ? 36 : 0 }}
-      >
-        {/* Lock-screen clock plus a quiet identity plaque. The Job Card still
-            says what to do; this only orients who they are in the story. */}
-        <div className="flex flex-1 items-start px-10 pt-10">
-          <div className="flex w-full max-w-[400px] flex-col">
-            <DesktopClock lang={lang} />
-            <DesktopIdentity name={displayName} identity={identity} lang={lang} />
-          </div>
-        </div>
-      </div>
-
-      {/* app windows - mounted once opened, visible only while active, so
-          minimizing preserves state (e.g. which mail step you're on) */}
-      {apps.browser && (
-        <AppWindow active={active === "browser"} topOffset={windowTop} bigText={bigText}>
-          <BrowserClient key={progressEpoch} />
-        </AppWindow>
-      )}
-      {apps.pdf && (
-        <AppWindow active={active === "pdf"} topOffset={windowTop} bigText={bigText}>
-          <PdfReaderClient />
-        </AppWindow>
-      )}
-
-      <MyJobPanel
-        open={myJobOpen}
-        onOpenChange={setMyJobOpen}
-        onOpenAwards={() => {
-          setMyJobOpen(false);
-          setAwardsOpen(true);
-        }}
-      />
-      <AwardsCase
-        open={awardsOpen}
-        onOpenChange={setAwardsOpen}
-      />
-      <TrackCelebration
-        onSeeAward={() => {
-          dismissCelebration();
-          setMyJobOpen(false);
-          setAwardsOpen(true);
-        }}
-      />
-      <LevelUpCelebration />
-      <Shelf
-        displayName={displayName}
-        myJobOpen={myJobOpen}
-        onMyJobOpenChange={(open) => {
+    <Desktop
+      displayName={displayName}
+      topInset={fromStudio ? 36 : 0}
+      myJob={{
+        open: myJobOpen,
+        onOpenChange: (open) => {
           setMyJobOpen(open);
           if (open) setAwardsOpen(false);
           if (open && showListIntro) setStoryFlag(LIST_INTRO_FLAG, "true");
-        }}
-      />
-      {/* The one instruction voice. Above the app windows, below the Help
-          drawer and pickers, present on every screen. */}
-      <JobCard />
-      {showListIntro ? <ListIntroSpotlight /> : null}
-      <MariaNoteToast />
-      <TeacherNotesToast onOpen={() => setTeacherNotesOpen(true)} />
-      <TeacherNotesPanel open={teacherNotesOpen} onClose={() => setTeacherNotesOpen(false)} />
-      <MobileNudge />
-      {fromStudio && <DesignerJumpBanner />}
-    </div>
+        },
+      }}
+      beforeShelf={
+        <>
+          <MyJobPanel
+            open={myJobOpen}
+            onOpenChange={setMyJobOpen}
+            onOpenAwards={() => {
+              setMyJobOpen(false);
+              setAwardsOpen(true);
+            }}
+          />
+          <AwardsCase
+            open={awardsOpen}
+            onOpenChange={setAwardsOpen}
+          />
+          <TrackCelebration
+            onSeeAward={() => {
+              dismissCelebration();
+              setMyJobOpen(false);
+              setAwardsOpen(true);
+            }}
+          />
+          <LevelUpCelebration />
+        </>
+      }
+      afterCard={
+        <>
+          {showListIntro ? <ListIntroSpotlight /> : null}
+          <MariaNoteToast />
+          <TeacherNotesToast onOpen={() => setTeacherNotesOpen(true)} />
+          <TeacherNotesPanel open={teacherNotesOpen} onClose={() => setTeacherNotesOpen(false)} />
+          <MobileNudge />
+          {fromStudio && <DesignerJumpBanner />}
+        </>
+      }
+    />
   );
 }
 

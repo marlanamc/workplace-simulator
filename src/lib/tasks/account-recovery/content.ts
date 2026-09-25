@@ -76,6 +76,10 @@ export const RECOVERY_COPY: Record<Lang, {
   badgeWhere: string;
   tryAgain: string;
   backToDesk: string;
+  /** Google sign-in chrome. */
+  signInTitle: string;
+  continueTo: string;
+  verifyTitle: string;
 }> = {
   en: {
     heading: "Harborside Accounts",
@@ -102,6 +106,9 @@ export const RECOVERY_COPY: Record<Lang, {
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
+    signInTitle: "Sign in",
+    continueTo: "to continue to Harborside Cafe",
+    verifyTitle: "2-Step Verification",
   },
   es: {
     heading: "Harborside Accounts",
@@ -128,6 +135,9 @@ export const RECOVERY_COPY: Record<Lang, {
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
+    signInTitle: "Iniciar sesión",
+    continueTo: "para ir a Harborside Cafe",
+    verifyTitle: "Verificación en 2 pasos",
   },
 };
 

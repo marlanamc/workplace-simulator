@@ -18,9 +18,22 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import { firstPersonSkill } from "@/lib/skills";
-import { Lock } from "lucide-react";
 
 type View = "signin" | "code-sent" | "code-entry" | "done";
+
+/** The Google wordmark, as on the sign-in page students meet on a school Chromebook. */
+function GoogleWord() {
+  return (
+    <div aria-label="Google" className="select-none text-[30px] font-medium leading-none tracking-[-1px]">
+      <span className="text-[#4285f4]">G</span>
+      <span className="text-[#ea4335]">o</span>
+      <span className="text-[#fbbc05]">o</span>
+      <span className="text-[#4285f4]">g</span>
+      <span className="text-[#34a853]">l</span>
+      <span className="text-[#ea4335]">e</span>
+    </div>
+  );
+}
 
 export default function AccountRecoveryTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
@@ -70,10 +83,8 @@ export default function AccountRecoveryTask() {
 
   return (
     <div className="relative">
-      <div className="mb-1 flex items-center justify-between gap-3">
-        <h2 className="text-[19px] font-medium">{c.heading}</h2>
-      </div>
-      <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
+      {/* The page is the sign-in screen itself; its title is the page's heading. */}
+      <h2 className="sr-only">{c.heading}</h2>
 
       {view !== "done" && (
         <RightNowBar
@@ -87,76 +98,80 @@ export default function AccountRecoveryTask() {
         />
       )}
 
-      {view === "signin" && (
-        <div className="max-w-[380px] rounded-xl border border-border bg-white p-6">
-          <div className="mb-5 flex justify-center">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-muted text-text-secondary">
-              <Lock size={22} strokeWidth={2} aria-hidden />
-            </span>
+      {view !== "done" && (
+        <div className="flex justify-center rounded-2xl bg-[#f0f4f9] px-4 py-8">
+          <div className="w-full max-w-[460px] rounded-[28px] bg-white px-8 pt-9 pb-8 sm:px-10">
+            <GoogleWord />
+            {view === "signin" ? (
+              <>
+                <h3 className="m-0 mt-3 text-[32px] font-normal leading-tight text-[#1f1f1f]">{c.signInTitle}</h3>
+                <p className="mt-2 mb-5 text-[16px] text-[#1f1f1f]">{c.continueTo}</p>
+                <div
+                  aria-label={c.usernameLabel}
+                  className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#747775] py-0.5 pr-3 pl-0.5 text-[14px] font-medium text-[#1f1f1f]"
+                >
+                  <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1e8e3e] text-[13px] text-white">Y</span>
+                  <span className="truncate">you@harborsidecafe.com</span>
+                </div>
+                <label className="block text-[14px] font-medium text-[#444746]">
+                  {c.passwordLabel}
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") trySignIn(); }}
+                    placeholder={c.passwordPlaceholder}
+                    className="mt-1.5 block min-h-14 w-full rounded-[4px] border border-[#747775] px-3.5 text-[17px] font-normal text-[#1f1f1f] outline-none placeholder:text-[#747775] focus:border-2 focus:border-[#0b57d0]"
+                  />
+                </label>
+                <div className="mt-8 flex justify-end">
+                  <button
+                    onClick={trySignIn}
+                    className="inline-flex min-h-10 cursor-pointer items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0842a0]"
+                  >
+                    {c.signIn}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <h3 className="m-0 mt-3 text-[32px] font-normal leading-tight text-[#1f1f1f]">{c.verifyTitle}</h3>
+                <p className="mt-2 mb-1 text-[16px] font-medium text-[#1f1f1f]">{c.codeSentTitle}</p>
+                <p className="mt-0 mb-5 text-[15px] leading-relaxed text-[#444746]">{c.codeSentBody}</p>
+                {view === "code-sent" ? (
+                  <button
+                    onClick={() => setPicker(true)}
+                    className="inline-flex min-h-10 cursor-pointer items-center rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f0f4f9]"
+                  >
+                    {c.findCodeBtn}
+                  </button>
+                ) : (
+                  <>
+                    <label className="block text-[14px] font-medium text-[#444746]">
+                      {c.codeLabel}
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={codeInput}
+                        onChange={(e) => setCodeInput(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") trySubmitCode(); }}
+                        placeholder={c.codePlaceholder}
+                        className="mt-1.5 block min-h-14 w-full rounded-[4px] border border-[#747775] px-3.5 text-[18px] font-normal tracking-[0.2em] text-[#1f1f1f] outline-none placeholder:tracking-normal placeholder:text-[#747775] focus:border-2 focus:border-[#0b57d0]"
+                      />
+                    </label>
+                    <div className="mt-8 flex justify-end">
+                      <button
+                        onClick={trySubmitCode}
+                        className="inline-flex min-h-10 cursor-pointer items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0842a0]"
+                      >
+                        {c.submitCode}
+                      </button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
           </div>
-          <label className="mb-3 block text-[14px] font-medium text-text-primary">
-            {c.usernameLabel}
-            <input
-              type="text"
-              readOnly
-              value="you@harborsidecafe.com"
-              className="mt-1.5 block w-full rounded-lg border border-border bg-surface-muted px-3 py-2.5 text-[14px] text-text-secondary outline-none"
-            />
-          </label>
-          <label className="mb-4 block text-[14px] font-medium text-text-primary">
-            {c.passwordLabel}
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={c.passwordPlaceholder}
-              className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[14px] outline-none placeholder:text-text-tertiary focus:border-accent"
-            />
-          </label>
-          <button
-            onClick={trySignIn}
-            className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-          >
-            {c.signIn}
-          </button>
-        </div>
-      )}
-
-      {(view === "code-sent" || view === "code-entry") && (
-        <div className="max-w-[420px] rounded-xl border border-border bg-white p-6">
-          <div className="mb-1 text-[16px] font-medium text-text-primary">{c.codeSentTitle}</div>
-          <p className="mb-4 text-[14px] text-text-secondary">{c.codeSentBody}</p>
-
-          {view === "code-sent" && (
-            <button
-              onClick={() => setPicker(true)}
-              className="inline-flex min-h-[44px] items-center rounded-full border border-border px-5 text-[14px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
-            >
-              {c.findCodeBtn}
-            </button>
-          )}
-
-          {view === "code-entry" && (
-            <>
-              <label className="mb-4 block text-[14px] font-medium text-text-primary">
-                {c.codeLabel}
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={codeInput}
-                  onChange={(e) => setCodeInput(e.target.value)}
-                  placeholder={c.codePlaceholder}
-                  className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[16px] tracking-[0.2em] outline-none placeholder:tracking-normal placeholder:text-text-tertiary focus:border-accent"
-                />
-              </label>
-              <button
-                onClick={trySubmitCode}
-                className="inline-flex min-h-[46px] w-full items-center justify-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-              >
-                {c.submitCode}
-              </button>
-            </>
-          )}
         </div>
       )}
 

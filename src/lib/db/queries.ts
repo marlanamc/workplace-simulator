@@ -1,6 +1,6 @@
 import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { getDb } from "./client";
-import { openingReplies, badges, learners, skillRungs, submissions, taskCompletions, type SubmissionContent } from "./schema";
+import { openingReplies, badges, learners, practiceAttempts, skillRungs, submissions, taskCompletions, type SubmissionContent } from "./schema";
 
 /**
  * How two spellings of a learner's name count as the same person: trim the
@@ -169,6 +169,33 @@ export async function getClassSubmissions(classCode: string) {
     .innerJoin(learners, eq(learners.id, submissions.learnerId))
     .where(eq(learners.classCode, classCode))
     .orderBy(desc(submissions.submittedAt));
+}
+
+/**
+ * Class members' lesson attempts, most recently updated first. `lessonKeys`
+ * keeps out the retired /practice activities, which share the table.
+ */
+export async function getClassLessonAttempts(classCode: string, lessonKeys: string[], version: number) {
+  if (lessonKeys.length === 0) return [];
+  const db = getDb();
+  return db
+    .select({
+      learnerId: practiceAttempts.learnerId,
+      learnerName: learners.displayName,
+      taskKey: practiceAttempts.activityId,
+      state: practiceAttempts.state,
+      updatedAt: practiceAttempts.updatedAt,
+    })
+    .from(practiceAttempts)
+    .innerJoin(learners, eq(learners.id, practiceAttempts.learnerId))
+    .where(
+      and(
+        eq(learners.classCode, classCode),
+        eq(practiceAttempts.version, version),
+        inArray(practiceAttempts.activityId, lessonKeys),
+      ),
+    )
+    .orderBy(desc(practiceAttempts.updatedAt));
 }
 
 /** One learner's submissions, newest first — for the per-student progress page. */

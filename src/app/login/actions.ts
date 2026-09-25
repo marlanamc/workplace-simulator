@@ -1,6 +1,6 @@
 "use server";
 
-import { practiceReturn } from "@/lib/practice/activities";
+import { safeReturn } from "@/lib/lessons/return";
 import { redirect } from "next/navigation";
 import { setSessionCookie, hashPin, verifyPin } from "@/lib/auth";
 import { createLearner, findLearner } from "@/lib/db/queries";
@@ -43,5 +43,5 @@ export async function loginOrSignup(_prev: LoginResult, formData: FormData): Pro
   }
 
   const nextRaw = String(formData.get("next") ?? "/");
-  redirect(practiceReturn(nextRaw));
+  redirect(safeReturn(nextRaw));
 }

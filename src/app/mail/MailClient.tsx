@@ -65,7 +65,6 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
-import { recordOpeningReply } from '@/app/actions';
 import { storage } from '@/lib/storage';
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
@@ -120,7 +119,7 @@ function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
 }
 
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
-  const { learnerId, openingReplies, setOpeningReplies, restartLevel, markComplete, completedTaskKeys, currentTrack, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
+  const { learnerId, openingReplies, saveOpeningReply, restartLevel, markComplete, completedTaskKeys, currentTrack, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
   const { browserTabToken, openApp } = useWindowManager();
   const timeclockMailActive =
     !completedTaskKeys.includes("timeclock") && storyFlags[TIMECLOCK_MAIL_FLAG] === "true";
@@ -349,9 +348,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     const reply: OpeningReply = { messageId: openingMessage.id, response: body, lang };
     storage.setJSON(draftKey, reply);
     try {
-      const result = await recordOpeningReply(reply);
-      if (!result.ok) throw new Error('Reply not saved');
-      setOpeningReplies([...openingReplies.filter(r => r.messageId !== reply.messageId), reply]);
+      if (!(await saveOpeningReply(reply))) throw new Error('Reply not saved');
       storage.remove(draftKey);
       dismiss();
       setShowMeTarget(null);

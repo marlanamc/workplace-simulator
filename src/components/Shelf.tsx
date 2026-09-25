@@ -11,6 +11,8 @@ import {
 } from "@/lib/desktop-content";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
+import { useLesson } from "@/lib/lesson-context";
+import { LESSON_COPY } from "@/lib/lessons/copy";
 import { useNudge } from "@/lib/use-nudge";
 import { QuickSettingsClock, ShelfClock } from "@/components/LiveClock";
 import { useClickOutside } from "@/lib/use-click-outside";
@@ -156,13 +158,15 @@ function ShelfPin({
 
 export default function Shelf({
   displayName,
-  myJobOpen,
-  onMyJobOpenChange,
+  myJob,
 }: {
   displayName: string;
-  myJobOpen: boolean;
-  onMyJobOpenChange: (open: boolean) => void;
+  /** The My tasks pin and its panel. A lesson has no task list, so it leaves this out. */
+  myJob?: { open: boolean; onOpenChange: (open: boolean) => void };
 }) {
+  const myJobOpen = myJob?.open ?? false;
+  const onMyJobOpenChange = (open: boolean) => myJob?.onOpenChange(open);
+  const lesson = useLesson();
   const { completedTaskKeys, currentTrack, lang, setLang, bridgePath, celebrateLevel, courseRoute, bigText, setBigText } =
     useProgress();
   const [launcherOpen, setLauncherOpen] = useState(false);
@@ -229,9 +233,9 @@ export default function Shelf({
       >
         <div className="absolute left-3 top-1/2 hidden max-w-[240px] -translate-y-1/2 min-[920px]:block">
           <p className="truncate text-[13px] font-medium leading-tight tracking-[-0.01em] text-white/85">
-            {dayTitle(currentLevel, lang)}
+            {lesson ? `${LESSON_COPY.kicker[lang]} · ${lesson.title[lang]}` : dayTitle(currentLevel, lang)}
           </p>
-          {leftover === 0 && (
+          {!lesson && leftover === 0 && (
             // "Day", not "shift" — the Job Card calls this same moment a day
             // ("That's today done"), and two names for one thing is the
             // confusion this pass exists to remove.
@@ -317,6 +321,7 @@ export default function Shelf({
           );
         })}
 
+        {myJob && (
         <ShelfPin
           label={
             tourLocked
@@ -353,6 +358,7 @@ export default function Shelf({
             {tourLocked && <ShelfLockMark />}
           </span>
         </ShelfPin>
+        )}
           </div>
         </div>
 
@@ -405,7 +411,8 @@ export default function Shelf({
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent text-[13px] font-semibold text-white">
                     {displayName.slice(0, 1).toUpperCase()}
                   </span>
-                  <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{displayName}</span>
+                  <span className="min-w-0 flex-1 truncate text-[13px] font-medium">{lesson ? LESSON_COPY.guest[lang] : displayName}</span>
+                  {!lesson && (
                   <form action={logout}>
                     <button
                       type="submit"
@@ -414,6 +421,7 @@ export default function Shelf({
                       {lang === "en" ? "Sign out" : "Cerrar sesión"}
                     </button>
                   </form>
+                  )}
                   <button
                     title={lang === "en" ? "Settings (not available here)" : "Ajustes (no disponible aquí)"}
                     onClick={() => say(lang === "en" ? "Settings aren't part of this practice space." : "Los ajustes no son parte de este espacio de práctica.")}

@@ -132,40 +132,36 @@ Before deploying this revision, apply the additive SQL in
 The desktop deliberately fails to load rather than treating a failed opening
 progress read as a fresh account. This migration does not rewrite old progress.
 
-## Digital Practice (separate from the game)
+## Lesson mode (every task as a classroom lesson)
 
-`/practice` is a public activity library built from `ACTIVITIES` in
-`src/lib/practice/activities.ts`. `/practice/workshop` rehearses an email invitation,
-fictional registration, review, and confirmation; `/practice/assignment` rehearses finding a
-Classroom assignment, attaching the right file (not an old copy), turning it in, and posting a
-class comment; `/practice/password` rehearses, in a Google sign-in look (inside a Chrome window, as on
-program Chromebooks), choosing the right account on a shared
-computer, resetting a forgotten password with a texted code (next to a look-alike ad code),
-signing in, and signing out. It saves no typed password: the learner is asked to use the
-fictional practice password, so a reload can verify progress without storing one. None of
-these touch game state or credit. `?preview=1` is an ephemeral teacher
-preview that also shows the activity's teacher guide; its share button removes preview mode.
+`/lessons` is a public library of game tasks a teacher can run on their own in class
+(filter with `?skill=`, switch language with `?lang=es`). `/lessons/<taskKey>` runs one task
+on the same computer as the game: `<Desktop>` (`src/components/desktop/Desktop.tsx`), the
+Browser, and the Job Card, with no account needed. The hand-built `/practice` activities
+retired into this; their old URLs redirect (`next.config.ts`).
 
-To add an activity: define a `PracticeActivity` (stages, bilingual instructions/help, goal,
-fictional details, teacher guide, pure `parseDraft`) in `src/lib/practice/`, register it in
-`ACTIVITIES`, and add `src/app/practice/<id>/` whose component calls `usePracticeDraft` and
-renders only the simulated app inside `PracticeShell`. Registration also opens its login
-return path and its `/api/practice?activity=<id>` key; `digital-practice.test.ts` checks
-every registered activity is bilingual. `mode=guided` or
-`mode=independent` and `lang=en` or `lang=es` configure a shared link.
+- **One set of tasks, two ways in.** Story mode's `ProgressProvider` and Lesson mode's
+  `LessonProgressProvider` (`src/app/lessons/`) supply the same `ProgressValue`. The lesson
+  one keeps everything in memory, seeded by `seedForLesson()` so the lesson's task is the next
+  job, and pins `currentTrack` to that task's track. A finish never writes game credit.
+- **`useLesson()`** (`src/lib/lesson-context.tsx`) is null outside a lesson. The Job Card
+  reads it for "Lesson · <title>", the support choice (Guided talks like Act I, On my own
+  like Act III), and the finish buttons (Practice again, Back to lessons). The Browser keeps
+  to the lesson's tabs (a task's own deep links still work). The Shelf drops sign-out and
+  My tasks.
+- **Practice again** resets the provider to the seed and bumps `progressEpoch`, which
+  remounts the Browser, so every task restarts on its first step.
+- **Making a lesson:** add a `lesson` block (`LessonMeta`: title, summary, skill tags from
+  `src/lib/lessons/skills.ts`, minutes, teacher guide) to the task in `tasks/registry.ts`.
+  `content-integrity.test.ts` checks it and names the launch set that must have one.
+- **Teacher preview** (`?preview=1`) adds a teacher-only bar above the computer with the guide
+  and a copy-link button; the copied link keeps `mode` and `lang`. It saves nothing.
+- **Saving.** Guests keep a finish count in this browser. "Sign in to save" on the finish
+  card carries it into the account (`?transfer=1`). Account attempts live in
+  `practice_attempts` (`activity_id` = task key) through `/api/lessons`: support used, times
+  finished, and when. Never the task's inner state. `/teacher` lists them under Lessons.
+- **No server actions on the lesson path.** Tasks go through `useProgress()`;
+  `lessons.test.ts` fails if a task imports `@/app/actions`.
 
-The Practice Card is this experience’s single instruction surface, independent of the
-story-dependent Job Card provider. Its help is bilingual; simulated email/form content
-intentionally remains simple English. English level does not select a support mode.
-
-Guests save locally and can clear their work on shared devices. Account drafts live in
-`practice_attempts`, keyed by authenticated learner, activity, and version, never in game
-completion tables. The JSON state includes support mode and completion stage. Guest transfer
-requires the explicit sign-in-to-save action; preview never reads or writes saved attempts.
-An account-local retry buffer survives failed saves and is removed after server acknowledgement.
-Clearing replaces the current attempt; this version does not keep assessment history.
-
-The additive `20260924-practice.sql` migration runs through the existing migration pipeline.
-Apply it before deploying these routes. No production migration is needed to test guest mode.
-Run `npm run check`, then `npx playwright test e2e/digital-practice.spec.ts` for public flows.
-The focused browser tests stub account storage where noted; they do not modify real learners.
+Run `npm run check`, then `npx playwright test e2e/lessons.spec.ts e2e/lessons-smoke.spec.ts`.
+The smoke sweep opens every reachable task as a lesson through the dev-only `?smoke=1` draft.

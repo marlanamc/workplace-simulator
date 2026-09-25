@@ -5,6 +5,8 @@ import { AlertCircle, Check, ChevronDown, ChevronUp, Mail, MapPin, Shrink, Volum
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
+import { useLesson } from "@/lib/lesson-context";
+import { LESSON_COPY } from "@/lib/lessons/copy";
 import {
   INTRO_BEATS,
   CARD_PRACTICE,
@@ -83,6 +85,7 @@ export default function JobCard() {
   const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag, bridgePath, courseRoute, chooseCourseRoute, routeSaving, saveError, saving, retrySave } =
     useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
+  const lesson = useLesson();
   const {
     step,
     finish,
@@ -107,7 +110,11 @@ export default function JobCard() {
   const visibleHelp = !practicing && !busy ? help : null;
   const visibleCorrection = practicing || busy ? "" : correction;
   const level = levelForTrack(currentTrack.key);
-  const act = actForLevel(level)?.key ?? "act1";
+  // A lesson picks its own support: Guided talks like Act I (every click,
+  // plus Show me), On my own like Act III (the goal, then out of the way).
+  const act = lesson
+    ? (lesson.mode === "guided" ? "act1" : "act3")
+    : (actForLevel(level)?.key ?? "act1");
 
   const [choosingRoute, setChoosingRoute] = useState(false);
   const [corner, setCorner] = useState<Corner>(HOME);
@@ -135,7 +142,7 @@ export default function JobCard() {
     requestAnimationFrame(() => collapseRef.current?.focus());
   }
 
-  const nextTaskKey = nextTaskInTrack(currentTrack, completedTaskKeys);
+  const nextTaskKey = lesson ? lesson.taskKey : nextTaskInTrack(currentTrack, completedTaskKeys);
   const levelTaskKeys = taskKeysForLevel(level, bridgePath);
   const doneInLevel = levelTaskKeys.filter((k) => completedTaskKeys.includes(k)).length;
   const jobNumber = Math.min(doneInLevel + 1, levelTaskKeys.length);
@@ -297,13 +304,41 @@ export default function JobCard() {
       };
     }
 
-    if (active === null && courseRoute === 'pause' && !choosingRoute && coreComplete(completedTaskKeys)) return {
+    // A lesson is one task. It finishes on its own card, with the two ways
+    // out a classroom needs, and never counts down the jobs left in a day.
+    if (lesson && (completedTaskKeys.includes(lesson.taskKey) || (finish && active !== null))) {
+      return {
+        badge: "✓",
+        kicker: `${LESSON_COPY.kicker[lang]} · ${lesson.title[lang]}`,
+        tone: "green",
+        step: 4,
+        line: JOB_CARD_DONE_LINE[lesson.taskKey]?.[lang] ?? LESSON_COPY.doneLine[lang],
+        hint:
+          lesson.save.status === "guest"
+            ? LESSON_COPY.savedHere[lang]
+            : lesson.save.status === "saving"
+              ? LESSON_COPY.saving[lang]
+              : lesson.save.status === "saved"
+                ? LESSON_COPY.savedAccount[lang]
+                : lesson.save.status === "error"
+                  ? LESSON_COPY.notSaved[lang]
+                  : undefined,
+        primaryLabel: LESSON_COPY.practiceAgain[lang],
+        onPrimary: lesson.onRestart,
+        primaryTestId: "lesson-practice-again",
+        secondaryLabel: LESSON_COPY.backToLessons[lang],
+        onSecondary: lesson.onFinish,
+        secondaryTestId: "lesson-back",
+      };
+    }
+
+    if (!lesson && active === null && courseRoute === 'pause' && !choosingRoute && coreComplete(completedTaskKeys)) return {
       badge: '✓', kicker: lang === 'en' ? 'Core course complete' : 'Curso básico terminado',
       line: lang === 'en' ? 'You can stop here. Your skills and progress are saved.' : 'Puedes terminar aquí. Tus habilidades y tu progreso están guardados.',
       tone: 'green', step: -1,
       primaryLabel: lang === 'en' ? 'Explore another direction' : 'Explorar otro camino', onPrimary: () => setChoosingRoute(true),
     };
-    if (coreComplete(completedTaskKeys) && (choosingRoute || (active === null && courseComplete(completedTaskKeys, courseRoute)))) {
+    if (!lesson && coreComplete(completedTaskKeys) && (choosingRoute || (active === null && courseComplete(completedTaskKeys, courseRoute)))) {
       return {
         badge: "✓", kicker: lang === "en" ? "Your next direction" : "Tu próximo camino",
         line: lang === "en" ? "You have finished this part. Choose another direction, or stop here with the skills you earned."
@@ -351,10 +386,12 @@ export default function JobCard() {
     // like the game losing its place. The task name lives in the body, not
     // here: the header is a tight bar and a third clause always truncates.
     // `jobOf` returns "" on a one-task day, so orientation is just the name.
-    const kicker = nextTaskKey
+    const kicker = lesson
+      ? `${LESSON_COPY.kicker[lang]} · ${lesson.title[lang]}`
+      : nextTaskKey
       ? [dayLabel(level, lang), c.jobOf(jobNumber, levelTaskKeys.length)].filter(Boolean).join(" · ")
       : c.dayDoneKicker;
-    const badge = nextTaskKey ? String(jobNumber) : "✓";
+    const badge = lesson ? String((effectiveStep?.stepIndex ?? 0) + 1) : nextTaskKey ? String(jobNumber) : "✓";
 
     // Nothing open: the card sets the job up and its button opens the thing
     // it names. This is what the desktop briefing used to do.
@@ -365,6 +402,18 @@ export default function JobCard() {
       const location = TASK_LOCATIONS[nextTaskKey];
       const desktopLine =
         JOB_CARD_LINE[nextTaskKey]?.[lang] ?? TASK_INFO[nextTaskKey].dispatch[lang];
+      if (lesson) {
+        return {
+          badge,
+          kicker,
+          line: desktopLine,
+          tone: "blue",
+          step: 0,
+          primaryLabel: LESSON_COPY.openTask[lang],
+          onPrimary: () =>
+            openApp(location?.appKey ?? "browser", { tab: lesson.tabs[0], section: location?.section }),
+        };
+      }
       if (!location) {
         return { badge, kicker, line: c.comingSoonLine, tone: "blue", step: 0 };
       }
@@ -639,9 +688,20 @@ export default function JobCard() {
             ))}
           </div>
         )}
-        {active === null && coreComplete(completedTaskKeys) && !script.routeChoices && !saving && !saveError && (
+        {!lesson && active === null && coreComplete(completedTaskKeys) && !script.routeChoices && !saving && !saveError && (
           <button type="button" className="mt-2 min-h-11 text-[14px] text-[#0b57d0]" onClick={() => setChoosingRoute(true)}>
             {lang === "en" ? "Change direction" : "Cambiar de camino"}
+          </button>
+        )}
+        {lesson && script.tone === "green" && (lesson.save.status === "guest" || lesson.save.status === "error") && (
+          <button
+            type="button"
+            data-testid={lesson.save.status === "guest" ? "lesson-sign-in" : "lesson-retry-save"}
+            onClick={() => (lesson.save.status === "guest" ? lesson.save.signIn(lang) : lesson.save.retry())}
+            className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center rounded-[16px] border-2 text-[17px] font-medium"
+            style={{ borderColor: TONE.blue, color: TONE.blue, background: "#fff" }}
+          >
+            {lesson.save.status === "guest" ? LESSON_COPY.signInToSave[lang] : LESSON_COPY.tryAgain[lang]}
           </button>
         )}
         {script.primaryLabel && (
@@ -710,6 +770,31 @@ export default function JobCard() {
           >
             {script.secondaryLabel}
           </button>
+        )}
+
+        {/* A lesson's one setting: how much the card spells out. It lives on
+            the card because the card is what it changes. */}
+        {lesson && script.tone !== "green" && (
+          <div role="group" aria-label={LESSON_COPY.supportLabel[lang]} className="mt-3 flex items-center gap-2 text-[14px] text-[#5f6368]">
+            <span className="shrink-0">{LESSON_COPY.supportLabel[lang]}</span>
+            {(["guided", "independent"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                data-testid={`lesson-mode-${m}`}
+                aria-pressed={lesson.mode === m}
+                onClick={() => lesson.setMode(m)}
+                className="min-h-10 flex-1 cursor-pointer rounded-full border px-3 font-medium"
+                style={
+                  lesson.mode === m
+                    ? { background: "#e8f0fe", borderColor: TONE.blue, color: TONE.blue }
+                    : { borderColor: "var(--border)", color: "#3c4043" }
+                }
+              >
+                {LESSON_COPY[m][lang]}
+              </button>
+            ))}
+          </div>
         )}
 
         {script.step >= 0 && (

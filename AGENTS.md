@@ -20,6 +20,19 @@ instruct the learner, it reports to the Job Card (`src/lib/job-card-context.tsx`
 drawing its own banner, strip, or toast. This product previously had six competing
 instruction voices and the whole point of the current design is that it has one.
 
+### Lesson mode
+
+`/lessons/<taskKey>` runs one game task on its own, on the same `<Desktop>`
+(`src/components/desktop/Desktop.tsx`) as Story mode. `LessonProgressProvider`
+supplies the same `ProgressValue` in memory, and `useLesson()` (null outside a
+lesson) is how the Job Card, Browser, and Shelf tell the two apart.
+
+- Lessons have no account, so nothing a task renders may call a server action.
+  Go through `useProgress()` instead; `lessons.test.ts` fails on a direct
+  `@/app/actions` import in a task.
+- The Job Card is still the only instruction voice in a lesson. No lesson banners.
+- A task becomes a lesson by getting a `lesson` block in `tasks/registry.ts`.
+
 ### Before you commit
 
 `npm run check` — lint + typecheck + unit tests, a few seconds. It must be green.
