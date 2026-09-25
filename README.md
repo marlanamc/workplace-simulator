@@ -138,7 +138,11 @@ progress read as a fresh account. This migration does not rewrite old progress.
 `src/lib/practice/activities.ts`. `/practice/workshop` rehearses an email invitation,
 fictional registration, review, and confirmation; `/practice/assignment` rehearses finding a
 Classroom assignment, attaching the right file (not an old copy), turning it in, and posting a
-class comment. Neither touches game state or credit. `?preview=1` is an ephemeral teacher
+class comment; `/practice/password` rehearses choosing the right account on a shared
+computer, resetting a forgotten password with a texted code (next to a look-alike ad code),
+signing in, and signing out. It saves no typed password: the learner is asked to use the
+fictional practice password, so a reload can verify progress without storing one. None of
+these touch game state or credit. `?preview=1` is an ephemeral teacher
 preview that also shows the activity's teacher guide; its share button removes preview mode.
 
 To add an activity: define a `PracticeActivity` (stages, bilingual instructions/help, goal,
