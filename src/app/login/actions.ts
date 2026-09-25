@@ -1,5 +1,6 @@
 "use server";
 
+import { practiceReturn } from "@/lib/practice/content";
 import { redirect } from "next/navigation";
 import { setSessionCookie, hashPin, verifyPin } from "@/lib/auth";
 import { createLearner, findLearner } from "@/lib/db/queries";
@@ -40,5 +41,5 @@ export async function loginOrSignup(_prev: LoginResult, formData: FormData): Pro
   }
 
   const nextRaw = String(formData.get("next") ?? "/");
-  redirect(nextRaw === "/studio" || nextRaw === "/teacher" ? nextRaw : "/");
+  redirect(practiceReturn(nextRaw));
 }
