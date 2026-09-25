@@ -1,8 +1,13 @@
 import { workshop } from "./content";
 import { assignment } from "./assignment";
+import { password } from "./password";
 import type { ActivityMeta } from "./types";
 /** Library order. Adding an activity here also opens its login return path and API key. */
-export const ACTIVITIES: readonly ActivityMeta[] = [workshop, assignment];
+export const ACTIVITIES: readonly ActivityMeta[] = [
+  workshop,
+  password,
+  assignment,
+];
 export function activityById(id: string | null | undefined) {
   return ACTIVITIES.find((a) => a.id === id) ?? null;
 }

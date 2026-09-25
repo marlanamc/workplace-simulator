@@ -495,6 +495,133 @@
   opacity: 0.55;
   cursor: default;
 }
+.account-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid #d5ddda;
+}
+.account-list li {
+  border-bottom: 1px solid #d5ddda;
+}
+.practice .account-list button {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 0;
+  padding: 14px 8px;
+  background: none;
+  overflow-wrap: anywhere;
+}
+.avatar,
+.practice .avatar-button {
+  flex-shrink: 0;
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--teal);
+  color: white;
+  font-weight: 700;
+}
+.practice .avatar-button {
+  width: 48px;
+  height: 48px;
+  border: 0;
+}
+.practice .avatar-button:hover {
+  background: #0b4943;
+}
+.account-chip {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid #cbd4d1;
+  border-radius: 999px;
+  padding: 6px 20px 6px 6px;
+  width: fit-content;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.show-password {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  margin: -8px 0 16px;
+  cursor: pointer;
+}
+.show-password input {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+}
+.rules {
+  list-style: none;
+  padding: 0;
+  margin: -12px 0 8px;
+  font-size: 18px;
+  color: #455b60;
+}
+.rules .met {
+  color: #155b40;
+  font-weight: 700;
+}
+.phone {
+  border: 8px solid var(--ink);
+  border-radius: 24px;
+  max-width: 380px;
+  padding: 12px 16px;
+  margin: 20px 0;
+  background: #f6f8f8;
+}
+.phone-title {
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 8px;
+}
+.phone ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.phone li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0 12px;
+  border-top: 1px solid #d5ddda;
+  padding: 10px 0;
+}
+.phone li p {
+  width: 100%;
+  margin: 4px 0 0;
+  font-size: 18px;
+}
+.app-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d5ddda;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}
+.account-menu {
+  margin-left: auto;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid #cbd4d1;
+  border-radius: 8px;
+  padding: 4px 20px 20px;
+  box-shadow: 0 8px 24px rgb(24 47 59 / 0.15);
+  overflow-wrap: anywhere;
+}
 @media (max-width: 900px) {
   .practice-columns {
     grid-template-columns: 280px minmax(0, 1fr);

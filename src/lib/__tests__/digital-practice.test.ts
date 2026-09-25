@@ -8,6 +8,14 @@ import {
   commentError,
   parseAssignment,
 } from "../practice/assignment";
+import {
+  PRACTICE_PASSWORD,
+  blankPassword,
+  codeError,
+  newPasswordErrors,
+  parsePassword,
+  signinAgainError,
+} from "../practice/password";
 import type { PracticeActivity, BaseDraft } from "../practice/types";
 const valid = {
   ...blank(),
@@ -147,4 +155,42 @@ describe("every practice activity", () => {
     }
   });
   it("includes the homework activity", () => expect(all).toContain(assignment));
+});
+
+describe("forgot your password", () => {
+  const maya = { ...blankPassword(), account: "maya" as const };
+  it("only moves on with Maya's account and the real code", () => {
+    expect(
+      parsePassword({ ...blankPassword(), account: "sam", stage: "code" }),
+    ).toBeNull();
+    expect(parsePassword({ ...maya, stage: "code" })).not.toBeNull();
+    expect(
+      parsePassword({ ...maya, stage: "newPassword", code: "2024" }),
+    ).toBeNull();
+    expect(
+      parsePassword({ ...maya, stage: "complete", code: " 730418 " }),
+    ).not.toBeNull();
+  });
+  it("names the ad's coupon code as a look-alike", () =>
+    expect(codeError({ ...maya, code: "2024" })?.en).toMatch(/coupon/));
+  it("checks the rules first, then the practice password and the match", () => {
+    expect(newPasswordErrors("short1", "short1")[0].en).toMatch(/rules/);
+    expect(newPasswordErrors("MyOwnPass9", "MyOwnPass9")[0].en).toMatch(
+      /never a real password/,
+    );
+    expect(newPasswordErrors(PRACTICE_PASSWORD, "blue-harbor-27")).toHaveLength(
+      1,
+    );
+    expect(newPasswordErrors(PRACTICE_PASSWORD, PRACTICE_PASSWORD)).toEqual([]);
+    expect(signinAgainError("blue-harbor-27")).not.toBeNull();
+    expect(signinAgainError(PRACTICE_PASSWORD)).toBeNull();
+  });
+  it("never saves a password, even if one is injected", () => {
+    const saved = parsePassword({
+      ...maya,
+      password: "secret",
+      newPassword: "x",
+    });
+    expect(saved).toEqual(maya);
+  });
 });
