@@ -102,7 +102,7 @@ jobs:
             const sql = neon(process.env.DATABASE_URL);
             const rows = await sql`select tablename from pg_tables where schemaname = current_schema()`;
             const have = new Set(rows.map((r) => r.tablename));
-            const need = ["learners", "task_completions", "badges", "submissions", "skill_rungs", "opening_replies"];
+            const need = ["learners", "task_completions", "badges", "submissions", "skill_rungs", "opening_replies", "practice_attempts"];
             const missing = need.filter((t) => !have.has(t));
             if (missing.length) {
               console.error(`::error::Schema push left these tables missing: ${missing.join(", ")}`);

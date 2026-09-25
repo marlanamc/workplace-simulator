@@ -15,6 +15,9 @@ import { HANDOFF_CTA, SHIFT_MOMENT, storyMailsFor } from "@/lib/story-beats";
 import { BOOKMARK_LABEL } from "@/lib/shift-spine";
 import { firstPersonSkill } from "@/lib/skills";
 import { TASKS } from "@/lib/tasks/registry";
+import { lessonTabFor } from "@/lib/lessons/catalog";
+import { SKILL_TAGS } from "@/lib/lessons/skills";
+import { TAB_META_BY_KEY } from "@/lib/tabs";
 import { TEACHER_NOTES_COPY } from "@/lib/teacher-notes-content";
 import { formatPortfolioSummary } from "@/lib/portfolio-summary";
 
@@ -424,5 +427,41 @@ describe("learner-facing copy does not use em dashes", () => {
       hits,
     );
     expect(hits, hits.map(([p, s]) => `${p}: ${s}`).join("\n")).toEqual([]);
+  });
+});
+
+/**
+ * The tasks the PD session asked for first. Each must be a lesson before
+ * Lesson mode launches; the rest of the game follows one block at a time.
+ */
+const LAUNCH_LESSONS: TaskKey[] = [
+  "account-recovery", "coursework", "files", "mail-reply", "mail-attach", "job-posting", "job-application",
+  "resume-build", "w4-form", "appointment-scheduling", "formula-check", "spreadsheet", "budget-sheet", "calendar",
+];
+
+describe("lessons", () => {
+  const withLesson = Object.values(TASKS).filter((t) => t.lesson);
+
+  it.each(LAUNCH_LESSONS)("launch task %s has a lesson block", (key) => {
+    expect(TASKS[key].lesson, `TASKS[${key}].lesson: add one in tasks/registry.ts`).toBeDefined();
+  });
+
+  it.each(withLesson.map((t) => [t.key, t] as const))("%s lesson is complete and bilingual", (key, t) => {
+    const l = t.lesson!;
+    expect(t.built && !t.retired, `${key}: only a built, live task can be a lesson`).toBe(true);
+    expectBilingual(l.title, `${key} lesson.title`);
+    expectBilingual(l.summary, `${key} lesson.summary`);
+    expect(l.skills.length, `${key} lesson.skills is empty`).toBeGreaterThan(0);
+    for (const s of l.skills) expect(SKILL_TAGS as readonly string[], `${key}: unknown skill tag ${s}`).toContain(s);
+    expect(l.minutes).toBeGreaterThan(0);
+    const g = l.guide;
+    for (const [part, items] of Object.entries({ skills: g.skills, prepare: g.prepare, stickingPoints: g.stickingPoints, followUp: g.followUp })) {
+      expect(items.length, `${key} guide.${part} is empty`).toBeGreaterThan(0);
+      items.forEach((item, i) => expectBilingual(item, `${key} guide.${part}[${i}]`));
+    }
+    expectBilingual(g.peerHelp, `${key} guide.peerHelp`);
+    const tab = lessonTabFor(key);
+    expect(tab, `${key}: no tab to open the lesson on (jumpTabForTask / TASK_LOCATIONS)`).toBeDefined();
+    for (const extra of [tab!, ...(l.tabs ?? [])]) expect(TAB_META_BY_KEY[extra], `${key}: unknown tab ${extra}`).toBeDefined();
   });
 });

@@ -156,6 +156,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria said welcome. Write her back.", es: "Maria te dio la bienvenida. Contéstale." },
     jobCardDoneLine: { en: "Three replies sent. Day one is complete.", es: "Tres respuestas enviadas. Completaste el primer día." },
+    lesson: {
+      title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
+      summary: {
+        en: "Read three short emails from a manager and a coworker, and write a reply to each one.",
+        es: "Lee tres correos cortos de una gerente y un compañero, y responde a cada uno.",
+      },
+      skills: ["email"],
+      minutes: 15,
+      guide: {
+        skills: [
+          { en: "Open the right email in a full inbox", es: "Abrir el correo correcto en una bandeja llena" },
+          { en: "Click Reply and write a short message", es: "Hacer clic en Responder y escribir un mensaje corto" },
+          { en: "Start with a greeting and end with your name", es: "Empezar con un saludo y terminar con tu nombre" },
+          { en: "Answer the question the email asks", es: "Contestar la pregunta que hace el correo" },
+        ],
+        prepare: [
+          { en: "Ask who has an email account and who uses it every week.", es: "Pregunta quién tiene una cuenta de correo y quién la usa cada semana." },
+          { en: "Write the parts of a reply on the board: hello, your message, your name.", es: "Escribe en la pizarra las partes de una respuesta: saludo, tu mensaje, tu nombre." },
+        ],
+        stickingPoints: [
+          { en: "Some learners open an email from a vendor first. Ask: who sent this email? Is it Maria?", es: "Algunos abren primero el correo de un proveedor. Pregunta: ¿quién envió este correo? ¿Es Maria?" },
+          { en: "The second email asks them to confirm 10 AM. A reply with no or can't does not pass. Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta con no o no puedo no se acepta. Pregunta: ¿qué quiere saber Maria?" },
+          { en: "The third email is from Darnell. The reply must say the bag goes on the shelf under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
+        ],
+        followUp: [
+          { en: "Who sends you emails or texts that need an answer? How fast do you answer?", es: "¿Quién te envía correos o mensajes que necesitan respuesta? ¿Qué tan rápido contestas?" },
+          { en: "How do you tell your boss that you will be at work on time?", es: "¿Cómo le dices a tu jefe que vas a llegar al trabajo a tiempo?" },
+        ],
+        peerHelp: {
+          en: "A partner can read the email out loud, but the learner writes and sends the reply.",
+          es: "Un compañero puede leer el correo en voz alta, pero el estudiante escribe y envía la respuesta.",
+        },
+      },
+    },
   },
 
   "mail-attach": {
@@ -173,6 +207,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria needs the July safety report.", es: "Maria necesita el reporte de julio." },
     jobCardDoneLine: { en: "Sent, with the file.", es: "Enviado, con el archivo." },
+    lesson: {
+      title: { en: "Attach a file to an email", es: "Adjuntar un archivo a un correo" },
+      summary: {
+        en: "Read what the manager needs, then reply with the right PDF file attached.",
+        es: "Lee lo que necesita la gerente y luego responde con el archivo PDF correcto adjunto.",
+      },
+      skills: ["email", "files"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Read an email to find what someone needs and when", es: "Leer un correo para saber qué necesita alguien y para cuándo" },
+          { en: "Choose the right file from Downloads", es: "Elegir el archivo correcto en Descargas" },
+          { en: "Attach a file to a reply", es: "Adjuntar un archivo a una respuesta" },
+          { en: "Check that the file is attached before you send", es: "Revisar que el archivo esté adjunto antes de enviar" },
+        ],
+        prepare: [
+          { en: "Ask who has sent a photo or a document by email or text.", es: "Pregunta quién ya envió una foto o un documento por correo o por mensaje." },
+          { en: "Explain that an attachment is a file that goes with the email.", es: "Explica que un archivo adjunto es un archivo que va con el correo." },
+        ],
+        stickingPoints: [
+          { en: "Some learners open Maria's older welcome email. Ask: which email is about the safety report?", es: "Algunos abren el correo de bienvenida anterior de Maria. Pregunta: ¿cuál correo habla del reporte de seguridad?" },
+          { en: "Some learners pick the June report or the shift swap form. Ask: what month did Maria ask for?", es: "Algunos eligen el reporte de junio o el formulario de cambio de turno. Pregunta: ¿qué mes pidió Maria?" },
+          { en: "Some learners write a message and click Send with no file. Ask: do you see the file name in the green box?", es: "Algunos escriben el mensaje y hacen clic en Enviar sin el archivo. Pregunta: ¿ves el nombre del archivo en la caja verde?" },
+        ],
+        followUp: [
+          { en: "When do you need to send a file in real life? A pay stub, an ID, a school form.", es: "¿Cuándo necesitas enviar un archivo en la vida real? Un recibo de pago, una identificación, un formulario de la escuela." },
+          { en: "How can you check that a file is really attached before you send?", es: "¿Cómo puedes revisar que un archivo está adjunto antes de enviar?" },
+        ],
+        peerHelp: {
+          en: "A partner can help read the file names, but the learner chooses the file and clicks Send.",
+          es: "Un compañero puede ayudar a leer los nombres de los archivos, pero el estudiante elige el archivo y hace clic en Enviar.",
+        },
+      },
+    },
   },
 
   schedule: {
@@ -335,16 +403,16 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Type a code exactly as it appears", es: "Escribir un código exactamente como aparece" },
         ],
         prepare: [
-          { en: "Ask who has used a code from a text to sign in before.", es: "Pregunte quién ya usó un código de un mensaje de texto para iniciar sesión." },
-          { en: "Explain that the code changes every time, so you cannot save it.", es: "Explique que el código cambia cada vez, así que no se puede guardar." },
+          { en: "Ask who has used a code from a text to sign in before.", es: "Pregunta quién ya usó un código de un mensaje de texto para iniciar sesión." },
+          { en: "Explain that the code changes every time, so you cannot save it.", es: "Explica que el código cambia cada vez, así que no se puede guardar." },
         ],
         stickingPoints: [
-          { en: "Some learners pick the ad or the coworker's text. Ask: who sent this text?", es: "Algunos eligen el anuncio o el mensaje del compañero. Pregunte: ¿quién envió este mensaje?" },
+          { en: "Some learners pick the ad or the coworker's text. Ask: who sent this text?", es: "Algunos eligen el anuncio o el mensaje del compañero. Pregunta: ¿quién envió este mensaje?" },
           { en: "Some learners type the whole message. The box only takes the 6 numbers.", es: "Algunos escriben todo el mensaje. La casilla solo acepta los 6 números." },
         ],
         followUp: [
-          { en: "Where do you get codes like this in real life? Your bank, your email, your school.", es: "¿Dónde recibe códigos así en la vida real? El banco, el correo, la escuela." },
-          { en: "Why should you never tell anyone your code?", es: "¿Por qué nunca debe decirle a nadie su código?" },
+          { en: "Where do you get codes like this in real life? Your bank, your email, your school.", es: "¿Dónde recibes códigos así en la vida real? En el banco, el correo, la escuela." },
+          { en: "Why should you never tell anyone your code?", es: "¿Por qué nunca debes decirle a nadie tu código?" },
         ],
         peerHelp: {
           en: "A partner can point at the screen, but the learner clicks and types.",
@@ -400,6 +468,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     shiftMoment: { en: "Next week. You are a lead now.", es: "La semana que viene. Ya eres líder." },
     location: browser("Open Calendar from the bookmarks"),
+    lesson: {
+      title: { en: "Answer a meeting invite with a new time", es: "Responder a una invitación con otro horario" },
+      summary: {
+        en: "A meeting is on a day you do not work. Check your shifts, then reply with a better time.",
+        es: "Una reunión es un día que no trabajas. Revisa tus turnos y responde con un horario mejor.",
+      },
+      skills: ["scheduling"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Open a meeting invite on a calendar", es: "Abrir una invitación a una reunión en un calendario" },
+          { en: "Compare the meeting day with your work shifts", es: "Comparar el día de la reunión con tus turnos de trabajo" },
+          { en: "Suggest a new time instead of saying yes", es: "Proponer otro horario en vez de decir que sí" },
+          { en: "Write a short, polite message", es: "Escribir un mensaje corto y amable" },
+        ],
+        prepare: [
+          { en: "Ask who uses a calendar on their phone or on paper.", es: "Pregunta quién usa un calendario en el teléfono o en papel." },
+          { en: "Explain the ways to answer an invite: Yes, No, Maybe, or suggest a new time.", es: "Explica las formas de responder a una invitación: Sí, No, Quizá, o proponer otro horario." },
+        ],
+        stickingPoints: [
+          { en: "Some learners click Yes right away. Ask: do you work on Wednesday, August 26?", es: "Algunos hacen clic en Sí enseguida. Pregunta: ¿trabajas el miércoles 26 de agosto?" },
+          { en: "Some learners click one of their work shifts instead of the meeting. Ask them to find the event called Weekly Lead Huddle.", es: "Algunos hacen clic en uno de sus turnos en vez de la reunión. Pídeles buscar el evento que se llama Weekly Lead Huddle." },
+          { en: "Some learners click No or Maybe. Renata still needs the meeting. Ask: what time can you suggest?", es: "Algunos hacen clic en No o Quizá. Renata todavía necesita la reunión. Pregunta: ¿qué horario puedes proponer?" },
+        ],
+        followUp: [
+          { en: "What do you do when an appointment is on the same day as work or school?", es: "¿Qué haces cuando una cita es el mismo día que el trabajo o la escuela?" },
+          { en: "How do you tell someone that a time does not work for you?", es: "¿Cómo le dices a alguien que un horario no te funciona?" },
+        ],
+        peerHelp: {
+          en: "A partner can help read the calendar, but the learner opens the invite and writes the message.",
+          es: "Un compañero puede ayudar a leer el calendario, pero el estudiante abre la invitación y escribe el mensaje.",
+        },
+      },
+    },
   },
 
   files: {
@@ -418,6 +520,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes por la mañana. Jordan empieza hoy.",
     },
     location: browser("Open Drive from the bookmarks"),
+    lesson: {
+      title: { en: "Rename and share a file", es: "Cambiar el nombre de un archivo y compartirlo" },
+      summary: {
+        en: "Find this week's schedule in Drive, rename it, and share it with a new coworker who can only view it.",
+        es: "Busca el horario de esta semana en Drive, cámbiale el nombre y compártelo con un compañero nuevo que solo lo puede ver.",
+      },
+      skills: ["files"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Find the right file by its date", es: "Encontrar el archivo correcto por su fecha" },
+          { en: "Rename a file with a set pattern", es: "Cambiar el nombre de un archivo con un formato dado" },
+          { en: "Share a file with one person", es: "Compartir un archivo con una persona" },
+          { en: "Choose view access instead of edit access", es: "Elegir acceso para ver en vez de acceso para editar" },
+        ],
+        prepare: [
+          { en: "Ask who has shared a photo or a file from their phone.", es: "Pregunta quién ya compartió una foto o un archivo desde su teléfono." },
+          { en: "Explain the difference: view means look only, and edit means change.", es: "Explica la diferencia: ver es solo mirar, y editar es cambiar." },
+        ],
+        stickingPoints: [
+          { en: "Some learners click last week's schedule. Ask: what date is on this file? What date is this week?", es: "Algunos hacen clic en el horario de la semana pasada. Pregunta: ¿qué fecha tiene este archivo? ¿Qué fecha es esta semana?" },
+          { en: "Some learners type a different name. The name must be schedule-week-of-aug-24. Ask them to compare their name with the example, one word at a time.", es: "Algunos escriben otro nombre. El nombre debe ser schedule-week-of-aug-24. Pídeles comparar su nombre con el ejemplo, palabra por palabra." },
+          { en: "Some learners choose Can edit. Ask: does Jordan need to change the schedule, or only look at it?", es: "Algunos eligen Puede editar. Pregunta: ¿Jordan necesita cambiar el horario, o solo mirarlo?" },
+        ],
+        followUp: [
+          { en: "Who do you share files or photos with? Should they be able to change them?", es: "¿Con quién compartes archivos o fotos? ¿Deben poder cambiarlos?" },
+          { en: "How do you name files on your phone or computer so you can find them later?", es: "¿Cómo nombras los archivos en tu teléfono o computadora para encontrarlos después?" },
+        ],
+        peerHelp: {
+          en: "A partner can help find the date column, but the learner types the name and clicks Share.",
+          es: "Un compañero puede ayudar a encontrar la columna de la fecha, pero el estudiante escribe el nombre y hace clic en Compartir.",
+        },
+      },
+    },
   },
 
   "mail-send-link": {
@@ -460,6 +596,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes por la tarde. Hay que entregar las cuentas.",
     },
     location: browser("Open Sheets from the bookmarks"),
+    lesson: {
+      title: { en: "Enter numbers and send the total", es: "Escribir números y enviar el total" },
+      summary: {
+        en: "Type five days of tip amounts into a shared sheet, then email the manager the total.",
+        es: "Escribe las propinas de cinco días en una hoja compartida y luego envía el total a la gerente por correo.",
+      },
+      skills: ["spreadsheets", "email"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Open the right spreadsheet", es: "Abrir la hoja de cálculo correcta" },
+          { en: "Type money amounts into cells", es: "Escribir cantidades de dinero en las celdas" },
+          { en: "Let the sheet add the numbers", es: "Dejar que la hoja sume los números" },
+          { en: "Send the total in a short email", es: "Enviar el total en un correo corto" },
+        ],
+        prepare: [
+          { en: "Practice reading money amounts out loud, like 42.50 and 51.25.", es: "Practica leer cantidades de dinero en voz alta, como 42.50 y 51.25." },
+          { en: "Explain that the sheet adds the numbers by itself when all the cells are filled.", es: "Explica que la hoja suma los números sola cuando todas las celdas están llenas." },
+        ],
+        stickingPoints: [
+          { en: "Some learners type an amount on the wrong day, or leave out the numbers after the dot. Ask: which day is this slip for? Read the amount to me.", es: "Algunos escriben una cantidad en el día equivocado, o no escriben los números después del punto. Pregunta: ¿de qué día es este recibo? Léeme la cantidad." },
+          { en: "Some learners try to send the email before all five days are filled. Ask: are all five days done?", es: "Algunos quieren enviar el correo antes de llenar los cinco días. Pregunta: ¿ya llenaste los cinco días?" },
+          { en: "Some learners write I sent it with no number. The email must say the total from the sheet. Ask: what is the total?", es: "Algunos escriben Ya lo envié sin el número. El correo debe decir el total de la hoja. Pregunta: ¿cuál es el total?" },
+        ],
+        followUp: [
+          { en: "Where do you keep track of money, like tips, bills, or shopping?", es: "¿Dónde anotas el dinero, como las propinas, las cuentas o las compras?" },
+          { en: "When do you need to send a number to someone at work or at home?", es: "¿Cuándo necesitas enviar un número a alguien en el trabajo o en casa?" },
+        ],
+        peerHelp: {
+          en: "A partner can read the slips out loud, but the learner types each number.",
+          es: "Un compañero puede leer los recibos en voz alta, pero el estudiante escribe cada número.",
+        },
+      },
+    },
   },
 
   "make-a-copy": {
@@ -544,6 +714,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. Hay que entregar las horas para la nómina.",
     },
     location: browser("Open Sheets from the bookmarks"),
+    lesson: {
+      title: { en: "Fix a total formula in a spreadsheet", es: "Corregir la fórmula de un total en una hoja de cálculo" },
+      summary: {
+        en: "The hours total looks right, but the formula leaves out one person. Fix the formula and email the correct total.",
+        es: "El total de horas parece correcto, pero la fórmula deja fuera a una persona. Corrige la fórmula y envía el total correcto por correo.",
+      },
+      skills: ["spreadsheets"],
+      minutes: 12,
+      guide: {
+        skills: [
+          { en: "Open the right spreadsheet from a list", es: "Abrir la hoja de cálculo correcta de una lista" },
+          { en: "Click a cell to see its formula", es: "Hacer clic en una celda para ver su fórmula" },
+          { en: "Read a range like H2:H6 and count the rows", es: "Leer un rango como H2:H6 y contar las filas" },
+          { en: "Tell a manager the corrected number", es: "Decirle a una gerente el número corregido" },
+        ],
+        prepare: [
+          { en: "Write a SUM formula on the board. Explain that H2:H6 means row 2 to row 6.", es: "Escribe una fórmula SUM en la pizarra. Explica que H2:H6 quiere decir de la fila 2 a la fila 6." },
+          { en: "Ask students to count the names on the sheet before they click anything.", es: "Pide a los estudiantes contar los nombres de la hoja antes de hacer clic." },
+        ],
+        stickingPoints: [
+          { en: "Many learners trust the total and do not open the formula. Ask: which rows does the formula add? Is every name in those rows?", es: "Muchos confían en el total y no abren la fórmula. Pregunta: ¿qué filas suma la fórmula? ¿Están todos los nombres en esas filas?" },
+          { en: "Some learners fix SUM but not AVERAGE. Both need H2:H6. Ask: did you check the other formula too?", es: "Algunos corrigen SUM pero no AVERAGE. Las dos necesitan H2:H6. Pregunta: ¿revisaste también la otra fórmula?" },
+          { en: "The email must give the new total and say a name was missing. Ask: what was wrong, and what is the right number?", es: "El correo debe dar el total nuevo y decir que faltaba un nombre. Pregunta: ¿qué estaba mal y cuál es el número correcto?" },
+        ],
+        followUp: [
+          { en: "Have you found a mistake on a pay stub or a bill? What did you do?", es: "¿Encontraste alguna vez un error en un recibo de pago o una cuenta? ¿Qué hiciste?" },
+          { en: "Why should you check a number before you send it to someone?", es: "¿Por qué debes revisar un número antes de enviarlo a alguien?" },
+        ],
+        peerHelp: {
+          en: "A partner can help count the rows, but the learner changes the formula and writes the email.",
+          es: "Un compañero puede ayudar a contar las filas, pero el estudiante cambia la fórmula y escribe el correo.",
+        },
+      },
+    },
   },
 
   "team-meeting": {
@@ -618,6 +822,39 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Sheets from the bookmarks"),
     jobCardLine: { en: "Find what is over budget.", es: "Encuentra qué se pasó del presupuesto." },
+    lesson: {
+      title: { en: "Find what went over budget", es: "Encontrar qué se pasó del presupuesto" },
+      summary: {
+        en: "Read an IF formula and a bar chart to find the category that went over budget, then tell the manager by how much.",
+        es: "Lee una fórmula IF y un gráfico de barras para encontrar la categoría que se pasó del presupuesto, y dile a la gerente por cuánto.",
+      },
+      skills: ["spreadsheets"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Read the budget and actual columns", es: "Leer las columnas de presupuesto y real" },
+          { en: "Read an IF formula that says over or under", es: "Leer una fórmula IF que dice sobre o bajo" },
+          { en: "Match a table to a bar chart", es: "Relacionar una tabla con un gráfico de barras" },
+          { en: "Write the category and the amount in an email", es: "Escribir la categoría y la cantidad en un correo" },
+        ],
+        prepare: [
+          { en: "Explain budget, what we plan to spend, and actual, what we really spent.", es: "Explica presupuesto, lo que pensamos gastar, y real, lo que de verdad gastamos." },
+          { en: "Write one example on the board: budget $100, actual $120, over by $20.", es: "Escribe un ejemplo en la pizarra: presupuesto $100, real $120, se pasó por $20." },
+        ],
+        stickingPoints: [
+          { en: "Some learners try to write the email before they open the formula. They must click the status cell that says over first. Ask: which cell says over?", es: "Algunos quieren escribir el correo antes de abrir la fórmula. Primero deben hacer clic en la celda de estado que dice sobre. Pregunta: ¿qué celda dice sobre?" },
+          { en: "Some learners name Labor but give no amount, or write $2,850. The amount over is $450. Ask: how much more than the budget did they spend?", es: "Algunos nombran Mano de obra pero no dan la cantidad, o escriben $2,850. Se pasó por $450. Pregunta: ¿cuánto más que el presupuesto gastaron?" },
+        ],
+        followUp: [
+          { en: "Do you plan how much to spend each week or each month? What happens when you spend more?", es: "¿Planeas cuánto gastar cada semana o cada mes? ¿Qué pasa cuando gastas más?" },
+          { en: "Who do you tell at home or at work when there is not enough money?", es: "¿A quién le dices en casa o en el trabajo cuando no alcanza el dinero?" },
+        ],
+        peerHelp: {
+          en: "A partner can help compare the two columns, but the learner clicks the cells and writes the email.",
+          es: "Un compañero puede ayudar a comparar las dos columnas, pero el estudiante hace clic en las celdas y escribe el correo.",
+        },
+      },
+    },
   },
 
   "reply-all": {
@@ -675,6 +912,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Front Desk from the bookmarks"),
     jobCardLine: { en: "Spot the clash. Offer the open slot.", es: "Mira el choque. Ofrece el hueco." },
+    lesson: {
+      title: { en: "Book an appointment at an open time", es: "Dar una cita en un horario libre" },
+      summary: {
+        en: "A patient wants a time that is already taken. Find the open time, choose it, and send a confirmation.",
+        es: "Una paciente quiere una hora que ya está ocupada. Busca la hora libre, elígela y envía una confirmación.",
+      },
+      skills: ["scheduling", "workplace-systems"],
+      minutes: 8,
+      guide: {
+        skills: [
+          { en: "Read an appointment schedule", es: "Leer una agenda de citas" },
+          { en: "See when a time is already booked", es: "Ver cuándo una hora ya está ocupada" },
+          { en: "Choose the open time instead", es: "Elegir la hora libre en su lugar" },
+          { en: "Write a confirmation that says the new time", es: "Escribir una confirmación que dice la hora nueva" },
+        ],
+        prepare: [
+          { en: "Ask who has made an appointment by phone at a clinic or an office.", es: "Pregunta quién ya hizo una cita por teléfono en una clínica o una oficina." },
+          { en: "Explain that booked means someone already has that time, and open means it is free.", es: "Explica que ocupada quiere decir que alguien ya tiene esa hora, y libre quiere decir que nadie la tiene." },
+        ],
+        stickingPoints: [
+          { en: "Some learners click 10:00 because the patient asked for it. Ask: does someone already have that time?", es: "Algunos hacen clic en las 10:00 porque la paciente la pidió. Pregunta: ¿alguien ya tiene esa hora?" },
+          { en: "In the list of reasons, some learners pick that the clinic is closed. Ask them to look at the 10:00 row again and read what it says.", es: "En la lista de razones, algunos eligen que la clínica está cerrada. Pídeles mirar otra vez la fila de las 10:00 y leer lo que dice." },
+          { en: "Some learners write See you soon with no time. The message must say 11:30. Ask: what time should Maya come in?", es: "Algunos escriben Nos vemos sin la hora. El mensaje debe decir 11:30. Pregunta: ¿a qué hora debe venir Maya?" },
+        ],
+        followUp: [
+          { en: "When you call to make an appointment, what do you ask? What do you write down?", es: "Cuando llamas para hacer una cita, ¿qué preguntas? ¿Qué anotas?" },
+          { en: "What do you say when the time you want is not free?", es: "¿Qué dices cuando la hora que quieres no está libre?" },
+        ],
+        peerHelp: {
+          en: "A partner can read the schedule out loud, but the learner picks the time and writes the message.",
+          es: "Un compañero puede leer la agenda en voz alta, pero el estudiante elige la hora y escribe el mensaje.",
+        },
+      },
+    },
   },
 
   "financial-aid": {
@@ -732,6 +1003,39 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Coursework from the bookmarks"),
     jobCardLine: { en: "Read the due date. Then submit.", es: "Lee la fecha. Luego entrega." },
+    lesson: {
+      title: { en: "Find a due date and submit an assignment", es: "Encontrar la fecha de entrega y entregar una tarea" },
+      summary: {
+        en: "Read a class syllabus, choose the right due date, and write a short reply to a customer complaint.",
+        es: "Lee el temario de una clase, elige la fecha de entrega correcta y escribe una respuesta corta a la queja de un cliente.",
+      },
+      skills: ["workplace-systems"],
+      minutes: 8,
+      guide: {
+        skills: [
+          { en: "Find the due date on a syllabus", es: "Encontrar la fecha de entrega en un temario" },
+          { en: "Choose the right date from a list", es: "Elegir la fecha correcta de una lista" },
+          { en: "Write a short reply that says what you will do next", es: "Escribir una respuesta corta que dice qué vas a hacer" },
+          { en: "Submit an assignment online", es: "Entregar una tarea en línea" },
+        ],
+        prepare: [
+          { en: "Ask who has taken an online class or used a school website.", es: "Pregunta quién ya tomó una clase en línea o usó un sitio web de una escuela." },
+          { en: "Explain that a due date has a day and a time, and late work is not accepted.", es: "Explica que la fecha de entrega tiene un día y una hora, y que no se acepta trabajo tarde." },
+        ],
+        stickingPoints: [
+          { en: "Some learners pick Thursday or Saturday from the list. Ask: what day does the syllabus say?", es: "Algunos eligen jueves o sábado en la lista. Pregunta: ¿qué día dice el temario?" },
+          { en: "Some learners write only OK or Thank you. The reply must say what they will do next. Ask: what will you do about the complaint?", es: "Algunos escriben solo OK o Gracias. La respuesta debe decir qué van a hacer. Pregunta: ¿qué vas a hacer con la queja?" },
+        ],
+        followUp: [
+          { en: "Where do you see due dates in your life? School, bills, forms for work.", es: "¿Dónde ves fechas de entrega en tu vida? La escuela, las cuentas, los formularios del trabajo." },
+          { en: "What do you do when you know you will be late with something?", es: "¿Qué haces cuando sabes que vas a entregar algo tarde?" },
+        ],
+        peerHelp: {
+          en: "A partner can read the syllabus out loud, but the learner chooses the date and writes the reply.",
+          es: "Un compañero puede leer el temario en voz alta, pero el estudiante elige la fecha y escribe la respuesta.",
+        },
+      },
+    },
   },
 
   "billing-sheet": {
@@ -811,6 +1115,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Jobs from the bookmarks"),
     jobCardLine: { en: "Read the posting. Do you fit?", es: "Lee el anuncio. ¿Encajas?" },
     jobCardDoneLine: { en: "You fit. Next: the application.", es: "Encajas. Sigue: la solicitud." },
+    lesson: {
+      title: { en: "Compare a job posting to your experience", es: "Comparar un anuncio de empleo con tu experiencia" },
+      summary: {
+        en: "Read a job posting, check the requirements you meet, and write one line about why you are a good fit.",
+        es: "Lee un anuncio de empleo, marca los requisitos que cumples y escribe una línea sobre por qué eres una buena opción.",
+      },
+      skills: ["job-search"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Read the parts of a job posting: the role, the pay, the requirements", es: "Leer las partes de un anuncio de empleo: el puesto, el pago, los requisitos" },
+          { en: "Match requirements to your own experience", es: "Comparar los requisitos con tu propia experiencia" },
+          { en: "Know that you can apply without every requirement", es: "Saber que puedes aplicar aunque no cumplas todos los requisitos" },
+          { en: "Write one sentence about why you fit the job", es: "Escribir una oración sobre por qué eres buena opción para el trabajo" },
+        ],
+        prepare: [
+          { en: "Ask who has looked at a job ad, online or on paper.", es: "Pregunta quién ya miró un anuncio de empleo, en línea o en papel." },
+          { en: "Explain that most people who get hired do not meet every requirement in the posting.", es: "Explica que la mayoría de las personas contratadas no cumplen todos los requisitos del anuncio." },
+        ],
+        stickingPoints: [
+          { en: "Some learners check the Bachelor's degree box. This job does not need one. Ask: do you have a degree? Does this job need it?", es: "Algunos marcan el título universitario. Este trabajo no lo necesita. Pregunta: ¿tienes un título? ¿Este trabajo lo necesita?" },
+          { en: "Some learners check fewer than three boxes. Ask them to read each line and say what they did in the simulator that matches it.", es: "Algunos marcan menos de tres puntos. Pídeles leer cada línea y decir qué hicieron en el simulador que coincide." },
+          { en: "The fit line needs at least four words. Ask: what is one thing you did that fits this job?", es: "La línea necesita al menos cuatro palabras. Pregunta: ¿qué es algo que hiciste que encaja con este trabajo?" },
+        ],
+        followUp: [
+          { en: "What job do you want? What do postings for that job ask for?", es: "¿Qué trabajo quieres? ¿Qué piden los anuncios para ese trabajo?" },
+          { en: "What skills from your past jobs or your home country can you list?", es: "¿Qué habilidades de tus trabajos anteriores o de tu país puedes anotar?" },
+        ],
+        peerHelp: {
+          en: "A partner can talk about each requirement, but the learner checks the boxes and writes the line.",
+          es: "Un compañero puede hablar de cada requisito, pero el estudiante marca los puntos y escribe la línea.",
+        },
+      },
+    },
   },
 
   "job-application": {
@@ -831,6 +1169,39 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Jobs from the bookmarks"),
     jobCardLine: { en: "Fill each section. Then submit.", es: "Llena cada sección. Luego envía." },
     jobCardDoneLine: { en: "Application sent.", es: "Solicitud enviada." },
+    lesson: {
+      title: { en: "Fill out a job application", es: "Llenar una solicitud de empleo" },
+      summary: {
+        en: "Fill out an online job application: check your work history, choose your availability, and write why you want the job.",
+        es: "Llena una solicitud de empleo en línea: revisa tu historial de trabajo, elige tu disponibilidad y escribe por qué quieres el trabajo.",
+      },
+      skills: ["job-search", "forms"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Read each section of an application", es: "Leer cada sección de una solicitud" },
+          { en: "Check work history that is already filled in", es: "Revisar el historial de trabajo que ya está lleno" },
+          { en: "Choose full time, part time, or either one", es: "Elegir tiempo completo, medio tiempo o cualquiera de los dos" },
+          { en: "Write two or three sentences about why you want the job", es: "Escribir dos o tres oraciones sobre por qué quieres el trabajo" },
+        ],
+        prepare: [
+          { en: "Ask who has filled out a job application, on paper or online.", es: "Pregunta quién ya llenó una solicitud de empleo, en papel o en línea." },
+          { en: "Explain full time and part time, and ask students which one they want.", es: "Explica tiempo completo y medio tiempo, y pregunta a los estudiantes cuál quieren." },
+        ],
+        stickingPoints: [
+          { en: "Some learners click submit before they choose their availability. Ask: can you work full time, part time, or both?", es: "Algunos hacen clic en Enviar solicitud antes de elegir su disponibilidad. Pregunta: ¿puedes trabajar tiempo completo, medio tiempo o los dos?" },
+          { en: "Some learners write only I need a job. The answer needs at least six words. Ask: what do you like about this job, and what can you bring to it?", es: "Algunos escriben solo Necesito un trabajo. La respuesta necesita al menos seis palabras. Pregunta: ¿qué te gusta de este trabajo y qué puedes aportar?" },
+        ],
+        followUp: [
+          { en: "What will you say when an application asks why you want the job?", es: "¿Qué vas a decir cuando una solicitud te pregunte por qué quieres el trabajo?" },
+          { en: "What days and hours can you really work? Write them down.", es: "¿Qué días y horas puedes trabajar de verdad? Escríbelos." },
+        ],
+        peerHelp: {
+          en: "A partner can talk about reasons for wanting the job, but the learner chooses and writes the answers.",
+          es: "Un compañero puede hablar de razones para querer el trabajo, pero el estudiante elige y escribe las respuestas.",
+        },
+      },
+    },
   },
 
   "resume-build": {
@@ -851,6 +1222,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Résumé from the bookmarks"),
     jobCardLine: { en: "Summary, two roles, your skills.", es: "Resumen, dos puestos, tus habilidades." },
     jobCardDoneLine: { en: "Résumé saved.", es: "Currículum guardado." },
+    lesson: {
+      title: { en: "Write a one-page résumé", es: "Escribir un currículum de una página" },
+      summary: {
+        en: "Write a short summary, add one accomplishment for each of two jobs, and choose your skills.",
+        es: "Escribe un resumen corto, agrega un logro para cada uno de dos trabajos y elige tus habilidades.",
+      },
+      skills: ["job-search", "documents"],
+      minutes: 15,
+      guide: {
+        skills: [
+          { en: "Know the parts of a simple résumé", es: "Conocer las partes de un currículum sencillo" },
+          { en: "Write a summary sentence about yourself", es: "Escribir una oración de resumen sobre ti" },
+          { en: "Write one accomplishment that starts with an action word", es: "Escribir un logro que empieza con un verbo de acción" },
+          { en: "Choose only the skills you really have", es: "Elegir solo las habilidades que de verdad tienes" },
+        ],
+        prepare: [
+          { en: "Bring a simple one-page résumé to show the class.", es: "Trae un currículum sencillo de una página para mostrar a la clase." },
+          { en: "Write action words on the board: ran, checked, trained, fixed.", es: "Escribe verbos de acción en la pizarra: manejé, revisé, capacité, arreglé." },
+        ],
+        stickingPoints: [
+          { en: "Some learners write only a few words in the summary. It needs at least six words. Ask: what can you do well at work?", es: "Algunos escriben pocas palabras en el resumen. Necesita al menos seis palabras. Pregunta: ¿qué haces bien en el trabajo?" },
+          { en: "Some learners fill in only one accomplishment. Each of the two jobs needs one, with at least four words. Ask: what did you do well in this job?", es: "Algunos llenan solo un logro. Cada uno de los dos trabajos necesita uno, con al menos cuatro palabras. Pregunta: ¿qué hiciste bien en este trabajo?" },
+          { en: "Some learners check fewer than three skills. Ask: which of these have you practiced?", es: "Algunos marcan menos de tres habilidades. Pregunta: ¿cuáles de estas has practicado?" },
+        ],
+        followUp: [
+          { en: "What jobs have you had, here or in another country? What did you do well?", es: "¿Qué trabajos has tenido, aquí o en otro país? ¿Qué hiciste bien?" },
+          { en: "Who can read your résumé before you send it?", es: "¿Quién puede leer tu currículum antes de que lo envíes?" },
+        ],
+        peerHelp: {
+          en: "A partner can suggest action words, but the learner writes the sentences and chooses the skills.",
+          es: "Un compañero puede sugerir verbos de acción, pero el estudiante escribe las oraciones y elige las habilidades.",
+        },
+      },
+    },
   },
 
   "interview-practice": {
@@ -911,6 +1316,40 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Onboarding from the bookmarks"),
     jobCardLine: { en: "W-4: status, sign, date.", es: "W-4: estado, firma, fecha." },
     jobCardDoneLine: { en: "W-4 submitted.", es: "W-4 enviado." },
+    lesson: {
+      title: { en: "Fill out a W-4 tax form", es: "Llenar el formulario de impuestos W-4" },
+      summary: {
+        en: "Fill out a practice W-4 for a fictional new hire, then sign it and write the date.",
+        es: "Llena un W-4 de práctica para una persona ficticia recién contratada, luego fírmalo y escribe la fecha.",
+      },
+      skills: ["forms"],
+      minutes: 10,
+      guide: {
+        skills: [
+          { en: "Know what a W-4 is for", es: "Saber para qué sirve un W-4" },
+          { en: "Choose a filing status", es: "Elegir el estado civil para impuestos" },
+          { en: "Enter the number of dependents", es: "Escribir el número de dependientes" },
+          { en: "Sign with a typed full name and write the date", es: "Firmar escribiendo el nombre completo y poner la fecha" },
+        ],
+        prepare: [
+          { en: "Explain that a W-4 tells the job how much tax to take from each paycheck.", es: "Explica que el W-4 le dice al trabajo cuánto impuesto quitar de cada cheque." },
+          { en: "Tell students the form is for a fictional person, Robin Avery. They copy the details from the box at the top, not their own information.", es: "Diles que el formulario es de una persona ficticia, Robin Avery. Copian los datos del cuadro de arriba, no sus propios datos." },
+        ],
+        stickingPoints: [
+          { en: "Some learners type their own name as the signature. It must match the name on the form, Robin Avery. Ask: whose form is this?", es: "Algunos escriben su propio nombre como firma. Debe ser igual al nombre del formulario, Robin Avery. Pregunta: ¿de quién es este formulario?" },
+          { en: "Some learners write the date in a different way. It must be 10/01/2026, as in the details box. Ask them to copy it exactly.", es: "Algunos escriben la fecha de otra forma. Debe ser 10/01/2026, como en el cuadro de datos. Pídeles copiarla exactamente." },
+          { en: "Some learners leave dependents empty. If there are none, the answer is 0. Ask: does Robin have children or other people to support?", es: "Algunos dejan vacíos los dependientes. Si no hay, la respuesta es 0. Pregunta: ¿Robin tiene hijos u otras personas que mantiene?" },
+        ],
+        followUp: [
+          { en: "What other forms might you fill out on your first day at a new job?", es: "¿Qué otros formularios podrías llenar tu primer día en un trabajo nuevo?" },
+          { en: "Who can you ask for help with a tax form at work?", es: "¿A quién le puedes pedir ayuda con un formulario de impuestos en el trabajo?" },
+        ],
+        peerHelp: {
+          en: "A partner can point to the details box, but the learner fills in each box.",
+          es: "Un compañero puede señalar el cuadro de datos, pero el estudiante llena cada casilla.",
+        },
+      },
+    },
   },
 
   "i9-section1": {

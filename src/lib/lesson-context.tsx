@@ -4,6 +4,7 @@ import { createContext, useContext, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
+import type { LessonSave } from "@/app/lessons/useLessonSave";
 
 /**
  * Present only inside a `/lessons/<task>` run. Outside a lesson `useLesson()`
@@ -17,12 +18,18 @@ export interface LessonValue {
   taskKey: TaskKey;
   title: Localized;
   mode: LessonMode;
+  /** Change support mid-task. The task keeps its place. */
+  setMode: (mode: LessonMode) => void;
+  /** Teacher preview: the guide bar is showing and nothing is saved. */
+  preview: boolean;
   /** Browser tabs this lesson may show. The first is where it opens. */
   tabs: string[];
   /** Leave the lesson (back to the library). */
   onFinish: () => void;
   /** Start the same lesson again from a clean slate. */
   onRestart: () => void;
+  /** Where this lesson's finishes are kept, for the card's finish line. */
+  save: Pick<LessonSave, "status" | "retry" | "signIn">;
 }
 
 const LessonContext = createContext<LessonValue | null>(null);

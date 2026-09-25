@@ -313,6 +313,16 @@ export default function JobCard() {
         tone: "green",
         step: 4,
         line: JOB_CARD_DONE_LINE[lesson.taskKey]?.[lang] ?? LESSON_COPY.doneLine[lang],
+        hint:
+          lesson.save.status === "guest"
+            ? LESSON_COPY.savedHere[lang]
+            : lesson.save.status === "saving"
+              ? LESSON_COPY.saving[lang]
+              : lesson.save.status === "saved"
+                ? LESSON_COPY.savedAccount[lang]
+                : lesson.save.status === "error"
+                  ? LESSON_COPY.notSaved[lang]
+                  : undefined,
         primaryLabel: LESSON_COPY.practiceAgain[lang],
         onPrimary: lesson.onRestart,
         primaryTestId: "lesson-practice-again",
@@ -683,6 +693,17 @@ export default function JobCard() {
             {lang === "en" ? "Change direction" : "Cambiar de camino"}
           </button>
         )}
+        {lesson && script.tone === "green" && (lesson.save.status === "guest" || lesson.save.status === "error") && (
+          <button
+            type="button"
+            data-testid={lesson.save.status === "guest" ? "lesson-sign-in" : "lesson-retry-save"}
+            onClick={() => (lesson.save.status === "guest" ? lesson.save.signIn(lang) : lesson.save.retry())}
+            className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center rounded-[16px] border-2 text-[17px] font-medium"
+            style={{ borderColor: TONE.blue, color: TONE.blue, background: "#fff" }}
+          >
+            {lesson.save.status === "guest" ? LESSON_COPY.signInToSave[lang] : LESSON_COPY.tryAgain[lang]}
+          </button>
+        )}
         {script.primaryLabel && (
           <button
             type="button"
@@ -749,6 +770,31 @@ export default function JobCard() {
           >
             {script.secondaryLabel}
           </button>
+        )}
+
+        {/* A lesson's one setting: how much the card spells out. It lives on
+            the card because the card is what it changes. */}
+        {lesson && script.tone !== "green" && (
+          <div role="group" aria-label={LESSON_COPY.supportLabel[lang]} className="mt-3 flex items-center gap-2 text-[14px] text-[#5f6368]">
+            <span className="shrink-0">{LESSON_COPY.supportLabel[lang]}</span>
+            {(["guided", "independent"] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                data-testid={`lesson-mode-${m}`}
+                aria-pressed={lesson.mode === m}
+                onClick={() => lesson.setMode(m)}
+                className="min-h-10 flex-1 cursor-pointer rounded-full border px-3 font-medium"
+                style={
+                  lesson.mode === m
+                    ? { background: "#e8f0fe", borderColor: TONE.blue, color: TONE.blue }
+                    : { borderColor: "var(--border)", color: "#3c4043" }
+                }
+              >
+                {LESSON_COPY[m][lang]}
+              </button>
+            ))}
+          </div>
         )}
 
         {script.step >= 0 && (

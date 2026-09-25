@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionLearnerId } from "@/lib/auth";
-import { getClassRoster, getClassSubmissions, getLearnerById } from "@/lib/db/queries";
+import { getClassLessonAttempts, getClassRoster, getClassSubmissions, getLearnerById } from "@/lib/db/queries";
+import { LESSONS, lessonByKey } from "@/lib/lessons/catalog";
+import { LESSON_ATTEMPT_VERSION, parseAttempt } from "@/lib/lessons/attempts";
 import SubmissionCard from "./SubmissionCard";
 import ProgressStrip from "./ProgressStrip";
 import { studentProgress } from "./progress";
@@ -17,10 +19,17 @@ export default async function TeacherPage() {
   const me = await getLearnerById(learnerId);
   if (!me || me.role !== "teacher") redirect("/");
 
-  const [roster, submissions] = await Promise.all([
+  const [roster, submissions, lessonRows] = await Promise.all([
     getClassRoster(me.classCode),
     getClassSubmissions(me.classCode),
+    getClassLessonAttempts(me.classCode, LESSONS.map((l) => l.taskKey), LESSON_ATTEMPT_VERSION),
   ]);
+  const lessonAttempts = lessonRows.flatMap((r) => {
+    const state = parseAttempt(r.state);
+    const lesson = lessonByKey(r.taskKey);
+    return state && lesson && state.attempts > 0 ? [{ ...r, state, title: lesson.title.en }] : [];
+  });
+  const dateFmt = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 
   const needsReview = submissions.filter((s) => !s.teacherNote);
   const reviewed = submissions.filter((s) => s.teacherNote);
@@ -52,12 +61,20 @@ export default async function TeacherPage() {
               student the next time they open the simulator — nothing is blocked in the meantime.
             </p>
           </div>
+          <div className="flex gap-2">
+          <Link
+            href="/lessons"
+            className="inline-flex h-9 items-center rounded-full bg-white/10 px-3.5 text-[13px] font-medium text-white hover:bg-white/20"
+          >
+            Lessons
+          </Link>
           <Link
             href="/studio"
             className="inline-flex h-9 items-center rounded-full bg-white/10 px-3.5 text-[13px] font-medium text-white hover:bg-white/20"
           >
             Studio
           </Link>
+          </div>
         </div>
       </header>
 
@@ -106,6 +123,49 @@ export default async function TeacherPage() {
                         ) : (
                           <span className="text-[#80868b]">—</span>
                         )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+
+        {/* Lessons: the standalone /lessons practice. Separate from game progress. */}
+        <section data-testid="teacher-lessons">
+          <h2 className="text-[16px] font-medium">
+            Lessons
+            <span className="ml-2 text-[13px] font-normal text-[#9aa0a6]">{lessonAttempts.length}</span>
+          </h2>
+          {lessonAttempts.length === 0 ? (
+            <p className="mt-2 text-[13px] text-[#9aa0a6]">
+              No lessons finished yet. Students who sign in during a lesson show up here when they finish it.
+            </p>
+          ) : (
+            <div className="mt-3 overflow-x-auto rounded-2xl border border-white/8">
+              <table className="w-full min-w-[620px] text-left text-[13px]">
+                <thead className="bg-white/[0.03] text-[#9aa0a6]">
+                  <tr>
+                    <th className="px-4 py-2.5 font-medium">Name</th>
+                    <th className="px-4 py-2.5 font-medium">Lesson</th>
+                    <th className="px-4 py-2.5 font-medium">Help level</th>
+                    <th className="px-4 py-2.5 font-medium">Times finished</th>
+                    <th className="px-4 py-2.5 font-medium">Last finished</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/6">
+                  {lessonAttempts.map((a) => (
+                    <tr key={`${a.learnerId}:${a.taskKey}`}>
+                      <td className="px-4 py-2.5 font-medium">{a.learnerName}</td>
+                      <td className="px-4 py-2.5">{a.title}</td>
+                      <td className="px-4 py-2.5 text-[#9aa0a6]">
+                        {a.state.mode === "guided" ? "Guided" : "On my own"}
+                        {a.state.modes.includes("guided") && a.state.modes.includes("independent") ? " (tried both)" : ""}
+                      </td>
+                      <td className="px-4 py-2.5 tabular-nums">{a.state.attempts}</td>
+                      <td className="px-4 py-2.5 text-[#9aa0a6]">
+                        {a.state.completedAt ? dateFmt.format(new Date(a.state.completedAt)) : "Not yet"}
                       </td>
                     </tr>
                   ))}

@@ -16,7 +16,7 @@ export default async function LessonPage({
   searchParams,
 }: {
   params: Promise<{ taskKey: string }>;
-  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[]; smoke?: string | string[] }>;
+  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[]; smoke?: string | string[]; preview?: string | string[]; transfer?: string | string[] }>;
 }) {
   const { taskKey } = await params;
   const query = await searchParams;
@@ -28,6 +28,8 @@ export default async function LessonPage({
       key={taskKey}
       taskKey={taskKey as TaskKey}
       draft={draft}
+      preview={first(query.preview) === "1"}
+      transfer={first(query.transfer) === "1"}
       initialMode={first(query.mode) === "independent" ? "independent" : "guided"}
       initialLang={first(query.lang) === "es" ? "es" : "en"}
     />

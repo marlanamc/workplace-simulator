@@ -201,3 +201,18 @@ reach Ready using their preferred input, and recover from a misplaced click.
 Try the browser's real 200% zoom and Bigger text setting. Record assistance
 needed and any confusing language; do not score speed or infer mastery from
 practice completion. Automated viewport checks do not replace this pilot.
+
+## Lesson mode
+
+- `src/lib/__tests__/lessons.test.ts`: every reachable task seeds as the next job and has a
+  tab to open on, and nothing on the lesson path imports a server action.
+- `src/lib/__tests__/lessons-api.test.ts`: `/api/lessons`, attempt parsing and merging, and
+  `safeReturn` (the only places sign-in may send someone next).
+- `content-integrity.test.ts` → "lessons": every `lesson` block is complete and bilingual, and
+  the launch set all have one.
+- `e2e/lessons.spec.ts`: guided and independent runs, Practice again, Spanish, 404s, the
+  library filter, teacher preview, the copied link, changing support mid-task, phone width,
+  a guest finish carried into an account on sign-in, the teacher's Lessons table, and the old
+  `/practice` redirects.
+- `e2e/lessons-smoke.spec.ts`: all 51 reachable tasks open as lessons with no console errors.
+  A new task is covered automatically.

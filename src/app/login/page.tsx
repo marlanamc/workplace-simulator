@@ -1,9 +1,9 @@
 import LoginForm from "./LoginForm";
 import { loginsPaused } from "@/lib/login-gate";
+import { safeReturn } from "@/lib/lessons/return";
 
 function safeNext(value: string | string[] | undefined) {
-  const raw = Array.isArray(value) ? value[0] : value;
-  return raw === "/studio" ? "/studio" : "/";
+  return safeReturn(Array.isArray(value) ? value[0] : value);
 }
 
 export default async function LoginPage({
