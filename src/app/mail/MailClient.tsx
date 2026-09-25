@@ -10,6 +10,7 @@ import {
   LESSONS,
   COMPOSE_LESSONS,
   FILES,
+  OPENING_CLUTTER,
   emailsForTask,
   DARNELL_APRON_STAMP,
   SUBJECT_BY_TASK,
@@ -49,7 +50,7 @@ import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import MailSignature from "@/components/task/MailSignature";
 import { signatureFor } from "@/lib/mail-greeting";
-import { sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
+import { letterBody, sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
 import type { Localized, SubmissionContent } from "@/lib/task-types";
 import { taskNeedsTeacherReview } from "@/lib/curriculum-catalog";
 import { useWindowManager } from "@/lib/window-manager";
@@ -67,7 +68,7 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { useLesson } from "@/lib/lesson-context";
-import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
+import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { storage } from '@/lib/storage';
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
@@ -242,8 +243,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         // Sent the evening before Day One, so the inbox stamps them Yesterday.
         time: message.time, sentOn: HIRE_DAY - 1, subject: message.subject, preview: message.body,
         isTarget: index === openingIndex, unread: index === openingIndex, wrongHint: undefined,
-        ...(index < openingIndex ? { story: true, body: { en: [message.body.en], es: [message.body.es] } } : {}),
+        ...(index < openingIndex ? { story: true, body: { en: openingLines(message, "en"), es: openingLines(message, "es") } } : {}),
       })) : emailsForTask(activeMailTask)),
+      ...(opening ? OPENING_CLUTTER : []),
     ],
     storyTodayDay,
   );
@@ -878,7 +880,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">{T("to me", "para mí")}</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {(opening ? [openingMessage.body[lang]] : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
+                      {(opening ? letterBody(openingMessage.sender.name, openingLines(openingMessage, lang), lang, displayName) : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>

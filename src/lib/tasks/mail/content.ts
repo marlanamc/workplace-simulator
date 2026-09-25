@@ -1,7 +1,7 @@
 import { CAST, inboxSender } from "@/lib/cast";
 import { mailGreeting } from "@/lib/mail-greeting";
 import { HIRE_DAY, sentOnForTask } from "@/lib/story-calendar";
-import { OPENING_MESSAGES } from "@/lib/tasks/mail/opening";
+import { OPENING_MESSAGES, openingLines } from "@/lib/tasks/mail/opening";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 
 /** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
@@ -925,6 +925,8 @@ interface DecoyEmail {
   initials: string;
   color: string;
   time: string;
+  /** August day it was sent, when it isn't the task's own day. */
+  sentOn?: number;
   isTarget: false;
   unread?: boolean;
   subject: Localized;
@@ -1019,6 +1021,30 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
     },
     wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
+
+/**
+ * What a new hire's inbox already holds the evening before day one: account
+ * setup and paperwork. Read, older than Maria's notes, and openable, so the
+ * first inbox a learner sees is a real one without pulling focus.
+ */
+export const OPENING_CLUTTER: InboxEmail[] = ([
+  { key: "it-setup", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "9:30 AM", sentOn: HIRE_DAY - 2, isTarget: false, unread: false,
+    subject: { en: "Your Harborside account is ready", es: "Tu cuenta de Harborside está lista" },
+    preview: { en: "Your email is set up. Sign in on your first day.", es: "Tu correo está listo. Entra el primer día." },
+    wrongHint: wrongHint("That's from IT. Open Maria's email.", "Eso es de sistemas. Abre el correo de Maria."),
+    body: {
+      en: ["Welcome to Harborside!", "Your work email is set up. You will sign in on the cafe computer on your first day. Your manager will give you your password.", "IT will never ask for your password by email or text.", "IT Helpdesk · ext. 204"],
+      es: ["¡Bienvenido a Harborside!", "Tu correo de trabajo ya está listo. Vas a entrar en la computadora del café tu primer día. Tu gerente te va a dar tu contraseña.", "Sistemas nunca te va a pedir tu contraseña por correo ni por mensaje de texto.", "Sistemas · ext. 204"],
+    } },
+  { key: "hr-paperwork", ...inboxSender(CAST.hr), time: "11:05 AM", sentOn: HIRE_DAY - 2, isTarget: false, unread: false,
+    subject: { en: "New hire paperwork: what to bring", es: "Papeles de nuevo empleado: qué traer" },
+    preview: { en: "A photo ID, and your bank details for direct deposit.", es: "Una identificación con foto y los datos de tu banco para el depósito directo." },
+    wrongHint: wrongHint("That's from HR. Open Maria's email.", "Eso es de RR.HH. Abre el correo de Maria."),
+    body: {
+      en: ["Welcome to the team! On your first day you will fill out three forms: a W-4 for taxes, an I-9, and a direct deposit form.", "Please bring a photo ID and your bank's routing and account numbers. A voided check works too.", "Questions? Call (617) 555-0114."],
+      es: ["¡Bienvenido al equipo! Tu primer día vas a llenar tres formularios: un W-4 para los impuestos, un I-9 y un formulario de depósito directo.", "Por favor trae una identificación con foto y los números de ruta y de cuenta de tu banco. Un cheque anulado también sirve.", "¿Preguntas? Llama al (617) 555-0114."],
+    } },
+] satisfies DecoyEmail[]).map(openable);
 
 const NOT_A_JOB_EN =
   "Nothing here needs an answer right now. Your job is to write a new email. Click Compose.";
@@ -1170,7 +1196,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
       subject: opened.subject,
       preview: opened.body,
       story: true,
-      body: { en: [opened.body.en], es: [opened.body.es] },
+      body: { en: openingLines(opened, "en"), es: openingLines(opened, "es") },
     };
     return [safety, earlierWelcome, ...decoys];
   }

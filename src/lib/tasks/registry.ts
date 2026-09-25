@@ -202,7 +202,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Write the parts of a reply on the board: hello, your message, your name.", es: "Escribe en la pizarra las partes de una respuesta: saludo, tu mensaje, tu nombre." },
         ],
         stickingPoints: [
-          { en: "Some learners open the wrong email first. Ask: who sent this email? What is the subject?", es: "Algunos abren primero el correo equivocado. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
+          { en: "The inbox also has two older emails from IT and HR. Opening them is fine and nothing is marked wrong. Ask: who sent this email? What is the subject?", es: "La bandeja también tiene dos correos anteriores de sistemas y RR.HH. Abrirlos está bien y no se marca nada como error. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
+          { en: "Maria's emails carry real first-day details (the address, what to wear, what to bring). The reply only needs to answer the question.", es: "Los correos de Maria traen detalles reales del primer día (la dirección, qué ponerse, qué traer). La respuesta solo necesita contestar la pregunta." },
           { en: "The second email asks them to confirm 10 AM. A reply that says they can't come does not pass (\"No problem\" is fine). Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta que dice que no pueden venir no se acepta (\"Sin problema\" sí). Pregunta: ¿qué quiere saber Maria?" },
           { en: "The third email is from Darnell. The reply must say the bag goes on the shelf under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
         ],
@@ -214,6 +215,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can read the email out loud, but the learner writes and sends the reply.",
           es: "Un compañero puede leer el correo en voz alta, pero el estudiante escribe y envía la respuesta.",
         },
+        atWork: [
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "Confirm your first shift and what uniform to wear.", es: "Confirmar tu primer turno y qué uniforme ponerte." } },
+          { setting: { en: "a warehouse", es: "un almacén" }, example: { en: "Answer the staffing agency: yes, you can start Monday at 6 AM.", es: "Contestarle a la agencia: sí, puedes empezar el lunes a las 6 AM." } },
+          { setting: { en: "a store", es: "una tienda" }, example: { en: "Tell a coworker you got the locker code.", es: "Decirle a un compañero que recibiste el código del casillero." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Confirm tomorrow's client visit time.", es: "Confirmar la hora de la visita de mañana con el cliente." } },
+        ],
       },
     },
   },

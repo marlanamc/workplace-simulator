@@ -902,8 +902,13 @@ const CLOSING: Record<Lang, string> = { en: "Thanks,", es: "Gracias," };
 export function storyBodyFor(row: InboxRow, lang: Lang, displayName: string): string[] {
   if (!row.body) return [];
   if (row.notice) return row.body[lang];
-  const signed = signatureFor(row.from) ? [] : [firstName(row.from)];
-  return [mailGreeting(lang, displayName), ...row.body[lang], CLOSING[lang], ...signed];
+  return letterBody(row.from, row.body[lang], lang, displayName);
+}
+
+/** Any person's email, framed the same way: greeting, the lines, closing, and a typed name if they have no signature. */
+export function letterBody(from: string, lines: string[], lang: Lang, displayName: string): string[] {
+  const signed = signatureFor(from) ? [] : [firstName(from)];
+  return [mailGreeting(lang, displayName), ...lines, CLOSING[lang], ...signed];
 }
 
 export function noteIsFromMaria(taskKey: TaskKey): boolean {
