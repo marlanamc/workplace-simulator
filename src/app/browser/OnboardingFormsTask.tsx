@@ -33,6 +33,7 @@ import {
   signatureMatches,
   dateLooksFilled,
   PRACTICE_PROFILE, PRACTICE_REFERENCE, practiceFieldsMatch,
+  firstMismatch, W4_FIELD_HINT, REFERENCE_HINT, W4_STEPS,
   routingIsValid,
 } from "@/lib/tasks/onboarding-paperwork/content";
 
@@ -125,14 +126,16 @@ export default function OnboardingFormsTask() {
     setAccountType(null);
   };
 
-  const referenceHint = lang === 'en' ? 'Compare the form with Robin’s fictional reference details.' : 'Compara el formulario con los datos ficticios de Robin.';
+  const referenceHint = REFERENCE_HINT[lang];
+  // Empty boxes first, then the one box that does not match Robin, by name.
   const submitW4 = () => {
-    if (!practiceFieldsMatch({status: w4Status ?? '', dependents, date})) return say(referenceHint);
-    if (!w4Status || dependents.trim() === "") return say(s.needRequired);
+    if (!w4Status || dependents.trim() === "" || !signature.trim() || !date.trim()) return say(s.needRequired);
+    const wrong = firstMismatch({ status: w4Status, dependents, date });
+    if (wrong) return say(W4_FIELD_HINT[wrong]?.[lang] ?? referenceHint);
     if (!signatureMatches(signature, PRACTICE_PROFILE.name)) return say(s.needSignature);
-    if (!dateLooksFilled(date)) return say(s.needRequired);
     markComplete("w4-form", "submit_w4");
   };
+  const w4Step = !w4Status ? 0 : dependents.trim() === "" ? 1 : 2;
 
   const submitI9 = () => {
     if (!practiceFieldsMatch({dob, address, workStatus: i9Status ?? '', date})) return say(referenceHint);
@@ -160,8 +163,8 @@ export default function OnboardingFormsTask() {
         {!done && (
           <RightNowBar
             icon={TASK_ICONS[active]}
-            stepIndex={0}
-            steps={RIGHT_NOW_STEPS}
+            stepIndex={active === "w4-form" ? w4Step : 0}
+            steps={active === "w4-form" ? W4_STEPS : RIGHT_NOW_STEPS}
             lang={lang}
             rightNowLabel={RIGHT_NOW_LABEL}
             onHelp={() => setHelp(true)}

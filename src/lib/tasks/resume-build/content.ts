@@ -35,22 +35,24 @@ export const RESUME_COPY: Record<Lang, {
   lessonKicker: string;
   tipLabel: string;
   gotIt: string;
+  namePlaceholder: string;
+  needBulletFor: (role: string) => string;
 }> = {
   en: {
     appName: "Docs: Résumé",
     heading: "Build your résumé",
-    intro: "Your completed simulated roles are listed. Add a summary line, one accomplishment for each of your last two roles, and the skills you've shown.",
+    intro: "Your jobs are listed below. Write a short summary, one thing you did well at each job, and choose your skills.",
     contactLabel: "Contact",
     summaryLabel: "Summary: one or two sentences",
-    summaryHint: "Describe the skills you practiced here. This résumé is a simulation, not a record of paid employment.",
+    summaryHint: "For example: I am a shift lead who trains new workers and keeps the schedule organized.",
     experienceLabel: "Experience",
     bulletHint: "One thing you did well in this role. Start with an action word: ran, checked, trained, fixed.",
     skillsLabel: "Skills",
-    skillsHint: "Check the ones you've actually done.",
+    skillsHint: "Choose the ones you have done.",
     previewLabel: "Preview",
     save: "Save résumé",
-    needSummary: "Write a summary line before you save.",
-    needBullets: "Add one accomplishment for each of your top two roles.",
+    needSummary: "Write a summary first: 1 or 2 sentences, at least 6 words.",
+    needBullets: "Write one thing you did well at each job.",
     needSkills: "Check at least three skills you've shown.",
     sentKicker: "Résumé saved",
     doneTitle: "You have a one-page résumé.",
@@ -60,22 +62,24 @@ export const RESUME_COPY: Record<Lang, {
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
     gotIt: "Got it. Back to my task",
+    namePlaceholder: "Your name",
+    needBulletFor: (role) => `Write one thing you did well as ${role}. At least 4 words.`,
   },
   es: {
     appName: "Docs: Currículum",
     heading: "Arma tu currículum",
-    intro: "Tus puestos simulados completados están en la lista. Agrega una línea de resumen, un logro por cada uno de tus últimos dos puestos, y las habilidades que has mostrado.",
+    intro: "Tus empleos están abajo. Escribe un resumen corto, una cosa que hiciste bien en cada empleo, y elige tus habilidades.",
     contactLabel: "Contacto",
     summaryLabel: "Resumen: una o dos oraciones",
-    summaryHint: "Describe las habilidades que practicaste aquí. Este currículum es una simulación, no un historial de empleo real.",
+    summaryHint: "Por ejemplo: Soy líder de turno, entreno a trabajadores nuevos y mantengo el horario organizado.",
     experienceLabel: "Experiencia",
     bulletHint: "Una cosa que hiciste bien en este puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé.",
     skillsLabel: "Habilidades",
-    skillsHint: "Marca las que de verdad has hecho.",
+    skillsHint: "Elige las que ya has hecho.",
     previewLabel: "Vista previa",
     save: "Guardar currículum",
-    needSummary: "Escribe una línea de resumen antes de guardar.",
-    needBullets: "Agrega un logro por cada uno de tus dos puestos principales.",
+    needSummary: "Primero escribe un resumen: 1 o 2 oraciones, al menos 6 palabras.",
+    needBullets: "Escribe una cosa que hiciste bien en cada empleo.",
     needSkills: "Marca al menos tres habilidades que hayas mostrado.",
     sentKicker: "Currículum guardado",
     doneTitle: "Tienes un currículum de una página.",
@@ -85,6 +89,8 @@ export const RESUME_COPY: Record<Lang, {
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
+    namePlaceholder: "Tu nombre",
+    needBulletFor: (role) => `Escribe una cosa que hiciste bien como ${role}. Al menos 4 palabras.`,
   },
 };
 
@@ -125,6 +131,30 @@ export const SUMMARY_STARTERS: Record<Lang, string[]> = {
   ],
 };
 
+/**
+ * A lesson learner writes from the lesson's two cafe jobs, so their starters
+ * say what those jobs did. Story starters stay honest about the simulator.
+ */
+export const LESSON_SUMMARY_STARTERS: Record<Lang, string[]> = {
+  en: [
+    "I am a shift lead at Harborside Cafe.",
+    "I train new workers and keep the schedule organized.",
+    "I am good with email, calendars, and spreadsheets.",
+    "I am looking for a full-time office job.",
+  ],
+  es: [
+    "Soy líder de turno en Harborside Cafe.",
+    "Entreno a trabajadores nuevos y mantengo el horario organizado.",
+    "Manejo bien el correo, los calendarios y las hojas de cálculo.",
+    "Busco un trabajo de oficina de tiempo completo.",
+  ],
+};
+
+export const LESSON_BULLET_STARTERS: Record<Lang, string[]> = {
+  en: ["Trained new workers on the register.", "Fixed problems in the weekly schedule.", "Typed tips in a spreadsheet and sent the total.", "Answered work email every day."],
+  es: ["Entrené a trabajadores nuevos en la caja.", "Arreglé problemas en el horario semanal.", "Escribí propinas en una hoja de cálculo y envié el total.", "Contesté el correo del trabajo todos los días."],
+};
+
 export const BULLET_STARTERS: Record<Lang, string[]> = {
   en: ['Found a schedule conflict and requested a swap in the simulator.', 'Entered figures and reported a spreadsheet total.', 'Shared a current file with view-only access.', 'Sent a clear message to a simulated coworker.'],
   es: ['Encontré un conflicto de horario y pedí un cambio en el simulador.', 'Ingresé cifras y reporté el total de una hoja de cálculo.', 'Compartí un archivo actual con acceso de solo lectura.', 'Envié un mensaje claro a un compañero simulado.'],
@@ -158,12 +188,16 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Write a summary line, then one accomplishment for each of your top two roles.",
-    es: "Escribe una línea de resumen, luego un logro por cada uno de tus dos puestos principales.",
+    en: "Write a short summary: 1 or 2 sentences about you as a worker.",
+    es: "Escribe un resumen corto: 1 o 2 oraciones sobre ti como trabajador.",
   },
   {
-    en: "Choose at least three skills you have shown, then save.",
-    es: "Elige al menos tres habilidades que has demostrado, luego guarda.",
+    en: "For each job, write one thing you did well. Start with a word like trained, fixed, or served.",
+    es: "Para cada empleo, escribe una cosa que hiciste bien. Empieza con una palabra como entrené, arreglé o atendí.",
+  },
+  {
+    en: "Choose at least three skills you have shown. Then click Save résumé.",
+    es: "Elige al menos tres habilidades que has demostrado. Después haz clic en Guardar currículum.",
   },
 ];
 

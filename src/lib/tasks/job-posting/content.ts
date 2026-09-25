@@ -47,13 +47,13 @@ export const JOB_POSTING_COPY: Record<Lang, {
     about:
       "The Office Administrator keeps the HQ office running: files and shared drives, calendars and meetings, expense reports, and helping teams get what they need. You do not need an office background. We are looking for someone organized who has led a team before.",
     reqLabel: "What we're looking for",
-    reqHint: "Check every one your cafe experience already covers.",
+    reqHint: "Check each thing you have already done.",
     fitLabel: "In one line: why are you a good fit?",
-    fitHint: "Describe one example from your simulator practice that fits this role.",
+    fitHint: "Say one thing you did at Harborside Cafe that fits this job.",
     apply: "Apply for this job",
-    needPicks: "Check at least three that your experience covers.",
-    needFit: "Write one line about why you fit before you apply.",
-    degreeNote: "You do not have a degree, and this job does not need one. Leave that one unchecked. You still have enough.",
+    needPicks: "Check at least three things you have done. Read each line and ask: have I done this?",
+    needFit: "Write one sentence about why you are a good fit. Then click Apply.",
+    degreeNote: "Your cafe experience does not include a college degree. This job does not need one, so leave that box empty. You still have enough.",
     sentKicker: "Ready to apply",
     doneTitle: "You matched the posting to your experience.",
     doneBody: "You have most of what they ask for. A missing box or two is normal. Apply anyway.",
@@ -75,13 +75,13 @@ export const JOB_POSTING_COPY: Record<Lang, {
     about:
       "El Administrador de Oficina mantiene la oficina de HQ funcionando: archivos y drives compartidos, calendarios y reuniones, informes de gastos, y ayudar a los equipos con lo que necesitan. No necesitas experiencia de oficina. Buscamos a alguien organizado que ya haya dirigido un equipo.",
     reqLabel: "Lo que buscamos",
-    reqHint: "Marca cada punto que tu experiencia en el café ya cubre.",
+    reqHint: "Marca cada cosa que ya hiciste.",
     fitLabel: "En una línea: ¿por qué eres una buena opción?",
-    fitHint: "Describe un ejemplo de tu práctica en el simulador que encaje con este puesto.",
+    fitHint: "Di una cosa que hiciste en Harborside Cafe que encaje con este trabajo.",
     apply: "Aplicar a este trabajo",
-    needPicks: "Marca al menos tres que tu experiencia cubra.",
-    needFit: "Escribe una línea sobre por qué encajas antes de aplicar.",
-    degreeNote: "No tienes un título, y este trabajo no lo necesita. Deja ese punto sin marcar. Aun así tienes suficiente.",
+    needPicks: "Marca al menos tres cosas que ya hiciste. Lee cada línea y pregúntate: ¿ya hice esto?",
+    needFit: "Escribe una oración sobre por qué eres buena opción. Después haz clic en Aplicar.",
+    degreeNote: "Tu experiencia en el café no incluye un título universitario. Este trabajo no lo necesita, así que deja esa casilla vacía. Aun así tienes suficiente.",
     sentKicker: "Listo para aplicar",
     doneTitle: "Comparaste el anuncio con tu experiencia.",
     doneBody: "Tienes casi todo lo que piden. Que falten uno o dos puntos es normal. Aplica de todos modos.",
@@ -104,16 +104,16 @@ export const REQUIREMENTS: PostingRequirement[] = [
   {
     key: "customer-facing",
     text: {
-      en: "Practice communicating with coworkers and supervisors",
-      es: "Práctica de comunicación con compañeros y supervisores",
+      en: "Talks with coworkers and managers, by email and in person",
+      es: "Habla con compañeros y gerentes, por correo y en persona",
     },
     met: true,
   },
   {
     key: "scheduling",
     text: {
-      en: "Practice reading schedules and resolving a conflict",
-      es: "Práctica de leer horarios y resolver un conflicto",
+      en: "Reads a work schedule and fixes problems in it",
+      es: "Lee un horario de trabajo y arregla problemas en él",
     },
     met: true,
   },
@@ -128,16 +128,16 @@ export const REQUIREMENTS: PostingRequirement[] = [
   {
     key: "budget",
     text: {
-      en: "Has entered and reported a spreadsheet total",
-      es: "Ha ingresado y reportado un total en una hoja de cálculo",
+      en: "Has typed numbers in a spreadsheet and sent the total",
+      es: "Ha escrito números en una hoja de cálculo y enviado el total",
     },
     met: true,
   },
   {
     key: "degree",
     text: {
-      en: "Bachelor's degree",
-      es: "Título universitario",
+      en: "College degree (bachelor's)",
+      es: "Título universitario (licenciatura)",
     },
     met: false,
   },
@@ -157,16 +157,16 @@ export function fitLooksReal(fit: string): boolean {
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "I ran shift schedules for the cafe crew.",
-    "I entered figures and reported a spreadsheet total.",
-    "I use email, calendars, and spreadsheets every shift.",
-    "I practiced professional messages in the simulator.",
+    "I fixed problems in the cafe's work schedule.",
+    "I typed tips in a spreadsheet and sent the total to my manager.",
+    "I use email, calendars, and spreadsheets at work.",
+    "I trained new workers as a shift lead.",
   ],
   es: [
-    "Manejé los horarios de turnos del equipo del café.",
-    "Ingresé cifras y reporté el total de una hoja de cálculo.",
-    "Uso correo, calendarios y hojas de cálculo en cada turno.",
-    "Practiqué mensajes profesionales en el simulador.",
+    "Arreglé problemas en el horario de trabajo del café.",
+    "Escribí propinas en una hoja de cálculo y le envié el total a mi gerente.",
+    "Uso correo, calendarios y hojas de cálculo en el trabajo.",
+    "Entrené a trabajadores nuevos como líder de turno.",
   ],
 };
 
@@ -198,12 +198,12 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Read the posting. Check every requirement your experience covers.",
-    es: "Lee el anuncio. Marca cada requisito que tu experiencia cubre.",
+    en: "Read what the job asks for. Check each thing you have done.",
+    es: "Lee lo que pide el trabajo. Marca cada cosa que ya hiciste.",
   },
   {
-    en: "Write one line on why you fit, then apply.",
-    es: "Escribe una línea de por qué encajas, luego aplica.",
+    en: "Write one sentence: why are you a good fit? Then click Apply for this job.",
+    es: "Escribe una oración: ¿por qué eres buena opción? Después haz clic en Aplicar a este trabajo.",
   },
 ];
 

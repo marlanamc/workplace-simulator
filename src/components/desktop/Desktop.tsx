@@ -6,6 +6,7 @@ import DesktopIdentity from "@/components/DesktopIdentity";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
 import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 import JobCard from "@/components/task/JobCard";
+import LessonInfoCard, { LESSON_RAIL_CLASS } from "@/components/lesson/LessonInfoCard";
 import { deskIdentityFor } from "@/lib/desk-identity";
 import { actForLevel, levelForTrack, sceneForLevel } from "@/lib/tracks-content";
 import { useWindowManager } from "@/lib/window-manager";
@@ -49,7 +50,8 @@ function AppWindow({
         active
           ? {
               top: topOffset,
-              left: SHELF_INSET,
+              // A lesson keeps a left column for its info card and the Job Card on wide screens (--app-left).
+              left: `var(--app-left, ${SHELF_INSET}px)`,
               right: SHELF_INSET,
               bottom: SHELF_RESERVE + 8,
               zoom: bigText ? 1.15 : undefined,
@@ -111,7 +113,7 @@ export default function Desktop({
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden text-[15px]"
+      className={`relative min-h-screen overflow-hidden text-[15px] ${lesson ? LESSON_RAIL_CLASS : ""}`}
       style={{ color: "var(--text-primary)" }}
     >
       {/* wallpaper - the room of the current act, so New Hire is the cafe floor */}
@@ -136,7 +138,7 @@ export default function Desktop({
       >
         {/* Lock-screen clock plus a quiet identity plaque. The Job Card still
             says what to do; this only orients who they are in the story. */}
-        <div className="flex flex-1 items-start px-10 pt-10">
+        <div className={`flex flex-1 items-start px-10 pt-10 ${lesson ? "xl:pl-[480px]" : ""}`}>
           <div className="flex w-full max-w-[400px] flex-col">
             <DesktopClock lang={lang} />
             <DesktopIdentity name={displayName} identity={identity} lang={lang} />
@@ -158,6 +160,7 @@ export default function Desktop({
         </AppWindow>
       )}
 
+      {lesson && <LessonInfoCard top={windowTop} />}
       {beforeShelf}
       <Shelf displayName={displayName} myJob={myJob} />
       {/* The one instruction voice. Above the app windows, below the Help

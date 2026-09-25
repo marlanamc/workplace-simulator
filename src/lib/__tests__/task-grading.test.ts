@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { CORRECT_WEEK_TOTAL } from "@/lib/tasks/crew-week";
-import { emailMentionsFix, parseRange, rangeCoversCrew } from "@/lib/tasks/formula-check/content";
+import { emailMentionsFix, parseRange, rangeCoversCrew, sumProblem } from "@/lib/tasks/formula-check/content";
 import { replyIsSafe } from "@/lib/tasks/priority-call/content";
 import { agendaBulletCount, titleIsAboutSchedule } from "@/lib/tasks/team-meeting/content";
 import { replyAcceptsOffer, overlapMentionsShift } from "@/lib/tasks/college-offer/content";
@@ -103,6 +103,8 @@ describe("formula check: does the range cover the whole crew", () => {
     "=sum(h2:h6)",
     "  =SUM( H2 : H6 )  ",
     "=SUM(H6:H2)", // backwards range still covers the crew
+    "=H2+H3+H4+H5+H6", // one cell at a time is a real way to add
+    "=h2 + h3 + h4 + h5 + h6",
   ])("accepts %j as a SUM over the crew", (formula) => {
     expect(rangeCoversCrew(formula, "sum")).toBe(true);
   });
@@ -125,6 +127,18 @@ describe("formula check: does the range cover the whole crew", () => {
     for (const junk of ["", "SUM(H2:H6)", "=SUM(H2:H6", "42", "=TOTAL(H2:H6)"]) {
       expect(rangeCoversCrew(junk, "sum"), junk).toBe(false);
     }
+  });
+
+  it.each([
+    ["SUM(H2:H6)", "no-equals"],
+    ["=SUM(H2 H6)", "unreadable"],
+    ["=SUM(H2:H5)", "missing-last"],
+    ["=SUM(H3:H6)", "missing-first"],
+    ["=SUM(H2:H7)", "too-far"],
+    ["=H2+H3+H4+H5", "missing-last"],
+    ["=SUM(H2:H6)", "ok"],
+  ])("names the problem with %j: %s", (formula, problem) => {
+    expect(sumProblem(formula)).toBe(problem);
   });
 
   it("parseRange reports the range it found, normalized low-to-high", () => {
@@ -313,6 +327,9 @@ describe("coursework: a complete reply before submit", () => {
     "I hear you. I will check with my manager and follow up this afternoon.",
     "Gracias por avisar. Voy a revisar esto hoy y te escribo.",
     "Te escuché. Voy a hablar con mi gerente y te confirmo esta tarde.",
+    "I will call the customer and fix it.",
+    "Sorry Dana, we can make you a new latte.",
+    "Lo siento, te preparo otro café mañana.",
   ])("accepts a real reply: %j", (body) => {
     expect(responseIsComplete(body)).toBe(true);
   });

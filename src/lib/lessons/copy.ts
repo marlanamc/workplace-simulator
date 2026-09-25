@@ -30,6 +30,16 @@ export const LESSON_COPY = {
     es: "Todavía no se guardó. Vuelve a intentar o avísale a tu maestro.",
   },
   tryAgain: { en: "Try saving again", es: "Intentar guardar otra vez" },
+  introNeed: { en: "Today", es: "Hoy" },
+  introCardTitle: { en: "Your info card", es: "Tu tarjeta de información" },
+  introCard: {
+    en: "This card stays on your screen while you work. When you need a name, a password, or a date, look here.",
+    es: "Esta tarjeta se queda en tu pantalla mientras trabajas. Cuando necesites un nombre, una contraseña o una fecha, mira aquí.",
+  },
+  introStart: { en: "I'm ready", es: "Empezar" },
+  infoTitle: { en: "Your info", es: "Tu información" },
+  infoOpen: { en: "Your info", es: "Tu información" },
+  infoClose: { en: "Close", es: "Cerrar" },
 } satisfies Record<string, Localized>;
 
 /** Teacher-facing words: the preview bar and the guide. Never shown to a student. */

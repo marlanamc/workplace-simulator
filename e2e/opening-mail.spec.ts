@@ -88,7 +88,8 @@ for (const lang of ['en','es'] as const) {
     await page.getByRole('textbox',{name:/Your reply|Tu respuesta/}).fill(lang === 'en' ? 'Yes, see you tomorrow!' : 'Sí, allí estaré.');
     await page.locator('[data-showme="send-button"]').click();
     await card.getByRole('button',{name:/Next message|Siguiente mensaje/}).click();
-    await expect(card).toContainText(lang === 'en' ? 'shelf under the counter' : 'estante debajo del mostrador');
+    // With the scaffolding down, the card still says which email to open.
+    await expect(card).toContainText(lang === 'en' ? "Open Darnell Washington's email" : 'Abre el correo de Darnell Washington');
     await expect(page.locator('[data-showme="attach-button"]')).toHaveCount(0);
     await page.screenshot({path:test.info().outputPath(`opening-objective-${lang}.png`), animations:'disabled'});
     await card.getByRole('button', {name:/^Show me$|^Muéstrame$/}).click();

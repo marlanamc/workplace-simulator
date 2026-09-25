@@ -64,6 +64,7 @@ import {
 } from "@/lib/tasks/timeclock/content";
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
+import { useLesson } from "@/lib/lesson-context";
 import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { storage } from '@/lib/storage';
 
@@ -142,6 +143,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [openingIndex, setOpeningIndex] = useState(() => Math.min(nextOpeningIndex(openingReplies), 2));
   const openingMessage = OPENING_MESSAGES[openingIndex];
   const [explicitOpeningHelp, setExplicitOpeningHelp] = useState(false);
+  // A Guided lesson spells out every click, so the opening's fading scaffold stays up.
+  const lessonRun = useLesson();
   const [openingSaving, setOpeningSaving] = useState(false);
   const openingInFlight = useRef(false);
   const [openingSaveError, setOpeningSaveError] = useState(false);
@@ -203,7 +206,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // the story as it stood at that moment — no future Maria mails flooding in.
   const rawInbox = sortInboxByTime(
     [
-      ...storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags),
+      // Story mail answers what the learner did earlier in the game. A lesson
+      // has no earlier, so those rows would only be unexplained decoys.
+      ...(lessonRun ? [] : storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags)),
       ...(opening ? OPENING_MESSAGES.slice(0, openingIndex + 1).map((message, index) => ({
         key: `opening-${message.id}`, from: message.sender.name, initials: message.sender.initials, color: message.sender.color,
         // Sent the evening before Day One, so the inbox stamps them Yesterday.
@@ -229,7 +234,18 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
 
   const advance = (n: number) => setStep((s) => (s < n ? n : s));
 
-  const lessonIdx = Math.min(step, 4);
+  // The attach job's help follows the screen that is showing, so it never
+  // talks about a Reply button on the page that has only Continue.
+  const lessonIdx =
+    activeMailTask === "mail-attach"
+      ? view === "empty" || view === "story"
+        ? 0
+        : view === "read" || view === "confirm"
+          ? 1
+          : attached
+            ? 4
+            : 3
+      : Math.min(step, 4);
   const lesson = opening ? { t: openingMessage.subject[lang], s: [
     T(`Open ${openingMessage.sender.name}'s email.`, `Abre el correo de ${openingMessage.sender.name}.`),
     T('Click Reply.', 'Haz clic en Responder.'), openingIndex === 0 ? FIRST_REPLY_GUIDANCE[lang] : openingMessage.objective[lang], ...(openingIndex === 0 ? [] : [T('Click Send.', 'Haz clic en Enviar.')]),
@@ -649,6 +665,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       <span>{tc.subject}</span>
                     </div>
                     <textarea
+                      data-showme="compose-body"
                       aria-label={T("Your reply", "Tu respuesta")}
                       maxLength={opening ? 10000 : undefined}
                       disabled={openingSaving}
@@ -729,7 +746,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         : "confirm-correct"
                       : needsAttach && !attached
                         ? "attach-button"
-                        : "send-button";
+                        : body.trim()
+                          ? "send-button"
+                          : "compose-body";
               return (
                 ownsJobCard ? (
                 <RightNowBar
@@ -738,7 +757,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   icon={TASK_ICONS.mail}
                   stepIndex={stepIndex}
                   stepCount={stepCount}
-                  instruction={opening ? openingSaving ? { en: 'Saving your reply…', es: 'Guardando tu respuesta…' } : openingSaveError ? { en: 'Your reply could not be saved. Try again.', es: 'No se pudo guardar tu respuesta. Inténtalo de nuevo.' } : openingInstruction(openingIndex, view, Boolean(body.trim()), explicitOpeningHelp) : instruction}
+                  instruction={opening ? openingSaving ? { en: 'Saving your reply…', es: 'Guardando tu respuesta…' } : openingSaveError ? { en: 'Your reply could not be saved. Try again.', es: 'No se pudo guardar tu respuesta. Inténtalo de nuevo.' } : openingInstruction(openingIndex, view, Boolean(body.trim()), explicitOpeningHelp || lessonRun?.mode === "guided") : instruction}
                   primaryLabel={opening && openingSaveError ? T('Retry save', 'Reintentar guardado') : undefined}
                   onPrimary={opening && openingSaveError ? () => void sendOpening() : undefined}
                   lang={lang}
@@ -904,6 +923,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       <span>{subjectMeta.reSubject}</span>
                     </div>
                     <textarea
+                      data-showme="compose-body"
                       aria-label={T("Your reply", "Tu respuesta")}
                       maxLength={opening ? 10000 : undefined}
                       disabled={openingSaving}
@@ -929,7 +949,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       />
                     </div>
                     {attached && (
-                      <div className="mx-4 mb-2 inline-flex items-center gap-2 rounded-lg border border-[#d3e3fd] bg-[#f8fbff] px-3 py-2">
+                      // Green, as the help and the teacher guide say: attached means it worked.
+                      <div data-testid="attachment-chip" className="mx-4 mb-2 inline-flex items-center gap-2 rounded-lg border-2 border-[#1e8e3e] bg-[#e6f4ea] px-3 py-2">
                         <span className="rounded px-1.5 py-0.5 text-[10px] font-bold text-white" style={{ background: "#ea4335" }}>
                           PDF
                         </span>

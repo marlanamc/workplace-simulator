@@ -22,6 +22,8 @@ import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 
 /** Google Classroom's colors, so the page looks like the one students use at school. */
 const GC = { class: "#1967d2", line: "#dadce0", muted: "#5f6368" } as const;
@@ -61,9 +63,11 @@ export default function CourseworkTask() {
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
   const c = COURSEWORK_COPY[lang];
 
   const trySubmit = () => {
+    showMe.clear();
     if (!acked) return say(c.needAck);
     if (!body.trim()) return say(c.empty);
     if (!responseIsComplete(body)) return say(c.weak);
@@ -77,7 +81,14 @@ export default function CourseworkTask() {
     setBody("");
   };
 
-  const stepIndex = !acked ? 0 : 2;
+  const stepIndex = !acked ? 0 : responseIsComplete(body) ? 2 : 1;
+  const showMeIds = ["deadline-select", "answer-box", "submit-button"];
+  // A wrong day is corrected as it is chosen, not only at Submit.
+  const chooseDeadline = (key: string) => {
+    setDeadline(key);
+    showMe.clear();
+    if (key && !deadlineIsCorrect(key)) say(c.needAck);
+  };
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-white text-[14px] text-[#3c4043]">
@@ -111,10 +122,11 @@ export default function CourseworkTask() {
         <RightNowBar
           icon={TASK_ICONS.coursework}
           stepIndex={stepIndex}
-          stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[stepIndex]}
+          steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -138,8 +150,20 @@ export default function CourseworkTask() {
                 </p>
               </div>
             </div>
-            <p className="mt-4 mb-0 text-[15px] leading-relaxed text-[#202124]">{c.syllabus}</p>
-            <p className="mt-3 mb-0 text-[15px] leading-relaxed">{c.prompt}</p>
+            <h3 className="mt-4 mb-1 text-[16px] font-medium text-[#202124]">{c.instructionsLabel}</h3>
+            <p className="m-0 text-[15px] leading-relaxed text-[#202124]">{c.syllabus}</p>
+            <p className="mt-2 mb-0 text-[15px] leading-relaxed">{c.prompt}</p>
+            {/* The email the assignment is about. It has to be on the page to be answered. */}
+            <section
+              aria-label={c.emailLabel}
+              className="mt-4 rounded-lg border bg-[#f8f9fa] px-4 py-3"
+              style={{ borderColor: GC.line }}
+            >
+              <p className="m-0 text-[12px] font-medium uppercase tracking-wide" style={{ color: GC.muted }}>{c.emailLabel}</p>
+              <p className="mt-2 mb-0 text-[14px] font-medium text-[#202124]">{c.emailFrom}</p>
+              <p className="m-0 text-[14px] text-[#202124]">{c.emailSubject}</p>
+              <p className="mt-2 mb-0 text-[15px] leading-relaxed text-[#202124]">{c.emailBody}</p>
+            </section>
             {submitted && (
               <div className="mt-6 flex flex-col gap-5">
                 <TaskDoneCard kicker={c.sentKicker} />
@@ -171,8 +195,9 @@ export default function CourseworkTask() {
                     {c.deadlineLabel}
                     <select
                       aria-label={c.deadlineLabel}
+                      data-showme="deadline-select"
                       value={deadline}
-                      onChange={(e) => setDeadline(e.target.value)}
+                      onChange={(e) => chooseDeadline(e.target.value)}
                       className="mt-1.5 block min-h-11 w-full rounded-md border bg-white px-2 font-normal"
                       style={{ borderColor: GC.line }}
                     >
@@ -187,6 +212,7 @@ export default function CourseworkTask() {
                   <label className="mt-4 block text-[14px] font-medium text-[#202124]">
                     {c.answerLabel}
                     <textarea
+                      data-showme="answer-box"
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
                       placeholder={c.writeHere}
@@ -197,6 +223,7 @@ export default function CourseworkTask() {
                   <NeedAStart lang={lang} starters={STARTERS[lang]} onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)} />
                   <button
                     type="button"
+                    data-showme="submit-button"
                     onClick={trySubmit}
                     className="mt-4 inline-flex min-h-[44px] w-full cursor-pointer items-center justify-center rounded-md px-6 text-[15px] font-medium text-white"
                     style={{ background: GC.class }}
@@ -219,6 +246,7 @@ export default function CourseworkTask() {
       </div>
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

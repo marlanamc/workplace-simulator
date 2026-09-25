@@ -4,6 +4,10 @@ import { HQ_FILES } from "@/lib/tasks/office-drive/content";
 import { LEVELS } from "@/lib/tracks-content";
 import { newTabHint, sittingTitle, jobTitle } from "@/lib/shift-spine";
 import { followupHasOwnersAndDates } from "@/lib/tasks/meeting-minutes/content";
+import { parseMoney } from "@/lib/text-facts";
+import { TIP_ROWS, entryMatches, wrongEntryHint } from "@/lib/tasks/spreadsheet/content";
+import { codeMatches } from "@/lib/tasks/account-recovery/content";
+import { firstMismatch, sameDate } from "@/lib/tasks/onboarding-paperwork/content";
 
 /**
  * The rename step is the heaviest typing ask in the app — these pin down
@@ -17,6 +21,11 @@ describe("Files rename forgiveness", () => {
     "  schedule-week-of-aug-24.pdf ",
     "SCHEDULE-WEEK-OF-AUG-24",
     "schedule week of aug 24.pdf",
+    "schedule_week_of_aug_24",
+    "schedule - week - of - aug - 24",
+    "schedule-week-of-aug24",
+    "schedule-week-of-august-24",
+    "schedule-week-of-aug-24.",
   ])("accepts %j", (input) => {
     expect(normalizeRename(input)).toBe(RENAME_TARGET);
   });
@@ -99,5 +108,64 @@ describe("shift-spine naming", () => {
     expect(newTabHint(level4, "calendar", "en")).toContain("Calendar");
     expect(newTabHint(level4, "calendar", "es")).toContain("Calendar");
     expect(newTabHint(level4, null, "es")).toContain("marcadores");
+  });
+});
+
+/**
+ * Money a learner copies off a slip. "$42.50" exactly as printed, and a comma
+ * for cents, both used to be marked wrong.
+ */
+describe("money amounts", () => {
+  it.each([
+    ["$42.50", 42.5],
+    ["42.50", 42.5],
+    ["42.5", 42.5],
+    ["42,50", 42.5],
+    ["$ 42.50", 42.5],
+    ["38", 38],
+    ["1,234.50", 1234.5],
+  ])("reads %j as %d", (input, expected) => {
+    expect(parseMoney(input)).toBe(expected);
+  });
+
+  it.each(["", "abc", "42.5.0", "4.2.5"])("rejects %j", (input) => {
+    expect(parseMoney(input)).toBeNull();
+  });
+
+  it("a tip entry counts however the amount is written", () => {
+    const monday = TIP_ROWS[0];
+    for (const typed of ["$42.50", "42.5", "42,50"]) expect(entryMatches(monday, typed)).toBe(true);
+    expect(entryMatches(monday, "42.05")).toBe(false);
+  });
+
+  it("the correction names the day and the slip's amount", () => {
+    expect(wrongEntryHint(TIP_ROWS[3], "en")).toBe("Check Thursday. The slip says $46.75.");
+    expect(wrongEntryHint(TIP_ROWS[3], "es")).toContain("jueves");
+  });
+});
+
+describe("text codes", () => {
+  it.each(["482915", "482 915", " 482915 "])("accepts %j", (input) => {
+    expect(codeMatches(input)).toBe(true);
+  });
+
+  it.each(["482916", "Your verification code is 482915", ""])("rejects %j", (input) => {
+    expect(codeMatches(input)).toBe(false);
+  });
+});
+
+/** The W-4 date used to pass only as exactly "10/01/2026". */
+describe("form dates", () => {
+  it.each(["10/01/2026", "10/1/2026", "10-01-2026", "10.01.26", " 10 / 1 / 2026 "])("accepts %j", (input) => {
+    expect(sameDate(input, "10/01/2026")).toBe(true);
+  });
+
+  it.each(["01/10/2026", "Oct 1 2026", "10/02/2026", ""])("rejects %j", (input) => {
+    expect(sameDate(input, "10/01/2026")).toBe(false);
+  });
+
+  it("names the W-4 box that does not match Robin", () => {
+    expect(firstMismatch({ status: "single", dependents: "2", date: "10/1/2026" })).toBe("dependents");
+    expect(firstMismatch({ status: "single", dependents: "0", date: "10/1/2026" })).toBeNull();
   });
 });

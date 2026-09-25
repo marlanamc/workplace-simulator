@@ -44,6 +44,8 @@ import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 
 function DeskChrome({ clinic, children }: { clinic: string; children: React.ReactNode }) {
   return (
@@ -87,31 +89,47 @@ export default function FrontDeskTask() {
   return <ScheduleDesk />;
 }
 
+/** Which control each step's Show me points at. */
+const APPT_SHOW_ME = ["reason-select", "open-slot", "offer-button", "confirm-body"] as const;
+
 function ScheduleDesk() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("appointment-scheduling"));
   const [conflict, setConflict] = useState("");
   const [slot, setSlot] = useState<string | null>(null);
-  const [checked, setChecked] = useState<Set<string>>(new Set());
   const [body, setBody] = useState("");
   const [compose, setCompose] = useState(false);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
   const c = APPOINTMENT_COPY[lang];
 
-  const pick = (time: string, taken: boolean) => {
-    setChecked((prev) => new Set(prev).add(time));
-    if (taken) return say(c.taken);
+  // The whole schedule is on screen from the start: reading it is the skill,
+  // not clicking each row to uncover it.
+  const reasonKnown = conflictIdentified(conflict);
+  const stepIndex = compose ? 3 : !reasonKnown ? 0 : slot !== OPEN_SLOT ? 1 : 2;
+
+  const chooseReason = (key: string) => {
+    setConflict(key);
+    showMe.clear();
+    if (key && !conflictIdentified(key)) say(c.wrongReason);
+  };
+
+  const pick = (time: string, taken: boolean, name: string | null) => {
+    showMe.clear();
+    if (taken) return say(name ? c.takenBy(name) : c.taken);
     setSlot(time);
   };
 
   const tryOffer = () => {
-    if (!conflictIdentified(conflict)) return say(lang === "en" ? "Check the requested 10:00 appointment. Why can’t Maya take it?" : "Revisa la cita solicitada de las 10:00. ¿Por qué Maya no puede tomarla?");
+    showMe.clear();
+    if (!reasonKnown) return say(c.wrongReason);
     if (slot !== OPEN_SLOT) return say(c.needSlot);
     setCompose(true);
   };
 
   const trySend = () => {
+    showMe.clear();
     if (!body.trim()) return say(c.empty);
     if (!confirmationOffersOpenSlot(body)) return say(c.weak);
     setDone(true);
@@ -122,7 +140,6 @@ function ScheduleDesk() {
     setDone(false);
     setSlot(null);
     setConflict("");
-    setChecked(new Set());
     setBody("");
     setCompose(false);
   };
@@ -132,11 +149,12 @@ function ScheduleDesk() {
       {!done && (
         <RightNowBar
           icon={TASK_ICONS["appointment-scheduling"]}
-          stepIndex={compose ? 2 : slot === OPEN_SLOT ? 1 : 0}
-          stepCount={APPT_STEPS.length}
-          instruction={APPT_STEPS[compose ? 2 : slot === OPEN_SLOT ? 1 : 0]}
+          stepIndex={stepIndex}
+          steps={APPT_STEPS}
           lang={lang}
           rightNowLabel={APPT_LABEL}
+          onShowMe={() => showMe.toggleFor(APPT_SHOW_ME[stepIndex])}
+          showMeActive={showMe.targetId === APPT_SHOW_ME[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -146,40 +164,44 @@ function ScheduleDesk() {
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto flex max-w-[640px] flex-col gap-4">
             <h2 className="text-[20px] font-medium">{c.heading}</h2>
-            <p className="rounded-xl border border-[#dadce0] bg-white px-4 py-3 text-[15px] leading-relaxed">{c.request}</p><label className="my-3 block text-[14px]">{lang === "en" ? "Why is the requested time unavailable?" : "¿Por qué no está disponible la hora solicitada?"}
-              <select value={conflict} onChange={(e) => setConflict(e.target.value)} className="mt-2 block min-h-11 w-full rounded border p-2">
-                <option value="">{lang === "en" ? "Choose a reason" : "Elige una razón"}</option>
-                {CONFLICT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label[lang]}</option>)}
-              </select>
-            </label>
+            <p className="rounded-xl border border-[#dadce0] bg-white px-4 py-3 text-[15px] leading-relaxed">{c.request}</p>
             <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white">
               {SLOTS.map((s) => {
                 const selected = slot === s.time;
-                const revealed = checked.has(s.time);
                 return (
                   <button
                     key={s.time}
                     type="button"
-                    onClick={() => pick(s.time, s.taken)}
+                    data-showme={s.taken ? undefined : "open-slot"}
+                    onClick={() => pick(s.time, s.taken, s.name)}
                     className={`flex w-full items-center justify-between border-b border-[#eee] px-4 py-2.5 text-left cursor-pointer last:border-b-0 ${
-                      selected ? "bg-[#e0f2f1]" : "hover:bg-[#f8f9fa]"
+                      selected ? "bg-[#e0f2f1] ring-2 ring-inset ring-[#00695c]" : "hover:bg-[#f8f9fa]"
                     }`}
                   >
                     <span className="font-medium tabular-nums">{s.time}</span>
-                    {revealed ? (
-                      <span className={s.taken ? "text-[#5f6368]" : "font-medium text-[#00695c]"}>
-                        {s.taken ? `${c.booked} · ${s.name}` : c.open}
-                      </span>
-                    ) : (
-                      <span className="text-[#9aa0a6]">{c.checkSlot}</span>
-                    )}
+                    <span className={s.taken ? "text-[#5f6368]" : "font-medium text-[#00695c]"}>
+                      {s.taken ? `${c.booked} · ${s.name}` : c.open}
+                    </span>
                   </button>
                 );
               })}
             </div>
+            <label className="block text-[15px] font-medium">
+              {c.reasonLabel}
+              <select
+                value={conflict}
+                data-showme="reason-select"
+                onChange={(e) => chooseReason(e.target.value)}
+                className="mt-2 block min-h-11 w-full rounded border bg-white p-2 font-normal"
+              >
+                <option value="">{c.chooseReason}</option>
+                {CONFLICT_OPTIONS.map((o) => <option key={o.key} value={o.key}>{o.label[lang]}</option>)}
+              </select>
+            </label>
             {!compose ? (
               <button
                 type="button"
+                data-showme="offer-button"
                 onClick={tryOffer}
                 className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-[#00695c] px-6 text-[15px] font-medium text-white cursor-pointer"
               >
@@ -190,6 +212,7 @@ function ScheduleDesk() {
                 <div className="text-[13px] font-medium text-[#5f6368]">{c.confirmHeading}</div>
                 <textarea
                   value={body}
+                  data-showme="confirm-body"
                   onChange={(e) => setBody(e.target.value)}
                   placeholder={c.writeHere}
                   className="mt-2 min-h-[110px] w-full resize-y rounded-lg border border-[#dadce0] px-3 py-2 text-[15px] outline-none"
@@ -209,6 +232,7 @@ function ScheduleDesk() {
       )}
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={APPT_LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </DeskChrome>
   );
 }

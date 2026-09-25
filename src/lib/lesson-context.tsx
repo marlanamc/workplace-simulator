@@ -3,7 +3,7 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang, Localized } from "@/lib/task-types";
-import type { LessonMode } from "@/lib/lessons/types";
+import type { LessonFact, LessonMode, LessonScene } from "@/lib/lessons/types";
 import type { LessonSave } from "@/app/lessons/useLessonSave";
 
 /**
@@ -17,6 +17,11 @@ import type { LessonSave } from "@/app/lessons/useLessonSave";
 export interface LessonValue {
   taskKey: TaskKey;
   title: Localized;
+  /** Who the learner is and who the task names, for the info card. */
+  scene: LessonScene;
+  reference: LessonFact[];
+  /** The name the task writes for "you", when it needs one. */
+  persona?: string;
   mode: LessonMode;
   /** Change support mid-task. The task keeps its place. */
   setMode: (mode: LessonMode) => void;

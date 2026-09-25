@@ -12,10 +12,13 @@ import {
   RIGHT_NOW_STEPS,
   WRONG_RENAME_HINT,
   WRONG_EDIT_HINT,
+  COMMENT_HINT,
   LESSONS,
   type DriveFile,
 } from "@/lib/tasks/files/content";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 import SettingsPopover from "@/components/task/SettingsPopover";
 import { levelForTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
@@ -91,6 +94,7 @@ function CafeFilesTask() {
   // doesn't need to trigger a re-render on its own.
   const messyWrongCount = useRef(0);
   const { nudge, say, dismiss } = useNudge();
+  const showMe = useShowMe();
 
   // Messy mode (Level.messy): more near-duplicate decoys, and coaching that
   // speaks up less often - real-world friction added on purpose, not a new
@@ -100,6 +104,8 @@ function CafeFilesTask() {
 
   const c = FILES_COPY[lang];
   const listOpen = view === "browse" || view === "rename" || view === "share";
+  const stepIndex = view === "home" ? 0 : view === "browse" ? 1 : view === "rename" ? 2 : 3;
+  const showMeIds = ["shared-drive", "target-file", "rename-input", "can-view"];
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -111,6 +117,7 @@ function CafeFilesTask() {
   }, [fileList, query, folder]);
 
   const pickFile = (f: DriveFile) => {
+    showMe.clear();
     if (!f.isTarget) {
       if (!f.wrongHint) return;
       if (!messy) {
@@ -129,6 +136,7 @@ function CafeFilesTask() {
   };
 
   const tryRename = () => {
+    showMe.clear();
     if (normalizeRename(renameValue) !== RENAME_TARGET) {
       return say(WRONG_RENAME_HINT[lang]);
     }
@@ -136,6 +144,7 @@ function CafeFilesTask() {
   };
 
   const tryShare = () => {
+    showMe.clear();
     if (permission === "edit") {
       return say(WRONG_EDIT_HINT[lang]);
     }
@@ -158,8 +167,8 @@ function CafeFilesTask() {
   const notYet = () =>
     say(
       lang === "en"
-        ? "That's not part of today's task. Open the shared folder instead."
-        : "Eso no es parte de la tarea de hoy. Abre la carpeta compartida en su lugar."
+        ? "That's not part of today's task. Click Cafe Shared Drive."
+        : "Eso no es parte de la tarea de hoy. Haz clic en Unidad compartida del café."
     );
 
   const restart = () => {
@@ -217,11 +226,12 @@ function CafeFilesTask() {
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS.files}
-          stepIndex={view === "rename" ? 1 : view === "share" ? 2 : 0}
-          stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[view === "rename" ? 1 : view === "share" ? 2 : 0]}
+          stepIndex={stepIndex}
+          steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -281,7 +291,8 @@ function CafeFilesTask() {
                 </div>
                 <h2 className="mb-3 text-[16px] font-medium">{c.sharedHeading}</h2>
                 <button
-                  onClick={() => { setFolder(null); setView("browse"); }}
+                  data-showme="shared-drive"
+                  onClick={() => { showMe.clear(); setFolder(null); setView("browse"); }}
                   className="flex w-full max-w-[420px] items-center gap-3 rounded-xl bg-[#f0f4f9] px-4 py-3 text-left hover:bg-[#e8eaed] cursor-pointer"
                 >
                   <Users size={20} className="text-[#1a73e8]" />
@@ -320,6 +331,7 @@ function CafeFilesTask() {
                 {filtered.map((f) => (
                   <button
                     key={f.key}
+                    data-showme={f.isTarget ? "target-file" : undefined}
                     onClick={() => pickFile(f)}
                     className="grid w-full grid-cols-[1fr_120px_88px] items-center gap-2 rounded-xl px-3 py-2.5 text-left hover:bg-[#f1f3f4] cursor-pointer"
                   >
@@ -352,6 +364,9 @@ function CafeFilesTask() {
                 <p className="mb-2 text-[12px] text-[#5f6368]">{c.renameHint}</p>
                 <input
                   autoFocus
+                  data-showme="rename-input"
+                  // The old name starts selected, as in Drive: typing replaces it.
+                  onFocus={(e) => e.currentTarget.select()}
                   value={renameValue}
                   onChange={(e) => setRenameValue(e.target.value)}
                   placeholder={c.renamePlaceholder}
@@ -362,7 +377,7 @@ function CafeFilesTask() {
 
             {view === "share" && (
               <DriveDialog
-                title={`${c.share} "${renameValue}.pdf"`}
+                title={`${c.share} "${RENAME_TARGET}.pdf"`}
                 onCancel={() => setView("rename")}
                 cancelLabel={lang === "en" ? "Cancel" : "Cancelar"}
                 confirmLabel={c.share}
@@ -381,7 +396,8 @@ function CafeFilesTask() {
                 </p>
                 <div className="flex flex-col gap-1">
                   <button
-                    onClick={() => setPermission("view")}
+                    data-showme="can-view"
+                    onClick={() => { showMe.clear(); setPermission("view"); }}
                     className={`flex min-h-[44px] items-center justify-between rounded-lg border px-3 text-left text-[14px] cursor-pointer ${
                       permission === "view" ? "border-[#0b57d0] bg-[#e8f0fe]" : "border-[#dadce0] hover:bg-[#f8f9fa]"
                     }`}
@@ -389,10 +405,14 @@ function CafeFilesTask() {
                     <span>{c.canView}</span>
                     <span className="text-[12px] text-[#5f6368]">{lang === "en" ? "Viewer" : "Lector"}</span>
                   </button>
-                  <div className="flex min-h-[44px] items-center justify-between rounded-lg border border-[#dadce0] px-3 text-left text-[14px] text-[#9aa0a6]">
+                  <button
+                    type="button"
+                    onClick={() => say(COMMENT_HINT[lang])}
+                    className="flex min-h-[44px] items-center justify-between rounded-lg border border-[#dadce0] px-3 text-left text-[14px] text-[#5f6368] hover:bg-[#f8f9fa] cursor-pointer"
+                  >
                     <span>{c.canComment}</span>
                     <span className="text-[12px]">{lang === "en" ? "Commenter" : "Comentador"}</span>
-                  </div>
+                  </button>
                   <button
                     onClick={() => setPermission("edit")}
                     className={`flex min-h-[44px] items-center justify-between rounded-lg border px-3 text-left text-[14px] cursor-pointer ${
@@ -413,12 +433,13 @@ function CafeFilesTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][view === "share" ? 1 : 0]}
+        lesson={LESSONS[lang][view === "share" ? 1 : view === "rename" ? 2 : 0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

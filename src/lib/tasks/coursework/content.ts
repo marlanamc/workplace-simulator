@@ -10,7 +10,6 @@ export const COURSEWORK_COPY: Record<Lang, {
   dueLabel: string;
   assignment: string;
   prompt: string;
-  ackLabel: string;
   writeHere: string;
   submit: string;
   needAck: string;
@@ -30,6 +29,11 @@ export const COURSEWORK_COPY: Record<Lang, {
   points: string;
   deadlineLabel: string;
   chooseDeadline: string;
+  instructionsLabel: string;
+  emailLabel: string;
+  emailFrom: string;
+  emailSubject: string;
+  emailBody: string;
   answerLabel: string;
   privateComments: string;
 }> = {
@@ -37,16 +41,15 @@ export const COURSEWORK_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     course: "Workplace Writing 101",
     heading: "This week's assignment",
-    syllabus: "Read the assigned email. Write 3–4 sentences on how you would reply at work. Due Friday, 11:59 PM. Late work is not accepted.",
+    syllabus: "Read the customer's email below. Write a short reply, 2 or 3 sentences, like you would at work. Due Friday, 11:59 PM. Late work is not accepted.",
     dueLabel: "Due",
     assignment: "How would you reply?",
-    prompt: "A coworker emailed you a complaint from a customer. Write a short reply you would actually send.",
-    ackLabel: "I see this is due Friday at 11:59 PM",
+    prompt: "Say you are sorry, and say one thing you will do to fix it.",
     writeHere: "Write your reply…",
     submit: "Submit assignment",
-    needAck: "Check the due date first. It is on the syllabus.",
-    empty: "Write a short reply first.",
-    weak: "A real reply says you heard them and what you will do next.",
+    needAck: "First find the due date. It is under the title. Choose it in When is it due?",
+    empty: "Write a short reply to Dana first.",
+    weak: "Say sorry, and say one thing you will do. For example: I will make you a new latte.",
     sentKicker: "Assignment submitted",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -58,25 +61,29 @@ export const COURSEWORK_COPY: Record<Lang, {
     assigned: "Assigned",
     turnedIn: "Turned in",
     points: "100 points",
-    deadlineLabel: "Submission deadline",
-    chooseDeadline: "Choose a deadline",
-    answerLabel: "Your answer",
+    deadlineLabel: "When is it due?",
+    chooseDeadline: "Choose a day",
+    instructionsLabel: "Instructions",
+    emailLabel: "The customer's email",
+    emailFrom: "From: Dana Price",
+    emailSubject: "Subject: Wrong order again",
+    emailBody: "I ordered a large latte this morning and got a small black coffee. This is the second time this week. Please fix this.",
+    answerLabel: "Your reply to Dana",
     privateComments: "Private comments",
   },
   es: {
     helpBtn: "Ayúdame con este paso",
     course: "Escritura en el trabajo 101",
     heading: "Tarea de esta semana",
-    syllabus: "Lee el correo. Escribe 3–4 oraciones sobre cómo responderías en el trabajo. Entrega: viernes, 11:59 PM. No se acepta tarde.",
+    syllabus: "Lee el correo del cliente abajo. Escribe una respuesta corta, de 2 o 3 oraciones, como lo harías en el trabajo. Entrega: viernes, 11:59 PM. No se acepta tarde.",
     dueLabel: "Entrega",
     assignment: "¿Cómo responderías?",
-    prompt: "Un compañero te reenvió una queja de un cliente. Escribe una respuesta corta que de verdad enviarías.",
-    ackLabel: "Ya vi que se entrega el viernes a las 11:59 PM",
+    prompt: "Di que lo sientes, y di una cosa que vas a hacer para arreglarlo.",
     writeHere: "Escribe tu respuesta…",
     submit: "Entregar tarea",
-    needAck: "Marca la fecha primero. Está en el temario.",
-    empty: "Primero escribe una respuesta corta.",
-    weak: "Una respuesta real dice que los oíste y qué harás después.",
+    needAck: "Primero busca la fecha de entrega. Está debajo del título. Elígela en ¿Cuándo se entrega?",
+    empty: "Primero escribe una respuesta corta para Dana.",
+    weak: "Di que lo sientes, y di una cosa que vas a hacer. Por ejemplo: Te voy a preparar un latte nuevo.",
     sentKicker: "Tarea entregada",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -88,23 +95,28 @@ export const COURSEWORK_COPY: Record<Lang, {
     assigned: "Asignada",
     turnedIn: "Entregada",
     points: "100 puntos",
-    deadlineLabel: "Fecha límite de entrega",
-    chooseDeadline: "Elige una fecha",
-    answerLabel: "Tu respuesta",
+    deadlineLabel: "¿Cuándo se entrega?",
+    chooseDeadline: "Elige un día",
+    instructionsLabel: "Instrucciones",
+    emailLabel: "El correo del cliente",
+    emailFrom: "De: Dana Price",
+    emailSubject: "Asunto: Otra vez el pedido mal",
+    emailBody: "Pedí un latte grande esta mañana y me dieron un café negro pequeño. Es la segunda vez esta semana. Por favor, arréglenlo.",
+    answerLabel: "Tu respuesta para Dana",
     privateComments: "Comentarios privados",
   },
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "Thank you for telling me. I will look into this today and write you back.",
-    "I hear you. I will check with my manager and follow up this afternoon.",
-    "Gracias por avisar. Voy a revisar esto hoy y te escribo.",
+    "Hi Dana, I am sorry we got your order wrong.",
+    "Next time you come in, I will make you a large latte for free.",
+    "I will also talk to my manager so it does not happen again.",
   ],
   es: [
-    "Gracias por avisar. Voy a revisar esto hoy y te escribo.",
-    "Te escuché. Voy a hablar con mi gerente y te confirmo esta tarde.",
-    "Thank you for telling me. I will look into this today.",
+    "Hola Dana, siento mucho que nos equivocamos con tu pedido.",
+    "La próxima vez que vengas, te preparo un latte grande gratis.",
+    "También voy a hablar con mi gerente para que no vuelva a pasar.",
   ],
 };
 
@@ -113,10 +125,15 @@ export function describeSubmission(body: string, lang: Lang): SubmissionContent 
   return { lang, fields: [{ label: COURSEWORK_COPY[lang].assignment, value: body }] };
 }
 
+/**
+ * A real reply: a sentence or more that says sorry, thanks them, or says
+ * what happens next. Many words count, because learners say it many ways
+ * ("I will call you", "we can fix it", "te preparo otro").
+ */
 export function responseIsComplete(body: string): boolean {
   const t = body.trim();
-  if (t.length < 28) return false;
-  return /thank|gracias|sorry|siento|look|revis|follow|seguir|check|hablar|manager|gerente|today|hoy|afternoon|tarde/.test(
+  if (t.length < 20) return false;
+  return /thank|gracias|sorry|apolog|siento|disculp|perd[oó]n|look|revis|follow|seguir|check|hablar|talk|manager|gerente|today|hoy|afternoon|tarde|will|i'll|we'll|can |call|llam|fix|arregl|replace|reemplaz|refund|reembols|new |nuev|free|gratis|voy a|vamos a|puedo|prepar|make/.test(
     t.toLowerCase(),
   );
 }
@@ -126,31 +143,37 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "The due date is part of the assignment",
       s: [
-        "Read the syllabus before you write anything. The due date is the first thing to look for.",
-        "Only check the box after you have seen the date: Friday, 11:59 PM.",
-        "A complete reply is short: you understood the assignment, and here is your next step.",
+        "Before you write, find the due date. It is under the title of the assignment.",
+        "Then read the instructions and the customer's email.",
+        "A good reply is short: say sorry, and say one thing you will do.",
       ],
-      tip: "This lesson is about what goes wrong when you submit without checking the due date.",
+      tip: "Late work is not accepted in this class. Always look for the due date first.",
     },
   ],
   es: [
     {
       t: "La fecha de entrega es parte de la tarea",
       s: [
-        "Lee el temario antes de escribir nada. La fecha de entrega es lo primero que hay que buscar.",
-        "Marca la casilla solo después de haber visto la fecha: viernes, 11:59 PM.",
-        "Una respuesta completa es corta: entendiste la tarea, y este es tu siguiente paso.",
+        "Antes de escribir, busca la fecha de entrega. Está debajo del título de la tarea.",
+        "Después lee las instrucciones y el correo del cliente.",
+        "Una buena respuesta es corta: di que lo sientes, y di una cosa que vas a hacer.",
       ],
-      tip: "Esta lección trata de lo que sale mal cuando entregas sin revisar la fecha.",
+      tip: "En esta clase no se acepta tarea tarde. Siempre busca primero la fecha de entrega.",
     },
   ],
 };
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Read the syllabus due date.", es: "Lee la fecha del temario." },
-  { en: "Check that you saw Friday 11:59 PM.", es: "Marca que viste el viernes a las 11:59 PM." },
-  { en: "Reply that you heard the concern and will check on it, then submit.", es: "Responde que escuchaste la preocupación y que la revisarás; luego entrega." },
+  {
+    en: "Find the due date under the title. Choose it in When is it due?",
+    es: "Busca la fecha de entrega debajo del título. Elígela en ¿Cuándo se entrega?",
+  },
+  {
+    en: "Read Dana's email. Write a short reply: say sorry, and say what you will do.",
+    es: "Lee el correo de Dana. Escribe una respuesta corta: di que lo sientes, y di qué vas a hacer.",
+  },
+  { en: "Click Submit assignment.", es: "Haz clic en Entregar tarea." },
 ];
 
 export const DEADLINE_OPTIONS = [

@@ -1,6 +1,7 @@
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
 import type { LessonMeta } from "@/lib/lessons/types";
+import { LESSON_PASSWORD } from "@/lib/tasks/account-recovery/content";
 
 /**
  * The task registry — one entry per task, one place to edit.
@@ -79,6 +80,20 @@ export interface TaskDescriptor {
   lesson?: LessonMeta;
 }
 
+/**
+ * What a job-search lesson learner has done, so "your experience" means
+ * something on screen. The job-posting answer key (`REQUIREMENTS[].met`)
+ * matches these lines one for one.
+ */
+const JOB_SEEKER_FACTS: LessonMeta["reference"] = [
+  { label: { en: "Past jobs", es: "Empleos" }, value: { en: "Team Member, then Shift Lead", es: "Miembro del equipo, luego líder" } },
+  { label: { en: "Talked with", es: "Hablaste con" }, value: { en: "Coworkers and managers", es: "Compañeros y gerentes" } },
+  { label: { en: "Schedules", es: "Horarios" }, value: { en: "Fixed a schedule problem", es: "Arreglaste un problema del horario" } },
+  { label: { en: "Computer", es: "Computadora" }, value: { en: "Email, calendars, spreadsheets", es: "Correo, calendarios, hojas de cálculo" } },
+  { label: { en: "Numbers", es: "Números" }, value: { en: "Sent a spreadsheet total", es: "Enviaste el total de una hoja" } },
+  { label: { en: "School", es: "Estudios" }, value: { en: "High school. No college degree.", es: "Secundaria. Sin título universitario." } },
+];
+
 const browser = (ctaLabel: string, tab?: string, section?: PortalSection): TaskLocation => ({
   appKey: "browser",
   ...(tab ? { tab } : {}),
@@ -154,7 +169,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes, 8:14 AM. Maria te da la bienvenida.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Maria said welcome. Write her back.", es: "Maria te dio la bienvenida. Contéstale." },
+    jobCardLine: { en: "You have 3 new emails. Answer each one.", es: "Tienes 3 correos nuevos. Contesta cada uno." },
     jobCardDoneLine: { en: "Three replies sent. Day one is complete.", es: "Tres respuestas enviadas. Completaste el primer día." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
@@ -164,6 +179,17 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["email"],
       minutes: 15,
+      scene: {
+        you: { en: "Today is your first day at Harborside Cafe.", es: "Hoy es tu primer día en Harborside Cafe." },
+        people: [
+          { name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } },
+          { name: "Darnell Washington", role: { en: "A coworker. He works mornings too.", es: "Un compañero. También trabaja en las mañanas." } },
+        ],
+        need: {
+          en: "You have 3 short emails, 2 from Maria and 1 from Darnell. Write a short answer to each one.",
+          es: "Tienes 3 correos cortos, 2 de Maria y 1 de Darnell. Escribe una respuesta corta a cada uno.",
+        },
+      },
       guide: {
         skills: [
           { en: "Open the right email in a full inbox", es: "Abrir el correo correcto en una bandeja llena" },
@@ -176,8 +202,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Write the parts of a reply on the board: hello, your message, your name.", es: "Escribe en la pizarra las partes de una respuesta: saludo, tu mensaje, tu nombre." },
         ],
         stickingPoints: [
-          { en: "Some learners open an email from a vendor first. Ask: who sent this email? Is it Maria?", es: "Algunos abren primero el correo de un proveedor. Pregunta: ¿quién envió este correo? ¿Es Maria?" },
-          { en: "The second email asks them to confirm 10 AM. A reply with no or can't does not pass. Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta con no o no puedo no se acepta. Pregunta: ¿qué quiere saber Maria?" },
+          { en: "Some learners open the wrong email first. Ask: who sent this email? What is the subject?", es: "Algunos abren primero el correo equivocado. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
+          { en: "The second email asks them to confirm 10 AM. A reply that says they can't come does not pass (\"No problem\" is fine). Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta que dice que no pueden venir no se acepta (\"Sin problema\" sí). Pregunta: ¿qué quiere saber Maria?" },
           { en: "The third email is from Darnell. The reply must say the bag goes on the shelf under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
         ],
         followUp: [
@@ -215,6 +241,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["email", "files"],
       minutes: 10,
+      scene: {
+        you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
+        people: [{ name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } }],
+        need: {
+          en: "Maria sent you an email. She needs a report. The report is a file on your computer. You will send it to her in an email.",
+          es: "Maria te envió un correo. Necesita un informe. El informe es un archivo en tu computadora. Se lo vas a enviar en un correo.",
+        },
+      },
       guide: {
         skills: [
           { en: "Read an email to find what someone needs and when", es: "Leer un correo para saber qué necesita alguien y para cuándo" },
@@ -386,6 +420,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Wednesday morning. You're signed out.",
       es: "Miércoles por la mañana. Cerraste sesión.",
     },
+    jobCardLine: {
+      en: "Sign back in. Use the code from your phone.",
+      es: "Vuelve a entrar. Usa el código de tu teléfono.",
+    },
     location: browser("Open Sign In", "account-recovery"),
     lesson: {
       title: { en: "Sign in with a text code", es: "Iniciar sesión con un código de texto" },
@@ -395,6 +433,18 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["accounts"],
       minutes: 5,
+      scene: {
+        you: { en: "You work at Harborside Cafe. Your work account signed you out.", es: "Trabajas en Harborside Cafe. Tu cuenta del trabajo cerró tu sesión." },
+        people: [],
+        need: {
+          en: "Sign in again with your password. Then the account sends a code to your phone in a text message. Type that code to finish.",
+          es: "Vuelve a entrar con tu contraseña. Después, la cuenta te envía un código al teléfono en un mensaje de texto. Escribe ese código para terminar.",
+        },
+      },
+      reference: [
+        { label: { en: "Email", es: "Correo" }, value: "you@harborsidecafe.com" },
+        { label: { en: "Password", es: "Contraseña" }, value: LESSON_PASSWORD },
+      ],
       guide: {
         skills: [
           { en: "Sign in with a username and password", es: "Iniciar sesión con usuario y contraseña" },
@@ -409,6 +459,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         stickingPoints: [
           { en: "Some learners pick the ad or the coworker's text. Ask: who sent this text?", es: "Algunos eligen el anuncio o el mensaje del compañero. Pregunta: ¿quién envió este mensaje?" },
           { en: "Some learners type the whole message. The box only takes the 6 numbers.", es: "Algunos escriben todo el mensaje. La casilla solo acepta los 6 números." },
+          { en: "The password is on the info card, and capital letters count. Point to the big H.", es: "La contraseña está en la tarjeta de información, y las mayúsculas cuentan. Señala la H mayúscula." },
         ],
         followUp: [
           { en: "Where do you get codes like this in real life? Your bank, your email, your school.", es: "¿Dónde recibes códigos así en la vida real? En el banco, el correo, la escuela." },
@@ -457,8 +508,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Handle a meeting invite", es: "Maneja una invitación a reunión" },
     dispatch: {
-      en: "The meeting is at the same time as your shift. Pick a time that works.",
-      es: "La reunión es a la misma hora que tu turno. Elige una hora que funcione.",
+      en: "Renata set a meeting on your day off. Ask her for a different time.",
+      es: "Renata puso una reunión en tu día libre. Pídele otro horario.",
+    },
+    jobCardLine: {
+      en: "The meeting is on your day off. Ask Renata for a different time.",
+      es: "La reunión es en tu día libre. Pídele a Renata otro horario.",
     },
     skill: { en: "Handle a meeting invite the right way", es: "responder bien a una invitación de reunión" },
     bookmarkLabel: "Calendar",
@@ -476,6 +531,18 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["scheduling"],
       minutes: 10,
+      scene: {
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        need: {
+          en: "Renata invited you to a meeting on Wednesday, August 26. You do not work that day. Ask her for a different time.",
+          es: "Renata te invitó a una reunión el miércoles 26 de agosto. Ese día no trabajas. Pídele otro horario.",
+        },
+      },
+      reference: [
+        { label: { en: "Meeting", es: "Reunión" }, value: { en: "Wed, Aug 26, 9:00 AM", es: "Miér., 26 de agosto, 9:00 AM" } },
+        { label: { en: "Your next shift", es: "Tu próximo turno" }, value: { en: "Thu, Aug 27, 10 AM to 6 PM", es: "Jue., 27 de agosto, 10 AM a 6 PM" } },
+      ],
       guide: {
         skills: [
           { en: "Open a meeting invite on a calendar", es: "Abrir una invitación a una reunión en un calendario" },
@@ -509,8 +576,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Share a file the right way", es: "Comparte un archivo de la forma correcta" },
     dispatch: {
-      en: "They need the file. Share the file, not the whole folder.",
-      es: "Necesitan el archivo. Comparte el archivo, no toda la carpeta.",
+      en: "A new coworker starts today. Rename this week's schedule, then share it with them.",
+      es: "Hoy empieza un compañero nuevo. Cambia el nombre del horario de esta semana y compártelo con esa persona.",
+    },
+    jobCardLine: {
+      en: "Rename this week's schedule. Then share it with the new coworker, view only.",
+      es: "Cambia el nombre del horario de esta semana. Después compártelo con el compañero nuevo, solo para ver.",
     },
     skill: { en: "Share a file with the right access", es: "compartir un archivo con el acceso correcto" },
     bookmarkLabel: "Drive",
@@ -528,6 +599,21 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["files"],
       minutes: 10,
+      scene: {
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        people: [
+          { name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } },
+          { name: "Jordan Kim", role: { en: "New coworker. Starts today.", es: "Compañero nuevo. Empieza hoy." } },
+        ],
+        need: {
+          en: "Jordan needs this week's work schedule. It is a file in the cafe's shared Drive. Renata wants the file to have a clear name. Jordan can look at it but not change it.",
+          es: "Jordan necesita el horario de trabajo de esta semana. Es un archivo en el Drive compartido del café. Renata quiere que el archivo tenga un nombre claro. Jordan lo puede ver, pero no cambiar.",
+        },
+      },
+      reference: [
+        { label: { en: "This week", es: "Esta semana" }, value: { en: "Week of Aug 24", es: "Semana del 24 de agosto" } },
+        { label: { en: "New file name", es: "Nombre nuevo" }, value: "schedule-week-of-aug-24" },
+      ],
       guide: {
         skills: [
           { en: "Find the right file by its date", es: "Encontrar el archivo correcto por su fecha" },
@@ -585,8 +671,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Enter data and share a total", es: "Escribe los números y envía el total" },
     dispatch: {
-      en: "This week's numbers. Total them and send it up.",
-      es: "Los números de esta semana. Súmalos y envía el total.",
+      en: "Type this week's tips. Then send Renata the total.",
+      es: "Escribe las propinas de esta semana. Después envíale el total a Renata.",
+    },
+    jobCardLine: {
+      en: "Type this week's tips. Then send Renata the total.",
+      es: "Escribe las propinas de esta semana. Después envíale el total a Renata.",
     },
     skill: { en: "Read and trust a spreadsheet total", es: "leer y confiar en el total de una hoja de cálculo" },
     bookmarkLabel: "Sheets",
@@ -604,6 +694,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["spreadsheets", "email"],
       minutes: 10,
+      scene: {
+        you: { en: "You are a server at Harborside Cafe.", es: "Atiendes mesas en Harborside Cafe." },
+        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        need: {
+          en: "Every day, you write your tips on a small paper slip. Renata needs this week's tips in a spreadsheet, and the total in an email. She adds it to your pay.",
+          es: "Cada día anotas tus propinas en un papelito. Renata necesita las propinas de esta semana en una hoja de cálculo, y el total en un correo. Ella lo suma a tu pago.",
+        },
+      },
       guide: {
         skills: [
           { en: "Open the right spreadsheet", es: "Abrir la hoja de cálculo correcta" },
@@ -703,8 +801,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Fix the hours formula", es: "Arregla la fórmula de horas" },
     dispatch: {
-      en: "The hours total looks fine. The formula does not.",
-      es: "El total de horas se ve bien. La fórmula no.",
+      en: "The hours formula leaves someone out. Fix it and send Renata the total.",
+      es: "La fórmula de horas deja fuera a alguien. Arréglala y envíale el total a Renata.",
+    },
+    jobCardLine: {
+      en: "Fix the hours formula so it counts everyone. Then email Renata.",
+      es: "Arregla la fórmula de horas para que cuente a todos. Después escríbele a Renata.",
     },
     skill: { en: "Fix a formula range", es: "corregir el rango de una fórmula" },
     bookmarkLabel: "Sheets",
@@ -722,6 +824,17 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["spreadsheets"],
       minutes: 12,
+      scene: {
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        people: [
+          { name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } },
+          { name: "Casey Brooks", role: { en: "Works on your crew", es: "Trabaja en tu equipo" } },
+        ],
+        need: {
+          en: "A spreadsheet adds up the hours your crew worked this week. Renata uses the total for pay. The formula forgot one person.",
+          es: "Una hoja de cálculo suma las horas que trabajó tu equipo esta semana. Renata usa el total para los pagos. A la fórmula le falta una persona.",
+        },
+      },
       guide: {
         skills: [
           { en: "Open the right spreadsheet from a list", es: "Abrir la hoja de cálculo correcta de una lista" },
@@ -735,7 +848,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         stickingPoints: [
           { en: "Many learners trust the total and do not open the formula. Ask: which rows does the formula add? Is every name in those rows?", es: "Muchos confían en el total y no abren la fórmula. Pregunta: ¿qué filas suma la fórmula? ¿Están todos los nombres en esas filas?" },
-          { en: "Some learners fix SUM but not AVERAGE. Both need H2:H6. Ask: did you check the other formula too?", es: "Algunos corrigen SUM pero no AVERAGE. Las dos necesitan H2:H6. Pregunta: ¿revisaste también la otra fórmula?" },
+          { en: "Some learners type SUM(H2:H6) with no equals sign, or change the wrong number. Ask: which row is Casey in? Which number in the formula is the last row?", es: "Algunos escriben SUM(H2:H6) sin el signo igual, o cambian el número equivocado. Pregunta: ¿en qué fila está Casey? ¿Qué número de la fórmula es la última fila?" },
           { en: "The email must give the new total and say a name was missing. Ask: what was wrong, and what is the right number?", es: "El correo debe dar el total nuevo y decir que faltaba un nombre. Pregunta: ¿qué estaba mal y cuál es el número correcto?" },
         ],
         followUp: [
@@ -830,6 +943,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["spreadsheets"],
       minutes: 10,
+      scene: {
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        need: {
+          en: "The cafe plans how much money to spend each week. That plan is the budget. One kind of cost went over the plan. Renata wants to know which one, and by how much.",
+          es: "El café planea cuánto dinero gastar cada semana. Ese plan es el presupuesto. Un tipo de gasto se pasó del plan. Renata quiere saber cuál, y por cuánto.",
+        },
+      },
       guide: {
         skills: [
           { en: "Read the budget and actual columns", es: "Leer las columnas de presupuesto y real" },
@@ -900,8 +1021,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Book the visit without a clash", es: "Agenda la cita sin un choque" },
     dispatch: {
-      en: "A patient asked for a time that is already taken. Offer the open slot.",
-      es: "Un paciente pidió una hora que ya está ocupada. Ofrece el hueco libre.",
+      en: "A patient asked for a time that is already taken. Offer her a free time.",
+      es: "Una paciente pidió una hora que ya está ocupada. Ofrécele una hora libre.",
     },
     skill: { en: "Book an appointment without double-booking", es: "agendar una cita sin encimarla con otra" },
     bookmarkLabel: "Front Desk",
@@ -911,7 +1032,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. Ya está la lista de la mañana.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "Spot the clash. Offer the open slot.", es: "Mira el choque. Ofrece el hueco." },
+    jobCardLine: { en: "Maya's time is taken. Offer her a free time.", es: "La hora de Maya está ocupada. Ofrécele una hora libre." },
     lesson: {
       title: { en: "Book an appointment at an open time", es: "Dar una cita en un horario libre" },
       summary: {
@@ -920,6 +1041,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["scheduling", "workplace-systems"],
       minutes: 8,
+      scene: {
+        you: { en: "You work at the front desk of Harborside Health, a clinic.", es: "Trabajas en la recepción de Harborside Health, una clínica." },
+        people: [{ name: "Maya Ansari", role: { en: "A patient. She called the clinic.", es: "Una paciente. Llamó a la clínica." } }],
+        need: {
+          en: "Maya wants an appointment today at 10:00. Someone already has 10:00. Find a time that is free and tell her.",
+          es: "Maya quiere una cita hoy a las 10:00. Otra persona ya tiene las 10:00. Busca una hora libre y díselo.",
+        },
+      },
       guide: {
         skills: [
           { en: "Read an appointment schedule", es: "Leer una agenda de citas" },
@@ -991,8 +1120,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Submit the assignment on time", es: "Entrega la tarea a tiempo" },
     dispatch: {
-      en: "The syllabus has a due date. Read it. Write a short answer. Submit.",
-      es: "El temario tiene una fecha. Léelo. Escribe una respuesta corta. Entrégala.",
+      en: "Find the due date. Write a short answer. Then submit.",
+      es: "Busca la fecha de entrega. Escribe una respuesta corta. Después entrégala.",
     },
     skill: { en: "Read a syllabus and submit on time", es: "leer un temario y entregar a tiempo" },
     bookmarkLabel: "Coursework",
@@ -1002,18 +1131,29 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Jueves. Algo se entrega esta noche.",
     },
     location: browser("Open Coursework from the bookmarks"),
-    jobCardLine: { en: "Read the due date. Then submit.", es: "Lee la fecha. Luego entrega." },
+    jobCardLine: { en: "Find the due date. Answer Dana. Then submit.", es: "Busca la fecha de entrega. Contesta a Dana. Después entrega." },
     lesson: {
       title: { en: "Find a due date and submit an assignment", es: "Encontrar la fecha de entrega y entregar una tarea" },
       summary: {
-        en: "Read a class syllabus, choose the right due date, and write a short reply to a customer complaint.",
-        es: "Lee el temario de una clase, elige la fecha de entrega correcta y escribe una respuesta corta a la queja de un cliente.",
+        en: "Read a class assignment, choose the right due date, and write a short reply to a customer's email.",
+        es: "Lee una tarea de clase, elige la fecha de entrega correcta y escribe una respuesta corta al correo de un cliente.",
       },
       skills: ["workplace-systems"],
       minutes: 8,
+      scene: {
+        you: { en: "You take a writing class at Bunker Hill Community College.", es: "Tomas una clase de escritura en Bunker Hill Community College." },
+        people: [
+          { name: "Ms. Rivera", role: { en: "Your teacher", es: "Tu maestra" } },
+          { name: "Dana Price", role: { en: "A customer in your homework. Her order was wrong.", es: "Una clienta en tu tarea. Su pedido llegó mal." } },
+        ],
+        need: {
+          en: "Your homework is on the class website. Find the day it is due. Then write a short answer to a customer's email and turn it in.",
+          es: "Tu tarea está en la página de la clase. Busca el día de entrega. Después escribe una respuesta corta al correo de una clienta y entrégala.",
+        },
+      },
       guide: {
         skills: [
-          { en: "Find the due date on a syllabus", es: "Encontrar la fecha de entrega en un temario" },
+          { en: "Find the due date on an assignment", es: "Encontrar la fecha de entrega en una tarea" },
           { en: "Choose the right date from a list", es: "Elegir la fecha correcta de una lista" },
           { en: "Write a short reply that says what you will do next", es: "Escribir una respuesta corta que dice qué vas a hacer" },
           { en: "Submit an assignment online", es: "Entregar una tarea en línea" },
@@ -1023,16 +1163,16 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that a due date has a day and a time, and late work is not accepted.", es: "Explica que la fecha de entrega tiene un día y una hora, y que no se acepta trabajo tarde." },
         ],
         stickingPoints: [
-          { en: "Some learners pick Thursday or Saturday from the list. Ask: what day does the syllabus say?", es: "Algunos eligen jueves o sábado en la lista. Pregunta: ¿qué día dice el temario?" },
-          { en: "Some learners write only OK or Thank you. The reply must say what they will do next. Ask: what will you do about the complaint?", es: "Algunos escriben solo OK o Gracias. La respuesta debe decir qué van a hacer. Pregunta: ¿qué vas a hacer con la queja?" },
+          { en: "Some learners pick Thursday or Saturday from the list. Ask: what day does it say under the title?", es: "Algunos eligen jueves o sábado en la lista. Pregunta: ¿qué día dice debajo del título?" },
+          { en: "Some learners write only OK or Thank you. The reply must say sorry and what they will do. Ask: what will you do about Dana's order?", es: "Algunos escriben solo OK o Gracias. La respuesta debe decir que lo sienten y qué van a hacer. Pregunta: ¿qué vas a hacer con el pedido de Dana?" },
         ],
         followUp: [
           { en: "Where do you see due dates in your life? School, bills, forms for work.", es: "¿Dónde ves fechas de entrega en tu vida? La escuela, las cuentas, los formularios del trabajo." },
           { en: "What do you do when you know you will be late with something?", es: "¿Qué haces cuando sabes que vas a entregar algo tarde?" },
         ],
         peerHelp: {
-          en: "A partner can read the syllabus out loud, but the learner chooses the date and writes the reply.",
-          es: "Un compañero puede leer el temario en voz alta, pero el estudiante elige la fecha y escribe la respuesta.",
+          en: "A partner can read the assignment out loud, but the learner chooses the date and writes the reply.",
+          es: "Un compañero puede leer la tarea en voz alta, pero el estudiante elige la fecha y escribe la respuesta.",
         },
       },
     },
@@ -1123,6 +1263,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["job-search"],
       minutes: 10,
+      scene: {
+        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
+        people: [{ name: "Anita Raman", role: { en: "Sent you the job post", es: "Te envió el anuncio" } }],
+        need: {
+          en: "Read the job post. Compare what the job asks for with your experience on your info card.",
+          es: "Lee el anuncio. Compara lo que pide el trabajo con tu experiencia en tu tarjeta de información.",
+        },
+      },
+      reference: JOB_SEEKER_FACTS,
       guide: {
         skills: [
           { en: "Read the parts of a job posting: the role, the pay, the requirements", es: "Leer las partes de un anuncio de empleo: el puesto, el pago, los requisitos" },
@@ -1177,6 +1326,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["job-search", "forms"],
       minutes: 10,
+      scene: {
+        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
+        people: [],
+        need: {
+          en: "You found a job you like. Fill out the online application.",
+          es: "Encontraste un trabajo que te gusta. Llena la solicitud en línea.",
+        },
+      },
+      reference: JOB_SEEKER_FACTS,
       guide: {
         skills: [
           { en: "Read each section of an application", es: "Leer cada sección de una solicitud" },
@@ -1220,7 +1378,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. La solicitud pidió un currículum.",
     },
     location: browser("Open Résumé from the bookmarks"),
-    jobCardLine: { en: "Summary, two roles, your skills.", es: "Resumen, dos puestos, tus habilidades." },
+    jobCardLine: {
+      en: "Write a summary, one thing you did well at each job, and your skills.",
+      es: "Escribe un resumen, una cosa que hiciste bien en cada empleo y tus habilidades.",
+    },
     jobCardDoneLine: { en: "Résumé saved.", es: "Currículum guardado." },
     lesson: {
       title: { en: "Write a one-page résumé", es: "Escribir un currículum de una página" },
@@ -1230,6 +1391,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["job-search", "documents"],
       minutes: 15,
+      scene: {
+        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
+        people: [],
+        need: {
+          en: "Make a short résumé. A résumé is one page about your work: your jobs, what you did well, and your skills.",
+          es: "Haz un currículum corto. Un currículum es una página sobre tu trabajo: tus empleos, lo que hiciste bien y tus habilidades.",
+        },
+      },
+      reference: JOB_SEEKER_FACTS,
       guide: {
         skills: [
           { en: "Know the parts of a simple résumé", es: "Conocer las partes de un currículum sencillo" },
@@ -1303,8 +1473,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Fill out the W-4", es: "Llena el W-4" },
     dispatch: {
-      en: "First new-hire form: the W-4. It sets your tax withholding. Pick a status, sign, date.",
-      es: "Primer formulario de nuevo empleado: el W-4. Fija tu retención de impuestos. Elige un estado, firma, fecha.",
+      en: "Practice the W-4, a new-hire tax form, for a pretend worker named Robin Avery.",
+      es: "Practica el W-4, un formulario de impuestos para empleados nuevos, para un trabajador inventado llamado Robin Avery.",
     },
     skill: { en: "Fill out a W-4", es: "llenar un formulario W-4" },
     bookmarkLabel: "Onboarding",
@@ -1314,7 +1484,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. RR. HH. envió los formularios.",
     },
     location: browser("Open Onboarding from the bookmarks"),
-    jobCardLine: { en: "W-4: status, sign, date.", es: "W-4: estado, firma, fecha." },
+    jobCardLine: {
+      en: "Fill out Robin's W-4 with Robin's facts. Then sign and date it.",
+      es: "Llena el W-4 de Robin con los datos de Robin. Después fírmalo y ponle la fecha.",
+    },
     jobCardDoneLine: { en: "W-4 submitted.", es: "W-4 enviado." },
     lesson: {
       title: { en: "Fill out a W-4 tax form", es: "Llenar el formulario de impuestos W-4" },
@@ -1324,6 +1497,23 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["forms"],
       minutes: 10,
+      scene: {
+        you: {
+          en: "You are practicing a new-hire tax form. You fill it out for a pretend person, not for you.",
+          es: "Estás practicando un formulario de impuestos para empleados nuevos. Lo llenas para una persona inventada, no para ti.",
+        },
+        people: [{ name: "Robin Avery", role: { en: "A pretend new worker", es: "Un empleado nuevo inventado" } }],
+        need: {
+          en: "Fill out Robin's W-4. Copy Robin's facts from your info card. Then sign with Robin's name and write the date.",
+          es: "Llena el W-4 de Robin. Copia los datos de Robin de tu tarjeta de información. Después firma con el nombre de Robin y escribe la fecha.",
+        },
+      },
+      reference: [
+        { label: { en: "Name", es: "Nombre" }, value: "Robin Avery" },
+        { label: { en: "Filing status", es: "Estado civil" }, value: { en: "Single", es: "Soltero/a" } },
+        { label: { en: "Dependents (children)", es: "Dependientes (hijos)" }, value: "0" },
+        { label: { en: "Today's date", es: "Fecha de hoy" }, value: "10/01/2026" },
+      ],
       guide: {
         skills: [
           { en: "Know what a W-4 is for", es: "Saber para qué sirve un W-4" },

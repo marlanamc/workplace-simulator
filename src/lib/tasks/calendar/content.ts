@@ -4,15 +4,15 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Next week",
-    headline: "Renata put a meeting on a day you work.",
-    body: "The Weekly Lead Huddle is on the calendar. Check the day against your shifts before you say yes.",
+    headline: "Renata put a meeting on your day off.",
+    body: "The Weekly Lead Huddle is on Wednesday, August 26. You do not work that day. Ask her for a different time.",
     cta: "Open Calendar",
   },
   es: {
     emoji: "📅",
     kicker: "La semana que viene",
-    headline: "Renata puso una reunión un día que trabajas.",
-    body: "La reunión semanal de líderes está en el calendario. Revisa el día contra tus turnos antes de decir que sí.",
+    headline: "Renata puso una reunión en tu día libre.",
+    body: "La reunión semanal de líderes es el miércoles 26 de agosto. Ese día no trabajas. Pídele otro horario.",
     cta: "Abrir Calendar",
   },
 };
@@ -181,14 +181,14 @@ export const WRONG_ACCEPT_HINT: Record<Lang, string> = {
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "Hi Renata, I'm not scheduled to work Wednesday.",
-    "Could we move the huddle to a day I'm already in?",
-    "I'm happy to call in instead, if that works better.",
+    "Could we move the meeting to a day I work?",
+    "I can also join by phone, if that is better.",
     "Let me know what works. Thank you.",
   ],
   es: [
     "Hola Renata, no estoy programado para trabajar el miércoles.",
-    "¿Podríamos mover la reunión a un día que ya trabaje?",
-    "Con gusto puedo llamar en vez de eso, si funciona mejor.",
+    "¿Podemos mover la reunión a un día que trabajo?",
+    "También me puedo unir por teléfono, si es mejor.",
     "Avísame qué funciona. Gracias.",
   ],
 };
@@ -198,40 +198,40 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Reading a meeting invite",
       s: [
-        "Look at the day and time, not just who it's from.",
-        "Check that day against your actual schedule.",
-        "A meeting on a day you're not working is worth flagging, not just accepting.",
+        "Look at the day and time of the meeting, not only who sent it.",
+        "Look at your shifts. Green shows the days you work.",
+        "If the meeting is on a day you do not work, do not just say yes. Ask for a different time.",
       ],
-      tip: "This is the same move as checking a shift for a conflict. Same skill, new tool.",
+      tip: "You checked your schedule for a shift before. This is the same skill in a new app.",
     },
     {
       t: "Proposing a different time",
       s: [
-        "Say plainly that the time doesn't work and why.",
-        "Suggest what would work instead, if you can.",
+        "Say that the time does not work, and why.",
+        "Say a day and time that works for you.",
         "Keep it short. One or two sentences is enough.",
       ],
-      tip: "You don't need to fix it yourself. Saying it clearly is enough.",
+      tip: "You do not need to fix the whole schedule. A clear message is enough.",
     },
   ],
   es: [
     {
       t: "Leer una invitación a una reunión",
       s: [
-        "Mira el día y la hora, no solo quién la envía.",
-        "Compara ese día con tu horario real.",
-        "Una reunión en un día que no trabajas vale la pena señalarla, no solo aceptarla.",
+        "Mira el día y la hora de la reunión, no solo quién la envió.",
+        "Mira tus turnos. El verde muestra los días que trabajas.",
+        "Si la reunión es un día que no trabajas, no digas que sí sin más. Pide otro horario.",
       ],
-      tip: "Es el mismo movimiento que revisar un turno por un conflicto. Misma habilidad, nueva herramienta.",
+      tip: "Ya revisaste tu horario para un turno antes. Es la misma habilidad en otra aplicación.",
     },
     {
       t: "Proponer otro horario",
       s: [
-        "Di claramente que ese horario no funciona y por qué.",
-        "Sugiere qué funcionaría en su lugar, si puedes.",
-        "Manténlo corto. Una o dos oraciones es suficiente.",
+        "Di que ese horario no te funciona, y por qué.",
+        "Di un día y una hora que sí te funcionen.",
+        "Que sea corto. Una o dos oraciones son suficientes.",
       ],
-      tip: "No tienes que resolverlo tú mismo. Señalarlo claramente es suficiente.",
+      tip: "No tienes que arreglar todo el horario. Un mensaje claro es suficiente.",
     },
   ],
 };
@@ -240,15 +240,34 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Open the Weekly Lead Huddle on Aug 26. Check it against your shifts.",
-    es: "Abre la reunión del 26 de agosto. Compárala con tus turnos.",
+    en: "Find the meeting on Wednesday, August 26. Click it.",
+    es: "Busca la reunión del miércoles 26 de agosto. Haz clic en ella.",
   },
   {
-    en: "That day is yours. Reply and suggest a time that works.",
-    es: "Ese día es tuyo. Responde y propón una hora que sí funcione.",
+    en: "You do not work on August 26. Click Propose a new time.",
+    es: "No trabajas el 26 de agosto. Haz clic en Proponer otro horario.",
   },
   {
-    en: "Write your message, then send it.",
-    es: "Escribe tu mensaje y envíalo.",
+    en: "Write Renata a new day and time. Then click Send.",
+    es: "Escríbele a Renata otro día y hora. Después haz clic en Enviar.",
   },
 ];
+
+/** A shift's start and end, so a chip on the calendar says "Shift 10–6", not just "10:00 AM". */
+export const SHIFT_SPAN: Record<string, string> = {
+  "7:00 AM": "7–3",
+  "10:00 AM": "10–6",
+  "8:00 AM": "8–4",
+};
+
+export const SHIFT_WORD: Localized = { en: "Shift", es: "Turno" };
+
+/** A message that asks for another time has to name one: a day, a time, or a part of the day. */
+export function proposesATime(body: string): boolean {
+  return /\d|monday|tuesday|wednesday|thursday|friday|saturday|sunday|lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|morning|afternoon|mañana|tarde/i.test(body);
+}
+
+export const NEEDS_TIME_HINT: Localized = {
+  en: "Say a new day or time for the meeting. You can click Thu 10:00 AM or Thu 2:00 PM.",
+  es: "Di otro día u hora para la reunión. Puedes hacer clic en Jue 10:00 AM o Jue 2:00 PM.",
+};

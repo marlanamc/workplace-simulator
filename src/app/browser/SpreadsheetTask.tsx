@@ -6,7 +6,8 @@ import { CAST } from "@/lib/cast";
 import {
   TIP_ROWS,
   SPREADSHEET_COPY,
-  WRONG_ENTRY_HINT,
+  wrongEntryHint,
+  entryMatches,
   STARTERS,
   LESSONS,
   RIGHT_NOW_STEPS,
@@ -23,6 +24,7 @@ import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
+import { parseMoney } from "@/lib/text-facts";
 
 type View = "home" | "sheet" | "compose" | "done";
 type CellCol = "A" | "B" | "C" | "D" | "E";
@@ -49,6 +51,9 @@ export default function SpreadsheetTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("spreadsheet") ? "done" : "home");
   const [entries, setEntries] = useState<Record<string, string>>({});
+  // Boxes the learner has left. A wrong amount is marked only then, not while
+  // they are still typing it.
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "B" });
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
@@ -60,9 +65,12 @@ export default function SpreadsheetTask() {
   // The sheet's live total - it recalculates every time a cell changes,
   // same as a real spreadsheet formula would.
   const liveSheetTotal = TIP_ROWS.reduce((sum, r) => {
-    const typed = parseFloat(entries[r.key] ?? "");
-    return sum + (Number.isFinite(typed) ? typed : 0);
+    return sum + (parseMoney(entries[r.key] ?? "") ?? 0);
   }, 0);
+  const allMatch = TIP_ROWS.every((r) => entryMatches(r, entries[r.key] ?? ""));
+  const firstToFix = TIP_ROWS.find((r) => !entryMatches(r, entries[r.key] ?? ""));
+  const stepIndex = view === "home" ? 0 : view === "sheet" ? (allMatch ? 2 : 1) : 3;
+  const showMeIds = ["open-file", "tip-cell", "email-total", "compose-body"];
 
   const setEntry = (key: string, value: string) => {
     setEntries((prev) => ({ ...prev, [key]: value }));
@@ -72,12 +80,8 @@ export default function SpreadsheetTask() {
     if (TIP_ROWS.some((r) => !entries[r.key]?.trim())) {
       return say(c.fillAllFirst);
     }
-    const allMatch = TIP_ROWS.every((r) => {
-      const typed = parseFloat(entries[r.key] ?? "");
-      return Math.abs(typed - r.given) < 0.005;
-    });
-    if (!allMatch) {
-      return say(WRONG_ENTRY_HINT[lang]);
+    if (firstToFix) {
+      return say(wrongEntryHint(firstToFix, lang));
     }
     setView("compose");
   };
@@ -109,6 +113,7 @@ export default function SpreadsheetTask() {
   const restart = () => {
     setView("home");
     setEntries({});
+    setTouched({});
     setBody("");
   };
 
@@ -153,12 +158,12 @@ export default function SpreadsheetTask() {
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS.spreadsheet}
-          stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
+          stepIndex={stepIndex}
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
-          showMeActive={showMe.targetId === "open-file"}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -353,16 +358,30 @@ export default function SpreadsheetTask() {
                           </button>
                         );
                       }
+                      const typed = tipRow ? entries[tipRow.key] ?? "" : "";
+                      const right = tipRow ? entryMatches(tipRow, typed) : false;
+                      const wrong = Boolean(tipRow && touched[tipRow.key] && typed.trim() && !right);
                       return (
                         <input
                           key={col}
-                          value={tipRow ? entries[tipRow.key] ?? "" : ""}
+                          value={typed}
+                          aria-label={tipRow?.day}
+                          aria-invalid={wrong || undefined}
+                          data-showme={tipRow && tipRow.key === firstToFix?.key ? "tip-cell" : undefined}
                           onFocus={() => setSelected({ row, col })}
+                          onBlur={() => {
+                            if (!tipRow) return;
+                            setTouched((prev) => ({ ...prev, [tipRow.key]: true }));
+                            if (typed.trim() && !right) say(wrongEntryHint(tipRow, lang));
+                          }}
                           onChange={(e) => tipRow && setEntry(tipRow.key, e.target.value)}
                           placeholder="0.00"
                           inputMode="decimal"
                           className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-[13px] outline-none"
-                          style={cellStyle}
+                          style={{
+                            ...cellStyle,
+                            background: wrong ? "#fce8e6" : right ? "#e6f4ea" : cellStyle.background,
+                          }}
                         />
                       );
                     }
@@ -382,6 +401,7 @@ export default function SpreadsheetTask() {
 
           <button
             onClick={tryEmailTotal}
+            data-showme="email-total"
             className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
           >
             {c.emailTotal}
@@ -391,7 +411,8 @@ export default function SpreadsheetTask() {
       )}
 
       {view === "compose" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-6">
+        // Docked right with a light scrim, so the sheet's total stays readable while writing.
+        <div className="absolute inset-0 flex items-center justify-end bg-black/15 p-6">
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
@@ -402,6 +423,7 @@ export default function SpreadsheetTask() {
               <span>{c.subject}</span>
             </div>
             <textarea
+              data-showme="compose-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder={c.writeHere}

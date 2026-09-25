@@ -93,7 +93,7 @@ interface JobCardValue {
   /**
    * "" when there is nothing to correct. A correction belongs to the step it
    * was raised on, so it clears the moment the learner advances - answered by
-   * doing the right thing, not only by waiting - and after 5s otherwise.
+   * doing the right thing, not only by waiting - and after 9s otherwise.
    */
   correction: string;
   correct: (message: string) => void;
@@ -125,7 +125,7 @@ interface JobCardValue {
 const JobCardContext = createContext<JobCardValue | null>(null);
 
 /** How long a correction stays on the card before it clears itself. */
-const CORRECTION_MS = 5000;
+const CORRECTION_MS = 9000;
 
 export function JobCardProvider({
   children,

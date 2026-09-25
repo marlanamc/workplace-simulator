@@ -10,6 +10,9 @@ import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import NeedAStart from "@/components/task/NeedAStart";
 import RightNowBar from "@/components/task/RightNowBar";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
+import { useLesson } from "@/lib/lesson-context";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import {
@@ -25,7 +28,7 @@ import {
 } from "@/lib/tasks/job-posting/content";
 import {
   JOB_APPLICATION_COPY,
-  practicedHistory,
+  historyFor,
   AVAILABILITY_OPTIONS,
   STARTERS as APP_STARTERS,
   LESSONS as APP_LESSONS,
@@ -55,6 +58,8 @@ export default function JobsTask() {
   const done = completedTaskKeys.includes(active);
   const { nudge, say, dismiss } = useNudge();
   const [help, setHelp] = useState(false);
+  const showMe = useShowMe();
+  const inLesson = useLesson() !== null;
 
   // ---- job-posting state ----
   const [picked, setPicked] = useState<string[]>([]);
@@ -104,6 +109,7 @@ export default function JobsTask() {
     : availability
       ? 1
       : 0;
+  const showMeIds = isPosting ? ["req-list", "fit-box"] : ["availability", "why-box"];
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]">
@@ -127,6 +133,8 @@ export default function JobsTask() {
           steps={steps}
           lang={lang}
           rightNowLabel={isPosting ? POSTING_RN_LABEL : APP_RN_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -161,7 +169,7 @@ export default function JobsTask() {
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
                 <div className="text-[14px] font-medium text-[#202124]">{pc.reqLabel}</div>
                 <div className="mt-1 text-[12px] text-[#5f6368]">{pc.reqHint}</div>
-                <div className="mt-3 flex flex-col gap-2">
+                <div data-showme="req-list" className="mt-3 flex flex-col gap-2">
                   {REQUIREMENTS.map((r) => {
                     const on = picked.includes(r.key);
                     return (
@@ -193,6 +201,7 @@ export default function JobsTask() {
                 <label htmlFor="posting-fit" className="text-[14px] font-medium text-[#202124]">{pc.fitLabel}</label>
                 <textarea
                   id="posting-fit"
+                  data-showme="fit-box"
                   value={fit}
                   onChange={(e) => setFit(e.target.value)}
                   placeholder={pc.fitHint}
@@ -225,10 +234,11 @@ export default function JobsTask() {
                 <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{ac.historyLabel}</div>
                 <div className="mt-0.5 text-[12px] text-[#5f6368]">{ac.historyHint}</div>
                 <ul className="mt-3 flex flex-col gap-2.5">
-                  {practicedHistory(completedTaskKeys).map((row, i) => (
+                  {historyFor(completedTaskKeys, inLesson).map((row, i) => (
                     <li key={i} className="border-l-2 border-[#dadce0] pl-3">
                       <div className="text-[14px] font-medium text-[#202124]">{row.title[lang]}</div>
                       <div className="text-[13px] text-[#5f6368]">{row.org} · {row.span[lang]}</div>
+                      {row.duties && <p className="mt-1 text-[13px] leading-snug text-[#3c4043]">{row.duties[lang]}</p>}
                     </li>
                   ))}
                 </ul>
@@ -236,7 +246,7 @@ export default function JobsTask() {
 
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
                 <div className="text-[14px] font-medium text-[#202124]">{ac.availabilityLabel}</div>
-                <div className="mt-3 flex flex-col gap-2">
+                <div data-showme="availability" className="mt-3 flex flex-col gap-2">
                   {AVAILABILITY_OPTIONS.map((o) => {
                     const on = availability === o.key;
                     return (
@@ -266,6 +276,7 @@ export default function JobsTask() {
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
                 <label className="text-[14px] font-medium text-[#202124]">{ac.whyLabel}</label>
                 <textarea
+                  data-showme="why-box"
                   value={why}
                   onChange={(e) => setWhy(e.target.value)}
                   placeholder={ac.whyHint}
@@ -297,6 +308,7 @@ export default function JobsTask() {
         gotItLabel={isPosting ? pc.gotIt : ac.gotIt}
       />
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

@@ -28,7 +28,7 @@ export const PAPERWORK_SHELL: Record<Lang, {
 }> = {
   en: {
     needRequired: "Fill in every box marked required before you submit.",
-    needSignature: "Sign with your full name, the same name at the top of the form.",
+    needSignature: "Sign with the employee's full name, the same name at the top of the form.",
     needRouting: "A routing number is exactly 9 digits. Check it again.",
     sentKicker: "Form submitted",
     tryAgain: "Do it again",
@@ -37,13 +37,13 @@ export const PAPERWORK_SHELL: Record<Lang, {
     tipLabel: "Tip",
     gotIt: "Got it. Back to my task",
     requiredLabel: "Required",
-    signLabel: "Signature (type your full name)",
+    signLabel: "Signature (type the employee's full name)",
     dateLabel: "Date",
     datePlaceholder: "MM/DD/YYYY",
   },
   es: {
     needRequired: "Llena cada casilla marcada como obligatoria antes de enviar.",
-    needSignature: "Firma con tu nombre completo, el mismo nombre que está arriba del formulario.",
+    needSignature: "Firma con el nombre completo del empleado, el mismo nombre que está arriba del formulario.",
     needRouting: "Un número de ruta tiene exactamente 9 dígitos. Revísalo otra vez.",
     sentKicker: "Formulario enviado",
     tryAgain: "Hacerlo otra vez",
@@ -52,7 +52,7 @@ export const PAPERWORK_SHELL: Record<Lang, {
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
     requiredLabel: "Obligatorio",
-    signLabel: "Firma (escribe tu nombre completo)",
+    signLabel: "Firma (escribe el nombre completo del empleado)",
     dateLabel: "Fecha",
     datePlaceholder: "MM/DD/AAAA",
   },
@@ -76,7 +76,7 @@ export const W4_COPY: Record<Lang, {
     formName: "Form W-4",
     title: "Employee's Withholding Certificate",
     blurb: "This form tells payroll how much tax to hold back from each paycheck.",
-    nameLabel: "Your name",
+    nameLabel: "Employee name",
     statusLabel: "Filing status",
     dependentsLabel: "Number of dependents (children or others you support)",
     dependentsHint: "If none, enter 0.",
@@ -88,7 +88,7 @@ export const W4_COPY: Record<Lang, {
     formName: "Formulario W-4",
     title: "Certificado de Retenciones del Empleado",
     blurb: "Este formulario le dice a nómina cuánto impuesto retener de cada cheque.",
-    nameLabel: "Tu nombre",
+    nameLabel: "Nombre del empleado",
     statusLabel: "Estado civil para impuestos",
     dependentsLabel: "Número de dependientes (hijos u otras personas que mantienes)",
     dependentsHint: "Si no tienes, escribe 0.",
@@ -222,19 +222,21 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
       t: "What is a W-4?",
       s: [
         "It tells your job how much tax to hold back from each paycheck.",
-        "Your filing status (single, married, head of household) is the main choice. Pick the one that's true for you.",
-        "A dependent is someone you support, usually a child. If you have none, enter 0. You can change this form later any time.",
+        "Filing status (single, married, head of household) is the main choice. Choose the one for the person on the form.",
+        "A dependent is someone the person supports, usually a child. If there are none, type 0.",
+        "In this practice, the person is Robin Avery. Copy Robin's facts, not your own.",
       ],
-      tip: "Not sure about status? \"Single\" is the safe default and you can update it.",
+      tip: "On your own W-4 at a real job, you choose what is true for you. You can change it later.",
     },
     es: {
       t: "¿Qué es un W-4?",
       s: [
         "Le dice a tu trabajo cuánto impuesto retener de cada cheque.",
-        "Tu estado civil para impuestos (soltero, casado, cabeza de familia) es la decisión principal. Elige el que sea verdad para ti.",
-        "Un dependiente es alguien que mantienes, normalmente un hijo. Si no tienes, escribe 0. Puedes cambiar este formulario después en cualquier momento.",
+        "El estado civil para impuestos (soltero, casado, cabeza de familia) es la decisión principal. Elige el de la persona del formulario.",
+        "Un dependiente es alguien que esa persona mantiene, normalmente un hijo. Si no hay, escribe 0.",
+        "En esta práctica, la persona es Robin Avery. Copia los datos de Robin, no los tuyos.",
       ],
-      tip: "¿No estás seguro del estado? \"Soltero\" es lo seguro por defecto y lo puedes actualizar.",
+      tip: "En tu propio W-4 en un trabajo real, eliges lo que es verdad para ti. Lo puedes cambiar después.",
     },
   },
   "i9-section1": {
@@ -295,6 +297,68 @@ export const PRACTICE_REFERENCE: Localized = {
  en: 'Fictional applicant: Robin Avery. Born 04/12/1990. Address: 123 Practice Lane. Form date: 10/01/2026. Single; no dependents. U.S. citizen. Practice Bank; routing 000000000; account 1234567890; checking. These are simplified practice forms, not real submissions.',
  es: 'Solicitante ficticio: Robin Avery. Nació el 04/12/1990 (mes/día/año). Dirección: 123 Practice Lane. Fecha del formulario: 10/01/2026. Soltero; sin dependientes. Ciudadano de EE. UU. Practice Bank; ruta 000000000; cuenta 1234567890; cuenta corriente. Son formularios simplificados de práctica, no trámites reales.',
 };
-export function practiceFieldsMatch(values: Partial<typeof PRACTICE_PROFILE>): boolean {
- return Object.entries(values).every(([key, value]) => String(value).trim().toLowerCase().replace(/\s+/g, ' ') === PRACTICE_PROFILE[key as keyof typeof PRACTICE_PROFILE].toLowerCase());
+/**
+ * Two month/day/year dates are the same day however they are written:
+ * 10/1/2026, 10/01/2026, 10-01-2026, 10.01.26.
+ */
+export function sameDate(typed: string, expected: string): boolean {
+  const parts = (v: string) => {
+    const m = v.trim().match(/^(\d{1,2})\s*[/.-]\s*(\d{1,2})\s*[/.-]\s*(\d{2}|\d{4})$/);
+    if (!m) return null;
+    const year = m[3].length === 2 ? 2000 + Number(m[3]) : Number(m[3]);
+    return `${Number(m[1])}/${Number(m[2])}/${year}`;
+  };
+  const a = parts(typed);
+  return a !== null && a === parts(expected);
 }
+
+type PracticeKey = keyof typeof PRACTICE_PROFILE;
+
+function fieldMatches(key: PracticeKey, value: string): boolean {
+  if (key === "date" || key === "dob") return sameDate(value, PRACTICE_PROFILE[key]);
+  return value.trim().toLowerCase().replace(/\s+/g, " ") === PRACTICE_PROFILE[key].toLowerCase();
+}
+
+export function practiceFieldsMatch(values: Partial<typeof PRACTICE_PROFILE>): boolean {
+  return Object.entries(values).every(([key, value]) => fieldMatches(key as PracticeKey, String(value)));
+}
+
+/** The first field that does not match Robin's facts, so a correction can name it. */
+export function firstMismatch(values: Partial<typeof PRACTICE_PROFILE>): PracticeKey | null {
+  const hit = Object.entries(values).find(([key, value]) => !fieldMatches(key as PracticeKey, String(value)));
+  return hit ? (hit[0] as PracticeKey) : null;
+}
+
+/** What to say when a W-4 box does not match Robin's facts. */
+export const W4_FIELD_HINT: Partial<Record<PracticeKey, Localized>> = {
+  status: {
+    en: "Robin is single. Choose \"Single, or married filing separately\".",
+    es: "Robin es soltero. Elige \"Soltero/a, o casado/a declarando por separado\".",
+  },
+  dependents: { en: "Robin has no dependents. Type 0.", es: "Robin no tiene dependientes. Escribe 0." },
+  date: {
+    en: "Write today's date from Robin's facts: 10/01/2026 (month/day/year).",
+    es: "Escribe la fecha de hoy de los datos de Robin: 10/01/2026 (mes/día/año).",
+  },
+};
+
+export const REFERENCE_HINT: Localized = {
+  en: "Compare the form with Robin's facts.",
+  es: "Compara el formulario con los datos de Robin.",
+};
+
+/** The W-4's own steps, so the card moves as the form fills. */
+export const W4_STEPS: Localized[] = [
+  {
+    en: "Look at Robin's facts. Choose Robin's filing status.",
+    es: "Mira los datos de Robin. Elige el estado civil de Robin.",
+  },
+  {
+    en: "Type Robin's number of dependents.",
+    es: "Escribe el número de dependientes de Robin.",
+  },
+  {
+    en: "Sign with Robin's full name. Write the date. Then click Submit W-4.",
+    es: "Firma con el nombre completo de Robin. Escribe la fecha. Después haz clic en Enviar W-4.",
+  },
+];
