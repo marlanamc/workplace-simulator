@@ -37,8 +37,8 @@ export const TEXTS = [
     time: "3 min ago",
   },
   {
-    from: "Riverside Learning",
-    body: `Your verification code is ${CODE}. Do not share this code with anyone.`,
+    from: "22000",
+    body: `G-${CODE} is your Google verification code. Don’t share it with anyone.`,
     time: "Just now",
   },
   { from: "Sam", body: "Did you finish the homework?", time: "Just now" },
@@ -63,16 +63,17 @@ export function accountError(d: PasswordDraft): Localized | null {
       };
 }
 export function codeError(d: PasswordDraft): Localized | null {
-  const c = d.code.replace(/\s/g, "");
+  // Google's text says "G-730418"; the box already shows the "G-".
+  const c = d.code.replace(/\s/g, "").replace(/^g-?/i, "");
   if (c === CODE) return null;
   if (c === "2024")
     return {
-      en: "2024 is a coupon from a pizza ad. Your code comes from Riverside Learning.",
-      es: "2024 es un cupón de un anuncio de pizza. Tu código viene de Riverside Learning.",
+      en: "2024 is a coupon from a pizza ad. Your code is in the text from Google.",
+      es: "2024 es un cupón de un anuncio de pizza. Tu código está en el mensaje de Google.",
     };
   return {
-    en: "Check the text from Riverside Learning. The code has 6 numbers.",
-    es: "Revisa el mensaje de Riverside Learning. El código tiene 6 números.",
+    en: "Check the text that says Google verification code. The code has 6 numbers after G-.",
+    es: "Revisa el mensaje que dice Google verification code. El código tiene 6 números después de G-.",
   };
 }
 /** Live checklist under the new-password field. */
@@ -88,8 +89,8 @@ export function newPasswordErrors(
   if (RULES.some((r) => !r.ok(password)))
     return [
       {
-        en: "This password does not follow all the rules yet. Look at the list under the box.",
-        es: "Esta contraseña todavía no cumple todas las reglas. Mira la lista debajo del cuadro.",
+        en: "This password is too weak. Use 8 or more characters with letters and numbers.",
+        es: "Esta contraseña es muy débil. Usa 8 caracteres o más, con letras y números.",
       },
     ];
   const out: Localized[] = [];
@@ -155,24 +156,24 @@ export const password: PracticeActivity<PasswordDraft> = {
   parseDraft: parsePassword,
   instructions: {
     signin: {
-      en: "Choose Maya’s account. Her password does not work — click Forgot password?",
-      es: "Elige la cuenta de Maya. Su contraseña no funciona — haz clic en Forgot password?",
+      en: "Choose Maya’s Google account. Her password does not work — click Forgot password?",
+      es: "Elige la cuenta de Google de Maya. Su contraseña no funciona — haz clic en Forgot password?",
     },
     code: {
-      en: "Read the texts on Maya’s phone. Find the code from Riverside Learning and type it in.",
-      es: "Lee los mensajes en el teléfono de Maya. Busca el código de Riverside Learning y escríbelo.",
+      en: "Click Send. Read the texts on Maya’s phone, find the Google code, and type the 6 numbers.",
+      es: "Haz clic en Send. Lee los mensajes en el teléfono de Maya, busca el código de Google y escribe los 6 números.",
     },
     newPassword: {
       en: `Make a new password. Type ${PRACTICE_PASSWORD} in both boxes, then click Save password.`,
       es: `Crea una contraseña nueva. Escribe ${PRACTICE_PASSWORD} en los dos cuadros y haz clic en Save password.`,
     },
     signinAgain: {
-      en: "Sign in with the new password.",
-      es: "Inicia sesión con la contraseña nueva.",
+      en: "Sign in with the new password: type it and click Next.",
+      es: "Inicia sesión con la contraseña nueva: escríbela y haz clic en Next.",
     },
     signedIn: {
-      en: "Check the name in the top corner — it shows whose account is open. Then click it and sign out.",
-      es: "Mira el nombre en la esquina de arriba — muestra de quién es la cuenta abierta. Luego haz clic y cierra sesión.",
+      en: "Look at the circle with a letter in the top corner — it shows whose account is open. Click it, then click Sign out.",
+      es: "Mira el círculo con una letra en la esquina de arriba — muestra de quién es la cuenta abierta. Haz clic y luego en Sign out.",
     },
     complete: {
       en: "You reset the password and signed out. On a shared computer, always sign out when you finish.",
@@ -189,12 +190,12 @@ export const password: PracticeActivity<PasswordDraft> = {
       es: "Un código de verificación demuestra que la cuenta es tuya. Nunca le digas este código a nadie — una empresa real no te lo pedirá.",
     },
     newPassword: {
-      en: "The list under the box turns green when a rule is met. You type the password twice so a typo does not lock you out.",
-      es: "La lista debajo del cuadro se pone verde cuando se cumple una regla. Escribes la contraseña dos veces para que un error no te deje afuera.",
+      en: "Google asks for 8 or more characters with letters and numbers. You type the password twice so a typo does not lock you out.",
+      es: "Google pide 8 caracteres o más, con letras y números. Escribes la contraseña dos veces para que un error no te deje afuera.",
     },
     signinAgain: {
-      en: "Passwords must match exactly: capital letters, numbers, and the dashes. Click Show password to check what you typed.",
-      es: "La contraseña debe ser exacta: mayúsculas, números y guiones. Haz clic en Show password para ver lo que escribiste.",
+      en: "Passwords must match exactly: capital letters, numbers, and the dashes. Check Show password to see what you typed.",
+      es: "La contraseña debe ser exacta: mayúsculas, números y guiones. Marca Show password para ver lo que escribiste.",
     },
     signedIn: {
       en: "The round picture with a letter is the account button. Click it to see the name, the email, and Sign out.",
@@ -267,8 +268,8 @@ export const password: PracticeActivity<PasswordDraft> = {
         es: "Hacer clic en la cuenta de Sam porque está primero. Pregunta: ¿de quién es este correo?",
       },
       {
-        en: "Typing 2024 from the pizza ad. Talk about who sent each message.",
-        es: "Escribir 2024 del anuncio de pizza. Habla de quién envió cada mensaje.",
+        en: "Typing 2024 from the pizza ad, or typing the G- twice. Talk about who sent each message.",
+        es: "Escribir 2024 del anuncio de pizza, o escribir G- dos veces. Habla de quién envió cada mensaje.",
       },
       {
         en: "Capital letters and dashes in the password. Show password helps.",

@@ -138,7 +138,8 @@ progress read as a fresh account. This migration does not rewrite old progress.
 `src/lib/practice/activities.ts`. `/practice/workshop` rehearses an email invitation,
 fictional registration, review, and confirmation; `/practice/assignment` rehearses finding a
 Classroom assignment, attaching the right file (not an old copy), turning it in, and posting a
-class comment; `/practice/password` rehearses choosing the right account on a shared
+class comment; `/practice/password` rehearses, in a Google sign-in look (inside a Chrome window, as on
+program Chromebooks), choosing the right account on a shared
 computer, resetting a forgotten password with a texted code (next to a look-alike ad code),
 signing in, and signing out. It saves no typed password: the learner is asked to use the
 fictional practice password, so a reload can verify progress without storing one. None of

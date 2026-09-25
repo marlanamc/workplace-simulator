@@ -171,10 +171,14 @@ describe("forgot your password", () => {
       parsePassword({ ...maya, stage: "complete", code: " 730418 " }),
     ).not.toBeNull();
   });
+  it("accepts the code with or without Google's G- prefix", () => {
+    expect(codeError({ ...maya, code: "G-730418" })).toBeNull();
+    expect(codeError({ ...maya, code: "730418" })).toBeNull();
+  });
   it("names the ad's coupon code as a look-alike", () =>
     expect(codeError({ ...maya, code: "2024" })?.en).toMatch(/coupon/));
   it("checks the rules first, then the practice password and the match", () => {
-    expect(newPasswordErrors("short1", "short1")[0].en).toMatch(/rules/);
+    expect(newPasswordErrors("short1", "short1")[0].en).toMatch(/too weak/);
     expect(newPasswordErrors("MyOwnPass9", "MyOwnPass9")[0].en).toMatch(
       /never a real password/,
     );
