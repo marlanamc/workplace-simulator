@@ -1378,7 +1378,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. La solicitud pidió un currículum.",
     },
     location: browser("Open Résumé from the bookmarks"),
-    jobCardLine: { en: "Summary, two roles, your skills.", es: "Resumen, dos puestos, tus habilidades." },
+    jobCardLine: {
+      en: "Write a summary, one thing you did well at each job, and your skills.",
+      es: "Escribe un resumen, una cosa que hiciste bien en cada empleo y tus habilidades.",
+    },
     jobCardDoneLine: { en: "Résumé saved.", es: "Currículum guardado." },
     lesson: {
       title: { en: "Write a one-page résumé", es: "Escribir un currículum de una página" },
