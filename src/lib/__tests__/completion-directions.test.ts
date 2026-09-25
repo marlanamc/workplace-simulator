@@ -29,7 +29,7 @@ describe("completion requirements are explicit in the Job Card", () => {
     expectDirection(SHIFT_STEPS[0], /11\s*AM/i, /11\s*AM/i);
     expectDirection(FORMULA_STEPS[2], /both formulas.*every crew row.*corrected total/i, /dos fórmulas.*cada fila.*total corregido/i);
     expectDirection(STATUS_STEPS[2], /total.*cc Jordan/i, /total.*copia a Jordan/i);
-    expectDirection(COURSEWORK_STEPS[2], /heard.*check/i, /escuchaste.*revisarás/i);
+    expectDirection(COURSEWORK_STEPS[1], /sorry.*what you will do/i, /lo sientes.*qué vas a hacer/i);
     expectDirection(ENROLLMENT_STEPS[2], /BHCC.*program/i, /BHCC.*programa/i);
     expectDirection(RESEARCH_STEPS[2], /authors.*library database/i, /autores.*base de datos de la biblioteca/i);
     expectDirection(INCIDENT_STEPS[0], /hurt.*what you did/i, /lastimó.*qué hiciste/i);

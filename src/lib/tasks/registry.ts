@@ -1108,8 +1108,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Submit the assignment on time", es: "Entrega la tarea a tiempo" },
     dispatch: {
-      en: "The syllabus has a due date. Read it. Write a short answer. Submit.",
-      es: "El temario tiene una fecha. Léelo. Escribe una respuesta corta. Entrégala.",
+      en: "Find the due date. Write a short answer. Then submit.",
+      es: "Busca la fecha de entrega. Escribe una respuesta corta. Después entrégala.",
     },
     skill: { en: "Read a syllabus and submit on time", es: "leer un temario y entregar a tiempo" },
     bookmarkLabel: "Coursework",
@@ -1119,26 +1119,29 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Jueves. Algo se entrega esta noche.",
     },
     location: browser("Open Coursework from the bookmarks"),
-    jobCardLine: { en: "Read the due date. Then submit.", es: "Lee la fecha. Luego entrega." },
+    jobCardLine: { en: "Find the due date. Answer Dana. Then submit.", es: "Busca la fecha de entrega. Contesta a Dana. Después entrega." },
     lesson: {
       title: { en: "Find a due date and submit an assignment", es: "Encontrar la fecha de entrega y entregar una tarea" },
       summary: {
-        en: "Read a class syllabus, choose the right due date, and write a short reply to a customer complaint.",
-        es: "Lee el temario de una clase, elige la fecha de entrega correcta y escribe una respuesta corta a la queja de un cliente.",
+        en: "Read a class assignment, choose the right due date, and write a short reply to a customer's email.",
+        es: "Lee una tarea de clase, elige la fecha de entrega correcta y escribe una respuesta corta al correo de un cliente.",
       },
       skills: ["workplace-systems"],
       minutes: 8,
       scene: {
         you: { en: "You take a writing class at Bunker Hill Community College.", es: "Tomas una clase de escritura en Bunker Hill Community College." },
-        people: [],
+        people: [
+          { name: "Ms. Rivera", role: { en: "Your teacher", es: "Tu maestra" } },
+          { name: "Dana Price", role: { en: "A customer in your homework. Her order was wrong.", es: "Una clienta en tu tarea. Su pedido llegó mal." } },
+        ],
         need: {
-          en: "You have homework this week. Find the day it is due. Then write your answer and turn it in.",
-          es: "Tienes una tarea esta semana. Busca el día de entrega. Después escribe tu respuesta y entrégala.",
+          en: "Your homework is on the class website. Find the day it is due. Then write a short answer to a customer's email and turn it in.",
+          es: "Tu tarea está en la página de la clase. Busca el día de entrega. Después escribe una respuesta corta al correo de una clienta y entrégala.",
         },
       },
       guide: {
         skills: [
-          { en: "Find the due date on a syllabus", es: "Encontrar la fecha de entrega en un temario" },
+          { en: "Find the due date on an assignment", es: "Encontrar la fecha de entrega en una tarea" },
           { en: "Choose the right date from a list", es: "Elegir la fecha correcta de una lista" },
           { en: "Write a short reply that says what you will do next", es: "Escribir una respuesta corta que dice qué vas a hacer" },
           { en: "Submit an assignment online", es: "Entregar una tarea en línea" },
@@ -1148,16 +1151,16 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that a due date has a day and a time, and late work is not accepted.", es: "Explica que la fecha de entrega tiene un día y una hora, y que no se acepta trabajo tarde." },
         ],
         stickingPoints: [
-          { en: "Some learners pick Thursday or Saturday from the list. Ask: what day does the syllabus say?", es: "Algunos eligen jueves o sábado en la lista. Pregunta: ¿qué día dice el temario?" },
-          { en: "Some learners write only OK or Thank you. The reply must say what they will do next. Ask: what will you do about the complaint?", es: "Algunos escriben solo OK o Gracias. La respuesta debe decir qué van a hacer. Pregunta: ¿qué vas a hacer con la queja?" },
+          { en: "Some learners pick Thursday or Saturday from the list. Ask: what day does it say under the title?", es: "Algunos eligen jueves o sábado en la lista. Pregunta: ¿qué día dice debajo del título?" },
+          { en: "Some learners write only OK or Thank you. The reply must say sorry and what they will do. Ask: what will you do about Dana's order?", es: "Algunos escriben solo OK o Gracias. La respuesta debe decir que lo sienten y qué van a hacer. Pregunta: ¿qué vas a hacer con el pedido de Dana?" },
         ],
         followUp: [
           { en: "Where do you see due dates in your life? School, bills, forms for work.", es: "¿Dónde ves fechas de entrega en tu vida? La escuela, las cuentas, los formularios del trabajo." },
           { en: "What do you do when you know you will be late with something?", es: "¿Qué haces cuando sabes que vas a entregar algo tarde?" },
         ],
         peerHelp: {
-          en: "A partner can read the syllabus out loud, but the learner chooses the date and writes the reply.",
-          es: "Un compañero puede leer el temario en voz alta, pero el estudiante elige la fecha y escribe la respuesta.",
+          en: "A partner can read the assignment out loud, but the learner chooses the date and writes the reply.",
+          es: "Un compañero puede leer la tarea en voz alta, pero el estudiante elige la fecha y escribe la respuesta.",
         },
       },
     },
