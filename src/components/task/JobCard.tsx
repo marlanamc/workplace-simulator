@@ -38,10 +38,10 @@ import { speakText } from "@/lib/read-aloud";
 /** Four parking spots. The card can never end up half off-screen. */
 type Corner = "bl" | "br" | "tl" | "tr";
 const HOME: Corner = "bl";
-const EDGE = 24;
+export const EDGE = 24;
 /** 48px shelf + 24px of air, so the card never sits on the shelf. */
 const BOTTOM = SHELF_RESERVE + EDGE;
-const CARD_W = 420;
+export const CARD_W = 420;
 
 const TONE = { blue: "#0b57d0", green: "#1e8e3e" } as const;
 type Tone = keyof typeof TONE;
@@ -513,7 +513,9 @@ export default function JobCard() {
         >
           {script.badge === "✓" ? <Check size={15} strokeWidth={3} /> : script.badge}
         </span>
-        <span className="min-w-0 flex-1 truncate text-[15px] font-medium">
+        {/* Two lines before it cuts off: a lesson's name is the only thing
+            telling the learner which lesson this is. */}
+        <span className="line-clamp-2 min-w-0 flex-1 text-[15px] leading-tight font-medium">
           {visibleHelp && !finish ? visibleHelp.kicker : script.kicker}
         </span>
         {!practicing && !busy && liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (

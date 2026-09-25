@@ -17,7 +17,7 @@ export default function NudgeToast({
 }: {
   text: NudgeMessage;
   /** Kept for call-site compatibility; the card owns dismissal now - a
-   *  correction clears when the learner advances, or after 5s. */
+   *  correction clears when the learner advances, or after 9s. */
   bottom?: number;
   onDismiss?: () => void;
 }) {
@@ -28,10 +28,12 @@ export default function NudgeToast({
   // framing the card's warning styling already supplies.
   const message = typeof text === "string" ? text : [text.body, text.title].find(Boolean) ?? "";
 
+  // Keyed on the message object, not its text: `useNudge` hands over a new
+  // one every time, so a repeated correction is raised again.
   useEffect(() => {
     if (!correct || !message) return;
     correct(message);
-  }, [correct, message]);
+  }, [correct, message, text]);
 
   return null;
 }

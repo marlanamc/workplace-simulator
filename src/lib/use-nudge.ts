@@ -16,7 +16,7 @@ export type NudgeMessage = string | NudgeCard;
  * Auto-dismisses after `durationMs`; learners can also dismiss early (X / click anywhere).
  * Default is still generous — the audience reads carefully, sometimes in a second language.
  */
-export function useNudge(durationMs = 6000) {
+export function useNudge(durationMs = 9000) {
   const [nudge, setNudge] = useState<NudgeMessage>("");
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -32,7 +32,9 @@ export function useNudge(durationMs = 6000) {
 
   const say = useCallback(
     (msg: NudgeMessage) => {
-      setNudge(msg);
+      // Always a fresh object, so saying the same thing twice still reaches
+      // the card: a learner repeating a wrong click must hear it again.
+      setNudge(typeof msg === "string" ? { title: "", body: msg } : { ...msg });
       if (timer.current) clearTimeout(timer.current);
       timer.current = setTimeout(() => setNudge(""), durationMs);
     },

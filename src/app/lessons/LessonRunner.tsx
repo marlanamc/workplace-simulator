@@ -15,6 +15,7 @@ import Desktop from "@/components/desktop/Desktop";
 import LessonProgressProvider from "./LessonProgressProvider";
 import { useLessonSave } from "./useLessonSave";
 import TeacherPreviewBar, { PREVIEW_BAR_H } from "./TeacherPreviewBar";
+import LessonIntro from "./LessonIntro";
 import type { TeacherGuide } from "@/lib/lessons/types";
 
 const noop = () => {};
@@ -58,6 +59,9 @@ export default function LessonRunner({
   const entry = (lessonByKey(taskKey) ?? (draft ? draftLessonFor(taskKey) : undefined))!;
   const seed = useMemo(() => seedForLesson(taskKey)!, [taskKey]);
   const [mode, setModeState] = useState(initialMode);
+  // The scene comes first. A smoke-sweep draft has no scene worth reading,
+  // and a learner back from signing in has already read it.
+  const [started, setStarted] = useState(draft || transfer);
   const modeRef = useRef(mode);
   // A smoke-sweep draft is not a real lesson, so it has nowhere to save.
   const save = useLessonSave(taskKey, { preview: preview || draft, transfer, mode, returnTo });
@@ -77,6 +81,9 @@ export default function LessonRunner({
     () => ({
       taskKey,
       title: entry.title,
+      scene: entry.scene,
+      reference: entry.reference ?? [],
+      persona: entry.persona,
       mode,
       setMode,
       preview,
@@ -90,10 +97,19 @@ export default function LessonRunner({
   return (
     <WindowManagerProvider jumpTab={entry.tabs[0]} jumpSection={entry.section}>
       <LessonProgressProvider seed={seed} lesson={lesson} initialLang={initialLang} onLessonComplete={onLessonComplete}>
-        {/* The first-run card beats belong to the game, not to a lesson. */}
-        <JobCardProvider introSeen onIntroDone={noop}>
-          <LessonDesktop preview={preview} guide={entry.guide} />
-        </JobCardProvider>
+        {started ? (
+          /* The first-run card beats belong to the game, not to a lesson. */
+          <JobCardProvider introSeen onIntroDone={noop}>
+            <LessonDesktop preview={preview} guide={entry.guide} />
+          </JobCardProvider>
+        ) : (
+          <LessonIntro
+            title={entry.title}
+            scene={entry.scene}
+            hasCard
+            onStart={() => setStarted(true)}
+          />
+        )}
       </LessonProgressProvider>
     </WindowManagerProvider>
   );

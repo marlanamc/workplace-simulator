@@ -1,4 +1,4 @@
-import { mentionsAmount } from "@/lib/text-facts";
+import { mentionsAmount, parseMoney } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { openFileStep } from "../open-file-step";
 
@@ -21,17 +21,26 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 
 export interface TipRow {
   key: string;
+  /** As written in the sheet and on the slip. */
   day: string;
+  /** The day in the learner's language, for a correction that names it. */
+  dayName: Localized;
   given: number;
 }
 
 export const TIP_ROWS: TipRow[] = [
-  { key: "mon", day: "Monday", given: 42.5 },
-  { key: "tue", day: "Tuesday", given: 38.0 },
-  { key: "wed", day: "Wednesday", given: 51.25 },
-  { key: "thu", day: "Thursday", given: 46.75 },
-  { key: "fri", day: "Friday", given: 63.0 },
+  { key: "mon", day: "Monday", dayName: { en: "Monday", es: "lunes" }, given: 42.5 },
+  { key: "tue", day: "Tuesday", dayName: { en: "Tuesday", es: "martes" }, given: 38.0 },
+  { key: "wed", day: "Wednesday", dayName: { en: "Wednesday", es: "miércoles" }, given: 51.25 },
+  { key: "thu", day: "Thursday", dayName: { en: "Thursday", es: "jueves" }, given: 46.75 },
+  { key: "fri", day: "Friday", dayName: { en: "Friday", es: "viernes" }, given: 63.0 },
 ];
+
+/** Whether what the learner typed for a day is that day's slip amount. "$42.50", "42.5" and "42,50" all count. */
+export function entryMatches(row: TipRow, typed: string): boolean {
+  const n = parseMoney(typed);
+  return n !== null && Math.abs(n - row.given) < 0.005;
+}
 
 /** The sum of every row - the sheet's total updates live as each cell is filled in. */
 export const REAL_TOTAL = TIP_ROWS.reduce((sum, r) => sum + r.given, 0);
@@ -90,7 +99,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     recentHeading: "Recent spreadsheets",
     openedLabel: "Opened Aug 21",
     slipHeading: "This week's tip slips",
-    fillAllFirst: "Fill in all five days first.",
+    fillAllFirst: "Type the tips for all five days first.",
     emailTotal: "Email the total to Renata",
     to: "To",
     subjectLabel: "Subject",
@@ -125,8 +134,8 @@ export const SPREADSHEET_COPY: Record<Lang, {
     templateSchedule: "Horario",
     recentHeading: "Hojas de cálculo recientes",
     openedLabel: "Abierta el 21 de agosto",
-    slipHeading: "Los recibos de propinas de esta semana",
-    fillAllFirst: "Primero completa los cinco días.",
+    slipHeading: "Tus papelitos de propinas de esta semana",
+    fillAllFirst: "Primero escribe las propinas de los cinco días.",
     emailTotal: "Enviar el total a Renata por correo",
     to: "Para",
     subjectLabel: "Asunto",
@@ -149,10 +158,13 @@ export const SPREADSHEET_COPY: Record<Lang, {
   },
 };
 
-export const WRONG_ENTRY_HINT: Record<Lang, string> = {
-  en: "That doesn't match the slip for that day. Check the amount again.",
-  es: "Eso no coincide con el recibo de ese día. Revisa la cantidad de nuevo.",
-};
+/** Names the day, and says what the slip shows, so the learner knows which box to fix. */
+export function wrongEntryHint(row: TipRow, lang: Lang): string {
+  const amount = money(row.given);
+  return lang === "en"
+    ? `Check ${row.dayName.en}. The slip says ${amount}.`
+    : `Revisa el ${row.dayName.es}. El papel dice ${amount}.`;
+}
 
 /**
  * The email actually reports the sheet's real total, not just any number.
@@ -222,11 +234,15 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(SPREADSHEET_COPY, (c) => c.sheetName),
   {
-    en: "Enter each slip, then read the total.",
-    es: "Ingresa cada recibo y luego lee el total.",
+    en: "Look at the paper slip. Type each day's tips in the Tips column.",
+    es: "Mira el papelito. Escribe las propinas de cada día en la columna Tips.",
   },
   {
-    en: "Email Renata the total.",
-    es: "Envíale el total a Renata por correo.",
+    en: "The sheet added the total. Click Email the total to Renata.",
+    es: "La hoja sumó el total. Haz clic en Enviar el total a Renata por correo.",
+  },
+  {
+    en: "Write Renata the total from the sheet. Then click Send.",
+    es: "Escríbele a Renata el total de la hoja. Después haz clic en Enviar.",
   },
 ];

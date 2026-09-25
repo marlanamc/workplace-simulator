@@ -9,18 +9,16 @@ function jobCard(page: Page) {
   return page.locator("[data-job-card]");
 }
 
-/** Park the card bottom-right. At 1280x720 it sits over this task's left-hand form, as it does in the game. */
-async function parkCardRight(page: Page) {
-  await jobCard(page).getByTestId("job-card-drag-handle").press("ArrowRight");
-  await expect(jobCard(page)).toHaveAttribute("data-corner", "br");
+/** Past the lesson's scene screen, onto the desktop. */
+async function startLesson(page: Page) {
+  await page.getByTestId("lesson-intro-start").click();
+  await expect(page.getByTestId("lesson-intro")).toHaveCount(0);
 }
 
 async function finishAccountRecovery(page: Page) {
-  await parkCardRight(page);
-  await page.getByPlaceholder("Enter your password").fill("coffee123");
+  await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await page.getByRole("button", { name: "Check my texts" }).click();
-  await page.getByText("Your verification code is 482915").click();
+  await page.getByRole("button", { name: /Harborside Accounts/ }).click();
   await page.getByPlaceholder("000000").fill("482915");
   await page.getByRole("button", { name: "Verify" }).click();
 }
@@ -30,8 +28,13 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/lessons/account-recovery");
 
-  // Straight onto the task: no welcome screen, only the lesson's tab.
+  // The scene first: who you are and what is needed, never the game's welcome.
   await expect(page.getByTestId("simulator-welcome")).toHaveCount(0);
+  await expect(page.getByTestId("lesson-intro")).toContainText("Your work account signed you out.");
+  await startLesson(page);
+
+  // Then the task, with only the lesson's tab and the facts to copy on screen.
+  await expect(page.getByTestId("lesson-info-card")).toContainText("Harbor2026");
   await expect(page.getByTestId("bookmark-account-recovery")).toBeVisible();
   await expect(page.getByTestId("bookmarks-row").getByRole("button")).toHaveCount(1);
   await expect(page.getByTestId("shelf-my-job")).toHaveCount(0);
@@ -39,7 +42,12 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   const card = jobCard(page);
   await expect(card).toContainText("Lesson · Sign in with a text code");
   // Guided spells out the step.
-  await expect(card).toContainText("Sign in with your work email and password.");
+  await expect(card).toContainText("Type the password from your info card.");
+
+  // A password that is not the one on the card is corrected, by name.
+  await page.getByPlaceholder("Enter your password").fill("harbor2026");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(card).toContainText("That is not the password.");
 
   await finishAccountRecovery(page);
   await expect(card).toContainText("Lesson · Sign in with a text code");
@@ -50,20 +58,24 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   // Practice again remounts the task on its first step.
   await again.click();
   await expect(page.getByPlaceholder("Enter your password")).toBeVisible();
-  await expect(card).toContainText("Sign in with your work email and password.");
+  await expect(card).toContainText("Type the password from your info card.");
   expect(errors).toEqual([]);
 });
 
 test("independent mode states the goal instead of each click", async ({ page }) => {
   await page.goto("/lessons/account-recovery?mode=independent");
+  await startLesson(page);
   const card = jobCard(page);
   await expect(card).toContainText("Lesson · Sign in with a text code");
-  await expect(card).not.toContainText("Sign in with your work email and password.");
+  await expect(card).toContainText("Sign back in. Use the code from your phone.");
+  await expect(card).not.toContainText("Type the password from your info card.");
   await expect(card.getByRole("button", { name: "Show me" })).toHaveCount(0);
 });
 
 test("a Spanish link opens the lesson in Spanish", async ({ page }) => {
   await page.goto("/lessons/account-recovery?lang=es");
+  await expect(page.getByTestId("lesson-intro")).toContainText("Tu cuenta del trabajo cerró tu sesión.");
+  await page.getByTestId("lesson-intro-start").click();
   await expect(jobCard(page)).toContainText("Lección · Iniciar sesión con un código de texto");
 });
 
@@ -81,6 +93,7 @@ test("the library filters by skill and opens a lesson and its teacher preview", 
   await expect(card).toBeVisible();
 
   await card.getByRole("link", { name: /Teacher preview and guide/ }).click();
+  await startLesson(page);
   await expect(page.getByTestId("teacher-preview")).toBeVisible();
   // The guide is teacher-facing: behind a button, above the computer, never on the Job Card.
   await expect(page.getByTestId("teacher-guide")).toHaveCount(0);
@@ -92,6 +105,7 @@ test("the library filters by skill and opens a lesson and its teacher preview", 
 test("the copied student link keeps support and language", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/lessons/account-recovery?preview=1&lang=es&returnTo=%2Flessons%3Fskill%3Daccounts");
+  await page.getByTestId("lesson-intro-start").click();
   await jobCard(page).getByTestId("lesson-mode-independent").click();
   await expect(page).toHaveURL(/mode=independent/);
   await page.getByRole("button", { name: "Copiar enlace para estudiantes" }).click();
@@ -105,15 +119,15 @@ test("the copied student link keeps support and language", async ({ page, contex
 
 test("changing support mid-task keeps the student's place", async ({ page }) => {
   await page.goto("/lessons/account-recovery");
-  await parkCardRight(page);
-  await page.getByPlaceholder("Enter your password").fill("coffee123");
+  await startLesson(page);
+  await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Check my texts" })).toBeVisible();
+  await expect(page.getByTestId("phone-texts")).toBeVisible();
   await jobCard(page).getByTestId("lesson-mode-independent").click();
-  await expect(page.getByRole("button", { name: "Check my texts" })).toBeVisible();
-  await expect(jobCard(page)).not.toContainText("Check your phone for the code");
+  await expect(page.getByTestId("phone-texts")).toBeVisible();
+  await expect(jobCard(page)).not.toContainText("Look at your phone.");
   await jobCard(page).getByTestId("lesson-mode-guided").click();
-  await expect(jobCard(page)).toContainText("Check your phone for the code");
+  await expect(jobCard(page)).toContainText("Look at your phone.");
 });
 
 test("the library and a lesson fit a phone screen", async ({ page }) => {
@@ -121,6 +135,10 @@ test("the library and a lesson fit a phone screen", async ({ page }) => {
   for (const url of ["/lessons", "/lessons/account-recovery", "/lessons/account-recovery?preview=1"]) {
     await page.goto(url);
     expect(await page.evaluate(() => document.documentElement.scrollWidth), url).toBeLessThanOrEqual(375);
+    if (url !== "/lessons") {
+      await page.getByTestId("lesson-intro-start").click();
+      expect(await page.evaluate(() => document.documentElement.scrollWidth), url).toBeLessThanOrEqual(375);
+    }
   }
   await jobCard(page).getByTestId("job-card-collapse").click();
   await expect(jobCard(page).getByTestId("job-card-collapse")).toHaveAttribute("aria-expanded", "false");
@@ -147,6 +165,7 @@ test.describe("saving", () => {
 
     // Teacher preview saves nothing, even after finishing.
     await page.goto("/lessons/account-recovery?preview=1");
+    await startLesson(page);
     await finishAccountRecovery(page);
     await expect(jobCard(page).getByTestId("lesson-practice-again")).toBeVisible();
     await expect(jobCard(page).getByTestId("lesson-sign-in")).toHaveCount(0);
@@ -154,6 +173,7 @@ test.describe("saving", () => {
 
     // A guest's finish stays in this browser until they sign in.
     await page.goto("/lessons/account-recovery?mode=independent&returnTo=%2Flessons%3Fskill%3Daccounts%26q%3Dcode");
+    await startLesson(page);
     await finishAccountRecovery(page);
     await expect(jobCard(page)).toContainText("This computer remembers it");
     await jobCard(page).getByTestId("lesson-sign-in").click();

@@ -68,6 +68,7 @@ export function draftLessonFor(key: string): LessonEntry | undefined {
     skills: [],
     minutes: 5,
     guide: EMPTY_GUIDE,
+    scene: { you: task.label, people: [], need: task.dispatch },
     taskKey: task.key,
     tabs: [home],
     section: TASK_LOCATIONS[task.key]?.section,

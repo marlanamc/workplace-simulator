@@ -15,11 +15,13 @@ for (const lang of ["en", "es"] as const) {
     expect(new URL(page.url()).searchParams.get("skill")).toBe("forms");
     const card = page.getByTestId("lesson-card-w4-form");
     await card.getByRole("link", { name: /Teacher preview|Vista del docente/ }).click();
+    await page.getByTestId("lesson-intro-start").click();
     await expect(page.getByTestId("teacher-preview")).toBeVisible();
     expect(new URL(page.url()).searchParams.get("returnTo")).toContain("q=W-4");
     await page.goBack();
     await expect(card).toBeVisible();
     await card.getByRole("link", { name: /^(Start|Empezar)/ }).click();
+    await page.getByTestId("lesson-intro-start").click();
     await page.getByRole("button", { name: /Hide the rest|Ocultar el resto/ }).click();
     await page.getByRole("radio", { name: /^(Single,|Soltero\/a,)/ }).check();
     await page.getByRole("textbox", { name: /^(Number of dependents|Número de dependientes)/ }).fill("0");
