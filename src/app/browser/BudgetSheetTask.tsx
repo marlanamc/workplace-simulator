@@ -10,6 +10,9 @@ import {
   statusFor,
   statusFormula,
   dollars,
+  TOTAL_ROW,
+  BUDGET_TOTAL,
+  ACTUAL_TOTAL,
   STARTERS,
   LESSONS,
   EMPTY_EMAIL_HINT,
@@ -30,13 +33,21 @@ import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
 type View = "home" | "sheet" | "compose" | "done";
-type Col = "A" | "B" | "C" | "D";
+type Col = "A" | "B" | "C" | "D" | "E";
 type Cell = { row: number; col: Col };
 
-const COLS: Col[] = ["A", "B", "C", "D"];
+const COLS: Col[] = ["A", "B", "C", "D", "E"];
 const HEADER_ROW = 1;
 const FIRST_DATA_ROW = 2;
-const COL_WIDTH: Record<Col, number> = { A: 140, B: 88, C: 88, D: 88 };
+const COL_WIDTH: Record<Col, number> = { A: 168, B: 84, C: 84, D: 72, E: 236 };
+/** The last line's row; the Total row's SUMs run from row 2 to here. */
+const LAST_DATA_ROW = FIRST_DATA_ROW + BUDGET_ROWS.length - 1;
+
+// One slot per budget line, so the chart fits however many lines there are.
+const CHART_PAD = 10;
+const CHART_SLOT = 52;
+const CHART_BAR = 24;
+const CHART_W = CHART_PAD * 2 + CHART_SLOT * BUDGET_ROWS.length;
 
 function SheetsIcon() {
   const Icon = TAB_ICONS.spreadsheet;
@@ -94,22 +105,28 @@ export default function BudgetSheetTask() {
     say(lang === "en" ? "That's not today's sheet. Open Cafe budget: week of Sep 1." : "Esa no es la hoja de hoy. Abre Presupuesto del café: sem. 1 sep.");
 
   const formulaBarContent = (() => {
-    if (selected.row === HEADER_ROW) {
-      if (selected.col === "A") return c.categoryHeader;
-      if (selected.col === "B") return c.budgetHeader;
-      if (selected.col === "C") return c.actualHeader;
-      return c.statusHeader;
+    if (selected.row === HEADER_ROW) return headerFor(selected.col);
+    if (selected.row === TOTAL_ROW) {
+      if (selected.col === "A") return c.totalLabel;
+      if (selected.col === "B" || selected.col === "C") return `=SUM(${selected.col}${FIRST_DATA_ROW}:${selected.col}${LAST_DATA_ROW})`;
+      return "";
     }
     const row = BUDGET_ROWS[selected.row - FIRST_DATA_ROW];
     if (!row) return "";
     if (selected.col === "A") return row.label[lang];
     if (selected.col === "B") return String(row.budget);
     if (selected.col === "C") return String(row.actual);
+    if (selected.col === "E") return row.note[lang];
     return statusFormula(selected.row, lang);
   })();
 
-  const headerFor = (col: Col) =>
-    col === "A" ? c.categoryHeader : col === "B" ? c.budgetHeader : col === "C" ? c.actualHeader : c.statusHeader;
+  function headerFor(col: Col) {
+    if (col === "A") return c.categoryHeader;
+    if (col === "B") return c.budgetHeader;
+    if (col === "C") return c.actualHeader;
+    if (col === "D") return c.statusHeader;
+    return c.notesHeader;
+  }
 
   const renderRowLabel = (row: number) => (
     <div
@@ -146,7 +163,7 @@ export default function BudgetSheetTask() {
       )}
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
 
-      {view === "sheet" && (
+      {(view === "sheet" || view === "compose") && (
         <>
           <div className="flex items-center gap-2 border-b border-[#e0e0e0] px-3 py-1.5">
             <span className="min-w-[40px] rounded border border-[#e0e0e0] px-2 py-1 text-center text-[12px] font-medium text-[#3c4043]">
@@ -201,7 +218,9 @@ export default function BudgetSheetTask() {
         </div>
       )}
 
-      {view === "sheet" && (
+      {/* The sheet stays under the compose box: the numbers are what the
+          learner is writing about. */}
+      {(view === "sheet" || view === "compose") && (
         <div className="min-h-0 flex-1 overflow-auto">
           <div className="p-4">
             <div className="mb-4 max-w-[440px] rounded-sm border border-[#f9ab00] bg-[#fef7e0] px-3 py-2.5 text-[13px] leading-relaxed text-[#3c4043]">
@@ -255,7 +274,8 @@ export default function BudgetSheetTask() {
                         if (col === "A") text = row.label[lang];
                         else if (col === "B") text = dollars(row.budget);
                         else if (col === "C") text = dollars(row.actual);
-                        else text = status === "over" ? c.overLabel : c.underLabel;
+                        else if (col === "D") text = status === "over" ? c.overLabel : c.underLabel;
+                        else text = row.note[lang];
                         const cellStyle: CSSProperties = {
                           width: COL_WIDTH[col],
                           height: 26,
@@ -268,7 +288,9 @@ export default function BudgetSheetTask() {
                             key={col}
                             data-showme={col === "D" && over ? "over-cell" : undefined}
                             onClick={() => { showMe.clear(); select({ row: r, col }); }}
-                            className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer"
+                            className={`shrink-0 truncate border-b border-r border-[#c0c0c0] px-1.5 text-[13px] cursor-pointer ${
+                              col === "B" || col === "C" ? "text-right tabular-nums" : col === "E" ? "text-left text-[#5f6368]" : "text-left"
+                            }`}
                             style={cellStyle}
                           >
                             {text}
@@ -278,24 +300,48 @@ export default function BudgetSheetTask() {
                     </div>
                   );
                 })}
+                {/* The Total row adds up B and C. It has no Status: the
+                    question is which line went over, not the whole week. */}
+                <div className="flex">
+                  {renderRowLabel(TOTAL_ROW)}
+                  {COLS.map((col) => {
+                    const text = col === "A" ? c.totalLabel : col === "B" ? dollars(BUDGET_TOTAL) : col === "C" ? dollars(ACTUAL_TOTAL) : "";
+                    return (
+                      <button
+                        key={col}
+                        onClick={() => { showMe.clear(); select({ row: TOTAL_ROW, col }); }}
+                        className={`shrink-0 border-b border-r border-t-2 border-[#c0c0c0] border-t-[#5f6368] bg-[#f8f9fa] px-1.5 text-[13px] font-bold cursor-pointer ${
+                          col === "B" || col === "C" ? "text-right tabular-nums" : "text-left"
+                        }`}
+                        style={{
+                          width: COL_WIDTH[col],
+                          height: 26,
+                          boxShadow: selected.row === TOTAL_ROW && selected.col === col ? "inset 0 0 0 2px #1a73e8" : undefined,
+                        }}
+                      >
+                        {text}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <div className="min-w-[220px] rounded-xl border border-[#dadce0] bg-[#f8f9fa] p-4">
                 <div className="mb-3 text-[12px] font-medium text-[#5f6368]">{c.chartTitle}</div>
                 {/* Each bar is what was spent; the dashed line across it is its
                     budget. The one bar that passes its line is the answer. */}
-                <svg viewBox="0 0 320 150" className="h-[150px] w-[320px]" aria-hidden>
+                <svg viewBox={`0 0 ${CHART_W} 150`} className="h-[150px]" style={{ width: CHART_W }} aria-hidden>
                   {BUDGET_ROWS.map((row, i) => {
-                    const h = Math.max(8, (row.actual / chartMax) * 100);
+                    const h = Math.max(4, (row.actual / chartMax) * 100);
                     const budgetY = 110 - (row.budget / chartMax) * 100;
-                    const x = 22 + i * 76;
+                    const x = CHART_PAD + i * CHART_SLOT + (CHART_SLOT - CHART_BAR) / 2;
                     const over = row.key === OVER_KEY;
                     return (
                       <g key={row.key}>
-                        <rect x={x} y={110 - h} width={32} height={h} fill={over ? "#c5221f" : "#1a73e8"} rx={2} />
-                        <line x1={x - 6} x2={x + 38} y1={budgetY} y2={budgetY} stroke="#202124" strokeWidth="1.5" strokeDasharray="4 3" />
-                        <text x={x + 16} y={128} textAnchor="middle" fontSize="10" fill="#3c4043">
-                          {row.label[lang]}
+                        <rect x={x} y={110 - h} width={CHART_BAR} height={h} fill={over ? "#c5221f" : "#1a73e8"} rx={2} />
+                        <line x1={x - 5} x2={x + CHART_BAR + 5} y1={budgetY} y2={budgetY} stroke="#202124" strokeWidth="1.5" strokeDasharray="4 3" />
+                        <text x={x + CHART_BAR / 2} y={126} textAnchor="middle" fontSize="10" fill="#3c4043">
+                          {row.chart[lang]}
                         </text>
                       </g>
                     );
@@ -319,8 +365,10 @@ export default function BudgetSheetTask() {
 
       {view === "compose" && (
         // Docked right with a light scrim, so the table stays readable while writing.
-        <div className="absolute inset-0 flex items-center justify-end bg-black/15 p-6">
-          <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
+        // The scrim lets clicks and scrolling through, so the learner can
+        // scroll back to a row while the message is open.
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-end bg-black/15 p-6">
+          <div className="pointer-events-auto w-full max-w-[400px] rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
               <span>{CAST.renata.email}</span>

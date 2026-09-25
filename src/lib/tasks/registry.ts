@@ -968,8 +968,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "The cafe plans how much money to spend each week. That plan is the budget. One kind of cost went over the plan. Renata wants to know which one, and by how much.",
-          es: "El café planea cuánto dinero gastar cada semana. Ese plan es el presupuesto. Un tipo de gasto se pasó del plan. Renata quiere saber cuál, y por cuánto.",
+          en: "The cafe plans how much money to spend each week. That plan is the budget. This week's sheet has seven kinds of cost, with a note about each one. One went over the plan. Renata wants to know which one, and by how much.",
+          es: "El café planea cuánto dinero gastar cada semana. Ese plan es el presupuesto. La hoja de esta semana tiene siete tipos de gasto, con una nota sobre cada uno. Uno se pasó del plan. Renata quiere saber cuál, y por cuánto.",
         },
       },
       guide: {
@@ -986,6 +986,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         stickingPoints: [
           { en: "Some learners try to write the email before they open the formula. They must click the status cell that says over first. Ask: which cell says over?", es: "Algunos quieren escribir el correo antes de abrir la fórmula. Primero deben hacer clic en la celda de estado que dice sobre. Pregunta: ¿qué celda dice sobre?" },
           { en: "Some learners name Labor but give no amount, or write $2,850. The amount over is $450. Ask: how much more than the budget did they spend?", es: "Algunos nombran Mano de obra pero no dan la cantidad, o escriben $2,850. Se pasó por $450. Pregunta: ¿cuánto más que el presupuesto gastaron?" },
+          { en: "Two lines are close on purpose. Utilities is $2 under, and Repairs is exactly on budget, so its IF says under. Ask: is $300 bigger than $300?", es: "Dos líneas están cerca a propósito. Servicios está $2 abajo, y Reparaciones está justo en el presupuesto, así que su IF dice bajo. Pregunta: ¿$300 es más grande que $300?" },
+          { en: "The Total row is over too, but it has no Status. Renata asked which kind of cost, so the answer is one line, not the total.", es: "La fila Total también se pasa, pero no tiene Estado. Renata preguntó qué tipo de gasto, así que la respuesta es una línea, no el total." },
         ],
         followUp: [
           { en: "Do you plan how much to spend each week or each month? What happens when you spend more?", es: "¿Planeas cuánto gastar cada semana o cada mes? ¿Qué pasa cuando gastas más?" },
@@ -995,6 +997,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can help compare the two columns, but the learner clicks the cells and writes the email.",
           es: "Un compañero puede ayudar a comparar las dos columnas, pero el estudiante hace clic en las celdas y escribe el correo.",
         },
+        atWork: [
+          { setting: { en: "a warehouse", es: "un almacén" }, example: { en: "Find which shift went over its planned overtime hours.", es: "Encontrar qué turno se pasó de las horas extra planeadas." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Check which week's mileage went over the limit.", es: "Revisar qué semana el millaje se pasó del límite." } },
+          { setting: { en: "a store", es: "una tienda" }, example: { en: "Tell the manager which department lost more stock than planned.", es: "Decirle al gerente qué departamento perdió más mercancía de lo planeado." } },
+          { setting: { en: "at home", es: "en casa" }, example: { en: "See which bill went over your monthly plan.", es: "Ver qué cuenta se pasó de tu plan del mes." } },
+        ],
       },
     },
   },
