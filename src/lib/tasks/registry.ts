@@ -508,8 +508,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Handle a meeting invite", es: "Maneja una invitación a reunión" },
     dispatch: {
-      en: "The meeting is at the same time as your shift. Pick a time that works.",
-      es: "La reunión es a la misma hora que tu turno. Elige una hora que funcione.",
+      en: "Renata set a meeting on your day off. Ask her for a different time.",
+      es: "Renata puso una reunión en tu día libre. Pídele otro horario.",
+    },
+    jobCardLine: {
+      en: "The meeting is on your day off. Ask Renata for a different time.",
+      es: "La reunión es en tu día libre. Pídele a Renata otro horario.",
     },
     skill: { en: "Handle a meeting invite the right way", es: "responder bien a una invitación de reunión" },
     bookmarkLabel: "Calendar",

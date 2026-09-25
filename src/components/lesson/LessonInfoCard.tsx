@@ -47,32 +47,34 @@ export function InfoCardBody({
         <IdCard size={18} aria-hidden />
         {LESSON_COPY.infoTitle[lang]}
       </p>
-      <div className="flex flex-col gap-3 px-5 pb-4 pt-3">
+      <div className="flex flex-col gap-2.5 px-5 pb-3.5 pt-3">
         <p className="m-0 text-[16px] leading-snug">{scene.you[lang]}</p>
         {scene.people.length > 0 && (
-          <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+          <ul className="m-0 flex list-none flex-col gap-1 p-0">
             {scene.people.map((p) => (
-              <li key={p.name} className="text-[16px] leading-snug">
+              <li key={p.name} className="text-[15px] leading-snug">
                 <span className="font-semibold">{p.name}</span>
-                <span className="block text-[14px] text-[#6b5340]">{p.role[lang]}</span>
+                <span className="text-[#6b5340]"> · {p.role[lang]}</span>
               </li>
             ))}
           </ul>
         )}
         {reference.length > 0 && (
-          <dl className="m-0 flex flex-col gap-2 border-t border-[#2a1810]/15 pt-3">
+          // Label beside value, one line each where it fits: the card has to
+          // stay short on a Chromebook screen, above the Job Card.
+          <dl className="m-0 grid grid-cols-[auto_1fr] items-baseline gap-x-3 gap-y-1.5 border-t border-[#2a1810]/15 pt-2.5">
             {reference.map((fact) => {
               const value = typeof fact.value === "string" ? fact.value : fact.value[lang];
               // Something to copy letter for letter (a password, a date) reads in a
               // typewriter face; a sentence stays in the normal one.
               const exact = !/\s/.test(value);
               return (
-                <div key={fact.label.en}>
-                  <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6b5340]">{fact.label[lang]}</dt>
+                <div key={fact.label.en} className="contents">
+                  <dt className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#6b5340]">{fact.label[lang]}</dt>
                   <dd
                     className={`m-0 leading-snug ${
                       exact
-                        ? `font-mono font-semibold select-all ${value.length > 14 ? "break-all text-[14px]" : "text-[19px]"}`
+                        ? `font-mono font-semibold select-all ${value.length > 14 ? "break-all text-[14px]" : "text-[18px]"}`
                         : "break-words text-[15px]"
                     }`}
                   >
@@ -119,7 +121,7 @@ export default function LessonInfoCard({ top }: { top: number }) {
       <aside
         aria-label={LESSON_COPY.infoTitle[lang]}
         className={`fixed z-[60] hidden overflow-y-auto rounded-[8px] xl:block ${glow}`}
-        style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(160px, calc(100dvh - 540px))" }}
+        style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(180px, calc(100dvh - 470px))" }}
       >
         {body}
       </aside>
