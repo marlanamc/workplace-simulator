@@ -23,6 +23,10 @@ export default function LessonGuide({ guide, lang }: { guide: TeacherGuide; lang
         {list(TEACHER_COPY.stickingPoints, guide.stickingPoints)}
         {list(TEACHER_COPY.followUp, guide.followUp)}
       </div>
+      {list(
+        TEACHER_COPY.atWork,
+        (guide.atWork ?? []).map((w) => ({ en: `${w.setting.en}: ${w.example.en}`, es: `${w.setting.es}: ${w.example.es}` })),
+      )}
       {guide.peerHelp[lang] && (
         <p className="m-0 text-[15px] leading-snug text-[#3c4043]">
           <strong className="text-[#202124]">{TEACHER_COPY.finishedEarly[lang]}</strong> {guide.peerHelp[lang]}

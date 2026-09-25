@@ -27,6 +27,8 @@ export type InboxRow = {
   preview: Localized;
   wrongHint?: Localized;
   body?: Record<Lang, string[]>;
+  /** Automatic or bulk mail (a delivery notice, an ad): the body is shown as written. */
+  notice?: boolean;
   unlockAfter: TaskKey;
 };
 
@@ -899,6 +901,7 @@ const CLOSING: Record<Lang, string> = { en: "Thanks,", es: "Gracias," };
  */
 export function storyBodyFor(row: InboxRow, lang: Lang, displayName: string): string[] {
   if (!row.body) return [];
+  if (row.notice) return row.body[lang];
   const signed = signatureFor(row.from) ? [] : [firstName(row.from)];
   return [mailGreeting(lang, displayName), ...row.body[lang], CLOSING[lang], ...signed];
 }

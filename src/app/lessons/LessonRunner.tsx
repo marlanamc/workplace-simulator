@@ -110,6 +110,7 @@ export default function LessonRunner({
             title={entry.title}
             scene={entry.scene}
             reference={entry.reference ?? []}
+            atWork={entry.guide.atWork}
             onStart={() => setStarted(true)}
           />
         )}

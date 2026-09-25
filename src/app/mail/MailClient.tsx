@@ -702,7 +702,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               </>
             ) : (
               <>
-            {(view === "empty" || view === "read" || view === "confirm" || view === "compose" || (opening && view === "story")) && (() => {
+            {/* Reading another email (a delivery notice, story mail) keeps the
+                card on its first line: find the task's email. */}
+            {(view === "empty" || view === "read" || view === "confirm" || view === "compose" || (view === "story" && (opening || (!mailDone && !composeOnly)))) && (() => {
               const stepCount = STEP_COUNT[activeMailTask];
               const needsAttach = activeMailTask === "mail-attach";
               // The compose step is really three moments in one pane, and the
@@ -719,7 +721,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               const confirmAnswered =
                 Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
               const instruction =
-                view === "empty"
+                view === "empty" || view === "story"
                   ? MAIL_JOB_CARD_STEPS.openMail[activeMailTask]
                   : view === "read"
                     // Job 2 goes through a comprehension check first, so its
@@ -734,7 +736,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         : MAIL_JOB_CARD_STEPS.confirm
                       : composeLine;
               const stepIndex =
-                view === "empty" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
+                view === "empty" || view === "story" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
               const showMeId =
                 (view === "empty" || view === "story")
                   ? "maria-row"
@@ -836,7 +838,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         )}
                       </div>
                     </div>
-                    <div className="text-[12px] text-[#5f6368]">to me</div>
+                    <div className="text-[12px] text-[#5f6368]">{T("to me", "para mí")}</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
                       {(opening ? [openingMessage.body[lang]] : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
@@ -1032,7 +1034,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       </div>
                       <div className="text-[12px] text-[#5f6368]">{stamp(openStory)}</div>
                     </div>
-                    <div className="text-[12px] text-[#5f6368]">to me</div>
+                    <div className="text-[12px] text-[#5f6368]">{T("to me", "para mí")}</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
                       {storyBodyFor(openStory, lang, displayName).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>

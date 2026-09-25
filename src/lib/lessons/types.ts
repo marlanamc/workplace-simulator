@@ -12,7 +12,16 @@ export type TeacherGuide = {
   stickingPoints: Localized[];
   followUp: Localized[];
   peerHelp: Localized;
+  /**
+   * The same skill in other jobs. The task stays at the cafe or clinic, so
+   * this is how a learner from a warehouse or a hotel sees their own work.
+   * The intro shows the settings; the guide shows the examples too.
+   */
+  atWork?: WorkExample[];
 };
+
+/** One other job where this lesson's skill shows up. */
+export type WorkExample = { setting: Localized; example: Localized };
 
 /** Someone the task names, so "Email Renata" says who Renata is. */
 export type LessonPerson = { name: string; role: Localized };

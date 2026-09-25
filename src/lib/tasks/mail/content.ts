@@ -892,7 +892,11 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 const wrongHint = (en: string, es: string): Localized => ({ en, es });
 
-/** A clutter email in the Day One inbox: never the target, always dismissible with a hint. */
+/**
+ * A clutter email: never the target. One with a `body` opens read-only, the
+ * way a real inbox does, and opening it is never corrected. Without one it
+ * only shows the hint.
+ */
 interface DecoyEmail {
   key: string;
   from: string;
@@ -904,6 +908,10 @@ interface DecoyEmail {
   subject: Localized;
   preview: Localized;
   wrongHint: Localized;
+  /** Shown as written: automatic mail has no "Hi" or typed name added. */
+  body?: Record<Lang, string[]>;
+  story?: boolean;
+  notice?: boolean;
 }
 
 export const FILES: PickableItem[] = [
@@ -933,30 +941,58 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
   { key: "dairy", from: "Harbor Dairy", initials: "HD", color: "#1a73e8", time: "7:41 AM", isTarget: false, unread: true,
     subject: { en: "Milk delivery confirmation", es: "Confirmación de entrega de leche" },
     preview: { en: "Tomorrow's order is on the truck. No action needed.", es: "El pedido de mañana ya va en el camión. No hay que hacer nada." },
+    body: {
+      en: ["Hello Harborside Cafe,", "Your order for tomorrow is on the truck: 12 gallons of whole milk, 6 gallons of oat milk, and 4 quarts of cream.", "Delivery time: 6:30 to 7:00 AM, at the back door.", "Questions? Call dispatch at (617) 555-0190.", "Harbor Dairy Dispatch"],
+      es: ["Hola, Harborside Cafe:", "Su pedido de mañana ya va en el camión: 12 galones de leche entera, 6 galones de leche de avena y 4 cuartos de crema.", "Hora de entrega: de 6:30 a 7:00 AM, por la puerta de atrás.", "¿Preguntas? Llame a despacho al (617) 555-0190.", "Despacho de Harbor Dairy"],
+    },
     wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
   { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
     subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
     preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },
+    body: {
+      en: ["Your schedule for Aug 17 to 23 is posted. Open the Harborside app to see your shifts.", "Need to swap a shift? Ask your manager at least 48 hours before it starts.", "This is an automatic message. Please do not reply."],
+      es: ["Tu horario del 17 al 23 de agosto ya está publicado. Abre la app de Harborside para ver tus turnos.", "¿Necesitas cambiar un turno? Pídeselo a tu gerente por lo menos 48 horas antes.", "Este es un mensaje automático. Por favor, no respondas."],
+    },
     wrongHint: wrongHint("That's an automatic message about the schedule. Maria's email has her name on the left.", "Ese es un mensaje automático del horario. El correo de Maria tiene su nombre a la izquierda.") },
   { key: "hr", ...inboxSender(CAST.hr), time: "Yesterday", isTarget: false,
     subject: { en: "Your paystub is ready", es: "Tu recibo de pago está listo" },
     preview: { en: "View your paystub in the portal.", es: "Ve tu recibo en el portal." },
+    body: {
+      en: ["Hello team,", "Paystubs for Aug 3 to 16 are ready. Sign in to the employee portal and click Pay to see yours.", "Pay date: Friday, Aug 21.", "Questions about your pay? Reply to this email or call (617) 555-0114."],
+      es: ["Hola, equipo:", "Ya están los recibos de pago del 3 al 16 de agosto. Entra al portal de empleados y haz clic en Pago para ver el tuyo.", "Día de pago: viernes 21 de agosto.", "¿Preguntas sobre tu pago? Responde a este correo o llama al (617) 555-0114."],
+    },
     wrongHint: wrongHint("That's from HR about pay. Today's task is the email from Maria Delgado.", "Eso es de RR.HH. sobre el pago. La tarea de hoy es el correo de Maria Delgado.") },
   { key: "it", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Yesterday", isTarget: false,
     subject: { en: "Reminder: update your password", es: "Recordatorio: cambia tu contraseña" },
     preview: { en: "Your password expires in 12 days.", es: "Tu contraseña vence en 12 días." },
+    body: {
+      en: ["Your Harborside password expires in 12 days.", "To change it, go to the sign-in page and click Forgot password.", "IT will never ask for your password by email or text. If someone does, do not answer. Tell your manager.", "IT Helpdesk · ext. 204"],
+      es: ["Tu contraseña de Harborside vence en 12 días.", "Para cambiarla, ve a la página de inicio de sesión y haz clic en ¿Olvidaste tu contraseña?", "Sistemas nunca te va a pedir tu contraseña por correo ni por mensaje de texto. Si alguien te la pide, no contestes. Avísale a tu gerente.", "Sistemas · ext. 204"],
+    },
     wrongHint: wrongHint("That's from IT. You can skip it for now. Find Maria Delgado.", "Eso es de sistemas. Puedes ignorarlo por ahora. Busca a Maria Delgado.") },
   { key: "team", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Mon", isTarget: false,
     subject: { en: "Break room fridge cleaning", es: "Limpieza del refrigerador" },
     preview: { en: "Please remove your food by Friday.", es: "Saca tu comida antes del viernes." },
+    body: {
+      en: ["Hi all,", "The break room fridge gets cleaned out on Friday at 3 PM.", "Food without a name and a date will be thrown away.", "Thanks! Cafe Team"],
+      es: ["Hola a todos:", "El refrigerador del cuarto de descanso se limpia el viernes a las 3 PM.", "La comida sin nombre y sin fecha se va a tirar.", "¡Gracias! El equipo del café"],
+    },
     wrongHint: wrongHint("That's a team note about the fridge, not from your manager.", "Eso es una nota del equipo sobre el refrigerador, no de tu gerente.") },
   { key: "vendor", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "Aug 18", isTarget: false,
     subject: { en: "Friday delivery window changed", es: "Cambió la entrega del viernes" },
     preview: { en: "Trucks will arrive after 10 AM.", es: "Los camiones llegarán después de las 10 AM." },
+    body: {
+      en: ["Hello,", "Starting this Friday, our trucks will come between 10 AM and 12 PM, not 8 to 10 AM.", "Your weekly order stays the same.", "Bean & Leaf Roasters, Wholesale"],
+      es: ["Hola:", "A partir de este viernes, nuestros camiones van a llegar entre las 10 AM y las 12 PM, no de 8 a 10 AM.", "Su pedido semanal sigue igual.", "Bean & Leaf Roasters, ventas al por mayor"],
+    },
     wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
   { key: "promo", from: "Uniform Outlet", initials: "UO", color: "#c5221f", time: "Aug 12", isTarget: false,
     subject: { en: "15% off fall uniforms", es: "15% de descuento en uniformes" },
     preview: { en: "Sale ends Sunday. Use code FALL15.", es: "La oferta termina el domingo. Usa el código FALL15." },
+    body: {
+      en: ["FALL SALE: 15% off aprons, black work shirts, and non-slip shoes.", "Use code FALL15 at checkout. The sale ends Sunday.", "You get this email because you signed up at uniformoutlet.com. Unsubscribe"],
+      es: ["OFERTA DE OTOÑO: 15% de descuento en delantales, camisas negras de trabajo y zapatos antideslizantes.", "Usa el código FALL15 al pagar. La oferta termina el domingo.", "Recibes este correo porque te registraste en uniformoutlet.com. Cancelar suscripción"],
+    },
     wrongHint: wrongHint("That's an ad. Work inboxes are full of these. Look for Maria Delgado.", "Eso es un anuncio. Las bandejas de trabajo están llenas de estos. Busca a Maria Delgado.") },
 ];
 
@@ -1050,6 +1086,14 @@ type InboxEmail = DecoyEmail | {
   wrongHint?: Localized;
 };
 
+/**
+ * A decoy with a body opens read-only in Mail's story view. `notice` tells
+ * that view to show the body as written, with no greeting added.
+ */
+function openable(decoy: DecoyEmail): InboxEmail {
+  return decoy.body ? { ...decoy, story: true, notice: true } : decoy;
+}
+
 /** Saturday sitting — later than the same-day decoys so Darnell is on top. */
 export const DARNELL_APRON_STAMP = {
   time: "9:48 AM",
@@ -1091,7 +1135,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   // (see DECOY_POOLS). The target rows for a job come first, then its pool.
   // Story mail (the manager's replies, correctly filtered by day) still shows
   // via storyMailsUpTo regardless of what this function returns.
-  const decoys = DECOY_POOLS[task] ?? [];
+  const decoys = (DECOY_POOLS[task] ?? []).map(openable);
   if (task === "mail-reply") return [welcome, ...decoys];
   if (task === "mail-attach") return [safety, welcome, ...decoys];
   if (task === "reply-all") {
