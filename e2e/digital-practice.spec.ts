@@ -368,3 +368,59 @@ test("homework fits a phone screen", async ({ page }) => {
     ),
   ).toBe(true);
 });
+
+test("password: right account, real code, new password, sign in, sign out", async ({
+  page,
+}) => {
+  await page.goto("/practice");
+  await page
+    .getByRole("link", { name: "Start practice: Forgot your password" })
+    .click();
+  await page.getByRole("button", { name: /Sam Okafor/ }).click();
+  await page.getByRole("link", { name: "Forgot password?" }).click();
+  await expect(page.locator(".field-error")).toContainText("Sam");
+  await page.getByRole("button", { name: "Use another account" }).click();
+  await page.getByRole("button", { name: /Maya Torres/ }).click();
+  await page.getByLabel("Password", { exact: true }).fill("guess123");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.getByText(/Wrong password/)).toBeVisible();
+  await page.getByRole("link", { name: "Forgot password?" }).click();
+  await page.getByLabel("Enter the code").fill("2024");
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await expect(page.getByText(/coupon from a pizza ad/)).toBeVisible();
+  await page.getByLabel("Enter the code").fill("730418");
+  await page.reload();
+  await expect(page.getByLabel("Enter the code")).toHaveValue("730418");
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByLabel("New password", { exact: true }).fill("abc");
+  await expect(page.getByText("At least 8 characters")).toBeVisible();
+  await page.getByLabel("New password", { exact: true }).fill("Blue-Harbor-27");
+  await page.getByLabel("Confirm new password").fill("Blue-Harbor-72");
+  await page.getByRole("button", { name: "Save password" }).click();
+  await expect(page.getByText(/two passwords are different/)).toBeVisible();
+  await page.getByLabel("Confirm new password").fill("Blue-Harbor-27");
+  await page.getByRole("button", { name: "Save password" }).click();
+  await page.getByLabel("Password", { exact: true }).fill("Blue-Harbor-27");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await page.getByRole("button", { name: "Account: Maya Torres" }).click();
+  await page.getByRole("button", { name: "Sign out" }).click();
+  await expect(
+    page.getByRole("heading", { name: "You’re signed out" }),
+  ).toBeVisible();
+  const saved = await page.evaluate(
+    () => localStorage.getItem("digital-practice:password:v1:guest") || "",
+  );
+  expect(saved).toContain('"stage":"complete"');
+  expect(saved).not.toContain("Blue-Harbor");
+});
+test("password activity fits a phone screen", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/practice/password");
+  await page.getByRole("button", { name: /Maya Torres/ }).click();
+  await page.getByRole("link", { name: "Forgot password?" }).click();
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
