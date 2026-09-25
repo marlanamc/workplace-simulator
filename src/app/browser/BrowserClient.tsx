@@ -8,6 +8,7 @@ import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
+import { useLesson } from "@/lib/lesson-context";
 import { LEVELS, levelForTrack, nextTaskInTrack, unlockedLevels } from "@/lib/tracks-content";
 import { TAB_META, TAB_COLORS, bookmarkTabKeys } from "@/lib/tabs";
 import { newTabHint } from "@/lib/shift-spine";
@@ -144,6 +145,12 @@ export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { lang, currentTrack, completedTaskKeys, bridgePath, storyFlags, setStoryFlag } = useProgress();
   const { nudge, say, dismiss } = useNudge();
+  // A lesson keeps the learner on its own tabs: the bookmark bar, the opening
+  // tabs, and every deep link are limited to them.
+  const lesson = useLesson();
+  const lessonTabs = lesson
+    ? lesson.tabs.flatMap((k) => BASE_TABS.filter((t) => t.key === k))
+    : null;
   const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
   const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
   const [tourHelpOpen, setTourHelpOpen] = useState(false);
@@ -187,12 +194,14 @@ export default function BrowserClient() {
     return matched;
   };
   const [openTabs, setOpenTabs] = useState<TabDef[]>(() => {
+    if (lessonTabs?.length) return lessonTabs;
     if (jumpDef) return [jumpDef];
     return initialFreeTabbing
       ? [makeNewTabStub(initialLevelKey)]
       : tabsForLevel(initialLevelKey, initialLevelDef?.firstTabKey);
   });
   const [activeTab, setActiveTab] = useState<TabKey>(() => {
+    if (lessonTabs?.length) return lessonTabs[0].key;
     if (jumpDef) return jumpDef.key;
     return initialFreeTabbing ? ("newtab" as TabKey) : defaultTab;
   });
@@ -207,12 +216,14 @@ export default function BrowserClient() {
   unlockedKeys.add(progressLevelKey);
   // Orientation teaches the Mail bookmark before Day One formally unlocks it.
   if (progressLevelKey === "level0") unlockedKeys.add("level1");
-  const visibleBookmarks = bookmarkTabKeys(
-    progressLevelKey,
-    completedTaskKeys,
-    bridgePath,
-    { unlockedLevelKeys: unlockedKeys },
-  );
+  const visibleBookmarks = lesson
+    ? new Set(lesson.tabs)
+    : bookmarkTabKeys(
+        progressLevelKey,
+        completedTaskKeys,
+        bridgePath,
+        { unlockedLevelKeys: unlockedKeys },
+      );
 
   // Deep-link handling from launcher / shelf navigator / Levels dropdown.
   // `browserTabExplicit` (from window-manager) tells "go to this exact tab"
@@ -223,7 +234,14 @@ export default function BrowserClient() {
   const [lastToken, setLastToken] = useState(browserTabToken);
   if (browserTabToken !== lastToken) {
     setLastToken(browserTabToken);
-    if (browserTabExplicit && BASE_TABS.some((t) => t.key === browserTab)) {
+    if (lesson) {
+      // A named lesson tab comes forward; anything else leaves the lesson as it is.
+      const tabDef = lessonTabs?.find((t) => t.key === browserTab);
+      if (browserTabExplicit && tabDef) {
+        setActiveTab(tabDef.key);
+        if (!openTabs.some((t) => t.key === tabDef.key)) setOpenTabs((prev) => [...prev, tabDef]);
+      }
+    } else if (browserTabExplicit && BASE_TABS.some((t) => t.key === browserTab)) {
       const tabDef = BASE_TABS.find((t) => t.key === browserTab)!;
       const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
       setActiveTab(browserTab as TabKey);
@@ -349,6 +367,7 @@ export default function BrowserClient() {
     freeTabbing && (isNewTabKey(tab.key) || tab.closeable || openTabs.length > 1);
 
   const goToBookmark = (t: TabDef) => {
+    if (lesson && !lesson.tabs.includes(t.key)) return;
     if (openTabs.some((ot) => ot.key === t.key)) {
       setActiveTab(t.key);
       return;

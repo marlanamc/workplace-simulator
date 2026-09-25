@@ -1,5 +1,6 @@
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
+import type { LessonMeta } from "@/lib/lessons/types";
 
 /**
  * The task registry — one entry per task, one place to edit.
@@ -74,6 +75,8 @@ export interface TaskDescriptor {
   jobCardLine?: Localized;
   /** The Job Card's green finish line. Falls back to the generic done copy. */
   jobCardDoneLine?: Localized;
+  /** Makes this task a standalone classroom lesson at `/lessons/<key>`. */
+  lesson?: LessonMeta;
 }
 
 const browser = (ctaLabel: string, tab?: string, section?: PortalSection): TaskLocation => ({
@@ -316,6 +319,39 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles por la mañana. Cerraste sesión.",
     },
     location: browser("Open Sign In", "account-recovery"),
+    lesson: {
+      title: { en: "Sign in with a text code", es: "Iniciar sesión con un código de texto" },
+      summary: {
+        en: "Sign in to a work account, find the real code in your texts, and type it in.",
+        es: "Inicia sesión en una cuenta de trabajo, busca el código correcto en tus mensajes y escríbelo.",
+      },
+      skills: ["accounts"],
+      minutes: 5,
+      guide: {
+        skills: [
+          { en: "Sign in with a username and password", es: "Iniciar sesión con usuario y contraseña" },
+          { en: "Find a verification code in text messages", es: "Encontrar un código de verificación en los mensajes de texto" },
+          { en: "Tell a real code apart from ads and other texts", es: "Distinguir el código real de los anuncios y otros mensajes" },
+          { en: "Type a code exactly as it appears", es: "Escribir un código exactamente como aparece" },
+        ],
+        prepare: [
+          { en: "Ask who has used a code from a text to sign in before.", es: "Pregunte quién ya usó un código de un mensaje de texto para iniciar sesión." },
+          { en: "Explain that the code changes every time, so you cannot save it.", es: "Explique que el código cambia cada vez, así que no se puede guardar." },
+        ],
+        stickingPoints: [
+          { en: "Some learners pick the ad or the coworker's text. Ask: who sent this text?", es: "Algunos eligen el anuncio o el mensaje del compañero. Pregunte: ¿quién envió este mensaje?" },
+          { en: "Some learners type the whole message. The box only takes the 6 numbers.", es: "Algunos escriben todo el mensaje. La casilla solo acepta los 6 números." },
+        ],
+        followUp: [
+          { en: "Where do you get codes like this in real life? Your bank, your email, your school.", es: "¿Dónde recibe códigos así en la vida real? El banco, el correo, la escuela." },
+          { en: "Why should you never tell anyone your code?", es: "¿Por qué nunca debe decirle a nadie su código?" },
+        ],
+        peerHelp: {
+          en: "A partner can point at the screen, but the learner clicks and types.",
+          es: "Un compañero puede señalar la pantalla, pero el estudiante hace clic y escribe.",
+        },
+      },
+    },
   },
 
   incident: {

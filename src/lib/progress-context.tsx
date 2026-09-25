@@ -24,6 +24,7 @@ import {
   persistBridgePath,
   persistCourseRoute,
   recordWritingSubmission,
+  recordOpeningReply,
   markMyFeedbackSeen,
   restartLevelProgress,
   syncSkillRun,
@@ -57,7 +58,7 @@ const saveRungMap = (learnerId: string, map: RungMap) =>
   storage.setJSON(learnerKey.rungs(learnerId), map);
 
 type PendingSave = { taskKey: TaskKey; badgeKey?: string; submission?: SubmissionContent; confidence?: Confidence };
-interface ProgressValue {
+export interface ProgressValue {
   courseRoute: CourseRoute | null;
   chooseCourseRoute: (route: CourseRoute) => Promise<void>;
   routeSaving: boolean;
@@ -67,6 +68,8 @@ interface ProgressValue {
   writing: Record<string, SubmissionContent>;
   openingReplies: OpeningReply[];
   setOpeningReplies: (replies: OpeningReply[]) => void;
+  /** Save one opening-mail reply. Resolves false when it did not save. */
+  saveOpeningReply: (reply: OpeningReply) => Promise<boolean>;
 
   learnerId: string;
   displayName: string;
@@ -106,7 +109,7 @@ interface ProgressValue {
   dismissFeedback: (id: string) => void;
 }
 
-const ProgressContext = createContext<ProgressValue | null>(null);
+export const ProgressContext = createContext<ProgressValue | null>(null);
 
 export function ProgressProvider({
   learnerId,
@@ -233,6 +236,13 @@ export function ProgressProvider({
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
   const [pendingFeedback, setPendingFeedback] = useState<TeacherFeedback[]>(initialFeedback);
   const pointsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const saveOpeningReply = useCallback(async (reply: OpeningReply) => {
+    const result = await recordOpeningReply(reply);
+    if (!result.ok) return false;
+    setOpeningReplies((prev) => [...prev.filter((r) => r.messageId !== reply.messageId), reply]);
+    return true;
+  }, []);
 
   const dismissFeedback = useCallback((id: string) => {
     setPendingFeedback((prev) => prev.filter((f) => f.id !== id));
@@ -389,7 +399,7 @@ export function ProgressProvider({
       courseRoute, chooseCourseRoute, routeSaving,
       saveError: isClient && (routeError || (pending.length > 0 && savingCount === 0)),
       saving: savingCount > 0,
-      writing, openingReplies, setOpeningReplies,
+      writing, openingReplies, setOpeningReplies, saveOpeningReply,
       retrySave: async () => {
         if (routeError && routeAttempt.current) void chooseCourseRoute(routeAttempt.current);
         for (const item of [...pendingRef.current]) await markComplete(item.taskKey, item.badgeKey, item.submission, item.confidence);
@@ -424,7 +434,7 @@ export function ProgressProvider({
       dismissFeedback,
     }),
     [
-      courseRoute, chooseCourseRoute, routeSaving, routeError, pending, savingCount, writing, openingReplies, isClient,
+      courseRoute, chooseCourseRoute, routeSaving, routeError, pending, savingCount, writing, openingReplies, saveOpeningReply, isClient,
       learnerId,
       displayName,
       completedTaskKeys,

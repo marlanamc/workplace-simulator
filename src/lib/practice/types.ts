@@ -2,14 +2,8 @@ import type { Localized } from "@/lib/task-types";
 export type Mode = "guided" | "independent";
 /** Every saved draft carries these; the rest is the activity's own answers. */
 export type BaseDraft = { version: number; stage: string; mode: Mode };
-/** Shown only in teacher preview. Support is chosen by computer experience, not English level. */
-export type TeacherGuide = {
-  skills: Localized[];
-  prepare: Localized[];
-  stickingPoints: Localized[];
-  followUp: Localized[];
-  peerHelp: Localized;
-};
+export type { TeacherGuide } from "@/lib/lessons/types";
+import type { TeacherGuide } from "@/lib/lessons/types";
 /** What the library, login redirect, and API need — no stage typing. */
 export type ActivityMeta = {
   id: string;
