@@ -1,4 +1,5 @@
 import LoginForm from "./LoginForm";
+import { loginsPaused } from "@/lib/login-gate";
 
 function safeNext(value: string | string[] | undefined) {
   const raw = Array.isArray(value) ? value[0] : value;
@@ -11,5 +12,5 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string | string[] }>;
 }) {
   const next = safeNext((await searchParams).next);
-  return <LoginForm next={next} />;
+  return <LoginForm next={next} paused={loginsPaused()} />;
 }

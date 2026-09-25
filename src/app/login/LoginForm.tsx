@@ -27,6 +27,9 @@ const COPY: Record<
   Lang,
   {
     banner: string;
+    wipTitle: string;
+    wipBody: string;
+    wipPaused: string;
     addUser: string;
     addTitle: string;
     pickerHint: string;
@@ -48,6 +51,9 @@ const COPY: Record<
 > = {
   en: {
     banner: "Practice Chromebook. Nothing here is real.",
+    wipTitle: "Work in progress",
+    wipBody: "This simulator is still being built. Marlie will send all staff a link to explore next week.",
+    wipPaused: "Sign-in is turned off until then.",
     addUser: "Add user",
     addTitle: "Add user",
     pickerHint: "Add a user to sign in.",
@@ -69,10 +75,14 @@ const COPY: Record<
       pin: "Your PIN is 4 numbers.",
       classCode: "Enter your class code.",
       wrongPin: "That PIN doesn't match. Try again, or ask your teacher.",
+      paused: "Sign-in is turned off for now.",
     },
   },
   es: {
     banner: "Chromebook de práctica. Nada aquí es real.",
+    wipTitle: "En construcción",
+    wipBody: "Este simulador todavía se está construyendo. Marlie enviará un enlace a todo el personal la próxima semana para explorarlo.",
+    wipPaused: "El inicio de sesión está desactivado hasta entonces.",
     addUser: "Agregar usuario",
     addTitle: "Agregar usuario",
     pickerHint: "Agrega un usuario para entrar.",
@@ -94,6 +104,7 @@ const COPY: Record<
       pin: "Tu PIN son 4 números.",
       classCode: "Escribe el código de clase.",
       wrongPin: "Ese PIN no coincide. Inténtalo otra vez, o pregúntale a tu maestra.",
+      paused: "El inicio de sesión está desactivado por ahora.",
     },
   },
 };
@@ -311,7 +322,7 @@ function readStoredLang(): Lang {
   return storage.getString(DEVICE_KEY.lang) === "es" ? "es" : "en";
 }
 
-export default function LoginForm({ next }: { next: string }) {
+export default function LoginForm({ next, paused = false }: { next: string; paused?: boolean }) {
   const [state, formAction, pending] = useActionState(loginOrSignup, initialState);
   const isClient = useSyncExternalStore(
     () => () => {},
@@ -405,13 +416,22 @@ export default function LoginForm({ next }: { next: string }) {
         <div>
           <DesktopClock lang={lang} />
           <p className="mt-3 max-w-[36ch] text-[14px] text-white/80">{c.banner}</p>
+          <div
+            role="note"
+            data-testid="login-wip-notice"
+            className="mt-4 max-w-[40ch] rounded-2xl border border-white/25 bg-black/35 px-4 py-3 backdrop-blur-sm"
+          >
+            <p className="m-0 text-[15px] font-semibold">🚧 {c.wipTitle}</p>
+            <p className="m-0 mt-1 text-[14px] text-white/85">{c.wipBody}</p>
+            {paused ? <p className="m-0 mt-1 text-[14px] font-semibold">{c.wipPaused}</p> : null}
+          </div>
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-5 py-6">
           {mode === "picker" && (
             <>
               <LoginHarborMark school="EBHCS" title="Workplace Simulator Game" />
-              {recents.length === 0 && (
+              {recents.length === 0 && !paused && (
                 <p className="mt-auto mb-2 max-w-[28ch] text-center text-[16px] text-white/80">
                   {c.pickerHint}
                 </p>
@@ -532,6 +552,7 @@ export default function LoginForm({ next }: { next: string }) {
         suppressHydrationWarning
       >
         <div className="flex min-w-0 flex-1 flex-wrap items-end gap-2">
+          {!paused && <>
           {recents.map((user) => {
             const active =
               unlocking && selected?.displayName === user.displayName && selected.classCode === user.classCode;
@@ -573,6 +594,7 @@ export default function LoginForm({ next }: { next: string }) {
             </span>
             <span className="w-full text-center text-[13px] font-medium leading-tight">{c.addUser}</span>
           </button>
+          </>}
         </div>
 
         <div className="flex shrink-0 items-center gap-0.5 pb-3 text-white/90">
