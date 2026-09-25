@@ -35,7 +35,7 @@ describe("completion requirements are explicit in the Job Card", () => {
     expectDirection(RESEARCH_STEPS[2], /authors.*library database/i, /autores.*base de datos de la biblioteca/i);
     expectDirection(INCIDENT_STEPS[0], /hurt.*what you did/i, /lastimó.*qué hiciste/i);
     expectDirection(PRIORITY_STEPS[2], /acknowledge.*check.*Do not promise.*refund/i, /Reconoce.*revisarás.*No prometas.*reembolso/i);
-    expectDirection(RESUME_STEPS[1], /at least three skills/i, /al menos tres habilidades/i);
+    expectDirection(RESUME_STEPS[2], /at least three skills/i, /al menos tres habilidades/i);
     expectDirection(SLIDE_STEPS[2], /full sentence/i, /oración completa/i);
     expectDirection(OPS_STEPS[3], /weekly total.*Thursday.*uncovered/i, /total semanal.*jueves.*sin cobertura/i);
   });

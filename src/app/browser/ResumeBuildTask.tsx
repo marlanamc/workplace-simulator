@@ -1,6 +1,9 @@
 "use client";
 
-import { practicedHistory } from "@/lib/tasks/job-application/content";
+import { historyFor } from "@/lib/tasks/job-application/content";
+import { useLesson } from "@/lib/lesson-context";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -18,6 +21,8 @@ import {
   SKILL_CHOICES as ALL_SKILL_CHOICES,
   SUMMARY_STARTERS,
   BULLET_STARTERS,
+  LESSON_SUMMARY_STARTERS,
+  LESSON_BULLET_STARTERS,
   LESSONS,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
@@ -37,9 +42,14 @@ export default function ResumeBuildTask() {
     setDone(completedTaskKeys.includes("resume-build"));
   }
 
-  const WORK_HISTORY = practicedHistory(completedTaskKeys);
+  const inLesson = useLesson() !== null;
+  const showMe = useShowMe();
+  const WORK_HISTORY = historyFor(completedTaskKeys, inLesson);
   const BULLET_ROLES = WORK_HISTORY.slice(0, 2);
-  const SKILL_CHOICES = ALL_SKILL_CHOICES.filter((skill) => {
+  const summaryStarters = inLesson ? LESSON_SUMMARY_STARTERS : SUMMARY_STARTERS;
+  const bulletStarters = inLesson ? LESSON_BULLET_STARTERS : BULLET_STARTERS;
+  // A lesson has no game history to hide skills behind: every chip is fair.
+  const SKILL_CHOICES = inLesson ? ALL_SKILL_CHOICES : ALL_SKILL_CHOICES.filter((skill) => {
     if (skill.key === 'budget') return completedTaskKeys.includes('budget-sheet');
     if (skill.key === 'training') return completedTaskKeys.includes('team-meeting');
     if (skill.key === 'scheduling') return completedTaskKeys.includes('team-schedule');
@@ -71,6 +81,8 @@ export default function ResumeBuildTask() {
 
   const trySave = () => {
     if (!summaryLooksReal(summary)) return say(c.needSummary);
+    const shortRole = BULLET_ROLES.find((_, i) => !bulletLooksReal(bullets[i] ?? ""));
+    if (shortRole) return say(c.needBulletFor(shortRole.title[lang]));
     if (!bulletsReady) return say(c.needBullets);
     if (skills.length < 3) return say(c.needSkills);
     setDone(true);
@@ -84,7 +96,8 @@ export default function ResumeBuildTask() {
     setSkills([]);
   };
 
-  const stepIndex = summaryLooksReal(summary) && bulletsReady ? 1 : 0;
+  const stepIndex = !summaryLooksReal(summary) ? 0 : !bulletsReady ? 1 : 2;
+  const showMeIds = ["summary-box", "bullet-box", "skill-chips"];
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-[#f1f3f4] text-[14px] text-[#202124]">
@@ -106,6 +119,8 @@ export default function ResumeBuildTask() {
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -132,13 +147,14 @@ export default function ResumeBuildTask() {
                 <section className="rounded-xl border border-[#dadce0] bg-white p-4">
                   <label className="text-[13px] font-medium text-[#202124]">{c.summaryLabel}</label>
                   <textarea
+                    data-showme="summary-box"
                     value={summary}
                     onChange={(e) => setSummary(e.target.value)}
                     placeholder={c.summaryHint}
                     className="mt-2 min-h-[64px] w-full resize-y rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[15px] leading-relaxed outline-none focus:border-[#4285f4]"
                   />
                   <div className="mt-2">
-                    <NeedAStart lang={lang} starters={SUMMARY_STARTERS[lang]} onPick={(s) => setSummary((b) => (b ? `${b} ` : "") + s)} />
+                    <NeedAStart lang={lang} starters={summaryStarters[lang]} onPick={(s) => setSummary((b) => (b ? `${b} ` : "") + s)} />
                   </div>
                 </section>
 
@@ -149,14 +165,16 @@ export default function ResumeBuildTask() {
                       <div key={i}>
                         <div className="text-[14px] font-medium text-[#202124]">{role.title[lang]}</div>
                         <div className="text-[12px] text-[#5f6368]">{role.org} · {role.span[lang]}</div>
+                        {role.duties && <p className="mt-1 text-[13px] leading-snug text-[#3c4043]">{role.duties[lang]}</p>}
                         <textarea
+                          data-showme={i === bullets.findIndex((b) => !bulletLooksReal(b)) ? "bullet-box" : undefined}
                           value={bullets[i]}
                           onChange={(e) => setBullet(i, e.target.value)}
                           placeholder={c.bulletHint}
                           className="mt-2 min-h-[52px] w-full resize-y rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[14px] leading-relaxed outline-none focus:border-[#4285f4]"
                         />
                         <div className="mt-1.5">
-                          <NeedAStart lang={lang} starters={BULLET_STARTERS[lang]} onPick={(s) => setBullet(i, (bullets[i] ? `${bullets[i]} ` : "") + s)} />
+                          <NeedAStart lang={lang} starters={bulletStarters[lang]} onPick={(s) => setBullet(i, (bullets[i] ? `${bullets[i]} ` : "") + s)} />
                         </div>
                       </div>
                     ))}
@@ -172,7 +190,7 @@ export default function ResumeBuildTask() {
                 <section className="rounded-xl border border-[#dadce0] bg-white p-4">
                   <div className="text-[13px] font-medium text-[#202124]">{c.skillsLabel}</div>
                   <div className="mt-0.5 text-[12px] text-[#5f6368]">{c.skillsHint}</div>
-                  <div className="mt-3 flex flex-wrap gap-2">
+                  <div data-showme="skill-chips" className="mt-3 flex flex-wrap gap-2">
                     {SKILL_CHOICES.map((s) => {
                       const on = skills.includes(s.key);
                       return (
@@ -204,7 +222,7 @@ export default function ResumeBuildTask() {
               <aside className="hidden md:block">
                 <div className="sticky top-2 rounded-xl border border-[#dadce0] bg-white p-4 text-[12px] leading-relaxed">
                   <div className="text-[10px] font-medium uppercase tracking-wide text-[#80868b]">{c.previewLabel}</div>
-                  <div className="mt-2 text-[15px] font-semibold text-[#202124]">{displayName}</div>
+                  <div className="mt-2 text-[15px] font-semibold text-[#202124]">{displayName.trim() || c.namePlaceholder}</div>
                   <p className="mt-1 whitespace-pre-wrap text-[#3c4043]">{summary || "…"}</p>
                   <div className="mt-3 border-t border-[#e0e0e0] pt-2 text-[10px] font-medium uppercase tracking-wide text-[#80868b]">
                     {c.experienceLabel}
@@ -244,6 +262,7 @@ export default function ResumeBuildTask() {
         gotItLabel={c.gotIt}
       />
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
   );
 }

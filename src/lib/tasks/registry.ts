@@ -86,11 +86,11 @@ export interface TaskDescriptor {
  * matches these lines one for one.
  */
 const JOB_SEEKER_FACTS: LessonMeta["reference"] = [
-  { label: { en: "Past jobs", es: "Empleos anteriores" }, value: { en: "Harborside Cafe: Team Member, then Shift Lead", es: "Harborside Cafe: miembro del equipo, después líder de turno" } },
-  { label: { en: "You talked with", es: "Hablaste con" }, value: { en: "Coworkers and managers, by email and in person", es: "Compañeros y gerentes, por correo y en persona" } },
-  { label: { en: "Schedules", es: "Horarios" }, value: { en: "You read the schedule and fixed a problem in it", es: "Leíste el horario y arreglaste un problema" } },
-  { label: { en: "Computer tools", es: "Herramientas" }, value: { en: "Email, calendars, spreadsheets", es: "Correo, calendarios, hojas de cálculo" } },
-  { label: { en: "Numbers", es: "Números" }, value: { en: "You typed tips in a spreadsheet and sent the total", es: "Escribiste propinas en una hoja de cálculo y enviaste el total" } },
+  { label: { en: "Past jobs", es: "Empleos" }, value: { en: "Team Member, then Shift Lead", es: "Miembro del equipo, luego líder" } },
+  { label: { en: "Talked with", es: "Hablaste con" }, value: { en: "Coworkers and managers", es: "Compañeros y gerentes" } },
+  { label: { en: "Schedules", es: "Horarios" }, value: { en: "Fixed a schedule problem", es: "Arreglaste un problema del horario" } },
+  { label: { en: "Computer", es: "Computadora" }, value: { en: "Email, calendars, spreadsheets", es: "Correo, calendarios, hojas de cálculo" } },
+  { label: { en: "Numbers", es: "Números" }, value: { en: "Sent a spreadsheet total", es: "Enviaste el total de una hoja" } },
   { label: { en: "School", es: "Estudios" }, value: { en: "High school. No college degree.", es: "Secundaria. Sin título universitario." } },
 ];
 
@@ -1264,8 +1264,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["job-search"],
       minutes: 10,
       scene: {
-        you: { en: "You are looking for a new job. You worked at Harborside Cafe.", es: "Estás buscando un trabajo nuevo. Trabajaste en Harborside Cafe." },
-        people: [{ name: "Anita Raman", role: { en: "Director at Harborside HQ. She sent you the job post.", es: "Directora en Harborside HQ. Te envió el anuncio." } }],
+        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
+        people: [{ name: "Anita Raman", role: { en: "Sent you the job post", es: "Te envió el anuncio" } }],
         need: {
           en: "Read the job post. Compare what the job asks for with your experience on your info card.",
           es: "Lee el anuncio. Compara lo que pide el trabajo con tu experiencia en tu tarjeta de información.",
@@ -1327,7 +1327,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["job-search", "forms"],
       minutes: 10,
       scene: {
-        you: { en: "You are looking for a new job. You worked at Harborside Cafe.", es: "Estás buscando un trabajo nuevo. Trabajaste en Harborside Cafe." },
+        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
         people: [],
         need: {
           en: "You found a job you like. Fill out the online application.",
@@ -1389,7 +1389,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["job-search", "documents"],
       minutes: 15,
       scene: {
-        you: { en: "You are looking for a new job. You worked at Harborside Cafe.", es: "Estás buscando un trabajo nuevo. Trabajaste en Harborside Cafe." },
+        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
         people: [],
         need: {
           en: "Make a short résumé. A résumé is one page about your work: your jobs, what you did well, and your skills.",

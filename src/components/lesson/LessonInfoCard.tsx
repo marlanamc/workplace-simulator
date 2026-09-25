@@ -121,7 +121,7 @@ export default function LessonInfoCard({ top }: { top: number }) {
       <aside
         aria-label={LESSON_COPY.infoTitle[lang]}
         className={`fixed z-[60] hidden overflow-y-auto rounded-[8px] xl:block ${glow}`}
-        style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(180px, calc(100dvh - 470px))" }}
+        style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(180px, calc(100dvh - 440px))" }}
       >
         {body}
       </aside>
