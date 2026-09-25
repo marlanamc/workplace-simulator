@@ -37,7 +37,19 @@ export interface AwardLetterDoc extends PdfBase {
   signedBy: string;
 }
 
-export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc;
+/** A posted crew schedule: one row per person, one column per day. */
+export interface ScheduleDoc extends PdfBase {
+  kind: "schedule";
+  title: string;
+  /** The line people check first: "Week of Aug 24 – 30, 2026". */
+  week: string;
+  days: string[];
+  rows: { name: string; shifts: string[] }[];
+  notes: string[];
+  postedBy: string;
+}
+
+export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc | ScheduleDoc;
 
 export const PDF_DOCUMENTS: PdfDocument[] = [
   {

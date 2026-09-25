@@ -630,7 +630,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       ],
       guide: {
         skills: [
-          { en: "Find the right file by its date", es: "Encontrar el archivo correcto por su fecha" },
+          { en: "Open files to check what they are, and find the right one by reading the page", es: "Abrir archivos para ver qué son, y encontrar el correcto leyendo la página" },
           { en: "Rename a file with a set pattern", es: "Cambiar el nombre de un archivo con un formato dado" },
           { en: "Share a file with one person", es: "Compartir un archivo con una persona" },
           { en: "Choose view access instead of edit access", es: "Elegir acceso para ver en vez de acceso para editar" },
@@ -640,7 +640,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain the difference: view means look only, and edit means change.", es: "Explica la diferencia: ver es solo mirar, y editar es cambiar." },
         ],
         stickingPoints: [
-          { en: "Some learners click last week's schedule. Ask: what date is on this file? What date is this week?", es: "Algunos hacen clic en el horario de la semana pasada. Pregunta: ¿qué fecha tiene este archivo? ¿Qué fecha es esta semana?" },
+          { en: "Every file opens to its page. Opening the wrong one is fine; the Job Card says to read the week and click Close. A correction comes only if they click Rename on the wrong week.", es: "Cada archivo se abre y muestra su página. Abrir el equivocado está bien; la tarjeta de trabajo dice que lean la semana y hagan clic en Cerrar. Solo hay corrección si hacen clic en Cambiar nombre en la semana equivocada." },
+          { en: "The schedule is in English. Spanish readers match Week of Aug 24 with the info card (semana del 24 de agosto).", es: "El horario está en inglés. Quienes leen en español comparan Week of Aug 24 con la tarjeta de información (semana del 24 de agosto)." },
           { en: "Some learners type a different name. The name must be schedule-week-of-aug-24. Ask them to compare their name with the example, one word at a time.", es: "Algunos escriben otro nombre. El nombre debe ser schedule-week-of-aug-24. Pídeles comparar su nombre con el ejemplo, palabra por palabra." },
           { en: "Some learners choose Can edit. Ask: does Jordan need to change the schedule, or only look at it?", es: "Algunos eligen Puede editar. Pregunta: ¿Jordan necesita cambiar el horario, o solo mirarlo?" },
         ],
@@ -649,9 +650,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "How do you name files on your phone or computer so you can find them later?", es: "¿Cómo nombras los archivos en tu teléfono o computadora para encontrarlos después?" },
         ],
         peerHelp: {
-          en: "A partner can help find the date column, but the learner types the name and clicks Share.",
-          es: "Un compañero puede ayudar a encontrar la columna de la fecha, pero el estudiante escribe el nombre y hace clic en Compartir.",
+          en: "A partner can help read the week at the top of the page, but the learner types the name and clicks Share.",
+          es: "Un compañero puede ayudar a leer la semana arriba de la página, pero el estudiante escribe el nombre y hace clic en Compartir.",
         },
+        atWork: [
+          { setting: { en: "a store", es: "una tienda" }, example: { en: "Share this week's floor plan with a new cashier, view only.", es: "Compartir el plano de esta semana con un cajero nuevo, solo para ver." } },
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "Find today's room assignment sheet, not yesterday's.", es: "Encontrar la lista de cuartos de hoy, no la de ayer." } },
+          { setting: { en: "a cleaning company", es: "una empresa de limpieza" }, example: { en: "Rename the building checklist so the next crew can find it.", es: "Cambiarle el nombre a la lista del edificio para que el próximo equipo la encuentre." } },
+          { setting: { en: "a school", es: "una escuela" }, example: { en: "Share a class photo folder with a parent who can only look.", es: "Compartir una carpeta de fotos de la clase con un padre que solo puede mirar." } },
+        ],
       },
     },
   },

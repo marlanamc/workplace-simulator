@@ -231,6 +231,48 @@ function PayStubPage({
   );
 }
 
+function SchedulePage({ doc }: { doc: Extract<PdfDocument, { kind: "schedule" }> }) {
+  const cell = "border border-[#1a1a1a] px-[5pt] py-[5pt]";
+  return (
+    <>
+      <Letterhead />
+      <h1 className="mb-[4pt] text-center text-[16pt] font-bold tracking-wide">{doc.title}</h1>
+      {/* The week is what people check first, so it is the biggest line after the title. */}
+      <p className="mb-[14pt] text-center text-[14pt] font-bold">{doc.week}</p>
+      <table className="mb-[14pt] w-full border-collapse text-[10.5pt]">
+        <thead>
+          <tr className="bg-[#f3f3f3]">
+            <th className={`${cell} text-left font-bold`}>Name</th>
+            {doc.days.map((d) => (
+              <th key={d} className={`${cell} text-center font-bold`}>
+                {d}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {doc.rows.map((r) => (
+            <tr key={r.name}>
+              <td className={`${cell} whitespace-nowrap`}>{r.name}</td>
+              {r.shifts.map((sh, i) => (
+                <td key={i} className={`${cell} text-center tabular-nums`}>
+                  {sh || "—"}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <ul className="m-0 flex list-disc flex-col gap-[4pt] pl-[16pt] text-[11pt]">
+        {doc.notes.map((n) => (
+          <li key={n}>{n}</li>
+        ))}
+      </ul>
+      <p className="mt-[20pt] text-[11pt] italic">{doc.postedBy}</p>
+    </>
+  );
+}
+
 /**
  * One document as a real sheet of paper, scaled. The PDF Reader shows it full
  * size; a task can show it inline (a file preview, a picker's details pane)
@@ -266,6 +308,8 @@ export function PdfSheet({
             <ReportPage doc={doc} />
           ) : doc.kind === "award-letter" ? (
             <AwardLetterPage doc={doc} />
+          ) : doc.kind === "schedule" ? (
+            <SchedulePage doc={doc} />
           ) : (
             <PayStubPage doc={doc} employeeName={employeeName} />
           )}
