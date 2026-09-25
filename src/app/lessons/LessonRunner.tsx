@@ -106,7 +106,7 @@ export default function LessonRunner({
           <LessonIntro
             title={entry.title}
             scene={entry.scene}
-            hasCard
+            reference={entry.reference ?? []}
             onStart={() => setStarted(true)}
           />
         )}

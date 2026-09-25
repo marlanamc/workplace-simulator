@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { IdCard, X } from "lucide-react";
 import { useLesson } from "@/lib/lesson-context";
+import { useJobCardOptional } from "@/lib/job-card-context";
+import type { LessonFact, LessonScene } from "@/lib/lessons/types";
+import type { Lang } from "@/lib/task-types";
 import { useProgress } from "@/lib/progress-context";
 import { LESSON_COPY } from "@/lib/lessons/copy";
 import { SHELF_RESERVE } from "@/components/Shelf";
@@ -27,60 +30,87 @@ export const LESSON_RAIL_CLASS = "xl:[--app-left:460px]";
  * Wide screens dock it at the top of the lesson's left column; narrow ones
  * fold it into a tab the learner opens when they need it.
  */
+/** The card's face, shared by the docked card and the preview on the intro screen. */
+export function InfoCardBody({
+  scene,
+  reference,
+  lang,
+}: {
+  scene: LessonScene;
+  reference: LessonFact[];
+  lang: Lang;
+}) {
+  return (
+    <div data-testid="lesson-info-card" className="text-[#2a1810]">
+      {/* A band of its own, so it reads as part of the screen, not wallpaper. */}
+      <p className="m-0 flex items-center gap-2 bg-[#5b3a1e] px-5 py-2.5 text-[15px] font-semibold text-white">
+        <IdCard size={18} aria-hidden />
+        {LESSON_COPY.infoTitle[lang]}
+      </p>
+      <div className="flex flex-col gap-3 px-5 pb-4 pt-3">
+        <p className="m-0 text-[16px] leading-snug">{scene.you[lang]}</p>
+        {scene.people.length > 0 && (
+          <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+            {scene.people.map((p) => (
+              <li key={p.name} className="text-[16px] leading-snug">
+                <span className="font-semibold">{p.name}</span>
+                <span className="block text-[14px] text-[#6b5340]">{p.role[lang]}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {reference.length > 0 && (
+          <dl className="m-0 flex flex-col gap-2 border-t border-[#2a1810]/15 pt-3">
+            {reference.map((fact) => {
+              const value = typeof fact.value === "string" ? fact.value : fact.value[lang];
+              // Something to copy letter for letter (a password, a date) reads in a
+              // typewriter face; a sentence stays in the normal one.
+              const exact = !/\s/.test(value);
+              return (
+                <div key={fact.label.en}>
+                  <dt className="text-[12px] font-semibold uppercase tracking-[0.08em] text-[#6b5340]">{fact.label[lang]}</dt>
+                  <dd
+                    className={`m-0 leading-snug ${
+                      exact
+                        ? `font-mono font-semibold select-all ${value.length > 14 ? "break-all text-[14px]" : "text-[19px]"}`
+                        : "break-words text-[15px]"
+                    }`}
+                  >
+                    {value}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export const INFO_PAPER = {
+  background: "linear-gradient(165deg, #fff8e8 0%, #f6edd4 55%, #efe4c8 100%)",
+  boxShadow: "0 1px 0 rgba(255,255,255,0.55) inset, 0 10px 22px rgba(28,16,10,0.22), 0 2px 4px rgba(28,16,10,0.12)",
+};
+
+/** How the Job Card sends the learner here. Its copy always says it this way. */
+const MENTIONS_CARD = /info card|tarjeta de información/i;
+
 export default function LessonInfoCard({ top }: { top: number }) {
   const lesson = useLesson();
   const { lang } = useProgress();
+  const card = useJobCardOptional();
   const [open, setOpen] = useState(false);
   if (!lesson) return null;
 
-  const { scene, reference } = lesson;
-  const body = (
-    <div data-testid="lesson-info-card" className="flex flex-col gap-3 text-[#2a1810]">
-      <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#6b5340]">
-        {LESSON_COPY.infoTitle[lang]}
-      </p>
-      <p className="m-0 text-[15px] leading-snug">{scene.you[lang]}</p>
-      {scene.people.length > 0 && (
-        <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-          {scene.people.map((p) => (
-            <li key={p.name} className="text-[15px] leading-snug">
-              <span className="font-semibold">{p.name}</span>
-              <span className="block text-[13px] text-[#6b5340]">{p.role[lang]}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-      {reference.length > 0 && (
-        <dl className="m-0 flex flex-col gap-2 border-t border-[#2a1810]/15 pt-3">
-          {reference.map((fact) => {
-            const value = typeof fact.value === "string" ? fact.value : fact.value[lang];
-            // Something to copy letter for letter (a password, a date) reads in a
-            // typewriter face; a sentence stays in the normal one.
-            const exact = !/\s/.test(value);
-            return (
-              <div key={fact.label.en}>
-                <dt className="text-[12px] font-medium uppercase tracking-[0.08em] text-[#6b5340]">{fact.label[lang]}</dt>
-                <dd
-                  className={`m-0 leading-snug ${
-                    exact
-                      ? `font-mono font-semibold select-all ${value.length > 14 ? "break-all text-[13px]" : "text-[17px]"}`
-                      : "break-words text-[14px]"
-                  }`}
-                >
-                  {value}
-                </dd>
-              </div>
-            );
-          })}
-        </dl>
-      )}
-    </div>
-  );
+  // When the Job Card's step or correction sends the learner here ("Type the
+  // password from your info card"), the card glows until they move on. It
+  // also pulses a few times on arrival, so the eye finds it once.
+  const pointedAt = MENTIONS_CARD.test(`${card?.step?.line.en ?? ""} ${card?.step?.line.es ?? ""} ${card?.correction ?? ""}`);
+  const glow = pointedAt ? "animate-showme-pulse" : "animate-[showme-pulse_1.6s_ease-in-out_3]";
 
-  const paper = {
-    background: "linear-gradient(165deg, #fff8e8 0%, #f6edd4 55%, #efe4c8 100%)",
-    boxShadow: "0 1px 0 rgba(255,255,255,0.55) inset, 0 10px 22px rgba(28,16,10,0.22), 0 2px 4px rgba(28,16,10,0.12)",
-  };
+  const body = <InfoCardBody scene={lesson.scene} reference={lesson.reference} lang={lang} />;
+  const paper = INFO_PAPER;
 
   return (
     <>
@@ -88,7 +118,7 @@ export default function LessonInfoCard({ top }: { top: number }) {
           height gives way to the card, and scrolls if the facts run long. */}
       <aside
         aria-label={LESSON_COPY.infoTitle[lang]}
-        className="fixed z-[60] hidden overflow-y-auto rounded-[6px] px-5 pb-4 pt-4 xl:block"
+        className={`fixed z-[60] hidden overflow-y-auto rounded-[8px] xl:block ${glow}`}
         style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(160px, calc(100dvh - 540px))" }}
       >
         {body}
@@ -99,14 +129,14 @@ export default function LessonInfoCard({ top }: { top: number }) {
         {open ? (
           <aside
             aria-label={LESSON_COPY.infoTitle[lang]}
-            className="fixed right-2 z-[74] max-h-[calc(100vh-120px)] w-[280px] overflow-y-auto rounded-[6px] px-4 pb-4 pt-4"
+            className="fixed right-2 z-[74] max-h-[calc(100vh-120px)] w-[300px] overflow-y-auto rounded-[8px]"
             style={{ ...paper, bottom: SHELF_RESERVE + 16 }}
           >
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label={LESSON_COPY.infoClose[lang]}
-              className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-full text-[#6b5340] hover:bg-black/5"
+              className="absolute right-1.5 top-1 flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/15"
             >
               <X size={18} aria-hidden />
             </button>
@@ -117,8 +147,8 @@ export default function LessonInfoCard({ top }: { top: number }) {
             type="button"
             data-testid="lesson-info-open"
             onClick={() => setOpen(true)}
-            className="fixed right-2 z-[74] flex min-h-11 items-center gap-2 rounded-full px-4 text-[15px] font-semibold text-[#2a1810]"
-            style={{ ...paper, bottom: SHELF_RESERVE + 16 }}
+            className={`fixed right-2 z-[74] flex min-h-12 items-center gap-2 rounded-full bg-[#5b3a1e] px-5 text-[16px] font-semibold text-white ${glow}`}
+            style={{ bottom: SHELF_RESERVE + 16 }}
           >
             <IdCard size={18} aria-hidden />
             {LESSON_COPY.infoOpen[lang]}

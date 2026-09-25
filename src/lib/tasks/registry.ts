@@ -1009,8 +1009,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Book the visit without a clash", es: "Agenda la cita sin un choque" },
     dispatch: {
-      en: "A patient asked for a time that is already taken. Offer the open slot.",
-      es: "Un paciente pidió una hora que ya está ocupada. Ofrece el hueco libre.",
+      en: "A patient asked for a time that is already taken. Offer her a free time.",
+      es: "Una paciente pidió una hora que ya está ocupada. Ofrécele una hora libre.",
     },
     skill: { en: "Book an appointment without double-booking", es: "agendar una cita sin encimarla con otra" },
     bookmarkLabel: "Front Desk",
@@ -1020,7 +1020,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. Ya está la lista de la mañana.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "Spot the clash. Offer the open slot.", es: "Mira el choque. Ofrece el hueco." },
+    jobCardLine: { en: "Maya's time is taken. Offer her a free time.", es: "La hora de Maya está ocupada. Ofrécele una hora libre." },
     lesson: {
       title: { en: "Book an appointment at an open time", es: "Dar una cita en un horario libre" },
       summary: {
