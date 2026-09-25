@@ -133,8 +133,8 @@ export const assignment: PracticeActivity<AssignmentDraft> = {
   parseDraft: parseAssignment,
   instructions: {
     classwork: {
-      en: "Find the assignment “My weekly schedule.” Click it, then click View assignment.",
-      es: "Busca la tarea “My weekly schedule”. Haz clic en ella y luego en View assignment.",
+      en: "Find the assignment “My weekly schedule.” Click it, then click View instructions.",
+      es: "Busca la tarea “My weekly schedule”. Haz clic en ella y luego en View instructions.",
     },
     assignment: {
       en: "Click Add or create. Attach My schedule.docx — not the old one. Then click Turn in.",
@@ -151,16 +151,16 @@ export const assignment: PracticeActivity<AssignmentDraft> = {
   },
   help: {
     classwork: {
-      en: "Classwork is the list of homework. Each line is one assignment. Look for the name, then click it to see more.",
-      es: "Classwork es la lista de tareas. Cada línea es una tarea. Busca el nombre y haz clic para ver más.",
+      en: "Classwork is the list of homework. Each line is one assignment. Look for the name, then click it to see more. Stream and People are other pages of the class.",
+      es: "Classwork es la lista de tareas. Cada línea es una tarea. Busca el nombre y haz clic para ver más. Stream y People son otras páginas de la clase.",
     },
     assignment: {
-      en: "Look at the file names and dates. The newest schedule is from Today. If you attach the wrong file, click the ✕ next to it to remove it.",
-      es: "Mira los nombres y las fechas de los archivos. El horario más nuevo es de Today (hoy). Si adjuntas el archivo equivocado, haz clic en la ✕ para quitarlo.",
+      en: "Google Drive and File both show Maya’s files. Look at the names and dates — the newest schedule is from Today. If you attach the wrong file, click the ✕ next to it to remove it.",
+      es: "Google Drive y File muestran los archivos de Maya. Mira los nombres y las fechas — el horario más nuevo es de Today (hoy). Si adjuntas el archivo equivocado, haz clic en la ✕ para quitarlo.",
     },
     turnedIn: {
-      en: "The words Turned in mean your teacher can see your file. Class comments are for the whole class. One or two sentences is enough.",
-      es: "Turned in significa que tu maestra puede ver tu archivo. Los comentarios de la clase los ven todos. Una o dos oraciones son suficientes.",
+      en: "The words Turned in mean your teacher can see your file. Class comments are for the whole class: type in the box and click the arrow to post. One or two sentences is enough.",
+      es: "Turned in significa que tu maestra puede ver tu archivo. Los comentarios de la clase los ven todos: escribe en el cuadro y haz clic en la flecha para publicar. Una o dos oraciones son suficientes.",
     },
     complete: {
       en: "Made a mistake on real homework? Click Unsubmit, fix the file, and turn it in again.",
