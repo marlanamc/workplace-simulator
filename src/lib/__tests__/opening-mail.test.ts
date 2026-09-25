@@ -36,13 +36,13 @@ describe('opening reply practice', () => {
   it.each(['Hi!', 'Hola', 'Thank you', 'Gracias'])('accepts a brief welcome: %s', text => {
     expect(openingReplyAccepted('welcome',text)).toBe(true);
   });
-  it.each(['Yes', 'OK', "I'll be there", 'See you tomorrow!', 'Sí', 'Allí estaré', 'Nos vemos mañana', 'Confirmado'])('accepts confirmation: %s', text => {
+  it.each(['Yes', 'OK', "I'll be there", 'See you tomorrow!', 'Sí', 'Allí estaré', 'Nos vemos mañana', 'Confirmado', "No problem, I'll be there", 'Yes, I will not be late', 'Sin problema, ahí estaré'])('accepts confirmation: %s', text => {
     expect(openingReplyAccepted('start-time',text)).toBe(true);
   });
   it.each(['No', "I won't be there", 'No puedo ir', 'Where is it?', 'Coffee'])('rejects missing or negative confirmation: %s', text => {
     expect(openingReplyAccepted('start-time',text)).toBe(false);
   });
-  it.each(['Under the counter.', 'On the shelf beneath the counter', 'I will put it under the counter', 'Debajo del mostrador', 'En el estante bajo la barra', 'La dejare debajo del mostrador'])('accepts a short location: %s', text => {
+  it.each(['Under the counter.', 'On the shelf', 'I will put it on the shelf, no problem', 'On the shelf beneath the counter', 'I will put it under the counter', 'Debajo del mostrador', 'En el estante bajo la barra', 'La dejare debajo del mostrador'])('accepts a short location: %s', text => {
     expect(openingReplyAccepted('cups',text)).toBe(true);
   });
   it.each(['In the storage room', 'On the counter', 'En el almacén', 'No están debajo del mostrador', "I won't put it under the counter", 'I cannot leave it under the counter', ''])('rejects the wrong location: %s', text => {
@@ -64,6 +64,8 @@ describe('opening reply practice', () => {
     expect(openingInstruction(0,'read',false,false).en).toBe('Click Reply.');
     expect(openingInstruction(2,'read',false,false)).toEqual(OPENING_MESSAGES[2].objective);
     expect(openingInstruction(2,'read',false,true).en).toBe('Click Reply.');
+    // Even with the scaffolding down, the card says which email to open.
+    expect(openingInstruction(2,'empty',false,false).en).toContain("Darnell Washington's email");
   });
   it('keeps one scored opening task and moves the attachment after the schedule', () => {
     expect(taskKeysForLevel(LEVELS[1])).toEqual(['mail-reply']);

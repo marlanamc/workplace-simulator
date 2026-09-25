@@ -491,7 +491,10 @@ export default function JobCard() {
       data-job-card
       data-corner={corner}
       data-practice={practice.stage}
-      className="animate-card-pop fixed z-[72] flex flex-col overflow-hidden rounded-[24px] bg-white"
+      // In a lesson the card has its own column, so it can sit above a picker's
+      // backdrop without covering the picker: a correction for a wrong file
+      // stays readable instead of dimmed behind the overlay.
+      className={`animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
       style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div

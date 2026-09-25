@@ -64,7 +64,10 @@ export const MAIL_JOB_CARD_STEPS: {
 } = {
   openMail: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
-    "mail-attach": { en: "Open Maria's new email.", es: "Abre el correo nuevo de Maria." },
+    "mail-attach": {
+      en: "Open Maria's email: Need the July safety report today.",
+      es: "Abre el correo de Maria: Need the July safety report today.",
+    },
     // Compose-only jobs have no email to open, so their openMail lines are unused.
     "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
     "mail-etiquette": { en: "Open Darnell's email.", es: "Abre el correo de Darnell." },
@@ -72,7 +75,10 @@ export const MAIL_JOB_CARD_STEPS: {
     "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
   },
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
-  attach: { en: "Attach the July report.", es: "Adjunta el reporte de julio." },
+  attach: {
+    en: "Click Attach file. Then choose safety-report-july.pdf.",
+    es: "Haz clic en Adjuntar archivo. Después elige safety-report-july.pdf.",
+  },
   write: { en: "Write one short line.", es: "Escribe una línea corta." },
   writeEtiquette: {
     en: "Tell Darnell the extra aprons are in the storage room.",
@@ -903,10 +909,10 @@ interface DecoyEmail {
 export const FILES: PickableItem[] = [
   { key: "photo-jobsite-0714.jpg", label: "photo-jobsite-0714.jpg", tagText: "JPG", tagColor: "#5f6368", columns: ["Jul 14"], isTarget: false,
     wrongHint: wrongHint("That's a photo, not the report. Look for the file with 'safety-report' in the name.", "Esa es una foto, no el reporte. Busca el archivo que dice 'safety-report'.") },
-  { key: "safety-report-july.pdf", label: "safety-report-july.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Aug 1"], isTarget: true, wrongHint: null },
+  { key: "safety-report-july.pdf", label: "safety-report-july.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 31"], isTarget: true, wrongHint: null },
   { key: "shift-swap-form.pdf", label: "shift-swap-form.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 22"], isTarget: false,
     wrongHint: wrongHint("Close, but that is the shift swap form. You need the safety report.", "Casi, pero ese es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
-  { key: "safety-report-june.pdf", label: "safety-report-june.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 1"], isTarget: false,
+  { key: "safety-report-june.pdf", label: "safety-report-june.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jun 30"], isTarget: false,
     wrongHint: wrongHint("That one is June. She asked for July.", "Ese es de junio. Ella pidió el de julio.") },
 ];
 

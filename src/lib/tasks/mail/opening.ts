@@ -47,7 +47,10 @@ export function nextOpeningIndex(replies: Pick<OpeningReply, 'messageId'>[]): nu
 const normalized = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'").trim();
 /** Bounded content checks, not a grammar, spelling, or tone assessment. */
 export function openingReplyAccepted(id: OpeningMessageId, response: string): boolean {
-  const text = normalized(response);
+  // "No problem" and "not late" are yeses. Take them out before looking for a no.
+  const text = normalized(response)
+    .replace(/\b(no problem|no worries|not a problem|(will not|won't|not) be late|not late|no hay problema|sin problema|no voy a llegar tarde|no llegare tarde)\b/g, ' ok ')
+    .trim();
   if (!text) return false;
   if (id === 'welcome') return true;
   if (id === 'start-time') {
@@ -56,13 +59,17 @@ export function openingReplyAccepted(id: OpeningMessageId, response: string): bo
       || /\b(i'll|i will|see you|be there|count me in|estare|alli estare|nos vemos|ahi estare|cuenta conmigo)\b/.test(text);
   }
   if (/\b(not|no|never|won't|can't|cannot|nunca)\b/.test(text)) return false;
-  return /\b(under|below|beneath|underneath)\b.{0,35}\b(counter|worktop)\b/.test(text)
-    || /\b(debajo|bajo)\b.{0,35}\b(mostrador|meson|barra|encimera)\b/.test(text);
+  // Darnell named the shelf, so "on the shelf" answers him too.
+  return /\b(under|undr|below|beneath|underneath)\b.{0,35}\b(counter|conter|worktop)\b/.test(text)
+    || /\b(debajo|bajo)\b.{0,35}\b(mostrador|meson|barra|encimera)\b/.test(text)
+    || /\b(shelf|shelves|estante|repisa)\b/.test(text);
 }
 
 export function openingInstruction(index: number, view: string, hasText: boolean, explicit: boolean): Localized {
   const message = OPENING_MESSAGES[index];
-  if (index === 2 && !explicit) return message.objective;
+  // The third reply names only the goal, so the scaffolding comes down. It
+  // still says which email to open: a list of emails is no place to guess.
+  if (index === 2 && !explicit && view !== 'empty' && view !== 'story') return message.objective;
   if (view === 'empty' || view === 'story') return copy(`Open ${message.sender.name}'s email: ${message.subject.en}.`, `Abre el correo de ${message.sender.name}: ${message.subject.es}.`);
   if (view === 'read') return copy(index === 0 || explicit ? 'Click Reply.' : 'Reply to Maria.', index === 0 || explicit ? 'Haz clic en Responder.' : 'Responde a Maria.');
   if (index === 0 && view === 'compose') return FIRST_REPLY_GUIDANCE;

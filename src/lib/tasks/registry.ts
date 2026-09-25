@@ -169,7 +169,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes, 8:14 AM. Maria te da la bienvenida.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Maria said welcome. Write her back.", es: "Maria te dio la bienvenida. Contéstale." },
+    jobCardLine: { en: "You have 3 new emails. Answer each one.", es: "Tienes 3 correos nuevos. Contesta cada uno." },
     jobCardDoneLine: { en: "Three replies sent. Day one is complete.", es: "Tres respuestas enviadas. Completaste el primer día." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
@@ -202,8 +202,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Write the parts of a reply on the board: hello, your message, your name.", es: "Escribe en la pizarra las partes de una respuesta: saludo, tu mensaje, tu nombre." },
         ],
         stickingPoints: [
-          { en: "Some learners open an email from a vendor first. Ask: who sent this email? Is it Maria?", es: "Algunos abren primero el correo de un proveedor. Pregunta: ¿quién envió este correo? ¿Es Maria?" },
-          { en: "The second email asks them to confirm 10 AM. A reply with no or can't does not pass. Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta con no o no puedo no se acepta. Pregunta: ¿qué quiere saber Maria?" },
+          { en: "Some learners open the wrong email first. Ask: who sent this email? What is the subject?", es: "Algunos abren primero el correo equivocado. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
+          { en: "The second email asks them to confirm 10 AM. A reply that says they can't come does not pass (\"No problem\" is fine). Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta que dice que no pueden venir no se acepta (\"Sin problema\" sí). Pregunta: ¿qué quiere saber Maria?" },
           { en: "The third email is from Darnell. The reply must say the bag goes on the shelf under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
         ],
         followUp: [

@@ -31,6 +31,9 @@ export default function PickerModal({
   return (
     <div
       className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-6"
+      // Centered over the app window, not the whole screen: a lesson keeps a
+      // left column for its cards, and the picker should not slide under them.
+      style={{ left: "var(--app-left, 0px)" }}
       onClick={onCancel}
     >
       <div
