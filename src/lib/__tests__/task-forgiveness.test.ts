@@ -7,6 +7,7 @@ import { followupHasOwnersAndDates } from "@/lib/tasks/meeting-minutes/content";
 import { parseMoney } from "@/lib/text-facts";
 import { TIP_ROWS, entryMatches, wrongEntryHint } from "@/lib/tasks/spreadsheet/content";
 import { codeMatches } from "@/lib/tasks/account-recovery/content";
+import { firstMismatch, sameDate } from "@/lib/tasks/onboarding-paperwork/content";
 
 /**
  * The rename step is the heaviest typing ask in the app — these pin down
@@ -150,5 +151,21 @@ describe("text codes", () => {
 
   it.each(["482916", "Your verification code is 482915", ""])("rejects %j", (input) => {
     expect(codeMatches(input)).toBe(false);
+  });
+});
+
+/** The W-4 date used to pass only as exactly "10/01/2026". */
+describe("form dates", () => {
+  it.each(["10/01/2026", "10/1/2026", "10-01-2026", "10.01.26", " 10 / 1 / 2026 "])("accepts %j", (input) => {
+    expect(sameDate(input, "10/01/2026")).toBe(true);
+  });
+
+  it.each(["01/10/2026", "Oct 1 2026", "10/02/2026", ""])("rejects %j", (input) => {
+    expect(sameDate(input, "10/01/2026")).toBe(false);
+  });
+
+  it("names the W-4 box that does not match Robin", () => {
+    expect(firstMismatch({ status: "single", dependents: "2", date: "10/1/2026" })).toBe("dependents");
+    expect(firstMismatch({ status: "single", dependents: "0", date: "10/1/2026" })).toBeNull();
   });
 });

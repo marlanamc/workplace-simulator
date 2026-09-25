@@ -1470,8 +1470,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Fill out the W-4", es: "Llena el W-4" },
     dispatch: {
-      en: "First new-hire form: the W-4. It sets your tax withholding. Pick a status, sign, date.",
-      es: "Primer formulario de nuevo empleado: el W-4. Fija tu retención de impuestos. Elige un estado, firma, fecha.",
+      en: "Practice the W-4, a new-hire tax form, for a pretend worker named Robin Avery.",
+      es: "Practica el W-4, un formulario de impuestos para empleados nuevos, para un trabajador inventado llamado Robin Avery.",
     },
     skill: { en: "Fill out a W-4", es: "llenar un formulario W-4" },
     bookmarkLabel: "Onboarding",
@@ -1481,7 +1481,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. RR. HH. envió los formularios.",
     },
     location: browser("Open Onboarding from the bookmarks"),
-    jobCardLine: { en: "W-4: status, sign, date.", es: "W-4: estado, firma, fecha." },
+    jobCardLine: {
+      en: "Fill out Robin's W-4 with Robin's facts. Then sign and date it.",
+      es: "Llena el W-4 de Robin con los datos de Robin. Después fírmalo y ponle la fecha.",
+    },
     jobCardDoneLine: { en: "W-4 submitted.", es: "W-4 enviado." },
     lesson: {
       title: { en: "Fill out a W-4 tax form", es: "Llenar el formulario de impuestos W-4" },

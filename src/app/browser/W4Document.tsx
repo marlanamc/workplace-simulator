@@ -6,8 +6,8 @@ const COPY = {
   en: {
     viewer: "Payroll documents", practice: "SIMPLIFIED PRACTICE COPY", page: "Page 1 of 1",
     personal: "Personal information", dependents: "Dependents", sign: "Signature",
-    step: "Step", address: "Address", reference: "Employee reference",
-    details: "Robin Avery · Single · No dependents · Form date: 10/01/2026",
+    step: "Step", address: "Address", reference: "Robin's facts: copy these",
+    details: "Name: Robin Avery · Single · Dependents: 0 · Today's date: 10/01/2026",
     omitted: "Steps 2 and 4 · Multiple jobs and other adjustments are not included in this practice copy.",
     note: "Practice version • Fictional information • Not for filing",
     simplified: "Dependent count only; tax-credit calculations are omitted in this practice version.",
@@ -15,8 +15,8 @@ const COPY = {
   es: {
     viewer: "Documentos de nómina", practice: "COPIA SIMPLIFICADA DE PRÁCTICA", page: "Página 1 de 1",
     personal: "Información personal", dependents: "Dependientes", sign: "Firma",
-    step: "Paso", address: "Dirección", reference: "Datos del empleado",
-    details: "Robin Avery · Soltero · Sin dependientes · Fecha del formulario: 10/01/2026",
+    step: "Paso", address: "Dirección", reference: "Datos de Robin: cópialos",
+    details: "Nombre: Robin Avery · Soltero/a · Dependientes: 0 · Fecha de hoy: 10/01/2026",
     omitted: "Pasos 2 y 4 · Los empleos múltiples y otros ajustes no se incluyen en esta copia de práctica.",
     note: "Versión de práctica • Datos ficticios • No válida para trámites",
     simplified: "Solo el número de dependientes; esta versión de práctica omite el cálculo de créditos fiscales.",
@@ -60,7 +60,9 @@ export default function W4Document({ lang, status, onStatus, dependents, onDepen
   const s = PAPERWORK_SHELL[lang];
   return (
     <>
-      <aside className="border-l-2 border-[#65758a] px-4 py-1 text-[13px] leading-relaxed">
+      {/* Stays in view while the learner scrolls to the signature and date,
+          the two boxes that have to match it. */}
+      <aside className="sticky top-0 z-10 border-l-4 border-[#245b94] bg-[#eef3fa] px-4 py-2 text-[14px] leading-relaxed shadow-sm">
         <h2 className="font-semibold">{c.reference}</h2>
         <p>{c.details}</p>
       </aside>
@@ -95,7 +97,7 @@ export default function W4Document({ lang, status, onStatus, dependents, onDepen
           <p className="border-t border-[#777] px-4 py-3 text-[11px] leading-relaxed text-[#555]">{c.omitted}</p>
           <Section number={5} title={c.sign} lang={lang}>
             <div className="grid gap-4 sm:grid-cols-[1fr_150px]">
-              <label>{s.signLabel} <span className="text-[11px]">({s.requiredLabel})</span><input required value={signature} onChange={(e) => onSignature(e.target.value)} className={`${fieldClass} font-serif italic`} /></label>
+              <label>{s.signLabel} <span className="text-[11px]">({s.requiredLabel})</span><input required value={signature} onChange={(e) => onSignature(e.target.value)} placeholder={PRACTICE_PROFILE.name} className={`${fieldClass} font-serif italic`} /></label>
               <label>{s.dateLabel} <span className="text-[11px]">({s.requiredLabel})</span><input required value={date} onChange={(e) => onDate(e.target.value)} placeholder={s.datePlaceholder} className={fieldClass} /></label>
             </div>
           </Section>
