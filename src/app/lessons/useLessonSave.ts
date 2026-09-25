@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
+import { libraryReturn } from "@/lib/lessons/library";
 import { mergeAttempts, parseAttempt, recordFinish, type LessonAttempt } from "@/lib/lessons/attempts";
 
 /**
@@ -44,7 +45,7 @@ function writeJSON(store: "local" | "session", key: string, value: LessonAttempt
 
 export function useLessonSave(
   taskKey: TaskKey,
-  { preview, transfer, mode }: { preview: boolean; transfer: boolean; mode: LessonMode },
+  { preview, transfer, mode, returnTo }: { preview: boolean; transfer: boolean; mode: LessonMode; returnTo?: string },
 ): LessonSave {
   const router = useRouter();
   const api = `/api/lessons?lesson=${taskKey}`;
@@ -137,10 +138,11 @@ export function useLessonSave(
   const signIn = useCallback((lang: Lang) => {
     writeJSON("session", transferKey, current.current);
     const q = new URLSearchParams({ mode, transfer: "1" });
+    if (returnTo) q.set("returnTo", libraryReturn(returnTo, lang));
     if (lang === "es") q.set("lang", "es");
     router.push(`/login?next=${encodeURIComponent(`/lessons/${taskKey}?${q}`)}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, router, taskKey]);
+  }, [mode, router, taskKey, returnTo]);
 
   return { status, recordFinish: finish, retry, signIn };
 }

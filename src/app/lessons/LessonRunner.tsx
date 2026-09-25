@@ -6,6 +6,7 @@ import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
 import { draftLessonFor, lessonByKey, seedForLesson } from "@/lib/lessons/catalog";
+import { libraryReturn } from "@/lib/lessons/library";
 import { LESSON_COPY } from "@/lib/lessons/copy";
 import { WindowManagerProvider } from "@/lib/window-manager";
 import { JobCardProvider } from "@/lib/job-card-context";
@@ -41,8 +42,10 @@ export default function LessonRunner({
   preview = false,
   transfer = false,
   draft = false,
+  returnTo,
 }: {
   taskKey: TaskKey;
+  returnTo?: string;
   /** A task with no lesson block yet, opened by the smoke sweep. */
   draft?: boolean;
   initialMode: LessonMode;
@@ -57,7 +60,7 @@ export default function LessonRunner({
   const [mode, setModeState] = useState(initialMode);
   const modeRef = useRef(mode);
   // A smoke-sweep draft is not a real lesson, so it has nowhere to save.
-  const save = useLessonSave(taskKey, { preview: preview || draft, transfer, mode });
+  const save = useLessonSave(taskKey, { preview: preview || draft, transfer, mode, returnTo });
   const { recordFinish } = save;
   const onLessonComplete = useCallback(() => recordFinish(modeRef.current), [recordFinish]);
   // Support changes in place: the URL follows, so a copied link keeps it,
@@ -79,9 +82,9 @@ export default function LessonRunner({
       preview,
       save: { status: save.status, retry: save.retry, signIn: save.signIn },
       tabs: entry.tabs,
-      onFinish: () => router.push(initialLang === "es" ? "/lessons?lang=es" : "/lessons"),
+      onFinish: (lang = initialLang) => router.push(libraryReturn(returnTo, lang)),
     }),
-    [taskKey, entry, mode, setMode, preview, save.status, save.retry, save.signIn, router, initialLang],
+    [taskKey, entry, mode, setMode, preview, save.status, save.retry, save.signIn, router, initialLang, returnTo],
   );
 
   return (

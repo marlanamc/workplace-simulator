@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import W4Document, { W4DocumentShell } from "./W4Document";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import type { TaskKey } from "@/lib/desktop-content";
@@ -22,7 +23,6 @@ import {
   PAPERWORK_TASK_ORDER,
   PAPERWORK_SHELL,
   W4_COPY,
-  W4_STATUS_OPTIONS,
   I9_COPY,
   I9_STATUS_OPTIONS,
   DEPOSIT_COPY,
@@ -125,7 +125,7 @@ export default function OnboardingFormsTask() {
     setAccountType(null);
   };
 
-  const referenceHint = lang === 'en' ? 'Compare the form with Alex’s fictional reference details.' : 'Compara el formulario con los datos ficticios de Alex.';
+  const referenceHint = lang === 'en' ? 'Compare the form with Robin’s fictional reference details.' : 'Compara el formulario con los datos ficticios de Robin.';
   const submitW4 = () => {
     if (!practiceFieldsMatch({status: w4Status ?? '', dependents, date})) return say(referenceHint);
     if (!w4Status || dependents.trim() === "") return say(s.needRequired);
@@ -152,8 +152,10 @@ export default function OnboardingFormsTask() {
   const doneCopy =
     active === "w4-form" ? W4_COPY[lang] : active === "i9-section1" ? I9_COPY[lang] : DEPOSIT_COPY[lang];
 
+  const Shell = active === "w4-form" ? W4DocumentShell : FormsShell;
+
   return (
-    <FormsShell header="Forms">
+    <Shell lang={lang}>
       <div className="min-h-0 flex-1 overflow-y-auto">
         {!done && (
           <RightNowBar
@@ -166,8 +168,8 @@ export default function OnboardingFormsTask() {
           />
         )}
 
-        <div className="mx-auto flex w-full max-w-[640px] flex-col gap-3 px-4 py-6">
-          {!done && <article className="rounded-xl border border-[#dadce0] bg-white p-4 text-[14px] leading-relaxed">{PRACTICE_REFERENCE[lang]}</article>}
+        <div className={`mx-auto flex w-full flex-col gap-3 px-4 py-6 ${active === "w4-form" ? "max-w-[840px]" : "max-w-[640px]"}`}>
+          {!done && active !== "w4-form" && <article className="rounded-xl border border-[#dadce0] bg-white p-4 text-[14px] leading-relaxed">{PRACTICE_REFERENCE[lang]}</article>}
           {done ? (
             <div className="flex flex-col gap-5">
               <TaskDoneCard kicker={s.sentKicker} />
@@ -182,31 +184,14 @@ export default function OnboardingFormsTask() {
               />
             </div>
           ) : active === "w4-form" ? (
-            <>
-              <FormTitleCard title={W4_COPY[lang].formName} description={W4_COPY[lang].blurb} requiredLabel={s.requiredLabel} />
-              <QuestionCard label={W4_COPY[lang].nameLabel}>
-                <FormInput value={PRACTICE_PROFILE.name} readOnly className="text-[#5f6368]" />
-              </QuestionCard>
-              <QuestionCard label={W4_COPY[lang].statusLabel} required>
-                <Radio options={W4_STATUS_OPTIONS} value={w4Status} onChange={setW4Status} lang={lang} />
-              </QuestionCard>
-              <QuestionCard label={W4_COPY[lang].dependentsLabel} required>
-                <FormInput
-                  inputMode="numeric"
-                  value={dependents}
-                  onChange={(e) => setDependents(e.target.value.replace(/\D/g, ""))}
-                  placeholder="0"
-                />
-                <p className="mt-1 text-[12px] text-[#5f6368]">{W4_COPY[lang].dependentsHint}</p>
-              </QuestionCard>
-              <QuestionCard label={s.signLabel} required>
-                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={PRACTICE_PROFILE.name} />
-              </QuestionCard>
-              <QuestionCard label={s.dateLabel} required>
-                <FormInput value={date} onChange={(e) => setDate(e.target.value)} placeholder={s.datePlaceholder} />
-              </QuestionCard>
-              <FormSubmitButton onClick={submitW4}>{W4_COPY[lang].submit}</FormSubmitButton>
-            </>
+            <W4Document
+              lang={lang}
+              status={w4Status} onStatus={setW4Status}
+              dependents={dependents} onDependents={setDependents}
+              signature={signature} onSignature={setSignature}
+              date={date} onDate={setDate}
+              onSubmit={submitW4}
+            />
           ) : active === "i9-section1" ? (
             <>
               <FormTitleCard title={I9_COPY[lang].formName} description={I9_COPY[lang].blurb} requiredLabel={s.requiredLabel} />
@@ -271,6 +256,6 @@ export default function OnboardingFormsTask() {
         gotItLabel={s.gotIt}
       />
       <NudgeToast text={nudge} onDismiss={dismiss} />
-    </FormsShell>
+    </Shell>
   );
 }

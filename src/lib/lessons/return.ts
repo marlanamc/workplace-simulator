@@ -1,3 +1,4 @@
+import { libraryReturn } from "./library";
 import { lessonByKey } from "./catalog";
 
 const ORIGIN = "https://return.invalid";
@@ -24,12 +25,15 @@ export function safeReturn(raw: string | null | undefined): string {
     const isLibrary = u.pathname === "/lessons";
     const key = u.pathname.match(/^\/lessons\/([a-z0-9-]+)$/)?.[1];
     if (!isLibrary && !(key && lessonByKey(key))) return "/";
+    if (isLibrary) return libraryReturn(raw);
     const q = new URLSearchParams();
     for (const [name, choices] of Object.entries(LESSON_PARAMS)) {
       const v = u.searchParams.get(name);
       if (!v) continue;
       if (name === "skill" ? isLibrary && /^[a-z-]{1,40}$/.test(v) : choices.includes(v)) q.set(name, v);
     }
+    const returnTo = u.searchParams.get("returnTo");
+    if (returnTo) q.set("returnTo", libraryReturn(returnTo));
     return u.pathname + (q.size ? `?${q}` : "");
   } catch {
     return "/";

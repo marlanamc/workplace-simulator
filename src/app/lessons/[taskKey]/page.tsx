@@ -16,7 +16,7 @@ export default async function LessonPage({
   searchParams,
 }: {
   params: Promise<{ taskKey: string }>;
-  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[]; smoke?: string | string[]; preview?: string | string[]; transfer?: string | string[] }>;
+  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[]; smoke?: string | string[]; preview?: string | string[]; returnTo?: string | string[]; transfer?: string | string[] }>;
 }) {
   const { taskKey } = await params;
   const query = await searchParams;
@@ -27,6 +27,7 @@ export default async function LessonPage({
     <LessonRunner
       key={taskKey}
       taskKey={taskKey as TaskKey}
+      returnTo={first(query.returnTo)}
       draft={draft}
       preview={first(query.preview) === "1"}
       transfer={first(query.transfer) === "1"}

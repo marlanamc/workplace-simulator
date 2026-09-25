@@ -2,7 +2,7 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
-import type { Localized } from "@/lib/task-types";
+import type { Lang, Localized } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
 import type { LessonSave } from "@/app/lessons/useLessonSave";
 
@@ -25,7 +25,7 @@ export interface LessonValue {
   /** Browser tabs this lesson may show. The first is where it opens. */
   tabs: string[];
   /** Leave the lesson (back to the library). */
-  onFinish: () => void;
+  onFinish: (lang?: Lang) => void;
   /** Start the same lesson again from a clean slate. */
   onRestart: () => void;
   /** Where this lesson's finishes are kept, for the card's finish line. */
