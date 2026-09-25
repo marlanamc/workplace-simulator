@@ -778,29 +778,24 @@ export default function JobCard() {
         )}
 
         {/* A lesson's one setting: how much the card spells out. It lives on
-            the card because the card is what it changes. */}
-        {lesson && script.tone !== "green" && (
-          <div role="group" aria-label={LESSON_COPY.supportLabel[lang]} className="mt-3 flex items-center gap-2 text-[14px] text-[#5f6368]">
-            <span className="shrink-0">{LESSON_COPY.supportLabel[lang]}</span>
-            {(["guided", "independent"] as const).map((m) => (
-              <button
-                key={m}
-                type="button"
-                data-testid={`lesson-mode-${m}`}
-                aria-pressed={lesson.mode === m}
-                onClick={() => lesson.setMode(m)}
-                className="min-h-10 flex-1 cursor-pointer rounded-full border px-3 font-medium"
-                style={
-                  lesson.mode === m
-                    ? { background: "#e8f0fe", borderColor: TONE.blue, color: TONE.blue }
-                    : { borderColor: "var(--border)", color: "#3c4043" }
-                }
-              >
-                {LESSON_COPY[m][lang]}
-              </button>
-            ))}
-          </div>
-        )}
+            the card because the card is what it changes, but as one quiet
+            link offering the other level, so it reads as an option and never
+            competes with the step above it. */}
+        {lesson && script.tone !== "green" && (() => {
+          const other = lesson.mode === "guided" ? "independent" : "guided";
+          return (
+            <button
+              type="button"
+              data-testid={`lesson-mode-${other}`}
+              onClick={() => lesson.setMode(other)}
+              aria-label={`${LESSON_COPY.supportLabel[lang]}: ${LESSON_COPY[lesson.mode][lang]}. ${LESSON_COPY[other === "independent" ? "fewerHints" : "moreHints"][lang]}`}
+              className="mx-auto mt-2 flex min-h-10 cursor-pointer items-center gap-1 rounded-full px-3 text-[14px] font-medium text-[#5f6368] underline-offset-4 hover:text-[#1f1f1f] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b57d0]"
+            >
+              {LESSON_COPY[other === "independent" ? "fewerHints" : "moreHints"][lang]}
+              <span aria-hidden>&rarr;</span>
+            </button>
+          );
+        })()}
 
         {script.step >= 0 && (
           <div className="mt-4 flex items-center gap-1.5" aria-hidden>

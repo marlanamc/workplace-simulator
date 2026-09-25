@@ -18,6 +18,8 @@ export const LESSON_COPY = {
   guided: { en: "Guided", es: "Con guía" },
   independent: { en: "On my own", es: "Por mi cuenta" },
   supportLabel: { en: "Help level", es: "Nivel de ayuda" },
+  fewerHints: { en: "Fewer hints", es: "Menos pistas" },
+  moreHints: { en: "More hints", es: "Más pistas" },
   signInToSave: { en: "Sign in to save", es: "Inicia sesión para guardar" },
   savedHere: {
     en: "This computer remembers it. Sign in so your teacher can see it.",
