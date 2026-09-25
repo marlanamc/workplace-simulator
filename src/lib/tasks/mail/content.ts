@@ -1,6 +1,7 @@
 import { CAST, inboxSender } from "@/lib/cast";
 import { mailGreeting } from "@/lib/mail-greeting";
-import { sentOnForTask } from "@/lib/story-calendar";
+import { HIRE_DAY, sentOnForTask } from "@/lib/story-calendar";
+import { OPENING_MESSAGES } from "@/lib/tasks/mail/opening";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 
 /** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
@@ -56,6 +57,8 @@ export const MAIL_JOB_CARD_STEPS: {
   openMail: Record<PlayableMailTask, Localized>;
   confirm: Localized;
   attach: Localized;
+  attachPick: Localized;
+  attachCheck: Localized;
   write: Localized;
   writeEtiquette: Localized;
   writeForTask: Partial<Record<PlayableMailTask, Localized>>;
@@ -66,7 +69,7 @@ export const MAIL_JOB_CARD_STEPS: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": {
       en: "Open Maria's email: Need the July safety report today.",
-      es: "Abre el correo de Maria: Need the July safety report today.",
+      es: "Abre el correo de Maria: Necesito el reporte de seguridad de julio hoy.",
     },
     // Compose-only jobs have no email to open, so their openMail lines are unused.
     "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
@@ -75,9 +78,16 @@ export const MAIL_JOB_CARD_STEPS: {
     "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
   },
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
-  attach: {
-    en: "Click Attach file. Then choose safety-report-july.pdf.",
-    es: "Haz clic en Adjuntar archivo. Después elige safety-report-july.pdf.",
+  attach: { en: "Click Attach file.", es: "Haz clic en Adjuntar archivo." },
+  // The picker shows each file's first page, so the learner checks the
+  // month and the DRAFT stamp the way they would before sending a real file.
+  attachPick: {
+    en: "Click a file name to see its first page. Find the July report.",
+    es: "Haz clic en el nombre de un archivo para ver su primera página. Busca el reporte de julio.",
+  },
+  attachCheck: {
+    en: "Check the page: July 2026, and no DRAFT. Then click Attach.",
+    es: "Revisa la página: July 2026 (julio de 2026) y sin DRAFT (borrador). Luego haz clic en Adjuntar.",
   },
   write: { en: "Write one short line.", es: "Escribe una línea corta." },
   writeEtiquette: {
@@ -442,6 +452,8 @@ export const MAIL_COPY: Record<Lang, {
   open: string;
   colName: string;
   colDate: string;
+  pickerEmpty: string;
+  attachConfirm: string;
 }> = {
   en: {
     practiceBanner: "Practice space. Nothing here is real.",
@@ -482,6 +494,8 @@ export const MAIL_COPY: Record<Lang, {
     open: "Open",
     colName: "Name",
     colDate: "Date modified",
+    pickerEmpty: "Click a file name to see its first page here.",
+    attachConfirm: "Attach",
   },
   es: {
     practiceBanner: "Espacio de práctica. Nada aquí es real.",
@@ -522,6 +536,8 @@ export const MAIL_COPY: Record<Lang, {
     open: "Abrir",
     colName: "Nombre",
     colDate: "Fecha",
+    pickerEmpty: "Haz clic en el nombre de un archivo para ver aquí su primera página.",
+    attachConfirm: "Adjuntar",
   },
 };
 
@@ -714,26 +730,32 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
     en: {
       plain: [
         GREETING,
-        "Can you send me the July safety report today? Please attach the file to your reply.",
+        "Can you send me the July safety report today? The district office needs it by 3 PM, and I don't have a copy with me.",
+        "It is in the Downloads folder on the cafe computer. Please send the final report, not the draft. The draft is missing two checks.",
+        "Just attach the PDF to your reply.",
         "Thanks,",
       ],
       full: [
         GREETING,
-        "Could you send me the July safety report today? I need to turn it in and I don't have a copy.",
-        "Please attach the PDF to your reply so I can send it along.",
+        "Can you send me the July safety report today? The district office needs it by 3 PM, and I don't have a copy with me.",
+        "It is in the Downloads folder on the cafe computer. Please send the final report, not the draft. The draft is missing two checks.",
+        "Just attach the PDF to your reply.",
         "Thanks,",
       ],
     },
     es: {
       plain: [
         GREETING,
-        "¿Me puedes enviar hoy el reporte de seguridad de julio? Por favor adjunta el archivo en tu respuesta.",
+        "¿Me puedes enviar hoy el reporte de seguridad de julio? La oficina del distrito lo necesita antes de las 3 PM y no tengo una copia aquí.",
+        "Está en la carpeta Descargas de la computadora del café. Por favor manda el reporte final, no el borrador. Al borrador le faltan dos revisiones.",
+        "Solo adjunta el PDF a tu respuesta.",
         "Gracias,",
       ],
       full: [
         GREETING,
-        "¿Me puedes enviar hoy el reporte de seguridad de julio? Lo tengo que entregar y no tengo una copia.",
-        "Por favor adjunta el PDF en tu respuesta para yo poder reenviarlo.",
+        "¿Me puedes enviar hoy el reporte de seguridad de julio? La oficina del distrito lo necesita antes de las 3 PM y no tengo una copia aquí.",
+        "Está en la carpeta Descargas de la computadora del café. Por favor manda el reporte final, no el borrador. Al borrador le faltan dos revisiones.",
+        "Solo adjunta el PDF a tu respuesta.",
         "Gracias,",
       ],
     },
@@ -878,14 +900,14 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row. That is who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado. She is your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
     { t: "Reading a work email", s: ["Look for what the person is asking you to do.", "Look for when they need it.", "Sometimes they just want a reply. Sometimes they want a file attached."], tip: "You can read it twice. Nobody sees how long you take." },
     { t: "Reply vs. Forward", s: ["Reply sends your message back to the person who wrote to you.", "Forward sends their email to somebody else.", "Maria wrote to you, so click Reply."], tip: "If you're answering the person who emailed you, it's always Reply." },
-    { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens showing your files. Downloaded files are usually in Downloads.", "Click the file name safety-report-july.pdf to attach it."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
+    { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens with your Downloads. Click a file name, and its first page shows on the right.", "Look for July 2026 at the top and no DRAFT stamp. Then click Attach."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
     { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached? Do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
   ],
   es: [
     { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila. Esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado. Ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
     { t: "Leer un correo del trabajo", s: ["Busca qué te pide hacer la persona.", "Busca cuándo lo necesita.", "A veces solo quiere una respuesta. A veces quiere un archivo adjunto."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
     { t: "Responder o Reenviar", s: ["Responder envía tu mensaje a la persona que te escribió.", "Reenviar manda su correo a otra persona.", "Maria te escribió a ti, así que haz clic en Responder."], tip: "Si contestas a quien te escribió, siempre es Responder." },
-    { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus archivos. Lo descargado suele estar en Descargas.", "Haz clic en safety-report-july.pdf para adjuntarlo."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
+    { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus Descargas. Haz clic en el nombre de un archivo y su primera página aparece a la derecha.", "Busca July 2026 (julio de 2026) arriba y que no tenga el sello DRAFT (borrador). Luego haz clic en Adjuntar."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
     { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto? ¿Ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
   ],
 };
@@ -916,12 +938,14 @@ interface DecoyEmail {
 
 export const FILES: PickableItem[] = [
   { key: "photo-jobsite-0714.jpg", label: "photo-jobsite-0714.jpg", tagText: "JPG", tagColor: "#5f6368", columns: ["Jul 14"], isTarget: false,
-    wrongHint: wrongHint("That's a photo, not the report. Look for the file with 'safety-report' in the name.", "Esa es una foto, no el reporte. Busca el archivo que dice 'safety-report'.") },
-  { key: "safety-report-july.pdf", label: "safety-report-july.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 31"], isTarget: true, wrongHint: null },
+    wrongHint: wrongHint("That's a photo, not the report. Maria needs the July safety report PDF.", "Esa es una foto, no el reporte. Maria necesita el PDF del reporte de seguridad de julio.") },
+  { key: "safety-report-july-DRAFT.pdf", label: "safety-report-july-DRAFT.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 29"], isTarget: false,
+    wrongHint: wrongHint("That page says DRAFT. Maria asked for the final report. Choose the July report without DRAFT.", "Esa página dice DRAFT (borrador). Maria pidió el reporte final. Elige el reporte de julio sin DRAFT.") },
+  { key: "safety-report-july.pdf", label: "safety-report-july.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Aug 1"], isTarget: true, wrongHint: null },
   { key: "shift-swap-form.pdf", label: "shift-swap-form.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 22"], isTarget: false,
-    wrongHint: wrongHint("Close, but that is the shift swap form. You need the safety report.", "Casi, pero ese es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
+    wrongHint: wrongHint("That page is the shift swap form. You need the safety report.", "Esa página es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
   { key: "safety-report-june.pdf", label: "safety-report-june.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jun 30"], isTarget: false,
-    wrongHint: wrongHint("That one is June. She asked for July.", "Ese es de junio. Ella pidió el de julio.") },
+    wrongHint: wrongHint("That page says June 2026. Maria asked for July.", "Esa página dice June 2026 (junio de 2026). Maria pidió el de julio.") },
 ];
 
 /**
@@ -1084,6 +1108,8 @@ type InboxEmail = DecoyEmail | {
   subject: Localized;
   preview: Localized;
   wrongHint?: Localized;
+  story?: boolean;
+  body?: Record<Lang, string[]>;
 };
 
 /**
@@ -1113,13 +1139,6 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     unread: task === "mail-reply",
     subject: { en: welcomeMeta.en.subject, es: welcomeMeta.es.subject },
     preview: { en: welcomeMeta.en.preview, es: welcomeMeta.es.preview },
-    wrongHint:
-      task === "mail-attach"
-        ? wrongHint(
-            "That is her older welcome note. Open the newer one about the safety report.",
-            "Esa es su nota de bienvenida anterior. Abre la más nueva sobre el reporte de seguridad.",
-          )
-        : undefined,
   };
   const safety: InboxEmail = {
     key: "maria-safety",
@@ -1137,7 +1156,24 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
   // via storyMailsUpTo regardless of what this function returns.
   const decoys = (DECOY_POOLS[task] ?? []).map(openable);
   if (task === "mail-reply") return [welcome, ...decoys];
-  if (task === "mail-attach") return [safety, welcome, ...decoys];
+  if (task === "mail-attach") {
+    // Maria's welcome from the evening before Day One, as the learner got it
+    // in mail-reply. It opens read-only: it is not the job, but it is hers.
+    const opened = OPENING_MESSAGES[0];
+    const earlierWelcome: InboxEmail = {
+      key: "maria-welcome",
+      ...inboxSender(CAST.maria),
+      time: opened.time,
+      sentOn: HIRE_DAY - 1,
+      isTarget: false,
+      unread: false,
+      subject: opened.subject,
+      preview: opened.body,
+      story: true,
+      body: { en: [opened.body.en], es: [opened.body.es] },
+    };
+    return [safety, earlierWelcome, ...decoys];
+  }
   if (task === "reply-all") {
     const meta = SUBJECT_BY_TASK["reply-all"];
     return [

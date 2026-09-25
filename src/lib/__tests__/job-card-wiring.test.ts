@@ -49,6 +49,9 @@ function showMeTargets(src: string): string[] {
     if (m[1]) ids.add(m[1]);
     else for (const q of m[2].matchAll(/"([a-z0-9-]+)"/g)) ids.add(q[1]);
   }
+  // A shared component that renders the target itself (PickerModal's
+  // `showMeRow` / `showMeConfirm`) takes the id as a prop.
+  for (const m of src.matchAll(/showMe(?:Row|Confirm):\s*"([a-z0-9-]+)"/g)) ids.add(m[1]);
   return [...ids];
 }
 

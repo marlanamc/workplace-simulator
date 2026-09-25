@@ -38,6 +38,8 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
+import { PdfSheet } from "@/components/task/PdfSheet";
+import { DOWNLOAD_PREVIEWS, type FilePreview } from "@/lib/pdf-content";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import SettingsPopover from "@/components/task/SettingsPopover";
@@ -107,6 +109,30 @@ const STEP_COUNT: Record<MailTask, number> = {
   "reply-all": 3,
 };
 
+const ATTACH_TARGET = FILES.find((f) => f.isTarget)!;
+const ATTACH_TARGET_SIZE = (() => {
+  const p = DOWNLOAD_PREVIEWS[ATTACH_TARGET.key];
+  return p?.kind === "pdf" ? p.doc.size : "";
+})();
+
+/** A file's first page in the attach picker, big enough to read the month. */
+function FilePreviewPane({ preview }: { preview?: FilePreview }) {
+  if (!preview) return null;
+  if (preview.kind === "photo") {
+    return (
+      <figure className="m-0 flex w-full flex-col self-center overflow-hidden rounded bg-white">
+        <div
+          aria-hidden
+          className="h-[240px] w-full"
+          style={{ background: "linear-gradient(160deg, #9bb7c9 0%, #c9b79b 55%, #8a7a62 100%)" }}
+        />
+        <figcaption className="px-3 py-2 text-[13px] text-[#3c4043]">{preview.caption}</figcaption>
+      </figure>
+    );
+  }
+  return <PdfSheet doc={preview.doc} scale={0.6} stamp={preview.stamp} />;
+}
+
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
 }
@@ -162,6 +188,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
+  // The file selected in the picker's preview, before it is attached.
+  const [pickerPick, setPickerPick] = useState<string | null>(null);
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
@@ -507,6 +535,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setConfirmPick(null);
     setHelp(false);
     setPicker(false);
+    setPickerPick(null);
     setOpenStory(null);
     setBridgeOutEligible(false);
     setReplyAudience(null);
@@ -709,8 +738,13 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               const needsAttach = activeMailTask === "mail-attach";
               // The compose step is really three moments in one pane, and the
               // card names whichever one the learner is actually on.
+              const pickedTarget = FILES.find((f) => f.key === pickerPick)?.isTarget ?? false;
               const composeLine = needsAttach && !attached
-                ? MAIL_JOB_CARD_STEPS.attach
+                ? !picker
+                  ? MAIL_JOB_CARD_STEPS.attach
+                  : pickerPick
+                    ? MAIL_JOB_CARD_STEPS.attachCheck
+                    : MAIL_JOB_CARD_STEPS.attachPick
                 : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
                   ? MAIL_JOB_CARD_STEPS.replyAllEdit
                   : !body.trim()
@@ -747,7 +781,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         ? "reply-after-confirm"
                         : "confirm-correct"
                       : needsAttach && !attached
-                        ? "attach-button"
+                        ? !picker
+                          ? "attach-button"
+                          : pickedTarget
+                            ? "attach-confirm"
+                            : "attach-file"
                         : body.trim()
                           ? "send-button"
                           : "compose-body";
@@ -956,8 +994,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         <span className="rounded px-1.5 py-0.5 text-[10px] font-bold text-white" style={{ background: "#ea4335" }}>
                           PDF
                         </span>
-                        <span className="text-[13px] font-medium">safety-report-july.pdf</span>
-                        <span className="text-[12px] text-[#5f6368]">248 KB</span>
+                        <span className="text-[13px] font-medium">{ATTACH_TARGET.label}</span>
+                        <span className="text-[12px] text-[#5f6368]">{ATTACH_TARGET_SIZE}</span>
                         <button
                           onClick={() => setAttached(false)}
                           aria-label={T("Remove attachment", "Quitar adjunto")}
@@ -1091,12 +1129,25 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           categoryLabel={c.downloads}
           columnLabels={[c.colName, c.colDate]}
           items={FILES}
-          onCancel={() => setPicker(false)}
+          onCancel={() => {
+            setPicker(false);
+            setPickerPick(null);
+          }}
           cancelLabel={c.cancel}
+          preview={{
+            selectedKey: pickerPick,
+            onFocus: (item) => setPickerPick(item.key),
+            render: (item) => <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} />,
+            empty: c.pickerEmpty,
+            confirmLabel: c.attachConfirm,
+            showMeRow: "attach-file",
+            showMeConfirm: "attach-confirm",
+          }}
           onSelect={(item) => {
             if (item.isTarget) {
               setAttached(true);
               setPicker(false);
+              setPickerPick(null);
               advance(4);
             } else if (item.wrongHint) {
               recordWrong({ title: T("Not that one.", "Ese no es."), body: item.wrongHint[lang] });

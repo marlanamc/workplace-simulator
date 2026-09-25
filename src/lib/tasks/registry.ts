@@ -245,8 +245,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
         people: [{ name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "Maria sent you an email. She needs a report. The report is a file on your computer. You will send it to her in an email.",
-          es: "Maria te envió un correo. Necesita un informe. El informe es un archivo en tu computadora. Se lo vas a enviar en un correo.",
+          en: "Maria sent you an email. She needs the July safety report by 3 PM. The report is a file in your Downloads folder, next to a draft and other files. You will send her the right one.",
+          es: "Maria te envió un correo. Necesita el reporte de seguridad de julio antes de las 3 PM. El reporte es un archivo en tu carpeta Descargas, junto a un borrador y otros archivos. Le vas a enviar el correcto.",
         },
       },
       guide: {
@@ -261,8 +261,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that an attachment is a file that goes with the email.", es: "Explica que un archivo adjunto es un archivo que va con el correo." },
         ],
         stickingPoints: [
-          { en: "Some learners open Maria's older welcome email. Ask: which email is about the safety report?", es: "Algunos abren el correo de bienvenida anterior de Maria. Pregunta: ¿cuál correo habla del reporte de seguridad?" },
-          { en: "Some learners pick the June report or the shift swap form. Ask: what month did Maria ask for?", es: "Algunos eligen el reporte de junio o el formulario de cambio de turno. Pregunta: ¿qué mes pidió Maria?" },
+          { en: "The inbox has other real emails (a milk delivery, IT, HR). Opening them is fine and nothing is marked wrong. Ask: which email is about the safety report?", es: "La bandeja tiene otros correos reales (una entrega de leche, sistemas, RR.HH.). Abrirlos está bien y no se marca nada como error. Pregunta: ¿cuál correo habla del reporte de seguridad?" },
+          { en: "The picker shows each file's first page. Some learners attach the July DRAFT or the June report. Ask: what month is at the top? Do you see the red DRAFT stamp?", es: "La ventana muestra la primera página de cada archivo. Algunos adjuntan el BORRADOR de julio o el reporte de junio. Pregunta: ¿qué mes dice arriba? ¿Ves el sello rojo DRAFT?" },
+          { en: "The report is in English, like most US workplace files. Spanish readers look for July = julio and DRAFT = borrador.", es: "El reporte está en inglés, como la mayoría de los archivos de trabajo en EE. UU. Quienes leen en español buscan July = julio y DRAFT = borrador." },
           { en: "Some learners write a message and click Send with no file. Ask: do you see the file name in the green box?", es: "Algunos escriben el mensaje y hacen clic en Enviar sin el archivo. Pregunta: ¿ves el nombre del archivo en la caja verde?" },
         ],
         followUp: [
@@ -273,6 +274,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can help read the file names, but the learner chooses the file and clicks Send.",
           es: "Un compañero puede ayudar a leer los nombres de los archivos, pero el estudiante elige el archivo y hace clic en Enviar.",
         },
+        atWork: [
+          { setting: { en: "a warehouse", es: "un almacén" }, example: { en: "Email the supervisor a photo of a damaged box.", es: "Enviarle al supervisor una foto de una caja dañada." } },
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "Send the finished room checklist, not last week's.", es: "Enviar la lista de cuartos terminada, no la de la semana pasada." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Attach the signed visit note for the right date.", es: "Adjuntar la nota de visita firmada de la fecha correcta." } },
+          { setting: { en: "a school", es: "una escuela" }, example: { en: "Send your child's signed form back to the teacher.", es: "Devolverle a la maestra el formulario firmado de tu hijo." } },
+        ],
       },
     },
   },
