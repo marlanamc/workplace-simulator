@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
-import { lessonByKey, seedForLesson } from "@/lib/lessons/catalog";
+import { draftLessonFor, lessonByKey, seedForLesson } from "@/lib/lessons/catalog";
 import { LESSON_COPY } from "@/lib/lessons/copy";
 import { WindowManagerProvider } from "@/lib/window-manager";
 import { JobCardProvider } from "@/lib/job-card-context";
@@ -29,13 +29,16 @@ export default function LessonRunner({
   taskKey,
   initialMode,
   initialLang,
+  draft = false,
 }: {
   taskKey: TaskKey;
+  /** A task with no lesson block yet, opened by the smoke sweep. */
+  draft?: boolean;
   initialMode: LessonMode;
   initialLang: Lang;
 }) {
   const router = useRouter();
-  const entry = lessonByKey(taskKey)!;
+  const entry = (lessonByKey(taskKey) ?? (draft ? draftLessonFor(taskKey) : undefined))!;
   const seed = useMemo(() => seedForLesson(taskKey)!, [taskKey]);
 
   const lesson = useMemo(

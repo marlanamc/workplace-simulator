@@ -29,6 +29,4 @@ export type LessonMeta = {
   guide: TeacherGuide;
   /** Extra browser tabs, for a task that hops between apps. */
   tabs?: string[];
-  /** Key into the seeded writing fixtures, for a task that reads earlier writing. */
-  fixtures?: string;
 };

@@ -145,8 +145,10 @@ export default function BrowserClient() {
   const { browserTab, browserTabToken, browserTabExplicit, setBrowserTab } = useWindowManager();
   const { lang, currentTrack, completedTaskKeys, bridgePath, storyFlags, setStoryFlag } = useProgress();
   const { nudge, say, dismiss } = useNudge();
-  // A lesson keeps the learner on its own tabs: the bookmark bar, the opening
-  // tabs, and every deep link are limited to them.
+  // A lesson keeps the learner on its own tabs: it opens on them, the bookmark
+  // bar shows only them, and a bare re-open never resyncs to game progress.
+  // A task's own "Open Calendar" style link still works, because a hub task
+  // (Triage, the huddle, the weekly report) is made of those hops.
   const lesson = useLesson();
   const lessonTabs = lesson
     ? lesson.tabs.flatMap((k) => BASE_TABS.filter((t) => t.key === k))
@@ -217,7 +219,7 @@ export default function BrowserClient() {
   // Orientation teaches the Mail bookmark before Day One formally unlocks it.
   if (progressLevelKey === "level0") unlockedKeys.add("level1");
   const visibleBookmarks = lesson
-    ? new Set(lesson.tabs)
+    ? new Set([...lesson.tabs, ...openTabs.map((t) => t.key)])
     : bookmarkTabKeys(
         progressLevelKey,
         completedTaskKeys,
@@ -235,8 +237,8 @@ export default function BrowserClient() {
   if (browserTabToken !== lastToken) {
     setLastToken(browserTabToken);
     if (lesson) {
-      // A named lesson tab comes forward; anything else leaves the lesson as it is.
-      const tabDef = lessonTabs?.find((t) => t.key === browserTab);
+      // A named tab comes forward; a bare re-open leaves the lesson as it is.
+      const tabDef = BASE_TABS.find((t) => t.key === browserTab);
       if (browserTabExplicit && tabDef) {
         setActiveTab(tabDef.key);
         if (!openTabs.some((t) => t.key === tabDef.key)) setOpenTabs((prev) => [...prev, tabDef]);
@@ -367,7 +369,7 @@ export default function BrowserClient() {
     freeTabbing && (isNewTabKey(tab.key) || tab.closeable || openTabs.length > 1);
 
   const goToBookmark = (t: TabDef) => {
-    if (lesson && !lesson.tabs.includes(t.key)) return;
+    if (lesson && !visibleBookmarks.has(t.key)) return;
     if (openTabs.some((ot) => ot.key === t.key)) {
       setActiveTab(t.key);
       return;

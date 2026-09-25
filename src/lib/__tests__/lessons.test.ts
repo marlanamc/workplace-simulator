@@ -3,7 +3,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { TRACKS, activeTrack, nextTaskInTrack } from "@/lib/tracks-content";
 import { TASKS } from "@/lib/tasks/registry";
-import { LESSONS, lessonByKey, seedForLesson } from "@/lib/lessons/catalog";
+import { LESSONS, draftLessonFor, lessonByKey, seedForLesson } from "@/lib/lessons/catalog";
 
 const reachable = [...new Set(TRACKS.flatMap((t) => t.taskKeys))].filter((k) => TASKS[k]?.built && !TASKS[k].retired);
 
@@ -14,6 +14,10 @@ describe("lesson seeding", () => {
     const track = activeTrack(seed!.completedTaskKeys, seed!.bridgePath, seed!.courseRoute);
     expect(track.key).toBe(seed!.track.key);
     expect(nextTaskInTrack(track, seed!.completedTaskKeys)).toBe(taskKey);
+  });
+
+  it.each(reachable)("%s has a tab to open on", (taskKey) => {
+    expect(draftLessonFor(taskKey)?.tabs[0]).toBeTruthy();
   });
 
   it("returns null for a key that is not in any track", () => {

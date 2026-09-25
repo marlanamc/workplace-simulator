@@ -50,6 +50,30 @@ export function lessonByKey(key: string): LessonEntry | undefined {
   return BY_KEY.get(key);
 }
 
+const EMPTY_GUIDE = { skills: [], prepare: [], stickingPoints: [], followUp: [], peerHelp: { en: "", es: "" } };
+
+/**
+ * A stand-in lesson for a task that has no `lesson` block yet, named from the
+ * task's own label. Only the development smoke sweep uses it, to check that
+ * every task can run on its own before it is written up for teachers.
+ */
+export function draftLessonFor(key: string): LessonEntry | undefined {
+  const task = TASKS[key as TaskKey];
+  if (!task || task.retired || !task.built || !seedForLesson(task.key)) return undefined;
+  const home = lessonTabFor(task.key);
+  if (!home) return undefined;
+  return {
+    title: task.label,
+    summary: task.dispatch,
+    skills: [],
+    minutes: 5,
+    guide: EMPTY_GUIDE,
+    taskKey: task.key,
+    tabs: [home],
+    section: TASK_LOCATIONS[task.key]?.section,
+  };
+}
+
 export function lessonsBySkill(skill: SkillTag | null): LessonEntry[] {
   return skill ? LESSONS.filter((l) => l.skills.includes(skill)) : LESSONS;
 }

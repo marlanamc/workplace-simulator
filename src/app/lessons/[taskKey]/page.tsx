@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { TaskKey } from "@/lib/desktop-content";
-import { lessonByKey } from "@/lib/lessons/catalog";
+import { draftLessonFor, lessonByKey } from "@/lib/lessons/catalog";
 import LessonRunner from "../LessonRunner";
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -16,15 +16,18 @@ export default async function LessonPage({
   searchParams,
 }: {
   params: Promise<{ taskKey: string }>;
-  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[] }>;
+  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[]; smoke?: string | string[] }>;
 }) {
   const { taskKey } = await params;
-  if (!lessonByKey(taskKey)) notFound();
   const query = await searchParams;
+  // The smoke sweep opens tasks that are not lessons yet. Never in production.
+  const draft = process.env.NODE_ENV !== "production" && first(query.smoke) === "1";
+  if (!lessonByKey(taskKey) && !(draft && draftLessonFor(taskKey))) notFound();
   return (
     <LessonRunner
       key={taskKey}
       taskKey={taskKey as TaskKey}
+      draft={draft}
       initialMode={first(query.mode) === "independent" ? "independent" : "guided"}
       initialLang={first(query.lang) === "es" ? "es" : "en"}
     />
