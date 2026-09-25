@@ -103,3 +103,11 @@ test("search and topic links work without JavaScript", async ({ browser }) => {
   expect(new URL(page.url()).searchParams.get("skill")).toBe("forms");
   await context.close();
 });
+
+test("the sign-in screen links to lessons in the chosen language", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Español", exact: true }).click();
+  await page.getByRole("link", { name: "Practicar una lección, sin iniciar sesión" }).click();
+  await expect(page).toHaveURL(/\/lessons\?lang=es$/);
+  await expect(page.getByRole("heading", { name: "O elige un tema", exact: true })).toBeVisible();
+});
