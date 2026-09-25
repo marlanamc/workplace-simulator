@@ -91,7 +91,7 @@ test("the library filters by skill and opens a lesson and its teacher preview", 
 
 test("the copied student link keeps support and language", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await page.goto("/lessons/account-recovery?preview=1&lang=es");
+  await page.goto("/lessons/account-recovery?preview=1&lang=es&returnTo=%2Flessons%3Fskill%3Daccounts");
   await jobCard(page).getByTestId("lesson-mode-independent").click();
   await expect(page).toHaveURL(/mode=independent/);
   await page.getByRole("button", { name: "Copiar enlace para estudiantes" }).click();
@@ -100,6 +100,7 @@ test("the copied student link keeps support and language", async ({ page, contex
   expect(link).toContain("mode=independent");
   expect(link).toContain("lang=es");
   expect(link).not.toContain("preview");
+  expect(link).not.toContain("returnTo");
 });
 
 test("changing support mid-task keeps the student's place", async ({ page }) => {
@@ -152,13 +153,14 @@ test.describe("saving", () => {
     expect(await page.evaluate(() => localStorage.getItem("lesson-attempt:account-recovery:guest"))).toBeNull();
 
     // A guest's finish stays in this browser until they sign in.
-    await page.goto("/lessons/account-recovery?mode=independent");
+    await page.goto("/lessons/account-recovery?mode=independent&returnTo=%2Flessons%3Fskill%3Daccounts%26q%3Dcode");
     await finishAccountRecovery(page);
     await expect(jobCard(page)).toContainText("This computer remembers it");
     await jobCard(page).getByTestId("lesson-sign-in").click();
     await expect(page).toHaveURL(/\/login\?next=/);
     await addUser(page, STUDENT);
     await expect(page).toHaveURL(/\/lessons\/account-recovery\?.*transfer=1/, { timeout: 20_000 });
+    expect(new URL(page.url()).searchParams.get("returnTo")).toBe("/lessons?skill=accounts&q=code");
     await expect(page.getByTestId("simulator-welcome")).toHaveCount(0);
 
     const [learner] = await sql`select id from learners where display_name = ${STUDENT} and class_code = ${CLASS_CODE}`;

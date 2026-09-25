@@ -216,3 +216,12 @@ practice completion. Automated viewport checks do not replace this pilot.
   `/practice` redirects.
 - `e2e/lessons-smoke.spec.ts`: all 51 reachable tasks open as lessons with no console errors.
   A new task is covered automatically.
+
+## Lesson library discovery
+
+`lesson-library.test.ts` covers bilingual, accent-insensitive search, combined skill
+filters, starter membership, and validated library return URLs. `lesson-library.spec.ts`
+covers search with and without JavaScript, empty results, language changes, teacher
+preview, repeat practice, returning to filtered results, and phone/Chromebook widths.
+The lesson suite also checks that sign-in preserves library context and shared student
+links omit it. Run these with `e2e/lessons.spec.ts` and `e2e/lessons-smoke.spec.ts`.

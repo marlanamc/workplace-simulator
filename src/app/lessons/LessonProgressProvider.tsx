@@ -131,7 +131,7 @@ export default function LessonProgressProvider({
     [seed, lesson.taskKey, writing, openingReplies, saveOpeningReply, completedTaskKeys, progressEpoch, storyFlags, setStoryFlag, markComplete, restart, lang, bigText],
   );
 
-  const lessonValue = useMemo<LessonValue>(() => ({ ...lesson, onRestart: restart }), [lesson, restart]);
+  const lessonValue = useMemo<LessonValue>(() => ({ ...lesson, onFinish: () => lesson.onFinish(lang), onRestart: restart }), [lesson, restart, lang]);
 
   return (
     <ProgressContext.Provider value={value}>
