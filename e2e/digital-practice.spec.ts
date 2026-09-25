@@ -271,28 +271,30 @@ test("sign in explicitly carries the current guest attempt and safe return path"
 
 async function turnInHomework(page: Page) {
   await page.getByRole("button", { name: "My weekly schedule" }).click();
-  await page.getByRole("link", { name: "View assignment" }).click();
-  await page.getByRole("button", { name: "Turn in" }).click();
+  await page.getByRole("link", { name: "View instructions" }).click();
+  await page.getByRole("button", { name: "Turn in", exact: true }).click();
   // Wording follows the help language; the file names are the same in both.
-  await expect(page.locator(".field-error")).toContainText("My schedule.docx");
+  await expect(page.locator(".gc-error")).toContainText("My schedule.docx");
   await page.getByRole("button", { name: "+ Add or create" }).click();
   await page.getByRole("menuitem", { name: "Google Drive" }).click();
-  const drive = page.getByRole("dialog", { name: "Google Drive" });
+  const drive = page.getByRole("dialog", {
+    name: "Insert files using Google Drive",
+  });
   await drive.getByLabel("My schedule (old).docx").check();
-  await drive.getByRole("button", { name: "Add" }).click();
-  await page.getByRole("button", { name: "Turn in" }).click();
-  await expect(page.locator(".field-error").first()).toContainText(
+  await drive.getByRole("button", { name: "Insert" }).click();
+  await page.getByRole("button", { name: "Turn in", exact: true }).click();
+  await expect(page.locator(".gc-error").first()).toContainText(
     "My schedule (old).docx",
   );
   await page
     .getByRole("button", { name: "Remove My schedule (old).docx" })
     .click();
   await page.getByRole("button", { name: "+ Add or create" }).click();
-  await page.getByRole("menuitem", { name: "File from this computer" }).click();
-  const files = page.getByRole("dialog", { name: "Open a file" });
+  await page.getByRole("menuitem", { name: "File", exact: true }).click();
+  const files = page.getByRole("dialog", { name: "Select a file to open" });
   await files.getByRole("radio", { name: /^My schedule\.docx/ }).check();
-  await files.getByRole("button", { name: "Add" }).click();
-  await page.getByRole("button", { name: "Turn in" }).click();
+  await files.getByRole("button", { name: "Open" }).click();
+  await page.getByRole("button", { name: "Turn in", exact: true }).click();
   const confirm = page.getByRole("dialog", { name: "Turn in your work?" });
   await expect(confirm).toContainText("1 attachment will be submitted");
   await confirm.getByRole("button", { name: "Turn in" }).click();
@@ -305,7 +307,10 @@ test("homework: find, attach the right file, turn in, comment, resume", async ({
   await page
     .getByRole("link", { name: "Start practice: Turn in homework" })
     .click();
-  await expect(page.getByRole("heading", { name: "Classwork" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Week 3" })).toBeVisible();
+  await expect(
+    page.getByText("classroom.google.com/w/english-3"),
+  ).toBeVisible();
   await turnInHomework(page);
   await page.reload();
   await expect(page.getByText("Turned in", { exact: true })).toBeVisible();
@@ -317,7 +322,7 @@ test("homework: find, attach the right file, turn in, comment, resume", async ({
     .fill("My busiest day is Saturday because I work.");
   await page.getByRole("button", { name: "Post" }).click();
   await expect(
-    page.getByText("Maya Torres · My busiest day is Saturday because I work."),
+    page.locator(".gc-comment").filter({ hasText: "Maya Torres" }),
   ).toBeVisible();
   expect(
     await page.evaluate(() =>
@@ -327,7 +332,7 @@ test("homework: find, attach the right file, turn in, comment, resume", async ({
     ),
   ).toMatchObject({ stage: "complete", attached: ["schedule"] });
   await page.getByRole("button", { name: "Practice again" }).click();
-  await expect(page.getByRole("heading", { name: "Classwork" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Week 3" })).toBeVisible();
 });
 test("homework: Unsubmit returns to editing; Spanish help, English class", async ({
   page,
@@ -355,7 +360,7 @@ test("teacher preview shows the guide and saves nothing", async ({ page }) => {
     page.getByText(/Choosing “My schedule \(old\)\.docx\.”/),
   ).toBeVisible();
   await page.getByRole("button", { name: "My weekly schedule" }).click();
-  await page.getByRole("link", { name: "View assignment" }).click();
+  await page.getByRole("link", { name: "View instructions" }).click();
   expect(calls).toBe(0);
 });
 test("homework fits a phone screen", async ({ page }) => {
