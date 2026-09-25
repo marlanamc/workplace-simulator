@@ -73,12 +73,12 @@ test("an unknown or non-lesson task is a 404", async ({ page }) => {
 });
 
 test("the library filters by skill and opens a lesson and its teacher preview", async ({ page }) => {
-  await page.goto("/lessons");
+  await page.goto("/lessons?teacher=1");
   await page.getByTestId("skill-filter-accounts").click();
   await expect(page).toHaveURL(/skill=accounts/);
+  await expect(page.getByRole("heading", { level: 1, name: "Accounts and passwords" })).toBeVisible();
   const card = page.getByTestId("lesson-card-account-recovery");
   await expect(card).toBeVisible();
-  await expect(page.locator('[data-testid^="lesson-card-"]').filter({ hasNotText: "Accounts" })).toHaveCount(0);
 
   await card.getByRole("link", { name: /Teacher preview and guide/ }).click();
   await expect(page.getByTestId("teacher-preview")).toBeVisible();

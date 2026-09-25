@@ -12,6 +12,7 @@ import { loginOrSignup, type LoginErrorKey, type LoginResult } from "./actions";
 import type { Lang } from "@/lib/task-types";
 import { DEVICE_KEY, storage } from "@/lib/storage";
 import { DesktopClock } from "@/components/LiveClock";
+import Link from "next/link";
 import { Anchor } from "lucide-react";
 import { Languages } from "@/lib/icons";
 
@@ -46,6 +47,7 @@ const COPY: Record<
     battery: string;
     switchLabel: string;
     removeUser: string;
+    lessons: string;
     errors: Record<LoginErrorKey, string>;
   }
 > = {
@@ -70,6 +72,7 @@ const COPY: Record<
     battery: "Battery is charged",
     switchLabel: "Español",
     removeUser: "Remove {name}",
+    lessons: "Practice a lesson, no sign-in needed",
     errors: {
       name: "Enter your first name.",
       pin: "Your PIN is 4 numbers.",
@@ -99,6 +102,7 @@ const COPY: Record<
     battery: "La batería está cargada",
     switchLabel: "English",
     removeUser: "Quitar a {name}",
+    lessons: "Practicar una lección, sin iniciar sesión",
     errors: {
       name: "Escribe tu nombre.",
       pin: "Tu PIN son 4 números.",
@@ -436,6 +440,14 @@ export default function LoginForm({ next, paused = false }: { next: string; paus
                   {c.pickerHint}
                 </p>
               )}
+              {/* Lessons need no account, so this still works while sign-in is paused. */}
+              <Link
+                href={lang === "es" ? "/lessons?lang=es" : "/lessons"}
+                data-testid="login-lessons-link"
+                className={`${recents.length === 0 && !paused ? "" : "mt-auto "}mb-2 inline-flex min-h-11 items-center rounded-full px-4 text-[15px] font-medium text-white/90 underline underline-offset-4 hover:bg-white/10`}
+              >
+                {c.lessons}
+              </Link>
             </>
           )}
           {unlocking && (

@@ -39,6 +39,16 @@ describe("/api/lessons", () => {
     expect(await (await GET(new Request("https://l.test/api/lessons?lesson=account-recovery"))).json()).toEqual({ signedIn: false });
     expect(m.select).not.toHaveBeenCalled();
   });
+  it("lists the learner's finished lessons without ?lesson=", async () => {
+    m.where.mockResolvedValue([
+      { activityId: "account-recovery", state: done },
+      { activityId: "w4-form", state: { ...done, attempts: 0 } },
+      { activityId: "not-a-lesson", state: done },
+    ]);
+    expect(await (await GET(new Request("https://l.test/api/lessons"))).json()).toEqual({ signedIn: true, owner: "owner", done: ["account-recovery"] });
+    m.session.mockResolvedValue(null);
+    expect(await (await GET(new Request("https://l.test/api/lessons"))).json()).toEqual({ signedIn: false });
+  });
   it("rejects unknown lessons, cross-origin, and signed-out writes", async () => {
     expect((await PUT(put(done, { lesson: "tour" }))).status).toBe(400);
     expect((await PUT(put(done, { origin: "https://evil.test" }))).status).toBe(403);

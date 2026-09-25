@@ -24,6 +24,27 @@
   --danger: #c5221f;
 
   --focus-ring: #1a73e8;
+
+  /* Boston Harbor: the lesson library (/lessons). */
+  --harbor-navy: #14294d;
+  --harbor-deep: #0b1a33;
+  --harbor-ink: #14213d;
+  --harbor-sail: #f7f3ea;
+  --harbor-sand: #e6dcc7;
+  --harbor-sand-strong: #d8ccb2;
+  --harbor-sand-panel: #efe6d3;
+  --harbor-signal: #f5c542;
+  --harbor-signal-hover: #ecb522;
+  --harbor-signal-press: #b8871a;
+  --harbor-ring-red: #c8322a;
+  --harbor-success: #1d6b3f;
+  --harbor-success-tint: #dcefe3;
+  --harbor-done-bg: #f1f8f3;
+  --harbor-done-ring: #bfe0cb;
+  --harbor-muted: #454c5c;
+  --harbor-muted-2: #4f5566;
+  --harbor-muted-3: #5d6475;
+  --harbor-header-muted: #c9d6ea;
 }
 
 @theme inline {
@@ -49,6 +70,25 @@
   --color-warning: var(--warning);
   --color-warning-tint: var(--warning-tint);
   --color-danger: var(--danger);
+  --color-harbor-navy: var(--harbor-navy);
+  --color-harbor-deep: var(--harbor-deep);
+  --color-harbor-ink: var(--harbor-ink);
+  --color-harbor-sail: var(--harbor-sail);
+  --color-harbor-sand: var(--harbor-sand);
+  --color-harbor-sand-strong: var(--harbor-sand-strong);
+  --color-harbor-sand-panel: var(--harbor-sand-panel);
+  --color-harbor-signal: var(--harbor-signal);
+  --color-harbor-signal-hover: var(--harbor-signal-hover);
+  --color-harbor-signal-press: var(--harbor-signal-press);
+  --color-harbor-ring-red: var(--harbor-ring-red);
+  --color-harbor-success: var(--harbor-success);
+  --color-harbor-success-tint: var(--harbor-success-tint);
+  --color-harbor-done-bg: var(--harbor-done-bg);
+  --color-harbor-done-ring: var(--harbor-done-ring);
+  --color-harbor-muted: var(--harbor-muted);
+  --color-harbor-muted-2: var(--harbor-muted-2);
+  --color-harbor-muted-3: var(--harbor-muted-3);
+  --color-harbor-header-muted: var(--harbor-header-muted);
 }
 
 body {
@@ -71,6 +111,12 @@ textarea:focus-visible,
 [tabindex]:focus-visible {
   outline: 3px solid var(--focus-ring);
   outline-offset: 2px;
+}
+
+/* The lesson library uses a high-contrast yellow ring on every control. */
+.harbor :is(a, button, input):focus-visible {
+  outline: 4px solid var(--harbor-signal);
+  outline-offset: 3px;
 }
 
 @keyframes fade-up {

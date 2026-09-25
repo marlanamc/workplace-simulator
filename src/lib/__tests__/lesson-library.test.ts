@@ -1,22 +1,38 @@
 import { describe, expect, it } from "vitest";
 import { LESSONS } from "@/lib/lessons/catalog";
-import { libraryHref, libraryReturn, searchLessons, STARTER_LESSONS } from "@/lib/lessons/library";
+import { libraryHref, libraryReturn, QUICK_SEARCHES, searchLessons } from "@/lib/lessons/library";
+import { SKILL_LOOK, SKILL_TAGS } from "@/lib/lessons/skills";
 import { safeReturn } from "@/lib/lessons/return";
 
 describe("lesson discovery", () => {
   it("keeps catalog order for empty searches and combines skill and text", () => {
-    expect(searchLessons("en", null, "  ")).toEqual(LESSONS);
-    expect(searchLessons("en", "forms", "W-4").map(l => l.taskKey)).toEqual(["w4-form"]);
-    expect(searchLessons("en", "email", "W-4")).toEqual([]);
+    expect(searchLessons(null, "  ")).toEqual(LESSONS);
+    expect(searchLessons("forms", "W-4").map(l => l.taskKey)).toEqual(["w4-form"]);
+    expect(searchLessons("email", "W-4")).toEqual([]);
   });
-  it("matches accents and case, using the selected language and skill labels", () => {
-    expect(searchLessons("es", null, "CODIGO").map(l => l.taskKey)).toContain("account-recovery");
-    expect(searchLessons("es", null, "CONTRASENAS").map(l => l.taskKey)).toContain("account-recovery");
-    expect(searchLessons("en", null, "CODIGO")).toEqual([]);
+  it("matches accents and case in either language, including skill labels", () => {
+    expect(searchLessons(null, "CODIGO").map(l => l.taskKey)).toContain("account-recovery");
+    expect(searchLessons(null, "CONTRASENAS").map(l => l.taskKey)).toContain("account-recovery");
+    expect(searchLessons(null, "passwords").map(l => l.taskKey)).toContain("account-recovery");
   });
-  it("uses three published distinct starters", () => {
-    expect(new Set(STARTER_LESSONS).size).toBe(3);
-    for (const key of STARTER_LESSONS) expect(LESSONS.some(l => l.taskKey === key)).toBe(true);
+  it("matches any word, ranks more matches first, and ignores filler words", () => {
+    const both = searchLessons(null, "W-4 attach");
+    expect(both.map(l => l.taskKey)).toEqual(expect.arrayContaining(["w4-form", "mail-attach"]));
+    expect(searchLessons(null, "the W-4").map(l => l.taskKey)).toEqual(["w4-form"]);
+    expect(searchLessons(null, "zzzz")).toEqual([]);
+  });
+  it("maps a learner's word to the lessons' words", () => {
+    expect(searchLessons(null, "password").map(l => l.taskKey)).toContain("account-recovery");
+    expect(searchLessons(null, "empleo").length).toBeGreaterThan(0);
+  });
+  it("every quick search finds a lesson in both languages", () => {
+    for (const s of QUICK_SEARCHES) {
+      expect(searchLessons(null, s.en).length, s.en).toBeGreaterThan(0);
+      expect(searchLessons(null, s.es).length, s.es).toBeGreaterThan(0);
+    }
+  });
+  it("every skill has a topic look", () => {
+    for (const tag of SKILL_TAGS) expect(SKILL_LOOK[tag].colors.solid).toMatch(/^#[0-9a-f]{6}$/);
   });
 });
 
@@ -25,6 +41,7 @@ describe("library return navigation", () => {
     expect(libraryReturn("/lessons?skill=forms&q=W-4&lang=en", "es")).toBe("/lessons?lang=es&skill=forms&q=W-4");
     expect(libraryReturn(null, "es")).toBe("/lessons?lang=es");
     expect(libraryHref("en", null, "   ")).toBe("/lessons");
+    expect(libraryReturn("/lessons?skill=forms&teacher=1", "en")).toBe("/lessons?skill=forms&teacher=1");
   });
   it("rejects external, non-library and invalid filter destinations", () => {
     for (const raw of ["https://evil.test/lessons", "//evil.test/lessons", "/lessons/../teacher", "/lessons/w4-form"]) expect(libraryReturn(raw)).toBe("/lessons");
