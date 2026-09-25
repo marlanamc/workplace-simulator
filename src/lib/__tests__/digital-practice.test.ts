@@ -1,11 +1,14 @@
 import { describe, it, expect } from "vitest";
+import { blank, errors, parseDraft, instructions } from "../practice/content";
+import { ACTIVITIES, practiceReturn } from "../practice/activities";
 import {
-  blank,
-  errors,
-  parseDraft,
-  practiceReturn,
-  instructions,
-} from "../practice/content";
+  assignment,
+  attachmentErrors,
+  blankAssignment,
+  commentError,
+  parseAssignment,
+} from "../practice/assignment";
+import type { PracticeActivity, BaseDraft } from "../practice/types";
 const valid = {
   ...blank(),
   firstName: " Maya ",
@@ -53,6 +56,10 @@ describe("safe practice login returns", () => {
     expect(practiceReturn("/teacher")).toBe("/teacher");
     expect(practiceReturn("/studio")).toBe("/studio");
   });
+  it("returns to any registered activity", () =>
+    expect(practiceReturn("/practice/assignment?lang=es")).toBe(
+      "/practice/assignment?lang=es",
+    ));
   it("keeps only supported practice options", () =>
     expect(
       practiceReturn(
@@ -68,4 +75,76 @@ describe("safe practice login returns", () => {
     ])
       expect(practiceReturn(s)).toBe("/");
   });
+});
+
+describe("turn in homework", () => {
+  const turnedIn = {
+    ...blankAssignment(),
+    stage: "turnedIn" as const,
+    attached: ["schedule" as const],
+  };
+  it("needs exactly the current schedule attached", () => {
+    expect(attachmentErrors(blankAssignment())).toHaveLength(1);
+    expect(attachmentErrors(turnedIn)).toEqual([]);
+    const old = attachmentErrors({ ...turnedIn, attached: ["schedule-old"] });
+    expect(old.map((m) => m.en).join(" ")).toMatch(/last month/);
+    expect(old).toHaveLength(1);
+    expect(
+      attachmentErrors({ ...turnedIn, attached: ["schedule", "photo"] }),
+    ).toHaveLength(1);
+  });
+  it("asks for a full-sentence comment", () => {
+    expect(commentError({ ...turnedIn, comment: "Monday" })).not.toBeNull();
+    expect(
+      commentError({ ...turnedIn, comment: "My busiest day is Friday." }),
+    ).toBeNull();
+  });
+  it("rejects saved states that skip a step or carry unknown files", () => {
+    expect(
+      parseAssignment({ ...blankAssignment(), stage: "turnedIn" }),
+    ).toBeNull();
+    expect(parseAssignment({ ...turnedIn, stage: "complete" })).toBeNull();
+    expect(
+      parseAssignment({ ...turnedIn, attached: ["virus.exe"] }),
+    ).toBeNull();
+    expect(
+      parseAssignment({ ...turnedIn, attached: ["schedule", "schedule"] }),
+    ).toBeNull();
+    expect(
+      parseAssignment({ ...turnedIn, comment: "x".repeat(501) }),
+    ).toBeNull();
+    expect(parseAssignment({ ...turnedIn, learnerId: "other" })).toEqual(
+      turnedIn,
+    );
+  });
+});
+describe("every practice activity", () => {
+  const all = ACTIVITIES as PracticeActivity<BaseDraft>[];
+  it("has unique ids and a blank draft its own parser accepts", () => {
+    expect(new Set(all.map((a) => a.id)).size).toBe(all.length);
+    for (const a of all) expect(a.parseDraft(a.blank())).toEqual(a.blank());
+  });
+  it("is fully bilingual, including the teacher guide", () => {
+    for (const a of all) {
+      const texts = [
+        a.title,
+        a.summary,
+        a.eyebrow,
+        a.minutes,
+        a.goal,
+        a.guide.peerHelp,
+        ...a.stages.flatMap((s) => [a.instructions[s], a.help[s]]),
+        ...a.details.map((d) => d.label),
+        ...a.guide.skills,
+        ...a.guide.prepare,
+        ...a.guide.stickingPoints,
+        ...a.guide.followUp,
+      ];
+      for (const t of texts) {
+        expect(t.en.trim(), a.id).not.toBe("");
+        expect(t.es.trim(), a.id).not.toBe("");
+      }
+    }
+  });
+  it("includes the homework activity", () => expect(all).toContain(assignment));
 });

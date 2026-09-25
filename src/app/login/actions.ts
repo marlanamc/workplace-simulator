@@ -1,6 +1,6 @@
 "use server";
 
-import { practiceReturn } from "@/lib/practice/content";
+import { practiceReturn } from "@/lib/practice/activities";
 import { redirect } from "next/navigation";
 import { setSessionCookie, hashPin, verifyPin } from "@/lib/auth";
 import { createLearner, findLearner } from "@/lib/db/queries";
