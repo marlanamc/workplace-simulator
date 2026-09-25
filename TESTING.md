@@ -75,6 +75,17 @@ Mail. Plus: choosing Español on the login page survives sign-in AND reload.
   from the DB if you care about tidiness.
 - On failure it saves a trace: `npx playwright show-trace <path>` replays
   the whole session frame by frame.
+- **CI runs against a production build, not `next dev`.** The workflow builds
+  once (`npx next build`) and sets `E2E_PROD=1`, so Playwright starts
+  `next start`. Under `next dev` every page compiles on its first request,
+  and on a shared runner that stalled navigations past their timeout: a
+  different test failed on `waitForURL` each run. CI also retries a failed
+  test once (a dropped connection to the hosted test database); a pass on
+  retry still shows as *flaky* in the report, so look at those too.
+- To reproduce CI locally without stopping your dev server:
+  `npx next build && E2E_PROD=1 E2E_PORT=3100 LESSON_SMOKE=1 npx playwright test`.
+  `LESSON_SMOKE=1` keeps the `?smoke=1` draft lessons reachable in a
+  production build. Never set it on Vercel.
 
 ### The e2e database (set up once)
 
