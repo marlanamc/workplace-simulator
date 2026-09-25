@@ -13,6 +13,8 @@ import {
   EMPTY_EMAIL_HINT,
   rangeCoversCrew,
   parseRange,
+  sumProblem,
+  SUM_PROBLEM_HINT,
   emailMentionsFix,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
@@ -105,8 +107,14 @@ export default function FormulaCheckTask() {
   const selectedFormula = selected.row === TOTAL_ROW ? sumFormula : selected.row === AVERAGE_ROW ? averageFormula : null;
   const highlight = selected.col === "H" && selectedFormula ? parseRange(selectedFormula) : null;
 
+  const sumFixed = rangeCoversCrew(sumFormula, "sum");
+  const stepIndex = view === "home" ? 0 : view === "sheet" ? (sumFixed ? 2 : 1) : 3;
+  const showMeIds = ["open-file", "formula-bar", "email-total", "compose-body"];
+
   const tryEmail = () => {
-    if (!rangeCoversCrew(sumFormula, "sum")) return say(c.fixFirst);
+    showMe.clear();
+    const problem = sumProblem(sumFormula);
+    if (problem !== "ok") return say(SUM_PROBLEM_HINT[problem][lang]);
     if (!rangeCoversCrew(averageFormula, "average")) {
       return say(
         lang === "en"
@@ -191,12 +199,12 @@ export default function FormulaCheckTask() {
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["formula-check"]}
-          stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
+          stepIndex={stepIndex}
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
-          showMeActive={showMe.targetId === "open-file"}
+          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
+          showMeActive={showMe.targetId === showMeIds[stepIndex]}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -222,18 +230,28 @@ export default function FormulaCheckTask() {
               {cellRef(selected)}
             </span>
             <span className="text-[13px] italic text-[#5f6368]">fx</span>
-            {formulaEditable ? (
-              <input
-                value={formulaBarContent}
-                onChange={(e) => onFormulaChange(e.target.value)}
-                className="flex-1 border-l border-[#e0e0e0] bg-white px-2 py-1 text-[13px] text-[#202124] outline-none"
-                spellCheck={false}
-              />
-            ) : (
-              <span className="flex-1 truncate border-l border-[#e0e0e0] px-2 py-1 text-[13px] text-[#202124]">
-                {formulaBarContent}
-              </span>
-            )}
+            {/* A formula you can change looks like a box you can type in, so the
+                learner can tell the bar is editable. Clicking it on another
+                cell goes back to the Hours total, the one to fix. */}
+            <div data-showme="formula-bar" className="flex min-w-0 flex-1">
+              {formulaEditable ? (
+                <input
+                  aria-label={lang === "en" ? "Formula bar" : "Barra de fórmulas"}
+                  value={formulaBarContent}
+                  onChange={(e) => onFormulaChange(e.target.value)}
+                  className="min-h-9 flex-1 rounded border-2 border-[#1a73e8] bg-white px-2 font-mono text-[15px] text-[#202124] outline-none"
+                  spellCheck={false}
+                />
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setSelected({ row: TOTAL_ROW, col: "H" })}
+                  className="flex-1 truncate border-l border-[#e0e0e0] px-2 py-1 text-left text-[13px] text-[#202124]"
+                >
+                  {formulaBarContent}
+                </button>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -382,7 +400,7 @@ export default function FormulaCheckTask() {
                         className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-medium cursor-pointer"
                         style={cellStyle}
                       >
-                        {col === "A" ? meta.label : col === "H" ? (meta.value === null ? "#ERROR?" : meta.value) : ""}
+                        {col === "A" ? meta.label : col === "H" ? (meta.value === null ? "#ERROR!" : meta.value) : ""}
                       </button>
                     );
                   })}
@@ -392,6 +410,7 @@ export default function FormulaCheckTask() {
 
             <button
               onClick={tryEmail}
+              data-showme="email-total"
               className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.emailCta}
@@ -401,7 +420,8 @@ export default function FormulaCheckTask() {
       )}
 
       {view === "compose" && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40 p-6">
+        // Docked right with a light scrim, so the fixed total stays readable while writing.
+        <div className="absolute inset-0 flex items-center justify-end bg-black/15 p-6">
           <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
@@ -412,6 +432,7 @@ export default function FormulaCheckTask() {
               <span>{c.subject}</span>
             </div>
             <textarea
+              data-showme="compose-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               placeholder={c.writeHere}

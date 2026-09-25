@@ -793,8 +793,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Fix the hours formula", es: "Arregla la fórmula de horas" },
     dispatch: {
-      en: "The hours total looks fine. The formula does not.",
-      es: "El total de horas se ve bien. La fórmula no.",
+      en: "The hours formula leaves someone out. Fix it and send Renata the total.",
+      es: "La fórmula de horas deja fuera a alguien. Arréglala y envíale el total a Renata.",
+    },
+    jobCardLine: {
+      en: "Fix the hours formula so it counts everyone. Then email Renata.",
+      es: "Arregla la fórmula de horas para que cuente a todos. Después escríbele a Renata.",
     },
     skill: { en: "Fix a formula range", es: "corregir el rango de una fórmula" },
     bookmarkLabel: "Sheets",
@@ -836,7 +840,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         stickingPoints: [
           { en: "Many learners trust the total and do not open the formula. Ask: which rows does the formula add? Is every name in those rows?", es: "Muchos confían en el total y no abren la fórmula. Pregunta: ¿qué filas suma la fórmula? ¿Están todos los nombres en esas filas?" },
-          { en: "Some learners fix SUM but not AVERAGE. Both need H2:H6. Ask: did you check the other formula too?", es: "Algunos corrigen SUM pero no AVERAGE. Las dos necesitan H2:H6. Pregunta: ¿revisaste también la otra fórmula?" },
+          { en: "Some learners type SUM(H2:H6) with no equals sign, or change the wrong number. Ask: which row is Casey in? Which number in the formula is the last row?", es: "Algunos escriben SUM(H2:H6) sin el signo igual, o cambian el número equivocado. Pregunta: ¿en qué fila está Casey? ¿Qué número de la fórmula es la última fila?" },
           { en: "The email must give the new total and say a name was missing. Ask: what was wrong, and what is the right number?", es: "El correo debe dar el total nuevo y decir que faltaba un nombre. Pregunta: ¿qué estaba mal y cuál es el número correcto?" },
         ],
         followUp: [

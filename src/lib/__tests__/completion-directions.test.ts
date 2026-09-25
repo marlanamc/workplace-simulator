@@ -27,7 +27,8 @@ function expectDirection(direction: Direction, en: RegExp, es: RegExp) {
 describe("completion requirements are explicit in the Job Card", () => {
   it("names each revised content requirement in both languages", () => {
     expectDirection(SHIFT_STEPS[0], /11\s*AM/i, /11\s*AM/i);
-    expectDirection(FORMULA_STEPS[2], /both formulas.*every crew row.*corrected total/i, /dos fórmulas.*cada fila.*total corregido/i);
+    expectDirection(FORMULA_STEPS[1], /formula bar.*H5 to H6/i, /barra de fórmulas.*H5 por H6/i);
+    expectDirection(FORMULA_STEPS[3], /new total.*who was missing/i, /total nuevo.*quién faltaba/i);
     expectDirection(STATUS_STEPS[2], /total.*cc Jordan/i, /total.*copia a Jordan/i);
     expectDirection(COURSEWORK_STEPS[1], /sorry.*what you will do/i, /lo sientes.*qué vas a hacer/i);
     expectDirection(ENROLLMENT_STEPS[2], /BHCC.*program/i, /BHCC.*programa/i);
