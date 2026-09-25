@@ -22,6 +22,16 @@ export const COURSEWORK_COPY: Record<Lang, {
   lessonKicker: string;
   tipLabel: string;
   gotIt: string;
+  /** Google Classroom chrome. */
+  tabs: [string, string, string];
+  yourWork: string;
+  assigned: string;
+  turnedIn: string;
+  points: string;
+  deadlineLabel: string;
+  chooseDeadline: string;
+  answerLabel: string;
+  privateComments: string;
 }> = {
   en: {
     helpBtn: "Help me with this step",
@@ -43,6 +53,15 @@ export const COURSEWORK_COPY: Record<Lang, {
     lessonKicker: "2-minute lesson",
     tipLabel: "Tip",
     gotIt: "Got it. Back to my task",
+    tabs: ["Stream", "Classwork", "People"],
+    yourWork: "Your work",
+    assigned: "Assigned",
+    turnedIn: "Turned in",
+    points: "100 points",
+    deadlineLabel: "Submission deadline",
+    chooseDeadline: "Choose a deadline",
+    answerLabel: "Your answer",
+    privateComments: "Private comments",
   },
   es: {
     helpBtn: "Ayúdame con este paso",
@@ -64,6 +83,15 @@ export const COURSEWORK_COPY: Record<Lang, {
     lessonKicker: "Lección de 2 minutos",
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
+    tabs: ["Novedades", "Trabajo en clase", "Personas"],
+    yourWork: "Tu trabajo",
+    assigned: "Asignada",
+    turnedIn: "Entregada",
+    points: "100 puntos",
+    deadlineLabel: "Fecha límite de entrega",
+    chooseDeadline: "Elige una fecha",
+    answerLabel: "Tu respuesta",
+    privateComments: "Comentarios privados",
   },
 };
 
