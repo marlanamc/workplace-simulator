@@ -4,6 +4,7 @@ import { practiceReturn } from "@/lib/practice/activities";
 import { redirect } from "next/navigation";
 import { setSessionCookie, hashPin, verifyPin } from "@/lib/auth";
 import { createLearner, findLearner } from "@/lib/db/queries";
+import { loginsPaused } from "@/lib/login-gate";
 
 /**
  * Login failures are reported as a key rather than a sentence: this is a
@@ -11,7 +12,7 @@ import { createLearner, findLearner } from "@/lib/db/queries";
  * returning English text here put an English wall on the one screen a Spanish
  * learner meets before anything else. `LoginForm` holds `lang` and renders it.
  */
-export type LoginErrorKey = "name" | "pin" | "classCode" | "wrongPin";
+export type LoginErrorKey = "name" | "pin" | "classCode" | "wrongPin" | "paused";
 
 export interface LoginResult {
   error: LoginErrorKey | null;
@@ -20,6 +21,7 @@ export interface LoginResult {
 const PIN_RE = /^\d{4}$/;
 
 export async function loginOrSignup(_prev: LoginResult, formData: FormData): Promise<LoginResult> {
+  if (loginsPaused()) return { error: "paused" };
   const displayName = String(formData.get("displayName") ?? "").trim();
   const pin = String(formData.get("pin") ?? "").trim();
   const classCode = String(formData.get("classCode") ?? "").trim().toUpperCase();
