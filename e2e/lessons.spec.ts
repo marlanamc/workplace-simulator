@@ -18,7 +18,7 @@ async function startLesson(page: Page) {
 async function finishAccountRecovery(page: Page) {
   await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await page.getByRole("button", { name: /Harborside Accounts/ }).click();
+  await page.getByRole("button", { name: /Google/ }).click();
   await page.getByPlaceholder("000000").fill("482915");
   await page.getByRole("button", { name: "Verify" }).click();
 }

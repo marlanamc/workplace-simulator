@@ -78,11 +78,11 @@ export const W4_COPY: Record<Lang, {
     blurb: "This form tells payroll how much tax to hold back from each paycheck.",
     nameLabel: "Employee name",
     statusLabel: "Filing status",
-    dependentsLabel: "Number of dependents (children or others you support)",
+    dependentsLabel: "Number of dependents (children or others the employee supports)",
     dependentsHint: "If none, enter 0.",
     submit: "Submit W-4",
     doneTitle: "W-4 submitted.",
-    doneBody: "Payroll now knows your filing status. Next: the I-9.",
+    doneBody: "Payroll now knows Robin's filing status.",
   },
   es: {
     formName: "Formulario W-4",
@@ -90,11 +90,11 @@ export const W4_COPY: Record<Lang, {
     blurb: "Este formulario le dice a nómina cuánto impuesto retener de cada cheque.",
     nameLabel: "Nombre del empleado",
     statusLabel: "Estado civil para impuestos",
-    dependentsLabel: "Número de dependientes (hijos u otras personas que mantienes)",
-    dependentsHint: "Si no tienes, escribe 0.",
+    dependentsLabel: "Número de dependientes (hijos u otras personas que el empleado mantiene)",
+    dependentsHint: "Si no hay, escribe 0.",
     submit: "Enviar W-4",
     doneTitle: "W-4 enviado.",
-    doneBody: "Nómina ya conoce tu estado civil para impuestos. Sigue: el I-9.",
+    doneBody: "Nómina ya conoce el estado civil para impuestos de Robin.",
   },
 };
 
@@ -337,8 +337,8 @@ export const W4_FIELD_HINT: Partial<Record<PracticeKey, Localized>> = {
   },
   dependents: { en: "Robin has no dependents. Type 0.", es: "Robin no tiene dependientes. Escribe 0." },
   date: {
-    en: "Write today's date from Robin's facts: 10/01/2026 (month/day/year).",
-    es: "Escribe la fecha de hoy de los datos de Robin: 10/01/2026 (mes/día/año).",
+    en: "Write the form date from Robin's facts: 10/01/2026 (month/day/year).",
+    es: "Escribe la fecha del formulario de los datos de Robin: 10/01/2026 (mes/día/año).",
   },
 };
 

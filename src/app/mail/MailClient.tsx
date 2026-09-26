@@ -869,7 +869,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       </div>
                       <div className="text-[12px] text-[#5f6368]">
                         {stamp(
-                          opening ? { time: openingMessage.time, sentOn: 18 } : darnellRead
+                          opening ? { time: openingMessage.time, sentOn: HIRE_DAY - 1 } : darnellRead
                             ? DARNELL_APRON_STAMP
                             : {
                                 time: activeMailTask === "mail-attach" ? "10:10 AM" : "8:14 AM",

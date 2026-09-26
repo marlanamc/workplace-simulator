@@ -110,7 +110,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     appName: "Sheets",
-    sheetName: "Cafe budget: week of Sep 1",
+    sheetName: "Cafe budget: week of Aug 31",
     startNewHeading: "Start a new spreadsheet",
     blankLabel: "Blank",
     templateBudget: "Budget",
@@ -149,8 +149,8 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
   },
   es: {
     helpBtn: "Ayúdame con este paso",
-    appName: "Hojas",
-    sheetName: "Presupuesto del café: sem. 1 sep",
+    appName: "Sheets",
+    sheetName: "Presupuesto del café: sem. 31 ago",
     startNewHeading: "Iniciar una nueva hoja de cálculo",
     blankLabel: "En blanco",
     templateBudget: "Presupuesto",

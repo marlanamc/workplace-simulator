@@ -31,7 +31,7 @@ export const OPENING_MESSAGES = [
   {
     id: 'start-time', sender: CAST.maria, time: '6:09 PM',
     subject: copy('Tomorrow at 10 AM', 'Mañana a las 10 a. m.'),
-    body: copy('Your shift tomorrow, Wednesday, starts at 10 AM. Can you confirm you will be here?', 'Tu turno de mañana, miércoles, empieza a las 10 a. m. ¿Puedes confirmar que estarás aquí?'),
+    body: copy('Your shift tomorrow starts at 10 AM. Can you confirm you will be here?', 'Tu turno de mañana empieza a las 10 a. m. ¿Puedes confirmar que estarás aquí?'),
     more: lines(
       ['Please bring a photo ID and your bank information. We will do your new-hire paperwork before your shift.'],
       ['Por favor trae una identificación con foto y los datos de tu banco. Vamos a llenar tus papeles de nuevo empleado antes del turno.'],

@@ -40,7 +40,7 @@ export const JOB_POSTING_COPY: Record<Lang, {
     heading: "Job posting",
     company: "Harborside HQ",
     jobTitle: "Office Administrator",
-    location: "Harborside HQ · Boston, MA",
+    location: "Boston, MA",
     pay: "$24–27 / hour · Full time",
     postedBy: "Shared with you by Anita Raman",
     aboutLabel: "About the role",
@@ -68,7 +68,7 @@ export const JOB_POSTING_COPY: Record<Lang, {
     heading: "Anuncio de empleo",
     company: "Harborside HQ",
     jobTitle: "Administrador de Oficina",
-    location: "Harborside HQ · Boston, MA",
+    location: "Boston, MA",
     pay: "$24–27 / hora · Tiempo completo",
     postedBy: "Anita Raman te lo compartió",
     aboutLabel: "Sobre el puesto",
@@ -136,8 +136,8 @@ export const REQUIREMENTS: PostingRequirement[] = [
   {
     key: "degree",
     text: {
-      en: "College degree (bachelor's)",
-      es: "Título universitario (licenciatura)",
+      en: "College degree (bachelor's) preferred",
+      es: "Título universitario (licenciatura), de preferencia",
     },
     met: false,
   },
@@ -160,13 +160,13 @@ export const STARTERS: Record<Lang, string[]> = {
     "I fixed problems in the cafe's work schedule.",
     "I typed tips in a spreadsheet and sent the total to my manager.",
     "I use email, calendars, and spreadsheets at work.",
-    "I trained new workers as a shift lead.",
+    "I led a team as a shift lead.",
   ],
   es: [
     "Arreglé problemas en el horario de trabajo del café.",
     "Escribí propinas en una hoja de cálculo y le envié el total a mi gerente.",
     "Uso correo, calendarios y hojas de cálculo en el trabajo.",
-    "Entrené a trabajadores nuevos como líder de turno.",
+    "Dirigí un equipo como líder de turno.",
   ],
 };
 
