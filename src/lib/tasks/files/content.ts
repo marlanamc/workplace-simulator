@@ -1,4 +1,6 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import type { PdfDocument } from "@/lib/pdf-content";
+import { CREW, DAYS, DAY_LABELS } from "@/lib/tasks/crew-week";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -36,8 +38,8 @@ export const FILES: DriveFile[] = [
     date: "Aug 17",
     isTarget: false,
     wrongHint: wrongHint(
-      "That's last week's schedule. Look for the one from this week (Aug 24).",
-      "Ese es el horario de la semana pasada. Busca el de esta semana (24 de agosto)."
+      "That page says Week of Aug 17. That is last week. Close it and open this week's schedule (Aug 24).",
+      "Esa página dice Week of Aug 17. Es la semana pasada. Ciérrala y abre el horario de esta semana (24 de agosto)."
     ),
   },
   {
@@ -54,8 +56,8 @@ export const FILES: DriveFile[] = [
     date: "Jun 2",
     isTarget: false,
     wrongHint: wrongHint(
-      "That's a vacation request form, not the schedule.",
-      "Ese es un formulario de solicitud de vacaciones, no el horario."
+      "That page is a vacation request form, not the schedule. Close it and open a schedule.",
+      "Esa página es un formulario para pedir vacaciones, no el horario. Ciérrala y abre un horario."
     ),
   },
   {
@@ -65,8 +67,8 @@ export const FILES: DriveFile[] = [
     date: "Jul 3",
     isTarget: false,
     wrongHint: wrongHint(
-      "That's an old manager memo, not the schedule.",
-      "Ese es un memo viejo del gerente, no el horario."
+      "That page is an old memo about summer hours, not the schedule. Close it and open a schedule.",
+      "Esa página es un memo viejo sobre el horario de verano, no el horario de turnos. Ciérrala y abre un horario."
     ),
   },
 ];
@@ -86,8 +88,8 @@ export const MESSY_FILES: DriveFile[] = [
     date: "Aug 21",
     isTarget: false,
     wrongHint: wrongHint(
-      "That's an earlier draft - it says so right in the name. Look for the one without \"draft.\"",
-      "Ese es un borrador anterior - lo dice en el nombre. Busca el que no diga \"draft.\""
+      "That page says DRAFT, and Friday is not filled in. Close it and open the one without draft in the name.",
+      "Esa página dice DRAFT (borrador) y el viernes está vacío. Ciérrala y abre el que no dice draft en el nombre."
     ),
   },
   {
@@ -97,8 +99,8 @@ export const MESSY_FILES: DriveFile[] = [
     date: "Aug 24",
     isTarget: false,
     wrongHint: wrongHint(
-      "Same date, but it's a copy someone made - not the original. Open the one without \"copy\" in the name.",
-      "Misma fecha, pero es una copia que alguien hizo, no el original. Abre el que no diga \"copy\" en el nombre."
+      "Same week, but this is a copy someone made. Rename the original, the one without copy in the name.",
+      "Es la misma semana, pero es una copia que alguien hizo. Cámbiale el nombre al original, el que no dice copy."
     ),
   },
   {
@@ -108,8 +110,8 @@ export const MESSY_FILES: DriveFile[] = [
     date: "Sep 1",
     isTarget: false,
     wrongHint: wrongHint(
-      "That's next week's schedule. Jordan starts today, on this week's.",
-      "Ese es el horario de la próxima semana. Jordan empieza hoy, con el de esta semana."
+      "That page says Week of Aug 31. That is next week. Jordan starts today, so close it and open this week's.",
+      "Esa página dice Week of Aug 31. Es la próxima semana. Jordan empieza hoy, así que ciérrala y abre el de esta semana."
     ),
   },
 ];
@@ -143,8 +145,13 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Haz clic en Unidad compartida del café. Ahí están los horarios.",
   },
   {
-    en: "Find this week's schedule. Its date is Aug 24. Click it.",
-    es: "Busca el horario de esta semana. Su fecha es Aug 24. Haz clic en él.",
+    en: "Click a schedule to open it. Find the week of Aug 24.",
+    es: "Haz clic en un horario para abrirlo. Busca la semana del 24 de agosto.",
+  },
+  // Advances when the right file is open, not when any file is.
+  {
+    en: "The top says Week of Aug 24. This is the one. Click Rename.",
+    es: "Arriba dice Week of Aug 24 (semana del 24 de agosto). Es este. Haz clic en Cambiar nombre.",
   },
   {
     en: "Type the new name: schedule-week-of-aug-24. Then click Continue.",
@@ -272,6 +279,133 @@ export const FILES_COPY: Record<Lang, {
   },
 };
 
+/** While a file that is not the job is open: what to look at, and the way back. */
+export const CHECK_OTHER_WEEK: Localized = {
+  en: "Read the week at the top. If it is not Aug 24, click Close and open another file.",
+  es: "Lee la semana arriba. Si no es Aug 24 (24 de agosto), haz clic en Cerrar y abre otro archivo.",
+};
+
+export const PREVIEW_COPY: Record<Lang, { rename: string; close: string; owner: string }> = {
+  en: { rename: "Rename", close: "Close", owner: "Owner: Renata Silva" },
+  es: { rename: "Cambiar nombre", close: "Cerrar", owner: "Propietaria: Renata Silva" },
+};
+
+// --- The pages behind the file names --------------------------------------
+// Every file opens to a real page, so the learner tells them apart by
+// reading it, the way they would at work. Schedules are in English, like a
+// schedule posted at a US workplace; the Job Card says what to look for.
+
+const WEEK_DAYS = [...DAYS.map((d) => DAY_LABELS.en[d]), "Sun"];
+const crewRows = (shift: (member: (typeof CREW)[number], day: (typeof DAYS)[number]) => string) =>
+  CREW.map((m) => ({ name: m.name, shifts: [...DAYS.map((d) => shift(m, d)), "Closed"] }));
+
+function schedule(id: string, name: string, date: string, week: string, rows: { name: string; shifts: string[] }[], notes: string[]): PdfDocument {
+  return {
+    kind: "schedule",
+    id,
+    name,
+    size: "84 KB",
+    date,
+    title: "Crew Schedule",
+    week,
+    days: WEEK_DAYS,
+    rows,
+    notes,
+    postedBy: `Posted by Renata Silva, Shift Supervisor · ${date}`,
+  };
+}
+
+const THIS_WEEK_ROWS = crewRows((m, d) => m.shifts[d].label);
+const SWAP_NOTE = "Need to swap? Ask Renata at least 48 hours before the shift.";
+
+/** The page each Drive file opens to, keyed by `DriveFile.key`. */
+export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = {
+  "sched-aug24": {
+    doc: schedule("sched-aug24", "sched_82426.pdf", "Aug 21", "Week of Aug 24 – 30, 2026", THIS_WEEK_ROWS, [
+      "The cafe is closed on Sunday.",
+      "Saturday 4–10 PM is not filled yet.",
+      SWAP_NOTE,
+    ]),
+  },
+  "sched-aug24-copy": {
+    doc: schedule("sched-aug24-copy", "sched_82426_copy.pdf", "Aug 21", "Week of Aug 24 – 30, 2026", THIS_WEEK_ROWS, [
+      "The cafe is closed on Sunday.",
+      "Saturday 4–10 PM is not filled yet.",
+      SWAP_NOTE,
+    ]),
+  },
+  "sched-aug24-draft": {
+    stamp: "DRAFT",
+    doc: schedule(
+      "sched-aug24-draft",
+      "sched_82426_draft.pdf",
+      "Aug 19",
+      "Week of Aug 24 – 30, 2026",
+      crewRows((m, d) => (d === "fri" ? "TBD" : m.shifts[d].label)),
+      ["Friday shifts: to be decided."],
+    ),
+  },
+  "sched-aug17": {
+    doc: schedule(
+      "sched-aug17",
+      "sched_81724.pdf",
+      "Aug 14",
+      "Week of Aug 17 – 23, 2026",
+      // Last week: the same crew on different days.
+      crewRows((m, d) => m.shifts[DAYS[(DAYS.indexOf(d) + 2) % DAYS.length]].label || (d === "sat" ? "8–4" : "")),
+      ["The cafe is closed on Sunday.", SWAP_NOTE],
+    ),
+  },
+  "sched-sept": {
+    doc: schedule(
+      "sched-sept",
+      "sched_090107.pdf",
+      "Aug 28",
+      "Week of Aug 31 – Sep 6, 2026",
+      crewRows((m, d) => m.shifts[DAYS[(DAYS.indexOf(d) + 1) % DAYS.length]].label),
+      ["Monday, Sep 7 is Labor Day. The cafe opens at 10 AM.", SWAP_NOTE],
+    ),
+  },
+  "vacation-form": {
+    doc: {
+      kind: "report",
+      id: "vacation-form",
+      name: "vacation_request_form.pdf",
+      size: "41 KB",
+      date: "Jun 2, 2026",
+      title: "Vacation Request Form",
+      meta: [
+        { label: "Employee", value: "________________" },
+        { label: "Today's date", value: "________________" },
+      ],
+      sectionHeading: "Dates you are asking for",
+      items: ["First day off: ________", "Last day off: ________", "Manager approval: ________________"],
+      signedBy: "Turn this in at least 2 weeks before your first day off.",
+    },
+  },
+  "memo-july": {
+    doc: {
+      kind: "report",
+      id: "memo-july",
+      name: "memo_july.pdf",
+      size: "37 KB",
+      date: "Jul 3, 2026",
+      title: "Memo: Summer Hours",
+      meta: [
+        { label: "To", value: "All staff" },
+        { label: "Date", value: "July 3, 2026" },
+      ],
+      sectionHeading: "What is changing",
+      items: [
+        "From July 6 to August 14, the cafe opens at 6:30 AM.",
+        "The patio closes at 8 PM.",
+        "Iced drinks count toward the monthly sales contest.",
+      ],
+      signedBy: "Maria Delgado, Cafe Manager",
+    },
+  },
+};
+
 export const WRONG_RENAME_HINT: Record<Lang, string> = {
   en: "Check the name. Type these words with a dash - between them: schedule-week-of-aug-24",
   es: "Revisa el nombre. Escribe estas palabras con un guion - entre ellas: schedule-week-of-aug-24",
@@ -293,10 +427,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Finding the right file",
       s: [
         "Open the folder. You can also type part of a name in Search.",
-        "Look at the Date column. The date tells you which week a schedule is for.",
-        "Some files look almost the same. Read the date before you click.",
+        "Click a file to open it. Opening a file does not change it.",
+        "Read the top of the page. A schedule says which week it is for, like Week of Aug 24.",
       ],
-      tip: "If two names look the same, the date is the fastest way to tell them apart.",
+      tip: "File names can be hard to read. The page itself tells you what the file is.",
     },
     {
       t: "View access vs. edit access",
@@ -322,10 +456,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Encontrar el archivo correcto",
       s: [
         "Abre la carpeta. También puedes escribir parte de un nombre en Buscar.",
-        "Mira la columna Fecha. La fecha te dice de qué semana es un horario.",
-        "Algunos archivos se ven casi iguales. Lee la fecha antes de hacer clic.",
+        "Haz clic en un archivo para abrirlo. Abrir un archivo no lo cambia.",
+        "Lee la parte de arriba de la página. Un horario dice de qué semana es, por ejemplo Week of Aug 24 (semana del 24 de agosto).",
       ],
-      tip: "Si dos nombres se ven iguales, la fecha es la forma más rápida de distinguirlos.",
+      tip: "Los nombres de archivo pueden ser difíciles de leer. La página misma te dice qué es el archivo.",
     },
     {
       t: "Acceso de ver vs. editar",

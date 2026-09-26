@@ -33,6 +33,7 @@ export const LESSON_COPY = {
   },
   tryAgain: { en: "Try saving again", es: "Intentar guardar otra vez" },
   introNeed: { en: "Today", es: "Hoy" },
+  introAtWork: { en: "People do this at work in:", es: "Esto también se hace en:" },
   introCardTitle: { en: "Your info card", es: "Tu tarjeta de información" },
   introCard: {
     en: "This card stays on your screen while you work. When you need a name, a password, or a date, look here.",
@@ -61,6 +62,7 @@ export const TEACHER_COPY = {
   prepare: { en: "Before class", es: "Antes de la clase" },
   stickingPoints: { en: "Where students get stuck", es: "Dónde se atascan" },
   followUp: { en: "Questions for after", es: "Preguntas para después" },
+  atWork: { en: "Where learners will see this at work", es: "Dónde lo van a ver en el trabajo" },
   finishedEarly: { en: "Finished early?", es: "¿Terminaron antes?" },
   supportTip: {
     en: "Choose support by computer experience, not English level. New computer users start with Guided.",

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { FILES, MESSY_FILES, RENAME_TARGET, normalizeRename } from "@/lib/tasks/files/content";
+import { FILES, FILE_PAGES, MESSY_FILES, RENAME_TARGET, normalizeRename } from "@/lib/tasks/files/content";
 import { HQ_FILES } from "@/lib/tasks/office-drive/content";
 import { LEVELS } from "@/lib/tracks-content";
 import { newTabHint, sittingTitle, jobTitle } from "@/lib/shift-spine";
@@ -53,6 +53,25 @@ describe("Files decoys", () => {
     for (const f of FILES) {
       expect(MESSY_FILES.map((m) => m.key)).toContain(f.key);
     }
+  });
+
+  // Files open to their page before the learner renames one, so the page is
+  // how they tell near-identical names apart.
+  it("every file opens to a page with the same file name", () => {
+    for (const f of MESSY_FILES) {
+      expect(FILE_PAGES[f.key]?.doc.name, f.key).toBe(f.name);
+    }
+  });
+
+  it("only this week's schedules say Week of Aug 24, and the copy and draft are still wrong", () => {
+    const aug24 = MESSY_FILES.filter((f) => {
+      const doc = FILE_PAGES[f.key].doc;
+      return doc.kind === "schedule" && doc.week.startsWith("Week of Aug 24");
+    });
+    expect(aug24.map((f) => f.key).sort()).toEqual(["sched-aug24", "sched-aug24-copy", "sched-aug24-draft"]);
+    expect(aug24.filter((f) => f.isTarget).map((f) => f.key)).toEqual(["sched-aug24"]);
+    expect(FILE_PAGES["sched-aug24-draft"].stamp).toBe("DRAFT");
+    expect(MESSY_FILES.find((f) => f.key === "sched-aug24-copy")?.wrongHint?.en).toMatch(/copy/);
   });
 });
 

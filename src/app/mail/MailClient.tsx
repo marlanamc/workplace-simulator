@@ -10,6 +10,7 @@ import {
   LESSONS,
   COMPOSE_LESSONS,
   FILES,
+  OPENING_CLUTTER,
   emailsForTask,
   DARNELL_APRON_STAMP,
   SUBJECT_BY_TASK,
@@ -38,6 +39,8 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PickerModal from "@/components/task/PickerModal";
+import { PdfSheet } from "@/components/task/PdfSheet";
+import { DOWNLOAD_PREVIEWS, type FilePreview } from "@/lib/pdf-content";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import SettingsPopover from "@/components/task/SettingsPopover";
@@ -47,7 +50,7 @@ import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import MailSignature from "@/components/task/MailSignature";
 import { signatureFor } from "@/lib/mail-greeting";
-import { sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
+import { letterBody, sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
 import type { Localized, SubmissionContent } from "@/lib/task-types";
 import { taskNeedsTeacherReview } from "@/lib/curriculum-catalog";
 import { useWindowManager } from "@/lib/window-manager";
@@ -65,7 +68,7 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { useLesson } from "@/lib/lesson-context";
-import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
+import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { storage } from '@/lib/storage';
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
@@ -106,6 +109,30 @@ const STEP_COUNT: Record<MailTask, number> = {
   "call-out-sick": 2,
   "reply-all": 3,
 };
+
+const ATTACH_TARGET = FILES.find((f) => f.isTarget)!;
+const ATTACH_TARGET_SIZE = (() => {
+  const p = DOWNLOAD_PREVIEWS[ATTACH_TARGET.key];
+  return p?.kind === "pdf" ? p.doc.size : "";
+})();
+
+/** A file's first page in the attach picker, big enough to read the month. */
+function FilePreviewPane({ preview }: { preview?: FilePreview }) {
+  if (!preview) return null;
+  if (preview.kind === "photo") {
+    return (
+      <figure className="m-0 flex w-full flex-col self-center overflow-hidden rounded bg-white">
+        <div
+          aria-hidden
+          className="h-[240px] w-full"
+          style={{ background: "linear-gradient(160deg, #9bb7c9 0%, #c9b79b 55%, #8a7a62 100%)" }}
+        />
+        <figcaption className="px-3 py-2 text-[13px] text-[#3c4043]">{preview.caption}</figcaption>
+      </figure>
+    );
+  }
+  return <PdfSheet doc={preview.doc} scale={0.6} stamp={preview.stamp} />;
+}
 
 function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
@@ -162,6 +189,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [confirmPick, setConfirmPick] = useState<string | null>(null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
+  // The file selected in the picker's preview, before it is attached.
+  const [pickerPick, setPickerPick] = useState<string | null>(null);
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
@@ -214,8 +243,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         // Sent the evening before Day One, so the inbox stamps them Yesterday.
         time: message.time, sentOn: HIRE_DAY - 1, subject: message.subject, preview: message.body,
         isTarget: index === openingIndex, unread: index === openingIndex, wrongHint: undefined,
-        ...(index < openingIndex ? { story: true, body: { en: [message.body.en], es: [message.body.es] } } : {}),
+        ...(index < openingIndex ? { story: true, body: { en: openingLines(message, "en"), es: openingLines(message, "es") } } : {}),
       })) : emailsForTask(activeMailTask)),
+      ...(opening ? OPENING_CLUTTER : []),
     ],
     storyTodayDay,
   );
@@ -507,6 +537,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setConfirmPick(null);
     setHelp(false);
     setPicker(false);
+    setPickerPick(null);
     setOpenStory(null);
     setBridgeOutEligible(false);
     setReplyAudience(null);
@@ -702,13 +733,20 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               </>
             ) : (
               <>
-            {(view === "empty" || view === "read" || view === "confirm" || view === "compose" || (opening && view === "story")) && (() => {
+            {/* Reading another email (a delivery notice, story mail) keeps the
+                card on its first line: find the task's email. */}
+            {(view === "empty" || view === "read" || view === "confirm" || view === "compose" || (view === "story" && (opening || (!mailDone && !composeOnly)))) && (() => {
               const stepCount = STEP_COUNT[activeMailTask];
               const needsAttach = activeMailTask === "mail-attach";
               // The compose step is really three moments in one pane, and the
               // card names whichever one the learner is actually on.
+              const pickedTarget = FILES.find((f) => f.key === pickerPick)?.isTarget ?? false;
               const composeLine = needsAttach && !attached
-                ? MAIL_JOB_CARD_STEPS.attach
+                ? !picker
+                  ? MAIL_JOB_CARD_STEPS.attach
+                  : pickerPick
+                    ? MAIL_JOB_CARD_STEPS.attachCheck
+                    : MAIL_JOB_CARD_STEPS.attachPick
                 : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
                   ? MAIL_JOB_CARD_STEPS.replyAllEdit
                   : !body.trim()
@@ -719,7 +757,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               const confirmAnswered =
                 Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
               const instruction =
-                view === "empty"
+                view === "empty" || view === "story"
                   ? MAIL_JOB_CARD_STEPS.openMail[activeMailTask]
                   : view === "read"
                     // Job 2 goes through a comprehension check first, so its
@@ -734,7 +772,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         : MAIL_JOB_CARD_STEPS.confirm
                       : composeLine;
               const stepIndex =
-                view === "empty" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
+                view === "empty" || view === "story" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
               const showMeId =
                 (view === "empty" || view === "story")
                   ? "maria-row"
@@ -745,7 +783,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         ? "reply-after-confirm"
                         : "confirm-correct"
                       : needsAttach && !attached
-                        ? "attach-button"
+                        ? !picker
+                          ? "attach-button"
+                          : pickedTarget
+                            ? "attach-confirm"
+                            : "attach-file"
                         : body.trim()
                           ? "send-button"
                           : "compose-body";
@@ -836,9 +878,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         )}
                       </div>
                     </div>
-                    <div className="text-[12px] text-[#5f6368]">to me</div>
+                    <div className="text-[12px] text-[#5f6368]">{T("to me", "para mí")}</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {(opening ? [openingMessage.body[lang]] : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
+                      {(opening ? letterBody(openingMessage.sender.name, openingLines(openingMessage, lang), lang, displayName) : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
@@ -954,8 +996,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         <span className="rounded px-1.5 py-0.5 text-[10px] font-bold text-white" style={{ background: "#ea4335" }}>
                           PDF
                         </span>
-                        <span className="text-[13px] font-medium">safety-report-july.pdf</span>
-                        <span className="text-[12px] text-[#5f6368]">248 KB</span>
+                        <span className="text-[13px] font-medium">{ATTACH_TARGET.label}</span>
+                        <span className="text-[12px] text-[#5f6368]">{ATTACH_TARGET_SIZE}</span>
                         <button
                           onClick={() => setAttached(false)}
                           aria-label={T("Remove attachment", "Quitar adjunto")}
@@ -1032,7 +1074,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       </div>
                       <div className="text-[12px] text-[#5f6368]">{stamp(openStory)}</div>
                     </div>
-                    <div className="text-[12px] text-[#5f6368]">to me</div>
+                    <div className="text-[12px] text-[#5f6368]">{T("to me", "para mí")}</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
                       {storyBodyFor(openStory, lang, displayName).map((p, i) => (
                         <p key={i} className="m-0">{p}</p>
@@ -1089,12 +1131,25 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           categoryLabel={c.downloads}
           columnLabels={[c.colName, c.colDate]}
           items={FILES}
-          onCancel={() => setPicker(false)}
+          onCancel={() => {
+            setPicker(false);
+            setPickerPick(null);
+          }}
           cancelLabel={c.cancel}
+          preview={{
+            selectedKey: pickerPick,
+            onFocus: (item) => setPickerPick(item.key),
+            render: (item) => <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} />,
+            empty: c.pickerEmpty,
+            confirmLabel: c.attachConfirm,
+            showMeRow: "attach-file",
+            showMeConfirm: "attach-confirm",
+          }}
           onSelect={(item) => {
             if (item.isTarget) {
               setAttached(true);
               setPicker(false);
+              setPickerPick(null);
               advance(4);
             } else if (item.wrongHint) {
               recordWrong({ title: T("Not that one.", "Ese no es."), body: item.wrongHint[lang] });

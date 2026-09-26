@@ -202,7 +202,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Write the parts of a reply on the board: hello, your message, your name.", es: "Escribe en la pizarra las partes de una respuesta: saludo, tu mensaje, tu nombre." },
         ],
         stickingPoints: [
-          { en: "Some learners open the wrong email first. Ask: who sent this email? What is the subject?", es: "Algunos abren primero el correo equivocado. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
+          { en: "The inbox also has two older emails from IT and HR. Opening them is fine and nothing is marked wrong. Ask: who sent this email? What is the subject?", es: "La bandeja también tiene dos correos anteriores de sistemas y RR.HH. Abrirlos está bien y no se marca nada como error. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
+          { en: "Maria's emails carry real first-day details (the address, what to wear, what to bring). The reply only needs to answer the question.", es: "Los correos de Maria traen detalles reales del primer día (la dirección, qué ponerse, qué traer). La respuesta solo necesita contestar la pregunta." },
           { en: "The second email asks them to confirm 10 AM. A reply that says they can't come does not pass (\"No problem\" is fine). Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta que dice que no pueden venir no se acepta (\"Sin problema\" sí). Pregunta: ¿qué quiere saber Maria?" },
           { en: "The third email is from Darnell. The reply must say the bag goes on the shelf under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
         ],
@@ -214,6 +215,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can read the email out loud, but the learner writes and sends the reply.",
           es: "Un compañero puede leer el correo en voz alta, pero el estudiante escribe y envía la respuesta.",
         },
+        atWork: [
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "Confirm your first shift and what uniform to wear.", es: "Confirmar tu primer turno y qué uniforme ponerte." } },
+          { setting: { en: "a warehouse", es: "un almacén" }, example: { en: "Answer the staffing agency: yes, you can start Monday at 6 AM.", es: "Contestarle a la agencia: sí, puedes empezar el lunes a las 6 AM." } },
+          { setting: { en: "a store", es: "una tienda" }, example: { en: "Tell a coworker you got the locker code.", es: "Decirle a un compañero que recibiste el código del casillero." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Confirm tomorrow's client visit time.", es: "Confirmar la hora de la visita de mañana con el cliente." } },
+        ],
       },
     },
   },
@@ -245,8 +252,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
         people: [{ name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "Maria sent you an email. She needs a report. The report is a file on your computer. You will send it to her in an email.",
-          es: "Maria te envió un correo. Necesita un informe. El informe es un archivo en tu computadora. Se lo vas a enviar en un correo.",
+          en: "Maria sent you an email. She needs the July safety report by 3 PM. The report is a file in your Downloads folder, next to a draft and other files. You will send her the right one.",
+          es: "Maria te envió un correo. Necesita el reporte de seguridad de julio antes de las 3 PM. El reporte es un archivo en tu carpeta Descargas, junto a un borrador y otros archivos. Le vas a enviar el correcto.",
         },
       },
       guide: {
@@ -261,8 +268,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that an attachment is a file that goes with the email.", es: "Explica que un archivo adjunto es un archivo que va con el correo." },
         ],
         stickingPoints: [
-          { en: "Some learners open Maria's older welcome email. Ask: which email is about the safety report?", es: "Algunos abren el correo de bienvenida anterior de Maria. Pregunta: ¿cuál correo habla del reporte de seguridad?" },
-          { en: "Some learners pick the June report or the shift swap form. Ask: what month did Maria ask for?", es: "Algunos eligen el reporte de junio o el formulario de cambio de turno. Pregunta: ¿qué mes pidió Maria?" },
+          { en: "The inbox has other real emails (a milk delivery, IT, HR). Opening them is fine and nothing is marked wrong. Ask: which email is about the safety report?", es: "La bandeja tiene otros correos reales (una entrega de leche, sistemas, RR.HH.). Abrirlos está bien y no se marca nada como error. Pregunta: ¿cuál correo habla del reporte de seguridad?" },
+          { en: "The picker shows each file's first page. Some learners attach the July DRAFT or the June report. Ask: what month is at the top? Do you see the red DRAFT stamp?", es: "La ventana muestra la primera página de cada archivo. Algunos adjuntan el BORRADOR de julio o el reporte de junio. Pregunta: ¿qué mes dice arriba? ¿Ves el sello rojo DRAFT?" },
+          { en: "The report is in English, like most US workplace files. Spanish readers look for July = julio and DRAFT = borrador.", es: "El reporte está en inglés, como la mayoría de los archivos de trabajo en EE. UU. Quienes leen en español buscan July = julio y DRAFT = borrador." },
           { en: "Some learners write a message and click Send with no file. Ask: do you see the file name in the green box?", es: "Algunos escriben el mensaje y hacen clic en Enviar sin el archivo. Pregunta: ¿ves el nombre del archivo en la caja verde?" },
         ],
         followUp: [
@@ -273,6 +281,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can help read the file names, but the learner chooses the file and clicks Send.",
           es: "Un compañero puede ayudar a leer los nombres de los archivos, pero el estudiante elige el archivo y hace clic en Enviar.",
         },
+        atWork: [
+          { setting: { en: "a warehouse", es: "un almacén" }, example: { en: "Email the supervisor a photo of a damaged box.", es: "Enviarle al supervisor una foto de una caja dañada." } },
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "Send the finished room checklist, not last week's.", es: "Enviar la lista de cuartos terminada, no la de la semana pasada." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Attach the signed visit note for the right date.", es: "Adjuntar la nota de visita firmada de la fecha correcta." } },
+          { setting: { en: "a school", es: "una escuela" }, example: { en: "Send your child's signed form back to the teacher.", es: "Devolverle a la maestra el formulario firmado de tu hijo." } },
+        ],
       },
     },
   },
@@ -616,7 +630,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       ],
       guide: {
         skills: [
-          { en: "Find the right file by its date", es: "Encontrar el archivo correcto por su fecha" },
+          { en: "Open files to check what they are, and find the right one by reading the page", es: "Abrir archivos para ver qué son, y encontrar el correcto leyendo la página" },
           { en: "Rename a file with a set pattern", es: "Cambiar el nombre de un archivo con un formato dado" },
           { en: "Share a file with one person", es: "Compartir un archivo con una persona" },
           { en: "Choose view access instead of edit access", es: "Elegir acceso para ver en vez de acceso para editar" },
@@ -626,7 +640,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain the difference: view means look only, and edit means change.", es: "Explica la diferencia: ver es solo mirar, y editar es cambiar." },
         ],
         stickingPoints: [
-          { en: "Some learners click last week's schedule. Ask: what date is on this file? What date is this week?", es: "Algunos hacen clic en el horario de la semana pasada. Pregunta: ¿qué fecha tiene este archivo? ¿Qué fecha es esta semana?" },
+          { en: "Every file opens to its page. Opening the wrong one is fine; the Job Card says to read the week and click Close. A correction comes only if they click Rename on the wrong week.", es: "Cada archivo se abre y muestra su página. Abrir el equivocado está bien; la tarjeta de trabajo dice que lean la semana y hagan clic en Cerrar. Solo hay corrección si hacen clic en Cambiar nombre en la semana equivocada." },
+          { en: "The schedule is in English. Spanish readers match Week of Aug 24 with the info card (semana del 24 de agosto).", es: "El horario está en inglés. Quienes leen en español comparan Week of Aug 24 con la tarjeta de información (semana del 24 de agosto)." },
           { en: "Some learners type a different name. The name must be schedule-week-of-aug-24. Ask them to compare their name with the example, one word at a time.", es: "Algunos escriben otro nombre. El nombre debe ser schedule-week-of-aug-24. Pídeles comparar su nombre con el ejemplo, palabra por palabra." },
           { en: "Some learners choose Can edit. Ask: does Jordan need to change the schedule, or only look at it?", es: "Algunos eligen Puede editar. Pregunta: ¿Jordan necesita cambiar el horario, o solo mirarlo?" },
         ],
@@ -635,9 +650,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "How do you name files on your phone or computer so you can find them later?", es: "¿Cómo nombras los archivos en tu teléfono o computadora para encontrarlos después?" },
         ],
         peerHelp: {
-          en: "A partner can help find the date column, but the learner types the name and clicks Share.",
-          es: "Un compañero puede ayudar a encontrar la columna de la fecha, pero el estudiante escribe el nombre y hace clic en Compartir.",
+          en: "A partner can help read the week at the top of the page, but the learner types the name and clicks Share.",
+          es: "Un compañero puede ayudar a leer la semana arriba de la página, pero el estudiante escribe el nombre y hace clic en Compartir.",
         },
+        atWork: [
+          { setting: { en: "a store", es: "una tienda" }, example: { en: "Share this week's floor plan with a new cashier, view only.", es: "Compartir el plano de esta semana con un cajero nuevo, solo para ver." } },
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "Find today's room assignment sheet, not yesterday's.", es: "Encontrar la lista de cuartos de hoy, no la de ayer." } },
+          { setting: { en: "a cleaning company", es: "una empresa de limpieza" }, example: { en: "Rename the building checklist so the next crew can find it.", es: "Cambiarle el nombre a la lista del edificio para que el próximo equipo la encuentre." } },
+          { setting: { en: "a school", es: "una escuela" }, example: { en: "Share a class photo folder with a parent who can only look.", es: "Compartir una carpeta de fotos de la clase con un padre que solo puede mirar." } },
+        ],
       },
     },
   },
@@ -947,8 +968,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "The cafe plans how much money to spend each week. That plan is the budget. One kind of cost went over the plan. Renata wants to know which one, and by how much.",
-          es: "El café planea cuánto dinero gastar cada semana. Ese plan es el presupuesto. Un tipo de gasto se pasó del plan. Renata quiere saber cuál, y por cuánto.",
+          en: "The cafe plans how much money to spend each week. That plan is the budget. This week's sheet has seven kinds of cost, with a note about each one. One went over the plan. Renata wants to know which one, and by how much.",
+          es: "El café planea cuánto dinero gastar cada semana. Ese plan es el presupuesto. La hoja de esta semana tiene siete tipos de gasto, con una nota sobre cada uno. Uno se pasó del plan. Renata quiere saber cuál, y por cuánto.",
         },
       },
       guide: {
@@ -965,6 +986,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         stickingPoints: [
           { en: "Some learners try to write the email before they open the formula. They must click the status cell that says over first. Ask: which cell says over?", es: "Algunos quieren escribir el correo antes de abrir la fórmula. Primero deben hacer clic en la celda de estado que dice sobre. Pregunta: ¿qué celda dice sobre?" },
           { en: "Some learners name Labor but give no amount, or write $2,850. The amount over is $450. Ask: how much more than the budget did they spend?", es: "Algunos nombran Mano de obra pero no dan la cantidad, o escriben $2,850. Se pasó por $450. Pregunta: ¿cuánto más que el presupuesto gastaron?" },
+          { en: "Two lines are close on purpose. Utilities is $2 under, and Repairs is exactly on budget, so its IF says under. Ask: is $300 bigger than $300?", es: "Dos líneas están cerca a propósito. Servicios está $2 abajo, y Reparaciones está justo en el presupuesto, así que su IF dice bajo. Pregunta: ¿$300 es más grande que $300?" },
+          { en: "The Total row is over too, but it has no Status. Renata asked which kind of cost, so the answer is one line, not the total.", es: "La fila Total también se pasa, pero no tiene Estado. Renata preguntó qué tipo de gasto, así que la respuesta es una línea, no el total." },
         ],
         followUp: [
           { en: "Do you plan how much to spend each week or each month? What happens when you spend more?", es: "¿Planeas cuánto gastar cada semana o cada mes? ¿Qué pasa cuando gastas más?" },
@@ -974,6 +997,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can help compare the two columns, but the learner clicks the cells and writes the email.",
           es: "Un compañero puede ayudar a comparar las dos columnas, pero el estudiante hace clic en las celdas y escribe el correo.",
         },
+        atWork: [
+          { setting: { en: "a warehouse", es: "un almacén" }, example: { en: "Find which shift went over its planned overtime hours.", es: "Encontrar qué turno se pasó de las horas extra planeadas." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Check which week's mileage went over the limit.", es: "Revisar qué semana el millaje se pasó del límite." } },
+          { setting: { en: "a store", es: "una tienda" }, example: { en: "Tell the manager which department lost more stock than planned.", es: "Decirle al gerente qué departamento perdió más mercancía de lo planeado." } },
+          { setting: { en: "at home", es: "en casa" }, example: { en: "See which bill went over your monthly plan.", es: "Ver qué cuenta se pasó de tu plan del mes." } },
+        ],
       },
     },
   },
@@ -1045,8 +1074,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You work at the front desk of Harborside Health, a clinic.", es: "Trabajas en la recepción de Harborside Health, una clínica." },
         people: [{ name: "Maya Ansari", role: { en: "A patient. She called the clinic.", es: "Una paciente. Llamó a la clínica." } }],
         need: {
-          en: "Maya wants an appointment today at 10:00. Someone already has 10:00. Find a time that is free and tell her.",
-          es: "Maya quiere una cita hoy a las 10:00. Otra persona ya tiene las 10:00. Busca una hora libre y díselo.",
+          en: "Maya called while you were busy. A coworker wrote her message on a slip. She wants an appointment today at 10:00, but someone already has 10:00. Find a time that is free and text her back.",
+          es: "Maya llamó mientras estabas ocupado/a. Una compañera anotó su mensaje en un papel. Quiere una cita hoy a las 10:00, pero otra persona ya tiene las 10:00. Busca una hora libre y contéstale con un mensaje de texto.",
         },
       },
       guide: {
@@ -1062,6 +1091,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         stickingPoints: [
           { en: "Some learners click 10:00 because the patient asked for it. Ask: does someone already have that time?", es: "Algunos hacen clic en las 10:00 porque la paciente la pidió. Pregunta: ¿alguien ya tiene esa hora?" },
+          { en: "12:30 has no patient name, but it says Blocked (a staff meeting). Some learners click it. Ask: what does the Status column say?", es: "Las 12:30 no tienen nombre de paciente, pero dicen Bloqueada (una reunión del personal). Algunos hacen clic ahí. Pregunta: ¿qué dice la columna Estado?" },
+          { en: "The pink phone message slip stays on the right. It has Maya's phone number and date of birth, like a real message at a front desk.", es: "El papel rosado del mensaje telefónico se queda a la derecha. Tiene el teléfono y la fecha de nacimiento de Maya, como un mensaje real en una recepción." },
           { en: "In the list of reasons, some learners pick that the clinic is closed. Ask them to look at the 10:00 row again and read what it says.", es: "En la lista de razones, algunos eligen que la clínica está cerrada. Pídeles mirar otra vez la fila de las 10:00 y leer lo que dice." },
           { en: "Some learners write See you soon with no time. The message must say 11:30. Ask: what time should Maya come in?", es: "Algunos escriben Nos vemos sin la hora. El mensaje debe decir 11:30. Pregunta: ¿a qué hora debe venir Maya?" },
         ],
@@ -1073,6 +1104,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can read the schedule out loud, but the learner picks the time and writes the message.",
           es: "Un compañero puede leer la agenda en voz alta, pero el estudiante elige la hora y escribe el mensaje.",
         },
+        atWork: [
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "A guest wants a room that is taken. Offer one that is free.", es: "Un huésped quiere un cuarto ocupado. Ofrecerle uno libre." } },
+          { setting: { en: "a salon or barbershop", es: "un salón o una barbería" }, example: { en: "Find an open time in the book and text the client.", es: "Buscar una hora libre en la agenda y mandarle un mensaje al cliente." } },
+          { setting: { en: "an auto shop", es: "un taller mecánico" }, example: { en: "Move a car drop-off to a time the bay is free.", es: "Pasar la entrega de un carro a una hora en que haya espacio." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Tell a client the new visit time when yours is full.", es: "Decirle a un cliente la nueva hora de visita cuando la tuya está llena." } },
+        ],
       },
     },
   },

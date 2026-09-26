@@ -20,14 +20,39 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 };
 
 export const OVER_KEY = "labor";
-export const OVER_AMOUNT = 450;
 
+/**
+ * One week of a real cafe budget. Only Labor is over. Two lines sit close on
+ * purpose, the way real numbers do: Utilities is $2 under, and Repairs is
+ * exactly on budget, which the IF calls "under" because it is not bigger.
+ * `chart` is the short name under each bar. `note` is column E.
+ */
 export const BUDGET_ROWS = [
-  { key: "supplies", label: { en: "Supplies", es: "Insumos" }, budget: 800, actual: 720 },
-  { key: "labor", label: { en: "Labor", es: "Mano de obra" }, budget: 2400, actual: 2850 },
-  { key: "utilities", label: { en: "Utilities", es: "Servicios" }, budget: 360, actual: 340 },
-  { key: "marketing", label: { en: "Marketing", es: "Marketing" }, budget: 200, actual: 180 },
+  { key: "food", label: { en: "Food & drink supplies", es: "Comida y bebidas" }, chart: { en: "Food", es: "Comida" }, budget: 1200, actual: 1146,
+    note: { en: "Milk cost went up", es: "Subió el precio de la leche" } },
+  { key: "labor", label: { en: "Labor", es: "Mano de obra" }, chart: { en: "Labor", es: "M. obra" }, budget: 2400, actual: 2850,
+    note: { en: "2 new hires in training", es: "2 empleados nuevos en capacitación" } },
+  { key: "paper", label: { en: "Paper goods", es: "Artículos de papel" }, chart: { en: "Paper", es: "Papel" }, budget: 180, actual: 171,
+    note: { en: "Cups, lids, napkins", es: "Vasos, tapas, servilletas" } },
+  { key: "utilities", label: { en: "Utilities", es: "Servicios" }, chart: { en: "Utilities", es: "Servicios" }, budget: 360, actual: 358,
+    note: { en: "Electric and water", es: "Luz y agua" } },
+  { key: "repairs", label: { en: "Repairs", es: "Reparaciones" }, chart: { en: "Repairs", es: "Repar." }, budget: 300, actual: 300,
+    note: { en: "Espresso machine service", es: "Servicio de la máquina de espresso" } },
+  { key: "marketing", label: { en: "Marketing", es: "Publicidad" }, chart: { en: "Ads", es: "Public." }, budget: 200, actual: 180,
+    note: { en: "Fall flyers", es: "Volantes de otoño" } },
+  { key: "linens", label: { en: "Linens", es: "Ropa de trabajo" }, chart: { en: "Linens", es: "Ropa" }, budget: 90, actual: 84,
+    note: { en: "Aprons and towels", es: "Delantales y toallas" } },
 ] as const;
+
+/** The sheet row each budget line sits on (row 1 is the header). */
+export const rowNumberFor = (key: string) => BUDGET_ROWS.findIndex((r) => r.key === key) + 2;
+/** The Total row, under the last line. */
+export const TOTAL_ROW = BUDGET_ROWS.length + 2;
+export const BUDGET_TOTAL = BUDGET_ROWS.reduce((sum, r) => sum + r.budget, 0);
+export const ACTUAL_TOTAL = BUDGET_ROWS.reduce((sum, r) => sum + r.actual, 0);
+
+const OVER_ROW = BUDGET_ROWS.find((r) => r.key === OVER_KEY)!;
+export const OVER_AMOUNT = OVER_ROW.actual - OVER_ROW.budget;
 
 export function statusFor(actual: number, budget: number): "over" | "under" {
   return actual > budget ? "over" : "under";
@@ -54,6 +79,8 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
   openedLabel: string;
   noteHeading: string;
   noteBody: string;
+  notesHeader: string;
+  totalLabel: string;
   categoryHeader: string;
   budgetHeader: string;
   actualHeader: string;
@@ -92,6 +119,8 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     openedLabel: "Opened today",
     noteHeading: "Renata's note",
     noteBody: "One kind of cost went over the budget this week. Which one, and by how much? Please email me.",
+    notesHeader: "Notes",
+    totalLabel: "Total",
     categoryHeader: "Category",
     budgetHeader: "Budget",
     actualHeader: "Actual",
@@ -130,6 +159,8 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     openedLabel: "Abierta hoy",
     noteHeading: "Nota de Renata",
     noteBody: "Un tipo de gasto se pasó del presupuesto esta semana. ¿Cuál, y por cuánto? Por favor escríbeme.",
+    notesHeader: "Notas",
+    totalLabel: "Total",
     categoryHeader: "Categoría",
     budgetHeader: "Presupuesto",
     actualHeader: "Real",
@@ -164,8 +195,8 @@ export const EMPTY_EMAIL_HINT: Record<Lang, string> = {
 };
 
 export const WRONG_EMAIL_HINT: Record<Lang, string> = {
-  en: "Name the category and how much it is over. Compare actual spending ($2,850) with the budget ($2,400).",
-  es: "Nombra la categoría y cuánto se pasó. Compara el gasto real ($2,850) con el presupuesto ($2,400).",
+  en: `Name the category and how much it is over. Compare actual spending (${dollars(OVER_ROW.actual)}) with the budget (${dollars(OVER_ROW.budget)}).`,
+  es: `Nombra la categoría y cuánto se pasó. Compara el gasto real (${dollars(OVER_ROW.actual)}) con el presupuesto (${dollars(OVER_ROW.budget)}).`,
 };
 
 export const STARTERS: Record<Lang, string[]> = {
@@ -186,10 +217,11 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "An IF formula is a yes-or-no question in a cell",
       s: [
-        "Click the Status cell. The formula bar shows =IF(C3>B3,\"over\",\"under\").",
+        `Click the Status cell. The formula bar shows ${statusFormula(rowNumberFor(OVER_KEY), "en")}.`,
         "In plain words: if Actual (column C) is bigger than Budget (column B), the cell says \"over\". If not, it says \"under\".",
         "The chart shows the same thing. The red bar goes past its dashed budget line.",
         "To find how much over, subtract: Actual minus Budget.",
+        "Repairs is exactly on budget. The IF says under, because Actual is not bigger than Budget.",
       ],
       tip: "In this lesson you only read the formula. You do not write one. Once you can read an IF, writing one later is easier.",
     },
@@ -198,10 +230,11 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Una fórmula IF es una pregunta de sí o no dentro de una celda",
       s: [
-        "Haz clic en la celda de Estado. La barra de fórmulas muestra =IF(C3>B3,\"sobre\",\"bajo\").",
+        `Haz clic en la celda de Estado. La barra de fórmulas muestra ${statusFormula(rowNumberFor(OVER_KEY), "es")}.`,
         "En palabras simples: si Real (columna C) es más grande que Presupuesto (columna B), la celda dice \"sobre\". Si no, dice \"bajo\".",
         "El gráfico muestra lo mismo. La barra roja pasa su línea punteada de presupuesto.",
         "Para saber por cuánto se pasó, resta: Real menos Presupuesto.",
+        "Reparaciones está justo en el presupuesto. El IF dice bajo, porque Real no es más grande que Presupuesto.",
       ],
       tip: "En esta lección solo lees la fórmula. No escribes ninguna. Cuando puedas leer un IF, escribir uno después es más fácil.",
     },

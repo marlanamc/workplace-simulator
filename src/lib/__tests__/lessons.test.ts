@@ -92,6 +92,18 @@ describe("lesson scenes", () => {
     }
   });
 
+  it.each(LESSONS.filter((l) => l.guide.atWork).map((l) => [l.taskKey, l] as const))(
+    "%s lists at least three other jobs, in both languages",
+    (_key, lesson) => {
+      const atWork = lesson.guide.atWork!;
+      expect(atWork.length).toBeGreaterThanOrEqual(3);
+      for (const w of atWork) {
+        expect(both(w.setting), w.setting.en).toBe(true);
+        expect(both(w.example), w.example.en).toBe(true);
+      }
+    },
+  );
+
   it.each(LESSONS.map((l) => [l.taskKey, l] as const))("%s introduces everyone its Job Card names", (key, lesson) => {
     const task = TASKS[key];
     const lines = [task.jobCardLine?.en, task.dispatch.en].filter(Boolean).join(" ");

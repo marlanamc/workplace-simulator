@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
+import type { PdfDocument } from "@/lib/pdf-content";
 import { useProgress } from "@/lib/progress-context";
 import {
   FILES,
@@ -14,8 +15,12 @@ import {
   WRONG_EDIT_HINT,
   COMMENT_HINT,
   LESSONS,
+  CHECK_OTHER_WEEK,
+  FILE_PAGES,
+  PREVIEW_COPY,
   type DriveFile,
 } from "@/lib/tasks/files/content";
+import { PdfSheet } from "@/components/task/PdfSheet";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
@@ -31,7 +36,7 @@ import { Folder, Home, Plus, Users } from "lucide-react";
 import OfficeDriveTask from "./OfficeDriveTask";
 import { RECEIPT_FILES, RECEIPTS_COPY } from "@/lib/tasks/expense-report/content";
 
-type View = "home" | "browse" | "rename" | "share" | "done";
+type View = "home" | "browse" | "preview" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
 
@@ -87,25 +92,28 @@ function CafeFilesTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("files") ? "done" : "home");
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
+  // The file open in the preview. Opening one is looking, never a mistake.
+  const [previewKey, setPreviewKey] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [permission, setPermission] = useState<"view" | "edit" | null>(null);
   const [help, setHelp] = useState(false);
-  // A plain ref, not state: this only gates whether a toast fires, so it
-  // doesn't need to trigger a re-render on its own.
-  const messyWrongCount = useRef(0);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
 
-  // Messy mode (Level.messy): more near-duplicate decoys, and coaching that
-  // speaks up less often - real-world friction added on purpose, not a new
-  // mechanic. See MESSY_FILES for the extra decoys.
+  // Messy mode (Level.messy): more near-duplicate decoys - real-world
+  // friction added on purpose, not a new mechanic. See MESSY_FILES.
   const messy = levelForTrack(currentTrack.key).messy ?? false;
   const fileList = messy ? MESSY_FILES : FILES;
 
   const c = FILES_COPY[lang];
-  const listOpen = view === "browse" || view === "rename" || view === "share";
-  const stepIndex = view === "home" ? 0 : view === "browse" ? 1 : view === "rename" ? 2 : 3;
-  const showMeIds = ["shared-drive", "target-file", "rename-input", "can-view"];
+  const listOpen = view === "browse" || view === "preview" || view === "rename" || view === "share";
+  const previewing = fileList.find((f) => f.key === previewKey) ?? null;
+  const previewWrong = view === "preview" && previewing !== null && !previewing.isTarget;
+  const stepIndex =
+    view === "home" ? 0 : view === "browse" ? 1 : view === "preview" ? (previewWrong ? 1 : 2) : view === "rename" ? 3 : 4;
+  const showMeId = previewWrong
+    ? "preview-close"
+    : ["shared-drive", "target-file", "preview-rename", "rename-input", "can-view"][stepIndex];
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -116,19 +124,20 @@ function CafeFilesTask() {
     });
   }, [fileList, query, folder]);
 
+  const openFile = (f: DriveFile) => {
+    showMe.clear();
+    setPreviewKey(f.key);
+    setView("preview");
+  };
+
+  // Renaming is the choice, so this is where a wrong file gets a correction.
+  // Always: the learner has already read the page, and a Rename that does
+  // nothing would leave them guessing. Messy mode's friction is the extra
+  // near-duplicates, not silence.
   const pickFile = (f: DriveFile) => {
     showMe.clear();
     if (!f.isTarget) {
-      if (!f.wrongHint) return;
-      if (!messy) {
-        say(f.wrongHint[lang]);
-        return;
-      }
-      // Only every other wrong pick gets a coaching toast - a wrong click
-      // just does the wrong thing the rest of the time, same as it would
-      // on a real work account.
-      messyWrongCount.current += 1;
-      if (messyWrongCount.current % 2 === 0) say(f.wrongHint[lang]);
+      if (f.wrongHint) say(f.wrongHint[lang]);
       return;
     }
     setRenameValue(f.name.replace(/\.pdf$/, ""));
@@ -175,9 +184,9 @@ function CafeFilesTask() {
     setView("home");
     setQuery("");
     setFolder(null);
+    setPreviewKey(null);
     setRenameValue("");
     setPermission(null);
-    messyWrongCount.current = 0;
   };
 
   const navItem = (active: boolean, onClick: () => void, icon: ReactNode, label: string) => (
@@ -230,8 +239,9 @@ function CafeFilesTask() {
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
-          showMeActive={showMe.targetId === showMeIds[stepIndex]}
+          instruction={previewWrong ? CHECK_OTHER_WEEK : undefined}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -332,7 +342,7 @@ function CafeFilesTask() {
                   <button
                     key={f.key}
                     data-showme={f.isTarget ? "target-file" : undefined}
-                    onClick={() => pickFile(f)}
+                    onClick={() => openFile(f)}
                     className="grid w-full grid-cols-[1fr_120px_88px] items-center gap-2 rounded-xl px-3 py-2.5 text-left hover:bg-[#f1f3f4] cursor-pointer"
                   >
                     <span className="flex min-w-0 items-center gap-3">
@@ -353,10 +363,23 @@ function CafeFilesTask() {
               </div>
             )}
 
+            {view === "preview" && previewing && FILE_PAGES[previewing.key] && (
+              <FilePreview
+                file={previewing}
+                page={FILE_PAGES[previewing.key]}
+                copy={PREVIEW_COPY[lang]}
+                onClose={() => {
+                  showMe.clear();
+                  setView("browse");
+                }}
+                onRename={() => pickFile(previewing)}
+              />
+            )}
+
             {view === "rename" && (
               <DriveDialog
                 title={lang === "en" ? "Rename" : "Cambiar nombre"}
-                onCancel={() => setView("browse")}
+                onCancel={() => setView("preview")}
                 cancelLabel={lang === "en" ? "Cancel" : "Cancelar"}
                 confirmLabel={c.renameContinue}
                 onConfirm={tryRename}
@@ -389,7 +412,10 @@ function CafeFilesTask() {
                   <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#0f9d58] text-[11px] font-medium text-white">
                     JK
                   </span>
-                  <span className="text-[14px]">Jordan Kim</span>
+                  <span className="min-w-0">
+                    <span className="block text-[14px]">Jordan Kim</span>
+                    <span className="block truncate text-[12px] text-[#5f6368]">jordan.kim@harborsidecafe.com</span>
+                  </span>
                 </div>
                 <p className="mb-2 text-[13px] text-[#444746]">
                   {c.shareWith} <span className="font-medium">Jordan Kim</span>
@@ -440,6 +466,56 @@ function CafeFilesTask() {
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
+    </div>
+  );
+}
+
+/**
+ * Drive's file preview: the page itself, with Rename in the toolbar. It
+ * covers the file list, the way Drive's does, and scrolls if the learner
+ * wants the rest of the page.
+ */
+function FilePreview({
+  file,
+  page,
+  copy,
+  onClose,
+  onRename,
+}: {
+  file: DriveFile;
+  page: { doc: PdfDocument; stamp?: string };
+  copy: { rename: string; close: string; owner: string };
+  onClose: () => void;
+  onRename: () => void;
+}) {
+  return (
+    <div data-testid="drive-preview" className="absolute inset-0 z-10 flex flex-col bg-[#303134]">
+      <div className="flex items-center gap-3 px-4 py-2 text-white">
+        <span className="flex h-6 w-5 shrink-0 items-center justify-center rounded-[2px] bg-[#ea4335] text-[8px] font-bold">PDF</span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-[15px] font-medium">{file.name}</span>
+          <span className="block text-[12px] text-white/70">{copy.owner}</span>
+        </span>
+        <button
+          data-showme="preview-close"
+          onClick={onClose}
+          className="h-10 rounded-full px-4 text-[14px] font-medium text-white hover:bg-white/10 cursor-pointer"
+        >
+          {copy.close}
+        </button>
+        <button
+          data-showme="preview-rename"
+          onClick={onRename}
+          className="h-10 rounded-full bg-[#a8c7fa] px-5 text-[14px] font-medium text-[#062e6f] hover:bg-[#c2e7ff] cursor-pointer"
+        >
+          {copy.rename}
+        </button>
+      </div>
+      <div className="min-h-0 flex-1 overflow-auto px-4 pb-4">
+        <div className="flex justify-center">
+          <PdfSheet doc={page.doc} scale={0.66} stamp={page.stamp} />
+        </div>
+      </div>
     </div>
   );
 }

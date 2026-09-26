@@ -8,6 +8,9 @@ import {
   conflictIdentified,
   SLOTS,
   OPEN_SLOT,
+  PROVIDER,
+  PHONE_MESSAGE,
+  type SlotStatus,
   STARTERS as APPT_STARTERS,
   LESSONS as APPT_LESSONS,
   confirmationOffersOpenSlot,
@@ -115,11 +118,13 @@ function ScheduleDesk() {
     if (key && !conflictIdentified(key)) say(c.wrongReason);
   };
 
-  const pick = (time: string, taken: boolean, name: string | null) => {
+  const pick = (time: string, taken: boolean, name: string | null, status: SlotStatus) => {
     showMe.clear();
+    if (status === "blocked") return say(c.blocked);
     if (taken) return say(name ? c.takenBy(name) : c.taken);
     setSlot(time);
   };
+  const statusLabel: Record<SlotStatus, string> = { "checked-in": c.checkedIn, confirmed: c.confirmed, open: c.open, blocked: c.blockedLabel };
 
   const tryOffer = () => {
     showMe.clear();
@@ -162,25 +167,39 @@ function ScheduleDesk() {
         <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
-          <div className="mx-auto flex max-w-[640px] flex-col gap-4">
-            <h2 className="text-[20px] font-medium">{c.heading}</h2>
-            <p className="rounded-xl border border-[#dadce0] bg-white px-4 py-3 text-[15px] leading-relaxed">{c.request}</p>
-            <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white">
+          <div className="mx-auto flex max-w-[900px] flex-col-reverse gap-4 lg:flex-row lg:items-start">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            <h2 className="text-[20px] font-medium">
+              {c.sheetDay} · {PROVIDER}
+            </h2>
+            {/* The day sheet: every column a real front desk reads before
+                booking. Rows are buttons, so picking a time is one click. */}
+            <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white" role="table">
+              <div role="row" className="grid grid-cols-[56px_minmax(0,1fr)_minmax(0,1fr)_96px] gap-2 border-b border-[#dadce0] bg-[#f1f3f4] px-4 py-2 text-[12px] font-medium text-[#5f6368]">
+                <span role="columnheader">{c.colTime}</span>
+                <span role="columnheader">{c.colPatient}</span>
+                <span role="columnheader">{c.colVisit}</span>
+                <span role="columnheader">{c.colStatus}</span>
+              </div>
               {SLOTS.map((s) => {
                 const selected = slot === s.time;
+                const open = s.status === "open";
                 return (
                   <button
                     key={s.time}
                     type="button"
-                    data-showme={s.taken ? undefined : "open-slot"}
-                    onClick={() => pick(s.time, s.taken, s.name)}
-                    className={`flex w-full items-center justify-between border-b border-[#eee] px-4 py-2.5 text-left cursor-pointer last:border-b-0 ${
-                      selected ? "bg-[#e0f2f1] ring-2 ring-inset ring-[#00695c]" : "hover:bg-[#f8f9fa]"
+                    role="row"
+                    data-showme={open ? "open-slot" : undefined}
+                    onClick={() => pick(s.time, s.taken, s.name, s.status)}
+                    className={`grid w-full grid-cols-[56px_minmax(0,1fr)_minmax(0,1fr)_96px] items-center gap-2 border-b border-[#eee] px-4 py-2 text-left text-[14px] cursor-pointer last:border-b-0 ${
+                      selected ? "bg-[#e0f2f1] ring-2 ring-inset ring-[#00695c]" : s.status === "blocked" ? "bg-[repeating-linear-gradient(135deg,#f8f9fa_0_6px,#eceff1_6px_12px)]" : "hover:bg-[#f8f9fa]"
                     }`}
                   >
                     <span className="font-medium tabular-nums">{s.time}</span>
-                    <span className={s.taken ? "text-[#5f6368]" : "font-medium text-[#00695c]"}>
-                      {s.taken ? `${c.booked} · ${s.name}` : c.open}
+                    <span className="truncate">{s.name ?? ""}</span>
+                    <span className="truncate text-[#5f6368]">{s.visit?.[lang] ?? ""}</span>
+                    <span className={open ? "font-medium text-[#00695c]" : s.status === "blocked" ? "text-[#b3261e]" : "text-[#5f6368]"}>
+                      {statusLabel[s.status]}
                     </span>
                   </button>
                 );
@@ -228,12 +247,52 @@ function ScheduleDesk() {
               </div>
             )}
           </div>
+          <aside className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[250px]">
+            <PhoneMessageSlip lang={lang} />
+          </aside>
+          </div>
         </div>
       )}
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={APPT_LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </DeskChrome>
+  );
+}
+
+/**
+ * The pink "While you were out" slip a coworker leaves at a front desk. It
+ * holds the request and the number to text back, and it stays beside the day
+ * sheet the whole time.
+ */
+function PhoneMessageSlip({ lang }: { lang: "en" | "es" }) {
+  const c = APPOINTMENT_COPY[lang];
+  const m = PHONE_MESSAGE;
+  const line = (label: string, value: string) => (
+    <div className="flex items-baseline gap-2 border-b border-dashed border-[#c98a95] py-1">
+      <span className="shrink-0 text-[11px] font-bold uppercase tracking-wide text-[#8a3b4a]">{label}</span>
+      <span className="min-w-0 font-mono text-[14px] text-[#1f1f1f]">{value}</span>
+    </div>
+  );
+  return (
+    <div
+      data-testid="phone-message-slip"
+      className="rotate-[0.6deg] rounded-sm px-4 pb-4 pt-3 shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
+      style={{ background: "linear-gradient(180deg, #fde2e6 0%, #fbd3da 100%)" }}
+    >
+      <p className="m-0 mb-1 text-center text-[13px] font-bold uppercase tracking-[0.12em] text-[#8a3b4a]">{c.slipTitle}</p>
+      {line(c.slipCaller, m.caller)}
+      {line(c.slipDob, m.dob)}
+      {line(c.slipPhone, m.phone)}
+      {line(c.slipTime, m.time)}
+      <p className="m-0 mt-2 text-[11px] font-bold uppercase tracking-wide text-[#8a3b4a]">{c.slipMessage}</p>
+      <p className="m-0 mt-0.5 text-[15px] leading-snug text-[#1f1f1f]" style={{ fontFamily: '"Comic Sans MS", "Segoe Print", cursive' }}>
+        {m.message[lang]}
+      </p>
+      <p className="m-0 mt-2 text-right text-[12px] text-[#5f4b4e]">
+        {c.slipTakenBy}: {m.takenBy}
+      </p>
+    </div>
   );
 }
 

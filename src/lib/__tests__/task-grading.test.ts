@@ -4,7 +4,7 @@ import { emailMentionsFix, parseRange, rangeCoversCrew, sumProblem } from "@/lib
 import { replyIsSafe } from "@/lib/tasks/priority-call/content";
 import { agendaBulletCount, titleIsAboutSchedule } from "@/lib/tasks/team-meeting/content";
 import { replyAcceptsOffer, overlapMentionsShift } from "@/lib/tasks/college-offer/content";
-import { emailFlagsOver } from "@/lib/tasks/budget-sheet/content";
+import { BUDGET_ROWS, OVER_AMOUNT, OVER_KEY, emailFlagsOver, rowNumberFor, statusFor } from "@/lib/tasks/budget-sheet/content";
 import {
   casualDraftUntouched,
   stillSoundsCasual,
@@ -234,6 +234,20 @@ describe("budget sheet: flag the over category", () => {
   it("rejects an email that names neither labor nor the overage", () => {
     expect(emailFlagsOver("Hi Maria, the budget looks fine.")).toBe(false);
     expect(emailFlagsOver("Supplies look high.")).toBe(false);
+  });
+
+  it("rejects the near-miss lines", () => {
+    expect(emailFlagsOver("Utilities is almost over, only $2 under.")).toBe(false);
+    expect(emailFlagsOver("Repairs is at $300, right on budget.")).toBe(false);
+  });
+
+  // The step advances when the learner clicks any "over" Status cell, and the
+  // email check wants Labor. Both hold only while Labor is the one line over.
+  it("has exactly one line over budget, and it is Labor, $450, on row 3", () => {
+    const over = BUDGET_ROWS.filter((r) => statusFor(r.actual, r.budget) === "over");
+    expect(over.map((r) => r.key)).toEqual([OVER_KEY]);
+    expect(OVER_AMOUNT).toBe(450);
+    expect(rowNumberFor(OVER_KEY)).toBe(3);
   });
 });
 

@@ -2,7 +2,7 @@
 
 import { useProgress } from "@/lib/progress-context";
 import { LESSON_COPY } from "@/lib/lessons/copy";
-import type { LessonFact, LessonScene } from "@/lib/lessons/types";
+import type { LessonFact, LessonScene, WorkExample } from "@/lib/lessons/types";
 import type { Localized } from "@/lib/task-types";
 import { WelcomeShell } from "@/components/welcome-shell";
 import { INFO_PAPER, InfoCardBody } from "@/components/lesson/LessonInfoCard";
@@ -17,16 +17,21 @@ export default function LessonIntro({
   title,
   scene,
   reference,
+  atWork = [],
   onStart,
 }: {
   title: Localized;
   scene: LessonScene;
   reference: LessonFact[];
+  atWork?: WorkExample[];
   onStart: () => void;
 }) {
   const { lang } = useProgress();
   const people = scene.people.map((p) => `${p.name}: ${p.role[lang]}.`);
-  const speak = [title[lang], scene.you[lang], ...people, scene.need[lang], LESSON_COPY.introCard[lang]]
+  // Only the job names: the examples are for the teacher, and every extra
+  // sentence here is reading before the learner has started.
+  const workLine = atWork.length ? `${LESSON_COPY.introAtWork[lang]} ${atWork.map((w) => w.setting[lang]).join(", ")}.` : "";
+  const speak = [title[lang], scene.you[lang], ...people, scene.need[lang], workLine, LESSON_COPY.introCard[lang]]
     .filter(Boolean)
     .join(" ");
 
@@ -40,6 +45,7 @@ export default function LessonIntro({
       <section aria-labelledby="lesson-intro-need" className="mt-6 rounded-2xl bg-[#ece3d3] px-5 py-5 sm:px-7 sm:py-6">
         <h2 id="lesson-intro-need" className="text-base font-semibold">{LESSON_COPY.introNeed[lang]}</h2>
         <p className="mt-2 text-lg leading-relaxed">{scene.need[lang]}</p>
+        {workLine && <p data-testid="lesson-intro-at-work" className="mt-3 mb-0 text-base text-[#5f4b3a]">{workLine}</p>}
       </section>
 
       {/* The real card: who you are, who the task names, and what to copy.
