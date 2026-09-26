@@ -4,21 +4,61 @@ export const REQUESTED_SLOT = "10:00";
 export const OPEN_SLOT = "11:30";
 export const PATIENT = { en: "Maya Ansari", es: "Maya Ansari" };
 
-export const SLOTS = [
-  { time: "9:00", taken: true, name: "Ana Costa" },
-  { time: "9:30", taken: true, name: "Luis Moreno" },
-  { time: "10:00", taken: true, name: "Tomás Ortiz" },
-  { time: "10:30", taken: true, name: "Priya Shah" },
-  { time: "11:00", taken: true, name: "Dana Lee" },
-  { time: "11:30", taken: false, name: null },
-  { time: "12:00", taken: true, name: "Grace Okoye" },
-] as const;
+export type SlotStatus = "checked-in" | "confirmed" | "open" | "blocked";
+
+/**
+ * The provider's day sheet, as a front desk sees it. 11:30 is the one Open
+ * time. 12:30 looks empty but is Blocked for a staff meeting: an empty row
+ * is not the same as a free one.
+ */
+export const SLOTS: readonly { time: string; taken: boolean; name: string | null; visit: Localized | null; status: SlotStatus }[] = [
+  { time: "9:00", taken: true, name: "Ana Costa", visit: { en: "Annual physical", es: "Examen anual" }, status: "checked-in" },
+  { time: "9:30", taken: true, name: "Luis Moreno", visit: { en: "Flu shot", es: "Vacuna contra la gripe" }, status: "checked-in" },
+  { time: "10:00", taken: true, name: "Walter Nguyen", visit: { en: "Blood pressure check", es: "Control de presión" }, status: "confirmed" },
+  { time: "10:30", taken: true, name: "Priya Shah", visit: { en: "New patient", es: "Paciente nuevo" }, status: "confirmed" },
+  { time: "11:00", taken: true, name: "Dana Lee", visit: { en: "Follow-up", es: "Seguimiento" }, status: "confirmed" },
+  { time: "11:30", taken: false, name: null, visit: null, status: "open" },
+  { time: "12:00", taken: true, name: "Grace Okoye", visit: { en: "Sick visit", es: "Consulta por enfermedad" }, status: "confirmed" },
+  { time: "12:30", taken: true, name: null, visit: { en: "Staff meeting", es: "Reunión del personal" }, status: "blocked" },
+];
+
+export const PROVIDER = "Dr. Ruth Adeyemi";
+
+/**
+ * The paper message a coworker left at the desk. It stays on screen while
+ * the learner reads the day sheet and writes the text back.
+ */
+export const PHONE_MESSAGE = {
+  caller: PATIENT.en,
+  dob: "03/12/1998",
+  phone: "(617) 555-0142",
+  time: "8:47 AM",
+  takenBy: "Elena",
+  message: {
+    en: "Cough for a week. Wants a follow-up today at 10:00. Please text her back.",
+    es: "Tiene tos desde hace una semana. Quiere un seguimiento hoy a las 10:00. Por favor mándale un mensaje de texto.",
+  },
+};
 
 export const APPOINTMENT_COPY: Record<Lang, {
+  slipTitle: string;
+  slipCaller: string;
+  slipDob: string;
+  slipPhone: string;
+  slipTime: string;
+  slipTakenBy: string;
+  slipMessage: string;
+  sheetDay: string;
+  colTime: string;
+  colPatient: string;
+  colVisit: string;
+  colStatus: string;
+  checkedIn: string;
+  confirmed: string;
+  blockedLabel: string;
+  blocked: string;
   helpBtn: string;
   clinic: string;
-  heading: string;
-  request: string;
   offerCta: string;
   confirmHeading: string;
   writeHere: string;
@@ -41,12 +81,26 @@ export const APPOINTMENT_COPY: Record<Lang, {
   takenBy: (name: string) => string;
 }> = {
   en: {
+    slipTitle: "While you were out",
+    slipCaller: "Caller",
+    slipDob: "Date of birth",
+    slipPhone: "Phone",
+    slipTime: "Time",
+    slipTakenBy: "Taken by",
+    slipMessage: "Message",
+    sheetDay: "Monday",
+    colTime: "Time",
+    colPatient: "Patient",
+    colVisit: "Visit",
+    colStatus: "Status",
+    checkedIn: "Checked in",
+    confirmed: "Confirmed",
+    blockedLabel: "Blocked",
+    blocked: "12:30 is blocked for a staff meeting. No patients then. Look for the time that says Open.",
     helpBtn: "Help me with this step",
     clinic: "Harborside Health · Front desk",
-    heading: "Monday morning",
-    request: "Maya Ansari called. She wants an appointment today at 10:00.",
     offerCta: "Offer the open time",
-    confirmHeading: "Confirmation to Maya",
+    confirmHeading: "Text message to Maya · (617) 555-0142",
     writeHere: "Tell Maya the time you can give her…",
     send: "Send confirmation",
     needSlot: "Click the time that says Open first.",
@@ -67,12 +121,26 @@ export const APPOINTMENT_COPY: Record<Lang, {
     takenBy: (name) => `${name} already has that time. Look for the time that says Open.`,
   },
   es: {
+    slipTitle: "Mensaje telefónico",
+    slipCaller: "Llamó",
+    slipDob: "Fecha de nacimiento",
+    slipPhone: "Teléfono",
+    slipTime: "Hora",
+    slipTakenBy: "Lo tomó",
+    slipMessage: "Mensaje",
+    sheetDay: "Lunes",
+    colTime: "Hora",
+    colPatient: "Paciente",
+    colVisit: "Consulta",
+    colStatus: "Estado",
+    checkedIn: "Ya llegó",
+    confirmed: "Confirmada",
+    blockedLabel: "Bloqueada",
+    blocked: "Las 12:30 están bloqueadas por una reunión del personal. No hay pacientes a esa hora. Busca la hora que dice Libre.",
     helpBtn: "Ayúdame con este paso",
     clinic: "Harborside Health · Recepción",
-    heading: "Lunes por la mañana",
-    request: "Llamó Maya Ansari. Quiere una cita hoy a las 10:00.",
     offerCta: "Ofrecer la hora libre",
-    confirmHeading: "Confirmación para Maya",
+    confirmHeading: "Mensaje de texto para Maya · (617) 555-0142",
     writeHere: "Dile a Maya la hora que le puedes dar…",
     send: "Enviar confirmación",
     needSlot: "Primero haz clic en la hora que dice Libre.",
@@ -153,7 +221,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 
 export const CONFLICT_OPTIONS = [
  { key: 'closed', label: { en: 'The clinic is closed at 10:00', es: 'La clínica está cerrada a las 10:00' } },
- { key: 'booked', label: { en: 'Tomás Ortiz already has 10:00', es: 'Tomás Ortiz ya tiene las 10:00' } },
+ { key: 'booked', label: { en: 'Walter Nguyen already has 10:00', es: 'Walter Nguyen ya tiene las 10:00' } },
  { key: 'duration', label: { en: 'The appointment needs two hours', es: 'La cita necesita dos horas' } },
 ];
 export function conflictIdentified(key: string): boolean { return key === 'booked'; }

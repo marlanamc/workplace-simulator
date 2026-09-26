@@ -1074,8 +1074,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You work at the front desk of Harborside Health, a clinic.", es: "Trabajas en la recepción de Harborside Health, una clínica." },
         people: [{ name: "Maya Ansari", role: { en: "A patient. She called the clinic.", es: "Una paciente. Llamó a la clínica." } }],
         need: {
-          en: "Maya wants an appointment today at 10:00. Someone already has 10:00. Find a time that is free and tell her.",
-          es: "Maya quiere una cita hoy a las 10:00. Otra persona ya tiene las 10:00. Busca una hora libre y díselo.",
+          en: "Maya called while you were busy. A coworker wrote her message on a slip. She wants an appointment today at 10:00, but someone already has 10:00. Find a time that is free and text her back.",
+          es: "Maya llamó mientras estabas ocupado/a. Una compañera anotó su mensaje en un papel. Quiere una cita hoy a las 10:00, pero otra persona ya tiene las 10:00. Busca una hora libre y contéstale con un mensaje de texto.",
         },
       },
       guide: {
@@ -1091,6 +1091,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         stickingPoints: [
           { en: "Some learners click 10:00 because the patient asked for it. Ask: does someone already have that time?", es: "Algunos hacen clic en las 10:00 porque la paciente la pidió. Pregunta: ¿alguien ya tiene esa hora?" },
+          { en: "12:30 has no patient name, but it says Blocked (a staff meeting). Some learners click it. Ask: what does the Status column say?", es: "Las 12:30 no tienen nombre de paciente, pero dicen Bloqueada (una reunión del personal). Algunos hacen clic ahí. Pregunta: ¿qué dice la columna Estado?" },
+          { en: "The pink phone message slip stays on the right. It has Maya's phone number and date of birth, like a real message at a front desk.", es: "El papel rosado del mensaje telefónico se queda a la derecha. Tiene el teléfono y la fecha de nacimiento de Maya, como un mensaje real en una recepción." },
           { en: "In the list of reasons, some learners pick that the clinic is closed. Ask them to look at the 10:00 row again and read what it says.", es: "En la lista de razones, algunos eligen que la clínica está cerrada. Pídeles mirar otra vez la fila de las 10:00 y leer lo que dice." },
           { en: "Some learners write See you soon with no time. The message must say 11:30. Ask: what time should Maya come in?", es: "Algunos escriben Nos vemos sin la hora. El mensaje debe decir 11:30. Pregunta: ¿a qué hora debe venir Maya?" },
         ],
@@ -1102,6 +1104,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "A partner can read the schedule out loud, but the learner picks the time and writes the message.",
           es: "Un compañero puede leer la agenda en voz alta, pero el estudiante elige la hora y escribe el mensaje.",
         },
+        atWork: [
+          { setting: { en: "a hotel", es: "un hotel" }, example: { en: "A guest wants a room that is taken. Offer one that is free.", es: "Un huésped quiere un cuarto ocupado. Ofrecerle uno libre." } },
+          { setting: { en: "a salon or barbershop", es: "un salón o una barbería" }, example: { en: "Find an open time in the book and text the client.", es: "Buscar una hora libre en la agenda y mandarle un mensaje al cliente." } },
+          { setting: { en: "an auto shop", es: "un taller mecánico" }, example: { en: "Move a car drop-off to a time the bay is free.", es: "Pasar la entrega de un carro a una hora en que haya espacio." } },
+          { setting: { en: "home health care", es: "el cuidado de salud en casa" }, example: { en: "Tell a client the new visit time when yours is full.", es: "Decirle a un cliente la nueva hora de visita cuando la tuya está llena." } },
+        ],
       },
     },
   },
