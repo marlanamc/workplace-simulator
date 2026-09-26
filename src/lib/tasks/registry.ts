@@ -170,7 +170,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "You have 3 new emails. Answer each one.", es: "Tienes 3 correos nuevos. Contesta cada uno." },
-    jobCardDoneLine: { en: "Three replies sent. Day one is complete.", es: "Tres respuestas enviadas. Completaste el primer día." },
+    jobCardDoneLine: { en: "Three replies sent. You're ready for tomorrow.", es: "Tres respuestas enviadas. Ya estás listo para mañana." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
       summary: {
@@ -180,7 +180,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["email"],
       minutes: 15,
       scene: {
-        you: { en: "Today is your first day at Harborside Cafe.", es: "Hoy es tu primer día en Harborside Cafe." },
+        you: { en: "Tomorrow is your first day at Harborside Cafe.", es: "Mañana es tu primer día en Harborside Cafe." },
         people: [
           { name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } },
           { name: "Darnell Washington", role: { en: "A coworker. He works mornings too.", es: "Un compañero. También trabaja en las mañanas." } },
@@ -555,7 +555,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       reference: [
         { label: { en: "Meeting", es: "Reunión" }, value: { en: "Wed, Aug 26, 9:00 AM", es: "Miér., 26 de agosto, 9:00 AM" } },
-        { label: { en: "Your next shift", es: "Tu próximo turno" }, value: { en: "Thu, Aug 27, 10 AM to 6 PM", es: "Jue., 27 de agosto, 10 AM a 6 PM" } },
+        { label: { en: "Your Thursday shift", es: "Tu turno del jueves" }, value: { en: "Thu, Aug 27, 10 AM to 6 PM", es: "Jue., 27 de agosto, 10 AM a 6 PM" } },
       ],
       guide: {
         skills: [
@@ -735,7 +735,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that the sheet adds the numbers by itself when all the cells are filled.", es: "Explica que la hoja suma los números sola cuando todas las celdas están llenas." },
         ],
         stickingPoints: [
-          { en: "Some learners type an amount on the wrong day, or leave out the numbers after the dot. Ask: which day is this slip for? Read the amount to me.", es: "Algunos escriben una cantidad en el día equivocado, o no escriben los números después del punto. Pregunta: ¿de qué día es este recibo? Léeme la cantidad." },
+          { en: "Some learners type an amount on the wrong day, or leave out the numbers after the dot. Ask: which day is this line for? Read the amount to me.", es: "Algunos escriben una cantidad en el día equivocado, o no escriben los números después del punto. Pregunta: ¿de qué día es esta línea? Léeme la cantidad." },
           { en: "Some learners try to send the email before all five days are filled. Ask: are all five days done?", es: "Algunos quieren enviar el correo antes de llenar los cinco días. Pregunta: ¿ya llenaste los cinco días?" },
           { en: "Some learners write I sent it with no number. The email must say the total from the sheet. Ask: what is the total?", es: "Algunos escriben Ya lo envié sin el número. El correo debe decir el total de la hoja. Pregunta: ¿cuál es el total?" },
         ],
@@ -1087,12 +1087,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         prepare: [
           { en: "Ask who has made an appointment by phone at a clinic or an office.", es: "Pregunta quién ya hizo una cita por teléfono en una clínica o una oficina." },
-          { en: "Explain that booked means someone already has that time, and open means it is free.", es: "Explica que ocupada quiere decir que alguien ya tiene esa hora, y libre quiere decir que nadie la tiene." },
+          { en: "Explain that Confirmed or Checked in means someone already has that time, and Open means it is free.", es: "Explica que Confirmada o Registrada quiere decir que alguien ya tiene esa hora, y Libre quiere decir que nadie la tiene." },
         ],
         stickingPoints: [
           { en: "Some learners click 10:00 because the patient asked for it. Ask: does someone already have that time?", es: "Algunos hacen clic en las 10:00 porque la paciente la pidió. Pregunta: ¿alguien ya tiene esa hora?" },
           { en: "12:30 has no patient name, but it says Blocked (a staff meeting). Some learners click it. Ask: what does the Status column say?", es: "Las 12:30 no tienen nombre de paciente, pero dicen Bloqueada (una reunión del personal). Algunos hacen clic ahí. Pregunta: ¿qué dice la columna Estado?" },
-          { en: "The pink phone message slip stays on the right. It has Maya's phone number and date of birth, like a real message at a front desk.", es: "El papel rosado del mensaje telefónico se queda a la derecha. Tiene el teléfono y la fecha de nacimiento de Maya, como un mensaje real en una recepción." },
+          { en: "The pink phone message slip stays next to the schedule. It has Maya's phone number and date of birth, like a real message at a front desk.", es: "El papel rosado del mensaje telefónico se queda junto al horario. Tiene el teléfono y la fecha de nacimiento de Maya, como un mensaje real en una recepción." },
           { en: "In the list of reasons, some learners pick that the clinic is closed. Ask them to look at the 10:00 row again and read what it says.", es: "En la lista de razones, algunos eligen que la clínica está cerrada. Pídeles mirar otra vez la fila de las 10:00 y leer lo que dice." },
           { en: "Some learners write See you soon with no time. The message must say 11:30. Ask: what time should Maya come in?", es: "Algunos escriben Nos vemos sin la hora. El mensaje debe decir 11:30. Pregunta: ¿a qué hora debe venir Maya?" },
         ],
@@ -1164,8 +1164,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     bookmarkLabel: "Coursework",
     handoffCta: { en: "Open Coursework from the bookmarks", es: "Abre Curso en los marcadores" },
     shiftMoment: {
-      en: "Thursday. Something is due tonight.",
-      es: "Jueves. Algo se entrega esta noche.",
+      en: "Thursday. Something is due tomorrow night.",
+      es: "Jueves. Algo se entrega mañana en la noche.",
     },
     location: browser("Open Coursework from the bookmarks"),
     jobCardLine: { en: "Find the due date. Answer Dana. Then submit.", es: "Busca la fecha de entrega. Contesta a Dana. Después entrega." },
@@ -1321,8 +1321,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that most people who get hired do not meet every requirement in the posting.", es: "Explica que la mayoría de las personas contratadas no cumplen todos los requisitos del anuncio." },
         ],
         stickingPoints: [
-          { en: "Some learners check the Bachelor's degree box. This job does not need one. Ask: do you have a degree? Does this job need it?", es: "Algunos marcan el título universitario. Este trabajo no lo necesita. Pregunta: ¿tienes un título? ¿Este trabajo lo necesita?" },
-          { en: "Some learners check fewer than three boxes. Ask them to read each line and say what they did in the simulator that matches it.", es: "Algunos marcan menos de tres puntos. Pídeles leer cada línea y decir qué hicieron en el simulador que coincide." },
+          { en: "Some learners check the College degree box. This job does not need one. Ask: do you have a degree? Does this job need it?", es: "Algunos marcan el título universitario. Este trabajo no lo necesita. Pregunta: ¿tienes un título? ¿Este trabajo lo necesita?" },
+          { en: "Some learners check fewer than three boxes. Ask them to read each line and say what on their info card matches it.", es: "Algunos marcan menos de tres puntos. Pídeles leer cada línea y decir qué de su tarjeta de información coincide." },
           { en: "The fit line needs at least four words. Ask: what is one thing you did that fits this job?", es: "La línea necesita al menos cuatro palabras. Pregunta: ¿qué es algo que hiciste que encaja con este trabajo?" },
         ],
         followUp: [
@@ -1549,7 +1549,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         { label: { en: "Name", es: "Nombre" }, value: "Robin Avery" },
         { label: { en: "Filing status", es: "Estado civil" }, value: { en: "Single", es: "Soltero/a" } },
         { label: { en: "Dependents (children)", es: "Dependientes (hijos)" }, value: "0" },
-        { label: { en: "Today's date", es: "Fecha de hoy" }, value: "10/01/2026" },
+        { label: { en: "Form date", es: "Fecha del formulario" }, value: "10/01/2026" },
       ],
       guide: {
         skills: [

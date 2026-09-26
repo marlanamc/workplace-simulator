@@ -102,7 +102,7 @@ export default function BudgetSheetTask() {
   };
 
   const notYet = () =>
-    say(lang === "en" ? "That's not today's sheet. Open Cafe budget: week of Sep 1." : "Esa no es la hoja de hoy. Abre Presupuesto del café: sem. 1 sep.");
+    say(lang === "en" ? "That's not today's sheet. Open Cafe budget: week of Aug 31." : "Esa no es la hoja de hoy. Abre Presupuesto del café: sem. 31 ago.");
 
   const formulaBarContent = (() => {
     if (selected.row === HEADER_ROW) return headerFor(selected.col);

@@ -35,7 +35,7 @@ export const FILES: DriveFile[] = [
     key: "sched-aug17",
     name: "sched_81724.pdf",
     folder: "Schedules",
-    date: "Aug 17",
+    date: "Aug 14",
     isTarget: false,
     wrongHint: wrongHint(
       "That page says Week of Aug 17. That is last week. Close it and open this week's schedule (Aug 24).",
@@ -46,7 +46,7 @@ export const FILES: DriveFile[] = [
     key: "sched-aug24",
     name: "sched_82426.pdf",
     folder: "Schedules",
-    date: "Aug 24",
+    date: "Aug 21",
     isTarget: true,
   },
   {
@@ -85,7 +85,7 @@ export const MESSY_FILES: DriveFile[] = [
     key: "sched-aug24-draft",
     name: "sched_82426_draft.pdf",
     folder: "Schedules",
-    date: "Aug 21",
+    date: "Aug 19",
     isTarget: false,
     wrongHint: wrongHint(
       "That page says DRAFT, and Friday is not filled in. Close it and open the one without draft in the name.",
@@ -107,7 +107,7 @@ export const MESSY_FILES: DriveFile[] = [
     key: "sched-sept",
     name: "sched_090107.pdf",
     folder: "Schedules",
-    date: "Sep 1",
+    date: "Aug 28",
     isTarget: false,
     wrongHint: wrongHint(
       "That page says Week of Aug 31. That is next week. Jordan starts today, so close it and open this week's.",
@@ -311,7 +311,7 @@ function schedule(id: string, name: string, date: string, week: string, rows: { 
     days: WEEK_DAYS,
     rows,
     notes,
-    postedBy: `Posted by Renata Silva, Shift Supervisor · ${date}`,
+    postedBy: `Posted by Renata Silva, General Manager · ${date}`,
   };
 }
 
@@ -401,7 +401,7 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
         "The patio closes at 8 PM.",
         "Iced drinks count toward the monthly sales contest.",
       ],
-      signedBy: "Maria Delgado, Cafe Manager",
+      signedBy: "Renata Silva, General Manager",
     },
   },
 };

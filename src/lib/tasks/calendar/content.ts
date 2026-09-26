@@ -154,7 +154,7 @@ export const CALENDAR_COPY: Record<Lang, {
     whatTime: "¿Qué hora te funciona?",
     to: "Para",
     subjectLabel: "Asunto",
-    subject: "Re: Reunión semanal de líderes. ¿Otro horario?",
+    subject: "Re: Weekly Lead Huddle. ¿Otro horario?",
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
@@ -202,7 +202,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Look at your shifts. Green shows the days you work.",
         "If the meeting is on a day you do not work, do not just say yes. Ask for a different time.",
       ],
-      tip: "You checked your schedule for a shift before. This is the same skill in a new app.",
+      tip: "It is the same skill as checking a work schedule.",
     },
     {
       t: "Proposing a different time",
@@ -222,7 +222,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Mira tus turnos. El verde muestra los días que trabajas.",
         "Si la reunión es un día que no trabajas, no digas que sí sin más. Pide otro horario.",
       ],
-      tip: "Ya revisaste tu horario para un turno antes. Es la misma habilidad en otra aplicación.",
+      tip: "Es la misma habilidad que revisar un horario de trabajo.",
     },
     {
       t: "Proponer otro horario",

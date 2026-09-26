@@ -43,14 +43,14 @@ export const TEXTS: RecoveryText[] = [
     when: { en: "2 min ago", es: "hace 2 min" },
     isTarget: false,
     wrongHint: wrongHint(
-      "That text is an ad. Your code comes from Harborside Accounts.",
-      "Ese mensaje es un anuncio. Tu código viene de Harborside Accounts."
+      "That text is an ad. Your code comes from Google.",
+      "Ese mensaje es un anuncio. Tu código viene de Google."
     ),
   },
   {
     key: "code",
-    from: "Harborside Accounts",
-    body: { en: "Your verification code is 482915", es: "Tu código de verificación es 482915" },
+    from: "Google",
+    body: { en: "Your Google verification code is 482915", es: "Tu código de verificación de Google es 482915" },
     when: { en: "Now", es: "Ahora" },
     isTarget: true,
   },
@@ -61,8 +61,8 @@ export const TEXTS: RecoveryText[] = [
     when: { en: "1 min ago", es: "hace 1 min" },
     isTarget: false,
     wrongHint: wrongHint(
-      "That text is from Sam, a coworker. Your code comes from Harborside Accounts.",
-      "Ese mensaje es de Sam, un compañero. Tu código viene de Harborside Accounts."
+      "That text is from Sam, a coworker. Your code comes from Google.",
+      "Ese mensaje es de Sam, un compañero. Tu código viene de Google."
     ),
   },
 ];
@@ -111,7 +111,7 @@ export const RECOVERY_COPY: Record<Lang, {
   verifyTitle: string;
 }> = {
   en: {
-    heading: "Harborside Accounts",
+    heading: "Google",
     usernameLabel: "Username",
     passwordLabel: "Password",
     passwordPlaceholder: "Enter your password",
@@ -127,7 +127,7 @@ export const RECOVERY_COPY: Record<Lang, {
     phoneHeading: "Messages",
     phoneEmpty: "No new messages",
     phoneLabel: "Your phone",
-    wrongCode: "That is not the code. Look at the text from Harborside Accounts on your phone. Type its 6 numbers.",
+    wrongCode: "That is not the code. Look at the text from Google on your phone. Type its 6 numbers.",
     sentKicker: "Signed back in",
     doneBody: "Getting signed out happens to everyone. Now you know the steps: type your password, find the real code, and type it in.",
     badgeName: "Get back into a locked account",
@@ -139,7 +139,7 @@ export const RECOVERY_COPY: Record<Lang, {
     verifyTitle: "Check your phone",
   },
   es: {
-    heading: "Harborside Accounts",
+    heading: "Google",
     usernameLabel: "Usuario",
     passwordLabel: "Contraseña",
     passwordPlaceholder: "Escribe tu contraseña",
@@ -155,7 +155,7 @@ export const RECOVERY_COPY: Record<Lang, {
     phoneHeading: "Mensajes",
     phoneEmpty: "No hay mensajes nuevos",
     phoneLabel: "Tu teléfono",
-    wrongCode: "Ese no es el código. Mira el mensaje de Harborside Accounts en tu teléfono. Escribe sus 6 números.",
+    wrongCode: "Ese no es el código. Mira el mensaje de Google en tu teléfono. Escribe sus 6 números.",
     sentKicker: "Sesión iniciada",
     doneBody: "A todos se les cierra la sesión alguna vez. Ahora conoces los pasos: escribir tu contraseña, buscar el código real y escribirlo.",
     badgeName: "Volver a entrar a una cuenta bloqueada",
@@ -176,8 +176,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Escribe tu contraseña. Después haz clic en Iniciar sesión.",
   },
   {
-    en: "Look at your phone. Click the text from Harborside Accounts.",
-    es: "Mira tu teléfono. Haz clic en el mensaje de Harborside Accounts.",
+    en: "Look at your phone. Click the text from Google.",
+    es: "Mira tu teléfono. Haz clic en el mensaje de Google.",
   },
   {
     en: "Type the 6 numbers from that text. Then click Verify.",
@@ -193,21 +193,21 @@ export const LESSON_FIRST_STEP: Localized = {
 
 export const HELP_LESSON: Record<Lang, Lesson> = {
   en: {
-    t: "Getting back into a locked account",
+    t: "Getting back in after you are signed out",
     s: [
       "Type your password.",
       "The account sends a text message with a code to your phone. It takes a few seconds.",
-      "Find the real code. It comes from the account, not from an ad or a friend.",
+      "Find the real code. It comes from the account, not from an ad or a coworker.",
       "Type the numbers exactly as they appear.",
     ],
     tip: "This happens to everyone. It is not a mistake. Work accounts do this to keep you safe.",
   },
   es: {
-    t: "Volver a entrar a una cuenta bloqueada",
+    t: "Volver a entrar cuando se cierra tu sesión",
     s: [
       "Escribe tu contraseña.",
       "La cuenta te envía un mensaje de texto con un código al teléfono. Tarda unos segundos.",
-      "Busca el código real. Viene de la cuenta, no de un anuncio ni de un amigo.",
+      "Busca el código real. Viene de la cuenta, no de un anuncio ni de un compañero.",
       "Escribe los números tal como aparecen.",
     ],
     tip: "Esto le pasa a cualquiera. No es un error. Las cuentas del trabajo hacen esto para protegerte.",

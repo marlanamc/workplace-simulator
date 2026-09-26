@@ -255,13 +255,13 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
   "mail-reply": {
     en: {
       kicker: "Message sent",
-      body: "You replied to Maria, confirmed your start time, and helped a coworker. Your three replies are saved.",
+      body: "You replied to Maria, confirmed your start time, and answered a coworker. Your three replies are saved.",
       badgeNumber: "01",
       badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     },
     es: {
       kicker: "Mensaje enviado",
-      body: "Saludaste a Maria, confirmaste tu hora de entrada y ayudaste a un compañero. Tus tres respuestas están guardadas.",
+      body: "Saludaste a Maria, confirmaste tu hora de entrada y le contestaste a un compañero. Tus tres respuestas están guardadas.",
       badgeNumber: "01",
       badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     },
