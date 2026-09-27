@@ -18,12 +18,17 @@ export const LESSON_COPY = {
   guided: { en: "Guided", es: "Con guía" },
   independent: { en: "On my own", es: "Por mi cuenta" },
   supportLabel: { en: "Help level", es: "Nivel de ayuda" },
-  fewerHints: { en: "Fewer hints", es: "Menos pistas" },
-  moreHints: { en: "More hints", es: "Más pistas" },
-  signInToSave: { en: "Sign in to save", es: "Inicia sesión para guardar" },
+  // No arrow and no "next"-sounding word: this changes how much the card
+  // says, and must never read as the way to the next step.
+  fewerHints: { en: "I don't need hints", es: "No necesito pistas" },
+  moreHints: { en: "Show me the steps again", es: "Muéstrame los pasos otra vez" },
+  leave: { en: "Lessons", es: "Lecciones" },
+  leaveLabel: { en: "Leave this lesson and go back to the lessons", es: "Salir de esta lección y volver a las lecciones" },
+  askTeacher: { en: "Stuck? Ask your teacher.", es: "¿No sabes qué hacer? Pregúntale a tu maestro o maestra." },
+  signInToSave: { en: "Have a class code? Sign in", es: "¿Tienes un código de clase? Inicia sesión" },
   savedHere: {
-    en: "This computer remembers it. Sign in so your teacher can see it.",
-    es: "Esta computadora lo recuerda. Inicia sesión para que tu maestro lo vea.",
+    en: "This computer remembers it.",
+    es: "Esta computadora lo recuerda.",
   },
   saving: { en: "Saving…", es: "Guardando…" },
   savedAccount: { en: "Saved. Your teacher can see it.", es: "Guardado. Tu maestro lo puede ver." },
@@ -40,8 +45,10 @@ export const LESSON_COPY = {
     es: "Esta tarjeta se queda en tu pantalla mientras trabajas. Cuando necesites un nombre, una contraseña o una fecha, mira aquí.",
   },
   introStart: { en: "I'm ready", es: "Empezar" },
-  infoTitle: { en: "Your info", es: "Tu información" },
-  infoOpen: { en: "Your info", es: "Tu información" },
+  // "Your info" read as facts about the real learner ("No college degree").
+  // The card holds the pretend person's facts, so it is named as a card.
+  infoTitle: { en: "Info card", es: "Tarjeta de información" },
+  infoOpen: { en: "Info card", es: "Tarjeta de información" },
   infoClose: { en: "Close", es: "Cerrar" },
 } satisfies Record<string, Localized>;
 

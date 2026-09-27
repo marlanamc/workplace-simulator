@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { AlertCircle, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
@@ -312,8 +312,12 @@ export default function JobCard() {
         kicker: lesson.title[lang],
         tone: "green",
         step: 4,
-        line: JOB_CARD_DONE_LINE[lesson.taskKey]?.[lang] ?? LESSON_COPY.doneLine[lang],
-        hint:
+        // Story done lines point at the next day ("Next: the application"),
+        // which a lesson does not have. The lesson's own takeaway says what
+        // the learner can now do instead.
+        line: LESSON_COPY.doneLine[lang],
+        hint: [
+          lesson.takeaway?.[lang],
           lesson.save.status === "guest"
             ? LESSON_COPY.savedHere[lang]
             : lesson.save.status === "saving"
@@ -323,12 +327,15 @@ export default function JobCard() {
                 : lesson.save.status === "error"
                   ? LESSON_COPY.notSaved[lang]
                   : undefined,
-        primaryLabel: LESSON_COPY.practiceAgain[lang],
-        onPrimary: lesson.onRestart,
-        primaryTestId: "lesson-practice-again",
-        secondaryLabel: LESSON_COPY.backToLessons[lang],
-        onSecondary: lesson.onFinish,
-        secondaryTestId: "lesson-back",
+        ].filter(Boolean).join(" "),
+        // Leaving is the common next step in a classroom, so it is the big
+        // button; practicing again is offered quietly under it.
+        primaryLabel: LESSON_COPY.backToLessons[lang],
+        onPrimary: lesson.onFinish,
+        primaryTestId: "lesson-back",
+        secondaryLabel: LESSON_COPY.practiceAgain[lang],
+        onSecondary: lesson.onRestart,
+        secondaryTestId: "lesson-practice-again",
       };
     }
 
@@ -460,7 +467,8 @@ export default function JobCard() {
       onPrimary: liveStep?.primaryLabel ? pressPrimary : undefined,
       // Four bars for a job of any length: the task's own step count is
       // mapped onto them so the shape never changes between jobs.
-      step: Math.min(3, Math.round((effectiveStep.stepIndex / Math.max(1, effectiveStep.stepCount - 1)) * 3)),
+      // Floor, not round: step 2 of 3 lights bar 2, never bar 3.
+      step: Math.min(3, Math.floor((effectiveStep.stepIndex * 4) / Math.max(1, effectiveStep.stepCount))),
     };
   }
 
@@ -494,7 +502,10 @@ export default function JobCard() {
       // In a lesson the card has its own column, so it can sit above a picker's
       // backdrop without covering the picker: a correction for a wrong file
       // stays readable instead of dimmed behind the overlay.
-      className={`animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
+      // A short screen (a Chromebook at 150% text is 911x512) gets a
+      // compact card: narrower, smaller type, capped at half the height, so
+      // it never sits over most of the task and the info card.
+      className={`job-card-compact animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
       style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div
@@ -656,6 +667,7 @@ export default function JobCard() {
         <p
           role="status"
           aria-live="polite"
+          data-card-line
           className="m-0 text-[27px] font-medium leading-[1.2] tracking-[-0.01em] text-[#202124]"
         >
           {script.line}
@@ -698,15 +710,28 @@ export default function JobCard() {
             {lang === "en" ? "Change direction" : "Cambiar de camino"}
           </button>
         )}
-        {lesson && script.tone === "green" && (lesson.save.status === "guest" || lesson.save.status === "error") && (
+        {/* A lesson needs no account. Signing in (to carry this finish to a
+            teacher) is a quiet link for a guest, so it never reads as a step
+            the lesson requires; only a failed save gets a real button. */}
+        {lesson && script.tone === "green" && lesson.save.status === "guest" && (
           <button
             type="button"
-            data-testid={lesson.save.status === "guest" ? "lesson-sign-in" : "lesson-retry-save"}
-            onClick={() => (lesson.save.status === "guest" ? lesson.save.signIn(lang) : lesson.save.retry())}
+            data-testid="lesson-sign-in"
+            onClick={() => lesson.save.signIn(lang)}
+            className="mt-1 min-h-10 cursor-pointer text-[15px] font-medium text-[#0b57d0] underline underline-offset-4"
+          >
+            {LESSON_COPY.signInToSave[lang]}
+          </button>
+        )}
+        {lesson && script.tone === "green" && lesson.save.status === "error" && (
+          <button
+            type="button"
+            data-testid="lesson-retry-save"
+            onClick={() => lesson.save.retry()}
             className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center rounded-[16px] border-2 text-[17px] font-medium"
             style={{ borderColor: TONE.blue, color: TONE.blue, background: "#fff" }}
           >
-            {lesson.save.status === "guest" ? LESSON_COPY.signInToSave[lang] : LESSON_COPY.tryAgain[lang]}
+            {LESSON_COPY.tryAgain[lang]}
           </button>
         )}
         {script.primaryLabel && (
@@ -790,7 +815,19 @@ export default function JobCard() {
           const quiet =
             "flex min-h-10 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[14px] font-medium text-[#5f6368] underline-offset-4 hover:text-[#1f1f1f] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b57d0]";
           return (
-            <div className="mt-2 flex items-center justify-center gap-2">
+            <div className="mt-2 flex flex-wrap items-center justify-center gap-x-2">
+              {/* The way out of a lesson, so a learner in the wrong one
+                  never needs the browser's Back button. */}
+              <button
+                type="button"
+                data-testid="lesson-leave"
+                onClick={() => lesson.onFinish(lang)}
+                aria-label={LESSON_COPY.leaveLabel[lang]}
+                className={quiet}
+              >
+                <ArrowLeft size={16} aria-hidden />
+                {LESSON_COPY.leave[lang]}
+              </button>
               <button
                 type="button"
                 data-testid="lesson-info-open"
@@ -809,7 +846,6 @@ export default function JobCard() {
                 className={quiet}
               >
                 {hintLabel}
-                <span aria-hidden>&rarr;</span>
               </button>
             </div>
           );

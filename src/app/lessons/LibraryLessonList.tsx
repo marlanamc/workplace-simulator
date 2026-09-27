@@ -10,6 +10,8 @@ import { useLibraryDone } from "./LibraryDone";
 export type LibraryRow = {
   lessonKey: string;
   title: string;
+  /** One sentence saying what the lesson is, so a title alone never has to. */
+  summary?: string;
   minutes: number;
   href: string;
   previewHref?: string;
@@ -67,6 +69,7 @@ function Row({ lang, row, number, done }: { lang: Lang; row: LibraryRow; number:
       <Badge row={row} number={number} done={done} />
       <div className="flex min-w-0 flex-[1_1_240px] flex-col gap-2">
         <h3 className="m-0 text-[22px] leading-tight font-extrabold text-pretty">{row.title}</h3>
+        {row.summary && <p className="m-0 text-[17px] leading-snug text-pretty text-harbor-ink">{row.summary}</p>}
         <p className="m-0 flex flex-wrap items-center gap-x-3 gap-y-2 text-[17px] text-harbor-muted">
           {row.chip && (
             <span className="rounded-full px-3.5 py-1 font-extrabold" style={{ background: row.chip.tint, color: row.chip.deep }}>

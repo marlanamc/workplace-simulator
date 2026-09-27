@@ -128,8 +128,14 @@ export function WelcomeShell({
   dataAct,
   speak,
   children,
+  back,
+  footer,
 }: {
   testId: string;
+  /** A quiet way out, top left ("← Lessons"). */
+  back?: { label: string; ariaLabel?: string; onClick: () => void };
+  /** Replaces the "Need help? Contact…" line (a lesson says "Ask your teacher"). */
+  footer?: ReactNode;
   dataAct?: string;
   /**
    * The screen read out loud. These two full-page screens carry the most new
@@ -148,7 +154,19 @@ export function WelcomeShell({
       className="min-h-screen bg-[#f6f1e8] px-5 py-5 text-[#202124] sm:px-10 sm:py-8"
     >
       <div className="mx-auto max-w-[680px]">
-        <div className="mb-5 flex justify-end gap-2 sm:mb-6">
+        <div className="mb-5 flex flex-wrap justify-end gap-2 sm:mb-6">
+          {back && (
+            <button
+              type="button"
+              data-testid="welcome-back"
+              onClick={back.onClick}
+              aria-label={back.ariaLabel}
+              className="mr-auto inline-flex min-h-11 items-center gap-2 rounded-lg px-2 text-base font-medium text-[#0b57d0] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#0b57d0]"
+            >
+              <span aria-hidden>&larr;</span>
+              {back.label}
+            </button>
+          )}
           {speak && (
             <button
               type="button"
@@ -172,6 +190,9 @@ export function WelcomeShell({
 
         {children}
 
+        {footer ? (
+          <p className="mt-6 text-sm leading-relaxed">{footer}</p>
+        ) : (
         <p className="mt-6 text-sm leading-relaxed">
           {lang === "en" ? "Need help? Contact Marlie at" : "¿Necesitas ayuda? Contacta a Marlie en"}{" "}
           <a
@@ -182,6 +203,7 @@ export function WelcomeShell({
           </a>
           .
         </p>
+        )}
       </div>
     </main>
   );

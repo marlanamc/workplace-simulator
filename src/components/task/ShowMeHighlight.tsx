@@ -41,6 +41,21 @@ export default function ShowMeHighlight({
       setOval(Boolean(el?.hasAttribute("data-showme-oval")));
     };
 
+    // A target below the fold (Reply under a long email, a compose box that
+    // opened under the reading pane) would otherwise get a ring on the shelf.
+    // Bring it to the middle of its scroll container first; the scroll
+    // listener below re-measures as it moves.
+    const target = targetId
+      ? document.querySelector(`[data-showme="${targetId}"][data-showme-primary]`) ??
+        document.querySelector(`[data-showme="${targetId}"]`)
+      : null;
+    if (target) {
+      const r = target.getBoundingClientRect();
+      if (r.top < 0 || r.bottom > window.innerHeight - 64) {
+        target.scrollIntoView({ block: "center", inline: "nearest" });
+      }
+    }
+
     const raf = requestAnimationFrame(measure);
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, true);

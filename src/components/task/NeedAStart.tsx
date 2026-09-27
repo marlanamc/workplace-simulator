@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Lang } from "@/lib/task-types";
+import { useLesson } from "@/lib/lesson-context";
 
 const CHIP =
   "min-h-[32px] rounded-full border border-[#dadce0] px-3 text-[12px] text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer";
@@ -14,13 +15,23 @@ export default function NeedAStart({
   starters,
   onPick,
   chipClassName = CHIP,
+  missed,
 }: {
   lang: Lang;
   starters: string[];
   onPick: (starter: string) => void;
   chipClassName?: string;
+  /**
+   * Whether the learner has already had a send rejected. A task that passes
+   * it gets the lesson rule: "On my own" keeps the starters out of sight
+   * until the first miss, so the first try is the learner's own words.
+   * Story mode, Guided lessons, and tasks that omit it are unchanged.
+   */
+  missed?: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const lesson = useLesson();
+  if (lesson?.mode === "independent" && missed === false) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-2">

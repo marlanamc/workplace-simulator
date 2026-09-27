@@ -11,7 +11,9 @@ export const QUICK_SEARCHES: Localized[] = [
   { en: "W-4", es: "W-4" },
 ];
 
-export const normalizeSearch = (value: string) => value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+/** Accents, case, and hyphens ignored: "W4", "w-4" and "W-4" are one word. */
+export const normalizeSearch = (value: string) =>
+  value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/(\w)-(\w)/g, "$1$2").trim();
 export const cleanSearch = (value: string) => value.trim().slice(0, 200);
 
 /** Small words that would match almost every lesson. Dropped unless they are the whole search. */
@@ -21,13 +23,72 @@ const STOP_WORDS = new Set(
 
 /** A learner's word, and other words that mean the same thing in the lessons. */
 const SYNONYMS: Record<string, string[]> = {
-  password: ["contrasena", "code", "codigo"],
-  contrasena: ["password", "code", "codigo"],
-  job: ["empleo"],
-  empleo: ["job"],
+  password: ["contrasena", "code", "codigo", "sign in"],
+  contrasena: ["password", "code", "codigo", "sesion"],
+  login: ["sign in", "password", "account", "sesion", "contrasena"],
+  signin: ["sign in", "password", "account"],
+  sesion: ["sign in", "password", "contrasena"],
+  account: ["cuenta", "sign in", "password"],
+  cuenta: ["account", "sesion", "contrasena"],
+  phone: ["text", "code", "telefono", "mensaje"],
+  telefono: ["phone", "text", "mensaje", "codigo"],
+  text: ["mensaje", "code"],
+  job: ["empleo", "work", "hire"],
+  empleo: ["job", "trabajo"],
+  trabajo: ["job", "empleo", "work"],
+  work: ["job", "trabajo"],
   correo: ["email"],
   email: ["correo"],
+  mail: ["email", "correo"],
+  tax: ["w4", "impuesto"],
+  impuesto: ["w4", "tax"],
+  w4: ["tax", "impuesto"],
+  money: ["total", "budget", "dinero", "presupuesto"],
+  dinero: ["total", "budget", "money", "presupuesto"],
+  excel: ["spreadsheet", "sheet", "hoja"],
+  calendar: ["calendario", "meeting", "invite", "reunion"],
+  calendario: ["calendar", "meeting", "invite", "reunion"],
+  meeting: ["calendar", "reunion"],
+  file: ["archivo", "drive"],
+  archivo: ["file", "drive"],
+  appointment: ["cita"],
+  cita: ["appointment"],
+  resume: ["curriculum"],
+  curriculum: ["resume"],
 };
+
+/** "passwords" → "password", "taxes" → "tax", "citas" → "cita". */
+const singular = (w: string) =>
+  w.length > 4 && w.endsWith("es") && !w.endsWith("ses") ? [w.slice(0, -2), w.slice(0, -1)]
+  : w.length > 3 && w.endsWith("s") ? [w.slice(0, -1)]
+  : [];
+
+/** One letter missing, extra, or swapped ("pasword", "calender"). Only for longer words, so short ones stay exact. */
+function nearMiss(a: string, b: string) {
+  if (a.length < 5 || Math.abs(a.length - b.length) > 1) return false;
+  let i = 0;
+  let j = 0;
+  let edits = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) {
+      i++;
+      j++;
+      continue;
+    }
+    if (++edits > 1) return false;
+    if (a.length > b.length) i++;
+    else if (b.length > a.length) j++;
+    else {
+      i++;
+      j++;
+    }
+  }
+  return edits + (a.length - i) + (b.length - j) <= 1;
+}
+
+const matches = (text: string, words: string[]) =>
+  words.some((w) => text.includes(w)) ||
+  words.some((w) => text.split(/[^a-z0-9]+/).some((token) => nearMiss(w, token)));
 
 const searchText = (lesson: LessonEntry) =>
   normalizeSearch(
@@ -50,11 +111,16 @@ export function searchLessons(skill: SkillTag | null, query: string): LessonEntr
   const all = normalizeSearch(cleanSearch(query)).split(/\s+/).filter(Boolean);
   if (all.length === 0) return inSkill;
   const words = all.some((w) => !STOP_WORDS.has(w)) ? all.filter((w) => !STOP_WORDS.has(w)) : all;
-  const groups = words.map((w) => [w, ...(SYNONYMS[w] ?? [])]);
+  const groups = words.map((w) => {
+    // A typo of a word we know ("pasword") searches as that word.
+    const known = Object.keys(SYNONYMS).filter((k) => nearMiss(w, k));
+    const forms = [w, ...singular(w), ...known];
+    return [...forms, ...forms.flatMap((f) => SYNONYMS[f] ?? [])];
+  });
   return inSkill
     .map((lesson, order) => {
       const text = searchText(lesson);
-      return { lesson, order, score: groups.filter((g) => g.some((w) => text.includes(w))).length };
+      return { lesson, order, score: groups.filter((g) => matches(text, g)).length };
     })
     .filter((m) => m.score > 0)
     .sort((a, b) => b.score - a.score || a.order - b.order)
