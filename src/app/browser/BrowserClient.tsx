@@ -10,7 +10,7 @@ import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { useLesson } from "@/lib/lesson-context";
 import { LEVELS, levelForTrack, nextTaskInTrack, unlockedLevels } from "@/lib/tracks-content";
-import { TAB_META, TAB_COLORS, bookmarkTabKeys } from "@/lib/tabs";
+import { TAB_META, TAB_COLORS, bookmarkTabKeys, tabLabel } from "@/lib/tabs";
 import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -51,13 +51,16 @@ function ChromeTab({
   canClose,
   onClick,
   onClose,
+  lang,
 }: {
+  lang: "en" | "es";
   tab: TabDef;
   isActive: boolean;
   canClose: boolean;
   onClick: () => void;
   onClose: () => void;
 }) {
+  const label = tabLabel(tab.key, tab.label, lang);
   const newTab = isNewTabKey(tab.key);
   const Icon = TAB_ICONS[tab.key];
   // The close control is a real sibling <button>, never nested inside the
@@ -75,7 +78,7 @@ function ChromeTab({
       )}
       <button
         onClick={onClick}
-        title={tab.label}
+        title={label}
         className="relative z-10 flex h-full min-w-0 flex-1 items-center gap-2 pl-3 pr-1 cursor-pointer"
       >
         <span
@@ -89,12 +92,12 @@ function ChromeTab({
             isActive ? "text-[#202124]" : "text-[#474747]"
           }`}
         >
-          {tab.label}
+          {label}
         </span>
       </button>
       {canClose && (
         <button
-          aria-label={`Close ${tab.label}`}
+          aria-label={`Close ${label}`}
           onClick={onClose}
           className={`relative z-10 mr-2 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full text-[11px] text-[#5f6368] cursor-pointer hover:bg-black/10 ${
             isActive ? "opacity-70" : "opacity-0 group-hover:opacity-70"
@@ -391,6 +394,7 @@ export default function BrowserClient() {
             <ChromeTab
               key={t.key}
               tab={t}
+              lang={lang}
               isActive={t.key === activeTab}
               canClose={canCloseTab(t)}
               onClick={() => setActiveTab(t.key as TabKey)}
@@ -493,7 +497,7 @@ export default function BrowserClient() {
                 return Icon ? <Icon size={10} strokeWidth={2.5} /> : null;
               })()}
             </span>
-            {t.label}
+            {tabLabel(t.key, t.label, lang)}
           </button>
         ))}
       </div>

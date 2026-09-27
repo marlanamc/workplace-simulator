@@ -46,6 +46,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   needWhyShort: string;
   needWhyReal: string;
   needWhyBlank: string;
+  needWhyReason: string;
   needFullTime: string;
   historyLabel: string;
   historyHint: string;
@@ -82,6 +83,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
     needWhyShort: "Add your reason. For example: \"I want this job because ___.\"",
     needWhyReal: "Some of that is not words. Write your reason in your own words.",
     needWhyBlank: "Fill in the blank ___ with your own words.",
+    needWhyReason: "Say why Sam wants this job, or what Sam is good at. For example: \"I want this job because ___.\"",
     needFullTime: `This job is full time, 40 hours a week. ${JOB_SEEKER.first} wants 40 hours a week. Choose Full time.`,
     historyLabel: "Work history",
     historyHint: "Already filled in. Read it.",
@@ -118,6 +120,7 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
     needWhyShort: "Agrega tu razón. Por ejemplo: \"Quiero este trabajo porque ___.\"",
     needWhyReal: "Parte de eso no son palabras. Escribe tu razón con tus propias palabras.",
     needWhyBlank: "Llena el espacio ___ con tus propias palabras.",
+    needWhyReason: "Di por qué Sam quiere este trabajo, o qué hace bien Sam. Por ejemplo: \"Quiero este trabajo porque ___.\"",
     needFullTime: `Este trabajo es de tiempo completo, 40 horas por semana. ${JOB_SEEKER.first} quiere 40 horas por semana. Elige Tiempo completo.`,
     historyLabel: "Historial de trabajo",
     historyHint: "Ya está lleno. Léelo.",
@@ -179,7 +182,16 @@ export const AVAILABILITY_OPTIONS: { key: string; label: Localized }[] = [
 /** One short sentence with a reason: "I want this job because I like office work." */
 export const WHY_MIN_WORDS = 5;
 
-export type WhyProblem = "empty" | "blank" | "mash" | "short";
+export type WhyProblem = "empty" | "blank" | "mash" | "short" | "noReason";
+
+/**
+ * Words that give a reason for wanting a job, or say what the person is good
+ * at, in either language. Deliberately broad: honest reasons vary ("steady
+ * hours for my family", "me gusta organizar"), so this only catches a
+ * sentence that is about something else ("I look at the sky every day").
+ */
+const REASON_WORDS =
+  /\b(because|want|wants|like|likes|love|enjoy|interest|good at|experience|skill|help|learn|grow|career|team|customer|office|organi[sz]|work|job|role|position|hours|pay|family|future|people|can|am|porque|quiero|quisiera|me gusta|me encanta|experiencia|ayudar|aprender|crecer|equipo|client|oficina|organiz|trabaj|puesto|empleo|horario|horas|familia|futuro|gente|personas|puedo|soy|sé)/i;
 
 /**
  * The "why" answer passes when it is one real sentence. The card, the box's
@@ -191,6 +203,7 @@ export function whyProblem(why: string): WhyProblem | null {
   if (hasBlank(why)) return "blank";
   if (looksLikeKeyboardMash(why)) return "mash";
   if (realWordCount(why) < WHY_MIN_WORDS) return "short";
+  if (!REASON_WORDS.test(why.normalize("NFC"))) return "noReason";
   return null;
 }
 
@@ -200,7 +213,15 @@ export function whyLooksReal(why: string): boolean {
 
 export function whyHint(problem: WhyProblem, lang: Lang): string {
   const c = JOB_APPLICATION_COPY[lang];
-  return problem === "empty" ? c.needWhy : problem === "blank" ? c.needWhyBlank : problem === "mash" ? c.needWhyReal : c.needWhyShort;
+  return problem === "empty"
+    ? c.needWhy
+    : problem === "blank"
+      ? c.needWhyBlank
+      : problem === "mash"
+        ? c.needWhyReal
+        : problem === "noReason"
+          ? c.needWhyReason
+          : c.needWhyShort;
 }
 
 /**

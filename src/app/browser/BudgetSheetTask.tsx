@@ -33,7 +33,7 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
-import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
+import { useShowMe, SHOW_ME_LOOK, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
 type View = "home" | "sheet" | "compose" | "done";
 type Col = "A" | "B" | "C" | "D" | "E";
@@ -268,6 +268,7 @@ export default function BudgetSheetTask() {
                     <button
                       key={col}
                       data-showme={col === "D" ? "status-column" : undefined}
+                      data-showme-look={col === "D" ? SHOW_ME_LOOK[lang] : undefined}
                       onClick={() => select({ row: HEADER_ROW, col })}
                       className={`shrink-0 border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 text-left text-[12px] font-medium cursor-pointer ${CELL_FOCUS}`}
                       style={{

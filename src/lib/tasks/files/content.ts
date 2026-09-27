@@ -163,6 +163,12 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   },
 ];
 
+/** Step 0 while My Drive is open: the folder the line names is one click away. */
+export const MY_DRIVE_STEP: Localized = {
+  en: "This is My Drive. Click Shared with me. Then click Cafe Shared Drive.",
+  es: "Esto es Mi unidad. Haz clic en Compartido conmigo. Después haz clic en Unidad compartida del café.",
+};
+
 export const FILES_COPY: Record<Lang, {
   heading: string;
   newBtn: string;
@@ -252,7 +258,7 @@ export const FILES_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     scenarioKicker: "La situación de hoy",
-    scenario: "Renata te pidió compartir el horario de esta semana con Jordan Kim, un nuevo empleado. Solo para ver. Jordan no necesita editarlo. También te pidió renombrarlo así: schedule-week-of-[fecha].",
+    scenario: "Renata te pidió compartir el horario de esta semana con Jordan Kim, una persona nueva en el equipo. Solo para ver. Jordan no necesita editarlo. También te pidió renombrarlo así: schedule-week-of-[fecha].",
     searchPlaceholder: "Buscar archivos…",
     allFolders: "Todas las carpetas",
     renameLabel: "Cambia el nombre de este archivo",
@@ -571,7 +577,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "\"Puede ver\" quiere decir que la persona puede mirar el archivo, pero no cambiarlo.",
         "\"Puede editar\" quiere decir que puede cambiar el archivo. Dalo solo si necesita cambiarlo.",
-        "Si no estás seguro, elige \"Puede ver\".",
+        "Si tienes dudas, elige \"Puede ver\".",
       ],
       tip: "Es fácil dar \"Puede editar\" por error. Revisa otra vez antes de hacer clic en Compartir.",
     },

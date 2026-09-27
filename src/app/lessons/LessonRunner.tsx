@@ -114,6 +114,7 @@ export default function LessonRunner({
             atWork={entry.guide.atWork}
             onStart={() => setStarted(true)}
             onBack={(lang) => router.push(libraryReturn(returnTo, lang))}
+            persona={entry.persona}
           />
         )}
       </LessonProgressProvider>

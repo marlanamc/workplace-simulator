@@ -189,7 +189,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Mail", "mail"),
     // The inbox shows one new email at a time, so the card never promises three at once.
     jobCardLine: { en: "Answer Maria's new email. More will come, one at a time.", es: "Contesta el correo nuevo de Maria. Van a llegar más, uno a la vez." },
-    jobCardDoneLine: { en: "Three replies sent. You're ready for tomorrow.", es: "Tres respuestas enviadas. Ya estás listo para mañana." },
+    jobCardDoneLine: { en: "Three replies sent. You're ready for tomorrow.", es: "Tres respuestas enviadas. Ya tienes todo listo para mañana." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
       summary: {
@@ -453,8 +453,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Get back into a locked account", es: "Recupera una cuenta bloqueada" },
     dispatch: {
-      en: "You're signed out. Get back in before your shift.",
-      es: "Tu sesión se cerró. Vuelve a entrar antes de tu turno.",
+      en: "You're signed out of your work account. Sign back in.",
+      es: "Se cerró tu sesión en la cuenta del trabajo. Vuelve a entrar.",
     },
     skill: { en: "Get back into a locked account", es: "recuperar una cuenta bloqueada" },
     bookmarkLabel: "Sign In",
@@ -1605,7 +1605,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     label: { en: "Fill out the W-4", es: "Llena el W-4" },
     dispatch: {
       en: "Practice the W-4, a new-hire tax form, for a pretend worker named Robin Avery.",
-      es: "Practica el W-4, un formulario de impuestos para empleados nuevos, para un trabajador inventado llamado Robin Avery.",
+      es: "Practica el W-4, un formulario de impuestos para empleados nuevos, para una persona inventada, Robin Avery.",
     },
     skill: { en: "Fill out a W-4", es: "llenar un formulario W-4" },
     bookmarkLabel: "Onboarding",
@@ -1628,12 +1628,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["forms"],
       minutes: 10,
+      persona: "Robin Avery",
       scene: {
         you: {
           en: "You are practicing a new-hire tax form. You fill it out for a pretend person, not for you.",
           es: "Estás practicando un formulario de impuestos para empleados nuevos. Lo llenas para una persona inventada, no para ti.",
         },
-        people: [{ name: "Robin Avery", role: { en: "A pretend new worker", es: "Un empleado nuevo inventado" } }],
+        people: [{ name: "Robin Avery", role: { en: "A pretend new worker", es: "Una persona recién contratada (inventada)" } }],
         need: {
           en: "Fill out Robin's W-4. Read Robin's facts on your info card and choose what fits Robin. Then sign with Robin's name and write the date.",
           es: "Llena el W-4 de Robin. Lee los datos de Robin en tu tarjeta de información y elige lo que corresponde a Robin. Después firma con el nombre de Robin y escribe la fecha.",

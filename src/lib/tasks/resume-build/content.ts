@@ -91,7 +91,7 @@ export const RESUME_COPY: Record<Lang, {
     skillsHint: "Elige las que ya has hecho.",
     previewLabel: "Vista previa",
     save: "Guardar currículum",
-    needSummary: "Escribe un resumen en la primera casilla: 1 o 2 oraciones sobre ti como trabajador.",
+    needSummary: "Escribe un resumen en la primera casilla: 1 o 2 oraciones sobre ti en el trabajo.",
     needBullets: "Escribe una cosa que hiciste bien en cada empleo.",
     needSkills: "Marca al menos tres habilidades que hayas mostrado.",
     sentKicker: "Currículum guardado",
@@ -105,7 +105,7 @@ export const RESUME_COPY: Record<Lang, {
     namePlaceholder: "Tu nombre",
     needBulletFor: (role) => `Escribe una cosa que hiciste bien como ${role}, como "Entrené a trabajadores nuevos."`,
     educationLabel: "Estudios",
-    needSummaryReal: "Parte del resumen no son palabras. Escribe 1 o 2 oraciones sobre ti como trabajador.",
+    needSummaryReal: "Parte del resumen no son palabras. Escribe 1 o 2 oraciones sobre ti en el trabajo.",
     needSummaryBlank: "Llena el espacio ___ del resumen con tus propias palabras.",
     needBulletReal: (role) => `Parte de la línea de ${role} no son palabras. Escribe una cosa que hiciste bien en ese empleo.`,
     needBulletBlank: (role) => `Llena el espacio ___ de la línea de ${role} con tus propias palabras.`,
@@ -279,7 +279,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
     en: "Write a short summary: 1 or 2 sentences about you as a worker.",
-    es: "Escribe un resumen corto: 1 o 2 oraciones sobre ti como trabajador.",
+    es: "Escribe un resumen corto: 1 o 2 oraciones sobre ti en el trabajo.",
   },
   {
     en: "For each job, write one thing you did well. Start with a word like trained, fixed, or served.",
@@ -295,7 +295,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 export const LESSON_RIGHT_NOW_STEPS: Localized[] = [
   {
     en: `Write a short summary as ${JOB_SEEKER.first}: 1 or 2 sentences about you as a worker.`,
-    es: `Escribe un resumen corto como ${JOB_SEEKER.first}: 1 o 2 oraciones sobre ti como trabajador.`,
+    es: `Escribe un resumen corto como ${JOB_SEEKER.first}: 1 o 2 oraciones sobre ti en el trabajo.`,
   },
   {
     en: "For each job, write one different thing you did well. Start with a word like trained, fixed, or served.",
