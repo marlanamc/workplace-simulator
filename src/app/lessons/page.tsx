@@ -1,3 +1,4 @@
+import { materialsHref } from "@/lib/lessons/materials-links";
 import Link from "next/link";
 import { Atkinson_Hyperlegible_Next } from "next/font/google";
 import { Anchor, Search, Volume2 } from "lucide-react";
@@ -63,6 +64,7 @@ export default async function LessonsPage({
       summary: l.summary[lang],
       minutes: l.minutes,
       href: lessonHref(l.taskKey),
+      materialsHref: teacher ? materialsHref(l.taskKey, lang) : undefined,
       previewHref: teacher ? lessonHref(l.taskKey, true) : undefined,
       ...(withIcon && look && topic
         ? {
