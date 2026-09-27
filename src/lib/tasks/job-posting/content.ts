@@ -1,4 +1,6 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { hasBlank, looksLikeKeyboardMash, plain, realWordCount } from "@/lib/grading-jobs";
+import { JOB_SEEKER } from "@/lib/tasks/job-application/content";
 
 /**
  * "The Posting" — the first step of the getting-hired arc at the front of
@@ -26,6 +28,14 @@ export const JOB_POSTING_COPY: Record<Lang, {
   needPicks: string;
   needFit: string;
   degreeNote: string;
+  /** The same fact about the character a lesson learner is playing. */
+  lessonDegreeNote: string;
+  needFitWords: string;
+  needFitReal: string;
+  needFitBlank: string;
+  needFitWork: string;
+  doneChecked: string;
+  doneFit: string;
   sentKicker: string;
   doneTitle: string;
   doneBody: string;
@@ -53,7 +63,14 @@ export const JOB_POSTING_COPY: Record<Lang, {
     apply: "Apply for this job",
     needPicks: "Check at least three things you have done. Read each line and ask: have I done this?",
     needFit: "Write one sentence about why you are a good fit. Then click Apply.",
-    degreeNote: "Your cafe experience does not include a college degree. This job does not need one, so leave that box empty. You still have enough.",
+    degreeNote: "Your cafe work does not include a college degree. This job does not need one. Leave that box empty.",
+    lessonDegreeNote: `${JOB_SEEKER.first} has no college degree. This job does not need one. Leave that box empty.`,
+    needFitWords: "Write a few more words: say one thing you did, like \"I fixed the schedule.\"",
+    needFitReal: "Some of that is not words. Write one thing you did at the cafe, in your own words.",
+    needFitBlank: "Fill in the blank ___ with your own words.",
+    needFitWork: "Name one thing you did at Harborside Cafe that this job asks for, like fixing the schedule.",
+    doneChecked: "You checked",
+    doneFit: "Why you fit",
     sentKicker: "Ready to apply",
     doneTitle: "You matched the posting to your experience.",
     doneBody: "You have most of what they ask for. A missing box or two is normal. Apply anyway.",
@@ -81,7 +98,14 @@ export const JOB_POSTING_COPY: Record<Lang, {
     apply: "Aplicar a este trabajo",
     needPicks: "Marca al menos tres cosas que ya hiciste. Lee cada línea y pregúntate: ¿ya hice esto?",
     needFit: "Escribe una oración sobre por qué eres buena opción. Después haz clic en Aplicar.",
-    degreeNote: "Tu experiencia en el café no incluye un título universitario. Este trabajo no lo necesita, así que deja esa casilla vacía. Aun así tienes suficiente.",
+    degreeNote: "Tu trabajo en el café no incluye un título universitario. Este trabajo no lo necesita. Deja esa casilla vacía.",
+    lessonDegreeNote: `${JOB_SEEKER.first} no tiene título universitario. Este trabajo no lo necesita. Deja esa casilla vacía.`,
+    needFitWords: "Escribe unas palabras más: di una cosa que hiciste, como \"Arreglé el horario.\"",
+    needFitReal: "Parte de eso no son palabras. Escribe una cosa que hiciste en el café, con tus palabras.",
+    needFitBlank: "Llena el espacio ___ con tus propias palabras.",
+    needFitWork: "Nombra una cosa que hiciste en Harborside Cafe y que este trabajo pide, como arreglar el horario.",
+    doneChecked: "Marcaste",
+    doneFit: "Por qué encajas",
     sentKicker: "Listo para aplicar",
     doneTitle: "Comparaste el anuncio con tu experiencia.",
     doneBody: "Tienes casi todo lo que piden. Que falten uno o dos puntos es normal. Aplica de todos modos.",
@@ -151,22 +175,92 @@ export function pickingLooksReady(pickedKeys: string[]): boolean {
   return pickedKeys.filter((k) => MET_KEYS.includes(k)).length >= MIN_PICKS;
 }
 
-export function fitLooksReal(fit: string): boolean {
-  return fit.trim().split(/\s+/).filter(Boolean).length >= 4;
+export type PickProblem = "few" | "degree";
+
+/**
+ * What is wrong with the boxes checked. The degree line is a fact about the
+ * person applying (the lesson's character has none), so checking it is a
+ * claim that is not true, even with enough other boxes.
+ */
+export function pickProblem(pickedKeys: string[]): PickProblem | null {
+  if (pickedKeys.includes("degree")) return "degree";
+  return pickingLooksReady(pickedKeys) ? null : "few";
 }
 
+/** The fewest words that can still say one real thing: "I led team". */
+export const FIT_MIN_WORDS = 3;
+
+// Word starts that name something from the cafe jobs or this posting. A fit
+// line has to point at one of them: "I look at the sky every day" does not.
+const WORK_WORDS = [
+  // English
+  "schedul", "team", "train", "led", "lead", "manag", "supervis", "email", "mail", "calendar",
+  "spreadsheet", "sheet", "excel", "tip", "total", "number", "budget", "customer", "serv", "organiz",
+  "organis", "fix", "help", "coworker", "report", "shift", "cafe", "work", "job", "meeting",
+  "file", "computer", "talk", "communicat", "plan", "answer", "cash", "money", "people", "staff",
+  "office", "problem", "run", "ran", "boss",
+  // Spanish (accents are removed before matching)
+  "horario", "equipo", "entren", "capacit", "dirig", "lider", "gerent", "jefe", "correo", "calendario",
+  "hoja", "propina", "numero", "presupuesto", "cliente", "atend", "atiend", "organic", "organiz", "arregl",
+  "ayud", "companer", "informe", "turno", "trabaj", "reunion", "archivo", "computadora", "habl",
+  "contest", "dinero", "gente", "personal", "oficina", "problema", "manej", "empleo",
+];
+
+export type FitProblem = "empty" | "blank" | "mash" | "short" | "offTopic";
+
+/**
+ * The fit line passes when it is a short, real sentence about something done
+ * at work. It is not graded for quality: the teacher reads it.
+ */
+export function fitProblem(fit: string): FitProblem | null {
+  if (!fit.trim()) return "empty";
+  if (hasBlank(fit)) return "blank";
+  if (looksLikeKeyboardMash(fit)) return "mash";
+  if (realWordCount(fit) < FIT_MIN_WORDS) return "short";
+  const words = plain(fit).split(" ");
+  if (!words.some((w) => WORK_WORDS.some((stem) => w.startsWith(stem)))) {
+    return "offTopic";
+  }
+  return null;
+}
+
+export function fitLooksReal(fit: string): boolean {
+  return fitProblem(fit) === null;
+}
+
+/** The correction for each way the fit line falls short. */
+export function fitHint(problem: FitProblem, lang: Lang): string {
+  const c = JOB_POSTING_COPY[lang];
+  switch (problem) {
+    case "empty":
+      return c.needFit;
+    case "blank":
+      return c.needFitBlank;
+    case "mash":
+      return c.needFitReal;
+    case "short":
+      return c.needFitWords;
+    case "offTopic":
+      return c.needFitWork;
+  }
+}
+
+/**
+ * Frames, not answers: each has a blank the learner fills from the info card,
+ * so one click plus Apply is never a finished line.
+ */
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "I fixed problems in the cafe's work schedule.",
-    "I typed tips in a spreadsheet and sent the total to my manager.",
-    "I use email, calendars, and spreadsheets at work.",
-    "I led a team as a shift lead.",
+    "At Harborside Cafe, I ___.",
+    "I am good at ___.",
+    "At work I used ___ every day.",
+    "I led a team when I ___.",
   ],
   es: [
-    "Arreglé problemas en el horario de trabajo del café.",
-    "Escribí propinas en una hoja de cálculo y le envié el total a mi gerente.",
-    "Uso correo, calendarios y hojas de cálculo en el trabajo.",
-    "Dirigí un equipo como líder de turno.",
+    "En Harborside Cafe, yo ___.",
+    "Se me da bien ___.",
+    "En el trabajo usaba ___ todos los días.",
+    "Dirigí un equipo cuando ___.",
   ],
 };
 
@@ -177,7 +271,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "A job posting is a wish list. Most people who get hired do not match every line.",
         "Look for the lines you do cover, and count them. Three or four strong matches is enough to apply.",
-        "The degree line is common and often not required. When the role says \"or equivalent experience,\" your work counts.",
+        "Read the degree line closely. This one says \"preferred\". Preferred means nice to have, not required.",
       ],
       tip: "If you match most of the list, apply. Let them decide, not you.",
     },
@@ -188,7 +282,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Un anuncio de empleo es una lista de deseos. La mayoría de quienes son contratados no cumplen cada línea.",
         "Busca las líneas que sí cubres y cuéntalas. Tres o cuatro coincidencias fuertes bastan para aplicar.",
-        "La línea del título es común y muchas veces no es obligatoria. Cuando el puesto dice \"o experiencia equivalente\", tu trabajo cuenta.",
+        "Lee con cuidado la línea del título. Esta dice \"de preferencia\". Eso quiere decir que ayuda, pero no es obligatorio.",
       ],
       tip: "Si cumples casi toda la lista, aplica. Que decidan ellos, no tú.",
     },
@@ -204,6 +298,18 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   {
     en: "Write one sentence: why are you a good fit? Then click Apply for this job.",
     es: "Escribe una oración: ¿por qué eres buena opción? Después haz clic en Aplicar a este trabajo.",
+  },
+];
+
+/** A lesson learner is playing a character, so the card names who "you" are. */
+export const LESSON_RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: `Check each thing ${JOB_SEEKER.first} has done. Look at your info card.`,
+    es: `Marca cada cosa que ${JOB_SEEKER.first} ya hizo. Mira tu tarjeta de información.`,
+  },
+  {
+    en: `Write one sentence as ${JOB_SEEKER.first}: why are you a good fit? Then click Apply for this job.`,
+    es: `Escribe una oración como ${JOB_SEEKER.first}: ¿por qué eres buena opción? Después haz clic en Aplicar a este trabajo.`,
   },
 ];
 

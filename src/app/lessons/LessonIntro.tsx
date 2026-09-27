@@ -19,12 +19,15 @@ export default function LessonIntro({
   reference,
   atWork = [],
   onStart,
+  onBack,
 }: {
   title: Localized;
   scene: LessonScene;
   reference: LessonFact[];
   atWork?: WorkExample[];
   onStart: () => void;
+  /** Back to the library, in the language on screen. */
+  onBack: (lang: "en" | "es") => void;
 }) {
   const { lang } = useProgress();
   const people = scene.people.map((p) => `${p.name}: ${p.role[lang]}.`);
@@ -36,7 +39,12 @@ export default function LessonIntro({
     .join(" ");
 
   return (
-    <WelcomeShell testId="lesson-intro" speak={speak}>
+    <WelcomeShell
+      testId="lesson-intro"
+      speak={speak}
+      back={{ label: LESSON_COPY.leave[lang], ariaLabel: LESSON_COPY.leaveLabel[lang], onClick: () => onBack(lang) }}
+      footer={LESSON_COPY.askTeacher[lang]}
+    >
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-warning">{LESSON_COPY.kicker[lang]}</p>
         <h1 className="mt-1 text-[30px] leading-[1.1] font-semibold tracking-tight sm:text-[38px]">{title[lang]}</h1>

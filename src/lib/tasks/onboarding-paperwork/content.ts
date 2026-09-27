@@ -1,5 +1,6 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
 import type { TaskKey } from "@/lib/desktop-content";
+import { readCount } from "@/lib/grading-jobs";
 
 /**
  * "New-Hire Paperwork" — the last step of the getting-hired arc, before day one
@@ -25,6 +26,9 @@ export const PAPERWORK_SHELL: Record<Lang, {
   signLabel: string;
   dateLabel: string;
   datePlaceholder: string;
+  /** An empty signature box must not look signed: no name as a grey placeholder. */
+  signPlaceholder: string;
+  signShort: string;
 }> = {
   en: {
     needRequired: "Fill in every box marked required before you submit.",
@@ -40,6 +44,8 @@ export const PAPERWORK_SHELL: Record<Lang, {
     signLabel: "Signature (type the employee's full name)",
     dateLabel: "Date",
     datePlaceholder: "MM/DD/YYYY",
+    signPlaceholder: "Type the full name",
+    signShort: "Signature",
   },
   es: {
     needRequired: "Llena cada casilla marcada como obligatoria antes de enviar.",
@@ -55,6 +61,8 @@ export const PAPERWORK_SHELL: Record<Lang, {
     signLabel: "Firma (escribe el nombre completo del empleado)",
     dateLabel: "Fecha",
     datePlaceholder: "MM/DD/AAAA",
+    signPlaceholder: "Escribe el nombre completo",
+    signShort: "Firma",
   },
 };
 
@@ -68,6 +76,7 @@ export const W4_COPY: Record<Lang, {
   statusLabel: string;
   dependentsLabel: string;
   dependentsHint: string;
+  dependentsShort: string;
   submit: string;
   doneTitle: string;
   doneBody: string;
@@ -80,6 +89,7 @@ export const W4_COPY: Record<Lang, {
     statusLabel: "Filing status",
     dependentsLabel: "Number of dependents (children or others the employee supports)",
     dependentsHint: "If none, enter 0.",
+    dependentsShort: "Dependents",
     submit: "Submit W-4",
     doneTitle: "W-4 submitted.",
     doneBody: "Payroll now knows Robin's filing status.",
@@ -92,6 +102,7 @@ export const W4_COPY: Record<Lang, {
     statusLabel: "Estado civil para impuestos",
     dependentsLabel: "Número de dependientes (hijos u otras personas que el empleado mantiene)",
     dependentsHint: "Si no hay, escribe 0.",
+    dependentsShort: "Dependientes",
     submit: "Enviar W-4",
     doneTitle: "W-4 enviado.",
     doneBody: "Nómina ya conoce el estado civil para impuestos de Robin.",
@@ -224,7 +235,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
         "It tells your job how much tax to hold back from each paycheck.",
         "Filing status (single, married, head of household) is the main choice. Choose the one for the person on the form.",
         "A dependent is someone the person supports, usually a child. If there are none, type 0.",
-        "In this practice, the person is Robin Avery. Copy Robin's facts, not your own.",
+        "In this practice, the person is Robin Avery. Read Robin's facts and decide for Robin, not for you.",
       ],
       tip: "On your own W-4 at a real job, you choose what is true for you. You can change it later.",
     },
@@ -234,7 +245,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
         "Le dice a tu trabajo cuánto impuesto retener de cada cheque.",
         "El estado civil para impuestos (soltero, casado, cabeza de familia) es la decisión principal. Elige el de la persona del formulario.",
         "Un dependiente es alguien que esa persona mantiene, normalmente un hijo. Si no hay, escribe 0.",
-        "En esta práctica, la persona es Robin Avery. Copia los datos de Robin, no los tuyos.",
+        "En esta práctica, la persona es Robin Avery. Lee los datos de Robin y decide por Robin, no por ti.",
       ],
       tip: "En tu propio W-4 en un trabajo real, eliges lo que es verdad para ti. Lo puedes cambiar después.",
     },
@@ -316,6 +327,7 @@ type PracticeKey = keyof typeof PRACTICE_PROFILE;
 
 function fieldMatches(key: PracticeKey, value: string): boolean {
   if (key === "date" || key === "dob") return sameDate(value, PRACTICE_PROFILE[key]);
+  if (key === "dependents") return readCount(value) === Number(PRACTICE_PROFILE.dependents);
   return value.trim().toLowerCase().replace(/\s+/g, " ") === PRACTICE_PROFILE[key].toLowerCase();
 }
 
@@ -332,15 +344,97 @@ export function firstMismatch(values: Partial<typeof PRACTICE_PROFILE>): Practic
 /** What to say when a W-4 box does not match Robin's facts. */
 export const W4_FIELD_HINT: Partial<Record<PracticeKey, Localized>> = {
   status: {
-    en: "Robin is single. Choose \"Single, or married filing separately\".",
-    es: "Robin es soltero. Elige \"Soltero/a, o casado/a declarando por separado\".",
+    en: "Robin is not married and has no children. Choose \"Single, or married filing separately\".",
+    es: "Robin no está casado/a y no tiene hijos. Elige \"Soltero/a, o casado/a declarando por separado\".",
   },
-  dependents: { en: "Robin has no dependents. Type 0.", es: "Robin no tiene dependientes. Escribe 0." },
+  dependents: {
+    en: "Check Step 3. Robin has no children and supports no one else, so the number of dependents is 0.",
+    es: "Revisa el Paso 3. Robin no tiene hijos ni mantiene a nadie más, así que el número de dependientes es 0.",
+  },
   date: {
-    en: "Write the form date from Robin's facts: 10/01/2026 (month/day/year).",
-    es: "Escribe la fecha del formulario de los datos de Robin: 10/01/2026 (mes/día/año).",
+    en: "Check the Date box. Write the form date from Robin's facts: 10/01/2026 (month/day/year: October 1).",
+    es: "Revisa la casilla Fecha. Escribe la fecha del formulario de los datos de Robin: 10/01/2026 (mes/día/año: 1 de octubre).",
   },
 };
+
+/**
+ * A wrong filing status is corrected the moment it is chosen, at the field,
+ * and says why that option does not fit Robin, so the learner decides again
+ * from the facts rather than being handed the answer.
+ */
+export const W4_STATUS_WRONG: Record<string, Localized> = {
+  joint: {
+    en: "Married filing jointly is for a married couple. Robin is not married. Read Robin's facts and choose again.",
+    es: "Casado/a declarando en conjunto es para una pareja casada. Robin no está casado/a. Lee los datos de Robin y elige otra vez.",
+  },
+  hoh: {
+    en: "Head of household is for someone who pays for a home for a child or another family member. Robin has no children. Choose again.",
+    es: "Cabeza de familia es para quien paga una casa para un hijo u otro familiar. Robin no tiene hijos. Elige otra vez.",
+  },
+};
+
+export type W4Field = "status" | "dependents" | "signature" | "date";
+
+/** Each empty box, named, so the correction says where to look. */
+export const W4_EMPTY_HINT: Record<W4Field, Localized> = {
+  status: {
+    en: "Step 1: choose Robin's filing status.",
+    es: "Paso 1: elige el estado civil de Robin.",
+  },
+  dependents: {
+    en: "Step 3: type Robin's number of dependents in the box. If there are none, type 0.",
+    es: "Paso 3: escribe el número de dependientes de Robin en la casilla. Si no hay, escribe 0.",
+  },
+  signature: {
+    en: "Step 5: the Signature box is empty. Type Robin's full name there.",
+    es: "Paso 5: la casilla Firma está vacía. Escribe ahí el nombre completo de Robin.",
+  },
+  date: {
+    en: "Step 5: the Date box is empty. Type the form date from Robin's facts.",
+    es: "Paso 5: la casilla Fecha está vacía. Escribe la fecha del formulario de los datos de Robin.",
+  },
+};
+
+export const W4_NOT_A_COUNT: Localized = {
+  en: "Step 3 needs a number, like 0, 1, or 2.",
+  es: "El Paso 3 necesita un número, como 0, 1 o 2.",
+};
+
+export const W4_SIGNATURE_HINT: Localized = {
+  en: "Check the Signature box. Sign with Robin's full name, the same name at the top of the form: Robin Avery.",
+  es: "Revisa la casilla Firma. Firma con el nombre completo de Robin, el mismo que está arriba del formulario: Robin Avery.",
+};
+
+export interface W4Values {
+  status: string | null;
+  dependents: string;
+  signature: string;
+  date: string;
+}
+
+/**
+ * The first problem on the W-4, top to bottom: an empty box before a wrong
+ * one in the same step, and every message names its box.
+ */
+export function w4Problem(v: W4Values): { field: W4Field; hint: Localized } | null {
+  if (!v.status) return { field: "status", hint: W4_EMPTY_HINT.status };
+  if (v.status !== PRACTICE_PROFILE.status) return { field: "status", hint: W4_STATUS_WRONG[v.status] ?? W4_FIELD_HINT.status! };
+  if (!v.dependents.trim()) return { field: "dependents", hint: W4_EMPTY_HINT.dependents };
+  if (readCount(v.dependents) === null) return { field: "dependents", hint: W4_NOT_A_COUNT };
+  if (!fieldMatches("dependents", v.dependents)) return { field: "dependents", hint: W4_FIELD_HINT.dependents! };
+  if (!v.signature.trim()) return { field: "signature", hint: W4_EMPTY_HINT.signature };
+  if (!signatureMatches(v.signature, PRACTICE_PROFILE.name)) return { field: "signature", hint: W4_SIGNATURE_HINT };
+  if (!v.date.trim()) return { field: "date", hint: W4_EMPTY_HINT.date };
+  if (!fieldMatches("date", v.date)) return { field: "date", hint: W4_FIELD_HINT.date! };
+  return null;
+}
+
+/** Where the card is: it moves on only when a box is right, not just filled. */
+export function w4StepIndex(v: W4Values): number {
+  const problem = w4Problem(v);
+  if (!problem) return 2;
+  return problem.field === "status" ? 0 : problem.field === "dependents" ? 1 : 2;
+}
 
 export const REFERENCE_HINT: Localized = {
   en: "Compare the form with Robin's facts.",
@@ -350,15 +444,15 @@ export const REFERENCE_HINT: Localized = {
 /** The W-4's own steps, so the card moves as the form fills. */
 export const W4_STEPS: Localized[] = [
   {
-    en: "Look at Robin's facts. Choose Robin's filing status.",
-    es: "Mira los datos de Robin. Elige el estado civil de Robin.",
+    en: "Read Robin's facts at the top. Choose the filing status that fits Robin.",
+    es: "Lee los datos de Robin arriba. Elige el estado civil que corresponde a Robin.",
   },
   {
-    en: "Type Robin's number of dependents.",
-    es: "Escribe el número de dependientes de Robin.",
+    en: "Type how many dependents Robin has. A dependent is a child or someone Robin supports.",
+    es: "Escribe cuántos dependientes tiene Robin. Un dependiente es un hijo o alguien que Robin mantiene.",
   },
   {
-    en: "Sign with Robin's full name. Write the date. Then click Submit W-4.",
-    es: "Firma con el nombre completo de Robin. Escribe la fecha. Después haz clic en Enviar W-4.",
+    en: "Sign with Robin's full name. Write the form date. Then click Submit W-4.",
+    es: "Firma con el nombre completo de Robin. Escribe la fecha del formulario. Después haz clic en Enviar W-4.",
   },
 ];

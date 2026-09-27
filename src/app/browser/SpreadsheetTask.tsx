@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
 import {
@@ -12,8 +12,15 @@ import {
   LESSONS,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
-  emailMentionsTotal,
+  SHEET_HEADERS,
+  SENT_LABELS,
+  TOTAL_EMAIL_HINT,
+  dayLabel,
+  totalEmailProblem,
+  totalFormula,
 } from "@/lib/tasks/spreadsheet/content";
+import { useJobCardOptional } from "@/lib/job-card-context";
+import { CELL_FOCUS, SentEmailRecap, pickStarter } from "./sheet-lesson-parts";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -56,11 +63,18 @@ export default function SpreadsheetTask() {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [selected, setSelected] = useState<Cell>({ row: FIRST_DATA_ROW, col: "B" });
   const [body, setBody] = useState("");
+  // The learner has had a send rejected: "On my own" shows the starters only after this.
+  const [missed, setMissed] = useState(false);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
+  const clearCorrection = useJobCardOptional()?.clearCorrection;
+  const tipInputs = useRef<(HTMLInputElement | null)[]>([]);
+  const emailButton = useRef<HTMLButtonElement | null>(null);
+  const bodyBox = useRef<HTMLTextAreaElement | null>(null);
 
   const c = SPREADSHEET_COPY[lang];
+  const heads = SHEET_HEADERS[lang];
 
   // The sheet's live total - it recalculates every time a cell changes,
   // same as a real spreadsheet formula would.
@@ -76,6 +90,30 @@ export default function SpreadsheetTask() {
     setEntries((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Real spreadsheets put the cursor in the first cell, so typing goes
+  // somewhere. Focus moves from the click that opens the sheet.
+  const openSheet = () => {
+    setView("sheet");
+    requestAnimationFrame(() => {
+      const firstEmpty = TIP_ROWS.findIndex((r) => !entries[r.key]?.trim());
+      tipInputs.current[firstEmpty >= 0 ? firstEmpty : 0]?.focus();
+    });
+  };
+
+  // Enter and the down arrow go to the next day, like a real sheet. After
+  // Friday, Enter goes on to the Email button.
+  const onCellKey = (i: number) => (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const next = tipInputs.current[i + 1];
+      if (next) next.focus();
+      else if (e.key === "Enter") emailButton.current?.focus();
+    } else if (e.key === "ArrowUp" && i > 0) {
+      e.preventDefault();
+      tipInputs.current[i - 1]?.focus();
+    }
+  };
+
   const tryEmailTotal = () => {
     if (TIP_ROWS.some((r) => !entries[r.key]?.trim())) {
       return say(c.fillAllFirst);
@@ -84,37 +122,28 @@ export default function SpreadsheetTask() {
       return say(wrongEntryHint(firstToFix, lang));
     }
     setView("compose");
+    requestAnimationFrame(() => bodyBox.current?.focus());
   };
 
   const trySend = () => {
-    if (!body.trim()) {
-      return say(
-        lang === "en"
-          ? "Write a short message first. Even one sentence is fine."
-          : "Primero escribe un mensaje corto. Una oración está bien."
-      );
-    }
-    if (!emailMentionsTotal(body)) {
-      return say(
-        lang === "en"
-          ? "Say the actual total from the sheet, not just that you sent it."
-          : "Di el total real de la hoja, no solo que ya lo enviaste."
-      );
+    const problem = totalEmailProblem(body);
+    if (problem !== "ok") {
+      setMissed(true);
+      return say(TOTAL_EMAIL_HINT[problem][lang]);
     }
     setView("done");
     markComplete("spreadsheet", "enter_data_and_share_total");
   };
 
-  const discard = () => {
-    setView("sheet");
-    setBody("");
-  };
+  // Back to the sheet keeps the draft: the learner often leaves only to look.
+  const discard = () => setView("sheet");
 
   const restart = () => {
     setView("home");
     setEntries({});
     setTouched({});
     setBody("");
+    setMissed(false);
   };
 
   const notYet = () =>
@@ -127,14 +156,14 @@ export default function SpreadsheetTask() {
   // What the formula bar shows for whichever cell is selected.
   const formulaBarContent = (() => {
     if (selected.col === "A") {
-      if (selected.row === HEADER_ROW) return "Day";
-      if (selected.row === TOTAL_ROW) return "Total";
+      if (selected.row === HEADER_ROW) return heads.day;
+      if (selected.row === TOTAL_ROW) return heads.total;
       const r = TIP_ROWS[selected.row - FIRST_DATA_ROW];
-      return r?.day ?? "";
+      return r ? dayLabel(r, lang) : "";
     }
     if (selected.col === "B") {
-      if (selected.row === HEADER_ROW) return "Tips";
-      if (selected.row === TOTAL_ROW) return `=SUM(B${FIRST_DATA_ROW}:B${LAST_DATA_ROW})`;
+      if (selected.row === HEADER_ROW) return heads.tips;
+      if (selected.row === TOTAL_ROW) return totalFormula(lang, FIRST_DATA_ROW, LAST_DATA_ROW);
       const r = TIP_ROWS[selected.row - FIRST_DATA_ROW];
       return r ? entries[r.key] ?? "" : "";
     }
@@ -169,7 +198,7 @@ export default function SpreadsheetTask() {
       )}
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
 
-      {view === "sheet" && (
+      {(view === "sheet" || view === "compose") && (
         <>
           {/* ── decorative Sheets toolbar ────────────────────────────── */}
           <div className="flex items-center gap-3 border-b border-[#e0e0e0] bg-[#f9fbfd] px-4 py-1.5 text-[#5f6368]">
@@ -237,7 +266,7 @@ export default function SpreadsheetTask() {
 
             <h3 className="mb-3 text-[14px] font-medium text-[#3c4043]">{c.recentHeading}</h3>
             <button
-              onClick={() => setView("sheet")}
+              onClick={openSheet}
               data-showme="open-file"
               className="flex w-full items-center gap-3 rounded-xl border border-border bg-white p-4 text-left hover:bg-surface-muted cursor-pointer"
             >
@@ -256,7 +285,9 @@ export default function SpreadsheetTask() {
         </div>
       )}
 
-      {view === "sheet" && (
+      {/* The sheet stays under the compose box: its total is what the
+          learner is writing about. */}
+      {(view === "sheet" || view === "compose") && (
       <div className="min-h-0 flex-1 overflow-auto">
         <div className="p-4">
           {/* ── source document: not part of the sheet, something to copy from ── */}
@@ -269,7 +300,7 @@ export default function SpreadsheetTask() {
             </div>
             {TIP_ROWS.map((r) => (
               <div key={r.key} className="flex justify-between py-0.5 text-[#4a4636]">
-                <span>{r.day}</span>
+                <span>{dayLabel(r, lang)}</span>
                 <span>{money(r.given)}</span>
               </div>
             ))}
@@ -325,11 +356,12 @@ export default function SpreadsheetTask() {
                       return (
                         <button
                           key={col}
+                          tabIndex={-1}
                           onClick={() => setSelected({ row, col })}
-                          className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer ${bold ? "font-medium" : ""}`}
+                          className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer ${CELL_FOCUS} ${bold ? "font-medium" : ""}`}
                           style={cellStyle}
                         >
-                          {isHeader ? "Day" : isTotal ? "Total" : tipRow?.day}
+                          {isHeader ? heads.day : isTotal ? heads.total : tipRow ? dayLabel(tipRow, lang) : ""}
                         </button>
                       );
                     }
@@ -338,11 +370,12 @@ export default function SpreadsheetTask() {
                         return (
                           <button
                             key={col}
+                            tabIndex={-1}
                             onClick={() => setSelected({ row, col })}
-                            className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-medium cursor-pointer"
+                            className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-medium cursor-pointer ${CELL_FOCUS}`}
                             style={cellStyle}
                           >
-                            Tips
+                            {heads.tips}
                           </button>
                         );
                       }
@@ -350,8 +383,9 @@ export default function SpreadsheetTask() {
                         return (
                           <button
                             key={col}
+                            tabIndex={-1}
                             onClick={() => setSelected({ row, col })}
-                            className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-semibold cursor-pointer"
+                            className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-semibold cursor-pointer ${CELL_FOCUS}`}
                             style={cellStyle}
                           >
                             {money(liveSheetTotal)}
@@ -361,11 +395,15 @@ export default function SpreadsheetTask() {
                       const typed = tipRow ? entries[tipRow.key] ?? "" : "";
                       const right = tipRow ? entryMatches(tipRow, typed) : false;
                       const wrong = Boolean(tipRow && touched[tipRow.key] && typed.trim() && !right);
+                      const tipIndex = row - FIRST_DATA_ROW;
                       return (
                         <input
                           key={col}
+                          ref={(el) => {
+                            tipInputs.current[tipIndex] = el;
+                          }}
                           value={typed}
-                          aria-label={tipRow?.day}
+                          aria-label={tipRow ? `${heads.tips}, ${dayLabel(tipRow, lang)}` : undefined}
                           aria-invalid={wrong || undefined}
                           data-showme={tipRow && tipRow.key === firstToFix?.key ? "tip-cell" : undefined}
                           onFocus={() => setSelected({ row, col })}
@@ -374,10 +412,16 @@ export default function SpreadsheetTask() {
                             setTouched((prev) => ({ ...prev, [tipRow.key]: true }));
                             if (typed.trim() && !right) say(wrongEntryHint(tipRow, lang));
                           }}
-                          onChange={(e) => tipRow && setEntry(tipRow.key, e.target.value)}
+                          onKeyDown={onCellKey(tipIndex)}
+                          onChange={(e) => {
+                            if (!tipRow) return;
+                            setEntry(tipRow.key, e.target.value);
+                            // Fixed the day the card was talking about: the correction is done.
+                            if (entryMatches(tipRow, e.target.value)) clearCorrection?.();
+                          }}
                           placeholder="0.00"
                           inputMode="decimal"
-                          className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-[13px] outline-none"
+                          className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-[13px] outline-none ${CELL_FOCUS}`}
                           style={{
                             ...cellStyle,
                             background: wrong ? "#fce8e6" : right ? "#e6f4ea" : cellStyle.background,
@@ -388,8 +432,10 @@ export default function SpreadsheetTask() {
                     return (
                       <button
                         key={col}
+                        tabIndex={-1}
+                        aria-hidden
                         onClick={() => setSelected({ row, col })}
-                        className="shrink-0 border-b border-r border-[#c0c0c0] cursor-pointer"
+                        className={`shrink-0 border-b border-r border-[#c0c0c0] cursor-pointer ${CELL_FOCUS}`}
                         style={cellStyle}
                       />
                     );
@@ -400,6 +446,7 @@ export default function SpreadsheetTask() {
           </div>
 
           <button
+            ref={emailButton}
             onClick={tryEmailTotal}
             data-showme="email-total"
             className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
@@ -411,9 +458,10 @@ export default function SpreadsheetTask() {
       )}
 
       {view === "compose" && (
-        // Docked right with a light scrim, so the sheet's total stays readable while writing.
-        <div className="absolute inset-0 flex items-center justify-end bg-black/15 p-6">
-          <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
+        // Docked right over a light scrim that lets clicks and scrolling
+        // through, so the sheet's total stays readable while writing.
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-end bg-black/15 p-6">
+          <div className="pointer-events-auto max-h-full w-full max-w-[420px] overflow-y-auto rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
               <span>{CAST.renata.email}</span>
@@ -423,6 +471,7 @@ export default function SpreadsheetTask() {
               <span>{c.subject}</span>
             </div>
             <textarea
+              ref={bodyBox}
               data-showme="compose-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -433,7 +482,8 @@ export default function SpreadsheetTask() {
             <NeedAStart
               lang={lang}
               starters={STARTERS[lang]}
-              onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+              missed={missed}
+              onPick={(s) => pickStarter(bodyBox, body, s, setBody)}
               chipClassName="min-h-[38px] rounded-full border border-border bg-surface-muted px-3 text-[13px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
             />
             </div>
@@ -467,6 +517,18 @@ export default function SpreadsheetTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
+
+            {body.trim() ? (
+              <SentEmailRecap
+                heading={SENT_LABELS[lang].heading}
+                toLabel={c.to}
+                to={CAST.renata.email}
+                subjectLabel={c.subjectLabel}
+                subject={c.subject}
+                body={body}
+                fact={{ label: SENT_LABELS[lang].total, value: money(liveSheetTotal) }}
+              />
+            ) : null}
 
             <TaskDoneActions
               kicker={c.sentKicker}

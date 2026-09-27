@@ -85,6 +85,7 @@ export default function LessonRunner({
       scene: entry.scene,
       reference: entry.reference ?? [],
       persona: entry.persona,
+      takeaway: entry.takeaway,
       mode,
       setMode,
       infoOpen,
@@ -112,6 +113,7 @@ export default function LessonRunner({
             reference={entry.reference ?? []}
             atWork={entry.guide.atWork}
             onStart={() => setStarted(true)}
+            onBack={(lang) => router.push(libraryReturn(returnTo, lang))}
           />
         )}
       </LessonProgressProvider>

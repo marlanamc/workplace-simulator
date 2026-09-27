@@ -62,4 +62,10 @@ export type LessonMeta = {
   reference?: LessonFact[];
   /** The name the task writes for "you" (a résumé heading), when the task needs one. */
   persona?: string;
+  /**
+   * One plain sentence the finish card shows under "Lesson complete": what
+   * the learner can now do, or the habit to keep ("On a real W-4, you write
+   * your own facts."). Facts, not praise.
+   */
+  takeaway?: Localized;
 };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
 import {
@@ -20,7 +20,10 @@ import {
   emailFlagsOver,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
+  SENT_LABELS,
+  OVER_AMOUNT,
 } from "@/lib/tasks/budget-sheet/content";
+import { CELL_FOCUS, SentEmailRecap, pickStarter } from "./sheet-lesson-parts";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -64,13 +67,17 @@ export default function BudgetSheetTask() {
   const [selected, setSelected] = useState<Cell>({ row: HEADER_ROW, col: "A" });
   const [openedOver, setOpenedOver] = useState(false);
   const [body, setBody] = useState("");
+  const [missed, setMissed] = useState(false);
+  const bodyBox = useRef<HTMLTextAreaElement | null>(null);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
   const c = BUDGET_SHEET_COPY[lang];
+  const overRow = BUDGET_ROWS.find((r) => r.key === OVER_KEY)!;
   const chartMax = Math.max(...BUDGET_ROWS.flatMap((r) => [r.actual, r.budget]));
   const stepIndex = view === "home" ? 0 : view === "sheet" ? (openedOver ? 2 : 1) : 3;
-  const showMeIds = ["open-file", "over-cell", "email-cta", "compose-body"];
+  // Step 2 points at the evidence (the Status column), not at the answer cell.
+  const showMeIds = ["open-file", "status-column", "email-cta", "compose-body"];
 
   const select = (cell: Cell) => {
     setSelected(cell);
@@ -85,11 +92,18 @@ export default function BudgetSheetTask() {
     showMe.clear();
     if (!openedOver) return say(c.readFirst);
     setView("compose");
+    requestAnimationFrame(() => bodyBox.current?.focus());
   };
 
   const trySend = () => {
-    if (!body.trim()) return say(EMPTY_EMAIL_HINT[lang]);
-    if (!emailFlagsOver(body)) return say(WRONG_EMAIL_HINT[lang]);
+    if (!body.trim()) {
+      setMissed(true);
+      return say(EMPTY_EMAIL_HINT[lang]);
+    }
+    if (!emailFlagsOver(body)) {
+      setMissed(true);
+      return say(WRONG_EMAIL_HINT[lang]);
+    }
     setView("done");
     markComplete("budget-sheet", "read_budget_if_and_chart");
   };
@@ -99,6 +113,7 @@ export default function BudgetSheetTask() {
     setSelected({ row: HEADER_ROW, col: "A" });
     setOpenedOver(false);
     setBody("");
+    setMissed(false);
   };
 
   const notYet = () =>
@@ -230,6 +245,9 @@ export default function BudgetSheetTask() {
 
             <div className="flex flex-wrap items-start gap-6">
               <div className="inline-block border border-[#c0c0c0]" style={{ fontSize: 13 }}>
+                {/* The two header rows stay on screen while the sheet
+                    scrolls, so Budget and Actual are always labeled. */}
+                <div className="sticky top-0 z-10">
                 <div className="flex">
                   <div className="flex shrink-0 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa]" style={{ width: 32, height: 24 }} />
                   {COLS.map((col) => (
@@ -249,8 +267,9 @@ export default function BudgetSheetTask() {
                   {COLS.map((col) => (
                     <button
                       key={col}
+                      data-showme={col === "D" ? "status-column" : undefined}
                       onClick={() => select({ row: HEADER_ROW, col })}
-                      className="shrink-0 border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 text-left text-[12px] font-medium cursor-pointer"
+                      className={`shrink-0 border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 text-left text-[12px] font-medium cursor-pointer ${CELL_FOCUS}`}
                       style={{
                         width: COL_WIDTH[col],
                         height: 26,
@@ -261,9 +280,9 @@ export default function BudgetSheetTask() {
                     </button>
                   ))}
                 </div>
+                </div>
                 {BUDGET_ROWS.map((row, i) => {
                   const r = FIRST_DATA_ROW + i;
-                  const over = statusFor(row.actual, row.budget) === "over";
                   return (
                     <div key={row.key} className="flex">
                       {renderRowLabel(r)}
@@ -276,19 +295,20 @@ export default function BudgetSheetTask() {
                         else if (col === "C") text = dollars(row.actual);
                         else if (col === "D") text = status === "over" ? c.overLabel : c.underLabel;
                         else text = row.note[lang];
+                        // No red fill on the "over" cell: finding it means
+                        // reading the words and numbers, not spotting a color.
                         const cellStyle: CSSProperties = {
                           width: COL_WIDTH[col],
                           height: 26,
-                          background: col === "D" && over ? "#fce8e6" : "white",
-                          color: col === "D" && over ? "#c5221f" : "#202124",
+                          background: "white",
+                          color: "#202124",
                           boxShadow: isSelected ? "inset 0 0 0 2px #1a73e8" : undefined,
                         };
                         return (
                           <button
                             key={col}
-                            data-showme={col === "D" && over ? "over-cell" : undefined}
                             onClick={() => { showMe.clear(); select({ row: r, col }); }}
-                            className={`shrink-0 truncate border-b border-r border-[#c0c0c0] px-1.5 text-[13px] cursor-pointer ${
+                            className={`shrink-0 truncate border-b border-r border-[#c0c0c0] px-1.5 text-[13px] cursor-pointer ${CELL_FOCUS} ${
                               col === "B" || col === "C" ? "text-right tabular-nums" : col === "E" ? "text-left text-[#5f6368]" : "text-left"
                             }`}
                             style={cellStyle}
@@ -310,7 +330,7 @@ export default function BudgetSheetTask() {
                       <button
                         key={col}
                         onClick={() => { showMe.clear(); select({ row: TOTAL_ROW, col }); }}
-                        className={`shrink-0 border-b border-r border-t-2 border-[#c0c0c0] border-t-[#5f6368] bg-[#f8f9fa] px-1.5 text-[13px] font-bold cursor-pointer ${
+                        className={`shrink-0 border-b border-r border-t-2 border-[#c0c0c0] border-t-[#5f6368] bg-[#f8f9fa] px-1.5 text-[13px] font-bold cursor-pointer ${CELL_FOCUS} ${
                           col === "B" || col === "C" ? "text-right tabular-nums" : "text-left"
                         }`}
                         style={{
@@ -335,10 +355,10 @@ export default function BudgetSheetTask() {
                     const h = Math.max(4, (row.actual / chartMax) * 100);
                     const budgetY = 110 - (row.budget / chartMax) * 100;
                     const x = CHART_PAD + i * CHART_SLOT + (CHART_SLOT - CHART_BAR) / 2;
-                    const over = row.key === OVER_KEY;
+                    // Every bar the same color: the learner compares each bar with its dashed line.
                     return (
                       <g key={row.key}>
-                        <rect x={x} y={110 - h} width={CHART_BAR} height={h} fill={over ? "#c5221f" : "#1a73e8"} rx={2} />
+                        <rect x={x} y={110 - h} width={CHART_BAR} height={h} fill="#1a73e8" rx={2} />
                         <line x1={x - 5} x2={x + CHART_BAR + 5} y1={budgetY} y2={budgetY} stroke="#202124" strokeWidth="1.5" strokeDasharray="4 3" />
                         <text x={x + CHART_BAR / 2} y={126} textAnchor="middle" fontSize="10" fill="#3c4043">
                           {row.chart[lang]}
@@ -378,6 +398,7 @@ export default function BudgetSheetTask() {
               <span>{c.subject}</span>
             </div>
             <textarea
+              ref={bodyBox}
               data-showme="compose-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -388,7 +409,8 @@ export default function BudgetSheetTask() {
               <NeedAStart
                 lang={lang}
                 starters={STARTERS[lang]}
-                onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)}
+                missed={missed}
+                onPick={(s) => pickStarter(bodyBox, body, s, setBody)}
                 chipClassName="min-h-[38px] rounded-full border border-border bg-surface-muted px-3 text-[13px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
               />
             </div>
@@ -399,7 +421,8 @@ export default function BudgetSheetTask() {
               >
                 {c.send}
               </button>
-              <button onClick={() => { setView("sheet"); setBody(""); }} className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer">
+              {/* Back to the sheet keeps the draft: the learner often leaves only to look. */}
+              <button onClick={() => setView("sheet")} className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer">
                 {c.discard}
               </button>
             </div>
@@ -418,6 +441,20 @@ export default function BudgetSheetTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
+            {body.trim() ? (
+              <SentEmailRecap
+                heading={SENT_LABELS[lang].heading}
+                toLabel={c.to}
+                to={CAST.renata.email}
+                subjectLabel={c.subjectLabel}
+                subject={c.subject}
+                body={body}
+                fact={{
+                  label: SENT_LABELS[lang].over,
+                  value: `${overRow.label[lang]}: ${dollars(overRow.actual)} − ${dollars(overRow.budget)} = ${dollars(OVER_AMOUNT)}`,
+                }}
+              />
+            ) : null}
             <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>

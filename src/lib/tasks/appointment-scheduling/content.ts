@@ -24,6 +24,9 @@ export const SLOTS: readonly { time: string; taken: boolean; name: string | null
 
 export const PROVIDER = "Dr. Ruth Adeyemi";
 
+/** What Maya's booked row says on the finish screen: the visit her message asked for. */
+export const BOOKED_VISIT: Localized = { en: "Follow-up, cough", es: "Seguimiento, tos" };
+
 /**
  * The paper message a coworker left at the desk. It stays on screen while
  * the learner reads the day sheet and writes the text back.
@@ -67,6 +70,11 @@ export const APPOINTMENT_COPY: Record<Lang, {
   taken: string;
   empty: string;
   weak: string;
+  bare: string;
+  takenTime: string;
+  blank: string;
+  doneHeading: string;
+  doneTextLabel: string;
   sentKicker: string;
   tryAgain: string;
   backToDesk: string;
@@ -106,7 +114,12 @@ export const APPOINTMENT_COPY: Record<Lang, {
     needSlot: "Click the time that says Open first.",
     taken: "Look for the time that says Open.",
     empty: "Write a short confirmation first.",
-    weak: "Say the open time, 11:30, so she knows when to come in.",
+    weak: "Your text needs the new time. Which time on the schedule says Open? Write that time.",
+    bare: "Write a short sentence, not only the time. For example: You can come at 11:30 today.",
+    takenTime: "Your text says 11:30 is taken. 11:30 is the open time. Tell Maya she can come at 11:30.",
+    blank: "Your text still has ___ in it. Write the time there.",
+    doneHeading: "Maya's new appointment",
+    doneTextLabel: "Your text to Maya",
     sentKicker: "Confirmation sent",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -146,7 +159,12 @@ export const APPOINTMENT_COPY: Record<Lang, {
     needSlot: "Primero haz clic en la hora que dice Libre.",
     taken: "Busca la hora que dice Libre.",
     empty: "Primero escribe una confirmación corta.",
-    weak: "Di la hora libre, 11:30, para que sepa a qué hora venir.",
+    weak: "A tu mensaje le falta la hora nueva. ¿Qué hora de la agenda dice Libre? Escribe esa hora.",
+    bare: "Escribe una oración corta, no solo la hora. Por ejemplo: Puedes venir hoy a las 11:30.",
+    takenTime: "Tu mensaje dice que las 11:30 están ocupadas. Las 11:30 son la hora libre. Dile a Maya que puede venir a las 11:30.",
+    blank: "Tu mensaje todavía tiene ___. Escribe ahí la hora.",
+    doneHeading: "La nueva cita de Maya",
+    doneTextLabel: "Tu mensaje para Maya",
     sentKicker: "Confirmación enviada",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -162,22 +180,69 @@ export const APPOINTMENT_COPY: Record<Lang, {
   },
 };
 
+/**
+ * Frames: the time is the blank, because finding it on the schedule is the
+ * skill. A text that still has ___ in it is sent back.
+ */
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Maya, 10:00 is taken. I can do 11:30 today.",
-    "11:30 is open. Does that work for you?",
-    "See you at 11:30. Thank you!",
+    "Hi Maya, 10:00 is taken. I can do ___ today.",
+    "___ is open. Does that work for you?",
+    "See you at ___. Thank you!",
   ],
   es: [
-    "Hola Maya, las 10:00 están ocupadas. Te puedo dar las 11:30 hoy.",
-    "Las 11:30 están libres. ¿Te sirve?",
-    "Nos vemos a las 11:30. ¡Gracias!",
+    "Hola Maya, las 10:00 están ocupadas. Te puedo dar las ___ hoy.",
+    "Las ___ están libres. ¿Te sirve?",
+    "Nos vemos a las ___. ¡Gracias!",
   ],
 };
 
+/** What the text to Maya is missing, in the order the correction names it. */
+export type ConfirmationProblem = "empty" | "blank" | "weak" | "bare" | "takenTime";
+
+const strip = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+/**
+ * 11:30 the ways people write it: 11:30, 11.30, 11 30, 1130, 11h30,
+ * 11:30am, eleven thirty, half past eleven, once y media, 11 y 30.
+ */
+const OPEN_TIME =
+  /(?<![\d:])11\s*[:.h]?\s*30(?!\d)|(?<![\d:])11\s*(y|and)\s*(30|media|treinta)\b|\b(eleven|once)\s*(y\s*|and\s*)?(thirty|media|treinta)\b|\b11\s+thirty\b|\bhalf past (eleven|11)\b/g;
+
+/** Words that say a time cannot be had. */
+const TAKEN =
+  /\b(taken|booked|full|busy|unavailable|not (available|open|free)|isn't (available|open|free)|is not (available|open|free)|can't|cannot|ocupad[ao]s?|llen[ao]s?|no (esta|estan|hay) (libre|libres|disponible|disponibles)|no se puede|no puedo|tampoco)\b/;
+
+/** "11:30 is not taken" is an offer, not a clash. */
+const NOT_TAKEN = /\b(not|isn't|no (esta|estan))\s+(taken|booked|ocupad[ao]s?)\b/;
+
+/**
+ * A text back to Maya that offers the open time. Any usual way of writing
+ * 11:30 counts. It has to be a message, not only the number ("1130"), and
+ * it must not call 11:30 taken ("Sorry Maya, 11:30 is taken too.").
+ */
+export function confirmationProblem(body: string): ConfirmationProblem | null {
+  const raw = body.trim();
+  if (!raw) return "empty";
+  if (/_{2,}/.test(raw)) return "blank";
+  const t = strip(raw);
+  if (!t.match(OPEN_TIME)) return "weak";
+  // Judge each clause that names 11:30: "10:00 is taken, but 11:30 is
+  // open" is fine; "11:30 is taken too" is not.
+  const clauses = t.split(/[.!?;,\n]|\bbut\b|\bpero\b|\bsino\b|\b(?:because|porque|and|so|then|instead|entonces|asi que|en cambio)\b/);
+  const offered = clauses.filter((cl) => cl.match(OPEN_TIME));
+  if (offered.length > 0 && offered.every((cl) => TAKEN.test(cl) && !NOT_TAKEN.test(cl))) return "takenTime";
+  if (!/[a-zñ]{2,}/.test(t.replace(OPEN_TIME, " ").replace(/\b(am|pm|a\.m|p\.m)\b/g, " "))) return "bare";
+  return null;
+}
+
 export function confirmationOffersOpenSlot(body: string): boolean {
-  const t = body.toLowerCase();
-  return /11\s*[:.]?\s*30|11:30|11 30/.test(t);
+  return confirmationProblem(body) === null;
+}
+
+/** The Job Card correction for each problem. */
+export function confirmationCorrection(problem: ConfirmationProblem, lang: Lang): string {
+  return APPOINTMENT_COPY[lang][problem];
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -205,6 +270,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** Show me's bubble on a reading step: it points at evidence, not something to click. */
+export const SHOW_ME_LOOK: Localized = { en: "Look here.", es: "Mira aquí." };
+
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
@@ -219,9 +287,31 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   },
 ];
 
-export const CONFLICT_OPTIONS = [
- { key: 'closed', label: { en: 'The clinic is closed at 10:00', es: 'La clínica está cerrada a las 10:00' } },
- { key: 'booked', label: { en: 'Walter Nguyen already has 10:00', es: 'Walter Nguyen ya tiene las 10:00' } },
- { key: 'duration', label: { en: 'The appointment needs two hours', es: 'La cita necesita dos horas' } },
+/**
+ * Every reason names something real on the day sheet, so only reading the
+ * 10:00 row finds the answer: two neighbours' names (9:30 and 10:30) and the
+ * staff meeting (12:30). Each wrong one says where that fact really is.
+ */
+export const CONFLICT_OPTIONS: { key: string; label: Localized; hint: Localized }[] = [
+  {
+    key: "luis",
+    label: { en: "Luis Moreno already has 10:00", es: "Luis Moreno ya tiene las 10:00" },
+    hint: { en: "Luis Moreno has 9:30. Look at the 10:00 row. Whose name is there?", es: "Luis Moreno tiene las 9:30. Mira la fila de las 10:00. ¿Qué nombre dice?" },
+  },
+  {
+    key: "booked",
+    label: { en: "Walter Nguyen already has 10:00", es: "Walter Nguyen ya tiene las 10:00" },
+    hint: { en: "", es: "" },
+  },
+  {
+    key: "priya",
+    label: { en: "Priya Shah already has 10:00", es: "Priya Shah ya tiene las 10:00" },
+    hint: { en: "Priya Shah has 10:30. Look at the 10:00 row. Whose name is there?", es: "Priya Shah tiene las 10:30. Mira la fila de las 10:00. ¿Qué nombre dice?" },
+  },
+  {
+    key: "meeting",
+    label: { en: "There is a staff meeting at 10:00", es: "Hay una reunión del personal a las 10:00" },
+    hint: { en: "The staff meeting is at 12:30. Look at the 10:00 row. Whose name is there?", es: "La reunión del personal es a las 12:30. Mira la fila de las 10:00. ¿Qué nombre dice?" },
+  },
 ];
-export function conflictIdentified(key: string): boolean { return key === 'booked'; }
+export function conflictIdentified(key: string): boolean { return key === "booked"; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   APPOINTMENT_COPY,
@@ -8,14 +8,19 @@ import {
   conflictIdentified,
   SLOTS,
   OPEN_SLOT,
+  REQUESTED_SLOT,
+  BOOKED_VISIT,
+  PATIENT as APPT_PATIENT,
   PROVIDER,
   PHONE_MESSAGE,
   type SlotStatus,
   STARTERS as APPT_STARTERS,
   LESSONS as APPT_LESSONS,
-  confirmationOffersOpenSlot,
+  confirmationProblem,
+  confirmationCorrection,
   RIGHT_NOW_STEPS as APPT_STEPS,
   RIGHT_NOW_LABEL as APPT_LABEL,
+  SHOW_ME_LOOK as APPT_LOOK,
 } from "@/lib/tasks/appointment-scheduling/content";
 import {
   INTAKE_COPY,
@@ -66,16 +71,20 @@ function DoneBlock({
   tryAgain,
   back,
   onRestart,
+  children,
 }: {
   kicker: string;
   tryAgain: string;
   back: string;
   onRestart: () => void;
+  /** What the learner did (the booked row, the sent text), under the check. */
+  children?: React.ReactNode;
 }) {
   return (
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-[640px] flex-col gap-5">
         <TaskDoneCard kicker={kicker} />
+        {children}
         <TaskDoneActions kicker={kicker} tryAgainLabel={tryAgain} backToDeskLabel={back} onTryAgain={onRestart} />
       </div>
     </div>
@@ -92,8 +101,14 @@ export default function FrontDeskTask() {
   return <ScheduleDesk />;
 }
 
-/** Which control each step's Show me points at. */
-const APPT_SHOW_ME = ["reason-select", "open-slot", "offer-button", "confirm-body"] as const;
+/**
+ * Which control each step's Show me points at. The two reading steps point
+ * at the evidence (the 10:00 row, the Status column), not at the answer.
+ */
+const APPT_SHOW_ME = ["requested-slot", "status-header", "offer-button", "confirm-body"] as const;
+
+/** One schedule row's columns, shared by the header and the rows so they line up. */
+const SHEET_COLS = "grid-cols-[48px_minmax(0,1fr)_7.5rem] @md:grid-cols-[56px_minmax(0,1fr)_minmax(0,1fr)_7.5rem]";
 
 function ScheduleDesk() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
@@ -102,10 +117,23 @@ function ScheduleDesk() {
   const [slot, setSlot] = useState<string | null>(null);
   const [body, setBody] = useState("");
   const [compose, setCompose] = useState(false);
+  // Set on the first rejected Send, so "On my own" keeps the starters hidden
+  // until the learner has tried in their own words.
+  const [missed, setMissed] = useState(false);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
   const c = APPOINTMENT_COPY[lang];
+  const composeRef = useRef<HTMLTextAreaElement>(null);
+
+  // The text box opens under the schedule, often below the window. Bring it
+  // into view and put the cursor in it (a DOM sync, no state).
+  useEffect(() => {
+    if (!compose) return;
+    const box = composeRef.current;
+    box?.scrollIntoView({ block: "center", behavior: "smooth" });
+    box?.focus({ preventScroll: true });
+  }, [compose]);
 
   // The whole schedule is on screen from the start: reading it is the skill,
   // not clicking each row to uncover it.
@@ -115,7 +143,8 @@ function ScheduleDesk() {
   const chooseReason = (key: string) => {
     setConflict(key);
     showMe.clear();
-    if (key && !conflictIdentified(key)) say(c.wrongReason);
+    const option = CONFLICT_OPTIONS.find((o) => o.key === key);
+    if (option && !conflictIdentified(key)) say(option.hint[lang]);
   };
 
   const pick = (time: string, taken: boolean, name: string | null, status: SlotStatus) => {
@@ -135,8 +164,11 @@ function ScheduleDesk() {
 
   const trySend = () => {
     showMe.clear();
-    if (!body.trim()) return say(c.empty);
-    if (!confirmationOffersOpenSlot(body)) return say(c.weak);
+    const problem = confirmationProblem(body);
+    if (problem) {
+      setMissed(true);
+      return say(confirmationCorrection(problem, lang));
+    }
     setDone(true);
     markComplete("appointment-scheduling", "book_without_a_clash");
   };
@@ -147,6 +179,7 @@ function ScheduleDesk() {
     setConflict("");
     setBody("");
     setCompose(false);
+    setMissed(false);
   };
 
   return (
@@ -164,22 +197,41 @@ function ScheduleDesk() {
         />
       )}
       {done ? (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
+        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart}>
+          {/* What was done: the booked row and the text that went out. */}
+          <section aria-label={c.doneHeading} className="@container rounded-xl border border-[#dadce0] bg-white p-4">
+            <h2 className="m-0 text-[15px] font-medium">{c.doneHeading}</h2>
+            <div className={`mt-2 grid ${SHEET_COLS} items-center gap-2 rounded-lg bg-[#e0f2f1] px-3 py-2 text-[14px]`}>
+              <span className="font-medium tabular-nums">{OPEN_SLOT}</span>
+              <span className="truncate">{APPT_PATIENT[lang]}</span>
+              <span className="hidden truncate text-[#5f6368] @md:block">{BOOKED_VISIT[lang]}</span>
+              <span className="whitespace-nowrap font-medium text-[#00695c]">{c.confirmed}</span>
+            </div>
+            {body.trim() && (
+              <>
+                <p className="mt-3 mb-1 text-[13px] font-medium text-[#5f6368]">{c.doneTextLabel}</p>
+                <p className="m-0 max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm bg-[#00695c] px-3 py-2 text-[15px] text-white">{body}</p>
+              </>
+            )}
+          </section>
+        </DoneBlock>
       ) : (
-        <div className="min-h-0 flex-1 overflow-y-auto p-5">
-          <div className="mx-auto flex max-w-[900px] flex-col-reverse gap-4 lg:flex-row lg:items-start">
+        <div className="@container min-h-0 flex-1 overflow-y-auto p-5">
+          {/* Stacks by the window's width, not the screen's: at 150% zoom
+              the screen still reads as wide while the window is narrow. */}
+          <div className="mx-auto flex max-w-[900px] flex-col-reverse gap-4 @3xl:flex-row @3xl:items-start">
           <div className="flex min-w-0 flex-1 flex-col gap-4">
             <h2 className="text-[20px] font-medium">
               {c.sheetDay} · {PROVIDER}
             </h2>
             {/* The day sheet: every column a real front desk reads before
                 booking. Rows are buttons, so picking a time is one click. */}
-            <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white" role="table">
-              <div role="row" className="grid grid-cols-[56px_minmax(0,1fr)_minmax(0,1fr)_96px] gap-2 border-b border-[#dadce0] bg-[#f1f3f4] px-4 py-2 text-[12px] font-medium text-[#5f6368]">
+            <div className="@container overflow-hidden rounded-xl border border-[#dadce0] bg-white" role="table">
+              <div role="row" className={`grid ${SHEET_COLS} gap-2 border-b border-[#dadce0] bg-[#f1f3f4] px-4 py-2 text-[12px] font-medium text-[#5f6368]`}>
                 <span role="columnheader">{c.colTime}</span>
                 <span role="columnheader">{c.colPatient}</span>
-                <span role="columnheader">{c.colVisit}</span>
-                <span role="columnheader">{c.colStatus}</span>
+                <span role="columnheader" className="hidden @md:block">{c.colVisit}</span>
+                <span role="columnheader" data-showme="status-header">{c.colStatus}</span>
               </div>
               {SLOTS.map((s) => {
                 const selected = slot === s.time;
@@ -189,16 +241,16 @@ function ScheduleDesk() {
                     key={s.time}
                     type="button"
                     role="row"
-                    data-showme={open ? "open-slot" : undefined}
+                    data-showme={s.time === REQUESTED_SLOT ? "requested-slot" : undefined}
                     onClick={() => pick(s.time, s.taken, s.name, s.status)}
-                    className={`grid w-full grid-cols-[56px_minmax(0,1fr)_minmax(0,1fr)_96px] items-center gap-2 border-b border-[#eee] px-4 py-2 text-left text-[14px] cursor-pointer last:border-b-0 ${
+                    className={`grid w-full ${SHEET_COLS} items-center gap-2 border-b border-[#eee] px-4 py-2 text-left text-[14px] cursor-pointer last:border-b-0 ${
                       selected ? "bg-[#e0f2f1] ring-2 ring-inset ring-[#00695c]" : s.status === "blocked" ? "bg-[repeating-linear-gradient(135deg,#f8f9fa_0_6px,#eceff1_6px_12px)]" : "hover:bg-[#f8f9fa]"
                     }`}
                   >
                     <span className="font-medium tabular-nums">{s.time}</span>
                     <span className="truncate">{s.name ?? ""}</span>
-                    <span className="truncate text-[#5f6368]">{s.visit?.[lang] ?? ""}</span>
-                    <span className={open ? "font-medium text-[#00695c]" : s.status === "blocked" ? "text-[#b3261e]" : "text-[#5f6368]"}>
+                    <span className="hidden truncate text-[#5f6368] @md:block">{s.visit?.[lang] ?? ""}</span>
+                    <span className={`whitespace-nowrap ${open ? "font-medium text-[#00695c]" : s.status === "blocked" ? "text-[#b3261e]" : "text-[#5f6368]"}`}>
                       {statusLabel[s.status]}
                     </span>
                   </button>
@@ -230,13 +282,14 @@ function ScheduleDesk() {
               <div className="rounded-xl border border-[#dadce0] bg-white p-4">
                 <div className="text-[13px] font-medium text-[#5f6368]">{c.confirmHeading}</div>
                 <textarea
+                  ref={composeRef}
                   value={body}
                   data-showme="confirm-body"
                   onChange={(e) => setBody(e.target.value)}
                   placeholder={c.writeHere}
                   className="mt-2 min-h-[110px] w-full resize-y rounded-lg border border-[#dadce0] px-3 py-2 text-[15px] outline-none"
                 />
-                <NeedAStart lang={lang} starters={APPT_STARTERS[lang]} onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)} />
+                <NeedAStart lang={lang} starters={APPT_STARTERS[lang]} missed={missed} onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)} />
                 <button
                   type="button"
                   onClick={trySend}
@@ -247,7 +300,7 @@ function ScheduleDesk() {
               </div>
             )}
           </div>
-          <aside className="w-full shrink-0 lg:sticky lg:top-0 lg:w-[250px]">
+          <aside className="w-full shrink-0 @3xl:sticky @3xl:top-0 @3xl:w-[250px]">
             <PhoneMessageSlip lang={lang} />
           </aside>
           </div>
@@ -255,7 +308,11 @@ function ScheduleDesk() {
       )}
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={APPT_LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
-      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
+      <ShowMeHighlight
+        targetId={showMe.targetId}
+        label={showMe.targetId === "requested-slot" || showMe.targetId === "status-header" ? APPT_LOOK[lang] : SHOW_ME_POINTER[lang]}
+        onDismiss={showMe.clear}
+      />
     </DeskChrome>
   );
 }

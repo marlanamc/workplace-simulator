@@ -25,6 +25,15 @@ describe("lesson discovery", () => {
     expect(searchLessons(null, "password").map(l => l.taskKey)).toContain("account-recovery");
     expect(searchLessons(null, "empleo").length).toBeGreaterThan(0);
   });
+  it("finds the words the audit's learners typed: no hyphen, plurals, synonyms, one typo", () => {
+    const keys = (q: string) => searchLessons(null, q).map(l => l.taskKey);
+    expect(keys("W4")).toContain("w4-form");
+    expect(keys("taxes")).toContain("w4-form");
+    expect(keys("login")).toContain("account-recovery");
+    expect(keys("phone")).toContain("account-recovery");
+    expect(keys("pasword")).toContain("account-recovery");
+    expect(keys("calender")).toContain("calendar");
+  });
   it("every quick search finds a lesson in both languages", () => {
     for (const s of QUICK_SEARCHES) {
       expect(searchLessons(null, s.en).length, s.en).toBeGreaterThan(0);

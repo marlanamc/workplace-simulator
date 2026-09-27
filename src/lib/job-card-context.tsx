@@ -93,7 +93,8 @@ interface JobCardValue {
   /**
    * "" when there is nothing to correct. A correction belongs to the step it
    * was raised on, so it clears the moment the learner advances - answered by
-   * doing the right thing, not only by waiting - and after 9s otherwise.
+   * doing the right thing, not only by waiting - or clicks something else,
+   * and after 20s otherwise.
    */
   correction: string;
   correct: (message: string) => void;
@@ -124,8 +125,12 @@ interface JobCardValue {
 
 const JobCardContext = createContext<JobCardValue | null>(null);
 
-/** How long a correction stays on the card before it clears itself. */
-const CORRECTION_MS = 9000;
+/**
+ * How long a correction stays on the card if the learner does nothing else.
+ * Long, because a slow reader is still on it; the learner's next click
+ * elsewhere is what normally clears it (see the pointerdown effect below).
+ */
+const CORRECTION_MS = 20000;
 
 export function JobCardProvider({
   children,
@@ -171,6 +176,23 @@ export function JobCardProvider({
     setRaised({ message, onStep: stepKeyRef.current });
     correctionTimer.current = setTimeout(() => setRaised(null), CORRECTION_MS);
   }, []);
+
+  // A correction describes the thing the learner just clicked. Once they
+  // click something else (open next week's file, preview another
+  // attachment), it describes nothing on screen and contradicts the page.
+  // Clear on their next pointer press anywhere but the card itself or a text
+  // box they are typing a fix into. A click that is wrong again raises a new
+  // correction in its own click handler, after this has run.
+  useEffect(() => {
+    if (!raised) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target instanceof Element ? e.target : null;
+      if (target?.closest("[data-job-card], input, textarea, [contenteditable='true']")) return;
+      clearCorrection();
+    };
+    window.addEventListener("pointerdown", onPointerDown, true);
+    return () => window.removeEventListener("pointerdown", onPointerDown, true);
+  }, [raised, clearCorrection]);
 
   const correction = raised && raised.onStep === stepKey ? raised.message : "";
 

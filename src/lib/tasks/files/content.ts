@@ -33,7 +33,7 @@ const wrongHint = (en: string, es: string): Localized => ({ en, es });
 export const FILES: DriveFile[] = [
   {
     key: "sched-aug17",
-    name: "sched_81724.pdf",
+    name: "sched_81726.pdf",
     folder: "Schedules",
     date: "Aug 14",
     isTarget: false,
@@ -105,9 +105,9 @@ export const MESSY_FILES: DriveFile[] = [
   },
   {
     key: "sched-sept",
-    name: "sched_090107.pdf",
+    name: "sched_83126.pdf",
     folder: "Schedules",
-    date: "Aug 28",
+    date: "Aug 21",
     isTarget: false,
     wrongHint: wrongHint(
       "That page says Week of Aug 31. That is next week. Jordan starts today, so close it and open this week's.",
@@ -145,8 +145,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Haz clic en Unidad compartida del café. Ahí están los horarios.",
   },
   {
-    en: "Click a schedule to open it. Find the week of Aug 24.",
-    es: "Haz clic en un horario para abrirlo. Busca la semana del 24 de agosto.",
+    en: "Click a schedule to open it. Find the week of Aug 24. Not a draft, not a copy.",
+    es: "Haz clic en un horario para abrirlo. Busca la semana del 24 de agosto. Ni borrador ni copia.",
   },
   // Advances when the right file is open, not when any file is.
   {
@@ -281,9 +281,85 @@ export const FILES_COPY: Record<Lang, {
 
 /** While a file that is not the job is open: what to look at, and the way back. */
 export const CHECK_OTHER_WEEK: Localized = {
-  en: "Read the week at the top. If it is not Aug 24, click Close and open another file.",
-  es: "Lee la semana arriba. Si no es Aug 24 (24 de agosto), haz clic en Cerrar y abre otro archivo.",
+  en: "Read the week at the top and the file name. You need Week of Aug 24, not a draft or a copy. If this is not it, click Close and open another file.",
+  es: "Lee la semana arriba y el nombre del archivo. Necesitas Week of Aug 24 (24 de agosto), sin borrador (draft) ni copia (copy). Si no es este, haz clic en Cerrar y abre otro archivo.",
 };
+
+/**
+ * Folder names stay in English, like the files a US workplace keeps. A
+ * Spanish screen adds a short gloss, the way the Job Card glosses DRAFT.
+ */
+export const FOLDER_LABEL: Record<string, Localized> = {
+  Schedules: { en: "Schedules", es: "Schedules (horarios)" },
+  Forms: { en: "Forms", es: "Forms (formularios)" },
+  "Manager Memos": { en: "Manager Memos", es: "Manager Memos (memos de la gerencia)" },
+};
+
+/** Words a learner might search with that the file name does not show. */
+const SEARCH_ALIASES: Record<string, string> = {
+  Schedules: "horario horarios turnos",
+  Forms: "formulario formularios",
+  "Manager Memos": "memo memos gerencia",
+};
+
+const SEARCH_STOPWORDS = new Set([
+  "of", "the", "for", "a", "this", "week", "file", "pdf",
+  "de", "del", "la", "el", "los", "las", "esta", "este", "semana", "archivo",
+]);
+
+function searchWords(text: string): string[] {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\b(august|agosto)\b/g, "aug")
+    .replace(/\bsept\b/g, "sep")
+    .replace(/([a-z])(\d)/g, "$1 $2")
+    .replace(/(\d)([a-z])/g, "$1 $2")
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean);
+}
+
+/**
+ * Search reads more than the coded file name: the page's title and week, the
+ * folder, and plain words ("aug 24", "schedule", "horario", "draft"). Every
+ * word the learner types has to start a word in there. A part of the raw
+ * file name ("82426", "sched_8") still works too.
+ */
+export function fileMatchesQuery(file: DriveFile, query: string): boolean {
+  const raw = query.trim().toLowerCase();
+  if (!raw) return true;
+  if (file.name.toLowerCase().includes(raw)) return true;
+  const doc = FILE_PAGES[file.key]?.doc;
+  const hay = searchWords(
+    [
+      file.name,
+      file.folder,
+      SEARCH_ALIASES[file.folder] ?? "",
+      doc && "title" in doc ? doc.title : "",
+      doc?.kind === "schedule" ? doc.week : "",
+      /draft/.test(file.name) ? "borrador" : "",
+      /copy/.test(file.name) ? "copia" : "",
+    ].join(" "),
+  );
+  const words = searchWords(raw).filter((w) => !SEARCH_STOPWORDS.has(w));
+  if (words.length === 0) return true;
+  return words.every((w) => hay.some((h) => h.startsWith(w)));
+}
+
+export type RenameProblem = "empty" | "oldName" | "wrong";
+
+/** What is wrong with a typed name, or null when it matches RENAME_TARGET. */
+export function renameProblem(value: string, oldName: string): RenameProblem | null {
+  if (!value.trim()) return "empty";
+  if (normalizeRename(value) === RENAME_TARGET) return null;
+  const old = oldName.replace(/\.pdf$/i, "").toLowerCase();
+  const code = old.match(/\d{4,}/)?.[0];
+  const v = value.toLowerCase();
+  // Clicking into the box drops the selection, so typing lands next to the old name.
+  if (v.includes(old) || (code && v.includes(code))) return "oldName";
+  return "wrong";
+}
 
 export const PREVIEW_COPY: Record<Lang, { rename: string; close: string; owner: string }> = {
   en: { rename: "Rename", close: "Close", owner: "Owner: Renata Silva" },
@@ -348,7 +424,7 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
   "sched-aug17": {
     doc: schedule(
       "sched-aug17",
-      "sched_81724.pdf",
+      "sched_81726.pdf",
       "Aug 14",
       "Week of Aug 17 – 23, 2026",
       // Last week: the same crew on different days.
@@ -359,11 +435,11 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
   "sched-sept": {
     doc: schedule(
       "sched-sept",
-      "sched_090107.pdf",
-      "Aug 28",
+      "sched_83126.pdf",
+      "Aug 21",
       "Week of Aug 31 – Sep 6, 2026",
       crewRows((m, d) => m.shifts[DAYS[(DAYS.indexOf(d) + 1) % DAYS.length]].label),
-      ["Monday, Sep 7 is Labor Day. The cafe opens at 10 AM.", SWAP_NOTE],
+      ["Labor Day is the Monday after this week, Sep 7. The cafe opens at 10 AM that day.", SWAP_NOTE],
     ),
   },
   "vacation-form": {
@@ -411,6 +487,35 @@ export const WRONG_RENAME_HINT: Record<Lang, string> = {
   es: "Revisa el nombre. Escribe estas palabras con un guion - entre ellas: schedule-week-of-aug-24",
 };
 
+export const RENAME_HINTS: Record<RenameProblem, Localized> = {
+  empty: {
+    en: "The box is empty. Type the new name: schedule-week-of-aug-24",
+    es: "La casilla está vacía. Escribe el nombre nuevo: schedule-week-of-aug-24",
+  },
+  oldName: {
+    en: "The old name is still in the box. Delete the old name first. Then type schedule-week-of-aug-24",
+    es: "El nombre viejo sigue en la casilla. Borra el nombre viejo primero. Después escribe schedule-week-of-aug-24",
+  },
+  wrong: { en: WRONG_RENAME_HINT.en, es: WRONG_RENAME_HINT.es },
+};
+
+/** Clicking My Drive or New is looking around, not a mistake. */
+export const NEW_BUTTON_NOTE: Localized = {
+  en: "New makes a new file. Today's schedule is already in Cafe Shared Drive.",
+  es: "Nuevo crea un archivo nuevo. El horario de hoy ya está en la Unidad compartida del café.",
+};
+
+export const MY_DRIVE_EMPTY: Localized = {
+  en: "My Drive is empty. Files other people share with you are in Shared with me.",
+  es: "Mi unidad está vacía. Los archivos que otras personas comparten contigo están en Compartido conmigo.",
+};
+
+/** Show me on the open-a-file step points at a schedule, not the answer, so it says so. */
+export const OPEN_ONE_POINTER: Localized = { en: "Open one. Read the week.", es: "Abre uno. Lee la semana." };
+
+/** The finish shows the result: the new name and who it is shared with. */
+export const DONE_SHARED_WITH: Localized = { en: "Shared with Jordan Kim · Viewer", es: "Compartido con Jordan Kim · Lector" };
+
 export const COMMENT_HINT: Record<Lang, string> = {
   en: "Jordan only needs to look at the schedule. Choose Can view.",
   es: "Jordan solo necesita mirar el horario. Elige Puede ver.",
@@ -426,7 +531,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Finding the right file",
       s: [
-        "Open the folder. You can also type part of a name in Search.",
+        "Open the folder. You can also search, for example: aug 24, or schedule.",
         "Click a file to open it. Opening a file does not change it.",
         "Read the top of the page. A schedule says which week it is for, like Week of Aug 24.",
       ],
@@ -444,9 +549,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Renaming a file",
       s: [
-        "The old name is already in the box, and it is selected. Just start typing to replace it.",
+        "The old name is already in the box, and it is selected. Just start typing to replace it. If you click in the box, delete the old name first.",
         "Type the new name exactly: schedule-week-of-aug-24",
-        "The dash - is next to the 0 key. Then click Continue.",
+        "The dash - is next to the 0 key. Then click Continue, or press Enter.",
       ],
       tip: "A clear name helps the next person find the file.",
     },
@@ -455,7 +560,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Encontrar el archivo correcto",
       s: [
-        "Abre la carpeta. También puedes escribir parte de un nombre en Buscar.",
+        "Abre la carpeta. También puedes buscar, por ejemplo: aug 24, o horario.",
         "Haz clic en un archivo para abrirlo. Abrir un archivo no lo cambia.",
         "Lee la parte de arriba de la página. Un horario dice de qué semana es, por ejemplo Week of Aug 24 (semana del 24 de agosto).",
       ],
@@ -473,9 +578,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "Cambiar el nombre de un archivo",
       s: [
-        "El nombre viejo ya está en la casilla, y está seleccionado. Empieza a escribir para reemplazarlo.",
+        "El nombre viejo ya está en la casilla, y está seleccionado. Empieza a escribir para reemplazarlo. Si haces clic en la casilla, borra primero el nombre viejo.",
         "Escribe el nombre nuevo tal cual: schedule-week-of-aug-24",
-        "El guion - está al lado de la tecla 0. Después haz clic en Continuar.",
+        "El guion - está al lado de la tecla 0. Después haz clic en Continuar, o presiona Enter.",
       ],
       tip: "Un nombre claro ayuda a la próxima persona a encontrar el archivo.",
     },

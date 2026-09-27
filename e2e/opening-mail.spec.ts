@@ -175,7 +175,7 @@ test('reopening Mail before the schedule does not introduce attachments early', 
   await continuePastStudioArrivalIfPresent(page);
   await page.getByTestId('bookmark-mail').click();
   await expect(page.locator('[data-showme="reply-button"]')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:/Maria Delgado.*July safety report/})).toHaveCount(0);
+  await expect(page.getByRole('button',{name:/Maria Delgado.*Safety report for the district/})).toHaveCount(0);
   // Set up the next boundary: earned schedule, attachment still incomplete.
   await sql`INSERT INTO task_completions (learner_id,task_key) VALUES (${id},'schedule')`;
   await page.goto('/');

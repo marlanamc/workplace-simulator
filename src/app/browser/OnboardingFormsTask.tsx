@@ -1,6 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
+import { useJobCardOptional } from "@/lib/job-card-context";
+import { W4_STATUS_OPTIONS } from "@/lib/tasks/onboarding-paperwork/content";
 import W4Document, { W4DocumentShell } from "./W4Document";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -33,7 +37,8 @@ import {
   signatureMatches,
   dateLooksFilled,
   PRACTICE_PROFILE, PRACTICE_REFERENCE, practiceFieldsMatch,
-  firstMismatch, W4_FIELD_HINT, REFERENCE_HINT, W4_STEPS,
+  REFERENCE_HINT, W4_STEPS,
+  w4Problem, w4StepIndex, W4_STATUS_WRONG, type W4Field,
   routingIsValid,
 } from "@/lib/tasks/onboarding-paperwork/content";
 
@@ -127,15 +132,63 @@ export default function OnboardingFormsTask() {
   };
 
   const referenceHint = REFERENCE_HINT[lang];
-  // Empty boxes first, then the one box that does not match Robin, by name.
+  const card = useJobCardOptional();
+  const showMe = useShowMe();
+
+  // ---- W-4 ----
+  const w4Values = { status: w4Status, dependents, signature, date };
+  const w4Step = w4StepIndex(w4Values);
+  const w4Now = w4Problem(w4Values);
+  // Which box the showing correction is about. Typing in a different box
+  // makes it stale, and typing raises no pointer press to clear it.
+  const [correctionField, setCorrectionField] = useState<W4Field | null>(null);
+  const sayAbout = (field: W4Field, message: string) => {
+    setCorrectionField(field);
+    say(message);
+  };
+  const editing = (field: W4Field) => {
+    if (correctionField && correctionField !== field) {
+      card?.clearCorrection();
+      setCorrectionField(null);
+    }
+  };
+  // A wrong filing status is corrected right at the field, while it is on screen.
+  const chooseW4Status = (key: string) => {
+    setW4Status(key);
+    const wrong = W4_STATUS_WRONG[key];
+    if (wrong) sayAbout("status", wrong[lang]);
+    else if (correctionField === "status") {
+      card?.clearCorrection();
+      setCorrectionField(null);
+    }
+  };
+  const checkW4Field = (field: W4Field) => {
+    const problem = w4Problem(w4Values);
+    const value = field === "dependents" ? dependents : date;
+    if (problem?.field === field && value.trim()) sayAbout(field, problem.hint[lang]);
+  };
+  // Empty boxes first, then the box that does not match Robin, each by name.
   const submitW4 = () => {
-    if (!w4Status || dependents.trim() === "" || !signature.trim() || !date.trim()) return say(s.needRequired);
-    const wrong = firstMismatch({ status: w4Status, dependents, date });
-    if (wrong) return say(W4_FIELD_HINT[wrong]?.[lang] ?? referenceHint);
-    if (!signatureMatches(signature, PRACTICE_PROFILE.name)) return say(s.needSignature);
+    const problem = w4Problem(w4Values);
+    if (problem) return sayAbout(problem.field, problem.hint[lang]);
     markComplete("w4-form", "submit_w4");
   };
-  const w4Step = !w4Status ? 0 : dependents.trim() === "" ? 1 : 2;
+  const showMeId =
+    w4Step === 0 ? "w4-status" : w4Step === 1 ? "w4-dependents" : w4Now?.field === "date" ? "w4-date" : w4Now ? "w4-sign" : "w4-submit";
+
+  // When a step is done, bring the next box into view: the dependents box
+  // and the signature start below the fold. DOM sync only, no state.
+  const lastW4Step = useRef(w4Step);
+  useEffect(() => {
+    if (lastW4Step.current === w4Step) return;
+    const forward = w4Step > lastW4Step.current;
+    lastW4Step.current = w4Step;
+    if (!forward || active !== "w4-form") return;
+    const id = w4Step === 1 ? "w4-dependents" : "w4-sign";
+    const el = document.querySelector<HTMLElement>(`[data-showme="${id}"]`);
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+    el?.focus({ preventScroll: true });
+  }, [w4Step, active]);
 
   const submitI9 = () => {
     if (!practiceFieldsMatch({dob, address, workStatus: i9Status ?? '', date})) return say(referenceHint);
@@ -167,6 +220,8 @@ export default function OnboardingFormsTask() {
             steps={active === "w4-form" ? W4_STEPS : RIGHT_NOW_STEPS}
             lang={lang}
             rightNowLabel={RIGHT_NOW_LABEL}
+            onShowMe={active === "w4-form" ? () => showMe.toggleFor(showMeId) : undefined}
+            showMeActive={active === "w4-form" && showMe.targetId === showMeId}
             onHelp={() => setHelp(true)}
           />
         )}
@@ -179,6 +234,17 @@ export default function OnboardingFormsTask() {
               <p className="text-[14px] leading-relaxed text-[#444746]">
                 {"doneBody" in doneCopy ? doneCopy.doneBody : ""}
               </p>
+              {active === "w4-form" && (
+                // What was sent, so the finish shows the form, not just a stamp.
+                <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 rounded border border-[#b8bcc1] bg-white p-4 text-[14px]">
+                  <dt className="font-semibold">{W4_COPY[lang].nameLabel}</dt><dd>{PRACTICE_PROFILE.name}</dd>
+                  <dt className="font-semibold">{W4_COPY[lang].statusLabel}</dt>
+                  <dd>{W4_STATUS_OPTIONS.find((o) => o.key === (w4Status ?? PRACTICE_PROFILE.status))?.label[lang]}</dd>
+                  <dt className="font-semibold">{W4_COPY[lang].dependentsShort}</dt><dd>{dependents.trim() || PRACTICE_PROFILE.dependents}</dd>
+                  <dt className="font-semibold">{s.signShort}</dt><dd className="font-serif italic">{signature || PRACTICE_PROFILE.name}</dd>
+                  <dt className="font-semibold">{s.dateLabel}</dt><dd>{date || PRACTICE_PROFILE.date}</dd>
+                </dl>
+              )}
               <TaskDoneActions
                 kicker={s.sentKicker}
                 tryAgainLabel={s.tryAgain}
@@ -189,10 +255,12 @@ export default function OnboardingFormsTask() {
           ) : active === "w4-form" ? (
             <W4Document
               lang={lang}
-              status={w4Status} onStatus={setW4Status}
-              dependents={dependents} onDependents={setDependents}
-              signature={signature} onSignature={setSignature}
-              date={date} onDate={setDate}
+              status={w4Status} onStatus={chooseW4Status}
+              dependents={dependents} onDependents={(v) => { editing("dependents"); setDependents(v); }}
+              onDependentsBlur={() => checkW4Field("dependents")}
+              signature={signature} onSignature={(v) => { editing("signature"); setSignature(v); }}
+              date={date} onDate={(v) => { editing("date"); setDate(v); }}
+              onDateBlur={() => checkW4Field("date")}
               onSubmit={submitW4}
             />
           ) : active === "i9-section1" ? (
@@ -211,7 +279,7 @@ export default function OnboardingFormsTask() {
                 <Radio options={I9_STATUS_OPTIONS} value={i9Status} onChange={setI9Status} lang={lang} />
               </QuestionCard>
               <QuestionCard label={s.signLabel} required>
-                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={PRACTICE_PROFILE.name} />
+                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={s.signPlaceholder} />
               </QuestionCard>
               <QuestionCard label={s.dateLabel} required>
                 <FormInput value={date} onChange={(e) => setDate(e.target.value)} placeholder={s.datePlaceholder} />
@@ -259,6 +327,7 @@ export default function OnboardingFormsTask() {
         gotItLabel={s.gotIt}
       />
       <NudgeToast text={nudge} onDismiss={dismiss} />
+      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </Shell>
   );
 }

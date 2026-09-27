@@ -18,7 +18,8 @@ async function startLesson(page: Page) {
 async function finishAccountRecovery(page: Page) {
   await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await page.getByRole("button", { name: /Google/ }).click();
+  // Two texts mention Google; the real one is the one Google sent.
+  await page.getByTestId("phone-texts").getByRole("button", { name: /^Google/ }).click();
   await page.getByPlaceholder("000000").fill("482915");
   await page.getByRole("button", { name: "Verify" }).click();
 }
@@ -51,6 +52,8 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
 
   await finishAccountRecovery(page);
   await expect(card).toContainText("Sign in with a text code");
+  // The finish says what the learner can now do.
+  await expect(card).toContainText("never give that code to anyone");
   const again = card.getByTestId("lesson-practice-again");
   await expect(again).toBeVisible();
   await expect(card.getByTestId("lesson-back")).toBeVisible();
@@ -62,6 +65,44 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   expect(errors).toEqual([]);
 });
 
+test("the sign-in lesson makes the code a real safety choice", async ({ page }) => {
+  await page.goto("/lessons/account-recovery");
+  await startLesson(page);
+  const card = jobCard(page);
+  // The password box has focus as soon as the page opens.
+  await expect(page.getByPlaceholder("Enter your password")).toBeFocused();
+  await page.keyboard.type("Harbor2026");
+  await page.keyboard.press("Enter");
+
+  // An empty code box is reported as empty, not as the wrong code.
+  const code = page.getByPlaceholder("000000");
+  await expect(code).toBeFocused();
+  await code.press("Enter");
+  await expect(card).toContainText("The box is empty.");
+
+  // The lookalike text is corrected, and the correction goes once the learner types.
+  await page.getByTestId("phone-texts").getByRole("button", { name: /Google Alert/ }).click();
+  await expect(card).toContainText("That text is fake.");
+  await code.focus();
+  await expect(card).not.toContainText("That text is fake.");
+
+  // Typing the fake text's number is its own correction.
+  await code.fill("915482");
+  await code.press("Enter");
+  await expect(card).toContainText("That code is from the fake text.");
+  await code.fill("482915");
+  await expect(card).not.toContainText("That code is from the fake text.");
+});
+
+test("the phone with the code stays on screen at 150% text", async ({ page }) => {
+  await page.setViewportSize({ width: 911, height: 512 });
+  await page.goto("/lessons/account-recovery");
+  await startLesson(page);
+  await page.getByPlaceholder("Enter your password").fill("Harbor2026");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect(page.getByTestId("phone-texts").getByRole("button", { name: /^Google/ })).toBeInViewport();
+});
+
 test("independent mode states the goal instead of each click", async ({ page }) => {
   await page.goto("/lessons/account-recovery?mode=independent");
   await startLesson(page);
@@ -69,7 +110,7 @@ test("independent mode states the goal instead of each click", async ({ page }) 
   await expect(card).toContainText("Sign in with a text code");
   await expect(card).toContainText("Sign back in. Use the code from your phone.");
   await expect(card).not.toContainText("Type the password from your info card.");
-  await expect(card.getByRole("button", { name: "Show me" })).toHaveCount(0);
+  await expect(card.getByRole("button", { name: "Show me", exact: true })).toHaveCount(0);
 });
 
 test("a Spanish link opens the lesson in Spanish", async ({ page }) => {

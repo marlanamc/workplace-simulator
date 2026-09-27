@@ -60,6 +60,7 @@ export default async function LessonsPage({
     return {
       lessonKey: l.taskKey,
       title: l.title[lang],
+      summary: l.summary[lang],
       minutes: l.minutes,
       href: lessonHref(l.taskKey),
       previewHref: teacher ? lessonHref(l.taskKey, true) : undefined,

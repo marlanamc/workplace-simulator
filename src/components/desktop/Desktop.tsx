@@ -141,7 +141,8 @@ export default function Desktop({
         <div className={`flex flex-1 items-start px-10 pt-10 ${lesson ? "xl:pl-[480px]" : ""}`}>
           <div className="flex w-full max-w-[400px] flex-col">
             <DesktopClock lang={lang} />
-            <DesktopIdentity name={displayName} identity={identity} lang={lang} />
+            {/* A lesson has no Story job title ("Shift lead"), so no name note. */}
+            {!lesson && <DesktopIdentity name={displayName} identity={identity} lang={lang} />}
           </div>
         </div>
       </div>

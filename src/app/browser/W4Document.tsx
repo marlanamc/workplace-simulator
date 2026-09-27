@@ -6,8 +6,8 @@ const COPY = {
   en: {
     viewer: "Payroll documents", practice: "SIMPLIFIED PRACTICE COPY", page: "Page 1 of 1",
     personal: "Personal information", dependents: "Dependents", sign: "Signature",
-    step: "Step", address: "Address", reference: "Robin's facts: copy these",
-    details: "Name: Robin Avery · Single · Dependents: 0 · Form date: 10/01/2026",
+    step: "Step", address: "Address", reference: "Robin's facts",
+    details: "Robin Avery · Not married · No children, supports no one else · Form date: 10/01/2026",
     omitted: "Steps 2 and 4 · Multiple jobs and other adjustments are not included in this practice copy.",
     note: "Practice version • Fictional information • Not for filing",
     simplified: "Dependent count only; tax-credit calculations are omitted in this practice version.",
@@ -15,8 +15,8 @@ const COPY = {
   es: {
     viewer: "Documentos de nómina", practice: "COPIA SIMPLIFICADA DE PRÁCTICA", page: "Página 1 de 1",
     personal: "Información personal", dependents: "Dependientes", sign: "Firma",
-    step: "Paso", address: "Dirección", reference: "Datos de Robin: cópialos",
-    details: "Nombre: Robin Avery · Soltero/a · Dependientes: 0 · Fecha del formulario: 10/01/2026",
+    step: "Paso", address: "Dirección", reference: "Datos de Robin",
+    details: "Robin Avery · No está casado/a · Sin hijos, no mantiene a nadie más · Fecha del formulario: 10/01/2026 (1 de octubre)",
     omitted: "Pasos 2 y 4 · Los empleos múltiples y otros ajustes no se incluyen en esta copia de práctica.",
     note: "Versión de práctica • Datos ficticios • No válida para trámites",
     simplified: "Solo el número de dependientes; esta versión de práctica omite el cálculo de créditos fiscales.",
@@ -49,11 +49,11 @@ function Section({ number, title, lang, children }: { number: number; title: str
   );
 }
 
-export default function W4Document({ lang, status, onStatus, dependents, onDependents, signature, onSignature, date, onDate, onSubmit }: {
+export default function W4Document({ lang, status, onStatus, dependents, onDependents, onDependentsBlur, signature, onSignature, date, onDate, onDateBlur, onSubmit }: {
   lang: Lang; status: string | null; onStatus: (value: string) => void;
-  dependents: string; onDependents: (value: string) => void;
+  dependents: string; onDependents: (value: string) => void; onDependentsBlur?: () => void;
   signature: string; onSignature: (value: string) => void;
-  date: string; onDate: (value: string) => void; onSubmit: () => void;
+  date: string; onDate: (value: string) => void; onDateBlur?: () => void; onSubmit: () => void;
 }) {
   const c = COPY[lang];
   const w = W4_COPY[lang];
@@ -71,17 +71,20 @@ export default function W4Document({ lang, status, onStatus, dependents, onDepen
           <div className="mb-3 flex flex-wrap justify-between gap-2 text-[10px] font-semibold tracking-[0.12em]">
             <span>{c.practice}</span><span>2026</span>
           </div>
-          <header className="grid gap-3 border-t-4 border-[#222] py-4 sm:grid-cols-[128px_1fr]">
+          <header className="grid gap-3 border-t-4 border-[#222] py-3 sm:grid-cols-[128px_1fr]">
             <div className="text-[34px] font-bold leading-none tracking-tight">W-4</div>
             <div><h1 className="text-[21px] font-bold leading-tight">{w.title}</h1><p className="mt-2 text-[12px] leading-relaxed">{w.blurb}</p></div>
           </header>
           <Section number={1} title={c.personal} lang={lang}>
-            <label className="block">{w.nameLabel}<input className={`${fieldClass} bg-[#f5f5f3]`} value={PRACTICE_PROFILE.name} readOnly /></label>
-            <div className="mt-3 border-b border-[#777] pb-2"><span className="text-[12px]">{c.address}</span><p className="mt-1 font-mono text-[15px]">{PRACTICE_PROFILE.address}</p></div>
-            <fieldset className="mt-4">
+            {/* Side by side, so the filing status starts on the first screen. */}
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block">{w.nameLabel}<input className={`${fieldClass} bg-[#f5f5f3]`} value={PRACTICE_PROFILE.name} readOnly /></label>
+              <div className="border-b border-[#777] pb-2"><span className="block">{c.address}</span><p className="mt-2 px-2 py-2 font-mono text-[15px]">{PRACTICE_PROFILE.address}</p></div>
+            </div>
+            <fieldset data-showme="w4-status" className="mt-3">
               <legend className="mb-1 font-semibold">{w.statusLabel} <span className="text-[11px] font-normal">({s.requiredLabel})</span></legend>
               {W4_STATUS_OPTIONS.map((option) => (
-                <label key={option.key} className="flex min-h-11 cursor-pointer items-center gap-3 py-2 leading-snug">
+                <label key={option.key} className="flex min-h-10 cursor-pointer items-center gap-3 py-1.5 leading-snug">
                   <input type="radio" name="w4-status" value={option.key} checked={status === option.key} onChange={() => onStatus(option.key)} required className="h-4 w-4 shrink-0 accent-[#245b94]" />
                   {option.label[lang]}
                 </label>
@@ -90,20 +93,20 @@ export default function W4Document({ lang, status, onStatus, dependents, onDepen
           </Section>
           <Section number={3} title={c.dependents} lang={lang}>
             <label className="flex flex-wrap items-end justify-between gap-3"> <span className="max-w-[320px]">{w.dependentsLabel} <span className="text-[11px]">({s.requiredLabel})</span></span>
-              <input aria-label={w.dependentsLabel} inputMode="numeric" required value={dependents} onChange={(e) => onDependents(e.target.value.replace(/\D/g, ""))} className={`${fieldClass} max-w-24 text-right`} />
+              <input data-showme="w4-dependents" aria-label={w.dependentsLabel} required value={dependents} onChange={(e) => onDependents(e.target.value)} onBlur={onDependentsBlur} className={`${fieldClass} max-w-28 text-right`} />
             </label>
             <p className="mt-3 text-[11px] leading-relaxed text-[#555]">{c.simplified}</p>
           </Section>
           <p className="border-t border-[#777] px-4 py-3 text-[11px] leading-relaxed text-[#555]">{c.omitted}</p>
           <Section number={5} title={c.sign} lang={lang}>
             <div className="grid gap-4 sm:grid-cols-[1fr_150px]">
-              <label>{s.signLabel} <span className="text-[11px]">({s.requiredLabel})</span><input required value={signature} onChange={(e) => onSignature(e.target.value)} placeholder={PRACTICE_PROFILE.name} className={`${fieldClass} font-serif italic`} /></label>
-              <label>{s.dateLabel} <span className="text-[11px]">({s.requiredLabel})</span><input required value={date} onChange={(e) => onDate(e.target.value)} placeholder={s.datePlaceholder} className={fieldClass} /></label>
+              <label>{s.signLabel} <span className="text-[11px]">({s.requiredLabel})</span><input data-showme="w4-sign" required value={signature} onChange={(e) => onSignature(e.target.value)} placeholder={s.signPlaceholder} className={`${fieldClass} font-serif italic placeholder:font-sans placeholder:not-italic placeholder:text-[14px] placeholder:text-[#6b7280]`} /></label>
+              <label>{s.dateLabel} <span className="text-[11px]">({s.requiredLabel})</span><input data-showme="w4-date" required value={date} onChange={(e) => onDate(e.target.value)} onBlur={onDateBlur} placeholder={s.datePlaceholder} className={fieldClass} /></label>
             </div>
           </Section>
           <footer className="flex flex-wrap justify-between gap-2 border-t-2 border-[#222] pt-3 text-[10px]"><span>{c.note}</span><span>{w.formName} (2026)</span></footer>
         </article>
-        <div className="mt-4 flex justify-end"><button type="submit" className="min-h-11 rounded bg-[#245b94] px-6 py-2 text-[14px] font-medium text-white transition-colors hover:bg-[#194675] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#245b94]">{w.submit}</button></div>
+        <div className="mt-4 flex justify-end"><button type="submit" data-showme="w4-submit" className="min-h-11 rounded bg-[#245b94] px-6 py-2 text-[14px] font-medium text-white transition-colors hover:bg-[#194675] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#245b94]">{w.submit}</button></div>
       </form>
     </>
   );

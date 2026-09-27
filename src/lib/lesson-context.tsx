@@ -22,6 +22,8 @@ export interface LessonValue {
   reference: LessonFact[];
   /** The name the task writes for "you", when it needs one. */
   persona?: string;
+  /** The finish card's one-line takeaway. */
+  takeaway?: Localized;
   mode: LessonMode;
   /** Change support mid-task. The task keeps its place. */
   setMode: (mode: LessonMode) => void;

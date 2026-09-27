@@ -323,3 +323,23 @@ textarea:focus-visible,
 @media (prefers-reduced-motion: reduce) {
   .job-card-primary { transition: none; }
 }
+
+/* The Job Card on a short screen (a Chromebook at 150% text is 911x512):
+   narrower, smaller type, at most about half the height, so it never covers
+   most of the task. Inline width/max-height need !important to yield. */
+@media (max-height: 640px), (max-width: 1000px) {
+  .job-card-compact {
+    width: 340px !important;
+    max-height: 55dvh !important;
+  }
+  .job-card-compact [data-card-line] {
+    font-size: 20px;
+  }
+  .job-card-compact .job-card-primary {
+    min-height: 48px;
+    font-size: 17px;
+  }
+  .job-card-compact .min-h-\[56px\] {
+    min-height: 44px;
+  }
+}

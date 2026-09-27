@@ -31,41 +31,55 @@ export interface RecoveryText {
 
 /**
  * Texts on the phone beside the sign-in page, once the account has sent the
- * code. The learner has to pick the real one out of the ad and the coworker's
- * text: the same "read the whole list" skill as picking a file or an email.
- * They stay on screen, so the code is still readable while it is typed.
+ * code. Two of them carry a 6-digit number and both say "Google", so the
+ * learner has to judge which one is real: who sent it, and whether it asks
+ * them to reply with the code. The coworker's text asks for the code too.
+ * The texts stay on screen, so the code is still readable while it is typed.
+ * Newest first, the way a phone lists them.
  */
 export const TEXTS: RecoveryText[] = [
   {
-    key: "promo",
-    from: "Cafe Rewards",
-    body: { en: "Buy 5 coffees, get 1 free. This week only!", es: "Compra 5 cafés y llévate 1 gratis. ¡Solo esta semana!" },
-    when: { en: "2 min ago", es: "hace 2 min" },
+    key: "fake",
+    from: "+1 (555) 014-2297",
+    body: {
+      en: "Google Alert: someone is using your account! Your code is 915482. Reply with the code now, or we will close your account.",
+      es: "Alerta de Google: ¡alguien está usando tu cuenta! Tu código es 915482. Responde con el código ahora o cerraremos tu cuenta.",
+    },
+    when: { en: "Now", es: "Ahora" },
     isTarget: false,
     wrongHint: wrongHint(
-      "That text is an ad. Your code comes from Google.",
-      "Ese mensaje es un anuncio. Tu código viene de Google."
+      "That text is fake. It comes from a phone number, not from Google, and it asks you to reply with the code. Google never asks that. Look for the text from Google.",
+      "Ese mensaje es falso. Viene de un número de teléfono, no de Google, y te pide que respondas con el código. Google nunca pide eso. Busca el mensaje de Google."
     ),
   },
   {
     key: "code",
     from: "Google",
-    body: { en: "Your Google verification code is 482915", es: "Tu código de verificación de Google es 482915" },
+    body: {
+      en: "Your Google verification code is 482915. Do not share it with anyone.",
+      es: "Tu código de verificación de Google es 482915. No se lo compartas a nadie.",
+    },
     when: { en: "Now", es: "Ahora" },
     isTarget: true,
   },
   {
     key: "friend",
     from: "Sam",
-    body: { en: "Running 5 min late, see you at open", es: "Llego 5 min tarde, nos vemos al abrir" },
-    when: { en: "1 min ago", es: "hace 1 min" },
+    body: {
+      en: "Hi! It's Sam from work. Can you send me the code you just got? I need it for the schedule.",
+      es: "¡Hola! Soy Sam, del trabajo. ¿Me mandas el código que te acaba de llegar? Lo necesito para el horario.",
+    },
+    when: { en: "2 min ago", es: "hace 2 min" },
     isTarget: false,
     wrongHint: wrongHint(
-      "That text is from Sam, a coworker. Your code comes from Google.",
-      "Ese mensaje es de Sam, un compañero. Tu código viene de Google."
+      "That text is from Sam, a coworker. Sam wants your code. Never give your code to anyone, not even a coworker. Look for the text from Google.",
+      "Ese mensaje es de Sam, un compañero. Sam quiere tu código. Nunca le des tu código a nadie, ni a un compañero. Busca el mensaje de Google."
     ),
   },
 ];
+
+/** The number in the fake text: typing it is the unsafe choice. */
+export const FAKE_CODE = "915482";
 
 /**
  * The password a lesson learner is given on their info card. Story mode has no
@@ -74,9 +88,28 @@ export const TEXTS: RecoveryText[] = [
  */
 export const LESSON_PASSWORD = "Harbor2026";
 
-/** Spaces are not part of a code: "482 915" is the same code. */
+/** Spaces and dashes are not part of a code: "482 915" is the same code. */
+function digitsOf(typed: string): string {
+  return typed.replace(/[\s-]+/g, "");
+}
+
 export function codeMatches(typed: string): boolean {
-  return typed.replace(/\s+/g, "") === CODE;
+  return digitsOf(typed) === CODE;
+}
+
+export type CodeCheck = "ok" | "empty" | "fake" | "wrong";
+
+/**
+ * Grades the code box. An empty box is reported first, then the fake text's
+ * number (the safety mistake, which gets its own correction), then anything
+ * else that is not the code.
+ */
+export function checkCode(typed: string): CodeCheck {
+  const digits = digitsOf(typed);
+  if (!digits) return "empty";
+  if (digits === CODE) return "ok";
+  if (digits === FAKE_CODE) return "fake";
+  return "wrong";
 }
 
 export const CODE = "482915";
@@ -99,6 +132,8 @@ export const RECOVERY_COPY: Record<Lang, {
   phoneEmpty: string;
   phoneLabel: string;
   wrongCode: string;
+  emptyCode: string;
+  fakeCode: string;
   sentKicker: string;
   doneBody: string;
   badgeName: string;
@@ -128,8 +163,10 @@ export const RECOVERY_COPY: Record<Lang, {
     phoneEmpty: "No new messages",
     phoneLabel: "Your phone",
     wrongCode: "That is not the code. Look at the text from Google on your phone. Type its 6 numbers.",
+    emptyCode: "The box is empty. Type the 6 numbers from the text from Google.",
+    fakeCode: "That code is from the fake text. It came from a phone number and asked you to reply. Type the code from the text from Google.",
     sentKicker: "Signed back in",
-    doneBody: "Getting signed out happens to everyone. Now you know the steps: type your password, find the real code, and type it in.",
+    doneBody: "Getting signed out happens to everyone. Type your password, find the real code from the account, and never give that code to anyone.",
     badgeName: "Get back into a locked account",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -156,8 +193,10 @@ export const RECOVERY_COPY: Record<Lang, {
     phoneEmpty: "No hay mensajes nuevos",
     phoneLabel: "Tu teléfono",
     wrongCode: "Ese no es el código. Mira el mensaje de Google en tu teléfono. Escribe sus 6 números.",
+    emptyCode: "La casilla está vacía. Escribe los 6 números del mensaje de Google.",
+    fakeCode: "Ese código es del mensaje falso. Vino de un número de teléfono y te pedía responder. Escribe el código del mensaje de Google.",
     sentKicker: "Sesión iniciada",
-    doneBody: "A todos se les cierra la sesión alguna vez. Ahora conoces los pasos: escribir tu contraseña, buscar el código real y escribirlo.",
+    doneBody: "A todos se les cierra la sesión alguna vez. Escribe tu contraseña, busca el código real de la cuenta y nunca le des ese código a nadie.",
     badgeName: "Volver a entrar a una cuenta bloqueada",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -176,8 +215,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Escribe tu contraseña. Después haz clic en Iniciar sesión.",
   },
   {
-    en: "Look at your phone. Click the text from Google.",
-    es: "Mira tu teléfono. Haz clic en el mensaje de Google.",
+    en: "Look at your phone. See who sent each text. Click the real text from Google.",
+    es: "Mira tu teléfono. Fíjate quién envió cada mensaje. Haz clic en el mensaje real de Google.",
   },
   {
     en: "Type the 6 numbers from that text. Then click Verify.",
@@ -197,8 +236,9 @@ export const HELP_LESSON: Record<Lang, Lesson> = {
     s: [
       "Type your password.",
       "The account sends a text message with a code to your phone. It takes a few seconds.",
-      "Find the real code. It comes from the account, not from an ad or a coworker.",
-      "Type the numbers exactly as they appear.",
+      "Find the real code. Look at who sent the text. The real code comes from the account, not from a phone number or a coworker.",
+      "A real code text never asks you to reply with the code. If a text asks for your code, it is a trick.",
+      "Type the numbers exactly as they appear. Never give the code to anyone.",
     ],
     tip: "This happens to everyone. It is not a mistake. Work accounts do this to keep you safe.",
   },
@@ -207,8 +247,9 @@ export const HELP_LESSON: Record<Lang, Lesson> = {
     s: [
       "Escribe tu contraseña.",
       "La cuenta te envía un mensaje de texto con un código al teléfono. Tarda unos segundos.",
-      "Busca el código real. Viene de la cuenta, no de un anuncio ni de un compañero.",
-      "Escribe los números tal como aparecen.",
+      "Busca el código real. Mira quién envió el mensaje. El código real viene de la cuenta, no de un número de teléfono ni de un compañero.",
+      "Un mensaje con un código real nunca te pide que respondas con el código. Si un mensaje te pide tu código, es una trampa.",
+      "Escribe los números tal como aparecen. Nunca le des el código a nadie.",
     ],
     tip: "Esto le pasa a cualquiera. No es un error. Las cuentas del trabajo hacen esto para protegerte.",
   },

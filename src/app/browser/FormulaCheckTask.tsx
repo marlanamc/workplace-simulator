@@ -1,24 +1,27 @@
 "use client";
 
-import { useState, type CSSProperties } from "react";
+import { useRef, useState, type CSSProperties } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
 import {
   FORMULA_CHECK_COPY,
   STARTERS,
   LESSONS,
-  WRONG_SUM_FORMULA,
-  AVERAGE_FORMULA,
-  WRONG_EMAIL_HINT,
-  EMPTY_EMAIL_HINT,
+  wrongSumFormula,
+  averageFormula as startingAverage,
+  AVERAGE_HINT,
+  FIX_EMAIL_HINT,
+  OFF_LABEL,
+  SENT_LABELS,
+  fixEmailProblem,
+  isAverage,
   rangeCoversCrew,
   parseRange,
-  sumProblem,
-  SUM_PROBLEM_HINT,
-  emailMentionsFix,
+  sumCorrection,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/formula-check/content";
+import { CELL_FOCUS, SentEmailRecap, pickStarter } from "./sheet-lesson-parts";
 import {
   CREW,
   CORRECT_COVER,
@@ -63,6 +66,19 @@ function colWidth(col: CellCol) {
   return 68;
 }
 
+/**
+ * In a window too narrow for the whole week (the grid is about 690px), the
+ * six day columns hide, the way a real sheet hides columns, and a grey bar
+ * marks where they were. The task only needs Name, Hours and the Total.
+ */
+const NARROW_HIDE = "@max-[44rem]:hidden";
+const NARROW_MARK = "@max-[44rem]:border-l-4 @max-[44rem]:border-l-[#9aa0a6]";
+function colVis(col: CellCol) {
+  if (DAY_COLS.includes(col)) return NARROW_HIDE;
+  if (col === "H") return NARROW_MARK;
+  return "";
+}
+
 function cellRef(cell: Cell) {
   return `${cell.col}${cell.row}`;
 }
@@ -84,58 +100,79 @@ function evalHoursFormula(formula: string, hours: number[]): number | null {
     sum += hours[r - FIRST_DATA_ROW] ?? 0;
     n++;
   }
-  if (/average/i.test(formula)) return n ? Math.round((sum / n) * 10) / 10 : 0;
+  if (isAverage(formula)) return n ? Math.round((sum / n) * 10) / 10 : 0;
   return sum;
 }
 
 export default function FormulaCheckTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("formula-check") ? "done" : "home");
-  const [sumFormula, setSumFormula] = useState(WRONG_SUM_FORMULA);
-  const [averageFormula, setAverageFormula] = useState(AVERAGE_FORMULA);
+  // null until the learner edits it, so the starting formula follows the
+  // screen's language (=SUM or =SUMA) until then.
+  const [sumEdit, setSumEdit] = useState<string | null>(null);
+  const [averageEdit, setAverageEdit] = useState<string | null>(null);
+  const sumFormula = sumEdit ?? wrongSumFormula(lang);
+  const averageFormula = averageEdit ?? startingAverage(lang);
+  // Wrong formula checks so far: the first gets a looking question, later ones the exact keys.
+  const [tries, setTries] = useState(0);
+  const [missed, setMissed] = useState(false);
   const [selected, setSelected] = useState<Cell>({ row: TOTAL_ROW, col: "H" });
   const [body, setBody] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
+  const bodyBox = useRef<HTMLTextAreaElement | null>(null);
 
   const c = FORMULA_CHECK_COPY[lang];
   const days = DAY_LABELS[lang];
   const hours = CREW.map((m) => hoursFor(m, m.key === CORRECT_COVER));
   const sumValue = evalHoursFormula(sumFormula, hours);
   const averageValue = evalHoursFormula(averageFormula, hours);
-  const selectedFormula = selected.row === TOTAL_ROW ? sumFormula : selected.row === AVERAGE_ROW ? averageFormula : null;
-  const highlight = selected.col === "H" && selectedFormula ? parseRange(selectedFormula) : null;
+  // The green cells show the rows the Total adds, all the time, so "look at
+  // the green cells" always has something to look at. Selecting the Average
+  // shows its rows instead.
+  const highlight = parseRange(selected.row === AVERAGE_ROW && selected.col === "H" ? averageFormula : sumFormula);
 
   const sumFixed = rangeCoversCrew(sumFormula, "sum");
   const stepIndex = view === "home" ? 0 : view === "sheet" ? (sumFixed ? 2 : 1) : 3;
   const showMeIds = ["open-file", "formula-bar", "email-total", "compose-body"];
 
+  /** Checks the Total's formula; says what is wrong on the card. True when it is right. */
+  const checkSum = () => {
+    const next = tries + 1;
+    const correction = sumCorrection(sumFormula, lang, next);
+    if (correction) {
+      setTries(next);
+      say(correction);
+      return false;
+    }
+    return true;
+  };
+
   const tryEmail = () => {
     showMe.clear();
-    const problem = sumProblem(sumFormula);
-    if (problem !== "ok") return say(SUM_PROBLEM_HINT[problem][lang]);
-    if (!rangeCoversCrew(averageFormula, "average")) {
-      return say(
-        lang === "en"
-          ? "AVERAGE should include every name too. Set it to H2:H6."
-          : "AVERAGE también debe incluir todos los nombres. Ponlo en H2:H6."
-      );
-    }
+    if (!checkSum()) return;
+    if (!rangeCoversCrew(averageFormula, "average")) return say(AVERAGE_HINT[lang]);
     setView("compose");
+    requestAnimationFrame(() => bodyBox.current?.focus());
   };
 
   const trySend = () => {
-    if (!body.trim()) return say(EMPTY_EMAIL_HINT[lang]);
-    if (!emailMentionsFix(body)) return say(WRONG_EMAIL_HINT[lang]);
+    const problem = fixEmailProblem(body);
+    if (problem !== "ok") {
+      setMissed(true);
+      return say(FIX_EMAIL_HINT[problem][lang]);
+    }
     setView("done");
     markComplete("formula-check", "fix_a_formula_range");
   };
 
   const restart = () => {
     setView("home");
-    setSumFormula(WRONG_SUM_FORMULA);
-    setAverageFormula(AVERAGE_FORMULA);
+    setSumEdit(null);
+    setAverageEdit(null);
+    setTries(0);
+    setMissed(false);
     setBody("");
     setSelected({ row: TOTAL_ROW, col: "H" });
   };
@@ -148,8 +185,8 @@ export default function FormulaCheckTask() {
     );
 
   const onFormulaChange = (value: string) => {
-    if (selected.row === TOTAL_ROW) setSumFormula(value);
-    if (selected.row === AVERAGE_ROW) setAverageFormula(value);
+    if (selected.row === TOTAL_ROW) setSumEdit(value);
+    if (selected.row === AVERAGE_ROW) setAverageEdit(value);
   };
 
   const formulaBarContent = (() => {
@@ -170,8 +207,12 @@ export default function FormulaCheckTask() {
     const day = dayForCol(selected.col);
     if (!day) return "";
     if (day === GAP_DAY && member.key === CORRECT_COVER) return GAP_SHIFT_LABEL;
-    return member.shifts[day].label;
+    return shiftText(member.shifts[day].label);
   })();
+
+  function shiftText(label: string) {
+    return label === OFF_LABEL.en ? OFF_LABEL[lang] : label;
+  }
 
   const formulaEditable = selected.col === "H" && (selected.row === TOTAL_ROW || selected.row === AVERAGE_ROW);
 
@@ -210,7 +251,7 @@ export default function FormulaCheckTask() {
       )}
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
 
-      {view === "sheet" && (
+      {(view === "sheet" || view === "compose") && (
         <>
           <div className="flex items-center gap-3 border-b border-[#e0e0e0] bg-[#f9fbfd] px-4 py-1.5 text-[#5f6368]">
             {["↶", "↷", "🖨", "🖌"].map((g) => (
@@ -239,6 +280,12 @@ export default function FormulaCheckTask() {
                   aria-label={lang === "en" ? "Formula bar" : "Barra de fórmulas"}
                   value={formulaBarContent}
                   onChange={(e) => onFormulaChange(e.target.value)}
+                  // Enter finishes the formula, like a real sheet: it is checked then.
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter") return;
+                    e.preventDefault();
+                    if (selected.row === TOTAL_ROW) checkSum();
+                  }}
                   className="min-h-9 flex-1 rounded border-2 border-[#1a73e8] bg-white px-2 font-mono text-[15px] text-[#202124] outline-none"
                   spellCheck={false}
                 />
@@ -246,7 +293,7 @@ export default function FormulaCheckTask() {
                 <button
                   type="button"
                   onClick={() => setSelected({ row: TOTAL_ROW, col: "H" })}
-                  className="flex-1 truncate border-l border-[#e0e0e0] px-2 py-1 text-left text-[13px] text-[#202124]"
+                  className={`flex-1 truncate border-l border-[#e0e0e0] px-2 py-1 text-left text-[13px] text-[#202124] ${CELL_FOCUS}`}
                 >
                   {formulaBarContent}
                 </button>
@@ -297,8 +344,12 @@ export default function FormulaCheckTask() {
         </div>
       )}
 
-      {view === "sheet" && (
-        <div className="min-h-0 flex-1 overflow-auto">
+      {/* The sheet stays under the compose box: the new total is what the
+          learner is writing about. The @container lets a narrow window (150%
+          zoom) hide the day columns, like hidden columns in a real sheet, so
+          Hours and the Total stay on screen. */}
+      {(view === "sheet" || view === "compose") && (
+        <div className="@container min-h-0 flex-1 overflow-auto">
           <div className="p-4">
             <div className="mb-4 max-w-[440px] rounded-sm border border-[#f9ab00] bg-[#fef7e0] px-3 py-2.5 text-[13px] leading-relaxed text-[#3c4043]">
               <div className="text-[11px] font-bold uppercase tracking-wide text-[#b06000]">{c.noteHeading}</div>
@@ -311,7 +362,7 @@ export default function FormulaCheckTask() {
                 {COLS.map((col) => (
                   <div
                     key={col}
-                    className={`flex shrink-0 items-center justify-center border-b border-r border-[#c0c0c0] text-[12px] font-medium ${
+                    className={`flex shrink-0 items-center justify-center border-b border-r border-[#c0c0c0] text-[12px] font-medium ${colVis(col)} ${
                       selected.col === col ? "bg-[#d2e3fc] text-[#1a73e8]" : "bg-[#f8f9fa] text-[#5f6368]"
                     }`}
                     style={{ width: colWidth(col), height: 24 }}
@@ -329,7 +380,7 @@ export default function FormulaCheckTask() {
                     <button
                       key={col}
                       onClick={() => setSelected({ row: HEADER_ROW, col })}
-                      className="shrink-0 border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 text-left text-[12px] font-medium cursor-pointer"
+                      className={`shrink-0 border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 text-left text-[12px] font-medium cursor-pointer ${CELL_FOCUS} ${colVis(col)}`}
                       style={{
                         width: colWidth(col),
                         height: 26,
@@ -362,12 +413,12 @@ export default function FormulaCheckTask() {
                       if (col === "A") text = member.name;
                       else if (col === "H") text = String(hours[i]);
                       else if (day === GAP_DAY && member.key === CORRECT_COVER) text = GAP_SHIFT_LABEL;
-                      else text = member.shifts[day!].label;
+                      else text = shiftText(member.shifts[day!].label);
                       return (
                         <button
                           key={col}
                           onClick={() => setSelected({ row, col })}
-                          className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer"
+                          className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer ${CELL_FOCUS} ${colVis(col)}`}
                           style={cellStyle}
                         >
                           {text}
@@ -397,7 +448,7 @@ export default function FormulaCheckTask() {
                       <button
                         key={col}
                         onClick={() => setSelected({ row: meta.row, col })}
-                        className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-medium cursor-pointer"
+                        className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] font-medium cursor-pointer ${CELL_FOCUS} ${colVis(col)}`}
                         style={cellStyle}
                       >
                         {col === "A" ? meta.label : col === "H" ? (meta.value === null ? "#ERROR!" : meta.value) : ""}
@@ -411,7 +462,7 @@ export default function FormulaCheckTask() {
             <button
               onClick={tryEmail}
               data-showme="email-total"
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
+              className="mt-4 flex w-fit min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
               {c.emailCta}
             </button>
@@ -420,9 +471,10 @@ export default function FormulaCheckTask() {
       )}
 
       {view === "compose" && (
-        // Docked right with a light scrim, so the fixed total stays readable while writing.
-        <div className="absolute inset-0 flex items-center justify-end bg-black/15 p-6">
-          <div className="w-full max-w-[520px] rounded-xl bg-white p-5 shadow-2xl">
+        // Docked right over a light scrim that lets clicks and scrolling
+        // through, so the fixed total stays readable while writing.
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-end bg-black/15 p-6">
+          <div className="pointer-events-auto max-h-full w-full max-w-[400px] overflow-y-auto rounded-xl bg-white p-5 shadow-2xl">
             <div className="mb-3 flex gap-3 border-b border-border pb-2.5 text-[14px]">
               <span className="w-14 shrink-0 text-text-tertiary">{c.to}</span>
               <span>{CAST.renata.email}</span>
@@ -432,6 +484,7 @@ export default function FormulaCheckTask() {
               <span>{c.subject}</span>
             </div>
             <textarea
+              ref={bodyBox}
               data-showme="compose-body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
@@ -442,7 +495,8 @@ export default function FormulaCheckTask() {
               <NeedAStart
                 lang={lang}
                 starters={STARTERS[lang]}
-                onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)}
+                missed={missed}
+                onPick={(s) => pickStarter(bodyBox, body, s, setBody)}
                 chipClassName="min-h-[38px] rounded-full border border-border bg-surface-muted px-3 text-[13px] font-medium text-accent hover:bg-accent-tint cursor-pointer"
               />
             </div>
@@ -453,7 +507,8 @@ export default function FormulaCheckTask() {
               >
                 {c.send}
               </button>
-              <button onClick={() => { setView("sheet"); setBody(""); }} className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer">
+              {/* Back to the sheet keeps the draft: the learner often leaves only to look. */}
+              <button onClick={() => setView("sheet")} className="min-h-[40px] px-2 text-[14px] text-text-tertiary cursor-pointer">
                 {c.discard}
               </button>
             </div>
@@ -472,6 +527,17 @@ export default function FormulaCheckTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
+            {body.trim() ? (
+              <SentEmailRecap
+                heading={SENT_LABELS[lang].heading}
+                toLabel={c.to}
+                to={CAST.renata.email}
+                subjectLabel={c.subjectLabel}
+                subject={c.subject}
+                body={body}
+                fact={{ label: SENT_LABELS[lang].formula, value: `${sumFormula} = ${sumValue ?? ""}` }}
+              />
+            ) : null}
             <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>

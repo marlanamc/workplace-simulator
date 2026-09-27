@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useLesson } from "@/lib/lesson-context";
+import { useJobCard } from "@/lib/job-card-context";
+import { useLiveClock } from "@/components/LiveClock";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 import {
@@ -13,7 +15,7 @@ import {
   LESSON_FIRST_STEP,
   LESSON_PASSWORD,
   HELP_LESSON,
-  codeMatches,
+  checkCode,
 } from "@/lib/tasks/account-recovery/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -41,8 +43,11 @@ function GoogleWord() {
   );
 }
 
-/** Which control each step's Show me points at. */
-const SHOW_ME_IDS = ["password-field", "phone-text", "code-field"] as const;
+/**
+ * Which control each step's Show me points at. The choice step points at the
+ * whole phone, the evidence, never at the right text.
+ */
+const SHOW_ME_IDS = ["password-field", "phone", "code-field"] as const;
 
 export default function AccountRecoveryTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
@@ -57,6 +62,18 @@ export default function AccountRecoveryTask() {
   const [help, setHelp] = useState(false);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("account-recovery");
   const showMe = useShowMe();
+  const { clearCorrection } = useJobCard();
+  // The phone's status bar shows the same time as the taskbar clock.
+  const phoneTime = useLiveClock(lang).time.split(" ")[0];
+  const passwordRef = useRef<HTMLInputElement>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard users land in the box they need, not ten Tabs away behind the
+  // window buttons. A DOM sync with the page that just opened.
+  useEffect(() => {
+    if (view === "signin") passwordRef.current?.focus();
+    else if (view === "code") codeRef.current?.focus();
+  }, [view]);
 
   const c = RECOVERY_COPY[lang];
   // The code text stays on the phone once it has arrived, so the learner can
@@ -91,7 +108,16 @@ export default function AccountRecoveryTask() {
 
   const trySubmitCode = () => {
     showMe.clear();
-    if (!codeMatches(codeInput)) {
+    const result = checkCode(codeInput);
+    if (result === "empty") {
+      recordWrong({ title: lang === "en" ? "Almost." : "Casi.", body: c.emptyCode });
+      return;
+    }
+    if (result === "fake") {
+      recordWrong({ title: lang === "en" ? "Careful." : "Cuidado.", body: c.fakeCode });
+      return;
+    }
+    if (result === "wrong") {
       recordWrong({ title: lang === "en" ? "Not quite." : "No es así.", body: c.wrongCode });
       return;
     }
@@ -132,9 +158,13 @@ export default function AccountRecoveryTask() {
         />
       )}
 
+      {/* Container queries on the window's own width: browser zoom keeps the
+          viewport breakpoints wide, so at 150% text the phone must still sit
+          beside the form, where the code stays in view while it is typed. */}
       {view !== "done" && (
-        <div className="flex flex-col items-center gap-6 rounded-2xl bg-[#f0f4f9] px-4 py-8 lg:flex-row lg:items-start lg:justify-center">
-          <div className="w-full max-w-[460px] rounded-[28px] bg-white px-8 pt-9 pb-8 sm:px-10">
+        <div className="@container">
+        <div className="flex flex-col items-center gap-4 rounded-2xl bg-[#f0f4f9] px-3 py-4 @min-[640px]:flex-row @min-[640px]:items-start @min-[640px]:justify-center @min-[640px]:gap-6 @min-[640px]:px-4 @min-[900px]:py-8">
+          <div className="w-full max-w-[460px] rounded-[28px] bg-white px-6 pt-6 pb-6 @min-[900px]:px-10 @min-[900px]:pt-9 @min-[900px]:pb-8">
             <GoogleWord />
             {view === "signin" ? (
               <>
@@ -151,6 +181,7 @@ export default function AccountRecoveryTask() {
                   {c.passwordLabel}
                   <input
                     type={showPassword ? "text" : "password"}
+                    ref={passwordRef}
                     data-showme="password-field"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -188,9 +219,16 @@ export default function AccountRecoveryTask() {
                   <input
                     type="text"
                     inputMode="numeric"
+                    ref={codeRef}
                     data-showme="code-field"
                     value={codeInput}
-                    onChange={(e) => setCodeInput(e.target.value)}
+                    // A correction about a text ("That text is fake") is done
+                    // once the learner starts on the code, keyboard or not.
+                    onFocus={clearCorrection}
+                    onChange={(e) => {
+                      setCodeInput(e.target.value);
+                      clearCorrection();
+                    }}
                     onKeyDown={(e) => { if (e.key === "Enter") trySubmitCode(); }}
                     placeholder={c.codePlaceholder}
                     autoComplete="one-time-code"
@@ -209,7 +247,12 @@ export default function AccountRecoveryTask() {
             )}
           </div>
 
-          <aside className="w-full shrink-0 lg:w-[260px]">
+          {/* Stacked (a narrow window), the phone comes first once the code
+              has arrived, so the texts are read before the code box. */}
+          <aside
+            data-showme="phone"
+            className={`w-full shrink-0 @min-[640px]:order-none @min-[640px]:w-[240px] ${view === "code" ? "order-first" : ""}`}
+          >
             <PhoneTexts
               heading={c.phoneHeading}
               emptyLabel={c.phoneEmpty}
@@ -217,9 +260,10 @@ export default function AccountRecoveryTask() {
               texts={phoneTexts}
               chosenKey={chosenText}
               onTap={tapText}
-              showMeKey="code"
+              time={phoneTime}
             />
           </aside>
+        </div>
         </div>
       )}
 
