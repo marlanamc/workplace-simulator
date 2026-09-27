@@ -3,15 +3,22 @@
 import { useMemo, useState, type ReactNode } from "react";
 import type { PdfDocument } from "@/lib/pdf-content";
 import { useProgress } from "@/lib/progress-context";
+import { useJobCardOptional } from "@/lib/job-card-context";
 import {
   FILES,
   MESSY_FILES,
   FILES_COPY,
   RENAME_TARGET,
-  normalizeRename,
+  renameProblem,
+  RENAME_HINTS,
+  fileMatchesQuery,
+  FOLDER_LABEL,
+  NEW_BUTTON_NOTE,
+  MY_DRIVE_EMPTY,
+  DONE_SHARED_WITH,
+  OPEN_ONE_POINTER,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
-  WRONG_RENAME_HINT,
   WRONG_EDIT_HINT,
   COMMENT_HINT,
   LESSONS,
@@ -36,7 +43,7 @@ import { Folder, Home, Plus, Users } from "lucide-react";
 import OfficeDriveTask from "./OfficeDriveTask";
 import { RECEIPT_FILES, RECEIPTS_COPY } from "@/lib/tasks/expense-report/content";
 
-type View = "home" | "browse" | "preview" | "rename" | "share" | "done";
+type View = "home" | "mine" | "browse" | "preview" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
 
@@ -99,6 +106,9 @@ function CafeFilesTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
+  // Moving to another file or folder makes an old correction wrong ("That page
+  // says DRAFT" over a page with no draft), so navigation clears it.
+  const clearCorrection = useJobCardOptional()?.clearCorrection;
 
   // Messy mode (Level.messy): more near-duplicate decoys - real-world
   // friction added on purpose, not a new mechanic. See MESSY_FILES.
@@ -110,22 +120,42 @@ function CafeFilesTask() {
   const previewing = fileList.find((f) => f.key === previewKey) ?? null;
   const previewWrong = view === "preview" && previewing !== null && !previewing.isTarget;
   const stepIndex =
-    view === "home" ? 0 : view === "browse" ? 1 : view === "preview" ? (previewWrong ? 1 : 2) : view === "rename" ? 3 : 4;
+    view === "home" || view === "mine"
+      ? 0
+      : view === "browse"
+        ? 1
+        : view === "preview"
+          ? previewWrong
+            ? 1
+            : 2
+          : view === "rename"
+            ? 3
+            : 4;
+  // Step 1 points at a schedule to open, not at the answer: reading the page is the skill.
   const showMeId = previewWrong
     ? "preview-close"
-    : ["shared-drive", "target-file", "preview-rename", "rename-input", "can-view"][stepIndex];
+    : view === "mine"
+      ? "nav-shared"
+      : ["shared-drive", "a-schedule", "preview-rename", "rename-input", "can-view"][stepIndex];
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return fileList.filter((f) => {
-      if (folder && f.folder !== folder) return false;
-      if (q && !f.name.toLowerCase().includes(q)) return false;
-      return true;
-    });
-  }, [fileList, query, folder]);
+  const filtered = useMemo(
+    () => fileList.filter((f) => (!folder || f.folder === folder) && fileMatchesQuery(f, query)),
+    [fileList, query, folder],
+  );
+  const firstSchedule = filtered.find((f) => f.folder === "Schedules")?.key;
+
+  const onShowMe = () => {
+    // After a search that found nothing, Show me would light up nothing: clear it first.
+    if (showMeId === "a-schedule" && !firstSchedule) {
+      setQuery("");
+      setFolder(null);
+    }
+    showMe.toggleFor(showMeId);
+  };
 
   const openFile = (f: DriveFile) => {
     showMe.clear();
+    clearCorrection?.();
     setPreviewKey(f.key);
     setView("preview");
   };
@@ -146,9 +176,8 @@ function CafeFilesTask() {
 
   const tryRename = () => {
     showMe.clear();
-    if (normalizeRename(renameValue) !== RENAME_TARGET) {
-      return say(WRONG_RENAME_HINT[lang]);
-    }
+    const problem = renameProblem(renameValue, previewing?.name ?? "");
+    if (problem) return say(RENAME_HINTS[problem][lang]);
     setView("share");
   };
 
@@ -168,17 +197,20 @@ function CafeFilesTask() {
     markComplete("files", "share_with_right_access");
   };
 
-  const openFolder = (f: string) => {
+  const openFolder = (f: string | null) => {
+    showMe.clear();
+    clearCorrection?.();
     setFolder(f);
     setView("browse");
   };
 
-  const notYet = () =>
-    say(
-      lang === "en"
-        ? "That's not part of today's task. Click Cafe Shared Drive."
-        : "Eso no es parte de la tarea de hoy. Haz clic en Unidad compartida del café."
-    );
+  const openMyDrive = () => {
+    showMe.clear();
+    clearCorrection?.();
+    setView("mine");
+  };
+
+  const newNote = () => say(NEW_BUTTON_NOTE[lang]);
 
   const restart = () => {
     setView("home");
@@ -189,8 +221,10 @@ function CafeFilesTask() {
     setPermission(null);
   };
 
-  const navItem = (active: boolean, onClick: () => void, icon: ReactNode, label: string) => (
+  // `shared` marks Shared with me: Show me's way out of My Drive.
+  const navItem = (active: boolean, onClick: () => void, icon: ReactNode, label: string, shared = false) => (
     <button
+      data-showme={shared ? "nav-shared" : undefined}
       onClick={onClick}
       className={`flex h-10 items-center gap-3 rounded-full px-4 text-[14px] cursor-pointer ${
         active ? "bg-[#c2e7ff] font-medium text-[#041e49]" : "text-[#444746] hover:bg-[#e8eaed]"
@@ -240,7 +274,7 @@ function CafeFilesTask() {
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           instruction={previewWrong ? CHECK_OTHER_WEEK : undefined}
-          onShowMe={() => showMe.toggleFor(showMeId)}
+          onShowMe={onShowMe}
           showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
@@ -257,6 +291,17 @@ function CafeFilesTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
+            {/* The result itself: the file under its new name, shared view-only with Jordan. */}
+            <div data-testid="files-done-result" className="flex items-center gap-3 rounded-xl border border-[#dadce0] px-4 py-3">
+              <span className="flex h-6 w-5 shrink-0 items-center justify-center rounded-[2px] bg-[#ea4335] text-[8px] font-bold text-white">
+                PDF
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-[14px] font-medium">{RENAME_TARGET}.pdf</span>
+                <span className="block text-[12px] text-[#5f6368]">{DONE_SHARED_WITH[lang]}</span>
+              </span>
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#0f9d58] text-[11px] font-medium text-white">JK</span>
+            </div>
             <TaskDoneActions
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
@@ -269,15 +314,15 @@ function CafeFilesTask() {
         <div className="flex min-h-0 flex-1">
           <div className="flex w-[220px] shrink-0 flex-col gap-0.5 px-3 pt-1">
             <button
-              onClick={notYet}
+              onClick={newNote}
               className="mb-3 flex h-14 items-center gap-3 rounded-2xl bg-white px-4 text-[14px] font-medium text-[#1f1f1f] shadow-[0_1px_2px_0_rgba(60,64,67,.3),0_1px_3px_1px_rgba(60,64,67,.15)] hover:bg-[#f8f9fa] cursor-pointer"
             >
               <Plus size={20} strokeWidth={2} className="text-[#444746]" />
               {c.newBtn}
             </button>
-            {navItem(view === "home", () => setView("home"), <Home size={18} />, c.navHome)}
-            {navItem(false, notYet, <Folder size={18} />, c.navMyDrive)}
-            {navItem(listOpen, () => { setFolder(null); setView("browse"); }, <Users size={18} />, c.navShared)}
+            {navItem(view === "home", () => { clearCorrection?.(); setView("home"); }, <Home size={18} />, c.navHome)}
+            {navItem(view === "mine", openMyDrive, <Folder size={18} />, c.navMyDrive)}
+            {navItem(listOpen, () => openFolder(null), <Users size={18} />, c.navShared, true)}
           </div>
 
           <div className="relative min-w-0 flex-1 overflow-y-auto px-4 pb-6 pt-2">
@@ -294,7 +339,7 @@ function CafeFilesTask() {
                         className="flex items-center gap-3 rounded-xl bg-[#f0f4f9] px-4 py-3 text-left hover:bg-[#e8eaed] cursor-pointer"
                       >
                         {Icon ? <Icon size={20} strokeWidth={2} className="shrink-0 text-[#5f6368]" /> : <Folder size={20} className="text-[#5f6368]" />}
-                        <span className="truncate text-[14px] font-medium">{f}</span>
+                        <span className="truncate text-[14px] font-medium">{FOLDER_LABEL[f]?.[lang] ?? f}</span>
                       </button>
                     );
                   })}
@@ -302,7 +347,7 @@ function CafeFilesTask() {
                 <h2 className="mb-3 text-[16px] font-medium">{c.sharedHeading}</h2>
                 <button
                   data-showme="shared-drive"
-                  onClick={() => { showMe.clear(); setFolder(null); setView("browse"); }}
+                  onClick={() => openFolder(null)}
                   className="flex w-full max-w-[420px] items-center gap-3 rounded-xl bg-[#f0f4f9] px-4 py-3 text-left hover:bg-[#e8eaed] cursor-pointer"
                 >
                   <Users size={20} className="text-[#1a73e8]" />
@@ -314,11 +359,15 @@ function CafeFilesTask() {
               </>
             )}
 
+            {view === "mine" && (
+              <p className="px-3 py-8 text-[14px] text-[#5f6368]">{MY_DRIVE_EMPTY[lang]}</p>
+            )}
+
             {listOpen && (
               <div>
                 <div className="mb-2 flex flex-wrap items-center gap-1 text-[13px] text-[#444746]">
                   <button
-                    onClick={() => setFolder(null)}
+                    onClick={() => openFolder(null)}
                     className={`h-8 rounded-full px-3 cursor-pointer ${folder === null ? "bg-[#e8f0fe] font-medium text-[#0b57d0]" : "hover:bg-[#f1f3f4]"}`}
                   >
                     {c.allFolders}
@@ -326,10 +375,10 @@ function CafeFilesTask() {
                   {FOLDERS.map((f) => (
                     <button
                       key={f}
-                      onClick={() => setFolder(f)}
+                      onClick={() => openFolder(f)}
                       className={`h-8 rounded-full px-3 cursor-pointer ${folder === f ? "bg-[#e8f0fe] font-medium text-[#0b57d0]" : "hover:bg-[#f1f3f4]"}`}
                     >
-                      {f}
+                      {FOLDER_LABEL[f]?.[lang] ?? f}
                     </button>
                   ))}
                 </div>
@@ -341,7 +390,7 @@ function CafeFilesTask() {
                 {filtered.map((f) => (
                   <button
                     key={f.key}
-                    data-showme={f.isTarget ? "target-file" : undefined}
+                    data-showme={f.key === firstSchedule ? "a-schedule" : undefined}
                     onClick={() => openFile(f)}
                     className="grid w-full grid-cols-[1fr_120px_88px] items-center gap-2 rounded-xl px-3 py-2.5 text-left hover:bg-[#f1f3f4] cursor-pointer"
                   >
@@ -370,6 +419,7 @@ function CafeFilesTask() {
                 copy={PREVIEW_COPY[lang]}
                 onClose={() => {
                   showMe.clear();
+                  clearCorrection?.();
                   setView("browse");
                 }}
                 onRename={() => pickFile(previewing)}
@@ -390,6 +440,12 @@ function CafeFilesTask() {
                   data-showme="rename-input"
                   // The old name starts selected, as in Drive: typing replaces it.
                   onFocus={(e) => e.currentTarget.select()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      tryRename();
+                    }
+                  }}
                   value={renameValue}
                   onChange={(e) => setRenameValue(e.target.value)}
                   placeholder={c.renamePlaceholder}
@@ -465,7 +521,11 @@ function CafeFilesTask() {
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
-      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
+      <ShowMeHighlight
+        targetId={showMe.targetId}
+        label={showMe.targetId === "a-schedule" ? OPEN_ONE_POINTER[lang] : SHOW_ME_POINTER[lang]}
+        onDismiss={showMe.clear}
+      />
     </div>
   );
 }

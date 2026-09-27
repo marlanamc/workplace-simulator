@@ -524,12 +524,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Handle a meeting invite", es: "Maneja una invitación a reunión" },
     dispatch: {
-      en: "Renata set a meeting on your day off. Ask her for a different time.",
-      es: "Renata puso una reunión en tu día libre. Pídele otro horario.",
+      en: "Renata sent you a meeting invite. Check it against your work shifts.",
+      es: "Renata te mandó una invitación a una reunión. Compárala con tus turnos.",
     },
     jobCardLine: {
-      en: "The meeting is on your day off. Ask Renata for a different time.",
-      es: "La reunión es en tu día libre. Pídele a Renata otro horario.",
+      en: "Check the meeting day against your work shifts. If you do not work that day, ask Renata for a new day and time.",
+      es: "Compara el día de la reunión con tus turnos. Si ese día no trabajas, pídele a Renata otro día y otra hora.",
     },
     skill: { en: "Handle a meeting invite the right way", es: "responder bien a una invitación de reunión" },
     bookmarkLabel: "Calendar",
@@ -551,9 +551,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "Renata invited you to a meeting on Wednesday, August 26. You do not work that day. Ask her for a different time.",
-          es: "Renata te invitó a una reunión el miércoles 26 de agosto. Ese día no trabajas. Pídele otro horario.",
+          en: "Renata invited you to a meeting on Wednesday, August 26. Your work shifts are on the same calendar. The meeting must be on a day you work.",
+          es: "Renata te invitó a una reunión el miércoles 26 de agosto. Tus turnos están en el mismo calendario. La reunión tiene que ser un día que trabajas.",
         },
+      },
+      takeaway: {
+        en: "Before you answer an invite, check the day against your work shifts. If it does not work, ask for a day you work and a time.",
+        es: "Antes de responder a una invitación, compara el día con tus turnos. Si no te funciona, pide un día que trabajas y una hora.",
       },
       reference: [
         { label: { en: "Meeting", es: "Reunión" }, value: { en: "Wed, Aug 26, 9:00 AM", es: "Miér., 26 de agosto, 9:00 AM" } },
@@ -571,9 +575,11 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain the ways to answer an invite: Yes, No, Maybe, or suggest a new time.", es: "Explica las formas de responder a una invitación: Sí, No, Quizá, o proponer otro horario." },
         ],
         stickingPoints: [
-          { en: "Some learners click Yes right away. Ask: do you work on Wednesday, August 26?", es: "Algunos hacen clic en Sí enseguida. Pregunta: ¿trabajas el miércoles 26 de agosto?" },
-          { en: "Some learners click one of their work shifts instead of the meeting. Ask them to find the event called Weekly Lead Huddle.", es: "Algunos hacen clic en uno de sus turnos en vez de la reunión. Pídeles buscar el evento que se llama Weekly Lead Huddle." },
+          { en: "The Job Card asks: do you work on August 26? It does not give the answer. Some learners click Yes right away; the correction then says Wednesday has no green shift and names Propose a new time. Ask: is there a green shift on the 26th?", es: "La tarjeta de trabajo pregunta: ¿trabajas el 26 de agosto? No da la respuesta. Algunos hacen clic en Sí enseguida; la corrección dice que el miércoles no tiene turno verde y nombra Proponer otro horario. Pregunta: ¿hay un turno verde el 26?" },
+          { en: "Some learners click one of their work shifts instead of the meeting. Ask them to find the event called Weekly Lead Huddle.", es: "Algunos hacen clic en uno de sus turnos en vez de la reunión. Pídeles buscar el evento que se llama Reunión semanal de líderes." },
           { en: "Some learners click No or Maybe. Renata still needs the meeting. Ask: what time can you suggest?", es: "Algunos hacen clic en No o Quizá. Renata todavía necesita la reunión. Pregunta: ¿qué horario puedes proponer?" },
+          { en: "The message must name a day they work and a time in that shift. \"See you Wednesday\" gets \"Wednesday is your day off\"; \"I come Tuesday\" asks for a time; \"Monday at 5 PM\" names the Monday shift, 7 AM to 3 PM. The time buttons add only the words, like Thursday at 10 AM.", es: "El mensaje debe nombrar un día que trabajan y una hora dentro del turno. \"Nos vemos el miércoles\" recibe \"El miércoles es tu día libre\"; \"Voy el martes\" pide una hora; \"El lunes a las 5 PM\" nombra el turno del lunes, de 7 AM a 3 PM. Los botones de hora solo agregan las palabras, como el jueves a las 10 AM." },
+          { en: "Need help writing? shows sentences with blanks (___). In On my own mode it appears only after a message is sent back.", es: "¿Necesitas ayuda para escribir? muestra oraciones con espacios (___). En el modo Por mi cuenta aparece solo después de que un mensaje no pasa." },
         ],
         followUp: [
           { en: "What do you do when an appointment is on the same day as work or school?", es: "¿Qué haces cuando una cita es el mismo día que el trabajo o la escuela?" },
@@ -626,6 +632,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           es: "Jordan necesita el horario de trabajo de esta semana. Es un archivo en el Drive compartido del café. Renata quiere que el archivo tenga un nombre claro. Jordan lo puede ver, pero no cambiar.",
         },
       },
+      takeaway: {
+        en: "Open a file to check what it is before you share it. Give it a clear name, and choose Can view when the person only needs to look.",
+        es: "Abre un archivo para ver qué es antes de compartirlo. Ponle un nombre claro, y elige Puede ver si la persona solo necesita mirarlo.",
+      },
       reference: [
         { label: { en: "This week", es: "Esta semana" }, value: { en: "Week of Aug 24", es: "Semana del 24 de agosto" } },
         { label: { en: "New file name", es: "Nombre nuevo" }, value: "schedule-week-of-aug-24" },
@@ -642,7 +652,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain the difference: view means look only, and edit means change.", es: "Explica la diferencia: ver es solo mirar, y editar es cambiar." },
         ],
         stickingPoints: [
-          { en: "Every file opens to its page. Opening the wrong one is fine; the Job Card says to read the week and click Close. A correction comes only if they click Rename on the wrong week.", es: "Cada archivo se abre y muestra su página. Abrir el equivocado está bien; la tarjeta de trabajo dice que lean la semana y hagan clic en Cerrar. Solo hay corrección si hacen clic en Cambiar nombre en la semana equivocada." },
+          { en: "Every file opens to its page. Opening the wrong one is fine; the Job Card says to read the week and the name (not a draft, not a copy) and click Close. A correction comes only if they click Rename on the wrong file, and it clears when they open another one.", es: "Cada archivo se abre y muestra su página. Abrir el equivocado está bien; la tarjeta de trabajo dice que lean la semana y el nombre (ni borrador ni copia) y hagan clic en Cerrar. Solo hay corrección si hacen clic en Cambiar nombre en el archivo equivocado, y se borra cuando abren otro." },
+          { en: "Search finds plain words too: aug 24, schedule, draft, horario. Show me points at a schedule to open, not at the right file.", es: "Buscar también encuentra palabras simples: aug 24, schedule, draft, horario. Muéstrame señala un horario para abrir, no el archivo correcto." },
+          { en: "Some learners click into the rename box, so the old name stays. The correction says: Delete the old name first. Enter works like Continue.", es: "Algunos hacen clic dentro de la casilla y el nombre viejo se queda. La corrección dice: Borra el nombre viejo primero. Enter funciona igual que Continuar." },
           { en: "The schedule is in English. Spanish readers match Week of Aug 24 with the info card (semana del 24 de agosto).", es: "El horario está en inglés. Quienes leen en español comparan Week of Aug 24 con la tarjeta de información (semana del 24 de agosto)." },
           { en: "Some learners type a different name. The name must be schedule-week-of-aug-24. Ask them to compare their name with the example, one word at a time.", es: "Algunos escriben otro nombre. El nombre debe ser schedule-week-of-aug-24. Pídeles comparar su nombre con el ejemplo, palabra por palabra." },
           { en: "Some learners choose Can edit. Ask: does Jordan need to change the schedule, or only look at it?", es: "Algunos eligen Puede editar. Pregunta: ¿Jordan necesita cambiar el horario, o solo mirarlo?" },

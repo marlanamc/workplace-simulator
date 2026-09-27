@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
+import { useLesson } from "@/lib/lesson-context";
 import { CAST } from "@/lib/cast";
 import { levelForTrack } from "@/lib/tracks-content";
 import { HUDDLE_DAY, leadHuddleVisible, shiftTimeOn, storyToday } from "@/lib/story-calendar";
@@ -16,8 +17,8 @@ import {
   RIGHT_NOW_LABEL,
   SHIFT_SPAN,
   SHIFT_WORD,
-  proposesATime,
-  NEEDS_TIME_HINT,
+  checkHuddleReply,
+  huddleReplyHint,
 } from "@/lib/tasks/calendar/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -219,13 +220,27 @@ function CafeCalendarTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("calendar") ? "done" : "home");
   const [body, setBody] = useState("");
   const [chosenTime, setChosenTime] = useState<"10am" | "2pm" | null>(null);
+  // Whether a send has been rejected: "On my own" keeps the starters hidden until then.
+  const [missed, setMissed] = useState(false);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
+  const inLesson = useLesson() !== null;
+  const replyRef = useRef<HTMLTextAreaElement>(null);
+
+  // DOM sync: when the reply opens, bring the text box into view and put the cursor there.
+  useEffect(() => {
+    if (view !== "compose") return;
+    const box = replyRef.current;
+    if (!box) return;
+    box.scrollIntoView({ block: "nearest" });
+    box.focus({ preventScroll: true });
+  }, [view]);
 
   const c = CALENDAR_COPY[lang];
   const stepIndex = view === "home" ? 0 : view === "invite" ? 1 : 2;
-  const showMeIds = ["huddle-event", "propose-link", "time-chip"];
+  // The writing step points at the text box, not at a chip that writes for them.
+  const showMeIds = ["huddle-event", "propose-link", "reply-box"];
   const T = (en: string, es: string) => (lang === "en" ? en : es);
 
   const wrongAccept = () => say(WRONG_ACCEPT_HINT[lang]);
@@ -247,7 +262,7 @@ function CafeCalendarTask() {
     say(
       T(
         "That's one of your work shifts. Open the meeting on Aug 26. It is called Weekly Lead Huddle.",
-        "Ese es uno de tus turnos. Abre la reunión del 26 de ago. Se llama Weekly Lead Huddle."
+        "Ese es uno de tus turnos. Abre la reunión del 26 de agosto. Se llama Reunión semanal de líderes."
       )
     );
   const notYet = () =>
@@ -260,12 +275,11 @@ function CafeCalendarTask() {
 
   const trySend = () => {
     showMe.clear();
-    if (!body.trim()) {
-      return say(
-        T("Write a short message first. Even one sentence is fine.", "Primero escribe un mensaje corto. Una oración está bien.")
-      );
+    const check = checkHuddleReply(body);
+    if (!check.ok) {
+      setMissed(true);
+      return say(huddleReplyHint(check, lang));
     }
-    if (!chosenTime && !proposesATime(body)) return say(NEEDS_TIME_HINT[lang]);
     setStoryFlag(HUDDLE_TIME_FLAG, chosenTime ?? extractHuddleTime(body));
     setView("done");
     markComplete("calendar", "handle_meeting_invite");
@@ -280,6 +294,7 @@ function CafeCalendarTask() {
     setView("home");
     setBody("");
     setChosenTime(null);
+    setMissed(false);
   };
 
   const showingCal = view !== "done";
@@ -332,8 +347,9 @@ function CafeCalendarTask() {
           </div>
         </div>
       ) : (
-        <div className="relative flex min-h-0 flex-1">
-          <div className="flex w-[220px] shrink-0 flex-col gap-4 px-3 pt-1">
+        <div className="@container relative flex min-h-0 flex-1">
+          {/* At zoom or in a small window the side panel steps aside so the month keeps its words. */}
+          <div className="hidden w-[220px] shrink-0 flex-col gap-4 px-3 pt-1 @[860px]:flex">
             <button
               onClick={notYet}
               className="flex h-14 items-center gap-3 rounded-2xl bg-white px-4 text-[14px] font-medium text-[#3c4043] shadow-[0_1px_2px_0_rgba(60,64,67,.3),0_1px_3px_1px_rgba(60,64,67,.15)] hover:bg-[#f8f9fa] cursor-pointer"
@@ -416,7 +432,7 @@ function CafeCalendarTask() {
                 <div key={d} className="py-2">{d}</div>
               ))}
             </div>
-            <div className="grid min-h-0 flex-1 grid-cols-7 grid-rows-6">
+            <div className="grid min-h-0 flex-1 auto-rows-[minmax(min-content,1fr)] grid-cols-7 overflow-y-auto">
               {MONTH_CELLS.map((cell, i) => {
                 const inMonth = !cell.other;
                 const isToday = inMonth && cell.day === today;
@@ -442,7 +458,7 @@ function CafeCalendarTask() {
                     {hasShift && (
                       <button
                         onClick={wrongShift}
-                        className="truncate rounded px-1 py-0.5 text-left text-[11px] font-medium text-white cursor-pointer"
+                        className="rounded px-1 py-0.5 text-left text-[11px] font-medium leading-tight text-white [overflow-wrap:anywhere] cursor-pointer"
                         style={{ background: "#0b8043" }}
                       >
                         {SHIFT_WORD[lang]} {SHIFT_SPAN[shiftTime!] ?? shiftTime}
@@ -452,10 +468,10 @@ function CafeCalendarTask() {
                       <button
                         data-showme="huddle-event"
                         onClick={() => { showMe.clear(); setView("invite"); }}
-                        className="truncate rounded px-1 py-0.5 text-left text-[11px] font-medium text-white cursor-pointer"
+                        className="rounded px-1 py-0.5 text-left text-[11px] font-medium leading-tight text-white [overflow-wrap:anywhere] cursor-pointer"
                         style={{ background: "#1a73e8" }}
                       >
-                        {MEETING.time.split(" – ")[0]} {MEETING.title}
+                        {MEETING.chipTime} {MEETING.title[lang]}
                       </button>
                     )}
                   </div>
@@ -465,13 +481,19 @@ function CafeCalendarTask() {
           </div>
 
           {showingCal && (view === "invite" || view === "compose") && (
-            <div className="absolute inset-0 z-10 flex items-start justify-center bg-black/20 pt-16">
+            <div
+              className={`absolute inset-0 z-10 flex items-start overflow-y-auto bg-black/20 pb-6 ${
+                // In a lesson the invite and the reply dock right, so the week's green shifts stay
+                // readable beside them (and clear of the Job Card, which sits on the left).
+                inLesson ? "justify-end pr-4 pt-4" : "justify-center pt-16"
+              }`}
+            >
               {view === "invite" && (
                 <div className="w-[min(100%-2rem,420px)] overflow-hidden rounded-3xl bg-white shadow-[0_4px_8px_3px_rgba(60,64,67,.15)]">
                   <div className="h-2 bg-[#1a73e8]" />
                   <div className="px-6 pb-5 pt-4">
                     <div className="mb-3 flex items-start justify-between gap-3">
-                      <h2 className="text-[22px] font-normal text-[#3c4043]">{MEETING.title}</h2>
+                      <h2 className="text-[22px] font-normal text-[#3c4043]">{MEETING.title[lang]}</h2>
                       <button
                         onClick={() => setView("home")}
                         aria-label={T("Close", "Cerrar")}
@@ -481,13 +503,14 @@ function CafeCalendarTask() {
                       </button>
                     </div>
                     <p className="text-[14px] text-[#3c4043]">
-                      {MEETING.day}, {MEETING.date} · {MEETING.time}
+                      {MEETING.when[lang]}
                     </p>
                     <p className="mt-1 text-[13px] text-[#5f6368]">
-                      {c.invitedBy}: {MEETING.organizer}
+                      {c.invitedBy}: {MEETING.organizer[lang]}
                     </p>
-                    <p className="mt-3 text-[14px] leading-relaxed text-[#3c4043]">{MEETING.description}</p>
-                    <p className="mt-3 text-[13px] text-[#c5221f]">{c.scheduleNote}</p>
+                    <p className="mt-3 text-[14px] leading-relaxed text-[#3c4043]">{MEETING.description[lang]}</p>
+                    {/* A lesson asks the learner to read the shifts; this line would answer for them. */}
+                    {!inLesson && <p className="mt-3 text-[13px] text-[#c5221f]">{c.scheduleNote}</p>}
 
                     <div className="mt-4 text-[12px] font-medium text-[#5f6368]">{c.going}</div>
                     <div className="mt-2 flex flex-wrap gap-2">
@@ -543,6 +566,8 @@ function CafeCalendarTask() {
                       <span>{c.subject}</span>
                     </div>
                     <textarea
+                      ref={replyRef}
+                      data-showme="reply-box"
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
                       placeholder={c.writeHere}
@@ -551,15 +576,17 @@ function CafeCalendarTask() {
                     <div className="mb-3">
                       <div className="mb-2 text-[12px] text-[#5f6368]">{c.whatTime}</div>
                       <div className="mb-3 flex flex-wrap gap-2">
-                        {HUDDLE_TIMES.map((slot, i) => (
+                        {HUDDLE_TIMES.map((slot) => (
                           <button
                             key={slot.key}
                             type="button"
-                            data-showme={i === 0 ? "time-chip" : undefined}
                             onClick={() => {
                               setChosenTime(slot.key);
-                              // Adds to what they wrote; never wipes it.
-                              setBody((b) => (b.trim() ? `${b.trim()} ${slot.starter[lang]}` : slot.starter[lang]));
+                              // Adds to what they wrote; never wipes it. A lesson inserts only
+                              // the time words, so the sentence is still the learner's.
+                              const add = inLesson ? slot.words[lang] : slot.starter[lang];
+                              setBody((b) => (b.trim() ? `${b.trim()} ${add}` : add));
+                              replyRef.current?.focus();
                             }}
                             className={`min-h-[32px] rounded-full border px-3 text-[12px] cursor-pointer ${
                               chosenTime === slot.key
@@ -571,13 +598,9 @@ function CafeCalendarTask() {
                           </button>
                         ))}
                       </div>
-                      <NeedAStart
-                        lang={lang}
-                        starters={STARTERS[lang]}
-                        onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
-                      />
                     </div>
-                    <div className="flex items-center gap-2 pb-4">
+                    {/* Send sits above the starters, so opening them never pushes it out of view. */}
+                    <div className="flex items-center gap-2 pb-3">
                       <button
                         onClick={trySend}
                         className="inline-flex min-h-[36px] items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0b57d0]/90 cursor-pointer"
@@ -590,6 +613,14 @@ function CafeCalendarTask() {
                       >
                         {c.discard}
                       </button>
+                    </div>
+                    <div className="pb-4">
+                      <NeedAStart
+                        lang={lang}
+                        starters={STARTERS[lang]}
+                        missed={missed}
+                        onPick={(s) => setBody((b) => (b ? b + " " : "") + s)}
+                      />
                     </div>
                   </div>
                 </div>
