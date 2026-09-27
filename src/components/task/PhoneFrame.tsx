@@ -58,7 +58,7 @@ export default function PhoneFrame({
               aria-hidden
               className="flex h-[40px] items-end justify-between px-[16px] pb-[5px] text-[11px] font-semibold tracking-tight"
             >
-              <span>{time}</span>
+              <span suppressHydrationWarning>{time}</span>
               <span className="flex items-center gap-[5px]">
                 <SignalIcon />
                 <WifiIcon />

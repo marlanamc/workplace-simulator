@@ -1,7 +1,7 @@
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
 import type { LessonMeta } from "@/lib/lessons/types";
-import { LESSON_PASSWORD } from "@/lib/tasks/account-recovery/content";
+import { LESSON_PASSWORD, RECOVERY_COPY } from "@/lib/tasks/account-recovery/content";
 
 /**
  * The task registry — one entry per task, one place to edit.
@@ -447,6 +447,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       skills: ["accounts"],
       minutes: 5,
+      takeaway: { en: RECOVERY_COPY.en.doneBody, es: RECOVERY_COPY.es.doneBody },
       scene: {
         you: { en: "You work at Harborside Cafe. Your work account signed you out.", es: "Trabajas en Harborside Cafe. Tu cuenta del trabajo cerró tu sesión." },
         people: [],
@@ -471,7 +472,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that the code changes every time, so you cannot save it.", es: "Explica que el código cambia cada vez, así que no se puede guardar." },
         ],
         stickingPoints: [
-          { en: "Some learners pick the ad or the coworker's text. Ask: who sent this text?", es: "Algunos eligen el anuncio o el mensaje del compañero. Pregunta: ¿quién envió este mensaje?" },
+          { en: "Two texts have a code and both say Google. Some learners pick the fake one from a phone number, or type its code. Ask: who sent this text? Does it ask you to reply?", es: "Dos mensajes tienen un código y los dos dicen Google. Algunos eligen el falso, que viene de un número de teléfono, o escriben su código. Pregunta: ¿quién envió este mensaje? ¿Te pide que respondas?" },
+          { en: "Sam, a coworker, asks for the code. Some learners want to help. Talk about why nobody should get your code, even a friend.", es: "Sam, un compañero, pide el código. Algunos quieren ayudar. Hablen de por qué nadie debe recibir tu código, ni un amigo." },
           { en: "Some learners type the whole message. The box only takes the 6 numbers.", es: "Algunos escriben todo el mensaje. La casilla solo acepta los 6 números." },
           { en: "The password is on the info card, and capital letters count. Point to the big H.", es: "La contraseña está en la tarjeta de información, y las mayúsculas cuentan. Señala la H mayúscula." },
         ],

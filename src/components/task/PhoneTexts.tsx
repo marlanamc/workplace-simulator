@@ -22,6 +22,7 @@ export default function PhoneTexts({
   chosenKey,
   onTap,
   showMeKey,
+  time,
 }: {
   heading: string;
   /** Shown before any text has arrived. */
@@ -33,9 +34,11 @@ export default function PhoneTexts({
   onTap?: (key: string) => void;
   /** Which text carries `data-showme="phone-text"`. */
   showMeKey?: string;
+  /** Status-bar time; the frame's default when omitted. */
+  time?: string;
 }) {
   return (
-    <PhoneFrame label={label}>
+    <PhoneFrame label={label} time={time}>
       <h3 className="px-[16px] pt-[4px] pb-[8px] text-[22px] font-bold leading-none tracking-tight">{heading}</h3>
       {texts.length === 0 ? (
         <p className="min-h-[220px] px-[16px] pt-[24px] text-center text-[13px] text-[#6e6e73]">{emptyLabel}</p>
