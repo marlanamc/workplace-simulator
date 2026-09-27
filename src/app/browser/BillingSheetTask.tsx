@@ -9,10 +9,9 @@ import {
   MISMATCH_KEY,
   STARTERS,
   LESSONS,
-  EMPTY_EMAIL_HINT,
-  WRONG_EMAIL_HINT,
   OFFICE_EMAIL,
-  emailFlagsMismatch,
+  billingEmailVerdict,
+  BILLING_EMAIL_CORRECTIONS,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/billing-sheet/content";
@@ -64,8 +63,8 @@ export default function BillingSheetTask() {
   };
 
   const trySend = () => {
-    if (!body.trim()) return say(EMPTY_EMAIL_HINT[lang]);
-    if (!emailFlagsMismatch(body)) return say(WRONG_EMAIL_HINT[lang]);
+    const verdict = billingEmailVerdict(body);
+    if (verdict !== "ok") return say(BILLING_EMAIL_CORRECTIONS[verdict][lang]);
     setView("done");
     markComplete("billing-sheet", "flag_billing_mismatch");
   };

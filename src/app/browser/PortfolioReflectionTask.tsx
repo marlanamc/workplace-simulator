@@ -12,7 +12,8 @@ import {
   LESSONS,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
-  reflectionComplete,
+  firstUnanswered,
+  needAnswerFor,
   describeSubmission,
 } from "@/lib/tasks/portfolio-reflection/content";
 import { useNudge } from "@/lib/use-nudge";
@@ -78,7 +79,8 @@ export default function PortfolioReflectionTask() {
   };
 
   const submit = () => {
-    if (!reflectionComplete(answers)) return say(c.needAll);
+    const missing = firstUnanswered(answers);
+    if (missing >= 0) return say(needAnswerFor(missing, lang));
     setView("done");
     markComplete("portfolio-reflection", "look_back", describeSubmission(answers, lang));
   };

@@ -14,6 +14,10 @@ import {
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
   summaryPullsBoth,
+  summaryVerdict,
+  SUMMARY_CORRECTIONS,
+  packetMessageIsReady,
+  NEED_MESSAGE,
   describeSubmission,
 } from "@/lib/tasks/ops-report-packet/content";
 import { useNudge } from "@/lib/use-nudge";
@@ -74,13 +78,15 @@ export default function OpsReportPacketTask() {
   };
 
   const saveDocs = () => {
-    if (!summaryPullsBoth(summary)) return say(c.needSummary);
+    const verdict = summaryVerdict(summary);
+    if (verdict !== "ok") return say(SUMMARY_CORRECTIONS[verdict][lang]);
     setSummarySaved(true);
     finishIfReady(confirmed, noted, true, false);
   };
 
   const sendPacket = () => {
     if (!confirmed || !noted || !summarySaved || !summaryPullsBoth(summary)) return say(c.needSend);
+    if (!packetMessageIsReady(message)) return say(NEED_MESSAGE[lang]);
     finishIfReady(confirmed, noted, summarySaved, true);
   };
 

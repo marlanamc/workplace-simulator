@@ -9,7 +9,7 @@ import {
   MAIL_STARTERS,
   HINTS,
   LESSONS,
-  replyIsSafe,
+  customerReplyVerdict,
   describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
@@ -62,8 +62,10 @@ export default function PriorityCallTask() {
   };
 
   const sendReply = () => {
-    if (reply.trim().length < 12) return say(h.empty);
-    if (!replyIsSafe(reply)) return say(h.overpromise);
+    const verdict = customerReplyVerdict(reply);
+    if (verdict === "empty") return say(h.empty);
+    if (verdict === "overpromise") return say(h.overpromise);
+    if (verdict === "no-ack") return say(h.ack);
     setMailDone(true);
     finishIfReady(true, coverDone, calDone);
   };

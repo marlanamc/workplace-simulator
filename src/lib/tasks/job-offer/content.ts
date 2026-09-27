@@ -1,3 +1,4 @@
+import { acceptance, mentionsDate, mentionsOtherDayOfMonth, normalizeReply, type MonthDay } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -100,12 +101,66 @@ export const DATE_CHOICES: { key: string; label: Localized; ok: boolean }[] = [
   { key: "sep-6", label: { en: "Friday, September 6", es: "Viernes 6 de septiembre" }, ok: false },
 ];
 
-export function replyLooksReal(reply: string): boolean {
-  const t = reply.toLowerCase();
-  return /\b(accept|acepto|aceptar|aceptamos)\b/.test(t)
-    && !/\b(not|don.t|cannot|can.t|no)\s+(\w+\s+){0,2}(accept|acept)/.test(t)
-    && /(?:oct(?:ober|ubre)?\.?\s+(?:the\s+)?6\b|\b6\s+(?:de\s+)?oct(?:ober|ubre)?\b|\b10[/-]0?6\b|\b0?6[/-]10\b)/.test(t);
+/** The start date in the letter, as a month and day. */
+export const START_DATE: MonthDay = { month: 10, day: 6 };
+/** The letter says "Monday, October 6", so "I come Monday" names the start day too. */
+const START_WEEKDAY = /\b(monday|mon|lunes)\b/;
+
+/**
+ * The start date in any common form: "October 6th", "6th of October",
+ * "Oct 6", "10/6", "6 de octubre", or the weekday from the letter.
+ */
+export function namesStartDate(reply: string): boolean {
+  const t = normalizeReply(reply);
+  const day = START_DATE.day;
+  const bareDay = new RegExp(`\\b(the ${day}(st|nd|rd|th)?|${day}(st|nd|rd|th)|el ${day})\\b`);
+  return mentionsDate(t, START_DATE) || START_WEEKDAY.test(t) || bareDay.test(t);
 }
+
+/** Why the reply to Anita is not sent yet, or "ok". */
+export type OfferAcceptVerdict = "ok" | "empty" | "declines" | "unsure" | "no-accept" | "no-date" | "wrong-date";
+
+export function offerAcceptVerdict(reply: string): OfferAcceptVerdict {
+  if (!reply.trim()) return "empty";
+  const answer = acceptance(reply);
+  if (answer === "declines") return "declines";
+  if (answer === "unsure") return "unsure";
+  if (mentionsOtherDayOfMonth(reply, START_DATE)) return "wrong-date";
+  if (answer !== "accepts") return "no-accept";
+  return namesStartDate(reply) ? "ok" : "no-date";
+}
+
+export function replyLooksReal(reply: string): boolean {
+  return offerAcceptVerdict(reply) === "ok";
+}
+
+/** The Job Card's correction for each verdict. */
+export const OFFER_ACCEPT_CORRECTIONS: Record<Exclude<OfferAcceptVerdict, "ok">, Localized> = {
+  empty: {
+    en: "Write a short reply to Anita first.",
+    es: "Primero escribe una respuesta corta para Anita.",
+  },
+  declines: {
+    en: "Your reply says no. To take the job, say you accept.",
+    es: "Tu respuesta dice que no. Para tomar el trabajo, di que aceptas.",
+  },
+  unsure: {
+    en: "Give Anita a clear answer. Say you accept the offer.",
+    es: "Dale a Anita una respuesta clara. Di que aceptas la oferta.",
+  },
+  "no-accept": {
+    en: "Say that you accept the offer.",
+    es: "Di que aceptas la oferta.",
+  },
+  "no-date": {
+    en: "Add your start date from the letter.",
+    es: "Agrega tu fecha de inicio de la carta.",
+  },
+  "wrong-date": {
+    en: "Check the date. Your start date is in the second paragraph of the letter.",
+    es: "Revisa la fecha. Tu fecha de inicio está en el segundo párrafo de la carta.",
+  },
+};
 
 export const REPLY_STARTERS: Record<Lang, string[]> = {
   en: [

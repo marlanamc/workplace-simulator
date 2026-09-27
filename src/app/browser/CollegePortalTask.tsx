@@ -11,6 +11,9 @@ import {
   STARTERS as ENROLL_STARTERS,
   LESSONS as ENROLL_LESSONS,
   statementShowsInterest,
+  DEADLINE_CHOICES,
+  DEADLINE_COPY,
+  deadlinePickIsRight,
   DOCUMENT_FILES,
   documentMatchesMissing,
   describeSubmission as describeEnrollment,
@@ -62,13 +65,21 @@ function EnrollmentPortal() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<EnrollView>(completedTaskKeys.includes("enrollment") ? "done" : "form");
   const [pickingDocument, setPickingDocument] = useState(false);
+  const [deadlineFound, setDeadlineFound] = useState(false);
   const [docReady, setDocReady] = useState(false);
   const [statement, setStatement] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = ENROLLMENT_COPY[lang];
+  const d = DEADLINE_COPY[lang];
+
+  const pickDeadline = (key: string) => {
+    if (!deadlinePickIsRight(key)) return say(d.wrong);
+    setDeadlineFound(true);
+  };
 
   const trySubmit = () => {
+    if (!deadlineFound) return say(d.need);
     if (!docReady) return say(c.needDoc);
     if (!statement.trim()) return say(c.empty);
     if (!statementShowsInterest(statement)) return say(c.weak);
@@ -76,7 +87,7 @@ function EnrollmentPortal() {
     markComplete("enrollment", "apply_before_the_deadline", describeEnrollment(statement, lang));
   };
 
-  const stepIndex = !docReady ? 1 : 2;
+  const stepIndex = !deadlineFound ? 0 : !docReady ? 1 : 2;
 
   return (
     <PortalChrome school={c.school}>
@@ -100,6 +111,26 @@ function EnrollmentPortal() {
                 <span className="text-[#5f6368]">{c.deadlineLabel}: </span>
                 <span className="font-semibold text-[#004d40]">{DEADLINE[lang]}</span>
               </p>
+            </div>
+            <div className="rounded-xl border border-[#dadce0] bg-white p-4">
+              <div className="text-[13px] font-medium text-[#5f6368]">{d.question}</div>
+              <div className="mt-3 flex flex-wrap gap-2" role="group" aria-label={d.question}>
+                {DEADLINE_CHOICES.map((choice) => {
+                  const chosen = deadlineFound && choice.ok;
+                  return (
+                    <button
+                      key={choice.key}
+                      type="button"
+                      aria-pressed={chosen}
+                      disabled={deadlineFound}
+                      onClick={() => pickDeadline(choice.key)}
+                      className={`min-h-[40px] rounded-full border px-4 text-[14px] ${chosen ? "border-[#1e8e3e] bg-[#e6f4ea] font-medium text-[#1e8e3e]" : "border-[#dadce0] bg-white text-[#202124] enabled:cursor-pointer enabled:hover:bg-[#e8f5f2] disabled:opacity-60"}`}
+                    >
+                      {choice.label[lang]}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
             <div className="rounded-xl border border-[#dadce0] bg-white p-4">
               <div className="text-[13px] font-medium text-[#5f6368]">{c.docsHeading}</div>
@@ -155,7 +186,7 @@ function EnrollmentPortal() {
         </div>
       )}
       {view === "done" && (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => { setView("form"); setDocReady(false); setStatement(""); }} />
+        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => { setView("form"); setDeadlineFound(false); setDocReady(false); setStatement(""); }} />
       )}
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={ENROLL_LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />

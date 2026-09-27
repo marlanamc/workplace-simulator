@@ -14,7 +14,9 @@ import {
   RIGHT_NOW_STEPS,
   agendaLooksReady,
   notesLookReal,
-  ACTION_ITEMS, ACTION_DAYS, commitmentsMatchHuddle, formatCommitments, type ActionCommitments,
+  followupVerdict,
+  FOLLOWUP_CORRECTIONS,
+  ACTION_ITEMS, ACTION_DAYS, commitmentsMatchHuddle, commitmentCorrection, formatCommitments, type ActionCommitments,
   describeSubmission,
 } from "@/lib/tasks/meeting-minutes/content";
 import { useNudge } from "@/lib/use-nudge";
@@ -73,7 +75,9 @@ export default function MeetingMinutesTask() {
   };
 
   const sendFollowup = () => {
-    if (!commitmentsMatchHuddle(commitments)) return say(c.needFollowup);
+    if (!commitmentsMatchHuddle(commitments)) return say(commitmentCorrection(commitments, lang) ?? c.needFollowup);
+    const verdict = followupVerdict(followup);
+    if (verdict !== "ok") return say(FOLLOWUP_CORRECTIONS[verdict][lang]);
     setFollowupDone(true);
     finishIfReady(agendaDone, notesDone, true);
   };

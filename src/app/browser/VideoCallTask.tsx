@@ -10,6 +10,8 @@ import {
   RIGHT_NOW_LABEL,
   LESSONS,
   videoCallPasses,
+  chatAsksQuestion,
+  CHAT_NEEDS_QUESTION,
 } from "@/lib/tasks/video-call/content";
 import ZoomMeeting from "@/components/zoom/ZoomMeeting";
 import RightNowBar from "@/components/task/RightNowBar";
@@ -48,6 +50,8 @@ export default function VideoCallTask() {
     if (!line) return;
     setChatLines((rows) => [...rows, line]);
     setChatDraft("");
+    // A hello is posted like in a real call, but only a question finishes the step.
+    if (!chatAsksQuestion(line)) return say(CHAT_NEEDS_QUESTION[lang]);
     const next = { joinedMuted, toggledCamera, sentChat: true, unmuted };
     setSentChat(true);
     finishIfReady(next);

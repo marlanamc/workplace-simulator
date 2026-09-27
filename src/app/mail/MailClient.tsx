@@ -23,11 +23,13 @@ import {
   REPLY_ALL_RECIPIENTS,
   casualDraftUntouched,
   stillSoundsCasual,
-  replyAllAnswersDana,
+  replyAllVerdict,
+  REPLY_ALL_CORRECTIONS,
   saysAttached,
   sendsLinkNotFile,
   mailEtiquetteAnswersDarnell,
-  callOutSickSaysCannotAttend,
+  sickCallVerdict,
+  SICK_CALL_CORRECTIONS,
   attachSendProblem,
   attachStarters,
   ATTACH_CORRECTIONS,
@@ -66,6 +68,8 @@ import {
   TIMECLOCK_COPY,
   RIGHT_NOW_STEPS as TIMECLOCK_STEPS,
   RIGHT_NOW_LABEL as TIMECLOCK_RIGHT_NOW_LABEL,
+  clockNoteVerdict,
+  CLOCK_NOTE_CORRECTIONS,
 } from "@/lib/tasks/timeclock/content";
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
@@ -501,13 +505,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           ),
         });
       }
-      if (!replyAllAnswersDana(body)) {
+      const verdict = replyAllVerdict(body);
+      if (verdict !== "ok" && verdict !== "empty" && verdict !== "casual") {
         return recordWrong({
           title: T("Answer Dana's ask.", "Responde lo que Dana pregunta."),
-          body: T(
-            "She needs a yes or no about the Friday 6 AM delivery.",
-            "Necesita un sí o un no sobre la entrega del viernes a las 6 AM.",
-          ),
+          body: REPLY_ALL_CORRECTIONS[verdict][lang],
         });
       }
       finish("choose_reply_not_reply_all");
@@ -522,14 +524,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         ),
       });
     }
-    if (activeMailTask === "call-out-sick" && !callOutSickSaysCannotAttend(body)) {
-      return recordWrong({
-        title: T("Say you can't come in.", "Di que no puedes venir."),
-        body: T(
-          "Maria needs to know you cannot work today's shift, not just that you're sick.",
-          "Maria necesita saber que no puedes trabajar tu turno de hoy, no solo que estás enfermo.",
-        ),
-      });
+    if (activeMailTask === "call-out-sick") {
+      const verdict = sickCallVerdict(body);
+      if (verdict !== "ok" && verdict !== "empty") {
+        return recordWrong({
+          title: verdict === "no-day" ? T("Say which day.", "Di qué día.") : T("Say you can't come in.", "Di que no puedes venir."),
+          body: SICK_CALL_CORRECTIONS[verdict][lang],
+        });
+      }
     }
     if (activeMailTask === "mail-send-link") {
       if (saysAttached(body)) {
@@ -557,13 +559,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   };
 
   const trySendTimeclock = () => {
-    if (!body.trim()) {
+    const verdict = clockNoteVerdict(body);
+    if (verdict !== "ok") {
       return recordWrong({
         title: T("Almost.", "Casi."),
-        body: T(
-          "Write a short message first. Even one sentence is fine.",
-          "Primero escribe un mensaje corto. Una oración está bien.",
-        ),
+        body: CLOCK_NOTE_CORRECTIONS[verdict][lang],
       });
     }
     if (wrongCount === 0) recordClean();

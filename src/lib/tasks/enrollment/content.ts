@@ -1,3 +1,5 @@
+import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
+import { DATE_CHECK } from "@/lib/tasks/financial-aid/content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const DEADLINE = { en: "September 15, 2026", es: "15 de septiembre de 2026" };
@@ -46,7 +48,7 @@ export const ENROLLMENT_COPY: Record<Lang, {
     submit: "Submit application",
     needDoc: "The missing document is not attached yet. Compare the checklist with the file names.",
     empty: "Write a short statement first.",
-    weak: "Say why you want this college: a program, a class, or BHCC.",
+    weak: "Say why you want to study here, in your own words. One honest reason is enough.",
     sentKicker: "Application sent",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -68,7 +70,7 @@ export const ENROLLMENT_COPY: Record<Lang, {
     submit: "Enviar solicitud",
     needDoc: "Todavía no se ha adjuntado el documento que falta. Compara la lista de requisitos con los nombres de los archivos.",
     empty: "Primero escribe una carta corta.",
-    weak: "Di por qué quieres esta universidad: un programa, una clase, o BHCC.",
+    weak: "Di por qué quieres estudiar aquí, con tus propias palabras. Una razón honesta basta.",
     sentKicker: "Solicitud enviada",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -98,7 +100,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Portals bury the date. Find it before you write.",
         "A checklist with one box still open is not ready to send.",
-        "The statement only has to name the school or the program. Short is fine.",
+        "The statement only has to say why you want to study here. Short is fine.",
       ],
       tip: "If you cannot point at the deadline, you are not ready to submit.",
     },
@@ -109,7 +111,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Los portales esconden la fecha. Encuéntrala antes de escribir.",
         "Una lista con una casilla abierta no está lista para enviar.",
-        "La carta solo tiene que nombrar la escuela o el programa. Corta está bien.",
+        "La carta solo tiene que decir por qué quieres estudiar aquí. Corta está bien.",
       ],
       tip: "Si no puedes señalar la fecha, no estás listo para enviar.",
     },
@@ -121,17 +123,55 @@ export function describeSubmission(statement: string, lang: Lang): SubmissionCon
   return { lang, fields: [{ label: ENROLLMENT_COPY[lang].statementHeading, value: statement }] };
 }
 
+/** A reason to apply, or the school or program by name. */
+const REASON =
+  /\b(bhcc|bunker|college|colegio|universidad|escuela|school|program\w*|class\w*|clase\w*|course\w*|curso\w*|business|negocio\w*|learn\w*|aprend\w*|stud\w*|estudi\w*|english|ingles|job|jobs|work\w*|trabaj\w*|career\w*|carrera\w*|future|futuro|family|familia|better|mejor\w*|goal\w*|meta\w*|help\w*|ayud\w*|degree|titulo|nurs\w*|enfermer\w*|hospital|office|oficina|dream\w*|sueno\w*|want|quiero|like|gusta)\b/;
+
+/**
+ * An honest reason in real words: "I like to learn english and work in
+ * hospital" counts, and "asdf college asdf asdf asdf" does not, even though
+ * it names the college.
+ */
 export function statementShowsInterest(body: string): boolean {
-  const t = body.toLowerCase();
-  if (t.trim().length < 24) return false;
-  return /bhcc|bunker|college|universidad|escuela|program|programa|class|clase|business|negocio/.test(t);
+  if (!looksLikeRealText(body, 4)) return false;
+  return REASON.test(normalizeReply(body));
 }
+
+/**
+ * Step one: find the apply-by date. The learner picks it from three dates:
+ * the deadline, and the award letter's dates from the same portal, which a
+ * learner skimming could mix up with it.
+ */
+export const DEADLINE_CHOICES: { key: string; label: Localized; ok: boolean }[] = [
+  { key: "deadline", label: DEADLINE, ok: true },
+  ...DATE_CHECK.en.options
+    .map((option, i) => ({ en: option.label, es: DATE_CHECK.es.options[i]?.label ?? option.label }))
+    .filter((label) => label.en !== DEADLINE.en)
+    .map((label, i) => ({ key: `other-${i}`, label, ok: false })),
+];
+
+export function deadlinePickIsRight(key: string): boolean {
+  return DEADLINE_CHOICES.some((choice) => choice.key === key && choice.ok);
+}
+
+export const DEADLINE_COPY: Record<Lang, { question: string; wrong: string; need: string }> = {
+  en: {
+    question: "What is the last day to apply?",
+    wrong: "That is not the apply-by date. Look at the top of the page.",
+    need: "First, find the apply-by date. Pick it below the heading.",
+  },
+  es: {
+    question: "¿Cuál es el último día para aplicar?",
+    wrong: "Esa no es la fecha para aplicar. Mira arriba en la página.",
+    need: "Primero, encuentra la fecha para aplicar. Elígela debajo del título.",
+  },
+};
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Find the apply-by date.", es: "Encuentra la fecha para aplicar." },
   { en: "Mark the missing document.", es: "Marca el documento que falta." },
-  { en: "Write a short statement that names BHCC or the program, then submit.", es: "Escribe una carta corta que nombre BHCC o el programa; luego envía." },
+  { en: "Write a short statement: why you want to study at BHCC or in the program. Then submit.", es: "Escribe una carta corta: por qué quieres estudiar en BHCC o en el programa. Luego envía." },
 ];
 
 export const DOCUMENT_FILES = [

@@ -1,3 +1,4 @@
+import { looksLikeRealText, wordCount } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -44,7 +45,7 @@ export const INTERVIEW_COPY: Record<Lang, {
     needAskBack: "Choose or write one question to ask before you finish.",
     sentKicker: "Interview done",
     doneTitle: "You got through the interview.",
-    doneBody: "Four honest answers and a question of your own. That's what a good interview looks like. Anita said she'd be in touch soon.",
+    doneBody: "Four answers in your own words, and a question of your own. Anita said she'd be in touch soon.",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
     lessonKicker: "2-minute lesson",
@@ -66,7 +67,7 @@ export const INTERVIEW_COPY: Record<Lang, {
     needAskBack: "Elige o escribe una pregunta para hacer antes de terminar.",
     sentKicker: "Entrevista terminada",
     doneTitle: "Pasaste la entrevista.",
-    doneBody: "Cuatro respuestas honestas y una pregunta tuya. Así se ve una buena entrevista. Anita dijo que se comunicaría pronto.",
+    doneBody: "Cuatro respuestas con tus propias palabras, y una pregunta tuya. Anita dijo que se comunicaría pronto.",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -210,8 +211,25 @@ export const ASK_BACK_CHOICES: { key: string; text: Localized }[] = [
   },
 ];
 
+/**
+ * A few sentences in real words. Word count alone let "money money money
+ * money money money" through; now one word on repeat, a phrase said twice,
+ * or keyboard mash does not count. Spelling and grammar are never judged.
+ */
 export function answerLooksReal(answer: string): boolean {
-  return answer.trim().split(/\s+/).filter(Boolean).length >= 6;
+  return wordCount(answer) >= 6 && looksLikeRealText(answer, 5);
+}
+
+/** The first question whose answer is not real yet, or -1 when all four are. */
+export function firstWeakAnswer(answers: Record<string, string>): number {
+  return QUESTIONS.findIndex((q) => !answerLooksReal(answers[q.key] ?? ""));
+}
+
+/** The Job Card's correction: which question needs more. */
+export function needAnswerFor(index: number, lang: Lang): string {
+  return lang === "en"
+    ? `Question ${index + 1} needs a real answer. Write a few sentences in your own words.`
+    : `La pregunta ${index + 1} necesita una respuesta real. Escribe unas oraciones con tus propias palabras.`;
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {

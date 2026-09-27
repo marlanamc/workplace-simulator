@@ -1,3 +1,4 @@
+import { affirms, denies, looksLikeRealText } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -139,19 +140,65 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
+/** Why the report is not filed yet, or "ok". */
+export type IncidentVerdict = "ok" | "empty" | "no-injury" | "no-action" | "false-injury" | "false-action";
+
+/** Said as a fact about the customer: hurt, injured, bleeding, se lastimó. */
+const HURT = /\b(hurt|hurts|injur\w*|bleed\w*|broke|broken|lastim\w*|herid[oa]s?|sangr\w*)\b/;
+/** Fine, in plain words: "he is ok", "she is fine", "está bien". */
+const FINE = /\b(ok|okay|fine|alright|all right|safe|unhurt|uninjured|bien)\b/;
+/** Something the learner did about it: cleaned, mopped, put a sign out, told someone, said sorry. */
+const ACTION =
+  /\b(clean\w*|mop\w*|wip(e|ed|ing)|dr(y|ied)|sign|cone|told|tell|inform\w*|notif\w*|reported|call(ed)?|help(ed)?|sorry|apologi\w*|limpi\w*|trape\w*|seque|seca\w*|letrero|senal|avis\w*|dije|le dije|llame|ayude|perdon|disculp\w*)\b/;
+
 /**
- * A complete incident narrative names both whether anyone was hurt and what
- * action/notification followed — the two elements starters model beyond the
- * bare "what happened" fact. Lenient by design: any phrasing with both
- * signals passes, in either language.
+ * A report is complete when it says (1) that the customer is fine, and (2)
+ * what the learner did about it. It must also be true: the story says nobody
+ * was hurt, and the learner cleaned up and told someone.
+ *
+ * Negation is read in its own clause, so "he is ok, i mop the floor and say
+ * sorry" passes, and "The customer was badly hurt. I did not clean anything
+ * and did not tell anyone." does not.
  */
-export function incidentNarrativeIsComplete(what: string): boolean {
-  const t = what.trim().toLowerCase();
-  if (t.length < 40) return false;
-  const mentionsInjury = /hurt|injur|no one|nadie|lastim/.test(t);
-  const mentionsAction = /clean|told|notif|inform|report|sign|wet floor|avis|limpi|report[eé]|letrero/.test(t);
-  return mentionsInjury && mentionsAction;
+export function incidentVerdict(what: string): IncidentVerdict {
+  if (!what.trim()) return "empty";
+  const hurt = affirms(what, HURT);
+  const fine = affirms(what, FINE) || denies(what, HURT);
+  if (hurt && !fine) return "false-injury";
+  const acted = affirms(what, ACTION);
+  if (!acted && denies(what, ACTION)) return "false-action";
+  if (!fine) return "no-injury";
+  if (!acted || !looksLikeRealText(what, 3)) return "no-action";
+  return "ok";
 }
+
+export function incidentNarrativeIsComplete(what: string): boolean {
+  return incidentVerdict(what) === "ok";
+}
+
+/** The Job Card's correction for each verdict. It names only what is missing or wrong. */
+export const INCIDENT_CORRECTIONS: Record<Exclude<IncidentVerdict, "ok">, Localized> = {
+  empty: {
+    en: "Write what happened. A few short sentences is fine.",
+    es: "Escribe qué pasó. Unas oraciones cortas están bien.",
+  },
+  "no-injury": {
+    en: "Say if the customer was hurt. For example: He is OK.",
+    es: "Di si el cliente se lastimó. Por ejemplo: Está bien.",
+  },
+  "no-action": {
+    en: "Say what you did about it: cleaned it up, put out a sign, or told someone.",
+    es: "Di qué hiciste al respecto: limpiaste, pusiste un letrero o le avisaste a alguien.",
+  },
+  "false-injury": {
+    en: "Check the facts. Nobody was hurt. Write what really happened.",
+    es: "Revisa los datos. Nadie se lastimó. Escribe lo que de verdad pasó.",
+  },
+  "false-action": {
+    en: "Your report says you did nothing. Say what you did about the spill.",
+    es: "Tu reporte dice que no hiciste nada. Di qué hiciste con el derrame.",
+  },
+};
 
 /** What the teacher sees: the when/where/what fields the learner submitted. */
 export function describeSubmission(when: string, where: string, what: string, lang: Lang): SubmissionContent {

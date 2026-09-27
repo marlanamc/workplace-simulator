@@ -11,7 +11,8 @@ import {
   OVERLAP_STARTERS,
   HINTS,
   LESSONS,
-  replyAcceptsOffer,
+  offerReplyVerdict,
+  OFFER_REPLY_CORRECTIONS,
   overlapMentionsShift,
   describeSubmission,
   RIGHT_NOW_STEPS,
@@ -54,7 +55,8 @@ export default function CollegeOfferTask() {
 
   const tryAccept = () => {
     if (!reply.trim()) return say(h.empty);
-    if (!replyAcceptsOffer(reply)) return say(h.accept);
+    const verdict = offerReplyVerdict(reply);
+    if (verdict !== "ok" && verdict !== "empty") return say(OFFER_REPLY_CORRECTIONS[verdict][lang]);
     setAccepted(true);
     setView("hub");
   };

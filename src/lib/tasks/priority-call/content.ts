@@ -1,3 +1,4 @@
+import { affirms, normalizeReply } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -177,10 +178,11 @@ export const MAIL_STARTERS: Record<Lang, string[]> = {
   ],
 };
 
-export const HINTS: Record<Lang, { urgency: string; overpromise: string; empty: string; cover: string; accept: string; no: string }> = {
+export const HINTS: Record<Lang, { urgency: string; overpromise: string; ack: string; empty: string; cover: string; accept: string; no: string }> = {
   en: {
     urgency: "Compare the waiting customer, the 4 PM staffing gap, and the 5 PM meeting. Which reason addresses an immediate consequence?",
     overpromise: "Don't promise a free drink or a refund here. Say you know it happened and that you will look into it.",
+    ack: "Tell Dana you know it happened. Say sorry, or say you will check on it.",
     empty: "Write a short reply first.",
     cover: "Pick Jordan. Jordan has room and is free Thursday night.",
     accept: "That's in the middle of close. Propose Saturday 10 AM.",
@@ -189,6 +191,7 @@ export const HINTS: Record<Lang, { urgency: string; overpromise: string; empty: 
   es: {
     urgency: "Compara al cliente que espera, el turno sin cubrir de las 4 y la reunión de las 5. ¿Qué motivo responde a una consecuencia inmediata?",
     overpromise: "No prometas una bebida gratis ni un reembolso. Dile que sabes lo que pasó y que lo vas a revisar.",
+    ack: "Dile a Dana que sabes lo que pasó. Pide perdón, o di que lo vas a revisar.",
     empty: "Primero escribe una respuesta corta.",
     cover: "Elige a Jordan. Jordan tiene espacio y está libre el jueves por la noche.",
     accept: "Eso es en medio del cierre. Propón el sábado a las 10 AM.",
@@ -224,7 +227,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 /** Promising something the learner cannot authorize. The one hard "no". */
 const OVERPROMISE =
-  /\bfree\b|\brefund\b|\bcomp(ed)?\b|\bon the house\b|\bgratis\b|\breembolso\b|\bdevoluci[oó]n\b/;
+  /\bfree\b|\brefund\b|\bcomp(ed)?\b|\bon the house\b|\bgratis\b|\breembolso\b|\bdevolucion\b/;
 
 /**
  * Acknowledging the customer, in either language. Deliberately wide: the job
@@ -233,12 +236,27 @@ const OVERPROMISE =
  * over-promised. Prefer letting a weak reply through over failing a real one.
  */
 const ACKNOWLEDGES =
-  /sorry|apolog|regret|understand|thank|look into|looking into|look at|check|fix|make (it|this) right|speak|talk|follow up|right away|perd[oó]n|siento|lamento|disculp|gracias|revis|entiendo|comprend|arregl|corrig|hablar[eé]?|enseguida/;
+  /sorry|apolog|regret|understand|thank|look into|looking into|look at|check|fix|make (it|this) right|speak|talk|tell|ask|let .{1,20} know|find out|follow up|right away|new (drink|one|order)|remake|make (you )?(a|another)|perd[oó]n|siento|lamento|disculp|gracias|revis|entiendo|comprend|arregl|corrig|hablar[eé]?|dec[ií]r|dig[oa]|avis|pregunt|enseguida|otra (bebida|vez)|nueva/;
+
+/** Why the customer reply is not sent yet, or "ok". */
+export type CustomerReplyVerdict = "ok" | "empty" | "overpromise" | "no-ack";
+
+/**
+ * The one hard "no" is promising something a shift lead cannot give: a free
+ * drink or a refund. A refusal of one ("I can't give a refund") is not a
+ * promise. Otherwise, any honest acknowledgement passes: "ok sorry", "I will
+ * tell the barista about the milk". A reply that acknowledges nothing is told
+ * so, and is never accused of over-promising.
+ */
+export function customerReplyVerdict(body: string): CustomerReplyVerdict {
+  if (!body.trim()) return "empty";
+  // A wider window, so "I can't give you a refund" reads as the refusal it is.
+  if (affirms(body, OVERPROMISE, 4)) return "overpromise";
+  return ACKNOWLEDGES.test(normalizeReply(body)) ? "ok" : "no-ack";
+}
 
 export function replyIsSafe(body: string) {
-  const t = body.toLowerCase();
-  if (OVERPROMISE.test(t)) return false;
-  return ACKNOWLEDGES.test(t);
+  return customerReplyVerdict(body) === "ok";
 }
 
 /** What the teacher sees: the "what's most urgent" call and the customer reply. */

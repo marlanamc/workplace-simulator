@@ -1,3 +1,4 @@
+import { acceptance } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -204,14 +205,14 @@ export const HINTS: Record<Lang, {
   empty: string;
 }> = {
   en: {
-    accept: "Say you accept, and name the class or BHCC.",
+    accept: "Say yes to the offer. For example: Yes, I accept. Thank you.",
     slot: "Pick the Tuesday 2 to 4 class time from the offer.",
     repeats: "Check Repeats weekly. This is a class, not a one-time meeting.",
     overlap: "Tell Renata the class hits your Tuesday close.",
     empty: "Write a short message first. Even one sentence is fine.",
   },
   es: {
-    accept: "Di que aceptas, y nombra la clase o BHCC.",
+    accept: "Di que sí a la oferta. Por ejemplo: Sí, acepto. Gracias.",
     slot: "Elige el horario del martes de 2 a 4 que dice la oferta.",
     repeats: "Marca Se repite cada semana. Es una clase, no una reunión de una vez.",
     overlap: "Dile a Renata que la clase choca con tu cierre del martes.",
@@ -244,12 +245,43 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
 };
 
-export function replyAcceptsOffer(body: string): boolean {
-  const t = body.toLowerCase();
-  const accepts = /accept|acepto|aceptar|yes|sí|si,|i'll take|voy a tomar|take the/.test(t);
-  const namesClass = /class|clase|bhcc|bunker|essentials|college|universidad/.test(t);
-  return accepts && namesClass;
+/** Why the reply to the offer is not sent yet, or "ok". */
+export type OfferReplyVerdict = "ok" | "empty" | "declines" | "unsure" | "no-answer";
+
+/**
+ * The learner is replying to the offer email, so a clear yes is enough:
+ * "yes ok thank you" accepts, and naming the class is not required. A no
+ * ("I do not accept the class") or a maybe does not accept, however many
+ * times it says "accept".
+ */
+export function offerReplyVerdict(body: string): OfferReplyVerdict {
+  if (!body.trim()) return "empty";
+  const answer = acceptance(body);
+  if (answer === "accepts") return "ok";
+  if (answer === "declines") return "declines";
+  if (answer === "unsure") return "unsure";
+  return "no-answer";
 }
+
+export function replyAcceptsOffer(body: string): boolean {
+  return offerReplyVerdict(body) === "ok";
+}
+
+/** The Job Card's correction for each verdict. */
+export const OFFER_REPLY_CORRECTIONS: Record<Exclude<OfferReplyVerdict, "ok" | "empty">, Localized> = {
+  declines: {
+    en: "Your reply says no. To take the class, say you accept.",
+    es: "Tu respuesta dice que no. Para tomar la clase, di que aceptas.",
+  },
+  unsure: {
+    en: "Give a clear answer. Say yes, you accept the class.",
+    es: "Da una respuesta clara. Di que sí, que aceptas la clase.",
+  },
+  "no-answer": {
+    en: "Say yes to the offer. For example: Yes, I accept. Thank you.",
+    es: "Di que sí a la oferta. Por ejemplo: Sí, acepto. Gracias.",
+  },
+};
 
 export function overlapMentionsShift(body: string): boolean {
   const t = body.toLowerCase();

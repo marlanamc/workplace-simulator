@@ -10,7 +10,7 @@ import {
   HINTS,
   LESSONS,
   titleIsAboutSchedule,
-  agendaBulletCount,
+  agendaIsReady,
   describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
@@ -39,7 +39,7 @@ export default function TeamMeetingTask() {
   const { nudge, say, dismiss } = useNudge();
   const c = TEAM_MEETING_COPY[lang];
   const h = HINTS[lang];
-  const agendaOk = agendaBulletCount(agenda) >= 2;
+  const agendaOk = agendaIsReady(agenda);
 
   const saveEvent = () => {
     if (!titleIsAboutSchedule(title)) return say(h.title);

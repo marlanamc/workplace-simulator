@@ -201,10 +201,16 @@ describe("college offer: accept and flag the overlap", () => {
     expect(replyAcceptsOffer(body)).toBe(true);
   });
 
-  it("rejects a reply that does not accept or name the class", () => {
+  it("rejects a reply that does not accept", () => {
     expect(replyAcceptsOffer("Thanks!")).toBe(false);
-    expect(replyAcceptsOffer("I accept.")).toBe(false);
     expect(replyAcceptsOffer("asdf")).toBe(false);
+    expect(replyAcceptsOffer("I do not accept the class")).toBe(false);
+  });
+
+  // Story Mode Audit #5: this is a reply to the offer email, so a clear yes
+  // is enough. The old rule also required naming the class and rejected these.
+  it.each(["I accept.", "yes ok thank you"])("accepts a plain yes to the offer: %j", (body) => {
+    expect(replyAcceptsOffer(body)).toBe(true);
   });
 
   it.each([
@@ -562,7 +568,7 @@ describe("performance review: one real strength, one real area to grow", () => {
 });
 
 describe("ops report packet: number checked, calendar noted, summary, sent", () => {
-  const base = { sheetTotalConfirmed: true, calendarNoted: true, packetSent: true };
+  const base = { sheetTotalConfirmed: true, calendarNoted: true, packetSent: true, message: "Hi Anita, here is this week's report." };
 
   it.each([
     "This week's total was $4,820, up from last week. Coming up: Thursday's open still needs someone.",
@@ -594,8 +600,11 @@ describe("portfolio reflection: every prompt answered", () => {
     ).toBe(true);
   });
 
-  it("rejects a blank or too-short answer", () => {
-    expect(reflectionComplete(["Reading a schedule.", "Formulas.", "ok", "Do it."])).toBe(false);
+  // Story Mode Audit #5: the card says "a few words each is fine", so a
+  // one- or two-word answer counts. Only a blank (or mash) box does not.
+  it("accepts a few words each, and rejects a blank or mashed answer", () => {
+    expect(reflectionComplete(["Reading a schedule.", "Formulas.", "ok", "Do it."])).toBe(true);
     expect(reflectionComplete(["Reading a schedule and asking for a swap.", "", "It gets easier.", "Worth the time."])).toBe(false);
+    expect(reflectionComplete(["email", "computer", "asdf", "is good"])).toBe(false);
   });
 });
