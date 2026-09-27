@@ -45,6 +45,8 @@ export interface JobCardStep {
   stepIndex: number;
   stepCount: number;
   line: Localized<string>;
+  /** Scenario goal when independent lesson practice changes the task facts. */
+  goal?: Localized<string>;
   /** Whether the task's Show-me spotlight is currently lit. */
   showMeActive: boolean;
   /** Whether the task offers a Show me at all on this step. */

@@ -175,6 +175,7 @@ export default function JobCard() {
     const same =
       heldStep &&
       heldStep.line.en === liveStep.line.en &&
+      heldStep.goal?.en === liveStep.goal?.en &&
       heldStep.stepIndex === liveStep.stepIndex &&
       heldStep.canShowMe === liveStep.canShowMe &&
       heldStep.canHelp === liveStep.canHelp &&
@@ -306,7 +307,7 @@ export default function JobCard() {
 
     // A lesson is one task. It finishes on its own card, with the two ways
     // out a classroom needs, and never counts down the jobs left in a day.
-    if (lesson && (completedTaskKeys.includes(lesson.taskKey) || (finish && active !== null))) {
+    if (lesson && (completedTaskKeys.includes(lesson.taskKey) || (finish && active !== null && lesson.practiceRound == null))) {
       return {
         badge: "✓",
         kicker: lesson.title[lang],
@@ -359,7 +360,7 @@ export default function JobCard() {
     // Only while the app is still on screen: task windows stay mounted when
     // minimized, so a finished-but-hidden job would otherwise keep the card
     // green after the learner is already back on the desktop for the next one.
-    if (finish && active !== null) {
+    if (finish && active !== null && lesson?.practiceRound == null) {
       const justFinished = finishedTaskKey;
       const finishedTrack = justFinished ? findTrackForTask(justFinished) : undefined;
       // The day the learner just finished, not the one they are moving into.
@@ -451,9 +452,9 @@ export default function JobCard() {
     // Act I spells out the click. From Act II on the card states the goal and
     // lets the learner work out the clicks, which is the whole point of the
     // ladder: the scaffolding comes down as they stop needing it.
-    const goalLine = nextTaskKey
+    const goalLine = effectiveStep.goal?.[lang] ?? (nextTaskKey
       ? (JOB_CARD_LINE[nextTaskKey]?.[lang] ?? TASK_INFO[nextTaskKey].label[lang])
-      : effectiveStep.line[lang];
+      : effectiveStep.line[lang]);
     const midLine = act === "act1" ? effectiveStep.line[lang] : goalLine;
 
     return {

@@ -11,6 +11,8 @@ import { rungFor, type RungMap } from "@/lib/release-ladder";
 import type { StoryFlags } from "@/lib/story-beats";
 import type { LessonSeed } from "@/lib/lessons/catalog";
 
+import { FOLLOWUP_ROUNDS } from "@/lib/tasks/lesson-followups/content";
+
 const NO_RUNGS: RungMap = {};
 const noop = () => {};
 
@@ -41,6 +43,8 @@ export default function LessonProgressProvider({
 }) {
   const [completedTaskKeys, setCompletedTaskKeys] = useState<TaskKey[]>(seed.completedTaskKeys);
   const completedRef = useRef(seed.completedTaskKeys);
+  const [practiceRound, setPracticeRound] = useState<number | null>(null);
+  const practiceRoundRef = useRef<number | null>(null);
   const [writing, setWriting] = useState(initialWriting);
   const [openingReplies, setOpeningReplies] = useState<OpeningReply[]>([]);
   const [storyFlags, setStoryFlags] = useState<StoryFlags>(seed.storyFlags);
@@ -56,12 +60,19 @@ export default function LessonProgressProvider({
     async (taskKey: TaskKey, _badgeKey?: string, submission?: SubmissionContent) => {
       if (submission) setWriting((prev) => ({ ...prev, [taskKey]: submission }));
       if (completedRef.current.includes(taskKey)) return true;
+      if (taskKey === lesson.taskKey && FOLLOWUP_ROUNDS[taskKey]?.length) {
+        if (practiceRoundRef.current === null) {
+          practiceRoundRef.current = 0;
+          setPracticeRound(0);
+        }
+        return true;
+      }
       completedRef.current = [...completedRef.current, taskKey];
       setCompletedTaskKeys(completedRef.current);
       onLessonComplete?.(taskKey);
       return true;
     },
-    [onLessonComplete],
+    [onLessonComplete, lesson.taskKey],
   );
 
   // Practice again: back to exactly where the lesson started. Bumping the
@@ -72,6 +83,8 @@ export default function LessonProgressProvider({
     setCompletedTaskKeys(seed.completedTaskKeys);
     setWriting(initialWriting);
     setOpeningReplies([]);
+    practiceRoundRef.current = null;
+    setPracticeRound(null);
     setStoryFlags(seed.storyFlags);
     setProgressEpoch((n) => n + 1);
   }, [seed, initialWriting]);
@@ -131,7 +144,32 @@ export default function LessonProgressProvider({
     [seed, lesson.taskKey, writing, openingReplies, saveOpeningReply, completedTaskKeys, progressEpoch, storyFlags, setStoryFlag, markComplete, restart, lang, bigText],
   );
 
-  const lessonValue = useMemo<LessonValue>(() => ({ ...lesson, onFinish: () => lesson.onFinish(lang), onRestart: restart }), [lesson, restart, lang]);
+  const completePracticeRound = useCallback((expectedIndex: number) => {
+    const index = practiceRoundRef.current;
+    const rounds = FOLLOWUP_ROUNDS[lesson.taskKey];
+    if (index === null || index !== expectedIndex || !rounds || completedRef.current.includes(lesson.taskKey)) return;
+    if (index + 1 < rounds.length) {
+      practiceRoundRef.current = index + 1;
+      setPracticeRound(index + 1);
+      return;
+    }
+    completedRef.current = [...completedRef.current, lesson.taskKey];
+    setCompletedTaskKeys(completedRef.current);
+    // Keep the final reviewed response visible until Practice again.
+    practiceRoundRef.current = null;
+    onLessonComplete?.(lesson.taskKey);
+  }, [lesson.taskKey, onLessonComplete]);
+
+  const lessonValue = useMemo<LessonValue>(() => ({ ...lesson,
+    ...(practiceRound !== null ? {
+      scene: {
+        you: { en: "You are handling a new workplace situation.", es: "Estás atendiendo una nueva situación de trabajo." },
+        people: [],
+        need: FOLLOWUP_ROUNDS[lesson.taskKey]![practiceRound].goal,
+      },
+      reference: [{ label: { en: "Current situation", es: "Situación actual" }, value: FOLLOWUP_ROUNDS[lesson.taskKey]![practiceRound].title }],
+    } : {}),
+    practiceRound, completePracticeRound, onFinish: () => lesson.onFinish(lang), onRestart: restart }), [lesson, practiceRound, completePracticeRound, restart, lang]);
 
   return (
     <ProgressContext.Provider value={value}>
