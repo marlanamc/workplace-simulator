@@ -7,12 +7,17 @@ import {
   DUE,
   DEADLINE_OPTIONS,
   deadlineIsCorrect,
+  TIME_LEFT_OPTIONS,
+  timeLeftIsCorrect,
+  TODAY,
   STARTERS,
   LESSONS,
-  responseIsComplete,
+  replyProblem,
+  replyCorrection,
   describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
+  SHOW_ME_LOOK,
 } from "@/lib/tasks/coursework/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -60,7 +65,12 @@ export default function CourseworkTask() {
   const [submitted, setSubmitted] = useState(done);
   const [deadline, setDeadline] = useState("");
   const acked = deadlineIsCorrect(deadline);
+  const [timeLeft, setTimeLeft] = useState("");
+  const timeKnown = timeLeftIsCorrect(timeLeft);
   const [body, setBody] = useState("");
+  // Set on the first rejected Submit, so "On my own" keeps the starters
+  // hidden until the learner has tried in their own words.
+  const [missed, setMissed] = useState(false);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
@@ -68,9 +78,13 @@ export default function CourseworkTask() {
 
   const trySubmit = () => {
     showMe.clear();
-    if (!acked) return say(c.needAck);
-    if (!body.trim()) return say(c.empty);
-    if (!responseIsComplete(body)) return say(c.weak);
+    if (!acked) return say(deadline ? c.wrongDeadline : c.needAck);
+    if (!timeKnown) return say(timeLeft ? TIME_LEFT_OPTIONS.find((o) => o.key === timeLeft)!.hint[lang] : c.needTime);
+    const problem = replyProblem(body);
+    if (problem) {
+      setMissed(true);
+      return say(replyCorrection(problem, lang));
+    }
     setSubmitted(true);
     markComplete("coursework", "submit_assignment_on_time", describeSubmission(body, lang));
   };
@@ -78,16 +92,29 @@ export default function CourseworkTask() {
   const restart = () => {
     setSubmitted(false);
     setDeadline("");
+    setTimeLeft("");
     setBody("");
+    setMissed(false);
   };
 
-  const stepIndex = !acked ? 0 : responseIsComplete(body) ? 2 : 1;
-  const showMeIds = ["deadline-select", "answer-box", "submit-button"];
-  // A wrong day is corrected as it is chosen, not only at Submit.
+  // The writing step stays up until Submit: advancing while the learner
+  // types would tell them the grader is already happy.
+  const stepIndex = !acked ? 0 : !timeKnown ? 1 : 2;
+  // The two choice steps point at the evidence (the due date, today's day),
+  // not at the answer; the writing step points at the box.
+  const showMeIds = ["due-line", "today-chip", "answer-box"];
+  // A wrong choice is corrected as it is chosen, not only at Submit. The
+  // correction names what to look at; the learner has already chosen.
   const chooseDeadline = (key: string) => {
     setDeadline(key);
     showMe.clear();
-    if (key && !deadlineIsCorrect(key)) say(c.needAck);
+    if (key && !deadlineIsCorrect(key)) say(c.wrongDeadline);
+  };
+  const chooseTimeLeft = (key: string) => {
+    setTimeLeft(key);
+    showMe.clear();
+    const option = TIME_LEFT_OPTIONS.find((o) => o.key === key);
+    if (option && !timeLeftIsCorrect(key)) say(option.hint[lang]);
   };
 
   return (
@@ -135,6 +162,17 @@ export default function CourseworkTask() {
         <div className="mx-auto flex max-w-[1000px] flex-col gap-6 px-6 py-6 md:flex-row md:items-start">
           {/* The assignment */}
           <div className="min-w-0 flex-1">
+            <p
+              data-showme="today-chip"
+              className="mt-0 mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[14px] text-[#202124]"
+              style={{ borderColor: GC.line }}
+            >
+              <svg aria-hidden viewBox="0 0 24 24" width="16" height="16" fill={GC.muted}>
+                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z" />
+              </svg>
+              <span style={{ color: GC.muted }}>{c.todayLabel}:</span>
+              <span className="font-medium">{TODAY[lang].charAt(0).toUpperCase() + TODAY[lang].slice(1)}</span>
+            </p>
             <div className="flex items-start gap-4 border-b pb-4" style={{ borderColor: GC.class }}>
               <AssignmentIcon muted={submitted} />
               <div className="min-w-0">
@@ -144,7 +182,7 @@ export default function CourseworkTask() {
                 <p className="mt-1 mb-0" style={{ color: GC.muted }}>{c.heading} · Ms. Rivera</p>
                 <p className="mt-2 mb-0 flex flex-wrap justify-between gap-2 text-[14px] font-medium text-[#202124]">
                   <span>{c.points}</span>
-                  <span>
+                  <span data-showme="due-line">
                     {c.dueLabel} {DUE[lang]}
                   </span>
                 </p>
@@ -210,6 +248,24 @@ export default function CourseworkTask() {
                     </select>
                   </label>
                   <label className="mt-4 block text-[14px] font-medium text-[#202124]">
+                    {c.timeLabel}
+                    <select
+                      aria-label={c.timeLabel}
+                      data-showme="time-select"
+                      value={timeLeft}
+                      onChange={(e) => chooseTimeLeft(e.target.value)}
+                      className="mt-1.5 block min-h-11 w-full rounded-md border bg-white px-2 font-normal"
+                      style={{ borderColor: GC.line }}
+                    >
+                      <option value="">{c.chooseTime}</option>
+                      {TIME_LEFT_OPTIONS.map((o) => (
+                        <option key={o.key} value={o.key}>
+                          {o.label[lang]}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="mt-4 block text-[14px] font-medium text-[#202124]">
                     {c.answerLabel}
                     <textarea
                       data-showme="answer-box"
@@ -220,7 +276,7 @@ export default function CourseworkTask() {
                       style={{ borderColor: GC.line }}
                     />
                   </label>
-                  <NeedAStart lang={lang} starters={STARTERS[lang]} onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)} />
+                  <NeedAStart lang={lang} starters={STARTERS[lang]} missed={missed} onPick={(s) => setBody((b) => (b ? `${b} ` : "") + s)} />
                   <button
                     type="button"
                     data-showme="submit-button"
@@ -246,7 +302,11 @@ export default function CourseworkTask() {
       </div>
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
-      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
+      <ShowMeHighlight
+        targetId={showMe.targetId}
+        label={showMe.targetId === "due-line" || showMe.targetId === "today-chip" ? SHOW_ME_LOOK[lang] : SHOW_ME_POINTER[lang]}
+        onDismiss={showMe.clear}
+      />
     </div>
   );
 }

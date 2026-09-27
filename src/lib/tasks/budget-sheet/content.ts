@@ -1,6 +1,7 @@
 import { mentionsAmount } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { openFileStep } from "../open-file-step";
+import { fnName } from "../sheet-words";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -61,7 +62,7 @@ export function statusFor(actual: number, budget: number): "over" | "under" {
 /** The formula as the sheet shows it, with the same words the cells show. */
 export function statusFormula(row: number, lang: Lang = "en"): string {
   const [over, under] = lang === "en" ? ["over", "under"] : ["sobre", "bajo"];
-  return `=IF(C${row}>B${row},"${over}","${under}")`;
+  return `=${fnName("IF", lang)}(C${row}>B${row},"${over}","${under}")`;
 }
 
 /** Money as the sheet and the corrections both write it: $2,850. */
@@ -135,7 +136,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     subject: "This week's budget: one category over",
     writeHere: "Write which category is over, and by how much…",
     send: "Send",
-    discard: "Discard",
+    discard: "Back to the sheet",
     sentKicker: "Message sent",
     doneTitle: "You read the IF, not just the total.",
     doneBody: "Labor was $450 over budget. The formula and the chart said the same thing. You told Renata which category it was and how much.",
@@ -175,11 +176,11 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     subject: "Presupuesto de esta semana: una categoría se pasó",
     writeHere: "Escribe qué categoría se pasó, y por cuánto…",
     send: "Enviar",
-    discard: "Descartar",
+    discard: "Volver a la hoja",
     sentKicker: "Mensaje enviado",
-    doneTitle: "Leíste el IF, no solo el total.",
+    doneTitle: "Leíste el SI, no solo el total.",
     doneBody: "Mano de obra se pasó $450 del presupuesto. La fórmula y el gráfico dijeron lo mismo. Le dijiste a Renata cuál categoría era y por cuánto.",
-    badgeName: "Leer un IF de presupuesto y un gráfico",
+    badgeName: "Leer un SI de presupuesto y un gráfico",
     badgeWhere: "Cuenta para: Asistente de gerencia",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -200,15 +201,16 @@ export const WRONG_EMAIL_HINT: Record<Lang, string> = {
 };
 
 export const STARTERS: Record<Lang, string[]> = {
+  // Frames, not answers: the learner finds the line and does the subtraction.
   en: [
-    "Hi Renata, labor is over budget by $450.",
-    "Labor actual is 2850 against a 2400 budget, a difference of 450.",
-    "The IF flags labor as over by $450. The chart shows the same bar.",
+    "Hi Renata, ___ is over budget.",
+    "It is over by $___.",
+    "Thank you.",
   ],
   es: [
-    "Hola Renata, mano de obra se pasó del presupuesto por $450.",
-    "Mano de obra real es 2850 contra un presupuesto de 2400: una diferencia de 450.",
-    "El IF marca mano de obra como \"sobre\" por $450. El gráfico muestra la misma barra.",
+    "Hola Renata, ___ se pasó del presupuesto.",
+    "Se pasó por $___.",
+    "Gracias.",
   ],
 };
 
@@ -219,7 +221,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         `Click the Status cell. The formula bar shows ${statusFormula(rowNumberFor(OVER_KEY), "en")}.`,
         "In plain words: if Actual (column C) is bigger than Budget (column B), the cell says \"over\". If not, it says \"under\".",
-        "The chart shows the same thing. The red bar goes past its dashed budget line.",
+        "The chart shows the same thing. One bar goes past its dashed budget line.",
         "To find how much over, subtract: Actual minus Budget.",
         "Repairs is exactly on budget. The IF says under, because Actual is not bigger than Budget.",
       ],
@@ -228,17 +230,23 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
   es: [
     {
-      t: "Una fórmula IF es una pregunta de sí o no dentro de una celda",
+      t: "Una fórmula SI (IF en inglés) es una pregunta de sí o no dentro de una celda",
       s: [
         `Haz clic en la celda de Estado. La barra de fórmulas muestra ${statusFormula(rowNumberFor(OVER_KEY), "es")}.`,
         "En palabras simples: si Real (columna C) es más grande que Presupuesto (columna B), la celda dice \"sobre\". Si no, dice \"bajo\".",
-        "El gráfico muestra lo mismo. La barra roja pasa su línea punteada de presupuesto.",
+        "El gráfico muestra lo mismo. Una barra pasa su línea punteada de presupuesto.",
         "Para saber por cuánto se pasó, resta: Real menos Presupuesto.",
-        "Reparaciones está justo en el presupuesto. El IF dice bajo, porque Real no es más grande que Presupuesto.",
+        "Reparaciones está justo en el presupuesto. El SI dice bajo, porque Real no es más grande que Presupuesto.",
       ],
-      tip: "En esta lección solo lees la fórmula. No escribes ninguna. Cuando puedas leer un IF, escribir uno después es más fácil.",
+      tip: "En esta lección solo lees la fórmula. No escribes ninguna. Cuando puedas leer un SI, escribir uno después es más fácil.",
     },
   ],
+};
+
+/** Shown on the finish screen above the message the learner sent. */
+export const SENT_LABELS: Record<Lang, { heading: string; over: string }> = {
+  en: { heading: "What you sent", over: "On the sheet" },
+  es: { heading: "Lo que enviaste", over: "En la hoja" },
 };
 
 export function emailFlagsOver(body: string): boolean {
@@ -251,13 +259,15 @@ export function emailFlagsOver(body: string): boolean {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(BUDGET_SHEET_COPY, (c) => c.sheetName),
+  // A looking step: compare the two columns, then open the Status formula.
   {
-    en: "Find the Status cell that says over. Click it and read the formula.",
-    es: "Busca la celda de Estado que dice sobre. Haz clic en ella y lee la fórmula.",
+    en: "Compare Budget and Actual on each line. Which line spent more than its budget? Click its Status cell and read the formula.",
+    es: "Compara Presupuesto y Real en cada línea. ¿Qué línea gastó más que su presupuesto? Haz clic en su celda de Estado y lee la fórmula.",
   },
+  // Said in plain words where the learner is looking, right after the click.
   {
-    en: "Click Email Renata what is over.",
-    es: "Haz clic en Escribirle a Renata qué se pasó.",
+    en: "The formula means: if Actual is bigger than Budget, show over. If not, show under. Now click Email Renata what is over.",
+    es: "La fórmula quiere decir: si Real es más grande que Presupuesto, muestra sobre. Si no, muestra bajo. Ahora haz clic en Escribirle a Renata qué se pasó.",
   },
   {
     en: "Write Renata the category and how much it is over. Subtract: Actual minus Budget.",

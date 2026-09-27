@@ -337,11 +337,13 @@ describe("financial aid: amount and accept-by date", () => {
 
 describe("coursework: a complete reply before submit", () => {
   it.each([
-    "Thank you for telling me. I will look into this today and write you back.",
-    "I hear you. I will check with my manager and follow up this afternoon.",
-    "Gracias por avisar. Voy a revisar esto hoy y te escribo.",
-    "Te escuché. Voy a hablar con mi gerente y te confirmo esta tarde.",
-    "I will call the customer and fix it.",
+    // The assignment asks for sorry and an action; replies with only one of
+    // the two are in lesson-grading-desk.test.ts as must-fail.
+    "Thank you for telling me. I am sorry. I will look into this today and write you back.",
+    "I hear you, and I apologize. I will check with my manager and follow up this afternoon.",
+    "Gracias por avisar. Lo siento. Voy a revisar esto hoy y te escribo.",
+    "Te escuché y te pido disculpas. Voy a hablar con mi gerente y te confirmo esta tarde.",
+    "Sorry. I will call the customer and fix it.",
     "Sorry Dana, we can make you a new latte.",
     "Lo siento, te preparo otro café mañana.",
   ])("accepts a real reply: %j", (body) => {

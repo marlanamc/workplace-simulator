@@ -1,6 +1,7 @@
 import { mentionsAmount, parseMoney } from "@/lib/text-facts";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { openFileStep } from "../open-file-step";
+import { fnName } from "../sheet-words";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -35,6 +36,23 @@ export const TIP_ROWS: TipRow[] = [
   { key: "thu", day: "Thursday", dayName: { en: "Thursday", es: "jueves" }, given: 46.75 },
   { key: "fri", day: "Friday", dayName: { en: "Friday", es: "viernes" }, given: 63.0 },
 ];
+
+/** The day as the sheet and the slip show it: "Monday" on the English screen, "Lunes" on the Spanish one. */
+export function dayLabel(row: TipRow, lang: Lang): string {
+  if (lang === "en") return row.day;
+  return row.dayName.es.charAt(0).toUpperCase() + row.dayName.es.slice(1);
+}
+
+/** The sheet's column headings, in the screen's language like the rest of the data. */
+export const SHEET_HEADERS: Record<Lang, { day: string; tips: string; total: string }> = {
+  en: { day: "Day", tips: "Tips", total: "Total" },
+  es: { day: "Día", tips: "Propinas", total: "Total" },
+};
+
+/** What the formula bar shows on the Total cell: =SUM(B2:B6), or =SUMA(B2:B6) in Spanish. */
+export function totalFormula(lang: Lang, firstRow = 2, lastRow = 1 + TIP_ROWS.length): string {
+  return `=${fnName("SUM", lang)}(B${firstRow}:B${lastRow})`;
+}
 
 /** Whether what the learner typed for a day is that day's slip amount. "$42.50", "42.5" and "42,50" all count. */
 export function entryMatches(row: TipRow, typed: string): boolean {
@@ -107,7 +125,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     writeHere: "Write your message here…",
     startersLabel: "Sentence starters",
     send: "Send",
-    discard: "Discard",
+    discard: "Back to the sheet",
     sentKicker: "Message sent",
     doneTitle: "You entered the numbers and sent the total.",
     doneBody: "You matched each amount to the right day. The sheet added them up. You sent that total to Renata. That is how a shared sheet should work.",
@@ -143,7 +161,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     writeHere: "Escribe tu mensaje aquí…",
     startersLabel: "Frases de ayuda",
     send: "Enviar",
-    discard: "Descartar",
+    discard: "Volver a la hoja",
     sentKicker: "Mensaje enviado",
     doneTitle: "Ingresaste los números y enviaste el total.",
     doneBody: "Relacionaste cada cantidad con el día correcto, dejaste que la hoja los sumara, y le enviaste ese total a Renata. Así es como debe funcionar una hoja compartida.",
@@ -173,15 +191,58 @@ export function wrongEntryHint(row: TipRow, lang: Lang): string {
  */
 export function emailMentionsTotal(body: string): boolean { return mentionsAmount(body, REAL_TOTAL); }
 
+export type TotalEmailProblem = "ok" | "empty" | "no-number" | "no-cents" | "wrong-number";
+
+/**
+ * What is wrong with the email, so the correction names that and nothing
+ * else. "241" is the total without its cents, which is its own mistake; any
+ * other number is not the sheet's total at all.
+ */
+export function totalEmailProblem(body: string): TotalEmailProblem {
+  if (!body.trim()) return "empty";
+  if (emailMentionsTotal(body)) return "ok";
+  const numbers = body.match(/\d+(?:[.,]\d+)?/g) ?? [];
+  if (numbers.length === 0) return "no-number";
+  const whole = Math.floor(REAL_TOTAL);
+  if (numbers.some((n) => Number(n) === whole || Number(n) === whole + 1)) return "no-cents";
+  return "wrong-number";
+}
+
+export const TOTAL_EMAIL_HINT: Record<Exclude<TotalEmailProblem, "ok">, Localized> = {
+  empty: {
+    en: "Write a short message first. Even one sentence is fine.",
+    es: "Primero escribe un mensaje corto. Una oración está bien.",
+  },
+  "no-number": {
+    en: "Your message has no number. Write the total from the Total row of the sheet.",
+    es: "Tu mensaje no tiene ningún número. Escribe el total de la fila Total de la hoja.",
+  },
+  "no-cents": {
+    en: "Write the cents too. Copy the whole total from the Total row, with the numbers after the dot.",
+    es: "Escribe también los centavos. Copia el total completo de la fila Total, con los números después del punto.",
+  },
+  "wrong-number": {
+    en: "That number is not the total. Look at the Total row of the sheet and copy that number.",
+    es: "Ese número no es el total. Mira la fila Total de la hoja y copia ese número.",
+  },
+};
+
+/** Shown on the finish screen above the message the learner sent. */
+export const SENT_LABELS: Record<Lang, { heading: string; total: string }> = {
+  en: { heading: "What you sent", total: "Total on the sheet" },
+  es: { heading: "Lo que enviaste", total: "Total en la hoja" },
+};
+
 export const STARTERS: Record<Lang, string[]> = {
+  // Frames, not answers: the learner still reads the total off the sheet.
   en: [
     "Hi Renata, here's this week's tip total.",
-    `The sheet's total comes to ${REAL_TOTAL_LABEL}.`,
+    "The total from the sheet is $___.",
     "Let me know if you need anything else. Thank you.",
   ],
   es: [
     "Hola Renata, aquí está el total de propinas de esta semana.",
-    `El total de la hoja es ${REAL_TOTAL_LABEL}.`,
+    "El total de la hoja es $___.",
     "Avísame si necesitas algo más. Gracias.",
   ],
 };
@@ -235,7 +296,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(SPREADSHEET_COPY, (c) => c.sheetName),
   {
     en: "Look at the paper slip. Type each day's tips in the Tips column.",
-    es: "Mira el papelito. Escribe las propinas de cada día en la columna Tips.",
+    es: "Mira el papelito. Escribe las propinas de cada día en la columna Propinas.",
   },
   {
     en: "The sheet added the total. Click Email the total to Renata.",
