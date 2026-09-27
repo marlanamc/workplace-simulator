@@ -1,0 +1,95 @@
+import { test, expect, type Page } from "@playwright/test";
+import { LEVELS } from "@/lib/tracks-content";
+import { dayTitle } from "@/lib/shift-spine";
+import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
+import { clickIntoPage, waitForInteractive } from "./interactive";
+
+/**
+ * Story Mode Audit finding #2: the Job Card sat on top of the button the
+ * learner had to press in 20+ tasks, at 100% zoom on a Chromebook-sized
+ * window. Show me then pointed underneath the card.
+ *
+ * For every day, this opens the day's first task and checks that no visible
+ * Show me target (`[data-showme]`) is under the card. It is `fixme` until the
+ * card learns to move out of the way (Stream A in
+ * `curriculum/story-audit-tracker.md`), then it becomes that work's
+ * acceptance test.
+ */
+
+const CLASS_CODE = "TEST-E2E";
+
+const VIEWPORTS = [
+  { name: "chromebook 100%", width: 1366, height: 768 },
+  { name: "chromebook 150%", width: 911, height: 512 },
+];
+
+type Box = { x: number; y: number; width: number; height: number };
+
+const intersects = (a: Box, b: Box) =>
+  a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+
+async function signUp(page: Page, name: string) {
+  await page.goto("/login");
+  await waitForInteractive(page);
+  await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
+  await page.getByPlaceholder("Jordan").fill(name);
+  await page.getByPlaceholder("HARBOR-24").fill(CLASS_CODE);
+  await page.locator('input[placeholder="••••"]').first().click();
+  await page.keyboard.type("1234");
+  await page.getByRole("button", { name: /^(Add|Agregar)$/ }).click();
+  await expect(page.getByTestId("simulator-welcome")).toBeVisible({ timeout: 20_000 });
+  await page.getByTestId("welcome-continue").click();
+}
+
+/** Jump to the start of a day and press the card's "Open …" hand-off, if it has one. */
+async function openDay(page: Page, studioLabel: string) {
+  await page.goto("/studio");
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: studioLabel, exact: true }).click());
+  await continuePastStudioArrivalIfPresent(page);
+  const card = page.locator("[data-job-card]");
+  await expect(card).toBeVisible({ timeout: 20_000 });
+  const open = card.getByRole("button", { name: /^(Open|Abr)/ }).first();
+  if (await open.isVisible()) await open.click();
+}
+
+/** Every visible Show me target that the card's box overlaps, by its data-showme id. */
+async function coveredTargets(page: Page): Promise<string[]> {
+  const cardBox = await page.locator("[data-job-card]").boundingBox();
+  if (!cardBox) return [];
+  const covered: string[] = [];
+  for (const target of await page.locator("[data-showme]").all()) {
+    if (!(await target.isVisible())) continue;
+    const box = await target.boundingBox();
+    if (box && intersects(box, cardBox)) covered.push((await target.getAttribute("data-showme")) ?? "?");
+  }
+  return covered;
+}
+
+/** Studio's own button labels, one per day (both Act V paths). */
+const STUDIO_DAYS: string[] = LEVELS.slice(1).flatMap((level) => {
+  const title = dayTitle(level, "en");
+  return level.pathTracks
+    ? [`Start of ${title} · College`, `Start of ${title} · Front desk`]
+    : [`Start of ${title}`];
+});
+
+for (const viewport of VIEWPORTS) {
+  test.describe(`Job Card never covers a Show me target (${viewport.name})`, () => {
+    test.fixme(true, "Stream A (#2): the card does not move out of the way yet.");
+    test.use({ viewport: { width: viewport.width, height: viewport.height } });
+
+    test("every day's first task", async ({ page }) => {
+      test.setTimeout(STUDIO_DAYS.length * 30_000);
+      await signUp(page, `E2e Overlap ${Date.now()}`);
+
+      const failures: string[] = [];
+      for (const day of STUDIO_DAYS) {
+        await openDay(page, day);
+        const covered = await coveredTargets(page);
+        if (covered.length) failures.push(`${day}: ${covered.join(", ")}`);
+      }
+      expect(failures, "Show me targets under the Job Card").toEqual([]);
+    });
+  });
+}
