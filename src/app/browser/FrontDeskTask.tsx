@@ -28,6 +28,7 @@ import {
   STARTERS as INTAKE_STARTERS,
   LESSONS as INTAKE_LESSONS,
   declineIsSafe,
+  declineSharesVisit,
   describeSubmission as describeIntake,
   RIGHT_NOW_STEPS as INTAKE_STEPS,
   RIGHT_NOW_LABEL as INTAKE_LABEL,
@@ -36,9 +37,7 @@ import {
   CALL_COPY,
   STARTERS as CALL_STARTERS,
   LESSONS as CALL_LESSONS,
-  replySharesInfo,
-  replyIsRude,
-  replyIsSafe,
+  callReplyVerdict,
   describeSubmission as describeCall,
   RIGHT_NOW_STEPS as CALL_STEPS,
   RIGHT_NOW_LABEL as CALL_LABEL,
@@ -378,7 +377,7 @@ function IntakeDesk() {
     if (!filed) return say(c.needFields);
     if (!recipientIsAuthorized(recipient)) return say(RECIPIENT_HINT[lang]);
     if (!reply.trim()) return say(c.empty);
-    if (/follow-?up|seguimiento/i.test(reply)) return say(c.shared);
+    if (declineSharesVisit(reply)) return say(c.shared);
     if (!declineIsSafe(reply)) return say(c.weak);
     setDone(true);
     markComplete("patient-intake", "file_intake_do_not_overshare", describeIntake(reply, lang, recipient));
@@ -474,9 +473,11 @@ function PhoneDesk() {
 
   const trySend = () => {
     if (!reply.trim()) return say(c.empty);
-    if (replySharesInfo(reply)) return say(c.shareHint);
-    if (replyIsRude(reply)) return say(c.rudeHint);
-    if (!replyIsSafe(reply)) return say(c.weak);
+    const verdict = callReplyVerdict(reply);
+    if (verdict === "share") return say(c.shareHint);
+    if (verdict === "rude") return say(c.rudeHint);
+    if (verdict === "noCallback") return say(c.noCallback);
+    if (verdict !== "ok") return say(c.weak);
     setDone(true);
     markComplete("confidentiality-call", "do_not_confirm_over_the_phone", describeCall(reply, lang));
   };
