@@ -1,6 +1,7 @@
 "use client";
 
-import { historyFor } from "@/lib/tasks/job-application/content";
+import { historyFor, JOB_SEEKER, type HistoryRow } from "@/lib/tasks/job-application/content";
+import type { Lang } from "@/lib/task-types";
 import { useLesson } from "@/lib/lesson-context";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
@@ -22,14 +23,79 @@ import {
   SUMMARY_STARTERS,
   BULLET_STARTERS,
   LESSON_SUMMARY_STARTERS,
-  LESSON_BULLET_STARTERS,
+  LESSON_BULLET_STARTERS_BY_ROLE,
   LESSONS,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
-  summaryLooksReal,
+  LESSON_RIGHT_NOW_STEPS,
+  summaryProblem,
+  summaryHint,
+  bulletProblem,
+  bulletHint,
   bulletLooksReal,
   describeSubmission,
 } from "@/lib/tasks/resume-build/content";
+
+const RULE = "mt-3 border-t border-[#e0e0e0] pt-2 text-[10px] font-medium uppercase tracking-wide text-[#80868b]";
+
+/**
+ * The résumé as a page: the live preview beside the form, and the finished
+ * page full width once it is saved, so the learner sees what they made.
+ */
+function ResumePage({
+  lang,
+  name,
+  contactLine,
+  education,
+  summary,
+  history,
+  bullets,
+  skills,
+  large = false,
+}: {
+  lang: Lang;
+  name: string;
+  contactLine?: string;
+  education?: string;
+  summary: string;
+  history: HistoryRow[];
+  bullets: string[];
+  skills: string[];
+  large?: boolean;
+}) {
+  const c = RESUME_COPY[lang];
+  return (
+    <div
+      data-testid={large ? "resume-final" : undefined}
+      className={`rounded-xl border border-[#dadce0] bg-white leading-relaxed ${large ? "p-8 text-[15px]" : "p-4 text-[12px]"}`}
+    >
+      {!large && <div className="text-[10px] font-medium uppercase tracking-wide text-[#80868b]">{c.previewLabel}</div>}
+      <div className={`font-semibold text-[#202124] ${large ? "text-[24px]" : "mt-2 text-[15px]"}`}>{name}</div>
+      {contactLine && <div className="text-[#5f6368]">{contactLine}</div>}
+      <p className="mt-1 whitespace-pre-wrap text-[#3c4043]">{summary || "…"}</p>
+      <div className={RULE}>{c.experienceLabel}</div>
+      {history.map((role, i) => (
+        <div key={i} className="mt-2">
+          <div className="font-medium text-[#202124]">{role.title[lang]}</div>
+          <div className="text-[#5f6368]">{role.org} · {role.span[lang]}</div>
+          {bullets[i] ? <div className="mt-0.5 text-[#3c4043]">• {bullets[i]}</div> : null}
+        </div>
+      ))}
+      {skills.length > 0 && (
+        <>
+          <div className={RULE}>{c.skillsLabel}</div>
+          <div className="mt-1 text-[#3c4043]">{skills.join(" · ")}</div>
+        </>
+      )}
+      {education && (
+        <>
+          <div className={RULE}>{c.educationLabel}</div>
+          <div className="mt-1 text-[#3c4043]">{education}</div>
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function ResumeBuildTask() {
   const { markComplete, completedTaskKeys, lang, displayName, writing } = useProgress();
@@ -42,12 +108,13 @@ export default function ResumeBuildTask() {
     setDone(completedTaskKeys.includes("resume-build"));
   }
 
-  const inLesson = useLesson() !== null;
+  const lesson = useLesson();
+  const inLesson = lesson !== null;
   const showMe = useShowMe();
   const WORK_HISTORY = historyFor(completedTaskKeys, inLesson);
   const BULLET_ROLES = WORK_HISTORY.slice(0, 2);
   const summaryStarters = inLesson ? LESSON_SUMMARY_STARTERS : SUMMARY_STARTERS;
-  const bulletStarters = inLesson ? LESSON_BULLET_STARTERS : BULLET_STARTERS;
+  const bulletStarters = BULLET_STARTERS;
   // A lesson has no game history to hide skills behind: every chip is fair.
   const SKILL_CHOICES = inLesson ? ALL_SKILL_CHOICES : ALL_SKILL_CHOICES.filter((skill) => {
     if (skill.key === 'budget') return completedTaskKeys.includes('budget-sheet');
@@ -68,8 +135,16 @@ export default function ResumeBuildTask() {
   });
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
+  // A rejected Save: "On my own" lessons keep the starters hidden until then.
+  const [missed, setMissed] = useState(false);
 
   const c = RESUME_COPY[lang];
+  // A lesson learner writes Sam's résumé: Sam's name, contact and school head
+  // the page, from the same persona the info card shows.
+  const name = (inLesson ? lesson?.persona ?? JOB_SEEKER.name : displayName.trim()) || c.namePlaceholder;
+  const contactLine = inLesson ? `${JOB_SEEKER.phone} · ${JOB_SEEKER.email} · ${JOB_SEEKER.city}` : undefined;
+  const education = inLesson ? JOB_SEEKER.school[lang] : undefined;
+  const skillLabels = SKILL_CHOICES.filter((s) => skills.includes(s.key)).map((s) => s.label[lang]);
 
   const setBullet = (i: number, value: string) =>
     setBullets((prev) => prev.map((b, j) => (j === i ? value : b)));
@@ -77,13 +152,18 @@ export default function ResumeBuildTask() {
   const toggleSkill = (key: string) =>
     setSkills((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
 
-  const bulletsReady = bullets.every(bulletLooksReal);
+  const summaryNow = summaryProblem(summary);
+  const bulletNow = bulletProblem(bullets);
 
   const trySave = () => {
-    if (!summaryLooksReal(summary)) return say(c.needSummary);
-    const shortRole = BULLET_ROLES.find((_, i) => !bulletLooksReal(bullets[i] ?? ""));
-    if (shortRole) return say(c.needBulletFor(shortRole.title[lang]));
-    if (!bulletsReady) return say(c.needBullets);
+    if (summaryNow) {
+      setMissed(true);
+      return say(summaryHint(summaryNow, lang));
+    }
+    if (bulletNow) {
+      setMissed(true);
+      return say(bulletHint(bulletNow.kind, BULLET_ROLES[bulletNow.index]?.title[lang] ?? "", lang));
+    }
     if (skills.length < 3) return say(c.needSkills);
     setDone(true);
     markComplete("resume-build", "build_resume", describeSubmission({ summary, bullets, skills }, lang, BULLET_ROLES));
@@ -91,12 +171,13 @@ export default function ResumeBuildTask() {
 
   const restart = () => {
     setDone(false);
+    setMissed(false);
     setSummary("");
     setBullets(BULLET_ROLES.map(() => ""));
     setSkills([]);
   };
 
-  const stepIndex = !summaryLooksReal(summary) ? 0 : !bulletsReady ? 1 : 2;
+  const stepIndex = summaryNow ? 0 : bulletNow ? 1 : 2;
   const showMeIds = ["summary-box", "bullet-box", "skill-chips"];
 
   return (
@@ -116,7 +197,7 @@ export default function ResumeBuildTask() {
         <RightNowBar
           icon={TASK_ICONS["resume-build"]}
           stepIndex={stepIndex}
-          steps={RIGHT_NOW_STEPS}
+          steps={inLesson ? LESSON_RIGHT_NOW_STEPS : RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(showMeIds[stepIndex])}
@@ -131,6 +212,17 @@ export default function ResumeBuildTask() {
             <div className="flex flex-col gap-5">
               <TaskDoneCard kicker={c.sentKicker} />
               <p className="text-[14px] leading-relaxed text-[#3c4043]">{c.doneBody}</p>
+              <ResumePage
+                large
+                lang={lang}
+                name={name}
+                contactLine={contactLine}
+                education={education}
+                summary={summary}
+                history={WORK_HISTORY}
+                bullets={bullets}
+                skills={skillLabels}
+              />
               <TaskDoneActions
                 kicker={c.sentKicker}
                 tryAgainLabel={c.tryAgain}
@@ -143,6 +235,14 @@ export default function ResumeBuildTask() {
               {/* form */}
               <div className="flex flex-col gap-4">
                 <p className="text-[13px] leading-relaxed text-[#5f6368]">{c.intro}</p>
+                {contactLine && (
+                  <section className="rounded-xl border border-[#dadce0] bg-white p-4 text-[13px] text-[#3c4043]">
+                    <div className="font-medium text-[#202124]">{c.contactLabel}</div>
+                    <div className="mt-1">{name} · {contactLine}</div>
+                    <div className="mt-2 font-medium text-[#202124]">{c.educationLabel}</div>
+                    <div className="mt-1">{education}</div>
+                  </section>
+                )}
 
                 <section className="rounded-xl border border-[#dadce0] bg-white p-4">
                   <label className="text-[13px] font-medium text-[#202124]">{c.summaryLabel}</label>
@@ -154,7 +254,7 @@ export default function ResumeBuildTask() {
                     className="mt-2 min-h-[64px] w-full resize-y rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[15px] leading-relaxed outline-none focus:border-[#4285f4]"
                   />
                   <div className="mt-2">
-                    <NeedAStart lang={lang} starters={summaryStarters[lang]} onPick={(s) => setSummary((b) => (b ? `${b} ` : "") + s)} />
+                    <NeedAStart lang={lang} starters={summaryStarters[lang]} missed={missed} onPick={(s) => setSummary((b) => (b ? `${b} ` : "") + s)} />
                   </div>
                 </section>
 
@@ -167,14 +267,19 @@ export default function ResumeBuildTask() {
                         <div className="text-[12px] text-[#5f6368]">{role.org} · {role.span[lang]}</div>
                         {role.duties && <p className="mt-1 text-[13px] leading-snug text-[#3c4043]">{role.duties[lang]}</p>}
                         <textarea
-                          data-showme={i === bullets.findIndex((b) => !bulletLooksReal(b)) ? "bullet-box" : undefined}
+                          data-showme={i === (bulletNow?.index ?? bullets.findIndex((b) => !bulletLooksReal(b))) ? "bullet-box" : undefined}
                           value={bullets[i]}
                           onChange={(e) => setBullet(i, e.target.value)}
                           placeholder={c.bulletHint}
                           className="mt-2 min-h-[52px] w-full resize-y rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[14px] leading-relaxed outline-none focus:border-[#4285f4]"
                         />
                         <div className="mt-1.5">
-                          <NeedAStart lang={lang} starters={bulletStarters[lang]} onPick={(s) => setBullet(i, (bullets[i] ? `${bullets[i]} ` : "") + s)} />
+                          <NeedAStart
+                            lang={lang}
+                            starters={inLesson ? (LESSON_BULLET_STARTERS_BY_ROLE[i] ?? LESSON_BULLET_STARTERS_BY_ROLE[0])[lang] : bulletStarters[lang]}
+                            missed={missed}
+                            onPick={(s) => setBullet(i, (bullets[i] ? `${bullets[i]} ` : "") + s)}
+                          />
                         </div>
                       </div>
                     ))}
@@ -220,32 +325,17 @@ export default function ResumeBuildTask() {
 
               {/* preview */}
               <aside className="hidden md:block">
-                <div className="sticky top-2 rounded-xl border border-[#dadce0] bg-white p-4 text-[12px] leading-relaxed">
-                  <div className="text-[10px] font-medium uppercase tracking-wide text-[#80868b]">{c.previewLabel}</div>
-                  <div className="mt-2 text-[15px] font-semibold text-[#202124]">{displayName.trim() || c.namePlaceholder}</div>
-                  <p className="mt-1 whitespace-pre-wrap text-[#3c4043]">{summary || "…"}</p>
-                  <div className="mt-3 border-t border-[#e0e0e0] pt-2 text-[10px] font-medium uppercase tracking-wide text-[#80868b]">
-                    {c.experienceLabel}
-                  </div>
-                  {WORK_HISTORY.map((role, i) => (
-                    <div key={i} className="mt-2">
-                      <div className="font-medium text-[#202124]">{role.title[lang]}</div>
-                      <div className="text-[#5f6368]">{role.org} · {role.span[lang]}</div>
-                      {i < BULLET_ROLES.length && bullets[i] ? (
-                        <div className="mt-0.5 text-[#3c4043]">• {bullets[i]}</div>
-                      ) : null}
-                    </div>
-                  ))}
-                  {skills.length > 0 && (
-                    <>
-                      <div className="mt-3 border-t border-[#e0e0e0] pt-2 text-[10px] font-medium uppercase tracking-wide text-[#80868b]">
-                        {c.skillsLabel}
-                      </div>
-                      <div className="mt-1 text-[#3c4043]">
-                        {SKILL_CHOICES.filter((s) => skills.includes(s.key)).map((s) => s.label[lang]).join(" · ")}
-                      </div>
-                    </>
-                  )}
+                <div className="sticky top-2">
+                  <ResumePage
+                    lang={lang}
+                    name={name}
+                    contactLine={contactLine}
+                    education={education}
+                    summary={summary}
+                    history={WORK_HISTORY}
+                    bullets={bullets.slice(0, BULLET_ROLES.length)}
+                    skills={skillLabels}
+                  />
                 </div>
               </aside>
             </div>

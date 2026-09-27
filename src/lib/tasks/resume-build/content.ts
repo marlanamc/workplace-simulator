@@ -1,5 +1,6 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
-import { WORK_HISTORY } from "@/lib/tasks/job-application/content";
+import { JOB_SEEKER, WORK_HISTORY } from "@/lib/tasks/job-application/content";
+import { hasBlank, looksLikeKeyboardMash, plain, realWordCount } from "@/lib/grading-jobs";
 
 /**
  * "Your Résumé" — the third step of the getting-hired arc. The learner turns
@@ -37,6 +38,12 @@ export const RESUME_COPY: Record<Lang, {
   gotIt: string;
   namePlaceholder: string;
   needBulletFor: (role: string) => string;
+  educationLabel: string;
+  needSummaryReal: string;
+  needSummaryBlank: string;
+  needBulletReal: (role: string) => string;
+  needBulletBlank: (role: string) => string;
+  needBulletSame: (role: string) => string;
 }> = {
   en: {
     appName: "Docs: Résumé",
@@ -51,7 +58,7 @@ export const RESUME_COPY: Record<Lang, {
     skillsHint: "Choose the ones you have done.",
     previewLabel: "Preview",
     save: "Save résumé",
-    needSummary: "Write a summary first: 1 or 2 sentences, at least 6 words.",
+    needSummary: "Write a summary in the first box: 1 or 2 sentences about you as a worker.",
     needBullets: "Write one thing you did well at each job.",
     needSkills: "Check at least three skills you've shown.",
     sentKicker: "Résumé saved",
@@ -63,7 +70,13 @@ export const RESUME_COPY: Record<Lang, {
     tipLabel: "Tip",
     gotIt: "Got it. Back to my task",
     namePlaceholder: "Your name",
-    needBulletFor: (role) => `Write one thing you did well as ${role}. At least 4 words.`,
+    needBulletFor: (role) => `Write one thing you did well as ${role}, like "Trained new workers."`,
+    educationLabel: "Education",
+    needSummaryReal: "Some of the summary is not words. Write 1 or 2 sentences about you as a worker.",
+    needSummaryBlank: "Fill in the blank ___ in the summary with your own words.",
+    needBulletReal: (role) => `Some of the ${role} line is not words. Write one thing you did well in that job.`,
+    needBulletBlank: (role) => `Fill in the blank ___ in the ${role} line with your own words.`,
+    needBulletSame: (role) => `The ${role} line is the same as the other job's. Write a different thing you did as ${role}.`,
   },
   es: {
     appName: "Docs: Currículum",
@@ -78,7 +91,7 @@ export const RESUME_COPY: Record<Lang, {
     skillsHint: "Elige las que ya has hecho.",
     previewLabel: "Vista previa",
     save: "Guardar currículum",
-    needSummary: "Primero escribe un resumen: 1 o 2 oraciones, al menos 6 palabras.",
+    needSummary: "Escribe un resumen en la primera casilla: 1 o 2 oraciones sobre ti como trabajador.",
     needBullets: "Escribe una cosa que hiciste bien en cada empleo.",
     needSkills: "Marca al menos tres habilidades que hayas mostrado.",
     sentKicker: "Currículum guardado",
@@ -90,7 +103,13 @@ export const RESUME_COPY: Record<Lang, {
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
     namePlaceholder: "Tu nombre",
-    needBulletFor: (role) => `Escribe una cosa que hiciste bien como ${role}. Al menos 4 palabras.`,
+    needBulletFor: (role) => `Escribe una cosa que hiciste bien como ${role}, como "Entrené a trabajadores nuevos."`,
+    educationLabel: "Estudios",
+    needSummaryReal: "Parte del resumen no son palabras. Escribe 1 o 2 oraciones sobre ti como trabajador.",
+    needSummaryBlank: "Llena el espacio ___ del resumen con tus propias palabras.",
+    needBulletReal: (role) => `Parte de la línea de ${role} no son palabras. Escribe una cosa que hiciste bien en ese empleo.`,
+    needBulletBlank: (role) => `Llena el espacio ___ de la línea de ${role} con tus propias palabras.`,
+    needBulletSame: (role) => `La línea de ${role} es igual a la del otro empleo. Escribe otra cosa que hiciste como ${role}.`,
   },
 };
 
@@ -108,12 +127,68 @@ export const SKILL_CHOICES: { key: string; label: Localized }[] = [
   { key: "customer", label: { en: "Customer service", es: "Servicio al cliente" } },
 ];
 
+/** "I am a shift lead." is a summary; the card asks for 1 or 2 sentences. */
+export const SUMMARY_MIN_WORDS = 4;
+/** A résumé line is a short phrase: "Trained new workers." */
+export const BULLET_MIN_WORDS = 3;
+
+export type TextProblem = "empty" | "blank" | "mash" | "short";
+
+function textProblem(text: string, minWords: number): TextProblem | null {
+  if (!text.trim()) return "empty";
+  if (hasBlank(text)) return "blank";
+  if (looksLikeKeyboardMash(text)) return "mash";
+  if (realWordCount(text) < minWords) return "short";
+  return null;
+}
+
+export function summaryProblem(summary: string): TextProblem | null {
+  return textProblem(summary, SUMMARY_MIN_WORDS);
+}
+
 export function summaryLooksReal(summary: string): boolean {
-  return summary.trim().split(/\s+/).filter(Boolean).length >= 6;
+  return summaryProblem(summary) === null;
 }
 
 export function bulletLooksReal(bullet: string): boolean {
-  return bullet.trim().split(/\s+/).filter(Boolean).length >= 4;
+  return textProblem(bullet, BULLET_MIN_WORDS) === null;
+}
+
+export type BulletProblem = TextProblem | "same";
+
+/**
+ * The first job line that falls short, top to bottom. A line copied from the
+ * job's duties passes ("Trained new workers."); the same line under both
+ * jobs does not, because each job needs its own.
+ */
+export function bulletProblem(bullets: string[]): { index: number; kind: BulletProblem } | null {
+  for (let i = 0; i < bullets.length; i++) {
+    const kind = textProblem(bullets[i] ?? "", BULLET_MIN_WORDS);
+    if (kind) return { index: i, kind };
+  }
+  for (let i = 1; i < bullets.length; i++) {
+    if (bullets.slice(0, i).some((b) => plain(b) === plain(bullets[i]))) return { index: i, kind: "same" };
+  }
+  return null;
+}
+
+export function summaryHint(problem: TextProblem, lang: Lang): string {
+  const c = RESUME_COPY[lang];
+  return problem === "blank" ? c.needSummaryBlank : problem === "mash" ? c.needSummaryReal : c.needSummary;
+}
+
+export function bulletHint(problem: BulletProblem, role: string, lang: Lang): string {
+  const c = RESUME_COPY[lang];
+  switch (problem) {
+    case "blank":
+      return c.needBulletBlank(role);
+    case "mash":
+      return c.needBulletReal(role);
+    case "same":
+      return c.needBulletSame(role);
+    default:
+      return c.needBulletFor(role);
+  }
 }
 
 export const SUMMARY_STARTERS: Record<Lang, string[]> = {
@@ -132,27 +207,42 @@ export const SUMMARY_STARTERS: Record<Lang, string[]> = {
 };
 
 /**
- * A lesson learner writes from the lesson's two cafe jobs, so their starters
- * say what those jobs did. Story starters stay honest about the simulator.
+ * A lesson learner writes as Sam, from the lesson's two cafe jobs. Frames with
+ * a blank, so a click is a way in and never the finished line.
  */
 export const LESSON_SUMMARY_STARTERS: Record<Lang, string[]> = {
   en: [
-    "I am a shift lead at Harborside Cafe.",
-    "I train new workers and keep the schedule organized.",
-    "I am good with email, calendars, and spreadsheets.",
-    "I am looking for a full-time office job.",
+    "I am a ___ at Harborside Cafe.",
+    "I am good at ___.",
+    "I am looking for a ___ job.",
   ],
   es: [
-    "Soy líder de turno en Harborside Cafe.",
-    "Entreno a trabajadores nuevos y mantengo el horario organizado.",
-    "Manejo bien el correo, los calendarios y las hojas de cálculo.",
-    "Busco un trabajo de oficina de tiempo completo.",
+    "Soy ___ en Harborside Cafe.",
+    "Se me da bien ___.",
+    "Busco un trabajo de ___.",
   ],
 };
 
+/**
+ * One list per job, in the order of `LESSON_HISTORY`: each frame starts
+ * with an action word from that job's own duties, so the Team Member line
+ * never gets a Shift Lead duty.
+ */
+export const LESSON_BULLET_STARTERS_BY_ROLE: Record<Lang, string[]>[] = [
+  {
+    en: ["Trained ___ new workers.", "Made the weekly schedule for ___.", "Fixed ___ in the schedule."],
+    es: ["Entrené a ___ trabajadores nuevos.", "Hice el horario semanal para ___.", "Arreglé ___ en el horario."],
+  },
+  {
+    en: ["Served ___ customers a day.", "Typed ___ in a spreadsheet.", "Answered ___ every day."],
+    es: ["Atendí a ___ clientes al día.", "Escribí ___ en una hoja de cálculo.", "Contesté ___ todos los días."],
+  },
+];
+
+/** Every lesson bullet frame, for the checks that each language stays itself. */
 export const LESSON_BULLET_STARTERS: Record<Lang, string[]> = {
-  en: ["Trained new workers on the register.", "Fixed problems in the weekly schedule.", "Typed tips in a spreadsheet and sent the total.", "Answered work email every day."],
-  es: ["Entrené a trabajadores nuevos en la caja.", "Arreglé problemas en el horario semanal.", "Escribí propinas en una hoja de cálculo y envié el total.", "Contesté el correo del trabajo todos los días."],
+  en: LESSON_BULLET_STARTERS_BY_ROLE.flatMap((r) => r.en),
+  es: LESSON_BULLET_STARTERS_BY_ROLE.flatMap((r) => r.es),
 };
 
 export const BULLET_STARTERS: Record<Lang, string[]> = {
@@ -199,6 +289,19 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     en: "Choose at least three skills you have shown. Then click Save résumé.",
     es: "Elige al menos tres habilidades que has demostrado. Después haz clic en Guardar currículum.",
   },
+];
+
+/** A lesson learner is playing Sam, so the card says whose résumé it is. */
+export const LESSON_RIGHT_NOW_STEPS: Localized[] = [
+  {
+    en: `Write a short summary as ${JOB_SEEKER.first}: 1 or 2 sentences about you as a worker.`,
+    es: `Escribe un resumen corto como ${JOB_SEEKER.first}: 1 o 2 oraciones sobre ti como trabajador.`,
+  },
+  {
+    en: "For each job, write one different thing you did well. Start with a word like trained, fixed, or served.",
+    es: "Para cada empleo, escribe una cosa distinta que hiciste bien. Empieza con una palabra como entrené, arreglé o atendí.",
+  },
+  RIGHT_NOW_STEPS[2],
 ];
 
 /** What the teacher sees: the summary, the two bullets, and the skills claimed. */

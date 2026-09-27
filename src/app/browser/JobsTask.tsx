@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useJobCardOptional } from "@/lib/job-card-context";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import type { TaskKey } from "@/lib/desktop-content";
@@ -22,8 +23,10 @@ import {
   LESSONS as POSTING_LESSONS,
   RIGHT_NOW_LABEL as POSTING_RN_LABEL,
   RIGHT_NOW_STEPS as POSTING_STEPS,
-  pickingLooksReady,
-  fitLooksReal,
+  LESSON_RIGHT_NOW_STEPS as POSTING_LESSON_STEPS,
+  pickProblem,
+  fitProblem,
+  fitHint,
   describeSubmission as describePosting,
 } from "@/lib/tasks/job-posting/content";
 import {
@@ -34,7 +37,16 @@ import {
   LESSONS as APP_LESSONS,
   RIGHT_NOW_LABEL as APP_RN_LABEL,
   RIGHT_NOW_STEPS as APP_STEPS,
-  whyLooksReal,
+  LESSON_RIGHT_NOW_STEPS as APP_LESSON_STEPS,
+  whyProblem,
+  whyHint,
+  availabilityFits,
+  contactProblem,
+  contactFieldMatches,
+  CONTACT_FIELDS,
+  CONTACT_HINT,
+  type ContactField,
+  type ContactValues,
   describeSubmission as describeApplication,
 } from "@/lib/tasks/job-application/content";
 
@@ -61,55 +73,137 @@ export default function JobsTask() {
   const showMe = useShowMe();
   const inLesson = useLesson() !== null;
 
+  const card = useJobCardOptional();
+  // A rejected Apply / Submit: "On my own" lessons keep the starters hidden until then.
+  const [missed, setMissed] = useState(false);
+  const reject = (message: string) => {
+    setMissed(true);
+    say(message);
+  };
+
   // ---- job-posting state ----
   const [picked, setPicked] = useState<string[]>([]);
   const [fit, setFit] = useState("");
 
   // ---- job-application state ----
   const [availability, setAvailability] = useState<string | null>(null);
+  // Lesson only: the character's contact boxes, checked against the info card.
+  const [contact, setContact] = useState<ContactValues>({ name: "", phone: "", email: "", start: "" });
+  const [contactCorrection, setContactCorrection] = useState<ContactField | null>(null);
   const [whyOverride, setWhy] = useState<string | null>(null);
   const why = whyOverride ?? (writing["job-application"]?.fields.at(-1)?.value ?? writing["job-posting"]?.fields.at(-1)?.value ?? "");
 
   const pc = JOB_POSTING_COPY[lang];
   const ac = JOB_APPLICATION_COPY[lang];
 
+  const degreeNote = inLesson ? pc.lessonDegreeNote : pc.degreeNote;
   const togglePick = (key: string) => {
     setPicked((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
-    if (key === "degree" && !picked.includes("degree")) say(pc.degreeNote);
+    if (key === "degree" && !picked.includes("degree")) say(degreeNote);
   };
 
   const tryApply = () => {
-    if (!pickingLooksReady(picked)) return say(pc.needPicks);
-    if (!fitLooksReal(fit)) return say(pc.needFit);
+    const pick = pickProblem(picked);
+    if (pick) return say(pick === "degree" ? degreeNote : pc.needPicks);
+    const problem = fitProblem(fit);
+    if (problem) return reject(fitHint(problem, lang));
     markComplete("job-posting", "match_posting", describePosting(picked, fit, lang));
   };
 
+  const setContactField = (field: ContactField, value: string) => {
+    // A correction about another box describes nothing the learner is doing now.
+    if (contactCorrection && contactCorrection !== field) {
+      card?.clearCorrection();
+      setContactCorrection(null);
+    }
+    setContact((prev) => ({ ...prev, [field]: value }));
+  };
+  const checkContactField = (field: ContactField) => {
+    if (contact[field].trim() && !contactFieldMatches(field, contact[field])) {
+      setContactCorrection(field);
+      say(CONTACT_HINT[field].wrong[lang]);
+    }
+  };
+  const chooseAvailability = (key: string) => {
+    setAvailability(key);
+    // Corrected at the field, while the job's hours are still on screen.
+    if (!availabilityFits(key, inLesson)) say(ac.needFullTime);
+  };
+
   const trySubmit = () => {
+    if (inLesson) {
+      const problem = contactProblem(contact);
+      if (problem) {
+        setContactCorrection(problem.field);
+        return say(CONTACT_HINT[problem.field][problem.kind][lang]);
+      }
+    }
     if (!availability) return say(ac.needAvailability);
-    if (!whyLooksReal(why)) return say(ac.needWhy);
-    markComplete("job-application", "submit_application", describeApplication({ availability, why }, lang));
+    if (!availabilityFits(availability, inLesson)) return say(ac.needFullTime);
+    const problem = whyProblem(why);
+    if (problem) return reject(whyHint(problem, lang));
+    markComplete(
+      "job-application",
+      "submit_application",
+      describeApplication({ availability, why, ...(inLesson ? { contact } : {}) }, lang),
+    );
   };
 
   const restart = () => {
+    setMissed(false);
     if (active === "job-posting") {
       setPicked([]);
       setFit("");
     } else {
       setAvailability(null);
       setWhy("");
+      setContact({ name: "", phone: "", email: "", start: "" });
     }
   };
 
   const isPosting = active === "job-posting";
-  const steps = isPosting ? POSTING_STEPS : APP_STEPS;
+  const steps = isPosting
+    ? inLesson ? POSTING_LESSON_STEPS : POSTING_STEPS
+    : inLesson ? APP_LESSON_STEPS : APP_STEPS;
+  const contactNow = inLesson ? contactProblem(contact) : null;
   const stepIndex = isPosting
-    ? pickingLooksReady(picked)
+    ? pickProblem(picked) === null
       ? 1
       : 0
-    : availability
-      ? 1
-      : 0;
-  const showMeIds = isPosting ? ["req-list", "fit-box"] : ["availability", "why-box"];
+    : inLesson
+      ? contactNow
+        ? 0
+        : availabilityFits(availability, true)
+          ? 2
+          : 1
+      : availability
+        ? 1
+        : 0;
+  const showMeIds = isPosting
+    ? ["req-list", "fit-box"]
+    : inLesson
+      ? [`contact-${contactNow?.field ?? "name"}`, "availability", "why-box"]
+      : ["availability", "why-box"];
+
+  const sentFields = done
+    ? (isPosting
+        ? describePosting(picked, fit, lang)
+        : describeApplication({ availability: availability ?? "", why, ...(inLesson ? { contact } : {}) }, lang)
+      ).fields.filter((f) => f.value)
+    : [];
+
+  // The application is long: when a section is done, bring the next one into
+  // view (the availability box and the "why" box start below the fold).
+  // A DOM sync with no state, so an effect is the right tool.
+  const lastStep = useRef({ active, stepIndex });
+  useEffect(() => {
+    const prev = lastStep.current;
+    lastStep.current = { active, stepIndex };
+    if (prev.active !== active || stepIndex <= prev.stepIndex || isPosting || done) return;
+    const el = document.querySelector<HTMLElement>(`[data-showme="${showMeIds[stepIndex]}"]`);
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+    if (el instanceof HTMLTextAreaElement) el.focus({ preventScroll: true });
+  });
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]">
@@ -147,6 +241,17 @@ export default function JobsTask() {
               <p className="text-[14px] leading-relaxed text-[#3c4043]">
                 {isPosting ? pc.doneBody : ac.doneBody}
               </p>
+              {/* What was sent, so the finish shows the work, not just a stamp. */}
+              {sentFields.length > 0 && (
+              <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 rounded-xl border border-[#dadce0] bg-white p-5 text-[14px]">
+                {sentFields.map((f) => (
+                    <div key={f.label} className="contents">
+                      <dt className="font-medium text-[#5f6368]">{f.label}</dt>
+                      <dd className="whitespace-pre-wrap text-[#202124]">{f.value}</dd>
+                    </div>
+                  ))}
+              </dl>
+              )}
               <TaskDoneActions
                 kicker={isPosting ? pc.sentKicker : ac.sentKicker}
                 tryAgainLabel={isPosting ? pc.tryAgain : ac.tryAgain}
@@ -208,7 +313,7 @@ export default function JobsTask() {
                   className="mt-2 min-h-[72px] w-full resize-y rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[15px] outline-none focus:border-[#1a73e8]"
                 />
                 <div className="mt-2">
-                  <NeedAStart lang={lang} starters={POSTING_STARTERS[lang]} onPick={(s) => setFit((b) => (b ? `${b} ` : "") + s)} />
+                  <NeedAStart lang={lang} starters={POSTING_STARTERS[lang]} missed={missed} onPick={(s) => setFit((b) => (b ? `${b} ` : "") + s)} />
                 </div>
               </div>
 
@@ -228,7 +333,36 @@ export default function JobsTask() {
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
                 <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{ac.positionLabel}</div>
                 <div className="mt-1 text-[15px] text-[#202124]">{ac.position}</div>
+                <div className="mt-0.5 text-[13px] font-medium text-[#188038]">{ac.positionHours}</div>
               </div>
+
+              {inLesson && (
+                <div className="rounded-xl border border-[#dadce0] bg-white p-5">
+                  <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{ac.contactLabel}</div>
+                  <div className="mt-0.5 text-[12px] text-[#5f6368]">{ac.contactHint}</div>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {CONTACT_FIELDS.map((field) => {
+                      const label = { name: ac.nameLabel, phone: ac.phoneLabel, email: ac.emailLabel, start: ac.startLabel }[field];
+                      return (
+                        <label key={field} className="flex flex-col gap-1 text-[13px] font-medium text-[#3c4043]">
+                          {label}
+                          <input
+                            data-showme={`contact-${field}`}
+                            value={contact[field]}
+                            onChange={(e) => setContactField(field, e.target.value)}
+                            onBlur={() => checkContactField(field)}
+                            placeholder={field === "start" ? ac.datePlaceholder : undefined}
+                            inputMode={field === "phone" ? "tel" : field === "email" ? "email" : undefined}
+                            autoComplete="off"
+                            spellCheck={false}
+                            className="min-h-[42px] rounded-lg border border-[#dadce0] bg-white px-3 text-[15px] font-normal text-[#202124] outline-none focus:border-[#1a73e8]"
+                          />
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
                 <div className="text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{ac.historyLabel}</div>
@@ -246,6 +380,8 @@ export default function JobsTask() {
 
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
                 <div className="text-[14px] font-medium text-[#202124]">{ac.availabilityLabel}</div>
+                {/* The job's hours again, beside the choice they decide. */}
+                <div className="mt-0.5 text-[13px] text-[#188038]">{ac.positionHours}</div>
                 <div data-showme="availability" className="mt-3 flex flex-col gap-2">
                   {AVAILABILITY_OPTIONS.map((o) => {
                     const on = availability === o.key;
@@ -253,7 +389,7 @@ export default function JobsTask() {
                       <button
                         key={o.key}
                         type="button"
-                        onClick={() => setAvailability(o.key)}
+                        onClick={() => chooseAvailability(o.key)}
                         className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left cursor-pointer ${
                           on ? "border-[#1a73e8] bg-[#e8f0fe]" : "border-[#dadce0] bg-white hover:bg-[#f8f9fa]"
                         }`}
@@ -274,8 +410,9 @@ export default function JobsTask() {
               </div>
 
               <div className="rounded-xl border border-[#dadce0] bg-white p-5">
-                <label className="text-[14px] font-medium text-[#202124]">{ac.whyLabel}</label>
+                <label htmlFor="application-why" className="text-[14px] font-medium text-[#202124]">{ac.whyLabel}</label>
                 <textarea
+                  id="application-why"
                   data-showme="why-box"
                   value={why}
                   onChange={(e) => setWhy(e.target.value)}
@@ -283,7 +420,7 @@ export default function JobsTask() {
                   className="mt-2 min-h-[96px] w-full resize-y rounded-lg border border-[#dadce0] bg-white px-3 py-2 text-[15px] leading-relaxed outline-none focus:border-[#1a73e8]"
                 />
                 <div className="mt-2">
-                  <NeedAStart lang={lang} starters={APP_STARTERS[lang]} onPick={(s) => setWhy((b) => (b ? `${b} ` : "") + s)} />
+                  <NeedAStart lang={lang} starters={APP_STARTERS[lang]} missed={missed} onPick={(s) => setWhy((b) => (b ? `${b} ` : "") + s)} />
                 </div>
               </div>
 

@@ -2,6 +2,7 @@ import type { AppKey, TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
 import type { LessonMeta } from "@/lib/lessons/types";
 import { LESSON_PASSWORD, RECOVERY_COPY } from "@/lib/tasks/account-recovery/content";
+import { JOB_SEEKER } from "@/lib/tasks/job-application/content";
 
 /**
  * The task registry — one entry per task, one place to edit.
@@ -87,11 +88,28 @@ export interface TaskDescriptor {
  */
 const JOB_SEEKER_FACTS: LessonMeta["reference"] = [
   { label: { en: "Past jobs", es: "Empleos" }, value: { en: "Team Member, then Shift Lead", es: "Miembro del equipo, luego líder" } },
-  { label: { en: "Talked with", es: "Hablaste con" }, value: { en: "Coworkers and managers", es: "Compañeros y gerentes" } },
-  { label: { en: "Schedules", es: "Horarios" }, value: { en: "Fixed a schedule problem", es: "Arreglaste un problema del horario" } },
+  { label: { en: "Talked with", es: "Habló con" }, value: { en: "Coworkers and managers", es: "Compañeros y gerentes" } },
+  { label: { en: "Schedules", es: "Horarios" }, value: { en: "Fixed a schedule problem", es: "Arregló un problema del horario" } },
   { label: { en: "Computer", es: "Computadora" }, value: { en: "Email, calendars, spreadsheets", es: "Correo, calendarios, hojas de cálculo" } },
-  { label: { en: "Numbers", es: "Números" }, value: { en: "Sent a spreadsheet total", es: "Enviaste el total de una hoja" } },
+  { label: { en: "Numbers", es: "Números" }, value: { en: "Sent a spreadsheet total", es: "Envió el total de una hoja" } },
   { label: { en: "School", es: "Estudios" }, value: { en: "High school. No college degree.", es: "Secundaria. Sin título universitario." } },
+];
+
+/** What the application asks Sam to type: copied from the card, checked forgivingly. */
+const APPLICATION_FACTS: LessonMeta["reference"] = [
+  { label: { en: "Name", es: "Nombre" }, value: JOB_SEEKER.name },
+  { label: { en: "Phone", es: "Teléfono" }, value: JOB_SEEKER.phone },
+  { label: { en: "Email", es: "Correo" }, value: JOB_SEEKER.email },
+  { label: { en: "Can start", es: "Puede empezar" }, value: { en: JOB_SEEKER.start, es: `${JOB_SEEKER.start} (${JOB_SEEKER.startSpoken.es})` } },
+  { label: { en: "Wants", es: "Quiere" }, value: { en: "40 hours a week", es: "40 horas por semana" } },
+];
+
+/** The résumé's heading and school come from Sam; the jobs are on the page. */
+const RESUME_FACTS: LessonMeta["reference"] = [
+  { label: { en: "Name", es: "Nombre" }, value: JOB_SEEKER.name },
+  { label: { en: "Past jobs", es: "Empleos" }, value: { en: "Team Member, then Shift Lead", es: "Miembro del equipo, luego líder" } },
+  { label: { en: "Computer", es: "Computadora" }, value: { en: "Email, calendars, spreadsheets", es: "Correo, calendarios, hojas de cálculo" } },
+  { label: { en: "School", es: "Estudios" }, value: JOB_SEEKER.school },
 ];
 
 const browser = (ctaLabel: string, tab?: string, section?: PortalSection): TaskLocation => ({
@@ -1338,10 +1356,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. Llega una vacante a tu correo.",
     },
     location: browser("Open Jobs from the bookmarks"),
-    jobCardLine: { en: "Read the posting. Do you fit?", es: "Lee el anuncio. ¿Encajas?" },
+    jobCardLine: {
+      en: "Read the posting. Check what you have done, then write why you fit.",
+      es: "Lee el anuncio. Marca lo que ya hiciste y escribe por qué encajas.",
+    },
     jobCardDoneLine: { en: "You fit. Next: the application.", es: "Encajas. Sigue: la solicitud." },
     lesson: {
-      title: { en: "Compare a job posting to your experience", es: "Comparar un anuncio de empleo con tu experiencia" },
+      title: { en: "Compare a job posting", es: "Comparar un anuncio de empleo" },
       summary: {
         en: "Read a job posting, check the requirements you meet, and write one line about why you are a good fit.",
         es: "Lee un anuncio de empleo, marca los requisitos que cumples y escribe una línea sobre por qué eres una buena opción.",
@@ -1349,14 +1370,22 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["job-search"],
       minutes: 10,
       scene: {
-        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
-        people: [{ name: "Anita Raman", role: { en: "Sent you the job post", es: "Te envió el anuncio" } }],
+        you: {
+          en: "You are playing Sam Rivera, who worked at Harborside Cafe. These facts are Sam's.",
+          es: "Haces el papel de Sam Rivera, que trabajó en Harborside Cafe. Estos datos son de Sam.",
+        },
+        people: [{ name: "Anita Raman", role: { en: "Sent Sam the job post", es: "Le envió el anuncio a Sam" } }],
         need: {
-          en: "Read the job post. Compare what the job asks for with your experience on your info card.",
-          es: "Lee el anuncio. Compara lo que pide el trabajo con tu experiencia en tu tarjeta de información.",
+          en: "Read the job post. Compare what the job asks for with Sam's experience on your info card.",
+          es: "Lee el anuncio. Compara lo que pide el trabajo con la experiencia de Sam en tu tarjeta de información.",
         },
       },
       reference: JOB_SEEKER_FACTS,
+      persona: JOB_SEEKER.name,
+      takeaway: {
+        en: "Most people who get hired do not match every line. If you match most of the list, apply.",
+        es: "La mayoría de las personas contratadas no cumplen cada línea. Si cumples casi toda la lista, aplica.",
+      },
       guide: {
         skills: [
           { en: "Read the parts of a job posting: the role, the pay, the requirements", es: "Leer las partes de un anuncio de empleo: el puesto, el pago, los requisitos" },
@@ -1369,9 +1398,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that most people who get hired do not meet every requirement in the posting.", es: "Explica que la mayoría de las personas contratadas no cumplen todos los requisitos del anuncio." },
         ],
         stickingPoints: [
-          { en: "Some learners check the College degree box. This job does not need one. Ask: do you have a degree? Does this job need it?", es: "Algunos marcan el título universitario. Este trabajo no lo necesita. Pregunta: ¿tienes un título? ¿Este trabajo lo necesita?" },
-          { en: "Some learners check fewer than three boxes. Ask them to read each line and say what on their info card matches it.", es: "Algunos marcan menos de tres puntos. Pídeles leer cada línea y decir qué de su tarjeta de información coincide." },
-          { en: "The fit line needs at least four words. Ask: what is one thing you did that fits this job?", es: "La línea necesita al menos cuatro palabras. Pregunta: ¿qué es algo que hiciste que encaja con este trabajo?" },
+          { en: "Learners play Sam Rivera, so the facts on the info card are Sam's, not theirs. Some check College degree. The card says Sam has none, and Apply waits until it is unchecked. Ask: does Sam have a degree? Does this job need it? (It says preferred.)", es: "Los estudiantes hacen el papel de Sam Rivera, así que los datos de la tarjeta son de Sam, no suyos. Algunos marcan el título universitario. La tarjeta dice que Sam no tiene, y Aplicar espera hasta que lo desmarquen. Pregunta: ¿Sam tiene título? ¿Este trabajo lo necesita? (Dice de preferencia.)" },
+          { en: "Some learners check fewer than three boxes. Ask them to read each line and say what on the info card matches it.", es: "Algunos marcan menos de tres puntos. Pídeles leer cada línea y decir qué de la tarjeta de información coincide." },
+          { en: "The fit line can be short (I led a team) but it must name something Sam did at work. Random letters or a starter with the blank left in are sent back. Ask: what is one thing Sam did that fits this job?", es: "La línea puede ser corta (Dirigí un equipo), pero debe nombrar algo que Sam hizo en el trabajo. Letras al azar o una frase con el espacio sin llenar se regresan. Pregunta: ¿qué hizo Sam que encaja con este trabajo?" },
         ],
         followUp: [
           { en: "What job do you want? What do postings for that job ask for?", es: "¿Qué trabajo quieres? ¿Qué piden los anuncios para ese trabajo?" },
@@ -1412,28 +1441,37 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["job-search", "forms"],
       minutes: 10,
       scene: {
-        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
+        you: {
+          en: "You are playing Sam Rivera, who worked at Harborside Cafe. These facts are Sam's.",
+          es: "Haces el papel de Sam Rivera, que trabajó en Harborside Cafe. Estos datos son de Sam.",
+        },
         people: [],
         need: {
-          en: "You found a job you like. Fill out the online application.",
-          es: "Encontraste un trabajo que te gusta. Llena la solicitud en línea.",
+          en: "Sam found a job at Harborside HQ. Fill out the online application for Sam. Copy Sam's contact facts from your info card.",
+          es: "Sam encontró un trabajo en Harborside HQ. Llena la solicitud en línea por Sam. Copia los datos de contacto de Sam de tu tarjeta de información.",
         },
       },
-      reference: JOB_SEEKER_FACTS,
+      reference: APPLICATION_FACTS,
+      persona: JOB_SEEKER.name,
+      takeaway: {
+        en: "On an application, copy names, numbers and dates exactly, and give one clear reason you want the job.",
+        es: "En una solicitud, copia nombres, números y fechas tal como están, y da una razón clara de por qué quieres el trabajo.",
+      },
       guide: {
         skills: [
           { en: "Read each section of an application", es: "Leer cada sección de una solicitud" },
-          { en: "Check work history that is already filled in", es: "Revisar el historial de trabajo que ya está lleno" },
-          { en: "Choose full time, part time, or either one", es: "Elegir tiempo completo, medio tiempo o cualquiera de los dos" },
-          { en: "Write two or three sentences about why you want the job", es: "Escribir dos o tres oraciones sobre por qué quieres el trabajo" },
+          { en: "Type a name, phone number, email, and start date exactly", es: "Escribir un nombre, teléfono, correo y fecha para empezar sin errores" },
+          { en: "Match availability to the job's hours", es: "Elegir la disponibilidad según las horas del trabajo" },
+          { en: "Write one or two sentences about why you want the job", es: "Escribir una o dos oraciones sobre por qué quieres el trabajo" },
         ],
         prepare: [
           { en: "Ask who has filled out a job application, on paper or online.", es: "Pregunta quién ya llenó una solicitud de empleo, en papel o en línea." },
-          { en: "Explain full time and part time, and ask students which one they want.", es: "Explica tiempo completo y medio tiempo, y pregunta a los estudiantes cuál quieren." },
+          { en: "Explain full time (about 40 hours a week) and part time. Tell students they are filling this out for a pretend job seeker, Sam Rivera.", es: "Explica tiempo completo (unas 40 horas por semana) y medio tiempo. Diles que llenan esto por una persona inventada que busca trabajo, Sam Rivera." },
         ],
         stickingPoints: [
-          { en: "Some learners click submit before they choose their availability. Ask: can you work full time, part time, or both?", es: "Algunos hacen clic en Enviar solicitud antes de elegir su disponibilidad. Pregunta: ¿puedes trabajar tiempo completo, medio tiempo o los dos?" },
-          { en: "Some learners write only I need a job. The answer needs at least six words. Ask: what do you like about this job, and what can you bring to it?", es: "Algunos escriben solo Necesito un trabajo. La respuesta necesita al menos seis palabras. Pregunta: ¿qué te gusta de este trabajo y qué puedes aportar?" },
+          { en: "Learners play Sam Rivera and copy Sam's name, phone, email, and start date from the info card. Phone numbers pass with or without dashes and spaces; 11/16/2026 also passes as 11-16-2026. When a box is wrong, the card names it.", es: "Los estudiantes hacen el papel de Sam Rivera y copian el nombre, teléfono, correo y fecha para empezar de la tarjeta. El teléfono vale con o sin guiones y espacios; 11/16/2026 también vale como 11-16-2026. Si una casilla está mal, la tarjeta la nombra." },
+          { en: "Some learners choose Part time. The job is full time (40 hours a week) and Sam wants 40 hours, so the card asks them to choose Full time. Ask: how many hours does the job have? How many does Sam want?", es: "Algunos eligen Medio tiempo. El trabajo es de tiempo completo (40 horas por semana) y Sam quiere 40 horas, así que la tarjeta pide elegir Tiempo completo. Pregunta: ¿cuántas horas tiene el trabajo? ¿Cuántas quiere Sam?" },
+          { en: "Some learners write only I need a job. The answer needs one sentence with a reason (about five words). Ask: why do you want this job, and what are you good at?", es: "Algunos escriben solo Necesito un trabajo. La respuesta necesita una oración con una razón (unas cinco palabras). Pregunta: ¿por qué quieres este trabajo y qué haces bien?" },
         ],
         followUp: [
           { en: "What will you say when an application asks why you want the job?", es: "¿Qué vas a decir cuando una solicitud te pregunte por qué quieres el trabajo?" },
@@ -1477,14 +1515,22 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["job-search", "documents"],
       minutes: 15,
       scene: {
-        you: { en: "You worked at Harborside Cafe. Now you want a new job.", es: "Trabajaste en Harborside Cafe. Ahora buscas un trabajo nuevo." },
+        you: {
+          en: "You are playing Sam Rivera, who worked at Harborside Cafe. These facts are Sam's.",
+          es: "Haces el papel de Sam Rivera, que trabajó en Harborside Cafe. Estos datos son de Sam.",
+        },
         people: [],
         need: {
-          en: "Make a short résumé. A résumé is one page about your work: your jobs, what you did well, and your skills.",
-          es: "Haz un currículum corto. Un currículum es una página sobre tu trabajo: tus empleos, lo que hiciste bien y tus habilidades.",
+          en: "Make Sam's short résumé. A résumé is one page about your work: your jobs, what you did well, and your skills.",
+          es: "Haz el currículum corto de Sam. Un currículum es una página sobre tu trabajo: tus empleos, lo que hiciste bien y tus habilidades.",
         },
       },
-      reference: JOB_SEEKER_FACTS,
+      reference: RESUME_FACTS,
+      persona: JOB_SEEKER.name,
+      takeaway: {
+        en: "A first résumé is one page: contact, a short summary, one strong line for each job, and your skills.",
+        es: "Un primer currículum es una página: contacto, un resumen corto, una línea fuerte para cada empleo y tus habilidades.",
+      },
       guide: {
         skills: [
           { en: "Know the parts of a simple résumé", es: "Conocer las partes de un currículum sencillo" },
@@ -1497,8 +1543,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Write action words on the board: ran, checked, trained, fixed.", es: "Escribe verbos de acción en la pizarra: manejé, revisé, capacité, arreglé." },
         ],
         stickingPoints: [
-          { en: "Some learners write only a few words in the summary. It needs at least six words. Ask: what can you do well at work?", es: "Algunos escriben pocas palabras en el resumen. Necesita al menos seis palabras. Pregunta: ¿qué haces bien en el trabajo?" },
-          { en: "Some learners fill in only one accomplishment. Each of the two jobs needs one, with at least four words. Ask: what did you do well in this job?", es: "Algunos llenan solo un logro. Cada uno de los dos trabajos necesita uno, con al menos cuatro palabras. Pregunta: ¿qué hiciste bien en este trabajo?" },
+          { en: "Learners write as Sam Rivera. Sam's name, contact, and school head the page. The summary can be one short sentence (I am a shift lead at Harborside Cafe). Ask: what can Sam do well at work?", es: "Los estudiantes escriben como Sam Rivera. El nombre, contacto y estudios de Sam encabezan la página. El resumen puede ser una oración corta (Soy líder de turno en Harborside Cafe). Pregunta: ¿qué hace bien Sam en el trabajo?" },
+          { en: "Each job needs its own line, at least three words (Trained new workers.). Copying a duty listed under the job is fine. The same line under both jobs is sent back. Ask: what did Sam do in this job that was different?", es: "Cada empleo necesita su propia línea, de al menos tres palabras (Entrené a trabajadores nuevos.). Copiar una tarea del empleo está bien. La misma línea en los dos empleos se regresa. Pregunta: ¿qué hizo Sam distinto en este empleo?" },
           { en: "Some learners check fewer than three skills. Ask: which of these have you practiced?", es: "Algunos marcan menos de tres habilidades. Pregunta: ¿cuáles de estas has practicado?" },
         ],
         followUp: [
@@ -1589,16 +1635,22 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         },
         people: [{ name: "Robin Avery", role: { en: "A pretend new worker", es: "Un empleado nuevo inventado" } }],
         need: {
-          en: "Fill out Robin's W-4. Copy Robin's facts from your info card. Then sign with Robin's name and write the date.",
-          es: "Llena el W-4 de Robin. Copia los datos de Robin de tu tarjeta de información. Después firma con el nombre de Robin y escribe la fecha.",
+          en: "Fill out Robin's W-4. Read Robin's facts on your info card and choose what fits Robin. Then sign with Robin's name and write the date.",
+          es: "Llena el W-4 de Robin. Lee los datos de Robin en tu tarjeta de información y elige lo que corresponde a Robin. Después firma con el nombre de Robin y escribe la fecha.",
         },
       },
+      // Facts about Robin, not the answers: the learner decides the filing
+      // status and the dependents count from them.
       reference: [
         { label: { en: "Name", es: "Nombre" }, value: "Robin Avery" },
-        { label: { en: "Filing status", es: "Estado civil" }, value: { en: "Single", es: "Soltero/a" } },
-        { label: { en: "Dependents (children)", es: "Dependientes (hijos)" }, value: "0" },
-        { label: { en: "Form date", es: "Fecha del formulario" }, value: "10/01/2026" },
+        { label: { en: "Married", es: "Casado/a" }, value: { en: "No", es: "No" } },
+        { label: { en: "Children", es: "Hijos" }, value: { en: "None. Supports no one else.", es: "No tiene. No mantiene a nadie." } },
+        { label: { en: "Form date", es: "Fecha del formulario" }, value: { en: "10/01/2026", es: "10/01/2026 (1 de octubre)" } },
       ],
+      takeaway: {
+        en: "On your own W-4 at a real job, you choose what is true for you. You can change it later.",
+        es: "En tu propio W-4 en un trabajo real, eliges lo que es verdad para ti. Lo puedes cambiar después.",
+      },
       guide: {
         skills: [
           { en: "Know what a W-4 is for", es: "Saber para qué sirve un W-4" },
@@ -1608,20 +1660,22 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         prepare: [
           { en: "Explain that a W-4 tells the job how much tax to take from each paycheck.", es: "Explica que el W-4 le dice al trabajo cuánto impuesto quitar de cada cheque." },
-          { en: "Tell students the form is for a fictional person, Robin Avery. They copy the details from the box at the top, not their own information.", es: "Diles que el formulario es de una persona ficticia, Robin Avery. Copian los datos del cuadro de arriba, no sus propios datos." },
+          { en: "Tell students the form is for a fictional person, Robin Avery. Robin is not married and has no children. They decide the filing status and dependents from those facts, not from their own life.", es: "Diles que el formulario es de una persona ficticia, Robin Avery. Robin no está casado/a y no tiene hijos. Deciden el estado civil y los dependientes con esos datos, no con su propia vida." },
+          { en: "Go over the three filing statuses in plain words: single, married filing jointly (a married couple), head of household (pays for a home for a child or family member).", es: "Repasa los tres estados civiles con palabras sencillas: soltero/a, casado/a declarando en conjunto (una pareja casada), cabeza de familia (paga una casa para un hijo o familiar)." },
         ],
         stickingPoints: [
-          { en: "Some learners type their own name as the signature. It must match the name on the form, Robin Avery. Ask: whose form is this?", es: "Algunos escriben su propio nombre como firma. Debe ser igual al nombre del formulario, Robin Avery. Pregunta: ¿de quién es este formulario?" },
-          { en: "Some learners write the date in a different way. It must be 10/01/2026, as in the details box. Ask them to copy it exactly.", es: "Algunos escriben la fecha de otra forma. Debe ser 10/01/2026, como en el cuadro de datos. Pídeles copiarla exactamente." },
-          { en: "Some learners leave dependents empty. If there are none, the answer is 0. Ask: does Robin have children or other people to support?", es: "Algunos dejan vacíos los dependientes. Si no hay, la respuesta es 0. Pregunta: ¿Robin tiene hijos u otras personas que mantiene?" },
+          { en: "Some learners choose Head of household or Married. The card explains right away why that does not fit Robin. Ask: is Robin married? Does Robin pay for a home for a child?", es: "Algunos eligen Cabeza de familia o Casado/a. La tarjeta explica enseguida por qué no le corresponde a Robin. Pregunta: ¿Robin está casado/a? ¿Paga una casa para un hijo?" },
+          { en: "Some learners type their own name as the signature. It must match the name on the form, Robin Avery. The empty box says Type the full name. Ask: whose form is this?", es: "Algunos escriben su propio nombre como firma. Debe ser igual al nombre del formulario, Robin Avery. La casilla vacía dice Escribe el nombre completo. Pregunta: ¿de quién es este formulario?" },
+          { en: "The date is October 1, 2026, month first. 10/01/2026, 10/1/2026 and 10-01-2026 all pass. 01/10/2026 (day first) does not. Ask: which number is the month?", es: "La fecha es el 1 de octubre de 2026, con el mes primero. 10/01/2026, 10/1/2026 y 10-01-2026 son correctas. 01/10/2026 (el día primero) no. Pregunta: ¿cuál número es el mes?" },
+          { en: "Some learners leave dependents empty. The card names the box. If there are none, the answer is 0; none or zero also count. Ask: does Robin have children or other people to support?", es: "Algunos dejan vacíos los dependientes. La tarjeta nombra la casilla. Si no hay, la respuesta es 0; también vale ninguno o cero. Pregunta: ¿Robin tiene hijos u otras personas que mantiene?" },
         ],
         followUp: [
           { en: "What other forms might you fill out on your first day at a new job?", es: "¿Qué otros formularios podrías llenar tu primer día en un trabajo nuevo?" },
           { en: "Who can you ask for help with a tax form at work?", es: "¿A quién le puedes pedir ayuda con un formulario de impuestos en el trabajo?" },
         ],
         peerHelp: {
-          en: "A partner can point to the details box, but the learner fills in each box.",
-          es: "Un compañero puede señalar el cuadro de datos, pero el estudiante llena cada casilla.",
+          en: "A partner can point to Robin's facts, but the learner decides and fills in each box.",
+          es: "Un compañero puede señalar los datos de Robin, pero el estudiante decide y llena cada casilla.",
         },
       },
     },

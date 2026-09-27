@@ -22,7 +22,15 @@ const taskFiles = [
 ];
 
 function read(path: string) {
-  return { name: path.split("/").pop()!, src: readFileSync(path, "utf8") };
+  const src = readFileSync(path, "utf8");
+  // A task that draws its document in a sibling file (OnboardingFormsTask ->
+  // W4Document) marks its Show me targets there, so those count as its own.
+  const dir = path.slice(0, path.lastIndexOf("/"));
+  const children = [...src.matchAll(/from "\.\/([A-Za-z0-9]+)"/g)]
+    .map((m) => join(dir, `${m[1]}.tsx`))
+    .filter((child) => { try { readFileSync(child); return true; } catch { return false; } })
+    .map((child) => readFileSync(child, "utf8"));
+  return { name: path.split("/").pop()!, src, targetsSrc: [src, ...children].join("\n") };
 }
 const tasks = taskFiles.map(read);
 
@@ -56,8 +64,8 @@ function showMeTargets(src: string): string[] {
 }
 
 describe("job card wiring", () => {
-  it.each(tasks)("$name points Show me at a control that exists", ({ src }) => {
-    const targets = showMeTargets(src);
+  it.each(tasks)("$name points Show me at a control that exists", ({ src, targetsSrc }) => {
+    const targets = showMeTargets(targetsSrc);
     for (const id of showMeIds(src)) {
       // A named id with no matching `data-showme` means pressing Show me
       // highlights nothing at all, and says nothing about why.
@@ -65,9 +73,9 @@ describe("job card wiring", () => {
     }
   });
 
-  it.each(tasks)("$name offers Show me only when it can point somewhere", ({ src }) => {
+  it.each(tasks)("$name offers Show me only when it can point somewhere", ({ src, targetsSrc }) => {
     if (!/onShowMe=/.test(src)) return;
-    expect(showMeTargets(src).length, "offers Show me but marks no target").toBeGreaterThan(0);
+    expect(showMeTargets(targetsSrc).length, "offers Show me but marks no target").toBeGreaterThan(0);
     expect(src, "offers Show me but never renders the spotlight").toContain("ShowMeHighlight");
   });
 
