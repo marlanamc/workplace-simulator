@@ -23,3 +23,33 @@ export function isValidSumFormula(formula: string) {
   const end = Math.max(Number(m[1]), Number(m[2]));
   return start <= 2 && end >= 6;
 }
+
+/** A plain number, the way a sheet reads one ("61", " 61 ", "61.0"). */
+const typedNumber = (typed: string): number | null => {
+  const t = typed.trim();
+  return /^-?\d+(\.\d+)?$/.test(t) ? Number(t) : null;
+};
+
+/**
+ * What the total cell shows for what the learner typed, the way real Sheets
+ * would: the sum for a good formula, a typed number or word as typed, and
+ * #ERROR! only for a formula it cannot read. (It used to show "#ERROR?" for
+ * a correct 61 typed by hand.)
+ */
+export function totalCellShows(typed: string): string {
+  if (isValidSumFormula(typed)) return String(STATUS_TOTAL);
+  const t = typed.trim();
+  if (!t) return "";
+  return t.startsWith("=") ? "#ERROR!" : t;
+}
+
+export type TotalProblem = "rightNumber" | "number" | "formula";
+
+/** Why the total is not done yet, so the Job Card can say the right thing. */
+export function totalProblem(typed: string): TotalProblem | null {
+  if (isValidSumFormula(typed)) return null;
+  const n = typedNumber(typed);
+  if (n === STATUS_TOTAL) return "rightNumber";
+  if (n !== null) return "number";
+  return "formula";
+}

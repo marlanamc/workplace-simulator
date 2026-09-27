@@ -16,7 +16,7 @@ import {
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/status-report/content";
-import { STATUS_ROWS, STATUS_TOTAL, isValidSumFormula } from "@/lib/tasks/status-sheet";
+import { STATUS_ROWS, totalCellShows, totalProblem } from "@/lib/tasks/status-sheet";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -42,10 +42,10 @@ export default function StatusReportTask() {
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
   const c = STATUS_REPORT_COPY[lang];
-  const sumOk = isValidSumFormula(formula);
 
   const tryEmail = () => {
-    if (!sumOk) return say(HINTS[lang].formula);
+    const problem = totalProblem(formula);
+    if (problem) return say(HINTS[lang][problem]);
     setView("compose");
   };
 
@@ -169,15 +169,15 @@ export default function StatusReportTask() {
               <div className="flex h-7 w-8 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] text-[12px]">7</div>
               <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5 font-medium">{c.totalLabel}</div>
               <button
+                data-testid="status-total-cell"
                 onClick={() => setSelectedTotal(true)}
                 className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#fef7e0] px-1.5 text-left font-medium cursor-pointer"
                 style={{ boxShadow: selectedTotal ? "inset 0 0 0 2px #1a73e8" : undefined }}
               >
-                {sumOk ? STATUS_TOTAL : formula.trim() ? "#ERROR?" : ""}
+                {totalCellShows(formula)}
               </button>
             </div>
           </div>
-          <p className="mt-3 text-[13px] text-[#5f6368]">{c.writeFormula}</p>
           <button
             onClick={tryEmail}
             className="mt-3 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer"

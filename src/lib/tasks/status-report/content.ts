@@ -38,7 +38,6 @@ export const STATUS_REPORT_COPY: Record<Lang, {
   countHeader: string;
   totalLabel: string;
   emailCta: string;
-  writeFormula: string;
   to: string;
   cc: string;
   ccAdd: string;
@@ -73,7 +72,6 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     countHeader: "Tickets",
     totalLabel: "Total",
     emailCta: "Email the total",
-    writeFormula: "Click the total cell and type =SUM(B2:B6).",
     to: "To",
     cc: "Cc",
     ccAdd: "Cc",
@@ -108,7 +106,6 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     countHeader: "Tickets",
     totalLabel: "Total",
     emailCta: "Enviar el total",
-    writeFormula: "Haz clic en la celda del total y escribe =SUM(B2:B6).",
     to: "Para",
     cc: "Cc",
     ccAdd: "Cc",
@@ -131,15 +128,19 @@ export const STATUS_REPORT_COPY: Record<Lang, {
   },
 };
 
-export const HINTS: Record<Lang, { formula: string; empty: string; cc: string; total: string }> = {
+export const HINTS: Record<Lang, { formula: string; rightNumber: string; number: string; empty: string; cc: string; total: string }> = {
   en: {
     formula: "Type =SUM(B2:B6) in the total cell. That is every ticket row.",
+    rightNumber: "Right number. Now let the sheet add it: type =SUM(B2:B6) in the total cell.",
+    number: "Check that number. Let the sheet add it: type =SUM(B2:B6) in the total cell.",
     empty: "Write a short message first. Even one sentence is fine.",
     cc: "Click Cc and add Jordan. A co-lead needs this number too.",
     total: `Mention the total (${STATUS_TOTAL}) so Renata does not have to open the sheet.`,
   },
   es: {
     formula: "Escribe =SUM(B2:B6) en la celda del total. Esas son todas las filas de tickets.",
+    rightNumber: "Es el número correcto. Ahora deja que la hoja lo sume: escribe =SUM(B2:B6) en la celda del total.",
+    number: "Revisa ese número. Deja que la hoja lo sume: escribe =SUM(B2:B6) en la celda del total.",
     empty: "Primero escribe un mensaje corto. Una oración está bien.",
     cc: "Haz clic en Cc y agrega a Jordan. Un co-líder también necesita este número.",
     total: `Menciona el total (${STATUS_TOTAL}) para que Renata no tenga que abrir la hoja.`,
