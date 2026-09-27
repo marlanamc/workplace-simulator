@@ -17,7 +17,6 @@ import {
   CONFIRM_COPY,
   DONE_COPY,
   isComposeOnly,
-  PLAYABLE_MAIL_TASKS,
   COMPOSE_RECIPIENT,
   CASUAL_DRAFT,
   REPLY_ALL_THREAD,
@@ -35,8 +34,8 @@ import {
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import { formatInboxTime, inboxToday, HIRE_DAY } from "@/lib/story-calendar";
-import { LEVELS, levelForTrack, taskKeysForLevel, nextTaskInTrack } from "@/lib/tracks-content";
-import type { TaskKey } from "@/lib/desktop-content";
+import { LEVELS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
+import { activeMailTaskFor } from "@/lib/mail-active-task";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -79,15 +78,6 @@ const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" 
 
 type View = "empty" | "read" | "confirm" | "compose" | "done" | "story" | "opening-sent";
 type MailTask = PlayableMailTask;
-/**
- * Every mail task, in curriculum order - derived from the level/track
- * structure rather than hand-listed, so a mail task that exists in content
- * but isn't wired into a level can never silently become unreachable here.
- */
-const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap((l) => taskKeysForLevel(l, null)) as string[]).filter(
-  (k): k is MailTask => (PLAYABLE_MAIL_TASKS as string[]).includes(k),
-);
-
 /**
  * "Click <the words actually on the button>." Built from the same copy the
  * button renders, in both languages, so the card can never name a control
@@ -158,16 +148,9 @@ function isStoryMail(m: { key: string }): m is InboxRow {
   return "story" in m && Boolean((m as InboxRow).story) && Array.isArray((m as InboxRow).body?.en);
 }
 
-/** Every mail job shares one Mail app - whichever isn't done yet is the one running now. */
-function activeMailTaskFor(completedTaskKeys: TaskKey[]): MailTask {
-  const next = MAIL_TASK_ORDER.find((k) => !completedTaskKeys.includes(k)) ?? MAIL_TASK_ORDER[MAIL_TASK_ORDER.length - 1];
-  // Mail remains browsable during the schedule job, but its next challenge
-  // must wait until that job is finished.
-  return next === 'mail-attach' && !completedTaskKeys.includes('schedule') ? 'mail-reply' : next;
-}
-
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
-  const { learnerId, openingReplies, saveOpeningReply, restartLevel, markComplete, completedTaskKeys, currentTrack, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
+  const { learnerId, openingReplies, saveOpeningReply, restartLevel, markComplete, completedTaskKeys, currentTrack, courseRoute, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
+  const currentLevelKey = levelForTrack(currentTrack.key).key;
   const { browserTabToken, openApp } = useWindowManager();
   const timeclockMailActive =
     !completedTaskKeys.includes("timeclock") && storyFlags[TIMECLOCK_MAIL_FLAG] === "true";
@@ -181,7 +164,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // Mail (the "Next job" button on the done screen, same as any other task) -
   // that's the `browserTabToken` bump below, mirroring PortalPage's own
   // `portalSectionToken` re-open pattern.
-  const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys));
+  const [activeMailTask, setActiveMailTask] = useState<MailTask>(() => activeMailTaskFor(completedTaskKeys, courseRoute, currentLevelKey));
   // Mail stays browsable while another job (shift notes, etc.) owns the day —
   // only coach on the card when this window *is* that job.
   const ownsJobCard = timeclockMailActive || (nextKey !== null && nextKey === activeMailTask);
@@ -261,7 +244,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       setBody("");
       setShowMeTarget(null);
     } else if (!(opening && !completedTaskKeys.includes("mail-reply"))) {
-      const next = activeMailTaskFor(completedTaskKeys);
+      const next = activeMailTaskFor(completedTaskKeys, courseRoute, currentLevelKey);
       setActiveMailTask(next);
       setView(completedTaskKeys.includes(next) ? "done" : next === 'mail-reply' && nextOpeningIndex(openingReplies) === 3 ? 'opening-sent' : isComposeOnly(next) ? "compose" : "empty");
       setStep(0);
