@@ -261,7 +261,22 @@ export default function BrowserClient() {
       const newLevelKey = levelForTrack(currentTrack.key).key;
       const newLevelDef = LEVELS.find((l) => l.key === newLevelKey);
       const activeLevelKey = BASE_TABS.find((t) => t.key === activeTab)?.levelKey;
-      if (activeLevelKey !== newLevelKey) {
+      const staleTab =
+        activeLevelKey === newLevelKey &&
+        newLevelDef?.freeTabbing &&
+        !isNewTabKey(activeTab) &&
+        !visibleBookmarks.has(activeTab);
+      if (staleTab) {
+        // A hand-off never lands on a tab the bookmarks bar no longer offers,
+        // like Day 12's finished make-a-copy once Sheets points at the status
+        // report. That tab's done screen would send the learner round in a
+        // circle, so close it and open a New Tab beside the bookmarks.
+        setOpenTabs((prev) => [
+          ...prev.filter((t) => t.key !== activeTab && !isNewTabKey(t.key)),
+          makeNewTabStub(newLevelKey),
+        ]);
+        setActiveTab("newtab" as TabKey);
+      } else if (activeLevelKey !== newLevelKey) {
         if (newLevelDef?.freeTabbing) {
           setOpenTabs([makeNewTabStub(newLevelKey)]);
           setActiveTab("newtab");
