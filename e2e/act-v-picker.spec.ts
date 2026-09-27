@@ -30,9 +30,9 @@ test("after Act II the learner chooses a route and can change it without losing 
   await card.getByTestId('course-route-office').click();
   await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', 'act6', {timeout:20000});
   await page.getByTestId('act-intro-continue').click();
-  await expect(card.getByText('Read the posting. Do you fit?')).toBeVisible();
+  await expect(card.getByText('Read the posting. Check what you have done, then write why you fit.')).toBeVisible();
   await page.reload();
-  await expect(card.getByText('Read the posting. Do you fit?')).toBeVisible({timeout:20000});
+  await expect(card.getByText('Read the posting. Check what you have done, then write why you fit.')).toBeVisible({timeout:20000});
   await card.getByRole('button',{name:'Change direction'}).click();
   await card.getByTestId('course-route-healthcare').click();
   await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act','act5',{timeout:20000});
