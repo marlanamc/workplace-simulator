@@ -343,3 +343,19 @@ textarea:focus-visible,
     min-height: 44px;
   }
 }
+
+/* A lesson between 800px and xl: the Job Card lives in its own 340px left
+   column (LESSON_RAIL_CLASS moves the app window right of it), so it can use
+   the column's full height and never covers the task. The info card opens
+   over the Job Card, inside the column, rather than over the task. */
+@media (min-width: 800px) and (max-width: 1279px) {
+  .lesson-rail-card {
+    width: 300px !important;
+    max-height: calc(100dvh - 96px) !important;
+  }
+  .lesson-info-pop {
+    left: 24px;
+    right: auto;
+    width: 300px;
+  }
+}

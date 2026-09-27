@@ -163,8 +163,8 @@ export default function AccountRecoveryTask() {
           beside the form, where the code stays in view while it is typed. */}
       {view !== "done" && (
         <div className="@container">
-        <div className="flex flex-col items-center gap-4 rounded-2xl bg-[#f0f4f9] px-3 py-4 @min-[640px]:flex-row @min-[640px]:items-start @min-[640px]:justify-center @min-[640px]:gap-6 @min-[640px]:px-4 @min-[900px]:py-8">
-          <div className="w-full max-w-[460px] rounded-[28px] bg-white px-6 pt-6 pb-6 @min-[900px]:px-10 @min-[900px]:pt-9 @min-[900px]:pb-8">
+        <div className="flex flex-col items-center gap-4 rounded-2xl bg-[#f0f4f9] px-3 py-4 @min-[520px]:flex-row @min-[520px]:items-start @min-[520px]:justify-center @min-[640px]:gap-6 @min-[640px]:px-4 @min-[900px]:py-8">
+          <div className="w-full min-w-0 max-w-[460px] rounded-[28px] bg-white px-6 pt-6 pb-6 @min-[520px]:flex-1 @min-[900px]:px-10 @min-[900px]:pt-9 @min-[900px]:pb-8">
             <GoogleWord />
             {view === "signin" ? (
               <>
@@ -251,7 +251,7 @@ export default function AccountRecoveryTask() {
               has arrived, so the texts are read before the code box. */}
           <aside
             data-showme="phone"
-            className={`w-full shrink-0 @min-[640px]:order-none @min-[640px]:w-[240px] ${view === "code" ? "order-first" : ""}`}
+            className={`w-full shrink-0 @min-[520px]:order-none @min-[520px]:w-[240px] ${view === "code" ? "order-first" : ""}`}
           >
             <PhoneTexts
               heading={c.phoneHeading}

@@ -504,8 +504,10 @@ export default function JobCard() {
       // stays readable instead of dimmed behind the overlay.
       // A short screen (a Chromebook at 150% text is 911x512) gets a
       // compact card: narrower, smaller type, capped at half the height, so
-      // it never sits over most of the task and the info card.
-      className={`job-card-compact animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
+      // it never sits over most of the task and the info card. A lesson
+      // between 800px and xl docks it in its own left column instead
+      // (LESSON_RAIL_CLASS), so it covers nothing.
+      className={`job-card-compact ${lesson ? "lesson-rail-card " : ""}animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
       style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div
