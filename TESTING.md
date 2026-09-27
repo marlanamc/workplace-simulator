@@ -11,6 +11,13 @@ with: **Replay a level** (rewind one level, keeping the rest), an
 story flags reset), and throwaway sign-ups under class code `TEST` when you
 truly need two learners at once.
 
+**Who can open it.** The time machine wipes the account's progress, so `/studio`
+turns away learners in real classes and sends them to the desktop. It opens
+for teacher accounts, and for class codes listed in `STUDIO_CLASS_CODES`
+(comma-separated, case-insensitive, and `CODE-*` matches a prefix). Left unset,
+that list is `TEST-E2E,E2E-*`, the e2e suite's own codes. Add a staff code there
+in Vercel for demo accounts, and sign up under `TEST-E2E` locally.
+
 ## Automated: three layers, cheapest first
 
 Run `npm run check` before any deploy — it's lint + typecheck + all unit
