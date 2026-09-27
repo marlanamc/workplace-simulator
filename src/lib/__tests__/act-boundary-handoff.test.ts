@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ACTS, LEVELS, actForLevel } from "../tracks-content";
+import { ACTS, LEVELS, levelUpCardFor } from "../tracks-content";
 
 /**
  * The handoff at an act boundary, pinned from both sides.
@@ -20,17 +20,11 @@ import { ACTS, LEVELS, actForLevel } from "../tracks-content";
  * clock-out card. These tests encode the rule so it cannot regress quietly.
  */
 
-/** Mirrors the early return in `LevelUpCelebration`. */
+/** `LevelUpCelebration` draws nothing for a level with no card to play. */
 function celebrationRendersNothing(levelKey: string): boolean {
   const level = LEVELS.find((l) => l.key === levelKey);
   if (!level?.levelUp) return false;
-  const act = actForLevel(level);
-  return (
-    !!act &&
-    act.key !== "act1" &&
-    act.levelKeys[0] === level.key &&
-    !level.levelUp.stoppingPoint
-  );
+  return levelUpCardFor(level) === null;
 }
 
 /** Mirrors the `celebrateLevel` clause of the `ActIntro` gate in `JobCardHost`. */
@@ -64,4 +58,17 @@ describe("act boundary handoff", () => {
     expect(introBlockedBy(act2Opener)).toBe(true);
     expect(celebrationRendersNothing(act2Opener)).toBe(false);
   });
+
+  it.each(laterActs.map((a) => [a.key, a.levelKeys[0]!] as const))(
+    "%s: finishing into %s leaves no celebration pending that nobody can dismiss",
+    (_actKey, openerKey) => {
+      // Story Mode Audit #3. Progress used to record the opener's level-up
+      // even when nothing would draw it. The Job Card hides while one is
+      // pending, so "Start Act IV" and "Start Act VII" led to an empty screen
+      // until a reload. Whatever is recorded must be a card that renders.
+      const opener = LEVELS.find((l) => l.key === openerKey)!;
+      const recorded = levelUpCardFor(opener);
+      if (recorded) expect(recorded.levelUp?.stoppingPoint).toBe(true);
+    },
+  );
 });

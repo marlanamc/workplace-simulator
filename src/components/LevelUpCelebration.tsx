@@ -2,7 +2,7 @@
 
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
-import { actForLevel, nextHandoff } from "@/lib/tracks-content";
+import { levelUpCardFor, nextHandoff } from "@/lib/tracks-content";
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import Confetti from "@/components/task/Confetti";
@@ -19,18 +19,11 @@ export default function LevelUpCelebration() {
   const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath, courseRoute, saving, saveError } = useProgress();
   const { openApp } = useWindowManager();
   if (!celebrateLevel?.levelUp || saving || saveError) return null;
+  // Act II+ openers normally defer to ActIntro and never get recorded here
+  // (see levelUpCardFor). A stoppingPoint card is the clock-out pause before
+  // that screen (end of Act I → Day 6 complete).
+  if (!levelUpCardFor(celebrateLevel)) return null;
   const { levelUp } = celebrateLevel;
-  // Act II+ openers normally defer to ActIntro. A stoppingPoint card is the
-  // clock-out pause before that screen (end of Act I → Day 6 complete).
-  const boundaryAct = actForLevel(celebrateLevel);
-  if (
-    boundaryAct &&
-    boundaryAct.key !== "act1" &&
-    boundaryAct.levelKeys[0] === celebrateLevel.key &&
-    !levelUp.stoppingPoint
-  ) {
-    return null;
-  }
   const kicker = levelUp.kicker[lang];
   const title = levelUp.title[lang];
   const body = levelUp.body[lang];
