@@ -1,5 +1,6 @@
 "use client";
 
+import { MATERIAL_COPY } from "@/lib/lessons/materials-links";
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { Check, Clock } from "lucide-react";
@@ -15,6 +16,7 @@ export type LibraryRow = {
   minutes: number;
   href: string;
   previewHref?: string;
+  materialsHref?: string;
   /** Search results: the lesson's icon on its topic color. Topic lists show a numbered life ring instead. */
   icon?: ReactNode;
   solid?: string;
@@ -99,6 +101,11 @@ function Row({ lang, row, number, done }: { lang: Lang; row: LibraryRow; number:
         >
           {label}
         </Link>
+        {row.materialsHref && (
+          <Link href={row.materialsHref} className="flex min-h-11 items-center justify-center text-[15px] font-bold text-[#1d4f91] underline">
+            {MATERIAL_COPY.open[lang]}
+          </Link>
+        )}
         {row.previewHref && (
           <Link
             href={row.previewHref}

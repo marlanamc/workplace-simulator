@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { materialsHref, MATERIAL_COPY } from "@/lib/lessons/materials-links";
 import { useState } from "react";
 import { BookOpen, Link2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
@@ -19,6 +21,7 @@ export const PREVIEW_BAR_H = 44;
 export default function TeacherPreviewBar({ guide }: { guide: TeacherGuide }) {
   const { lang } = useProgress();
   const lesson = useLesson()!;
+  const packHref = materialsHref(lesson.taskKey, lang);
   const [open, setOpen] = useState(false);
   const [share, setShare] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -83,6 +86,7 @@ export default function TeacherPreviewBar({ guide }: { guide: TeacherGuide }) {
               <p className="mt-0 mb-4 text-[14px] text-[#5f6368]">
                 {LESSON_COPY.supportLabel[lang]}: {LESSON_COPY[lesson.mode][lang]}
               </p>
+              {packHref && <Link href={packHref} target="_blank" rel="noopener" className="mb-4 inline-flex min-h-11 items-center font-semibold text-[#0b57d0] underline">{MATERIAL_COPY.open[lang]}</Link>}
               <LessonGuide guide={guide} lang={lang} />
             </>
           )}

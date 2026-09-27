@@ -166,3 +166,13 @@ retired into this; their old URLs redirect (`next.config.ts`).
 
 Run `npm run check`, then `npx playwright test e2e/lessons.spec.ts e2e/lessons-smoke.spec.ts`.
 The smoke sweep opens every reachable task as a lesson through the dev-only `?smoke=1` draft.
+
+### Workplace materials for lessons
+
+Teacher mode (`/lessons?teacher=1`) and lesson preview guides now link to six
+bilingual practice packs: work email, attachments, calendars, file handoffs,
+spreadsheet totals, and appointment scheduling. Each includes two fictional source
+documents, discussion prompts, evidence notes, and a changed situation. **Print
+source documents** omits teacher notes. These are teacher-led extensions after the
+computer lesson; they do not change simulator answers or award credit. See
+[curriculum/lesson-materials.md](curriculum/lesson-materials.md).
