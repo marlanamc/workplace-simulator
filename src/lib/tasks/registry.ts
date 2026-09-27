@@ -267,11 +267,11 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     lesson: {
       title: { en: "Attach a file to an email", es: "Adjuntar un archivo a un correo" },
       summary: {
-        en: "Read what the manager needs, then reply with the right PDF file attached.",
-        es: "Lee lo que necesita la gerente y luego responde con el archivo PDF correcto adjunto.",
+        en: "Send an attachment, replace an outdated file, and ask for an approved copy when only a draft is available.",
+        es: "Envía un adjunto, reemplaza un archivo viejo y pide una copia aprobada cuando solo hay un borrador.",
       },
       skills: ["email", "files"],
-      minutes: 10,
+      minutes: 20,
       scene: {
         you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
         people: [{ name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } }],
@@ -280,10 +280,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           es: "Maria te envió un correo. Necesita un reporte de seguridad de tu carpeta Descargas. Ahí hay varios reportes. Lee su correo para saber cuál, y luego envíaselo.",
         },
       },
-      takeaway: {
-        en: "Before you send a file, look at it: the right month, no DRAFT, and the file name in the green box.",
-        es: "Antes de enviar un archivo, míralo: el mes correcto, sin DRAFT (borrador) y el nombre del archivo en la caja verde.",
-      },
+      takeaway: { en: "Check the actual attachment before sending. If the required file is missing, ask for it.", es: "Revisa el adjunto real antes de enviar. Si falta el archivo solicitado, pídelo." },
       guide: {
         skills: [
           { en: "Read an email to find what someone needs and when", es: "Leer un correo para saber qué necesita alguien y para cuándo" },
@@ -292,6 +289,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Check that the file is attached before you send", es: "Revisar que el archivo esté adjunto antes de enviar" },
         ],
         prepare: [
+          { en: "The computer lesson now includes the original task and two new situations. Completion requires all three. Follow-ups check source-based choices and a reviewed response; they do not assess independent free writing. Estimated time includes reading and retries.", es: "La lección incluye la tarea original y dos situaciones nuevas. Para terminar se requieren las tres. Las nuevas situaciones revisan elecciones basadas en documentos y una respuesta revisada; no evalúan escritura libre independiente. El tiempo estimado incluye lectura y reintentos." },
           { en: "Ask who has sent a photo or a document by email or text.", es: "Pregunta quién ya envió una foto o un documento por correo o por mensaje." },
           { en: "Explain that an attachment is a file that goes with the email.", es: "Explica que un archivo adjunto es un archivo que va con el correo." },
         ],
@@ -446,6 +444,33 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     handoffCta: { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
     shiftMoment: { en: "Monday, 6:12 AM. You feel sick.", es: "Lunes, 6:12 AM. Te sientes mal." },
     location: browser("Open Mail", "mail"),
+    lesson: {
+      title: { en: "Report an absence and follow up", es: "Avisar de una ausencia y dar seguimiento" },
+      summary: { en: "Write an absence email, use a different workplace's contact rule, and follow up when nobody answers.", es: "Escribe un correo de ausencia, usa la regla de contacto de otro trabajo y da seguimiento cuando nadie contesta." },
+      skills: ["email", "workplace-systems"],
+      minutes: 20,
+      scene: {
+        you: { en: "You work at Harborside Cafe. Today you are sick.", es: "Trabajas en Harborside Cafe. Hoy estás enfermo/a." },
+        people: [{ name: "Maria", role: { en: "Your supervisor", es: "Tu supervisora" } }],
+        need: { en: "It is Monday at 6:12 AM. You cannot work your 10:00 AM shift today. Maria needs to know. After this email, two hotel situations use a different contact rule.", es: "Es lunes a las 6:12 a. m. No puedes trabajar tu turno de las 10:00 a. m. de hoy. Maria necesita saberlo. Después de este correo, dos situaciones en un hotel usan otra regla de contacto." },
+      },
+      takeaway: { en: "Name the shift you will miss, use your workplace's contact rule, and follow up when nobody answers.", es: "Indica a qué turno faltarás, usa la regla de contacto de tu trabajo y da seguimiento cuando nadie contesta." },
+      guide: {
+        skills: [
+          { en: "Write a clear message saying you cannot attend a shift", es: "Escribir un mensaje claro indicando que no puedes asistir a un turno" },
+          { en: "Choose a contact method using a supplied workplace rule", es: "Elegir un medio de contacto usando la regla del trabajo" },
+          { en: "Distinguish a sent message from a confirmed absence", es: "Distinguir un mensaje enviado de una ausencia confirmada" },
+        ],
+        prepare: [{ en: "Explain that the workplaces and contact rules are fictional. Learners do not need to share medical information or personal work experiences.", es: "Explica que los trabajos y las reglas son ficticios. No se necesitan datos médicos ni experiencias laborales personales." }],
+        stickingPoints: [
+          { en: "Feeling sick alone does not tell Maria whether the learner can attend. A short message such as I cannot work today is enough.", es: "Sentirse mal no le dice a Maria si la persona puede asistir. Basta un mensaje corto como No puedo trabajar hoy." },
+          { en: "The hotel requires a call within two hours of a shift. Do not teach email as a universal absence rule.", es: "El hotel requiere una llamada si faltan menos de dos horas. No enseñes el correo como una regla universal para ausencias." },
+          { en: "The last situation requires following up with the front desk. A voicemail does not establish approval.", es: "La última situación requiere avisar a recepción. Un mensaje de voz no demuestra aprobación." },
+        ],
+        followUp: [{ en: "Give a new fictional shift time and contact rule. Ask the learner to explain whom they would contact and why.", es: "Da otra hora de turno y regla ficticia. Pide que la persona explique a quién contactaría y por qué." }],
+        peerHelp: { en: "A partner may read the rule aloud. The learner chooses the contact and message.", es: "Un compañero puede leer la regla en voz alta. El estudiante elige el contacto y el mensaje." },
+      },
+    },
   },
 
   "account-recovery": {
@@ -645,11 +670,11 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     lesson: {
       title: { en: "Rename and share a file", es: "Cambiar el nombre de un archivo y compartirlo" },
       summary: {
-        en: "Find this week's schedule in Drive, rename it, and share it with a new coworker who can only view it.",
-        es: "Busca el horario de esta semana en Drive, cámbiale el nombre y compártelo con un compañero nuevo que solo lo puede ver.",
+        en: "Find and share a file, choose an approved version in a new workplace, and repair a named coworker’s access.",
+        es: "Busca y comparte un archivo, elige una versión aprobada en otro trabajo y corrige el acceso de una compañera.",
       },
       skills: ["files"],
-      minutes: 10,
+      minutes: 20,
       scene: {
         you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
         people: [
@@ -661,10 +686,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           es: "Jordan necesita el horario de trabajo de esta semana. Es un archivo en el Drive compartido del café. Renata quiere que el archivo tenga un nombre claro. Jordan lo puede ver, pero no cambiar.",
         },
       },
-      takeaway: {
-        en: "Open a file to check what it is before you share it. Give it a clear name, and choose Can view when the person only needs to look.",
-        es: "Abre un archivo para ver qué es antes de compartirlo. Ponle un nombre claro, y elige Puede ver si la persona solo necesita mirarlo.",
-      },
+      takeaway: { en: "Check the version, the person, and the access needed for the authorized work.", es: "Revisa la versión, la persona y el acceso necesario para el trabajo autorizado." },
       reference: [
         { label: { en: "This week", es: "Esta semana" }, value: { en: "Week of Aug 24", es: "Semana del 24 de agosto" } },
         { label: { en: "New file name", es: "Nombre nuevo" }, value: "schedule-week-of-aug-24" },
@@ -677,6 +699,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Choose view access instead of edit access", es: "Elegir acceso para ver en vez de acceso para editar" },
         ],
         prepare: [
+          { en: "The computer lesson now includes the original task and two new situations. Completion requires all three. Follow-ups check source-based choices and a reviewed response; they do not assess independent free writing. Estimated time includes reading and retries.", es: "La lección incluye la tarea original y dos situaciones nuevas. Para terminar se requieren las tres. Las nuevas situaciones revisan elecciones basadas en documentos y una respuesta revisada; no evalúan escritura libre independiente. El tiempo estimado incluye lectura y reintentos." },
           { en: "Ask who has shared a photo or a file from their phone.", es: "Pregunta quién ya compartió una foto o un archivo desde su teléfono." },
           { en: "Explain the difference: view means look only, and edit means change.", es: "Explica la diferencia: ver es solo mirar, y editar es cambiar." },
         ],
@@ -1120,15 +1143,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     lesson: {
       title: { en: "Book an appointment at an open time", es: "Dar una cita en un horario libre" },
       summary: {
-        en: "A patient wants a time that is already taken. Find the open time, choose it, and send a confirmation.",
-        es: "Una paciente quiere una hora que ya está ocupada. Busca la hora libre, elígela y envía una confirmación.",
+        en: "Book a visit, fit a whole appointment into a new calendar, and handle a change when no time works.",
+        es: "Agenda una visita, busca espacio para una cita completa en otra agenda y responde a un cambio cuando ninguna hora sirve.",
       },
-      takeaway: {
-        en: "Always look at the schedule before you say yes to a time, and write the new time in your message.",
-        es: "Siempre mira la agenda antes de decir que sí a una hora, y escribe la hora nueva en tu mensaje.",
-      },
+      takeaway: { en: "Check the whole visit against the calendar and the person’s availability. Ask for another time when none fits.", es: "Compara la visita completa con la agenda y la disponibilidad de la persona. Pide otra hora cuando ninguna sirva." },
       skills: ["scheduling", "workplace-systems"],
-      minutes: 8,
+      minutes: 25,
       scene: {
         you: { en: "You work at the front desk of Harborside Health, a clinic.", es: "Trabajas en la recepción de Harborside Health, una clínica." },
         people: [{ name: "Maya Ansari", role: { en: "A patient. She called the clinic.", es: "Una paciente. Llamó a la clínica." } }],
@@ -1145,6 +1165,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Write a confirmation that says the new time", es: "Escribir una confirmación que dice la hora nueva" },
         ],
         prepare: [
+          { en: "The computer lesson now includes the original task and two new situations. Completion requires all three. Follow-ups check source-based choices and a reviewed response; they do not assess independent free writing. Estimated time includes reading and retries.", es: "La lección incluye la tarea original y dos situaciones nuevas. Para terminar se requieren las tres. Las nuevas situaciones revisan elecciones basadas en documentos y una respuesta revisada; no evalúan escritura libre independiente. El tiempo estimado incluye lectura y reintentos." },
           { en: "Ask who has made an appointment by phone at a clinic or an office.", es: "Pregunta quién ya hizo una cita por teléfono en una clínica o una oficina." },
           { en: "Explain that Confirmed or Checked in means someone already has that time, and Open means it is free.", es: "Explica que Confirmada o Ya llegó quiere decir que alguien ya tiene esa hora, y Libre quiere decir que nadie la tiene." },
         ],

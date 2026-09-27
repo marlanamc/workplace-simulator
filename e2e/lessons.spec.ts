@@ -74,6 +74,8 @@ test("the sign-in lesson makes the code a real safety choice", async ({ page }) 
   await page.keyboard.type("Harbor2026");
   await page.keyboard.press("Enter");
 
+  // Wait for the new step to own the card before submitting from its focused input.
+  await expect(card).toContainText("Look at your phone.");
   // An empty code box is reported as empty, not as the wrong code.
   const code = page.getByPlaceholder("000000");
   await expect(code).toBeFocused();

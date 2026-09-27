@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import MailClient from "../mail/MailClient";
 import TourTask from "./TourTask";
 import { TAB_COMPONENTS } from "./tab-components";
@@ -17,6 +18,8 @@ import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS, CALENDAR_REMINDER_STEPS, CALENDAR_REMINDER_FLAG } from "@/lib/tasks/tour/content";
+
+const LessonFollowups = dynamic(() => import("@/components/lesson/LessonFollowups"));
 
 type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
 
@@ -519,6 +522,7 @@ export default function BrowserClient() {
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
+        {lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : <>
         {active?.key === "tour"     && (
           <TourTask
             startAtHelp={tourWalkthroughDone}
@@ -540,6 +544,7 @@ export default function BrowserClient() {
           return TabComponent ? <TabComponent /> : null;
         })()}
         {showingNewTab && <NewTabPage />}
+        </>}
       </div>
 
       {tourWalkthroughStep !== null && (

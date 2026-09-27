@@ -21,6 +21,7 @@ export default function RightNowBar({
   stepIndex,
   stepCount,
   instruction,
+  goal,
   steps,
   onShowMe,
   showMeActive,
@@ -42,6 +43,7 @@ export default function RightNowBar({
   steps?: Localized<string>[];
   /** Explicit instruction, when a task doesn't pass `steps`. */
   instruction?: Localized<string>;
+  goal?: Localized<string>;
   /** Explicit step count, when a task doesn't pass `steps`. */
   stepCount?: number;
   lang?: Lang;
@@ -60,6 +62,8 @@ export default function RightNowBar({
   const count = stepCount ?? steps?.length ?? 1;
   const en = line.en;
   const es = line.es;
+  const goalEn = goal?.en;
+  const goalEs = goal?.es;
   const canShowMe = Boolean(onShowMe);
   const lit = Boolean(showMeActive);
 
@@ -86,13 +90,14 @@ export default function RightNowBar({
       stepIndex,
       stepCount: count,
       line: { en, es },
+      goal: goalEn && goalEs ? { en: goalEn, es: goalEs } : undefined,
       showMeActive: lit,
       canShowMe,
       canHelp,
       primaryLabel,
     });
     return () => reportStep(null, id);
-  }, [reportStep, id, taskKey, priority, stepIndex, count, en, es, lit, canShowMe, canHelp, primaryLabel]);
+  }, [reportStep, id, taskKey, priority, stepIndex, count, en, es, goalEn, goalEs, lit, canShowMe, canHelp, primaryLabel]);
 
   return null;
 }

@@ -9,6 +9,8 @@ const eslintConfig = defineConfig([
   globalIgnores([
     // Default ignores of eslint-config-next:
     ".next/**",
+    // Nested agent checkouts are separate projects, including generated Next files.
+    ".claude/worktrees/**",
     "out/**",
     "test-results/**",
     "playwright-report/**",

@@ -16,6 +16,9 @@ import type { LessonSave } from "@/app/lessons/useLessonSave";
  */
 export interface LessonValue {
   taskKey: TaskKey;
+  /** Follow-up index after the original task; completion waits for the last round. */
+  practiceRound?: number | null;
+  completePracticeRound?: (roundIndex: number) => void;
   title: Localized;
   /** Who the learner is and who the task names, for the info card. */
   scene: LessonScene;
