@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   MAIL_COPY,
@@ -29,6 +29,9 @@ import {
   sendsLinkNotFile,
   mailEtiquetteAnswersDarnell,
   callOutSickSaysCannotAttend,
+  attachSendProblem,
+  attachStarters,
+  ATTACH_CORRECTIONS,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
 import { formatInboxTime, inboxToday, HIRE_DAY } from "@/lib/story-calendar";
@@ -68,7 +71,8 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { useLesson } from "@/lib/lesson-context";
-import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyAccepted, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
+import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_CORRECTIONS, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyVerdict, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
+import { useJobCardOptional } from '@/lib/job-card-context';
 import { storage } from '@/lib/storage';
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
@@ -87,8 +91,7 @@ const MAIL_TASK_ORDER: MailTask[] = (LEVELS.flatMap((l) => taskKeysForLevel(l, n
 /**
  * "Click <the words actually on the button>." Built from the same copy the
  * button renders, in both languages, so the card can never name a control
- * that isn't there - job 2 reads Maria's mail behind a Continue button, not
- * a Reply one, and the card has to say so.
+ * that isn't there.
  */
 const clickLine = (label: Localized<string>): Localized<string> => ({
   en: `Click ${label.en}.`,
@@ -96,8 +99,6 @@ const clickLine = (label: Localized<string>): Localized<string> => ({
 });
 const BUTTON_LABEL = {
   reply: { en: MAIL_COPY.en.reply, es: MAIL_COPY.es.reply },
-  continue: { en: CONFIRM_COPY.en.continueLabel, es: CONFIRM_COPY.es.continueLabel },
-  replyAfterConfirm: { en: CONFIRM_COPY.en.replyAfterLabel, es: CONFIRM_COPY.es.replyAfterLabel },
 } as const;
 
 /** Steps per job, for the card's progress bars. */
@@ -132,6 +133,25 @@ function FilePreviewPane({ preview }: { preview?: FilePreview }) {
     );
   }
   return <PdfSheet doc={preview.doc} scale={0.6} stamp={preview.stamp} />;
+}
+
+/** A sent message as the finish screen shows it back. */
+function SentMessage({ to, subject, body, lang, attachment }: { to: string; subject: string; body: string; lang: "en" | "es"; attachment?: string }) {
+  return (
+    <div className="rounded-2xl border border-[#e0e3e8] bg-white px-4 py-3 text-[13px]">
+      <div className="text-[#5f6368]">
+        {lang === "en" ? "To" : "Para"}: <span className="text-[#1f1f1f]">{to}</span>
+      </div>
+      <div className="font-medium text-[#1f1f1f]">{subject}</div>
+      <p className="m-0 mt-2 whitespace-pre-line text-[14px] leading-relaxed text-[#1f1f1f]">{body}</p>
+      {attachment && (
+        <div className="mt-2 inline-flex items-center gap-2 rounded-lg border-2 border-[#1e8e3e] bg-[#e6f4ea] px-3 py-1.5">
+          <Paperclip size={14} strokeWidth={2} />
+          <span className="text-[13px] font-medium">{attachment}</span>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function isStoryMail(m: { key: string }): m is InboxRow {
@@ -195,6 +215,41 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
   const [replyAudience, setReplyAudience] = useState<"dana" | "all" | null>(null);
+  // The text of the last send that was refused. While the box still holds
+  // exactly that, the card keeps asking for the fix instead of saying "Click
+  // Send" over a correction that disagrees; and a refused send is what lets
+  // "On my own" offer the sentence starters.
+  const [rejectedBody, setRejectedBody] = useState<string | null>(null);
+  const [sendMissed, setSendMissed] = useState(false);
+  // The card's line changes with the refusal (off "Click Send"), and a
+  // correction belongs to the line it was raised on. So it is raised on the
+  // moment later, once the card is showing the new line; raised now, it would
+  // attach to "Click Send" and vanish with it.
+  const refuseSend = (message: { title: string; body: string }) => {
+    setRejectedBody(body);
+    setSendMissed(true);
+    setTimeout(() => recordWrong(message), 60);
+  };
+  const readyToSend = Boolean(body.trim()) && body !== rejectedBody;
+  const jobCard = useJobCardOptional();
+  // Where keyboard focus goes after the step the learner just took. Set in the
+  // click handler; the effect below moves focus once the new view is in the DOM.
+  const mailRoot = useRef<HTMLDivElement>(null);
+  const pendingFocus = useRef<string | null>(null);
+  const focusNext = (id: string) => {
+    pendingFocus.current = id;
+  };
+  useEffect(() => {
+    const id = pendingFocus.current;
+    if (!id) return;
+    const el = mailRoot.current?.querySelector<HTMLElement>(`[data-focus="${id}"], [data-showme="${id}"]`);
+    if (!el) return;
+    pendingFocus.current = null;
+    // A new section (the question, the reply box) opens below the email,
+    // often below the fold of the reading pane. Bring it into view too.
+    el.scrollIntoView({ block: "center" });
+    el.focus({ preventScroll: true });
+  });
   const skillKey = timeclockMailActive ? "timeclock" : activeMailTask;
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, rung, wrongCount, showMeTargetId, setShowMeTarget } =
     useSkillGuidance(skillKey);
@@ -215,6 +270,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       setConfirmPick(null);
       setBridgeOutEligible(false);
       setReplyAudience(null);
+      setRejectedBody(null);
+      setSendMissed(false);
     }
   }
 
@@ -226,7 +283,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const composeOnly = isComposeOnly(activeMailTask);
   const T = (en: string, es: string) => (lang === "en" ? en : es);
   const mailDone = completedTaskKeys.includes(activeMailTask);
-  const storyTodayDay = inboxToday(levelForTrack(currentTrack.key));
+  // Day One's replies happen the evening before the first shift ("Your first
+  // day is tomorrow"), so that evening is today: they stamp 6:02 PM, not
+  // Yesterday.
+  const storyTodayDay = opening ? HIRE_DAY - 1 : inboxToday(levelForTrack(currentTrack.key));
   const stamp = (row: { time: string; sentOn?: number }) =>
     row.sentOn != null
       ? formatInboxTime({ sentOn: row.sentOn, clock: row.time, today: storyTodayDay, lang })
@@ -257,7 +317,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       return Boolean(m.unread) && !readStoryKeys.includes(m.key) && !(view === "story" && openStory?.key === m.key);
     }
     if (m.isTarget) {
-      return Boolean(m.unread) && !mailDone && view !== "read" && view !== "compose" && view !== "done";
+      return Boolean(m.unread) && !mailDone && view !== "read" && view !== "confirm" && view !== "compose" && view !== "done" && view !== "opening-sent";
     }
     return Boolean(m.unread);
   }).length;
@@ -270,9 +330,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     activeMailTask === "mail-attach"
       ? view === "empty" || view === "story"
         ? 0
-        : view === "read" || view === "confirm"
-          ? 1
-          : attached
+        : view === "read"
+          ? 2
+          : view === "confirm"
+            ? 1
+            : attached
             ? 4
             : 3
       : Math.min(step, 4);
@@ -284,6 +346,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const openMail = () => {
     setView("read");
     advance(1);
+    focusNext("reply-button");
   };
   const wrongMail = (hint?: { en: string; es: string }) =>
     recordWrong({
@@ -305,6 +368,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     if (activeMailTask === "mail-attach") {
       setView("confirm");
       advance(2);
+      focusNext("confirm-question");
       return;
     }
     if (activeMailTask === "reply-all") {
@@ -313,6 +377,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     }
     setView("compose");
     advance(2);
+    focusNext("compose-body");
   };
   const wrongReplyAll = () =>
     recordWrong({
@@ -366,24 +431,24 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     markComplete(activeMailTask, badgeKey, submission);
   };
 
-  const pickConfirm = (option: { label: string; correct: boolean }) => {
+  // The right answer opens the reply straight away: the question stood
+  // between Reply and the reply box, so answering it is the way through.
+  const pickConfirm = (option: { label: string; correct: boolean; hint?: string }) => {
     setConfirmPick(option.label);
     if (!option.correct) {
-      recordWrong({ title: T("Not quite.", "No es así."), body: cc.wrongReply });
+      recordWrong({ title: T("Not quite.", "No es así."), body: option.hint ?? cc.wrongReply });
       return;
     }
-    advance(3);
-  };
-
-  const startAttachReply = () => {
     setView("compose");
     advance(3);
+    focusNext("attach-button");
   };
 
   const sendOpening = async () => {
     if (openingInFlight.current) return;
-    if (!openingReplyAccepted(openingMessage.id, body)) {
-      recordWrong({ title: T('One short reply.', 'Una respuesta corta.'), body: openingMessage.objective[lang] });
+    const verdict = openingReplyVerdict(openingMessage.id, body);
+    if (verdict !== 'ok') {
+      refuseSend({ title: T('One short reply.', 'Una respuesta corta.'), body: OPENING_CORRECTIONS[verdict][lang] });
       return;
     }
     openingInFlight.current = true;
@@ -398,6 +463,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       storage.remove(draftKey);
       dismiss();
       setShowMeTarget(null);
+      setRejectedBody(null);
       setView('opening-sent');
       if (openingIndex === 2) {
         const completed = await markComplete('mail-reply', 'answer_own_words');
@@ -418,20 +484,23 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setOpeningIndex(openingIndex + 1);
     setBody(''); setStep(0); setView('empty'); setOpenStory(null);
     setExplicitOpeningHelp(false); setHelp(false); setShowMeTarget(null); dismiss();
-    setOpeningSaveError(false);
+    setOpeningSaveError(false); setRejectedBody(null); setSendMissed(false);
+    focusNext('maria-row');
   };
 
   const trySend = () => {
     if (opening) { void sendOpening(); return; }
+    if (activeMailTask === "mail-attach") {
+      // Checked in the order the card asks: the file first, then the line.
+      const problem = attachSendProblem(body, attached);
+      if (problem) {
+        return refuseSend({ title: T("Not yet.", "Todavía no."), body: ATTACH_CORRECTIONS[problem][lang] });
+      }
+    }
     if (!body.trim())
       return recordWrong({
         title: T("Almost.", "Casi."),
         body: T("Write one short line first.", "Primero escribe una línea corta."),
-      });
-    if (activeMailTask === "mail-attach" && !attached)
-      return recordWrong({
-        title: T("Not yet.", "Todavía no."),
-        body: T("She asked for the file. Click Attach file.", "Ella pidió el archivo. Haz clic en Adjuntar archivo."),
       });
     if (activeMailTask === "reply-all") {
       if (replyAudience !== "dana") {
@@ -541,6 +610,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setOpenStory(null);
     setBridgeOutEligible(false);
     setReplyAudience(null);
+    setRejectedBody(null);
+    setSendMissed(false);
   };
 
   const notThisFolder = () =>
@@ -551,6 +622,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
 
   return (
     <div
+      ref={mailRoot}
       className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]"
       style={{ fontFamily: "Roboto, Arial, sans-serif" }}
     >
@@ -614,7 +686,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
             </div>
             <div className="flex-1 overflow-y-auto">
               {inbox.map((m) => {
-                const mariaOpen = view === "read" || view === "confirm" || view === "compose" || view === "done";
+                // Answered counts as opened: a replied-to email is not bold.
+                const mariaOpen = view === "read" || view === "confirm" || view === "compose" || view === "done" || view === "opening-sent";
                 const storyOpen = view === "story" && openStory?.key === m.key;
                 const storyRead = Boolean("story" in m && m.story) && (storyOpen || readStoryKeys.includes(m.key));
                 const unread = Boolean(m.unread) && !(m.isTarget && (mariaOpen || mailDone)) && !storyRead;
@@ -749,46 +822,43 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     : MAIL_JOB_CARD_STEPS.attachPick
                 : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
                   ? MAIL_JOB_CARD_STEPS.replyAllEdit
-                  : !body.trim()
+                  : !(needsAttach ? readyToSend : body.trim())
                     ? activeMailTask === "mail-etiquette"
                       ? MAIL_JOB_CARD_STEPS.writeEtiquette
                       : MAIL_JOB_CARD_STEPS.writeForTask[activeMailTask] ?? MAIL_JOB_CARD_STEPS.write
                     : MAIL_JOB_CARD_STEPS.send;
-              const confirmAnswered =
-                Boolean(confirmPick) && cc.options.some((o) => o.correct && o.label === confirmPick);
               const instruction =
                 view === "empty" || view === "story"
                   ? MAIL_JOB_CARD_STEPS.openMail[activeMailTask]
                   : view === "read"
-                    // Job 2 goes through a comprehension check first, so its
-                    // button here says Continue, not Reply. Reply-all names
-                    // the safer button so the card does not say Reply all.
+                    // Reply-all names the safer button so the card does not
+                    // say Reply all.
                     ? activeMailTask === "reply-all"
                       ? { en: "Click Reply. Not Reply all.", es: "Haz clic en Responder. No en Responder a todos." }
-                      : clickLine(needsAttach ? BUTTON_LABEL.continue : BUTTON_LABEL.reply)
+                      : clickLine(BUTTON_LABEL.reply)
                     : view === "confirm"
-                      ? confirmAnswered
-                        ? clickLine(BUTTON_LABEL.replyAfterConfirm)
-                        : MAIL_JOB_CARD_STEPS.confirm
+                      ? MAIL_JOB_CARD_STEPS.confirm
                       : composeLine;
               const stepIndex =
                 view === "empty" || view === "story" ? 0 : view === "read" ? 1 : view === "confirm" ? 2 : stepCount - 1;
+              // On a choice, Show me points at the evidence (the line of
+              // the email, the page in the preview), never at the answer.
               const showMeId =
                 (view === "empty" || view === "story")
                   ? "maria-row"
                   : view === "read"
                     ? "reply-button"
                     : view === "confirm"
-                      ? confirmAnswered
-                        ? "reply-after-confirm"
-                        : "confirm-correct"
+                      ? "attach-ask"
                       : needsAttach && !attached
                         ? !picker
                           ? "attach-button"
                           : pickedTarget
                             ? "attach-confirm"
-                            : "attach-file"
-                        : body.trim()
+                            : pickerPick
+                              ? "attach-preview"
+                              : "attach-list"
+                        : (opening || needsAttach ? readyToSend : body.trim())
                           ? "send-button"
                           : "compose-body";
               return (
@@ -799,7 +869,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   icon={TASK_ICONS.mail}
                   stepIndex={stepIndex}
                   stepCount={stepCount}
-                  instruction={opening ? openingSaving ? { en: 'Saving your reply…', es: 'Guardando tu respuesta…' } : openingSaveError ? { en: 'Your reply could not be saved. Try again.', es: 'No se pudo guardar tu respuesta. Inténtalo de nuevo.' } : openingInstruction(openingIndex, view, Boolean(body.trim()), explicitOpeningHelp || lessonRun?.mode === "guided") : instruction}
+                  instruction={opening ? openingSaving ? { en: 'Saving your reply…', es: 'Guardando tu respuesta…' } : openingSaveError ? { en: 'Your reply could not be saved. Try again.', es: 'No se pudo guardar tu respuesta. Inténtalo de nuevo.' } : openingInstruction(openingIndex, view, readyToSend, explicitOpeningHelp || lessonRun?.mode === "guided") : instruction}
                   primaryLabel={opening && openingSaveError ? T('Retry save', 'Reintentar guardado') : undefined}
                   onPrimary={opening && openingSaveError ? () => void sendOpening() : undefined}
                   lang={lang}
@@ -880,9 +950,22 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     </div>
                     <div className="text-[12px] text-[#5f6368]">{T("to me", "para mí")}</div>
                     <div className="mt-4 flex max-w-[62ch] flex-col gap-3 text-[14px] leading-[1.6] text-[#1f1f1f]">
-                      {(opening ? letterBody(openingMessage.sender.name, openingLines(openingMessage, lang), lang, displayName) : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain).map((p, i) => (
-                        <p key={i} className="m-0">{p}</p>
-                      ))}
+                      {(() => {
+                        const lines = opening ? letterBody(openingMessage.sender.name, openingLines(openingMessage, lang), lang, displayName) : bodyForTask(activeMailTask as Exclude<MailTask, "call-out-sick" | "mail-send-link" | "reply-all">, lang, displayName).plain;
+                        if (activeMailTask !== "mail-attach") return lines.map((p, i) => <p key={i} className="m-0">{p}</p>);
+                        // The attach question's evidence: Show me lights up the
+                        // two lines that answer it (which month and when; final,
+                        // not the draft), never the answer button.
+                        return (
+                          <>
+                            <p className="m-0">{lines[0]}</p>
+                            <div data-showme="attach-ask" className="flex flex-col gap-3">
+                              {lines.slice(1, 3).map((p, i) => <p key={i} className="m-0">{p}</p>)}
+                            </div>
+                            {lines.slice(3).map((p, i) => <p key={i} className="m-0">{p}</p>)}
+                          </>
+                        );
+                      })()}
                     </div>
                     {senderSig && <MailSignature sig={senderSig} lang={lang} />}
                   </div>
@@ -897,7 +980,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       onClick={startReply}
                       className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
                     >
-                      {activeMailTask === "mail-attach" ? cc.continueLabel : c.reply}
+                      {c.reply}
                     </button>
                     {activeMailTask === "mail-reply" && (
                       <button
@@ -920,12 +1003,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
 
                 {view === "confirm" && (
                   <div className="mt-6 max-w-[62ch] pl-[52px]">
-                    <p className="mb-3 text-[15px] font-medium text-[#1f1f1f]">{cc.question}</p>
+                    <p data-focus="confirm-question" tabIndex={-1} className="mb-3 text-[15px] font-medium text-[#1f1f1f] outline-none">{cc.question}</p>
                     <div className="flex flex-col gap-2">
                       {cc.options.map((opt) => (
                         <button
                           key={opt.label}
-                          data-showme={opt.correct ? "confirm-correct" : undefined}
                           onClick={() => pickConfirm(opt)}
                           className={`rounded-xl border px-4 py-3 text-left text-[14px] font-medium cursor-pointer ${
                             confirmPick === opt.label
@@ -939,21 +1021,12 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         </button>
                       ))}
                     </div>
-                    {confirmPick && cc.options.some((o) => o.correct && o.label === confirmPick) && (
-                      <div className="mt-4 flex flex-col gap-3">
-                        <p className="text-[14px] text-[#1e8e3e]">{cc.correctReply}</p>
-                        <button
-                          data-showme="reply-after-confirm"
-                          onClick={startAttachReply}
-                          className="inline-flex min-h-[40px] w-fit items-center gap-2 rounded-full border border-[#747775] px-5 text-[14px] font-medium text-[#0b57d0] hover:bg-[#f2f6fc] cursor-pointer"
-                        >
-                          {cc.replyAfterLabel}
-                        </button>
-                      </div>
-                    )}
                   </div>
                 )}
 
+                {view === "compose" && activeMailTask === "mail-attach" && (
+                  <p className="mt-6 mb-0 ml-[52px] text-[14px] text-[#1e8e3e]">{cc.correctReply}</p>
+                )}
                 {view === "compose" && (
                   <div className="mt-6 ml-[52px] overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
                     <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
@@ -981,7 +1054,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     <div className="flex flex-wrap items-center gap-2 px-4 pb-2">
                       <NeedAStart
                         lang={lang}
-                        starters={opening ? [openingMessage.starter[lang]] : STARTERS[activeMailTask][lang]}
+                        // Frames with a blank, not the answer; "On my own" keeps
+                        // them hidden until a send has been refused.
+                        starters={opening ? [openingMessage.frame[lang]] : activeMailTask === "mail-attach" ? attachStarters(lang, attached) : STARTERS[activeMailTask][lang]}
+                        missed={opening || activeMailTask === "mail-attach" ? sendMissed : undefined}
                         onPick={(s) => {
                           const draft = (body ? body + ' ' : '') + s;
                           setBody(draft);
@@ -1034,6 +1110,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                           setBody("");
                           if (opening) storage.remove(draftKey);
                           setAttached(false);
+                          focusNext("reply-button");
                         }}
                         className="min-h-[36px] px-3 text-[13px] text-[#5f6368] hover:bg-[#f2f6fc] rounded-full cursor-pointer"
                       >
@@ -1095,6 +1172,22 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               return (
               <div className="flex flex-col gap-5 p-6 sm:p-8">
                 <TaskDoneCard kicker={dc.kicker} compact />
+                {/* What was sent, so the finish shows the work, not only a badge. */}
+                {opening && openingReplies.length > 0 && (
+                  <div data-testid="sent-messages" className="flex flex-col gap-3">
+                    {OPENING_MESSAGES.map((m) => {
+                      const r = openingReplies.find((x) => x.messageId === m.id);
+                      return r ? (
+                        <SentMessage key={m.id} to={m.sender.name} subject={`Re: ${m.subject[lang]}`} body={r.response} lang={lang} />
+                      ) : null;
+                    })}
+                  </div>
+                )}
+                {activeMailTask === "mail-attach" && body.trim() && (
+                  <div data-testid="sent-messages">
+                    <SentMessage to={CAST.maria.name} subject={subjectMeta.reSubject} body={body} lang={lang} attachment={`${ATTACH_TARGET.label} · ${ATTACH_TARGET_SIZE}`} />
+                  </div>
+                )}
                 {showBridgeOut && (
                   <BridgeOutCard
                     copy={bridgeOutCopyFor(activeMailTask)}
@@ -1134,15 +1227,28 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           onCancel={() => {
             setPicker(false);
             setPickerPick(null);
+            focusNext("attach-button");
           }}
           cancelLabel={c.cancel}
           preview={{
             selectedKey: pickerPick,
-            onFocus: (item) => setPickerPick(item.key),
-            render: (item) => <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} />,
+            onFocus: (item) => {
+              // A new page in the preview: "That page says June" no longer
+              // describes what is showing, even when chosen by keyboard.
+              if (item.key !== pickerPick) {
+                dismiss();
+                jobCard?.clearCorrection();
+              }
+              setPickerPick(item.key);
+            },
+            render: (item) => (
+              <div data-showme="attach-preview" className="self-start">
+                <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} />
+              </div>
+            ),
             empty: c.pickerEmpty,
             confirmLabel: c.attachConfirm,
-            showMeRow: "attach-file",
+            showMeList: "attach-list",
             showMeConfirm: "attach-confirm",
           }}
           onSelect={(item) => {
@@ -1150,7 +1256,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               setAttached(true);
               setPicker(false);
               setPickerPick(null);
+              setRejectedBody(null);
               advance(4);
+              focusNext(body.trim() ? "send-button" : "compose-body");
             } else if (item.wrongHint) {
               recordWrong({ title: T("Not that one.", "Ese no es."), body: item.wrongHint[lang] });
             }

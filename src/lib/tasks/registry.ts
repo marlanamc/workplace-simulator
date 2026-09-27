@@ -169,7 +169,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes, 8:14 AM. Maria te da la bienvenida.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "You have 3 new emails. Answer each one.", es: "Tienes 3 correos nuevos. Contesta cada uno." },
+    // The inbox shows one new email at a time, so the card never promises three at once.
+    jobCardLine: { en: "Answer Maria's new email. More will come, one at a time.", es: "Contesta el correo nuevo de Maria. Van a llegar más, uno a la vez." },
     jobCardDoneLine: { en: "Three replies sent. You're ready for tomorrow.", es: "Tres respuestas enviadas. Ya estás listo para mañana." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
@@ -186,9 +187,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { name: "Darnell Washington", role: { en: "A coworker. He works mornings too.", es: "Un compañero. También trabaja en las mañanas." } },
         ],
         need: {
-          en: "You have 3 short emails, 2 from Maria and 1 from Darnell. Write a short answer to each one.",
-          es: "Tienes 3 correos cortos, 2 de Maria y 1 de Darnell. Escribe una respuesta corta a cada uno.",
+          en: "3 short emails will come, one at a time: 2 from Maria and 1 from Darnell. Write a short answer to each one.",
+          es: "Van a llegar 3 correos cortos, uno a la vez: 2 de Maria y 1 de Darnell. Escribe una respuesta corta a cada uno.",
         },
+      },
+      takeaway: {
+        en: "A good work reply is short: say hello, answer the question, and sign your name.",
+        es: "Una buena respuesta de trabajo es corta: saluda, contesta la pregunta y firma con tu nombre.",
       },
       guide: {
         skills: [
@@ -204,8 +209,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         stickingPoints: [
           { en: "The inbox also has two older emails from IT and HR. Opening them is fine and nothing is marked wrong. Ask: who sent this email? What is the subject?", es: "La bandeja también tiene dos correos anteriores de sistemas y RR.HH. Abrirlos está bien y no se marca nada como error. Pregunta: ¿quién envió este correo? ¿Cuál es el asunto?" },
           { en: "Maria's emails carry real first-day details (the address, what to wear, what to bring). The reply only needs to answer the question.", es: "Los correos de Maria traen detalles reales del primer día (la dirección, qué ponerse, qué traer). La respuesta solo necesita contestar la pregunta." },
-          { en: "The second email asks them to confirm 10 AM. A reply that says they can't come does not pass (\"No problem\" is fine). Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Una respuesta que dice que no pueden venir no se acepta (\"Sin problema\" sí). Pregunta: ¿qué quiere saber Maria?" },
-          { en: "The third email is from Darnell. The reply must say the bag goes on the shelf under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
+          { en: "The second email asks them to confirm 10 AM. Any honest yes passes (\"I can come\", \"Of course\", \"Sounds good\", \"No problem\"). A reply that says they can't come, will be late, or names another time gets a correction that says which. Ask: what does Maria want to know?", es: "El segundo correo pide confirmar las 10 a. m. Cualquier sí pasa (\"Puedo ir\", \"Claro\", \"No te preocupes\", \"Sin problema\"). Si la respuesta dice que no pueden, que van a llegar tarde o da otra hora, la corrección dice cuál es el problema. Pregunta: ¿qué quiere saber Maria?" },
+          { en: "The third email is from Darnell. The reply must say the bag goes on the shelf or under the counter. Ask: where will you put your bag?", es: "El tercer correo es de Darnell. La respuesta debe decir que la bolsa va en el estante o debajo del mostrador. Pregunta: ¿dónde vas a dejar tu bolsa?" },
+          { en: "\"Need help writing?\" offers a sentence with a blank (___) to fill in, not the answer. In On my own mode it appears only after a send is refused.", es: "\"¿Necesitas ayuda para escribir?\" ofrece una frase con un espacio (___) para completar, no la respuesta. En el modo Por mi cuenta aparece solo después de un envío rechazado." },
         ],
         followUp: [
           { en: "Who sends you emails or texts that need an answer? How fast do you answer?", es: "¿Quién te envía correos o mensajes que necesitan respuesta? ¿Qué tan rápido contestas?" },
@@ -230,15 +236,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Send the report with the file", es: "Envía el reporte con el archivo" },
     dispatch: {
-      en: "Maria needs the July safety report. Read what she asks, then attach it.",
-      es: "Maria necesita el reporte de julio. Lee qué pide y adjúntalo.",
+      en: "Maria needs a report. Read what she asks, then attach it.",
+      es: "Maria necesita un reporte. Lee qué pide y adjúntalo.",
     },
     skill: { en: "Send a reply with a file attached", es: "responder con un archivo adjunto" },
     bookmarkLabel: "Mail",
     handoffCta: { en: "Next: Send the report", es: "Siguiente: Envía el reporte" },
     shiftMoment: { en: "Wednesday, 10:10 AM. She needs a file.", es: "Miércoles, 10:10 AM. Necesita un archivo." },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Maria needs the July safety report.", es: "Maria necesita el reporte de julio." },
+    jobCardLine: { en: "Maria needs a file. Read her email, then send it.", es: "Maria necesita un archivo. Lee su correo y envíaselo." },
     jobCardDoneLine: { en: "Sent, with the file.", es: "Enviado, con el archivo." },
     lesson: {
       title: { en: "Attach a file to an email", es: "Adjuntar un archivo a un correo" },
@@ -252,9 +258,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
         people: [{ name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "Maria sent you an email. She needs the July safety report by 3 PM. The report is a file in your Downloads folder, next to a draft and other files. You will send her the right one.",
-          es: "Maria te envió un correo. Necesita el reporte de seguridad de julio antes de las 3 PM. El reporte es un archivo en tu carpeta Descargas, junto a un borrador y otros archivos. Le vas a enviar el correcto.",
+          en: "Maria sent you an email. She needs a safety report from your Downloads folder. There are several reports there. Read her email to find out which one, then send it to her.",
+          es: "Maria te envió un correo. Necesita un reporte de seguridad de tu carpeta Descargas. Ahí hay varios reportes. Lee su correo para saber cuál, y luego envíaselo.",
         },
+      },
+      takeaway: {
+        en: "Before you send a file, look at it: the right month, no DRAFT, and the file name in the green box.",
+        es: "Antes de enviar un archivo, míralo: el mes correcto, sin DRAFT (borrador) y el nombre del archivo en la caja verde.",
       },
       guide: {
         skills: [
@@ -269,7 +279,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         stickingPoints: [
           { en: "The inbox has other real emails (a milk delivery, IT, HR). Opening them is fine and nothing is marked wrong. Ask: which email is about the safety report?", es: "La bandeja tiene otros correos reales (una entrega de leche, sistemas, RR.HH.). Abrirlos está bien y no se marca nada como error. Pregunta: ¿cuál correo habla del reporte de seguridad?" },
-          { en: "The picker shows each file's first page. Some learners attach the July DRAFT or the June report. Ask: what month is at the top? Do you see the red DRAFT stamp?", es: "La ventana muestra la primera página de cada archivo. Algunos adjuntan el BORRADOR de julio o el reporte de junio. Pregunta: ¿qué mes dice arriba? ¿Ves el sello rojo DRAFT?" },
+          { en: "After Reply, a question asks what Maria needs. All three answers are safety reports; only her email (month, final or draft, when) tells them apart. Show me lights up her email, not the answer.", es: "Después de Responder, una pregunta dice qué necesita Maria. Las tres respuestas son reportes de seguridad; solo su correo (el mes, final o borrador, cuándo) las distingue. Muéstrame ilumina su correo, no la respuesta." },
+          { en: "The picker shows each file's first page. Some learners attach the July DRAFT or the June report (double-clicking a file attaches it too). Ask: what month is at the top? Do you see the red DRAFT stamp?", es: "La ventana muestra la primera página de cada archivo. Algunos adjuntan el BORRADOR de julio o el reporte de junio (hacer doble clic en un archivo también lo adjunta). Pregunta: ¿qué mes dice arriba? ¿Ves el sello rojo DRAFT?" },
           { en: "The report is in English, like most US workplace files. Spanish readers look for July = julio and DRAFT = borrador.", es: "El reporte está en inglés, como la mayoría de los archivos de trabajo en EE. UU. Quienes leen en español buscan July = julio y DRAFT = borrador." },
           { en: "Some learners write a message and click Send with no file. Ask: do you see the file name in the green box?", es: "Algunos escriben el mensaje y hacen clic en Enviar sin el archivo. Pregunta: ¿ves el nombre del archivo en la caja verde?" },
         ],

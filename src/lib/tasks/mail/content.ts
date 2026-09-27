@@ -68,8 +68,8 @@ export const MAIL_JOB_CARD_STEPS: {
   openMail: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": {
-      en: "Open Maria's email: Need the July safety report today.",
-      es: "Abre el correo de Maria: Necesito el reporte de seguridad de julio hoy.",
+      en: "Open Maria's email: Safety report for the district.",
+      es: "Abre el correo de Maria: Reporte de seguridad para el distrito.",
     },
     // Compose-only jobs have no email to open, so their openMail lines are unused.
     "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
@@ -210,39 +210,61 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
   },
 };
 
-/** Comprehension check before the attach reply — "what does she need?" */
+/**
+ * Comprehension check before the attach reply: "what does she need?" Every
+ * option is a safety report due soon, so the subject line settles none of
+ * them. Telling them apart takes the email: the month (first line), final vs.
+ * draft (second paragraph), and when. The right one is not listed first.
+ * Each wrong option carries a hint that sends the learner back to the line
+ * that rules it out.
+ */
 export const CONFIRM_COPY: Record<Lang, {
   question: string;
-  options: { label: string; correct: boolean }[];
+  options: { label: string; correct: boolean; hint?: string }[];
   correctReply: string;
   wrongReply: string;
-  continueLabel: string;
-  replyAfterLabel: string;
 }> = {
   en: {
     question: "What does Maria need?",
     options: [
-      { label: "The July safety report, today", correct: true },
-      { label: "Help closing the cafe tonight", correct: false },
-      { label: "A new work schedule", correct: false },
+      { label: "The July draft report, by next week", correct: false, hint: "Read the second part again. Does she want the draft? And when does she need it?" },
+      { label: "The final July report, today by 3 PM", correct: true },
+      { label: "The June report, today by 3 PM", correct: false, hint: "Read her first line again. Which month does she ask for?" },
     ],
-    correctReply: "That's it. She needs the July safety report, today.",
+    correctReply: "That's it. She needs the final July report, today by 3 PM.",
     wrongReply: "Read it again. Look for what she's asking for and when.",
-    continueLabel: "Continue",
-    replyAfterLabel: "Reply with the file",
   },
   es: {
     question: "¿Qué necesita Maria?",
     options: [
-      { label: "El reporte de seguridad de julio, hoy", correct: true },
-      { label: "Ayuda para cerrar el café esta noche", correct: false },
-      { label: "Un nuevo horario de trabajo", correct: false },
+      { label: "El borrador del reporte de julio, para la próxima semana", correct: false, hint: "Lee otra vez la segunda parte. ¿Quiere el borrador? ¿Y para cuándo lo necesita?" },
+      { label: "El reporte final de julio, hoy antes de las 3 PM", correct: true },
+      { label: "El reporte de junio, hoy antes de las 3 PM", correct: false, hint: "Lee otra vez su primera línea. ¿Qué mes pide?" },
     ],
-    correctReply: "Así es. Necesita el reporte de seguridad de julio, hoy.",
+    correctReply: "Así es. Necesita el reporte final de julio, hoy antes de las 3 PM.",
     wrongReply: "Léelo otra vez. Busca qué pide y cuándo lo necesita.",
-    continueLabel: "Continuar",
-    replyAfterLabel: "Responder con el archivo",
   },
+};
+
+/** Why a mail-attach Send is refused, checked in the order the Job Card asks for things. */
+export type AttachSendProblem = "not-attached-says-attached" | "not-attached" | "empty" | "blank";
+export function attachSendProblem(body: string, attached: boolean): AttachSendProblem | null {
+  if (!attached) return saysAttached(body) ? "not-attached-says-attached" : "not-attached";
+  if (!body.trim()) return "empty";
+  if (/_{2,}/.test(body)) return "blank";
+  return null;
+}
+export const ATTACH_CORRECTIONS: Record<AttachSendProblem, Localized> = {
+  "not-attached-says-attached": {
+    en: "Your message says the file is attached, but nothing is attached yet. Click Attach file.",
+    es: "Tu mensaje dice que el archivo está adjunto, pero todavía no hay nada adjunto. Haz clic en Adjuntar archivo.",
+  },
+  "not-attached": {
+    en: "She asked for the file. Click Attach file.",
+    es: "Ella pidió el archivo. Haz clic en Adjuntar archivo.",
+  },
+  empty: { en: "The file is attached. Now write one short line to Maria.", es: "El archivo ya está adjunto. Ahora escríbele una línea corta a Maria." },
+  blank: { en: "Fill in the blank (___) with your own words.", es: "Completa el espacio (___) con tus propias palabras." },
 };
 
 /** Per-job done-screen copy. */
@@ -389,13 +411,13 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
   },
   "mail-attach": {
     en: {
-      subject: "Need the July safety report today",
-      reSubject: "Re: Need the July safety report today",
+      subject: "Safety report for the district",
+      reSubject: "Re: Safety report for the district",
       preview: "Can you send me the July safety report today?",
     },
     es: {
-      subject: "Necesito el reporte de seguridad de julio hoy",
-      reSubject: "Re: Necesito el reporte de seguridad de julio hoy",
+      subject: "Reporte de seguridad para el distrito",
+      reSubject: "Re: Reporte de seguridad para el distrito",
       preview: "¿Me puedes enviar hoy el reporte de seguridad de julio?",
     },
   },
@@ -868,15 +890,15 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
     ],
   },
   "mail-attach": {
+    // Frames, not answers: the learner names the report. "I attached the
+    // file" is only offered once a file is attached (see attachStarters).
     en: [
-      "Hi Maria, here is the July safety report.",
-      "Yes, I can send it today.",
+      "Hi Maria, here is the ___ safety report.",
       "I attached the file to this email.",
       "Let me know if you need anything else.",
     ],
     es: [
-      "Hola Maria, aquí está el reporte de seguridad de julio.",
-      "Sí, puedo enviarlo hoy.",
+      "Hola Maria, aquí está el reporte de seguridad de ___.",
       "Adjunté el archivo a este correo.",
       "Avísame si necesitas algo más.",
     ],
@@ -894,6 +916,12 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
     ],
   },
 };
+
+/** The attach job's starters: a line saying "attached" only once it is true. */
+export function attachStarters(lang: Lang, attached: boolean): string[] {
+  const all = STARTERS["mail-attach"][lang];
+  return attached ? all : all.filter((s) => !saysAttached(s));
+}
 
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [

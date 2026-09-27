@@ -1,5 +1,6 @@
 import { CAST } from '@/lib/cast';
 import type { Lang, Localized } from '@/lib/task-types';
+import { bagVerdict, hasBlank, startTimeVerdict, type BagVerdict, type StartTimeVerdict } from '@/lib/tasks/mail/reply-grading';
 
 export const OPENING_IDS = ['welcome', 'start-time', 'cups'] as const;
 export type OpeningMessageId = typeof OPENING_IDS[number];
@@ -27,6 +28,7 @@ export const OPENING_MESSAGES = [
     ),
     objective: copy('Reply to Maria with a short hello.', 'Responde a Maria con un saludo corto.'),
     starter: copy('Hi Maria, thank you!', '¡Hola Maria, gracias!'),
+    frame: copy('Hi Maria, thank you!', '¡Hola Maria, gracias!'),
   },
   {
     id: 'start-time', sender: CAST.maria, time: '6:09 PM',
@@ -38,6 +40,7 @@ export const OPENING_MESSAGES = [
     ),
     objective: copy('Confirm to Maria that you will be here tomorrow at 10 AM.', 'Confirma a Maria que estarás aquí mañana a las 10 a. m.'),
     starter: copy('Yes, I will be there.', 'Sí, allí estaré.'),
+    frame: copy('Hi Maria, I ___ be there at 10 AM.', 'Hola Maria, ___ allí a las 10 a. m.'),
   },
   {
     id: 'cups', sender: CAST.darnell, time: '6:15 PM',
@@ -49,8 +52,9 @@ export const OPENING_MESSAGES = [
     ),
     objective: copy('Tell Darnell you will put your bag on the shelf under the counter.', 'Dile a Darnell que dejarás tu bolsa en el estante debajo del mostrador.'),
     starter: copy('I will put it on the shelf under the counter.', 'La dejaré en el estante debajo del mostrador.'),
+    frame: copy('Hi Darnell, I will put my bag ___.', 'Hola Darnell, voy a dejar mi bolsa ___.'),
   },
-] satisfies Array<{ id: OpeningMessageId; sender: typeof CAST.maria; time: string; subject: Localized; body: Localized; more: Record<Lang, string[]>; objective: Localized; starter: Localized }>;
+] satisfies Array<{ id: OpeningMessageId; sender: typeof CAST.maria; time: string; subject: Localized; body: Localized; more: Record<Lang, string[]>; objective: Localized; starter: Localized; frame: Localized }>;
 
 /**
  * `body` is the one line the reply answers (it is also the inbox preview);
@@ -65,26 +69,47 @@ export function nextOpeningIndex(replies: Pick<OpeningReply, 'messageId'>[]): nu
   return next === -1 ? OPENING_IDS.length : next;
 }
 
-const normalized = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[’‘]/g, "'").trim();
-/** Bounded content checks, not a grammar, spelling, or tone assessment. */
-export function openingReplyAccepted(id: OpeningMessageId, response: string): boolean {
-  // "No problem" and "not late" are yeses. Take them out before looking for a no.
-  const text = normalized(response)
-    .replace(/\b(no problem|no worries|not a problem|(will not|won't|not) be late|not late|no hay problema|sin problema|no voy a llegar tarde|no llegare tarde)\b/g, ' ok ')
-    .trim();
-  if (!text) return false;
-  if (id === 'welcome') return true;
-  if (id === 'start-time') {
-    if (/\b(no|not|can't|cannot|won't|unable|never|nunca)\b/.test(text)) return false;
-    return /\b(yes|yeah|yep|sure|ok|okay|confirmed|confirm|absolutely|certainly|si|claro|vale|confirmo|confirmado|perfecto|entendido)\b/.test(text)
-      || /\b(i'll|i will|see you|be there|count me in|estare|alli estare|nos vemos|ahi estare|cuenta conmigo)\b/.test(text);
-  }
-  if (/\b(not|no|never|won't|can't|cannot|nunca)\b/.test(text)) return false;
-  // Darnell named the shelf, so "on the shelf" answers him too.
-  return /\b(under|undr|below|beneath|underneath)\b.{0,35}\b(counter|conter|worktop)\b/.test(text)
-    || /\b(debajo|bajo)\b.{0,35}\b(mostrador|meson|barra|encimera)\b/.test(text)
-    || /\b(shelf|shelves|estante|repisa)\b/.test(text);
+/**
+ * Why a reply was not accepted, or "ok". Bounded content checks, not a
+ * grammar, spelling, or tone assessment; the rules live in reply-grading.ts.
+ */
+export type OpeningVerdict = 'ok' | 'empty' | 'blank' | Exclude<StartTimeVerdict, 'ok' | 'empty' | 'blank'> | Exclude<BagVerdict, 'ok' | 'empty' | 'blank'>;
+export function openingReplyVerdict(id: OpeningMessageId, response: string): OpeningVerdict {
+  if (id === 'start-time') return startTimeVerdict(response);
+  if (id === 'cups') return bagVerdict(response);
+  if (!response.trim()) return 'empty';
+  return hasBlank(response) ? 'blank' : 'ok';
 }
+export function openingReplyAccepted(id: OpeningMessageId, response: string): boolean {
+  return openingReplyVerdict(id, response) === 'ok';
+}
+
+/** The Job Card correction for each rejected reply: it names what is missing. */
+export const OPENING_CORRECTIONS: Record<Exclude<OpeningVerdict, 'ok'>, Localized> = {
+  empty: copy('Write a short reply in the box first.', 'Primero escribe una respuesta corta en la caja.'),
+  blank: copy('Fill in the blank (___) with your own words.', 'Completa el espacio (___) con tus propias palabras.'),
+  declines: copy(
+    "Your reply says you can't come. In this practice, you can come. Tell Maria yes: you will be there at 10 AM.",
+    'Tu respuesta dice que no puedes ir. En esta práctica, sí puedes ir. Dile a Maria que sí: vas a estar ahí a las 10 a. m.',
+  ),
+  late: copy(
+    'Your reply says you will be late. Maria asked about 10 AM. Tell her you will be there at 10.',
+    'Tu respuesta dice que vas a llegar tarde. Maria preguntó por las 10 a. m. Dile que vas a estar ahí a las 10.',
+  ),
+  'other-time': copy('Maria said 10 AM. Check the time in your reply.', 'Maria dijo 10 a. m. Revisa la hora en tu respuesta.'),
+  unclear: copy(
+    'Maria asked a yes-or-no question: will you be here at 10 AM? Answer it. You can start with Yes.',
+    'Maria hizo una pregunta de sí o no: ¿vas a estar ahí a las 10 a. m.? Contéstala. Puedes empezar con Sí.',
+  ),
+  'wrong-place': copy(
+    'Darnell asked where you will put your bag. Read his email again and name the place.',
+    'Darnell preguntó dónde vas a dejar tu bolsa. Lee su correo otra vez y di el lugar.',
+  ),
+  negated: copy(
+    'Your reply says you will not put it there. Tell Darnell where you will put your bag.',
+    'Tu respuesta dice que no la vas a dejar ahí. Dile a Darnell dónde vas a dejar tu bolsa.',
+  ),
+};
 
 export function openingInstruction(index: number, view: string, hasText: boolean, explicit: boolean): Localized {
   const message = OPENING_MESSAGES[index];

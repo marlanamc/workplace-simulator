@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import type { PickableItem } from "@/lib/task-types";
 
 /**
@@ -32,8 +32,12 @@ export default function PickerModal({
     /** Shown before any file is selected. */
     empty: string;
     confirmLabel: string;
-    /** `data-showme` ids, so the Job Card's Show me can point here. */
-    showMeRow?: string;
+    /**
+     * `data-showme` ids, so the Job Card's Show me can point here. The list
+     * id marks the whole file list, not the right file: Show me helps the
+     * learner find where to look, not what to choose.
+     */
+    showMeList?: string;
     showMeConfirm?: string;
   };
 }) {
@@ -44,6 +48,12 @@ export default function PickerModal({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onCancel]);
+
+  // Keyboard users land in the list, not back on the page behind the dialog.
+  const list = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    list.current?.querySelector<HTMLElement>("button")?.focus();
+  }, []);
 
   const selected = preview ? items.find((i) => i.key === preview.selectedKey) ?? null : null;
 
@@ -59,7 +69,7 @@ export default function PickerModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`flex w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl animate-fade-up ${preview ? "max-w-[860px]" : "max-w-[560px]"}`}
+        className={`flex max-h-full w-full flex-col overflow-hidden rounded-2xl bg-white shadow-2xl animate-fade-up ${preview ? "max-w-[860px]" : "max-w-[560px]"}`}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-3 border-b border-border px-5 py-3.5">
@@ -73,7 +83,8 @@ export default function PickerModal({
             ✕
           </button>
         </div>
-        <div className="flex min-h-0">
+        {/* Short screens (150% zoom) shrink the list and page, so Attach stays on screen. */}
+        <div className="flex min-h-0 flex-1">
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between border-b border-border px-5 py-2 text-[12px] font-medium text-text-tertiary">
               <span>{categoryLabel}</span>
@@ -83,15 +94,17 @@ export default function PickerModal({
                 ))}
               </div>
             </div>
-            <div className={`overflow-y-auto ${preview ? "max-h-[420px]" : "max-h-[300px]"}`}>
+            <div ref={list} data-showme={preview?.showMeList} className={`overflow-y-auto ${preview ? "max-h-[min(420px,calc(100dvh-190px))]" : "max-h-[300px]"}`}>
               {items.map((item) => {
                 const isSelected = selected?.key === item.key;
                 return (
                   <button
                     key={item.key}
-                    data-showme={preview && item.isTarget ? preview.showMeRow : undefined}
                     aria-pressed={preview ? isSelected : undefined}
                     onClick={() => (preview ? preview.onFocus(item) : onSelect(item))}
+                    // Beginners double-click files, as on a desktop. In a
+                    // real picker that opens (here: attaches) the file.
+                    onDoubleClick={() => preview && onSelect(item)}
                     className={`flex w-full items-center justify-between gap-3 border-b border-surface-muted px-5 py-3 text-left cursor-pointer ${
                       isSelected ? "bg-[#c2e7ff]/60" : "hover:bg-surface-muted"
                     }`}
@@ -122,7 +135,7 @@ export default function PickerModal({
               data-testid="picker-preview"
               // Big enough to read the month and see a stamp: the point of
               // looking is to tell near-identical files apart.
-              className="flex h-[420px] w-[min(540px,58%)] shrink-0 justify-center overflow-auto border-l border-border bg-[#525659] p-3"
+              className="flex h-[min(420px,calc(100dvh-190px))] w-[min(540px,58%)] shrink-0 justify-center overflow-auto border-l border-border bg-[#525659] p-3"
             >
               {selected ? (
                 preview.render(selected)
