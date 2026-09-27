@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { neon } from "@neondatabase/serverless";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
+import { clickIntoPage, waitForInteractive } from "./interactive";
 
 /**
  * The teacher-review loop: a learner writes a review, the app saves the text,
@@ -23,6 +24,7 @@ function jobCard(page: Page) {
 
 async function signUp(page: Page, name: string) {
   await page.goto("/login");
+  await waitForInteractive(page);
   await page.getByRole("button", { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder("Jordan").fill(name);
   await page.getByPlaceholder("HARBOR-24").fill(CLASS_CODE);
@@ -40,8 +42,8 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
 
   // Teleport to "The Review" (Act VII, level 25).
   await page.goto("/studio");
-  await page.getByRole("button", { name: /The Review/ }).click();
-  await page.waitForURL(/from=studio/, { timeout: 20_000 });
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole("button", { name: /The Review/ }).click());
 
   const actIntro = page.getByTestId("act-intro");
   if (await actIntro.isVisible().catch(() => false)) {
@@ -94,6 +96,7 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
 
   // Next login: the note is waiting.
   await page.goto("/");
+  await waitForInteractive(page);
   const toast = page.getByText(/Your teacher left a note/);
   await expect(toast).toBeVisible({ timeout: 20_000 });
   await toast.click();
@@ -111,5 +114,6 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
   }, { timeout: 10_000 }).toBe(true);
 
   await page.goto("/");
+  await waitForInteractive(page);
   await expect(page.getByText(/Your teacher left a note/)).toHaveCount(0);
 });

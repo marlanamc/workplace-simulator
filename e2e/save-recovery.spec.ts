@@ -1,9 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { continuePastStudioArrivalIfPresent } from './studio-arrival';
+import { clickIntoPage, waitForInteractive } from './interactive';
 
 test('failed writing stays retryable across reload without claiming success', async ({ page }) => {
   test.slow();
   await page.goto('/login');
+  await waitForInteractive(page);
   await page.getByRole('button',{name:/Add user|Agregar usuario/}).click();
   await page.getByPlaceholder('Jordan').fill(`Save Retry ${Date.now()}`);
   await page.getByPlaceholder('HARBOR-24').fill('TEST-E2E');
@@ -12,8 +14,8 @@ test('failed writing stays retryable across reload without claiming success', as
   await page.getByRole('button',{name:/^(Add|Agregar)$/}).click();
   await page.getByTestId('welcome-continue').click();
   await page.goto('/studio');
-  await page.getByRole('button',{name:/The Review/}).click();
-  await page.waitForURL(/from=studio/);
+  await waitForInteractive(page);
+  await clickIntoPage(page, () => page.getByRole('button',{name:/The Review/}).click());
   await continuePastStudioArrivalIfPresent(page);
   const card = page.locator('[data-job-card]');
   await card.getByRole('button',{name:/^Open /}).click();
@@ -37,11 +39,13 @@ test('failed writing stays retryable across reload without claiming success', as
   await expect(card.getByRole('button',{name:'Retry save'})).toBeVisible({timeout:20000});
   await expect(page.getByText('Review submitted',{exact:true})).toHaveCount(0);
   await page.reload();
+  await waitForInteractive(page);
   await expect(card.getByRole('button',{name:'Retry save'})).toBeVisible({timeout:20000});
   await card.getByRole('button',{name:'Retry save'}).click();
   await expect(card.getByText('Saving your work…',{exact:true})).toBeVisible();
   await expect(card.getByText('Saving your work…',{exact:true})).toHaveCount(0,{timeout:20000});
   await expect(card.getByRole('button',{name:'Retry save'})).toHaveCount(0);
   await page.goto('/?task=performance-review');
+  await waitForInteractive(page);
   await expect(card.getByText('Review submitted',{exact:true})).toBeVisible({timeout:20000});
 });

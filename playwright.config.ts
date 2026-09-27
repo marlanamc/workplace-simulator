@@ -32,6 +32,10 @@ export default defineConfig({
   // One retry on CI only, for a dropped connection to the hosted test
   // database. A test that passes on retry is still reported as flaky.
   retries: process.env.CI ? 1 : 0,
+  // A CI failure is only as useful as what the job can upload afterwards. The
+  // HTML report plus the traces under `test-results/` are the whole record —
+  // without a reporter that writes one, the upload step found nothing.
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
     baseURL,
     trace: "retain-on-failure",

@@ -3,6 +3,7 @@ import { neon } from '@neondatabase/serverless';
 import { JOB_POSTING_COPY, REQUIREMENTS } from '../src/lib/tasks/job-posting/content';
 import { TASKS } from '../src/lib/tasks/registry';
 import { courseLevels, taskKeysForLevel } from '../src/lib/tracks-content';
+import { clickIntoPage, waitForInteractive } from './interactive';
 
 test.use({ actionTimeout: 20_000 });
 const sql = neon(process.env.DATABASE_URL!);
@@ -11,6 +12,7 @@ for (const lang of ['en', 'es'] as const) {
     test.slow();
     const name = `Route ${lang} ${Date.now()}`;
     await page.goto('/login');
+    await waitForInteractive(page);
     if (lang === 'es') await page.getByRole('button', { name: 'Español' }).click();
     await page.getByRole('button', { name: /Add user|Agregar usuario/ }).click();
     await page.getByPlaceholder('Jordan').fill(name);
@@ -22,7 +24,10 @@ for (const lang of ['en', 'es'] as const) {
     const credit = async () => (await sql`SELECT task_key FROM task_completions WHERE learner_id = ${learner.id} ORDER BY task_key`).map(row => row.task_key);
     const route = async () => (await sql`SELECT badge_key FROM badges WHERE learner_id = ${learner.id} AND badge_key LIKE 'course-route:%'`).map(row => row.badge_key);
     await page.goto('/studio');
-    await page.getByRole('button', { name: /After Act II \(pick a direction\)/ }).click();
+    await waitForInteractive(page);
+    // The Studio jump is a full page load, so the route buttons are painted
+    // before React can hear them.
+    await clickIntoPage(page, () => page.getByRole('button', { name: /After Act II \(pick a direction\)/ }).click());
     const card = page.locator('[data-job-card]');
     await card.getByTestId('course-route-office').click();
     await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', 'act6');
@@ -64,6 +69,7 @@ for (const lang of ['en', 'es'] as const) {
       const expected = choice.task ? (TASKS[choice.task].jobCardLine ?? TASKS[choice.task].dispatch)[lang] : lang === 'en' ? 'Core course complete' : 'Curso básico terminado';
       await expect(card).toContainText(expected);
       await page.reload();
+      await waitForInteractive(page);
       await expect(card).toContainText(expected);
       await expect.poll(route).toEqual([`course-route:${choice.key}`]);
       await expect.poll(credit).toEqual(earned);
