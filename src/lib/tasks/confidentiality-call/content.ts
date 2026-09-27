@@ -1,4 +1,5 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { REFUSES, sharesVisit } from "@/lib/tasks/clinic-privacy";
 
 export const CALL_COPY: Record<Lang, {
   helpBtn: string;
@@ -13,6 +14,7 @@ export const CALL_COPY: Record<Lang, {
   empty: string;
   shareHint: string;
   rudeHint: string;
+  noCallback: string;
   weak: string;
   sentKicker: string;
   tryAgain: string;
@@ -34,6 +36,7 @@ export const CALL_COPY: Record<Lang, {
     empty: "Write what you'd actually say to the caller first.",
     shareHint: "You do not know who this really is, so you cannot confirm a visit.",
     rudeHint: "You can say no without being rude. Offer to have Maya call them back.",
+    noCallback: "Good. You did not share anything. Now offer to have Maya call them back.",
     weak: "Say plainly that you can't confirm anything, and offer to have Maya call them back.",
     sentKicker: "Call handled",
     tryAgain: "Do it again",
@@ -55,6 +58,7 @@ export const CALL_COPY: Record<Lang, {
     empty: "Primero escribe qué le dirías de verdad a quien llama.",
     shareHint: "No sabes quién es en realidad, así que no puedes confirmar una visita.",
     rudeHint: "Puedes decir que no sin ser grosero. Ofrece que Maya le devuelva la llamada.",
+    noCallback: "Bien. No compartiste nada. Ahora ofrece que Maya le devuelva la llamada.",
     weak: "Di con claridad que no puedes confirmar nada, y ofrece que Maya le devuelva la llamada.",
     sentKicker: "Llamada atendida",
     tryAgain: "Hacerlo otra vez",
@@ -76,10 +80,21 @@ export const STARTERS: Record<Lang, string[]> = {
   ],
 };
 
-/** The reply confirms the visit — the leak this lesson teaches against. */
+/** The reply gives away Maya's visit: its time, its reason, or that it exists. */
 export function replySharesInfo(body: string): boolean {
-  const t = body.toLowerCase();
-  return /2\s*p|2pm|follow-?up|seguimiento|yes she|sí tiene|si tiene cita/.test(t);
+  return sharesVisit(body);
+}
+
+/** Says it cannot confirm or share, in beginner English too ("I can not give information"). */
+export function replyRefuses(body: string): boolean {
+  const t = body.toLowerCase().replace(/[’`]/g, "'");
+  return REFUSES.test(t) || /private|privad[oa]|privacy|privacidad/.test(t);
+}
+
+/** Offers to have Maya call back: "I can have Maya call you back", "Maya will call you". */
+export function replyOffersCallback(body: string): boolean {
+  const t = body.toLowerCase().replace(/[’`]/g, "'");
+  return /call (you |them |her )?back|call you|(te|le) (va a |puede )?llam|llamar(te|le)|devuelv|have (her|maya|them) call|(maya|she) (will|can) call/.test(t);
 }
 
 /** A flat refusal with no polite callback offer. */
@@ -91,15 +106,27 @@ export function replyIsRude(body: string): boolean {
   );
 }
 
+export type CallVerdict = "empty" | "share" | "rude" | "noCallback" | "weak" | "ok";
+
+/**
+ * What the Job Card should say about a reply, in the order it matters: a leak
+ * first, then rudeness, then whichever half of the answer is missing.
+ */
+export function callReplyVerdict(body: string): CallVerdict {
+  if (!body.trim()) return "empty";
+  if (replySharesInfo(body)) return "share";
+  if (replyIsRude(body)) return "rude";
+  if (body.trim().length < 12) return "weak";
+  const refuses = replyRefuses(body);
+  const callback = replyOffersCallback(body);
+  if (refuses && callback) return "ok";
+  if (refuses) return "noCallback";
+  return "weak";
+}
+
 /** Written answers: polite + callback, not a share, not a rude refuse. */
 export function replyIsSafe(body: string): boolean {
-  const t = body.toLowerCase();
-  if (t.trim().length < 12) return false;
-  if (replySharesInfo(body)) return false;
-  if (replyIsRude(body)) return false;
-  const refuses = /can('?t|not) confirm|no puedo confirmar|can('?t|not) (tell|share|say)|no puedo (decir|compartir|confirmar)/.test(t);
-  const callback = /call (you )?back|te llame|devuelv|have (her|maya|them) call/.test(t);
-  return refuses && callback;
+  return callReplyVerdict(body) === "ok";
 }
 
 /** What the teacher sees: the learner's own words to the caller. */

@@ -1,4 +1,5 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { REFUSES, sharesVisit } from "@/lib/tasks/clinic-privacy";
 
 export const PATIENT = { name: "Maya Ansari", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
 
@@ -99,12 +100,16 @@ export function describeSubmission(reply: string, lang: Lang, recipient?: string
     ...(choice ? [{ label: RECIPIENT_LABEL[lang], value: choice.label[lang] }] : [])] };
 }
 
+/** The reply to Tomás gives away why Maya is here. */
+export function declineSharesVisit(body: string): boolean {
+  return sharesVisit(body);
+}
+
 export function declineIsSafe(body: string): boolean {
-  const t = body.toLowerCase();
+  const t = body.toLowerCase().replace(/[’`]/g, "'");
   if (t.trim().length < 12) return false;
-  const shares = /follow-?up|seguimiento|she's here|esta aqu[ií]|why she|por qu[eé] est/.test(t);
-  if (shares) return false;
-  return /can'?t|cannot|no puedo|not allowed|no (me )?est[aá] permitido|care team|equipo de cuidado|privacy|privacidad/.test(t);
+  if (declineSharesVisit(body)) return false;
+  return REFUSES.test(t) || /care team|equipo de cuidado|privacy|privacidad|private|privad[oa]|only for|solo (es )?para/.test(t);
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {

@@ -34,12 +34,19 @@ export const STORY_AUDIT_SENTENCES: AuditSentence[] = [
   { task: "enrollment", day: "Day 21 A", lang: "en", text: "I like to learn english and work in hospital", expect: "accept", why: "An honest reason for the application." },
   { task: "billing-sheet", day: "Day 23 B", lang: "en", text: "row 4 is wrong. It should be $85.", expect: "accept", why: "Names the row and the right charge." },
   { task: "confidentiality-call", day: "Day 24 B", lang: "en", text: "Sorry, I can not give information. Maya will call you.", expect: "accept", why: "Shares nothing and offers a callback." },
-  { task: "confidentiality-call", day: "Day 24 B", lang: "en", text: "I can not give information", expect: "accept", why: "Shares nothing." },
+  // Shares nothing, but the task also asks for a callback. The correction must ask for that, not for a refusal (see the privacy tests).
+  { task: "confidentiality-call", day: "Day 24 B", lang: "en", text: "I can not give information", expect: "reject", why: "Shares nothing; only the callback offer is missing." },
   { task: "job-offer", day: "Day 28", lang: "en", text: "October 6th", expect: "accept", why: "The right start date, written with an ordinal." },
   { task: "job-offer", day: "Day 28", lang: "en", text: "6th of October", expect: "accept", why: "The right start date, day first." },
   { task: "job-offer", day: "Day 28", lang: "en", field: "reply", text: "ok i come monday", expect: "accept", why: "A clear acceptance with the day." },
   { task: "ops-report-packet", day: "Day 36", lang: "en", text: "Thursday morning open no person", expect: "accept", why: "Names the coverage gap without the phrase \"coverage gap\"." },
   { task: "portfolio-reflection", day: "Day 37", lang: "en", text: "email / computer / no scared / is good", expect: "accept", why: "The card says a few words each is fine." },
+
+  // Privacy, in both languages and around the edges (added with the #4 fix).
+  { task: "confidentiality-call", day: "Day 24 B", lang: "en", text: "I can't tell you if she has an appointment. I can have Maya call you back.", expect: "accept", why: "A refused confirmation is not a leak." },
+  { task: "confidentiality-call", day: "Day 24 B", lang: "es", text: "Lo siento, no puedo dar información. Maya te va a llamar.", expect: "accept", why: "Shares nothing and offers a callback." },
+  { task: "patient-intake", day: "Day 22 B", lang: "es", field: "decline", text: "No puedo compartir eso. Es privado.", expect: "accept", why: "A plain refusal." },
+  { task: "patient-intake", day: "Day 22 B", lang: "en", field: "decline", text: "Sorry Tomás, I can't tell you why she is here. It is only for the care team.", expect: "accept", why: "Refuses the question without answering it." },
 
   // ── Accepted today, but wrong ──────────────────────────────────────────
   { task: "timeclock", day: "Day 3", lang: "en", text: "hi maria. clock is wrong", expect: "reject", why: "No times; Maria cannot fix the punch." },
@@ -50,6 +57,9 @@ export const STORY_AUDIT_SENTENCES: AuditSentence[] = [
   { task: "patient-intake", day: "Day 22 B", lang: "en", field: "form", text: "x / x / x", expect: "reject", why: "Nothing copied from the paper form." },
   { task: "patient-intake", day: "Day 22 B", lang: "en", field: "decline", text: "Sorry Tomas, she is here for her cough. I cant show the form.", expect: "reject", why: "Gives away the reason for the visit." },
   { task: "confidentiality-call", day: "Day 24 B", lang: "en", text: "Maya comes at 11:30 today. I cannot tell you more, but I will have Maya call you back.", expect: "reject", why: "Confirms the appointment time to an unverified caller." },
+  { task: "confidentiality-call", day: "Day 24 B", lang: "en", text: "She has an appointment today, but I can't say the time. Maya will call you back.", expect: "reject", why: "Confirms the visit before refusing." },
+  { task: "confidentiality-call", day: "Day 24 B", lang: "es", text: "Sí, tiene cita a las 11:30. Maya te llama después.", expect: "reject", why: "Confirms the visit and its time." },
+  { task: "patient-intake", day: "Day 22 B", lang: "es", field: "decline", text: "Perdón Tomás, ella está aquí por su tos. No puedo mostrar el formulario.", expect: "reject", why: "Gives away the reason for the visit." },
   { task: "interview-practice", day: "Day 27", lang: "en", text: "money money money money money money", expect: "reject", why: "Word count is not an answer." },
   { task: "multi-person-scheduling", day: "Day 31", lang: "en", field: "question", text: "hi", expect: "reject", why: "Not a question." },
   { task: "meeting-minutes", day: "Day 34", lang: "en", field: "followup", text: "", expect: "reject", why: "The follow-up email is the point of the task." },
