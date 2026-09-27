@@ -1,3 +1,4 @@
+import { isQuestion } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const MEETING_ID = "847 220 1963";
@@ -18,6 +19,20 @@ export interface VideoCallState {
 export function videoCallPasses(state: VideoCallState): boolean {
   return state.joinedMuted && state.toggledCamera && state.sentChat && !state.unmuted;
 }
+
+/**
+ * The chat step asks for a question. "hi" is a hello, not a question; "when
+ * is the report due?", "can I get the slides" and "I have a question about
+ * Friday" all ask something. Only a message that asks counts as `sentChat`.
+ */
+export function chatAsksQuestion(line: string): boolean {
+  return isQuestion(line);
+}
+
+export const CHAT_NEEDS_QUESTION: Localized = {
+  en: "Now type your question in the chat. A question asks something, like: When is…? Can I…?",
+  es: "Ahora escribe tu pregunta en el chat. Una pregunta pide algo, por ejemplo: ¿Cuándo es…? ¿Puedo…?",
+};
 
 export const VIDEO_CALL_COPY: Record<Lang, {
   appName: string;

@@ -1,3 +1,4 @@
+import { looksLikeRealText, normalizeReply, wordCount } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -154,18 +155,57 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Write one area to grow, and what better looks like. Then submit.", es: "Escribe un área para mejorar, y cómo se ve mejor. Luego envía." },
 ];
 
-function wordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
+/** Name-calling, not feedback. The only tone the app can fairly catch. */
+const HARSH =
+  /\b(lazy|stupid|dumb|useless|idiot\w*|terrible|awful|horrible|worst|hopeless|incompetent|flojo|floja|perezos[oa]|vago|vaga|tont[oa]|estupid[oa]|inutil|pesim[oa]|incompetente)\b/;
+
+/**
+ * The growth line is about Sam's one real issue: running late for the
+ * morning open. Any plain way to say it counts: late, on time, early, the
+ * morning, the open, 6 AM, minutes; tarde, a tiempo, temprano, la apertura.
+ */
+const ABOUT_THE_ISSUE =
+  /\b(late|lateness|on time|in time|early|earlier|morning|mornings|open|opening|arriv\w*|come in|get there|be there|6|six|minutes?|mins?|clock\w*|punctual\w*|tarde|a tiempo|temprano|manana|mananas|apertura|abrir|llega\w*|minutos?|puntual\w*|hora)\b/;
+
+/** Legacy helper name: a draft in real words about the chosen fact. */
+export function strengthIsSpecific(text: string): boolean {
+  return wordCount(text) >= 4 && looksLikeRealText(text, 3);
 }
 
-/** Legacy helper name: checks draft completeness, not specificity. */
-export function strengthIsSpecific(text: string): boolean {
-  return wordCount(text) >= 4;
+/** Why the growth line is not ready, or "ok". */
+export type AreaVerdict = "ok" | "short" | "off-topic" | "harsh";
+
+export function areaVerdict(text: string): AreaVerdict {
+  const t = normalizeReply(text);
+  if (wordCount(t) < 3 || !looksLikeRealText(t, 3)) return "short";
+  if (HARSH.test(t)) return "harsh";
+  return ABOUT_THE_ISSUE.test(t) ? "ok" : "off-topic";
 }
 
 export function areaToGrowIsConstructive(text: string): boolean {
-  return wordCount(text) >= 4;
+  return areaVerdict(text) === "ok";
 }
+
+/** A strength in name-calling is not fair either ("Sam is lazy and bad"). */
+export function reviewIsHarsh(input: { strength: string; area: string }): boolean {
+  return HARSH.test(normalizeReply(`${input.strength} ${input.area}`));
+}
+
+/** The Job Card's correction for each growth-line verdict. */
+export const AREA_CORRECTIONS: Record<Exclude<AreaVerdict, "ok">, Localized> = {
+  short: {
+    en: "Say what needs to change, and what better would look like.",
+    es: "Di qué necesita cambiar, y cómo se vería mejor.",
+  },
+  "off-topic": {
+    en: "Write about the one thing to watch in Sam's profile: the morning open.",
+    es: "Escribe sobre lo que hay que observar en el perfil de Sam: la apertura de la mañana.",
+  },
+  harsh: {
+    en: "Say what Sam does, not what Sam is. For example: Sam is late some mornings.",
+    es: "Di lo que Sam hace, no cómo es Sam. Por ejemplo: Sam llega tarde algunas mañanas.",
+  },
+};
 
 export const EVIDENCE_LABEL: Localized = { en: 'Profile evidence for this strength', es: 'Dato del perfil para esta fortaleza' };
 export const EVIDENCE_HINT: Localized = { en: 'Choose one action from Sam’s profile to support the strength you are writing about.', es: 'Elige una acción del perfil de Sam para respaldar la fortaleza que estás escribiendo.' };
@@ -179,7 +219,7 @@ export interface PerformanceReviewInput {
 }
 
 export function performanceReviewPasses(input: PerformanceReviewInput): boolean {
-  return evidenceIsFromProfile(input.evidence ?? '') && strengthIsSpecific(input.strength) && areaToGrowIsConstructive(input.area);
+  return evidenceIsFromProfile(input.evidence ?? '') && strengthIsSpecific(input.strength) && areaToGrowIsConstructive(input.area) && !reviewIsHarsh(input);
 }
 
 /** What the teacher sees for this submission. */

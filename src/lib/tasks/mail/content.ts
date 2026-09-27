@@ -3,6 +3,7 @@ import { mailGreeting } from "@/lib/mail-greeting";
 import { HIRE_DAY, sentOnForTask } from "@/lib/story-calendar";
 import { OPENING_MESSAGES, openingLines } from "@/lib/tasks/mail/opening";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
+import { affirms, looksLikeRealText, normalizeReply, saysCannotAttend, wordCount, yesNoAnswer } from "@/lib/grading/meaning";
 
 /** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
 const GREETING = "__GREETING__";
@@ -645,12 +646,47 @@ export function stillSoundsCasual(body: string): boolean {
   return /\blol\b|jaja|yeah that's fine|sí está bien jaja|lmao|haha/.test(body.toLowerCase());
 }
 
-export function replyAllAnswersDana(body: string): boolean {
-  const t = body.toLowerCase();
-  const answers = /yes|no|sí|si\b|podemos|we can|we cannot|no podemos|take|recib/.test(t);
-  const aboutDelivery = /friday|viernes|6|delivery|entrega|dock|muelle|am\b/.test(t);
-  return answers && aboutDelivery && !stillSoundsCasual(body);
+/** Why a reply to Dana is not sent yet, or "ok". */
+export type ReplyAllVerdict = "ok" | "empty" | "casual" | "unsure" | "no-answer" | "short";
+
+/**
+ * Dana asked one yes-or-no question: can Harborside take a 6 AM Friday
+ * delivery? A yes or a no both answer her ("No podemos a las 6" is a real
+ * answer). "I am not sure" and "I don't know" are not, and a one-word "ok"
+ * is too thin for HQ.
+ */
+export function replyAllVerdict(body: string): ReplyAllVerdict {
+  if (!body.trim()) return "empty";
+  if (stillSoundsCasual(body)) return "casual";
+  const answer = yesNoAnswer(body);
+  if (answer === "unsure") return "unsure";
+  if (answer === "none") return "no-answer";
+  const aboutDelivery = /\b(friday|fri|viernes|delivery|deliveries|entrega|dock|muelle|truck|camion)\b|\b6\s*(am|a\.?\s?m\.?)?\b/.test(
+    normalizeReply(body),
+  );
+  if (!aboutDelivery && wordCount(body) < 3) return "short";
+  return "ok";
 }
+
+export function replyAllAnswersDana(body: string): boolean {
+  return replyAllVerdict(body) === "ok";
+}
+
+/** The Job Card's correction for each reply-all verdict. */
+export const REPLY_ALL_CORRECTIONS: Record<Exclude<ReplyAllVerdict, "ok" | "empty" | "casual">, Localized> = {
+  unsure: {
+    en: "Dana needs a clear yes or no. Can Harborside take the Friday 6 AM delivery?",
+    es: "Dana necesita un sí o un no claro. ¿Puede Harborside recibir la entrega del viernes a las 6 AM?",
+  },
+  "no-answer": {
+    en: "Answer Dana's question. Say yes or no about the Friday 6 AM delivery.",
+    es: "Responde la pregunta de Dana. Di sí o no sobre la entrega del viernes a las 6 AM.",
+  },
+  short: {
+    en: "Say it in a full sentence. Name the Friday delivery.",
+    es: "Dilo en una oración completa. Nombra la entrega del viernes.",
+  },
+};
 
 /**
  * Answers Darnell's actual question (where the extra aprons are) rather than
@@ -664,43 +700,65 @@ export function mailEtiquetteAnswersDarnell(body: string): boolean {
   return /\b(?:storage|store ?room|back room|supply room|almac[eé]n|bodega)\b/.test(t);
 }
 
+/** Why a sick-call email is not sent yet, or "ok". */
+export type SickCallVerdict = "ok" | "empty" | "no-absence" | "no-day";
+
 /**
- * States, in some form, that the learner cannot attend today's shift — not
- * just that they're sick. Lenient by design: any phrasing with a
- * can't-attend signal plus a reference to today/the shift passes.
+ * States, in some form, that the learner cannot come in today, not just that
+ * they're sick. Any beginner form counts: "I no come today", "i cant go to
+ * work today", "I can not work", "No puedo ir hoy". Judged on meaning, not
+ * word count or punctuation.
  */
-export function callOutSickSaysCannotAttend(body: string): boolean {
-  // Phone punctuation and line wrapping must not turn a clear absence into a failure.
-  // Judge the absence signal, not a minimum word count.
-  const t = body.trim().toLowerCase().replace(/[’‘]/g, "'").replace(/\s+/g, " ");
-  const cannotAttend =
-    /can'?t (come|make it|work|be there)|cannot (come|make it|work|be there)|unable to (come|make it|work|be there)|won'?t be able|not (going to|able to) (come|make it|work)|no puedo (ir|trabajar|asistir|llegar)|no podr[eé]|no voy a poder/.test(
-      t,
-    );
-  const aboutShift = /today|shift|work|turno|hoy|trabajo/.test(t);
-  return cannotAttend && aboutShift;
+export function sickCallVerdict(body: string): SickCallVerdict {
+  if (!body.trim()) return "empty";
+  if (!saysCannotAttend(body)) return "no-absence";
+  const aboutShift = /\b(today|tonight|this morning|shift|work|job|turno|hoy|trabajo|trabajar|esta manana)\b/.test(
+    normalizeReply(body),
+  );
+  return aboutShift ? "ok" : "no-day";
 }
 
-/** The email says "attached / adjunto" — the mistake this lesson teaches against. */
+export function callOutSickSaysCannotAttend(body: string): boolean {
+  return sickCallVerdict(body) === "ok";
+}
+
+/** The Job Card's correction. Each one names only what is missing. */
+export const SICK_CALL_CORRECTIONS: Record<Exclude<SickCallVerdict, "ok" | "empty">, Localized> = {
+  "no-absence": {
+    en: "Tell Maria you cannot work today's shift. For example: I can't come in today.",
+    es: "Dile a Maria que no puedes trabajar tu turno de hoy. Por ejemplo: Hoy no puedo ir.",
+  },
+  "no-day": {
+    en: "Say when. Tell Maria it is today's shift.",
+    es: "Di cuándo. Dile a Maria que es el turno de hoy.",
+  },
+};
+
+const ATTACH = /\battach(ed|ment|ing)?\b|\badjunt\w*|\bse adjunta\b|\ben el adjunto\b/;
+
+/**
+ * The email says the file is attached: the mistake this lesson teaches
+ * against. "I did not attach it" and "no attachment" say the opposite.
+ */
 export function saysAttached(body: string): boolean {
-  return /\battach(ed|ment|ing)?\b|\badjunt|\bse adjunta\b|\ben el adjunto\b/i.test(body);
+  return affirms(body, ATTACH);
 }
 
 /**
  * A "send the link" email that did its job: it points at the file (a URL, or
- * the words "link"/"enlace"), names what the file is, and does NOT tell Jordan
- * to open an attachment. Deliberately lenient — a learner who wrote a real
- * sentence with "here's the link to the schedule" passes.
+ * the words "link", "shared", "Drive", "enlace"), names what the file is, and
+ * does NOT tell Jordan to open an attachment. Deliberately lenient: "I did
+ * not attach it. It is shared in Drive." passes.
  */
 export function sendsLinkNotFile(body: string): boolean {
   const t = body.trim();
-  if (t.split(/\s+/).filter(Boolean).length < 5) return false;
+  if (!looksLikeRealText(t, 3)) return false;
   if (saysAttached(t)) return false;
   const hasLink =
-    /https?:\/\/|drive\.|docs\.|\.com\/|\blink\b|\benlace\b|\baccess\b|\bacceso\b|\bshared? (it|the file)\b|\bcompart/i.test(
+    /https?:\/\/|drive\.|docs\.|\.com\/|\blink\b|\benlace\b|\baccess\b|\bacceso\b|\bshared?\b|\bsharing\b|\bdrive\b|\bcompart/i.test(
       t,
     );
-  const namesFile = /schedule|horario|file|archivo|sheet|hoja|it\b|this week/i.test(t);
+  const namesFile = /schedule|horario|file|archivo|sheet|hoja|\bit\b|\blo\b|this week|esta semana/i.test(t);
   return hasLink && namesFile;
 }
 

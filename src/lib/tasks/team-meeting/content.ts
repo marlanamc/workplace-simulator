@@ -1,3 +1,4 @@
+import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -135,14 +136,14 @@ export const AGENDA_STARTERS: Record<Lang, string[]> = {
 
 export const HINTS: Record<Lang, { title: string; time: string; agenda: string }> = {
   en: {
-    title: "Give it a one-line title. Say it is about the schedule.",
+    title: "Give it a one-line title. Say what the meeting is about, like the schedule.",
     time: "Pick a time that is not a shift.",
-    agenda: "Write two or three short bullets. That is enough.",
+    agenda: "Write two things to talk about. Short lines are fine.",
   },
   es: {
-    title: "Ponle un título de una línea. Di que es sobre el horario.",
+    title: "Ponle un título de una línea. Di de qué es la reunión, por ejemplo el horario.",
     time: "Elige una hora que no sea un turno.",
-    agenda: "Escribe dos o tres puntos cortos. Eso basta.",
+    agenda: "Escribe dos cosas para hablar. Las líneas cortas están bien.",
   },
 };
 
@@ -172,16 +173,43 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 };
 
 
+/**
+ * A plain, accurate title for next week's huddle. "team meeting next week"
+ * and a misspelled "schedul meeting" are real titles; "Quick chat" and
+ * "asdf" say nothing about what the meeting is.
+ */
 export function titleIsAboutSchedule(title: string) {
-  const t = title.toLowerCase();
-  return /schedule|horario|huddle|reun|cover|cobertura/.test(t);
+  if (!looksLikeRealText(title, 1)) return false;
+  return /\b(schedul\w*|sched|horario\w*|huddle|meeting|meet|reun\w*|junta|team|equipo|staff|crew|week|weekly|semana\w*|shift\w*|turno\w*|cover\w*|cobertura|saturday|sabado|plan\w*)\b/.test(
+    normalizeReply(title),
+  );
 }
 
-export function agendaBulletCount(text: string) {
+function agendaLines(text: string): string[] {
   return text
     .split(/\n+/)
     .map((l) => l.replace(/^[-*•]\s*/, "").trim())
-    .filter(Boolean).length;
+    .filter(Boolean);
+}
+
+export function agendaBulletCount(text: string) {
+  return agendaLines(text).length;
+}
+
+/**
+ * The things to talk about. Bullets count one each. A single honest line
+ * that lists two things ("talk about schedule and saturday") counts as two,
+ * so a learner is not failed for writing a sentence instead of bullets.
+ */
+export function agendaItemCount(text: string): number {
+  const lines = agendaLines(text).filter((l) => looksLikeRealText(l, 1));
+  if (lines.length !== 1) return lines.length;
+  return lines[0].split(/,|;|\/|\+|&|\band\b|\by\b|\balso\b|\btambien\b/i).filter((part) => looksLikeRealText(part, 1)).length;
+}
+
+/** The agenda gives the meeting a point: two or more things to talk about, in real words. */
+export function agendaIsReady(text: string): boolean {
+  return agendaItemCount(text) >= 2 && looksLikeRealText(text, 2);
 }
 
 /** What the teacher sees: the meeting title and the agenda the learner wrote. */

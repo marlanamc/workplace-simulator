@@ -1,3 +1,4 @@
+import { mentionsTime } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -145,6 +146,34 @@ export const TIMECLOCK_COPY: Record<Lang, {
 export const WRONG_LOOKS_RIGHT_HINT: Record<Lang, string> = {
   en: "Look again. You got here at 7:00 AM, but the clock says 8:15 AM. What would you tell your supervisor?",
   es: "Mira otra vez. Llegaste a las 7:00 AM, pero el reloj dice 8:15 AM. ¿Qué le dirías a tu supervisor?",
+};
+
+/** Why the note to Maria is not sent yet, or "ok". */
+export type ClockNoteVerdict = "ok" | "empty" | "no-time";
+
+/**
+ * Maria can only fix the punch if she knows when the learner really got
+ * here: 7:00 AM. "hi maria. clock is wrong" says something is off but gives
+ * her nothing to fix it with. The 8:15 punch is on her screen already, so the
+ * arrival time is the fact the note has to carry. Any form counts: 7, 7:00,
+ * 7am, seven, las 7, siete.
+ */
+export function clockNoteVerdict(body: string): ClockNoteVerdict {
+  if (!body.trim()) return "empty";
+  const [hour, minute] = TIMECLOCK.arrivedAt.split(/[: ]/).map(Number);
+  return mentionsTime(body, hour, minute) ? "ok" : "no-time";
+}
+
+/** The Job Card's correction for each verdict. */
+export const CLOCK_NOTE_CORRECTIONS: Record<Exclude<ClockNoteVerdict, "ok">, Localized> = {
+  empty: {
+    en: "Write a short message first. Even one sentence is fine.",
+    es: "Primero escribe un mensaje corto. Una oración está bien.",
+  },
+  "no-time": {
+    en: `Tell Maria what time you got here. The clock says ${TIMECLOCK.clockedInAt}, but you came at ${TIMECLOCK.arrivedAt}.`,
+    es: `Dile a Maria a qué hora llegaste. El reloj dice ${TIMECLOCK.clockedInAt}, pero llegaste a las ${TIMECLOCK.arrivedAt}.`,
+  },
 };
 
 export const STARTERS: Record<Lang, string[]> = {

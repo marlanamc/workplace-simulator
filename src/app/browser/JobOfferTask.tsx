@@ -19,7 +19,8 @@ import {
   LESSONS,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
-  replyLooksReal,
+  offerAcceptVerdict,
+  OFFER_ACCEPT_CORRECTIONS,
   describeSubmission,
 } from "@/lib/tasks/job-offer/content";
 
@@ -49,7 +50,8 @@ export default function JobOfferTask() {
 
   const trySend = () => {
     if (!datePicked) return say(c.needDate);
-    if (!replyLooksReal(reply)) return say(c.needReply);
+    const verdict = offerAcceptVerdict(reply);
+    if (verdict !== "ok") return say(OFFER_ACCEPT_CORRECTIONS[verdict][lang]);
     setDone(true);
     markComplete("job-offer", "accept_offer", describeSubmission({ dateKey: dateKey!, reply }, lang));
   };

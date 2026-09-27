@@ -18,7 +18,8 @@ import {
   LESSONS,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
-  answerLooksReal,
+  firstWeakAnswer,
+  needAnswerFor,
   describeSubmission,
 } from "@/lib/tasks/interview-practice/content";
 
@@ -49,10 +50,10 @@ export default function InterviewTask() {
       ? askBackCustom
       : ASK_BACK_CHOICES.find((a) => a.key === askBackKey)?.text[lang] ?? "";
 
-  const answersReady = QUESTIONS.every((q) => answerLooksReal(answers[q.key] ?? ""));
+  const weakAnswer = firstWeakAnswer(answers);
 
   const tryFinish = () => {
-    if (!answersReady) return say(c.needAnswers);
+    if (weakAnswer >= 0) return say(needAnswerFor(weakAnswer, lang));
     if (!askBackText.trim()) return say(c.needAskBack);
     setDone(true);
     markComplete(
@@ -84,7 +85,7 @@ export default function InterviewTask() {
       {!done && (
         <RightNowBar
           icon={TASK_ICONS["interview-practice"]}
-          stepIndex={answersReady ? 1 : 0}
+          stepIndex={weakAnswer < 0 ? 1 : 0}
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}

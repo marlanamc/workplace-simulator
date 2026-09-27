@@ -1,3 +1,4 @@
+import { looksLikeRealText } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -151,9 +152,29 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read your summary. It's yours to share.", es: "Lee tu resumen. Es tuyo para compartir." },
 ];
 
+/**
+ * A reflection is not a test, and the card says a few words each is fine, so
+ * any answer in real words counts: "email", "no scared", "is good". Only an
+ * empty box, or keyboard mash, is not an answer yet.
+ */
+export function reflectionAnswerIsReal(answer: string): boolean {
+  return looksLikeRealText(answer, 1);
+}
+
+/** The first question with no answer yet, or -1 when all are answered. */
+export function firstUnanswered(answers: string[]): number {
+  return PROMPTS.findIndex((_, i) => !reflectionAnswerIsReal(answers[i] ?? ""));
+}
+
 export function reflectionComplete(answers: string[]): boolean {
-  if (answers.length < PROMPTS.length) return false;
-  return answers.every((a) => a.trim().split(/\s+/).filter(Boolean).length >= 3);
+  return firstUnanswered(answers) === -1;
+}
+
+/** The Job Card's correction: which question still needs an answer. */
+export function needAnswerFor(index: number, lang: Lang): string {
+  return lang === "en"
+    ? `Question ${index + 1} has no answer yet. A few words is fine.`
+    : `La pregunta ${index + 1} todavía no tiene respuesta. Con unas palabras basta.`;
 }
 
 export function portfolioReflectionPasses(answers: string[]): boolean {

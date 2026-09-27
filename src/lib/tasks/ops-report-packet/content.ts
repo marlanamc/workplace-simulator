@@ -1,4 +1,5 @@
 import { mentionsAmount } from "@/lib/text-facts";
+import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -262,18 +263,76 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Open Mail. Send the summary as one packet.", es: "Abre Mail. Envía el resumen como un solo paquete." },
 ];
 
-export function summaryPullsBoth(text: string): boolean {
-  const words = text.trim().split(/\s+/).filter(Boolean).length;
-  return words >= 6 && mentionsAmount(text, PLANTED_WEEK_TOTAL)
-    && /thurs|jueves|jue\b/i.test(text)
-    && /open|morning|apertura|mañana|manana|6(?::00)?\s*(am|a\.?m)/i.test(text)
-    && /cover|staff|unassign|no one|nobody|vacan|need|gap|missing|assign|nadie|cubrir|cobertura|sin|falta|asign|necesit/i.test(text);
+/** Nobody there, in any beginner phrasing: "no person", "nobody", "is empty", "needs someone". */
+const NOBODY =
+  /\b(no one|noone|nobody|no person|no people|no worker|no staff|no body|nobody yet|empty|alone|vacant|vacan\w*|gap|missing|uncovered|unassigned|unstaffed|open spot|not covered|no cover\w*|need(s|ed)? (a |one |some ?one|some ?body|a person|people|staff|cover\w*|a worker|help|someone)|still need(s)?|nadie|sin (nadie|persona|personal|cobertura|gente|asignar)|vaci[ao]|falta\w*|no hay (nadie|personal|gente)|necesita\w* (a alguien|alguien|una persona|gente|personal|cobertura)|sin cubrir|no tiene a nadie)\b/;
+/** "Everything is fine" while a shift is uncovered is a wrong report. */
+const ALL_FINE = /\b(everything (is )?(fine|ok|okay|good|great)|all (is )?(fine|good|well|ok)|no problems?|nothing to report|todo (esta )?bien|sin problemas|ningun problema)\b/;
+
+/**
+ * Thursday's morning open, and that nobody is on it, in any beginner form:
+ * "Thursday morning open no person", "Thursday open: no worker yet",
+ * "la apertura del jueves necesita a alguien". A bare "need" without who
+ * or what is not enough, and "Everything fine" is not a report of a gap.
+ */
+export function summaryNamesGap(text: string): boolean {
+  const t = normalizeReply(text);
+  if (ALL_FINE.test(t)) return false;
+  return /\b(thurs\w*|thu|jueves|jue)\b/.test(t)
+    && /\b(open\w*|morning|am|apertura|abrir|manana)\b|\b6(:00)?\s*(am|a\.?\s?m)/.test(t)
+    && NOBODY.test(t);
 }
+
+/** Why the summary is not saved yet, or "ok". */
+export type SummaryVerdict = "ok" | "empty" | "no-total" | "no-gap" | "all-fine";
+
+export function summaryVerdict(text: string): SummaryVerdict {
+  if (!text.trim()) return "empty";
+  if (ALL_FINE.test(normalizeReply(text))) return "all-fine";
+  if (!mentionsAmount(text, PLANTED_WEEK_TOTAL)) return "no-total";
+  return summaryNamesGap(text) ? "ok" : "no-gap";
+}
+
+export function summaryPullsBoth(text: string): boolean {
+  return summaryVerdict(text) === "ok";
+}
+
+/** The Job Card's correction for each verdict, in plain words (no "coverage gap"). */
+export const SUMMARY_CORRECTIONS: Record<Exclude<SummaryVerdict, "ok">, Localized> = {
+  empty: {
+    en: "Write the total and who is missing on Thursday morning.",
+    es: "Escribe el total y quién falta el jueves por la mañana.",
+  },
+  "no-total": {
+    en: "Add this week's total from the sheet.",
+    es: "Agrega el total de esta semana de la hoja.",
+  },
+  "no-gap": {
+    en: "Say that nobody is working the Thursday morning open.",
+    es: "Di que nadie trabaja en la apertura del jueves por la mañana.",
+  },
+  "all-fine": {
+    en: "Not everything is fine. Nobody is working Thursday morning. Say that.",
+    es: "No todo está bien. Nadie trabaja el jueves por la mañana. Dilo.",
+  },
+};
+
+/** The packet email needs a line or two, not an empty body. */
+export function packetMessageIsReady(message: string): boolean {
+  return looksLikeRealText(message, 2);
+}
+
+export const NEED_MESSAGE: Localized = {
+  en: "Write a line or two to Anita before you send.",
+  es: "Escríbele una o dos líneas a Anita antes de enviar.",
+};
 
 export interface OpsReportPacketInput {
   sheetTotalConfirmed: boolean;
   calendarNoted: boolean;
   summary: string;
+  /** The email body that carries the packet. */
+  message: string;
   packetSent: boolean;
 }
 
@@ -282,6 +341,7 @@ export function opsReportPacketPasses(input: OpsReportPacketInput): boolean {
     input.sheetTotalConfirmed &&
     input.calendarNoted &&
     summaryPullsBoth(input.summary) &&
+    packetMessageIsReady(input.message) &&
     input.packetSent
   );
 }

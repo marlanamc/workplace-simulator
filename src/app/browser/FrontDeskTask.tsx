@@ -25,6 +25,9 @@ import {
   INTAKE_COPY,
   VERIFIED_ASSIGNMENT, RECIPIENT_LABEL, RECIPIENT_HINT, RECIPIENT_OPTIONS, recipientIsAuthorized,
   PATIENT,
+  PAPER_FORM_LABEL,
+  intakeFormVerdict,
+  INTAKE_FORM_CORRECTIONS,
   STARTERS as INTAKE_STARTERS,
   LESSONS as INTAKE_LESSONS,
   declineIsSafe,
@@ -369,7 +372,9 @@ function IntakeDesk() {
   const c = INTAKE_COPY[lang];
 
   const tryFile = () => {
-    if (!name.trim() || !dob.trim() || !reason.trim()) return say(c.needFields);
+    const verdict = intakeFormVerdict({ name, dob, reason });
+    if (verdict === "missing") return say(c.needFields);
+    if (verdict !== "ok") return say(INTAKE_FORM_CORRECTIONS[verdict][lang]);
     setFiled(true);
   };
 
@@ -412,6 +417,19 @@ function IntakeDesk() {
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto flex max-w-[640px] flex-col gap-4">
             <h2 className="text-[20px] font-medium">{c.heading}</h2>
+            {!filed && (
+              <div className="rounded-xl border border-[#e0d7c3] bg-[#fdfaf2] px-4 py-3" aria-label={PAPER_FORM_LABEL[lang]}>
+                <div className="text-[13px] font-medium text-[#5f6368]">{PAPER_FORM_LABEL[lang]}</div>
+                <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-[14px]">
+                  <dt className="text-[#5f6368]">{c.nameLabel}</dt>
+                  <dd>{PATIENT.name}</dd>
+                  <dt className="text-[#5f6368]">{c.dobLabel}</dt>
+                  <dd>{PATIENT.dob}</dd>
+                  <dt className="text-[#5f6368]">{c.reasonLabel}</dt>
+                  <dd>{PATIENT.reason[lang]}</dd>
+                </dl>
+              </div>
+            )}
             <div className="rounded-xl border border-[#dadce0] bg-white p-4">
               <label className="block text-[13px] text-[#5f6368]">{c.nameLabel}</label>
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder={PATIENT.name} className="mt-1 mb-3 w-full rounded-lg border border-[#dadce0] px-3 py-2 text-[15px]" />

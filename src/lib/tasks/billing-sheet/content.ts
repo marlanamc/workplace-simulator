@@ -1,3 +1,5 @@
+import { normalizeReply } from "@/lib/grading/meaning";
+import { mentionsAmount } from "@/lib/text-facts";
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
 import { openFileStep } from "../open-file-step";
 
@@ -109,16 +111,6 @@ export const BILLING_COPY: Record<Lang, {
   },
 };
 
-export const EMPTY_EMAIL_HINT: Record<Lang, string> = {
-  en: "Write a short message first. Even one sentence is fine.",
-  es: "Primero escribe un mensaje corto. Una oración está bien.",
-};
-
-export const WRONG_EMAIL_HINT: Record<Lang, string> = {
-  en: "Name the mismatch (EKG / 93000 / Okonkwo) and the correct charge ($85).",
-  es: "Nombra el error (EKG / 93000 / Okonkwo) y el cargo correcto ($85).",
-};
-
 export const STARTERS: Record<Lang, string[]> = {
   en: [
     "Pat, the EKG for Okonkwo is $185. The list says $85.",
@@ -132,13 +124,55 @@ export const STARTERS: Record<Lang, string[]> = {
   ],
 };
 
-export function emailFlagsMismatch(body: string): boolean {
-  const t = body.toLowerCase();
-  const namesRow = /ekg|93000|okonkwo/.test(t);
-  const withoutWrong = t.replace(/185/g, "");
-  const namesCharge = /85/.test(withoutWrong);
-  return namesRow && namesCharge;
+/** The sheet row the wrong charge sits on: header is row 1, data starts on row 2. */
+export const MISMATCH_ROW = BILLING_ROWS.findIndex((row) => row.key === MISMATCH_KEY) + 2;
+
+const ROW_WORDS: Record<number, string> = {
+  2: "two|second|dos|segunda", 3: "three|third|tres|tercera", 4: "four|fourth|cuatro|cuarta", 5: "five|fifth|cinco|quinta",
+};
+
+/** Why the email to Pat is not sent yet, or "ok". */
+export type BillingEmailVerdict = "ok" | "empty" | "no-row" | "no-charge";
+
+/**
+ * The office note asks for "which row it is and what the charge should be".
+ * The row can be named any way a person would: "row 4", "fila 4", the code
+ * (93000), the service (EKG), or the patient. The charge is $85, and "185"
+ * never counts as saying 85.
+ */
+export function billingEmailVerdict(body: string): BillingEmailVerdict {
+  if (!body.trim()) return "empty";
+  const t = normalizeReply(body);
+  const row = BILLING_ROWS.find((r) => r.key === MISMATCH_KEY)!;
+  const lastName = row.patient.split(" ").pop()!.toLowerCase();
+  const rowWord = ROW_WORDS[MISMATCH_ROW] ?? String(MISMATCH_ROW);
+  const namesRow =
+    new RegExp(`\\b(ekg|ecg|${row.code}|${lastName})\\b`).test(t) ||
+    new RegExp(`\\b(row|fila|line|linea)\\s*#?\\s*(${MISMATCH_ROW}|${rowWord})\\b`).test(t) ||
+    new RegExp(`\\b(${rowWord})\\s+(row|fila|line|linea)\\b`).test(t);
+  if (!namesRow) return "no-row";
+  return mentionsAmount(t, CORRECT_CHARGE) ? "ok" : "no-charge";
 }
+
+export function emailFlagsMismatch(body: string): boolean {
+  return billingEmailVerdict(body) === "ok";
+}
+
+/** The Job Card's correction for each verdict. It names what is missing, not the answer. */
+export const BILLING_EMAIL_CORRECTIONS: Record<Exclude<BillingEmailVerdict, "ok">, Localized> = {
+  empty: {
+    en: "Write a short message first. Even one sentence is fine.",
+    es: "Primero escribe un mensaje corto. Una oración está bien.",
+  },
+  "no-row": {
+    en: "Say which row is wrong. Use the row number, the code, or the patient's name.",
+    es: "Di qué fila está mal. Usa el número de la fila, el código o el nombre del paciente.",
+  },
+  "no-charge": {
+    en: "Say what the charge should be. Check the reference list.",
+    es: "Di cuál debería ser el cargo. Revisa la lista de referencia.",
+  },
+};
 
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [

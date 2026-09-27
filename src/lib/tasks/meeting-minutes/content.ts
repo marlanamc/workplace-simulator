@@ -1,3 +1,4 @@
+import { looksLikeRealText, normalizeReply, wordCount } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 
 /**
@@ -249,31 +250,60 @@ export function agendaLooksReady(text: string): boolean {
   return bulletCount(text) >= 2;
 }
 
-/** ≥2 non-empty lines, or one substantial line. Deliberately loose. */
-export function notesLookReal(text: string): boolean {
-  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
-  if (lines.length >= 2) return true;
-  return (lines[0]?.split(/\s+/).filter(Boolean).length ?? 0) >= 8;
-}
-
-const OWNER =
-  /\b(alex|jordan|riley|sam|casey|maria|i\b|i'?ll|me\b|yo\b|[A-Z][a-z]{2,})\b/;
-const WHEN =
-  /\b(mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow|by |end of day|eod|this week|next week|lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bado|domingo|hoy|ma[ñn]ana|antes del|antes de que|para el|esta semana|\d{1,2}\/\d{1,2}|\d{1,2}\s?(am|pm))\b/i;
+/** Something from the huddle: a person, a day, or one of the three topics. */
+const HUDDLE_FACT =
+  /\b(alex|jordan|riley|saturday|sat|friday|fri|thursday|thu|monday|mon|close|closing|supplier|supply|suply|order|call|train\w*|new hire|new person|sabado|viernes|jueves|lunes|cierre|proveedor|insumos|pedido|llam\w*|capacit\w*|persona nueva)\b/;
 
 /**
- * The follow-up should read as a structured list: each line an action with a
- * person and a time. We check for both signals, with a "long enough and has a
- * colon or dash" fallback so a real list phrased in words we didn't predict
- * still passes.
+ * ≥2 lines, or one substantial line, and about the huddle. "ok / ok" is not
+ * notes; "jordan sat close / alex call supplier" is. Spelling is never judged.
  */
-export function followupHasOwnersAndDates(text: string): boolean {
-  const t = text.trim();
-  const words = t.split(/\s+/).filter(Boolean).length;
-  if (words < 8) return false;
-  if (OWNER.test(t) && WHEN.test(t)) return true;
-  return words >= 20 && /[:\-–—]/.test(t);
+export function notesLookReal(text: string): boolean {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const enough = lines.length >= 2 || wordCount(lines[0] ?? "") >= 8;
+  return enough && looksLikeRealText(text, 3) && HUDDLE_FACT.test(normalizeReply(text));
 }
+
+/** A person who owns an action. Only names from the huddle, or "I". */
+const OWNER = /\b(alex|jordan|riley|sam|casey)\b/;
+const WHEN =
+  /\b(mon|tue|wed|thu|fri|sat|sun|monday|tuesday|wednesday|thursday|friday|saturday|sunday|today|tomorrow|by|end of day|eod|this week|next week|lunes|martes|miercoles|jueves|viernes|sabado|domingo|hoy|manana|antes del|antes de que|para el|esta semana)\b|\b\d{1,2}\/\d{1,2}\b|\b\d{1,2}\s?(am|pm)\b/;
+
+/** Why the follow-up email is not sent yet, or "ok". */
+export type FollowupVerdict = "ok" | "empty" | "no-owner" | "no-date";
+
+/**
+ * The follow-up is the point of the task: it says who owes what by when.
+ * An empty email, or one with no name or no day in it, is not a follow-up,
+ * whatever the action list below it says.
+ */
+export function followupVerdict(text: string): FollowupVerdict {
+  const t = normalizeReply(text);
+  if (!looksLikeRealText(t, 3)) return "empty";
+  if (!OWNER.test(t)) return "no-owner";
+  if (!WHEN.test(t)) return "no-date";
+  return "ok";
+}
+
+export function followupHasOwnersAndDates(text: string): boolean {
+  return followupVerdict(text) === "ok";
+}
+
+/** The Job Card's correction for each follow-up verdict. */
+export const FOLLOWUP_CORRECTIONS: Record<Exclude<FollowupVerdict, "ok">, Localized> = {
+  empty: {
+    en: "Write the follow-up email. One line for each job: who does it, and what day.",
+    es: "Escribe el correo de seguimiento. Una línea por tarea: quién la hace y qué día.",
+  },
+  "no-owner": {
+    en: "Say who does each job. Use their names.",
+    es: "Di quién hace cada tarea. Usa sus nombres.",
+  },
+  "no-date": {
+    en: "Say when each job is due. Add a day.",
+    es: "Di para cuándo es cada tarea. Agrega un día.",
+  },
+};
 
 export interface MeetingMinutesInput {
   agenda: string;
@@ -316,6 +346,19 @@ export const ACTION_DAYS = [
 export type ActionCommitments = Record<string, { owner: string; day: string }>;
 export function commitmentsMatchHuddle(values: ActionCommitments): boolean {
   return ACTION_ITEMS.every((item) => values[item.key]?.owner === item.owner && values[item.key]?.day === item.day);
+}
+/**
+ * Once the learner has started the action list, the Job Card's correction
+ * names the first action whose owner or day is off. Null before that (the
+ * general instruction covers it) and when every action matches.
+ */
+export function commitmentCorrection(values: ActionCommitments, lang: Lang): string | null {
+  if (!Object.values(values).some((v) => v?.owner || v?.day)) return null;
+  const item = ACTION_ITEMS.find((i) => values[i.key]?.owner !== i.owner || values[i.key]?.day !== i.day);
+  if (!item) return null;
+  return lang === "en"
+    ? `Check "${item.label.en}" in the action list: who does it, and what day? Use the final decision in the transcript.`
+    : `Revisa "${item.label.es}" en la lista de acciones: ¿quién la hace y qué día? Usa la decisión final de la transcripción.`;
 }
 export function formatCommitments(values: ActionCommitments, lang: Lang): string {
  return ACTION_ITEMS.map((item) => `${item.label[lang]}: ${values[item.key]?.owner ?? ''}, ${ACTION_DAYS.find((d) => d.key === values[item.key]?.day)?.label[lang] ?? ''}`).join('\n');

@@ -12,7 +12,9 @@ import {
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
   strengthIsSpecific,
-  areaToGrowIsConstructive,
+  areaVerdict,
+  reviewIsHarsh,
+  AREA_CORRECTIONS,
   performanceReviewPasses,
   describeSubmission,
 } from "@/lib/tasks/performance-review/content";
@@ -50,7 +52,9 @@ export default function PerformanceReviewTask() {
     if (!strengthIsSpecific(strength)) {
       return say(c.needStrength);
     }
-    if (!areaToGrowIsConstructive(area)) return say(c.needArea);
+    const verdict = areaVerdict(area);
+    if (verdict !== "ok") return say(AREA_CORRECTIONS[verdict][lang]);
+    if (reviewIsHarsh({ strength, area })) return say(AREA_CORRECTIONS.harsh[lang]);
     if (!performanceReviewPasses({ strength, area, evidence })) return say(c.needArea);
     setDone(true);
     markComplete("performance-review", "write_a_fair_review", describeSubmission({ strength, area, evidence }, lang));

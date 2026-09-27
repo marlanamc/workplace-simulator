@@ -1,5 +1,6 @@
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { REFUSES, sharesVisit } from "@/lib/tasks/clinic-privacy";
+import { normalizeReply } from "@/lib/grading/meaning";
 
 export const PATIENT = { name: "Maya Ansari", dob: "03/12/1998", reason: { en: "Follow-up", es: "Seguimiento" } };
 
@@ -92,6 +93,58 @@ export const STARTERS: Record<Lang, string[]> = {
     "I can't share that. It stays with the care team.",
   ],
 };
+
+/** The box on the intake form that does not match Maya's paper form, or "ok". */
+export type IntakeFormVerdict = "ok" | "missing" | "name" | "dob" | "reason";
+
+const MONTH_NAMES = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+/** 03/12/1998 as typed: 3/12/1998, 03-12-98, March 12, 1998, 12 de marzo de 1998. */
+export function dobMatches(typed: string, expected = PATIENT.dob): boolean {
+  const [m, d, y] = expected.split("/").map(Number);
+  const t = normalizeReply(typed);
+  const nums = (t.match(/\d+/g) ?? []).map(Number);
+  const year = nums.find((n) => n === y || n === y % 100);
+  if (year === undefined) return false;
+  const [a, b] = nums.filter((n) => n !== year);
+  if (a === m && b === d) return true;
+  const monthNamed = new RegExp(`\\b(${MONTH_NAMES[m - 1]}|${MONTH_NAMES[m - 1].slice(0, 3)}|${MESES[m - 1]})\\b`).test(t);
+  return monthNamed && nums.includes(d);
+}
+
+/**
+ * The form has to match Maya's paper form, not just be filled in: "x / x /
+ * x" is not an intake. Case, accents, spacing, and the date format are
+ * never held against the learner.
+ */
+export function intakeFormVerdict(fields: { name: string; dob: string; reason: string }): IntakeFormVerdict {
+  if (!fields.name.trim() || !fields.dob.trim() || !fields.reason.trim()) return "missing";
+  const name = normalizeReply(fields.name);
+  if (!PATIENT.name.toLowerCase().split(" ").every((part) => name.includes(part))) return "name";
+  if (!dobMatches(fields.dob)) return "dob";
+  const reason = normalizeReply(fields.reason);
+  if (!/\bfollow\s*-?\s*up\b|\bfollowup\b|\bseguimiento\b/.test(reason)) return "reason";
+  return "ok";
+}
+
+export const INTAKE_FORM_CORRECTIONS: Record<Exclude<IntakeFormVerdict, "ok" | "missing">, Localized> = {
+  name: {
+    en: "Check the name. Copy it from Maya's paper form.",
+    es: "Revisa el nombre. Cópialo del formulario en papel de Maya.",
+  },
+  dob: {
+    en: "Check the date of birth. Copy it from Maya's paper form.",
+    es: "Revisa la fecha de nacimiento. Cópiala del formulario en papel de Maya.",
+  },
+  reason: {
+    en: "Check the reason for the visit. Copy it from Maya's paper form.",
+    es: "Revisa el motivo de la visita. Cópialo del formulario en papel de Maya.",
+  },
+};
+
+/** The source the learner copies from, shown above the intake boxes. */
+export const PAPER_FORM_LABEL: Localized = { en: "Maya's paper form", es: "Formulario en papel de Maya" };
 
 /** What the teacher sees: how the learner declined the coworker's request. */
 export function describeSubmission(reply: string, lang: Lang, recipient?: string): SubmissionContent {
