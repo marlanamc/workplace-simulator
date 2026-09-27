@@ -24,6 +24,12 @@ export function useShowMe() {
   return { targetId, toggleFor, clear };
 }
 
+/**
+ * What the bubble says over something to read rather than click (evidence on
+ * a choice step). Put it on the target as `data-showme-look`.
+ */
+export const SHOW_ME_LOOK: Localized<string> = { en: "Look here.", es: "Mira aquí." };
+
 /** What the spotlight bubble says. One phrasing everywhere, so it reads the same in every job. */
 export const SHOW_ME_POINTER: Localized<string> = {
   en: "This one. Click it.",

@@ -8,6 +8,11 @@ import { MoveUp } from "lucide-react";
  * Points at a real on-screen element by id. Mark the target with
  * `data-showme="<id>"`. The dim/ring/bubble never capture clicks — the real
  * control stays clickable — and any pointer down or Escape dismisses.
+ *
+ * A target that is something to read, not click (the line of an email that
+ * answers a question, the 10:00 row), also carries
+ * `data-showme-look={SHOW_ME_LOOK[lang]}`, and the bubble says that
+ * ("Look here.") instead of "Click it."
  */
 export default function ShowMeHighlight({
   targetId,
@@ -20,6 +25,7 @@ export default function ShowMeHighlight({
 }) {
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [oval, setOval] = useState(false);
+  const [look, setLook] = useState<string | null>(null);
   // Portal needs document.body — same client gate as LoginForm / ProgressProvider.
   const isClient = useSyncExternalStore(
     () => () => {},
@@ -32,6 +38,7 @@ export default function ShowMeHighlight({
       if (!targetId) {
         setRect(null);
         setOval(false);
+        setLook(null);
         return;
       }
       const el =
@@ -39,6 +46,7 @@ export default function ShowMeHighlight({
         document.querySelector(`[data-showme="${targetId}"]`);
       setRect(el ? el.getBoundingClientRect() : null);
       setOval(Boolean(el?.hasAttribute("data-showme-oval")));
+      setLook(el?.getAttribute("data-showme-look") || null);
     };
 
     // A target below the fold (Reply under a long email, a compose box that
@@ -123,7 +131,7 @@ export default function ShowMeHighlight({
         }}
       >
         <MoveUp size={20} strokeWidth={2.25} aria-hidden className={bubbleAbove ? "rotate-180" : ""} />
-        <span className="text-[16px] font-medium leading-tight">{label}</span>
+        <span className="text-[16px] font-medium leading-tight">{look ?? label}</span>
       </div>
     </div>,
     document.body,

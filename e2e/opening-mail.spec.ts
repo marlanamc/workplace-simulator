@@ -130,7 +130,7 @@ for (const lang of ['en','es'] as const) {
     // Explicit Studio replay clears only the opening steps.
     await startOpening(page);
     await expect.poll(saved).toEqual([]);
-    await expect(page.locator('[data-showme="maria-row"]')).toContainText(lang === 'en' ? 'Welcome to Harborside Cafe' : 'Bienvenido a Harborside Cafe');
+    await expect(page.locator('[data-showme="maria-row"]')).toContainText(lang === 'en' ? 'Welcome to Harborside Cafe' : 'Te damos la bienvenida a Harborside Cafe');
   });
 }
 

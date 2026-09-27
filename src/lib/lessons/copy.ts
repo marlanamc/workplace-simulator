@@ -40,6 +40,8 @@ export const LESSON_COPY = {
   introNeed: { en: "Today", es: "Hoy" },
   introAtWork: { en: "People do this at work in:", es: "Esto también se hace en:" },
   introCardTitle: { en: "Your info card", es: "Tu tarjeta de información" },
+  /** A lesson played as a pretend person: the card holds their facts, not the learner's. `{name}` is their first name. */
+  introCardTitlePersona: { en: "{name}'s info card", es: "La tarjeta de información de {name}" },
   introCard: {
     en: "This card stays on your screen while you work. When you need a name, a password, or a date, look here.",
     es: "Esta tarjeta se queda en tu pantalla mientras trabajas. Cuando necesites un nombre, una contraseña o una fecha, mira aquí.",

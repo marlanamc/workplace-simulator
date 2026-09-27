@@ -368,8 +368,8 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
       preview: "You're on the schedule for 5 shifts this week.",
     },
     es: {
-      subject: "Bienvenido a Harborside Cafe",
-      reSubject: "Re: Bienvenido a Harborside Cafe",
+      subject: "Te damos la bienvenida a Harborside Cafe",
+      reSubject: "Re: Te damos la bienvenida a Harborside Cafe",
       preview: "Estás en el horario para 5 turnos esta semana.",
     },
   },
@@ -732,14 +732,14 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
     es: {
       plain: [
         GREETING,
-        "Bienvenido a Harborside Cafe. Me alegra que estés aquí.",
+        "Te damos la bienvenida a Harborside Cafe. Me alegra que estés aquí.",
         "Estás en el horario para 5 turnos esta semana.",
         "Llámame o escríbeme si necesitas algo.",
         "Nos vemos en el piso,",
       ],
       full: [
         GREETING,
-        "Bienvenido al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
+        "Te damos la bienvenida al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
         "Estás en el horario para 5 turnos esta semana. Con eso te basta por ahora.",
         "Si necesitas algo (horario, acceso o solo una pregunta), llámame o escríbeme. Aquí estoy.",
         "Espero trabajar contigo.",
@@ -1062,15 +1062,15 @@ export const OPENING_CLUTTER: InboxEmail[] = ([
     wrongHint: wrongHint("That's from IT. Open Maria's email.", "Eso es de sistemas. Abre el correo de Maria."),
     body: {
       en: ["Welcome to Harborside!", "Your work email is set up. You will sign in on the cafe computer on your first day. Your manager will give you your password.", "IT will never ask for your password by email or text.", "IT Helpdesk · ext. 204"],
-      es: ["¡Bienvenido a Harborside!", "Tu correo de trabajo ya está listo. Vas a entrar en la computadora del café tu primer día. Tu gerente te va a dar tu contraseña.", "Sistemas nunca te va a pedir tu contraseña por correo ni por mensaje de texto.", "Sistemas · ext. 204"],
+      es: ["¡Te damos la bienvenida a Harborside!", "Tu correo de trabajo ya está listo. Vas a entrar en la computadora del café tu primer día. Tu gerente te va a dar tu contraseña.", "Sistemas nunca te va a pedir tu contraseña por correo ni por mensaje de texto.", "Sistemas · ext. 204"],
     } },
   { key: "hr-paperwork", ...inboxSender(CAST.hr), time: "11:05 AM", sentOn: HIRE_DAY - 2, isTarget: false, unread: false,
-    subject: { en: "New hire paperwork: what to bring", es: "Papeles de nuevo empleado: qué traer" },
+    subject: { en: "New hire paperwork: what to bring", es: "Papeles de ingreso: qué traer" },
     preview: { en: "A photo ID, and your bank details for direct deposit.", es: "Una identificación con foto y los datos de tu banco para el depósito directo." },
     wrongHint: wrongHint("That's from HR. Open Maria's email.", "Eso es de RR.HH. Abre el correo de Maria."),
     body: {
       en: ["Welcome to the team! On your first day you will fill out three forms: a W-4 for taxes, an I-9, and a direct deposit form.", "Please bring a photo ID and your bank's routing and account numbers. A voided check works too.", "Questions? Call (617) 555-0114."],
-      es: ["¡Bienvenido al equipo! Tu primer día vas a llenar tres formularios: un W-4 para los impuestos, un I-9 y un formulario de depósito directo.", "Por favor trae una identificación con foto y los números de ruta y de cuenta de tu banco. Un cheque anulado también sirve.", "¿Preguntas? Llama al (617) 555-0114."],
+      es: ["¡Te damos la bienvenida al equipo! Tu primer día vas a llenar tres formularios: un W-4 para los impuestos, un I-9 y un formulario de depósito directo.", "Por favor trae una identificación con foto y los números de ruta y de cuenta de tu banco. Un cheque anulado también sirve.", "¿Preguntas? Llama al (617) 555-0114."],
     } },
 ] satisfies DecoyEmail[]).map(openable);
 

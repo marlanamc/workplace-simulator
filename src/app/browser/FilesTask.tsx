@@ -19,6 +19,7 @@ import {
   OPEN_ONE_POINTER,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
+  MY_DRIVE_STEP,
   WRONG_EDIT_HINT,
   COMMENT_HINT,
   LESSONS,
@@ -273,7 +274,7 @@ function CafeFilesTask() {
           steps={RIGHT_NOW_STEPS}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          instruction={previewWrong ? CHECK_OTHER_WEEK : undefined}
+          instruction={previewWrong ? CHECK_OTHER_WEEK : view === "mine" ? MY_DRIVE_STEP : undefined}
           onShowMe={onShowMe}
           showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}

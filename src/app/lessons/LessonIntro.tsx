@@ -1,7 +1,7 @@
 "use client";
 
 import { useProgress } from "@/lib/progress-context";
-import { LESSON_COPY } from "@/lib/lessons/copy";
+import { fill, LESSON_COPY } from "@/lib/lessons/copy";
 import type { LessonFact, LessonScene, WorkExample } from "@/lib/lessons/types";
 import type { Localized } from "@/lib/task-types";
 import { WelcomeShell } from "@/components/welcome-shell";
@@ -20,6 +20,7 @@ export default function LessonIntro({
   atWork = [],
   onStart,
   onBack,
+  persona,
 }: {
   title: Localized;
   scene: LessonScene;
@@ -28,6 +29,8 @@ export default function LessonIntro({
   onStart: () => void;
   /** Back to the library, in the language on screen. */
   onBack: (lang: "en" | "es") => void;
+  /** The pretend person the lesson is played as, when there is one. */
+  persona?: string;
 }) {
   const { lang } = useProgress();
   const people = scene.people.map((p) => `${p.name}: ${p.role[lang]}.`);
@@ -59,7 +62,11 @@ export default function LessonIntro({
       {/* The real card: who you are, who the task names, and what to copy.
           Seeing it here first means the learner knows what to look for. */}
       <section aria-labelledby="lesson-intro-card" className="mt-6">
-        <h2 id="lesson-intro-card" className="text-lg font-semibold">{LESSON_COPY.introCardTitle[lang]}</h2>
+        <h2 id="lesson-intro-card" className="text-lg font-semibold">
+          {persona
+            ? fill(LESSON_COPY.introCardTitlePersona[lang], { name: persona.split(" ")[0] })
+            : LESSON_COPY.introCardTitle[lang]}
+        </h2>
         <p className="mt-1 text-base leading-relaxed text-[#3c4043]">{LESSON_COPY.introCard[lang]}</p>
         <div className="mt-3 max-w-[420px] overflow-hidden rounded-[8px]" style={INFO_PAPER}>
           <InfoCardBody scene={scene} reference={reference} lang={lang} />

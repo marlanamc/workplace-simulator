@@ -261,7 +261,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 };
 
 /** Show me's bubble on a reading step: it points at evidence, not something to click. */
-export const SHOW_ME_LOOK: Localized = { en: "Look here.", es: "Mira aquí." };
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [

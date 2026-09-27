@@ -5,7 +5,7 @@ import { SHIFT_TIMES } from '../story-calendar';
 
 describe('opening reply practice', () => {
   it('keeps first-reply structure guidance throughout composition in both languages', () => {
-    expect(OPENING_MESSAGES[0].subject).toEqual({ en: 'Welcome to Harborside Cafe', es: 'Bienvenido a Harborside Cafe' });
+    expect(OPENING_MESSAGES[0].subject).toEqual({ en: 'Welcome to Harborside Cafe', es: 'Te damos la bienvenida a Harborside Cafe' });
     for (const lang of ['en', 'es'] as const) {
       for (const hasText of [false, true]) for (const explicit of [false, true]) {
         expect(openingInstruction(0, 'compose', hasText, explicit)[lang]).toBe(FIRST_REPLY_GUIDANCE[lang]);

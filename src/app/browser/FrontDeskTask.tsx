@@ -20,7 +20,6 @@ import {
   confirmationCorrection,
   RIGHT_NOW_STEPS as APPT_STEPS,
   RIGHT_NOW_LABEL as APPT_LABEL,
-  SHOW_ME_LOOK as APPT_LOOK,
 } from "@/lib/tasks/appointment-scheduling/content";
 import {
   INTAKE_COPY,
@@ -53,7 +52,7 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
-import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
+import { SHOW_ME_LOOK, SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 
 function DeskChrome({ clinic, children }: { clinic: string; children: React.ReactNode }) {
   return (
@@ -231,7 +230,7 @@ function ScheduleDesk() {
                 <span role="columnheader">{c.colTime}</span>
                 <span role="columnheader">{c.colPatient}</span>
                 <span role="columnheader" className="hidden @md:block">{c.colVisit}</span>
-                <span role="columnheader" data-showme="status-header">{c.colStatus}</span>
+                <span role="columnheader" data-showme="status-header" data-showme-look={SHOW_ME_LOOK[lang]}>{c.colStatus}</span>
               </div>
               {SLOTS.map((s) => {
                 const selected = slot === s.time;
@@ -242,6 +241,7 @@ function ScheduleDesk() {
                     type="button"
                     role="row"
                     data-showme={s.time === REQUESTED_SLOT ? "requested-slot" : undefined}
+                    data-showme-look={s.time === REQUESTED_SLOT ? SHOW_ME_LOOK[lang] : undefined}
                     onClick={() => pick(s.time, s.taken, s.name, s.status)}
                     className={`grid w-full ${SHEET_COLS} items-center gap-2 border-b border-[#eee] px-4 py-2 text-left text-[14px] cursor-pointer last:border-b-0 ${
                       selected ? "bg-[#e0f2f1] ring-2 ring-inset ring-[#00695c]" : s.status === "blocked" ? "bg-[repeating-linear-gradient(135deg,#f8f9fa_0_6px,#eceff1_6px_12px)]" : "hover:bg-[#f8f9fa]"
@@ -310,7 +310,7 @@ function ScheduleDesk() {
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight
         targetId={showMe.targetId}
-        label={showMe.targetId === "requested-slot" || showMe.targetId === "status-header" ? APPT_LOOK[lang] : SHOW_ME_POINTER[lang]}
+        label={SHOW_ME_POINTER[lang]}
         onDismiss={showMe.clear}
       />
     </DeskChrome>

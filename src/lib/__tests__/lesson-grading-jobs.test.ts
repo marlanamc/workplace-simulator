@@ -89,6 +89,8 @@ describe("job-application", () => {
     "I am good at organizing and I want to learn.",
     "I want steady hours for my family.",
     "Quiero este trabajo porque me gusta organizar.",
+    "Me encanta atender a la gente en la oficina.",
+    "Steady full time hours help my family.",
   ])("accepts why %j", (why) => expect(whyProblem(why)).toBeNull());
 
   it.each([
@@ -96,6 +98,8 @@ describe("job-application", () => {
     ["asdf asdf asdf asdf asdf asdf", "mash"],
     ["I want this job because ___.", "blank"],
     ["I need a job", "short"],
+    ["I look at the sky every day.", "noReason"],
+    ["The weather is nice today, sunny and warm.", "noReason"],
   ] as const)("rejects why %j as %s", (why, problem) => expect(whyProblem(why)).toBe(problem));
 
   it("the card, hint, correction and help all ask for one or two sentences", () => {

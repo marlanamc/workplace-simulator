@@ -17,7 +17,6 @@ import {
   describeSubmission,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
-  SHOW_ME_LOOK,
 } from "@/lib/tasks/coursework/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -28,7 +27,7 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
-import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
+import { SHOW_ME_LOOK, SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 
 /** Google Classroom's colors, so the page looks like the one students use at school. */
 const GC = { class: "#1967d2", line: "#dadce0", muted: "#5f6368" } as const;
@@ -164,6 +163,7 @@ export default function CourseworkTask() {
           <div className="min-w-0 flex-1">
             <p
               data-showme="today-chip"
+              data-showme-look={SHOW_ME_LOOK[lang]}
               className="mt-0 mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[14px] text-[#202124]"
               style={{ borderColor: GC.line }}
             >
@@ -182,7 +182,7 @@ export default function CourseworkTask() {
                 <p className="mt-1 mb-0" style={{ color: GC.muted }}>{c.heading} · Ms. Rivera</p>
                 <p className="mt-2 mb-0 flex flex-wrap justify-between gap-2 text-[14px] font-medium text-[#202124]">
                   <span>{c.points}</span>
-                  <span data-showme="due-line">
+                  <span data-showme="due-line" data-showme-look={SHOW_ME_LOOK[lang]}>
                     {c.dueLabel} {DUE[lang]}
                   </span>
                 </p>
@@ -304,7 +304,7 @@ export default function CourseworkTask() {
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight
         targetId={showMe.targetId}
-        label={showMe.targetId === "due-line" || showMe.targetId === "today-chip" ? SHOW_ME_LOOK[lang] : SHOW_ME_POINTER[lang]}
+        label={SHOW_ME_POINTER[lang]}
         onDismiss={showMe.clear}
       />
     </div>

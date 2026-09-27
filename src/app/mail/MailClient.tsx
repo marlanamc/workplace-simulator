@@ -57,7 +57,7 @@ import { letterBody, sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRo
 import type { Localized, SubmissionContent } from "@/lib/task-types";
 import { taskNeedsTeacherReview } from "@/lib/curriculum-catalog";
 import { useWindowManager } from "@/lib/window-manager";
-import { SHOW_ME_POINTER } from "@/lib/use-show-me";
+import { SHOW_ME_LOOK, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import BridgeOutCard from "@/components/task/BridgeOutCard";
 import { bridgeOutCopyFor } from "@/lib/bridge-out-content";
 import { CAST } from "@/lib/cast";
@@ -959,7 +959,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         return (
                           <>
                             <p className="m-0">{lines[0]}</p>
-                            <div data-showme="attach-ask" className="flex flex-col gap-3">
+                            <div data-showme="attach-ask" data-showme-look={SHOW_ME_LOOK[lang]} className="flex flex-col gap-3">
                               {lines.slice(1, 3).map((p, i) => <p key={i} className="m-0">{p}</p>)}
                             </div>
                             {lines.slice(3).map((p, i) => <p key={i} className="m-0">{p}</p>)}
@@ -1242,7 +1242,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               setPickerPick(item.key);
             },
             render: (item) => (
-              <div data-showme="attach-preview" className="self-start">
+              <div data-showme="attach-preview" data-showme-look={SHOW_ME_LOOK[lang]} className="self-start">
                 <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} />
               </div>
             ),

@@ -69,6 +69,30 @@ export const TAB_META: TabMeta[] = [
   { key: "portal", label: "Portal", url: "portal.harborsidecafe.com", color: "#8430ce", levelKey: "level2" },
 ];
 
+/**
+ * Spanish tab names, for descriptive tabs only. App names (Mail, Calendar,
+ * Drive, Sheets, Docs, Today, Huddle…) stay as they are, because the Spanish
+ * copy tells the learner to "Abre Sheets" and a real Chromebook shows the
+ * app's own name.
+ */
+const TAB_LABEL_ES: Record<string, string> = {
+  tour: "Bienvenida",
+  "account-recovery": "Iniciar sesión",
+  jobs: "Empleos",
+  resume: "Currículum",
+  interview: "Entrevista",
+  offer: "Oferta",
+  onboarding: "Ingreso",
+  coursework: "Tareas",
+  library: "Biblioteca",
+  "front-desk": "Recepción",
+  "college-portal": "Universidad",
+};
+
+/** The tab's name in the learner's language. */
+export const tabLabel = (key: string, label: string, lang: "en" | "es") =>
+  lang === "es" ? (TAB_LABEL_ES[key] ?? label) : label;
+
 export const TAB_META_BY_KEY: Record<string, TabMeta> = Object.fromEntries(
   TAB_META.map((t) => [t.key, t]),
 );

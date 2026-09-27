@@ -20,8 +20,8 @@ export const FIRST_REPLY_EXAMPLE = copy(
 export const OPENING_MESSAGES = [
   {
     id: 'welcome', sender: CAST.maria, time: '6:02 PM',
-    subject: copy('Welcome to Harborside Cafe', 'Bienvenido a Harborside Cafe'),
-    body: copy('Welcome to the team! Your first day is tomorrow. Please reply to let me know you received this message.', '¡Bienvenido al equipo! Tu primer día es mañana. Responde para avisarme que recibiste este mensaje.'),
+    subject: copy('Welcome to Harborside Cafe', 'Te damos la bienvenida a Harborside Cafe'),
+    body: copy('Welcome to the team! Your first day is tomorrow. Please reply to let me know you received this message.', '¡Te damos la bienvenida al equipo! Tu primer día es mañana. Responde para avisarme que recibiste este mensaje.'),
     more: lines(
       ['The cafe is at 142 Main Street. Come in the side door and ask for me at the counter.', 'Please wear a black shirt, dark pants, and closed-toe shoes. We will give you an apron.'],
       ['El café está en 142 Main Street. Entra por la puerta del costado y pregunta por mí en el mostrador.', 'Por favor ponte una camisa negra, pantalón oscuro y zapatos cerrados. Nosotros te damos el delantal.'],
@@ -36,7 +36,7 @@ export const OPENING_MESSAGES = [
     body: copy('Your shift tomorrow starts at 10 AM. Can you confirm you will be here?', 'Tu turno de mañana empieza a las 10 a. m. ¿Puedes confirmar que estarás aquí?'),
     more: lines(
       ['Please bring a photo ID and your bank information. We will do your new-hire paperwork before your shift.'],
-      ['Por favor trae una identificación con foto y los datos de tu banco. Vamos a llenar tus papeles de nuevo empleado antes del turno.'],
+      ['Por favor trae una identificación con foto y los datos de tu banco. Vamos a llenar tus papeles de ingreso antes del turno.'],
     ),
     objective: copy('Confirm to Maria that you will be here tomorrow at 10 AM.', 'Confirma a Maria que estarás aquí mañana a las 10 a. m.'),
     starter: copy('Yes, I will be there.', 'Sí, allí estaré.'),
