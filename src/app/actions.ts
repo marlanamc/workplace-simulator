@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { clearSessionCookie, getSessionLearnerId } from "@/lib/auth";
+import { canUseStudio } from "@/lib/studio-access";
 import {
   getOpeningReplies,
   saveOpeningReply,
@@ -134,6 +135,8 @@ export async function awardCertificate(trackKey: string) {
 export async function setProgressPreset(presetKey: string | "all") {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) return { ok: false as const };
+  // Studio-only, and it wipes progress: check the same gate the page does.
+  if (!canUseStudio(await getLearnerById(learnerId))) return { ok: false as const };
 
   const { levelKey, path } = presetKey === "all" ? { levelKey: "all" as const, path: undefined } : parsePresetKey(presetKey);
 

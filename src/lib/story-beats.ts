@@ -782,11 +782,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "A title, the $188, and one main point. You presented it. That is all HQ needs for now.",
-        "There is more to come. Check Studio if you still want to try the other path.",
+        "There is more to come. When you finish, you can choose another direction.",
       ],
       es: [
         "Un título, los $188, y una idea. Lo presentaste. Eso es todo lo que HQ necesita por ahora.",
-        "Viene más. Revisa Studio si todavía quieres probar el otro camino.",
+        "Viene más. Cuando termines, puedes elegir otro camino.",
       ],
     },
   },

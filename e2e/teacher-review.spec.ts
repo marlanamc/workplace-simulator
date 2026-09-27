@@ -10,7 +10,9 @@ import { clickIntoPage, waitForInteractive } from "./interactive";
  * the teacher dashboard, and seeding the note is how a real class works.
  */
 
-const CLASS_CODE = `REVIEW-${Date.now().toString().slice(-6)}`;
+// Unique per run so the teacher's roster is only this student. The E2E- prefix
+// is what lets the student into Studio (see src/lib/studio-access.ts).
+const CLASS_CODE = `E2E-REVIEW-${Date.now().toString().slice(-6)}`;
 const STUDENT = `Review Ana ${Date.now()}`;
 const STRENGTH = "Sam trained two new hires this month and stayed patient with both.";
 const AREA = "The morning open needs Sam there by 6. Being on time every day would help the shift start clean.";

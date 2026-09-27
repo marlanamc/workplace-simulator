@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { redirect } from "next/navigation";
 import { getSessionLearnerId } from "@/lib/auth";
+import { getLearnerById } from "@/lib/db/queries";
+import { canUseStudio } from "@/lib/studio-access";
 import {
   AFTER_ACT_2_PATHS,
   CATALOG_ACTS,
@@ -28,6 +30,8 @@ export default async function StudioPage({
 }) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) redirect("/login?next=/studio");
+  // The time machine replaces this account's progress, so learners never get here.
+  if (!canUseStudio(await getLearnerById(learnerId))) redirect("/");
   // Demo view is for showing the game to staff: same page, minus designer detail.
   const demo = (await searchParams).view === "demo";
 

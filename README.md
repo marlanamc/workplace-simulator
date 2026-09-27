@@ -60,7 +60,7 @@ intact, and the shelf can show a "running" indicator for open apps.
 - `/` — the only real screen after login. The server component (`page.tsx`) checks the
   session and loads real progress; `DesktopClient.tsx` renders the desktop and hosts the
   providers. `/browser`, `/pdf-reader`, and `/mail` are redirect shims to `/` for old links.
-- `/studio` — instructor/dev tools, including the time machine (see TESTING.md).
+- `/studio` — instructor/dev tools, including the time machine. Teachers and listed class codes only (see TESTING.md).
 - `/certificate/[learnerId]` — the printable certificate.
 
 ### Apps

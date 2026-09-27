@@ -420,15 +420,18 @@ export default function LoginForm({ next, paused = false }: { next: string; paus
         <div>
           <DesktopClock lang={lang} />
           <p className="mt-3 max-w-[36ch] text-[14px] text-white/80">{c.banner}</p>
-          <div
-            role="note"
-            data-testid="login-wip-notice"
-            className="mt-4 max-w-[40ch] rounded-2xl border border-white/25 bg-black/35 px-4 py-3 backdrop-blur-sm"
-          >
-            <p className="m-0 text-[15px] font-semibold">🚧 {c.wipTitle}</p>
-            <p className="m-0 mt-1 text-[14px] text-white/85">{c.wipBody}</p>
-            {paused ? <p className="m-0 mt-1 text-[14px] font-semibold">{c.wipPaused}</p> : null}
-          </div>
+          {/* Staff-only news. Sign-in is paused only while staff are the audience. */}
+          {paused ? (
+            <div
+              role="note"
+              data-testid="login-wip-notice"
+              className="mt-4 max-w-[40ch] rounded-2xl border border-white/25 bg-black/35 px-4 py-3 backdrop-blur-sm"
+            >
+              <p className="m-0 text-[15px] font-semibold">🚧 {c.wipTitle}</p>
+              <p className="m-0 mt-1 text-[14px] text-white/85">{c.wipBody}</p>
+              <p className="m-0 mt-1 text-[14px] font-semibold">{c.wipPaused}</p>
+            </div>
+          ) : null}
         </div>
 
         <div className="flex flex-1 flex-col items-center justify-center px-5 py-6">
