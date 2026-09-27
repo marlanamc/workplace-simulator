@@ -1135,6 +1135,22 @@ export function arrivalLevelUp(level: Level): Level | null {
   return level;
 }
 
+/**
+ * The level-up card to play when a learner *finishes into* this level. An
+ * opener of Act II or later hands that moment to `ActIntro` instead, unless
+ * its card is a `stoppingPoint` (end the day first, then the intro).
+ *
+ * Returning the level here when no card will render leaves a pending
+ * celebration nobody can dismiss. It hid the Job Card after "Start Act IV"
+ * and "Start Act VII" until a reload, and kept the shelf on yesterday.
+ */
+export function levelUpCardFor(level: Level): Level | null {
+  if (!level.levelUp) return null;
+  const act = actForLevel(level);
+  const opensLaterAct = Boolean(act && act.key !== "act1" && act.levelKeys[0] === level.key);
+  return opensLaterAct && !level.levelUp.stoppingPoint ? null : level;
+}
+
 export function sceneForLevel(level: Level): DesktopScene {
   return actForLevel(level)?.scene ?? "harborside-open";
 }

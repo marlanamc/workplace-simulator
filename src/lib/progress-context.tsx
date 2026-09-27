@@ -12,6 +12,7 @@ import {
   isTrackComplete,
   levelForTrack,
   isLevelComplete,
+  levelUpCardFor,
   nextCourseLevel,
   taskKeysForLevel,
   LEVELS,
@@ -332,8 +333,11 @@ export function ProgressProvider({
       const level = levelForTrack(track.key);
       const path = routeBridgePath(courseRoute);
       const upcoming = isLevelComplete(level, next, path) ? nextCourseLevel(level, courseRoute) : null;
-      if (upcoming?.levelUp) setCelebrateLevel(upcoming);
-      else setCelebrateTrack(track);
+      // An act opener's moment belongs to ActIntro, so it records no card
+      // (and no trophy either, as before) rather than one nobody can dismiss.
+      const card = upcoming ? levelUpCardFor(upcoming) : null;
+      if (card) setCelebrateLevel(card);
+      else if (!upcoming?.levelUp) setCelebrateTrack(track);
     }
 
     if (storyMailAfter(taskKey)) setMariaNoteTaskKey(taskKey);
