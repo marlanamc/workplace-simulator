@@ -9,48 +9,15 @@
  * is not a yes to 10 AM either.
  */
 
+import { DECLINES, NEGATED_ATTEND, UNCLEAR, YES, hasBlank, normalizeReply, reassured } from "@/lib/grading/meaning";
+
+export { hasBlank, normalizeReply };
+
 export type StartTimeVerdict = "ok" | "empty" | "blank" | "declines" | "late" | "other-time" | "unclear";
 export type BagVerdict = "ok" | "empty" | "blank" | "wrong-place" | "negated";
 
-export function normalizeReply(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[’‘`]/g, "'")
-    .replace(/[¡¿]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-/** A starter frame left unfilled: "I will put my bag ___." */
-export function hasBlank(text: string): boolean {
-  return /_{2,}/.test(text);
-}
-
-/**
- * Phrases with "no"/"not" in them that are yeses or reassurance. Swapped for
- * "ok" before any negation is looked for, so they can never sink a reply.
- */
-const REASSURING =
-  /\b(no problems?|no prob|no worries|not a problem|no need to worry|don'?t worry|do not worry|of course|no te preocupes|no se preocupe|no hay problema|sin problemas?|claro que si|can'?t wait|cannot wait|can not wait|(won'?t|will not|wouldn'?t|would not|not going to) miss it|no me lo pierdo|no faltare|(i )?(will not|won'?t|wo not|not going to) be late|not be late|not late|no voy a llegar tarde|no llegare tarde|no llego tarde|on time|a tiempo|puntual)\b/g;
-
-function reassured(text: string): string {
-  return normalizeReply(text).replace(REASSURING, " ok ").replace(/\s+/g, " ").trim();
-}
-
 const LATE =
   /\b(late|tarde|retras\w*|demor\w*|a little after|un poco despues)\b|\b\d+\s*(min|mins|minutes?|minutos?)\b(?!\s*(early|before|antes|temprano))/;
-
-const DECLINES =
-  /\b(can'?t|cannot|can not|won'?t|wont|will not|unable|not able|not going to|not coming|i'?m sick|no puedo|no podre|no voy a (poder|ir|estar)|no ire|no vengo|no estare|no llegare|imposible|(don'?t|do not) think)\b/;
-/** A negation a few words before the verb it negates: "I will not come", "no voy". */
-const NEGATED_ATTEND =
-  /\b(not|no|never|nunca)\b(?: [\w']+){0,2} (come|coming|be there|make it|go|going|work|attend|ir|venir|voy|estar|llegar|asistir)\b/;
-const UNCLEAR = /\b(not sure|maybe|perhaps|i think so|tal vez|quizas?|no se|no estoy segur[oa]|i don'?t know|depends|depende)\b/;
-
-const YES =
-  /\b(yes|yeah|yep|yup|ya|sure|ok|okay|confirm|confirmed|absolutely|certainly|definitely|great|perfect|sounds good|sounds great|got it|alright|all right|fine|will do|count me in|see you|i'?ll be there|i will be there|be there|be here|i can come|i can be there|i can make it|i'?ll come|i will come|i come|i'?m coming|i am coming|im coming|i will go|si|claro|vale|dale|listo|confirmo|confirmado|perfecto|entendido|de acuerdo|por supuesto|con gusto|esta bien|seguro|ahi estare|alli estare|estare|nos vemos|cuenta conmigo|voy|ire|llego|llegare|puedo ir|puedo estar|puedo llegar)\b/;
 
 /** A clock time other than 10:00 ("at 11", "10:30 am", "a las 9"). */
 function namesOtherTime(t: string): boolean {
