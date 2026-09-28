@@ -176,8 +176,8 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   // --- Level 27: portfolio-reflection ---
   await openTask(page, "portfolio-reflection");
   await expect(page.getByRole("heading", { name: "Everything you've done" })).toBeVisible({ timeout: 20_000 });
-  // The award list should show earned trophies grouped by act.
-  await expect(page.getByText("Act I", {exact: true})).toBeVisible();
+  // The award list should show earned trophies grouped by act, named.
+  await expect(page.getByText("Act I: New Hire", {exact: true})).toBeVisible();
 
   await page.getByRole("button", { name: /look back/ }).click();
   const boxes = page.getByPlaceholder("Your answer…");
@@ -198,5 +198,8 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   const copied = await page.evaluate(() => navigator.clipboard.readText());
   expect(copied).toContain('This is a real answer with enough words to count.');
   expect(copied).toContain('Simulated workplace practice');
+  // Skills, in the first person, under plain headings.
+  expect(copied).toContain('I can write a specific, constructive performance note.');
+  expect(copied).toContain('Leading an office team');
 
 });
