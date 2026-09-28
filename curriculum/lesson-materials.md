@@ -1,7 +1,8 @@
 # Workplace practice packs
 
-Six published lessons now have bilingual teacher-led extensions: mail-reply,
-mail-attach, calendar, files, spreadsheet, and appointment-scheduling. Open
+Seven published lessons have bilingual teacher-led extensions: mail-reply,
+mail-attach, calendar, files, spreadsheet, formula-check, and
+appointment-scheduling. Open
 `/lessons?teacher=1`, choose a topic, then **Workplace materials**, or open the
 teacher guide inside a lesson preview. Each pack has its own public
 `/lessons/<taskKey>/materials?lang=en|es` page.
@@ -14,8 +15,10 @@ contain the kinds of details a worker must compare: dates, deadlines, availabili
 versions, paid receipts, and unfinished records. The teacher leads the discussion;
 these are not new simulator tasks or automatically assessed attempts.
 
-Print source documents for pairs or a small group. The print view excludes teacher
-prompts and answer notes. Let learners point, speak, or write in either language.
+Print the learner handout for pairs or a small group. It has the documents and
+a short **Your task** section: two to four plain questions with lines to write
+on (or blank grid cells to fill). The print view excludes teacher prompts and
+answer notes. Let learners point, speak, or write in either language.
 Ask what evidence supports a choice before introducing the changed situation.
 Accept reasonable wording rather than requiring the sample language. Record any
 help needed separately from whether the learner reaches a supported decision.
@@ -27,8 +30,14 @@ help needed separately from whether the learner reaches a supported decision.
   distractors, not trick questions or additional reading without a purpose.
 - Include discussion prompts, observable evidence, and one changed constraint.
   A valid response may be asking for clarification when no option fits.
+- Practice the same skill as the lesson, at the lesson's reading level: short
+  sentences and everyday words ("I have to leave at 11:00", not "time window").
+- Give the learner something to do on paper (`learnerTask`). The evidence stays
+  in the teacher notes, and the printed task must not name the catch.
 - Keep every visible phrase in English and Spanish. Match dates, arithmetic,
-  durations, filenames, and answer notes in both languages.
+  durations, and answer notes in both languages. Workplace file and folder names
+  stay in English in both, as they do in the lessons; the Spanish copy glosses
+  the key words (DRAFT = borrador).
 - Clearly separate the new situation from the simulator's existing facts and
   answer keys. Do not put new instructions on the learner desktop: the Job Card
   remains its only instruction voice.

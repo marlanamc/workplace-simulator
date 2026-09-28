@@ -169,10 +169,11 @@ The smoke sweep opens every reachable task as a lesson through the dev-only `?sm
 
 ### Workplace materials for lessons
 
-Teacher mode (`/lessons?teacher=1`) and lesson preview guides now link to six
+Teacher mode (`/lessons?teacher=1`) and lesson preview guides now link to seven
 bilingual practice packs: work email, attachments, calendars, file handoffs,
-spreadsheet totals, and appointment scheduling. Each includes two fictional source
-documents, discussion prompts, evidence notes, and a changed situation. **Print
-source documents** omits teacher notes. These are teacher-led extensions after the
+spreadsheet entry, formula checks, and appointment scheduling. Each includes two
+fictional source documents, a printable learner task with space to write,
+discussion prompts, evidence notes, and a changed situation. **Print learner
+handout** omits teacher notes. These are teacher-led extensions after the
 computer lesson; they do not change simulator answers or award credit. See
 [curriculum/lesson-materials.md](curriculum/lesson-materials.md).

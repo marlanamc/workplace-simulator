@@ -101,6 +101,7 @@ export default function AccountRecoveryTask() {
     if (text.isTarget) {
       setChosenText(key);
       dismiss();
+      requestAnimationFrame(() => codeRef.current?.focus());
     } else if (text.wrongHint) {
       recordWrong({ title: lang === "en" ? "Not that one." : "Ese no es.", body: text.wrongHint[lang] });
     }
@@ -135,13 +136,15 @@ export default function AccountRecoveryTask() {
     setCodeInput("");
   };
 
+  const selectedText = TEXTS.find((text) => text.key === chosenText);
+
   const phoneTexts =
     view === "signin"
       ? []
       : TEXTS.map((t) => ({ key: t.key, from: t.from, body: t.body[lang], when: t.when[lang] }));
 
   return (
-    <div className="relative">
+    <div className="relative h-full overflow-y-auto">
       {/* The page is the sign-in screen itself; its title is the page's heading. */}
       <h2 className="sr-only">{c.heading}</h2>
 
@@ -214,6 +217,13 @@ export default function AccountRecoveryTask() {
                 <h3 className="m-0 mt-3 text-[32px] font-normal leading-tight text-[#1f1f1f]">{c.verifyTitle}</h3>
                 <p className="mt-2 mb-1 text-[16px] font-medium text-[#1f1f1f]">{c.codeSentTitle}</p>
                 <p className="mt-0 mb-5 text-[15px] leading-relaxed text-[#444746]">{c.codeSentBody}</p>
+                <div className={selectedText ? "grid grid-cols-2 items-start gap-3 @min-[520px]:block" : undefined}>
+                {selectedText && (
+                  <blockquote data-testid="selected-phone-message" className="m-0 rounded-lg border border-[#dadce0] bg-[#e8f0fe] p-2 text-[13px] leading-snug @min-[520px]:hidden">
+                    <strong className="block">{selectedText.from}</strong>
+                    {selectedText.body[lang]}
+                  </blockquote>
+                )}
                 <label className="block text-[14px] font-medium text-[#444746]">
                   {c.codeLabel}
                   <input
@@ -235,6 +245,7 @@ export default function AccountRecoveryTask() {
                     className="mt-1.5 block min-h-14 w-full rounded-[4px] border border-[#747775] px-3.5 text-[18px] font-normal tracking-[0.2em] text-[#1f1f1f] outline-none placeholder:tracking-normal placeholder:text-[#747775] focus:border-2 focus:border-[#0b57d0]"
                   />
                 </label>
+                </div>
                 <div className="mt-8 flex justify-end">
                   <button
                     onClick={trySubmitCode}

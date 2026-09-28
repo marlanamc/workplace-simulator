@@ -57,12 +57,9 @@ export default function ShowMeHighlight({
       ? document.querySelector(`[data-showme="${targetId}"][data-showme-primary]`) ??
         document.querySelector(`[data-showme="${targetId}"]`)
       : null;
-    if (target) {
-      const r = target.getBoundingClientRect();
-      if (r.top < 0 || r.bottom > window.innerHeight - 64) {
-        target.scrollIntoView({ block: "center", inline: "nearest" });
-      }
-    }
+    // Always scroll the nearest ancestors too: a target can be inside the
+    // viewport while clipped by a shorter nested pane.
+    target?.scrollIntoView({ block: "nearest", inline: "nearest" });
 
     const raf = requestAnimationFrame(measure);
     window.addEventListener("resize", measure);

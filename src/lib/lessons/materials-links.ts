@@ -3,7 +3,7 @@ import type { TaskKey } from "@/lib/desktop-content";
 
 // Keep the authored packets out of the learner desktop's client bundle.
 export const MATERIAL_TASKS: readonly TaskKey[] = [
-  "mail-reply", "mail-attach", "calendar", "files", "spreadsheet", "appointment-scheduling",
+  "mail-reply", "mail-attach", "calendar", "files", "spreadsheet", "formula-check", "appointment-scheduling",
 ];
 export function materialsHref(key: string, lang: Lang): string | undefined {
   return MATERIAL_TASKS.includes(key as TaskKey) ? `/lessons/${key}/materials?lang=${lang}` : undefined;
@@ -18,7 +18,10 @@ export const MATERIAL_COPY = {
   evidence: { en: "Evidence to listen for", es: "Evidencia que se puede observar" },
   change: { en: "Change the situation", es: "Cambiar la situación" },
   support: { en: "Read the documents aloud if helpful. Learners can point, speak, or write; accept short answers in either language. Ask which document supports the answer. Observe the decision separately from reading or typing speed.", es: "Lea los documentos en voz alta si ayuda. Se puede señalar, hablar o escribir; acepte respuestas cortas en cualquiera de los dos idiomas. Pregunte qué documento respalda la respuesta. Observe la decisión por separado de la velocidad de lectura o escritura." },
-  print: { en: "Print source documents", es: "Imprimir documentos de consulta" },
+  print: { en: "Print learner handout", es: "Imprimir hoja para estudiantes" },
+  task: { en: "Your task", es: "Tu tarea" },
+  name: { en: "Name:", es: "Nombre:" },
+  blank: { en: "Empty. Write the number here.", es: "Vacía. Escribe el número aquí." },
   back: { en: "Back to teacher preview", es: "Volver a la vista del docente" },
   fictional: { en: "Fictional practice document", es: "Documento ficticio de práctica" },
 } as const;

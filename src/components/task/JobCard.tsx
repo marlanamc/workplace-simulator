@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useEffect, useCallback, useRef, useState } from "react";
 import { AlertCircle, ArrowLeft, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -122,6 +122,7 @@ export default function JobCard() {
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const collapseRef = useRef<HTMLButtonElement>(null);
 
@@ -198,6 +199,12 @@ export default function JobCard() {
     setHeardVoice(voice);
     setCollapsed(false);
   }
+
+  // A new instruction starts at its first line, even if Help or Show me
+  // scrolled the previous card to a lower control.
+  useEffect(() => {
+    if (bodyRef.current) bodyRef.current.scrollTop = 0;
+  }, [voice]);
 
   const moveToCorner = useCallback((next: Corner) => setCorner(next), [setCorner]);
 
@@ -503,25 +510,21 @@ export default function JobCard() {
       // In a lesson the card has its own column, so it can sit above a picker's
       // backdrop without covering the picker: a correction for a wrong file
       // stays readable instead of dimmed behind the overlay.
-      // A short screen (a Chromebook at 150% text is 911x512) gets a
-      // compact card: narrower, smaller type, capped at half the height, so
-      // it never sits over most of the task and the info card. A lesson
-      // between 800px and xl docks it in its own left column instead
-      // (LESSON_RAIL_CLASS), so it covers nothing.
+      // Lessons reserve a rail or bottom panel for this card at every size.
       className={`job-card-compact ${lesson ? "lesson-rail-card " : ""}animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
       style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div
         ref={handleRef}
         data-testid="job-card-drag-handle"
-        onPointerDown={startDrag}
-        onKeyDown={nudgeCorner}
-        tabIndex={0}
-        role="button"
-        aria-label={c.dragHint}
-        title={c.dragHint}
+        onPointerDown={lesson ? undefined : startDrag}
+        onKeyDown={lesson ? undefined : nudgeCorner}
+        tabIndex={lesson ? undefined : 0}
+        role={lesson ? undefined : "button"}
+        aria-label={lesson ? undefined : c.dragHint}
+        title={lesson ? undefined : c.dragHint}
         className="flex shrink-0 items-center gap-2.5 px-5 py-2 text-white"
-        style={{ background: tone, cursor: drag ? "grabbing" : "grab", touchAction: "none" }}
+        style={{ background: tone, cursor: lesson ? "default" : drag ? "grabbing" : "grab", touchAction: "none" }}
       >
         <span
           className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[14px] font-bold"
@@ -586,7 +589,7 @@ export default function JobCard() {
             <ChevronDown size={16} strokeWidth={2.5} aria-hidden />
           )}
         </button>
-        <span className="flex shrink-0 gap-[3px] opacity-75" aria-hidden>
+        <span className={`${lesson ? "hidden" : "flex"} shrink-0 gap-[3px] opacity-75`} aria-hidden>
           {[0, 1].map((col) => (
             <span key={col} className="flex flex-col gap-[3px]">
               {[0, 1, 2].map((row) => (
@@ -598,7 +601,7 @@ export default function JobCard() {
       </div>
 
       {!collapsed && (
-      <div className="min-h-0 overflow-y-auto p-5">
+      <div ref={bodyRef} className="min-h-0 overflow-y-auto p-5">
         {showPractice ? (
           <>
             <p role="status" className="m-0 text-[22px] font-medium leading-tight text-[#202124]">{script.line}</p>
@@ -836,7 +839,7 @@ export default function JobCard() {
                 data-testid="lesson-info-open"
                 aria-expanded={lesson.infoOpen}
                 onClick={() => lesson.setInfoOpen(!lesson.infoOpen)}
-                className={`${quiet} xl:hidden ${pointedAt && !lesson.infoOpen ? "animate-showme-pulse-compact text-[#5b3a1e]" : ""}`}
+                className={`${quiet} lesson-info-control xl:hidden ${pointedAt && !lesson.infoOpen ? "animate-showme-pulse-compact text-[#5b3a1e]" : ""}`}
               >
                 <IdCard size={16} aria-hidden />
                 {LESSON_COPY.infoOpen[lang]}
