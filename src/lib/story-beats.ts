@@ -9,6 +9,7 @@ import { AID_ACCEPT_BY_DAY, monthDate } from "@/lib/story-dates";
 const ACCEPT_BY_DATE = { en: monthDate(AID_ACCEPT_BY_DAY, "en"), es: monthDate(AID_ACCEPT_BY_DAY, "es") };
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 import { TASK_LIST } from "@/lib/tasks/registry";
+import { OFFLINE_FLAG } from "@/lib/tasks/handbook/offline";
 
 export const HUDDLE_TIME_FLAG = "huddleTime";
 /** Set when the learner flags a hours mismatch and Mail should open to compose. */
@@ -1044,6 +1045,7 @@ export function storyFlagKeysForTasks(taskKeys: Iterable<TaskKey>): string[] {
     if (task === "calendar") keys.push(HUDDLE_TIME_FLAG);
     if (task === "timeclock") keys.push(TIMECLOCK_MAIL_FLAG);
     if (task === "upload-schedule") keys.push(SCHEDULE_DOWNLOADED_FLAG);
+    if (task === "handbook") keys.push(OFFLINE_FLAG);
   }
   return keys;
 }

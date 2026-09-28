@@ -32,6 +32,7 @@ Use Studio’s “After Act II” preset to test choices and route switching. Us
 - [ ] College (V A), including document selection and deadline lookup.
 - [ ] Stop for now; reload; resume another route without lost or invented credit.
 - [ ] Save failure; retry after reload; restored writing and accurate shared summary.
+- [ ] Day 10 upload (Wave 4) on a small Chromebook (911×512): the Job Card covers the top of the picker preview, where the week is printed. Record whether the learner shrinks or moves the card on their own (the Welcome tour teaches this on Day 0), asks for help, or picks by file name alone. If most get stuck, add a one-time Job Card reminder the first time the card covers a picker.
 
 After selected activities, provide a new fictional example with different facts and ask the learner to explain their choice. Do not coach until recording the unaided attempt. Observe whether they compare references or click until something passes, and whether a starter helps expression or replaces thinking.
 

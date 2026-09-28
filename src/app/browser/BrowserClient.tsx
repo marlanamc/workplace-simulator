@@ -10,6 +10,8 @@ import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { useLesson } from "@/lib/lesson-context";
+import OfflinePage, { BROWSER_RELOAD_EVENT } from "./OfflinePage";
+import { OFFLINE_FLAG, offlineIncidentActive } from "@/lib/tasks/handbook/offline";
 import { LEVELS, TASK_LOCATIONS, levelForTrack, nextTaskInTrack, unlockedLevels } from "@/lib/tracks-content";
 import { jumpTabForTask } from "@/lib/curriculum-catalog";
 import { bookmarkToPulse } from "@/lib/bookmark-pulse";
@@ -158,6 +160,8 @@ export default function BrowserClient() {
   // A task's own "Open Calendar" style link still works, because a hub task
   // (Triage, the huddle, the weekly report) is made of those hops.
   const lesson = useLesson();
+  // Day 7's practice Wi-Fi drop (Wave 4, everyday recovery).
+  const offline = offlineIncidentActive(nextTaskInTrack(currentTrack, completedTaskKeys), storyFlags[OFFLINE_FLAG], Boolean(lesson));
   const lessonTabs = lesson
     ? lesson.tabs.flatMap((k) => BASE_TABS.filter((t) => t.key === k))
     : null;
@@ -469,7 +473,11 @@ export default function BrowserClient() {
             <path d="M4 11h12.17l-5.59-5.59L12 4l8 8-8 8-1.41-1.41L16.17 13H4v-2z" />
           </svg>
         </button>
-        <button className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/[0.06] cursor-pointer" aria-label="Reload">
+        <button
+          onClick={() => window.dispatchEvent(new Event(BROWSER_RELOAD_EVENT))}
+          className="flex h-8 w-8 items-center justify-center rounded-full text-[#5f6368] hover:bg-black/[0.06] cursor-pointer"
+          aria-label="Reload"
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
             <path d="M17.65 6.35A7.958 7.958 0 0 0 12 4C7.58 4 4 7.58 4 12s3.58 8 8 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
           </svg>
@@ -556,7 +564,10 @@ export default function BrowserClient() {
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
-        {lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : <>
+        {lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
+          // Every page but Forms, whose done screen is still up from Day 7's first job.
+          <OfflinePage />
+        ) : <>
         {active?.key === "tour"     && (
           <TourTask
             startAtHelp={tourWalkthroughDone}
