@@ -53,17 +53,19 @@ Pilot transfer: observe a harmless closed-tab recovery and Undo in a real editor
 
 ## 3. Communication beyond email
 
-Placement: choose one round suited to the learner's route, after email basics.
+Status: built on `feat/wave-4-communication`. The owner chose text, voicemail and a doc comment (28 Sep); each is a required moment in an existing task.
 
-- Manager text: a changed shift request with the day and time in the source. Learner replies with acknowledgement and the relevant detail.
-- Voicemail: short audio plus an equivalent transcript. Learner records caller, reason and callback information in a message form. Never require audio-only recall.
-- Calendar reply: compare the invitation with a visible schedule, then accept or propose a free alternative.
-- Document comment: select the relevant passage and leave a specific question. Do not edit the source when only a comment is requested.
-- Team chat: reply in the correct thread and keep private information out of a public channel.
+| Channel | Host | What happens | Evidence |
+|---|---|---|---|
+| Manager text | Day 2, `schedule` (the swap request) | After the swap form is filed, Maria texts: she moved the learner to the late Thursday shift they asked for, and asks them to confirm. The learner replies in a phone Messages thread. The schedule is unchanged. | The reply says yes and names the day or the time. A refusal, a bare "ok", or only a time each get one correction. The filed state survives a reload, and the Portal reopens on Shift Swap. |
+| Voicemail | Day 14, `team-schedule` | The cafe phone has a voicemail for Renata from Casey Brooks, who asked for Saturday off (matching the schedule) and wants a call back. The learner writes Renata a phone message: who called, why, and the call-back number. The crew sheet opens after that. | Caller, reason and number are checked separately. The audio uses the browser's own speech, and the transcript is always on screen (with a Spanish gloss), so nothing depends on hearing it. |
+| Doc comment | Day 12, `make-a-copy` | Renata's view-only template has last week's date in C1. The learner selects C1, clicks Comment, and asks her. Renata answers and fixes the heading, and the copy follows. | The comment is on C1 and names the date or the week. Typing on the template is still refused. |
+| Calendar reply | Days 9 and 13 (already built) | Propose a new time from the calendar. | Covered by existing tasks. |
+| Team chat | Act VI Zoom chat (already built) | Ask a question in meeting chat. | The public-channel privacy part is left for the pilot. |
 
-Initial Job Card example: “Renata sent a schedule question. Reply in her text thread.” / “Renata te envió una pregunta sobre el horario. Respóndele en su conversación de mensajes.”
+Day 15 (`formula-check`) was considered for the comment but rejected: its skill is fixing Renata's formula, and "comment, don't edit" there would contradict it.
 
-Evidence: grade destination, essential facts and disclosure boundaries separately. Accept short, comprehensible beginner language. An incomplete response gets one actionable correction. Save draft and selected thread on reload. Completion names the channel and action actually practiced.
+Grade destination, essential facts and disclosure boundaries separately. Accept short, comprehensible beginner language. An incomplete response gets one actionable correction. Completion names the channel and action actually practiced.
 
 ## Release gates
 

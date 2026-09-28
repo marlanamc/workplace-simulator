@@ -32,6 +32,20 @@ import { TAB_ICONS, TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
+import PhoneFrame from "@/components/task/PhoneFrame";
+import { useTaskDraft } from "@/lib/use-task-draft";
+import { speakText } from "@/lib/read-aloud";
+import { Play } from "lucide-react";
+import {
+  MESSAGE_FIRST,
+  PHONE_MESSAGE_CORRECTIONS,
+  VOICEMAIL_COPY,
+  VOICEMAIL_GLOSS,
+  VOICEMAIL_STEP,
+  VOICEMAIL_TEXT,
+  phoneMessageProblem,
+  type PhoneMessage,
+} from "@/lib/tasks/team-schedule/voicemail";
 import NeedAStart from "@/components/task/NeedAStart";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
@@ -78,6 +92,17 @@ export default function TeamScheduleTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
+  // Day 14's voicemail (Wave 4): a phone message for Renata comes first.
+  const [message, setMessage] = useTaskDraft<PhoneMessage>("team-schedule", "phone-message", { caller: "", reason: "", callback: "" });
+  const [messageSent, setMessageSent] = useTaskDraft("team-schedule", "phone-message-sent", false);
+  const vm = VOICEMAIL_COPY[lang];
+
+  const sendMessage = () => {
+    showMe.clear();
+    const problem = phoneMessageProblem(message);
+    if (problem) return say(PHONE_MESSAGE_CORRECTIONS[problem][lang]);
+    setMessageSent(true);
+  };
 
   const c = TEAM_SCHEDULE_COPY[lang];
   const days = DAY_LABELS[lang];
@@ -92,6 +117,7 @@ export default function TeamScheduleTask() {
   };
 
   const trySend = () => {
+    if (!messageSent) return say(MESSAGE_FIRST[lang]);
     if (!body.trim()) return say(EMPTY_EMAIL_HINT[lang]);
     if (!emailMentionsShift(body)) return say(WRONG_EMAIL_HINT[lang]);
     setView("done");
@@ -102,6 +128,8 @@ export default function TeamScheduleTask() {
     setView("home");
     setCoverKey(null);
     setBody("");
+    setMessage({ caller: "", reason: "", callback: "" });
+    setMessageSent(false);
   };
 
   const notYet = () =>
@@ -154,10 +182,13 @@ export default function TeamScheduleTask() {
           icon={TASK_ICONS["team-schedule"]}
           stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
           steps={RIGHT_NOW_STEPS}
+          // The voicemail is new in Act III, where the card only names the job, so it says it in full.
+          instruction={view === "home" && !messageSent ? VOICEMAIL_STEP : undefined}
+          goal={view === "home" && !messageSent ? VOICEMAIL_STEP : undefined}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
-          showMeActive={showMe.targetId === "open-file"}
+          onShowMe={view === "home" ? () => showMe.toggleFor(messageSent ? "open-file" : "voicemail-play") : undefined}
+          showMeActive={showMe.targetId === (messageSent ? "open-file" : "voicemail-play")}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -192,7 +223,8 @@ export default function TeamScheduleTask() {
 
       {view === "home" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
-          <div className="mx-auto max-w-[760px]">
+          <div className="mx-auto flex max-w-[1040px] flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="min-w-0 flex-1">
             <h3 className="mb-3 text-[14px] font-medium text-[#3c4043]">{c.startNewHeading}</h3>
             <div className="mb-8 flex flex-wrap gap-4">
               {[
@@ -215,7 +247,8 @@ export default function TeamScheduleTask() {
             </div>
             <h3 className="mb-3 text-[14px] font-medium text-[#3c4043]">{c.recentHeading}</h3>
             <button
-              onClick={() => setView("sheet")}
+              // The phone message comes first; the sheet has no way back to the phone.
+              onClick={() => (messageSent ? setView("sheet") : say(MESSAGE_FIRST[lang]))}
               data-showme="open-file"
               className="flex w-full items-center gap-3 rounded-xl border border-border bg-white p-4 text-left hover:bg-surface-muted cursor-pointer"
             >
@@ -227,6 +260,60 @@ export default function TeamScheduleTask() {
                 <span className="block text-[12px] text-text-tertiary">{c.openedLabel}</span>
               </span>
             </button>
+          </div>
+          {/* Stacked (below lg), the voicemail comes first and sits left, clear of the Job Card. */}
+          <aside className={`w-fit shrink-0 lg:order-none lg:w-[300px] ${messageSent ? "" : "order-first"}`}>
+            <PhoneFrame label={vm.phoneLabel} time="8:31">
+              <h3 className="px-[16px] pt-[4px] pb-[8px] text-[22px] font-bold leading-none tracking-tight">{vm.heading}</h3>
+              <div className="bg-white px-[14px] py-[10px]">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[14px] font-semibold">{vm.from}</span>
+                  <span className="text-[12px] text-[#6e6e73]">{vm.length}</span>
+                </div>
+                <button
+                  type="button"
+                  data-showme="voicemail-play"
+                  data-card-avoid
+                  onClick={() => { showMe.clear(); speakText(VOICEMAIL_TEXT, "en"); }}
+                  className="mt-2 inline-flex min-h-[36px] items-center gap-1.5 rounded-full bg-[#0b84ff] px-[12px] text-[13px] font-semibold text-white cursor-pointer"
+                >
+                  <Play size={14} aria-hidden /> {vm.play}
+                </button>
+                <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-[#6e6e73]">{vm.transcript}</p>
+                <p data-testid="voicemail-transcript" className="mt-1 text-[13px] leading-snug">{VOICEMAIL_TEXT}</p>
+                {VOICEMAIL_GLOSS[lang] && <p className="mt-2 text-[12px] leading-snug text-[#6e6e73]">{VOICEMAIL_GLOSS[lang]}</p>}
+              </div>
+            </PhoneFrame>
+            <div data-testid="phone-message" className="mt-4 rounded-xl border border-border bg-white p-4">
+              <h3 className="text-[14px] font-medium text-[#3c4043]">{vm.formHeading}</h3>
+              <p className="mb-3 text-[12px] text-text-tertiary">{vm.to}</p>
+              {messageSent ? (
+                <p role="status" className="text-[13px] text-[#137333]">{vm.sent}</p>
+              ) : (
+                <>
+                  {(["caller", "reason", "callback"] as const).map((field) => (
+                    <label key={field} className="mb-2 block text-[13px] text-[#3c4043]">
+                      {vm[field]}
+                      <input
+                        value={message[field]}
+                        onChange={(e) => setMessage({ ...message, [field]: e.target.value })}
+                        className="mt-1 block w-full rounded-lg border border-border px-3 py-2 text-[14px] outline-none focus:border-accent"
+                      />
+                    </label>
+                  ))}
+                  <button
+                    type="button"
+                    data-testid="phone-message-send"
+                    data-card-avoid
+                    onClick={sendMessage}
+                    className="mt-2 inline-flex min-h-[40px] items-center rounded-full bg-accent px-5 text-[14px] font-medium text-white cursor-pointer"
+                  >
+                    {vm.send}
+                  </button>
+                </>
+              )}
+            </div>
+          </aside>
           </div>
         </div>
       )}

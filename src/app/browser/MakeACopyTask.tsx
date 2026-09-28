@@ -19,6 +19,18 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
+import { useTaskDraft } from "@/lib/use-task-draft";
+import { MessageSquarePlus } from "lucide-react";
+import {
+  COMMENT_COPY,
+  COMMENT_CORRECTIONS,
+  COMMENT_STEPS,
+  HEADING_AFTER,
+  HEADING_BEFORE,
+  HEADING_CELL,
+  RENATA_REPLY,
+  commentProblem,
+} from "@/lib/tasks/make-a-copy/comment";
 
 type View = "home" | "template" | "copy" | "done";
 
@@ -33,6 +45,27 @@ export default function MakeACopyTask() {
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
   const c = MAKE_COPY_COPY[lang];
+  // Day 12's comment (Wave 4): ask Renata about her template's date instead of editing it.
+  const [commented, setCommented] = useTaskDraft<string | null>("make-a-copy", "comment", null);
+  const [cell, setCell] = useState<string | null>(null);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const cc = COMMENT_COPY[lang];
+  const heading = commented ? HEADING_AFTER : HEADING_BEFORE;
+
+  const openComment = () => {
+    showMe.clear();
+    if (commented) return;
+    setCommentOpen(true);
+  };
+
+  const postComment = () => {
+    const problem = commentProblem(cell, draft);
+    if (problem) return say(COMMENT_CORRECTIONS[problem][lang]);
+    setCommented(draft.trim());
+    setCommentOpen(false);
+    setDraft("");
+  };
 
   const tryCopy = () => {
     if (normalizeCopyName(copyName) !== COPY_NAME) return say(HINTS.name[lang]);
@@ -57,6 +90,10 @@ export default function MakeACopyTask() {
     setDialog(false);
     setCopyName("Copy of Weekly Status Template");
     setTyped("");
+    setCommented(null);
+    setCell(null);
+    setCommentOpen(false);
+    setDraft("");
   };
 
   const notYet = () =>
@@ -79,11 +116,12 @@ export default function MakeACopyTask() {
             icon={TASK_ICONS["make-a-copy"]}
             stepIndex={view === "home" ? 0 : view === "copy" ? 3 : dialog ? 2 : 1}
             steps={RIGHT_NOW_STEPS}
-            goal={dialog ? { en: MAKE_COPY_COPY.en.nameHint, es: MAKE_COPY_COPY.es.nameHint } : undefined}
+            instruction={view === "template" && !commented ? COMMENT_STEPS[commentOpen ? "write" : "select"] : undefined}
+            goal={view === "template" && !commented ? COMMENT_STEPS[commentOpen ? "write" : "select"] : dialog ? { en: MAKE_COPY_COPY.en.nameHint, es: MAKE_COPY_COPY.es.nameHint } : undefined}
             lang={lang}
             rightNowLabel={RIGHT_NOW_LABEL}
-            onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
-            showMeActive={showMe.targetId === "open-file"}
+            onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : view === "template" && !commented ? () => showMe.toggleFor(cell === HEADING_CELL ? "comment-button" : "heading-cell") : undefined}
+            showMeActive={showMe.targetId === (view === "home" ? "open-file" : cell === HEADING_CELL ? "comment-button" : "heading-cell")}
             onHelp={() => setHelp(true)}
           />
         )}
@@ -107,9 +145,21 @@ export default function MakeACopyTask() {
           {["Edit", "View", "Insert"].map((m) => (
             <span key={m} className="rounded px-2 py-1 text-[#5f6368]">{m}</span>
           ))}
+          {view === "template" && (
+            <button
+              type="button"
+              data-testid="comment-button"
+              data-showme="comment-button"
+              data-card-avoid
+              onClick={openComment}
+              className="ml-2 inline-flex items-center gap-1 rounded px-2 py-1 hover:bg-[#f1f3f4] cursor-pointer"
+            >
+              <MessageSquarePlus size={16} aria-hidden /> {cc.comment}
+            </button>
+          )}
           {fileOpen && (
             <div className="absolute left-2 top-full z-20 w-[220px] rounded-lg border border-[#dadce0] bg-white py-1 shadow-lg">
-              <button onClick={() => { setFileOpen(false); setDialog(true); }} className="flex h-9 w-full items-center px-3 text-left hover:bg-[#f1f3f4] cursor-pointer">
+              <button onClick={() => { setFileOpen(false); if (!commented) { say(COMMENT_STEPS.select[lang]); return; } setDialog(true); }} className="flex h-9 w-full items-center px-3 text-left hover:bg-[#f1f3f4] cursor-pointer">
                 {c.makeCopy}
               </button>
               <button onClick={() => { setFileOpen(false); say(HINTS.share[lang]); }} className="flex h-9 w-full items-center px-3 text-left hover:bg-[#f1f3f4] cursor-pointer">
@@ -161,7 +211,7 @@ export default function MakeACopyTask() {
           <div className="inline-block border border-[#c0c0c0] text-[13px]">
             <div className="flex">
               <div className="h-6 w-8 border-b border-r border-[#c0c0c0] bg-[#f8f9fa]" />
-              {["A", "B"].map((col) => (
+              {["A", "B", "C"].map((col) => (
                 <div key={col} className="flex h-6 w-[140px] items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] text-[12px] text-[#5f6368]">
                   {col}
                 </div>
@@ -171,6 +221,18 @@ export default function MakeACopyTask() {
               <div className="flex h-7 w-8 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] text-[12px] text-[#5f6368]">1</div>
               <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">{lang === "en" ? "Day" : "Día"}</div>
               <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">{lang === "en" ? "Tickets" : "Pedidos"}</div>
+              <button
+                type="button"
+                data-testid="heading-cell"
+                data-showme="heading-cell"
+                aria-label={`${HEADING_CELL}: ${heading}`}
+                onClick={() => { showMe.clear(); setCell(HEADING_CELL); }}
+                className="relative flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5 text-left font-medium cursor-pointer"
+                style={{ boxShadow: cell === HEADING_CELL && view === "template" ? "inset 0 0 0 2px #1a73e8" : undefined }}
+              >
+                {heading}
+                {commented && <span aria-hidden className="absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-[#f9ab00]" />}
+              </button>
             </div>
             {STATUS_ROWS.map((row, i) => (
               <div key={row.key} className="flex">
@@ -185,15 +247,52 @@ export default function MakeACopyTask() {
                   />
                 ) : (
                   <button
-                    onClick={view === "template" ? tryTypeOnTemplate : undefined}
+                    onClick={view === "template" ? () => { setCell(`B${i + 2}`); if (!commentOpen) tryTypeOnTemplate(); } : undefined}
                     className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5 text-left cursor-pointer"
+                    style={{ boxShadow: cell === `B${i + 2}` && view === "template" ? "inset 0 0 0 2px #1a73e8" : undefined }}
                   >
                     {row.value}
                   </button>
                 )}
+                <div className="h-7 w-[140px] border-b border-r border-[#c0c0c0]" />
               </div>
             ))}
           </div>
+          {view === "template" && (commentOpen || commented) && (
+            <div data-testid="comment-thread" className="mt-4 max-w-[340px] rounded-xl border border-[#dadce0] bg-white p-3 shadow-sm">
+              {commented ? (
+                <>
+                  <p className="text-[12px] font-medium">{cc.you} · {HEADING_CELL}</p>
+                  <p className="mt-0.5 text-[13px]">{commented}</p>
+                  <p className="mt-3 text-[12px] font-medium">Renata Silva</p>
+                  <p className="mt-0.5 text-[13px]">{RENATA_REPLY[lang]}</p>
+                  <p role="status" className="mt-2 text-[12px] text-[#137333]">{cc.resolvedNote}</p>
+                </>
+              ) : (
+                <>
+                  <p className="mb-1 text-[12px] text-[#5f6368]">{cell ?? "—"}</p>
+                  <textarea
+                    autoFocus
+                    data-testid="comment-input"
+                    aria-label={cc.placeholder}
+                    value={draft}
+                    onChange={(e) => setDraft(e.target.value)}
+                    placeholder={cc.placeholder}
+                    rows={3}
+                    className="w-full resize-none rounded border border-[#747775] px-2 py-1.5 text-[13px] outline-none focus:border-[#0b57d0]"
+                  />
+                  <div className="mt-2 flex justify-end gap-2">
+                    <button type="button" onClick={() => { setCommentOpen(false); setDraft(""); }} className="h-9 rounded-full px-3 text-[13px] font-medium text-[#0b57d0] cursor-pointer">
+                      {cc.cancel}
+                    </button>
+                    <button type="button" data-testid="comment-post" data-card-avoid onClick={postComment} className="h-9 rounded-full bg-[#0b57d0] px-4 text-[13px] font-medium text-white cursor-pointer">
+                      {cc.comment}
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       )}
 

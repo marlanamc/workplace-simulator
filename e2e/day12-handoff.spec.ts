@@ -33,6 +33,19 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
 
   // Make the copy and type in it: that finishes the first task.
   await page.getByText("Weekly Status Template").first().click();
+  // Wave 4: comment on Renata's template instead of editing it. The Copy waits for it.
+  await page.getByRole("button", { name: "File" }).click();
+  await page.getByRole("button", { name: "Make a copy" }).first().click();
+  await expect(card).toContainText("You cannot edit Renata's template");
+  await page.getByTestId("heading-cell").click();
+  await page.getByTestId("comment-button").click();
+  await page.getByTestId("comment-input").fill("ok");
+  await page.getByTestId("comment-post").click();
+  await expect(card).toContainText("Say what looks wrong");
+  await page.getByTestId("comment-input").fill("This says Sep 7. Is it Sep 14?");
+  await page.getByTestId("comment-post").click();
+  await expect(page.getByTestId("comment-thread")).toContainText("I fixed the template");
+  await expect(page.getByTestId("heading-cell")).toHaveText(/Week of Sep 14/);
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("button", { name: "Make a copy" }).first().click();
   await expect(card).toContainText("status-week-of-sep-14");

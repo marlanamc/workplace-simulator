@@ -15,14 +15,22 @@ import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 import { firstPersonSkill } from "@/lib/skills";
+import PhoneFrame from "@/components/task/PhoneFrame";
+import { useTaskDraft } from "@/lib/use-task-draft";
+import { MARIA_TEXT, MARIA_TEXT_FROM, TEXT_COPY, TEXT_CORRECTIONS, TEXT_STEPS, textReplyVerdict } from "@/lib/tasks/swap-request/manager-text";
 
-type View = "form" | "done";
+type View = "form" | "text" | "done";
 
 const SHIFTS = SCHEDULE.filter((d) => d.shift);
 
 export default function SwapRequestTask({ initialShift }: { initialShift?: string | null }) {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "form");
+  // Day 2's manager text (Wave 4): once the form is filed, Maria texts back.
+  // Kept as a draft, so a reload lands back on her text, not the empty form.
+  const [filed, setFiled] = useTaskDraft("schedule", "swap-filed", false);
+  const [reply, setReply] = useTaskDraft("schedule", "text-reply", "");
+  const [sentReply, setSentReply] = useState<string | null>(null);
+  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : filed ? "text" : "form");
   const [shift, setShift] = useState(initialShift ?? "");
   const [cover, setCover] = useState("");
   const [reason, setReason] = useState("");
@@ -30,7 +38,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("schedule");
   const showMe = useShowMe();
   // One step, one control: the button that files the form.
-  const showMeId = "submit-button";
+  const showMeId = view === "text" ? "text-reply" : "submit-button";
 
   const c = SWAP_COPY[lang];
   const sc = SCHEDULE_COPY[lang];
@@ -82,12 +90,31 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
     } else {
       recordMissed();
     }
+    setFiled(true);
+    setView("text");
+    // The page keeps the form's scroll position; bring Maria's text to the top.
+    requestAnimationFrame(() =>
+      document.querySelector('[data-testid="text-thread"]')?.scrollIntoView({ block: "start" }),
+    );
+  };
+
+  const sendText = () => {
+    showMe.clear();
+    const verdict = textReplyVerdict(reply);
+    if (verdict !== "ok") {
+      recordWrong({ title: lang === "en" ? "Not yet." : "Todavía no.", body: TEXT_CORRECTIONS[verdict][lang] });
+      return;
+    }
+    setSentReply(reply.trim());
     setView("done");
     markComplete("schedule", "request_shift_swap");
   };
 
   const restart = () => {
     setView("form");
+    setFiled(false);
+    setReply("");
+    setSentReply(null);
     setShift("");
     setCover("");
     setReason("");
@@ -102,9 +129,9 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["swap-request"]}
-          stepIndex={0}
-          stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[0]}
+          stepIndex={view === "text" ? 1 : 0}
+          stepCount={2}
+          instruction={view === "text" ? (reply.trim() ? TEXT_STEPS.reply : TEXT_STEPS.read) : RIGHT_NOW_STEPS[0]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(showMeId)}
@@ -191,8 +218,20 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
         </div>
       )}
 
+      {view === "text" && (
+        // Just the phone, on the left: the Job Card parks on the right at Chromebook size.
+        <div className="w-fit">
+          <TextThread lang={lang} reply={reply} onReply={setReply} onSend={sendText} />
+        </div>
+      )}
+
       {view === "done" && (
         <div className="flex flex-col gap-5">
+          {sentReply && (
+            <div className="w-full lg:w-[260px]">
+              <TextThread lang={lang} reply="" sent={sentReply} />
+            </div>
+          )}
           <TaskDoneCard
             kicker={c.sentKicker}
             title={firstPersonSkill("schedule", lang)}
@@ -223,5 +262,73 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       <NudgeToast text={nudge} onDismiss={dismiss} />
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     </div>
+  );
+}
+
+/**
+ * Maria's text on the learner's phone, with a reply box. Once sent, the
+ * reply shows as the learner's own bubble.
+ */
+function TextThread({
+  lang,
+  reply,
+  sent,
+  onReply,
+  onSend,
+}: {
+  lang: "en" | "es";
+  reply: string;
+  sent?: string;
+  onReply?: (value: string) => void;
+  onSend?: () => void;
+}) {
+  const t = TEXT_COPY[lang];
+  return (
+    <PhoneFrame label={t.label} time="4:12">
+      <h3 className="px-[16px] pt-[4px] pb-[8px] text-center text-[15px] font-semibold">{MARIA_TEXT_FROM}</h3>
+      <div data-testid="text-thread" className="flex min-h-[220px] flex-col gap-2 bg-white px-[10px] py-[12px]">
+        {/* data-card-avoid: this is what the learner has to read, so the Job Card parks elsewhere. */}
+        <p data-card-avoid className="max-w-[85%] self-start rounded-[16px] rounded-bl-[4px] bg-[#e9e9eb] px-[10px] py-[7px] text-[13px] leading-snug">
+          {MARIA_TEXT[lang]}
+        </p>
+        {sent && (
+          <>
+            <p className="max-w-[85%] self-end rounded-[16px] rounded-br-[4px] bg-[#0b84ff] px-[10px] py-[7px] text-[13px] leading-snug text-white">
+              {sent}
+            </p>
+            <span className="self-end text-[10px] text-[#6e6e73]">{t.delivered}</span>
+          </>
+        )}
+      </div>
+      {onReply && onSend && (
+        <div className="flex items-end gap-1.5 border-t border-black/10 bg-[#f2f2f7] px-[8px] py-[8px]">
+          <textarea
+            data-testid="text-reply"
+            data-showme="text-reply"
+            aria-label={t.placeholder}
+            value={reply}
+            onChange={(e) => onReply(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                onSend();
+              }
+            }}
+            placeholder={t.placeholder}
+            rows={2}
+            className="min-h-[44px] flex-1 resize-none rounded-[16px] border border-black/15 bg-white px-[10px] py-[6px] text-[13px] outline-none focus:border-[#0b84ff]"
+          />
+          <button
+            type="button"
+            data-testid="text-send"
+            data-card-avoid
+            onClick={onSend}
+            className="min-h-[44px] rounded-full bg-[#0b84ff] px-[12px] text-[13px] font-semibold text-white cursor-pointer"
+          >
+            {t.send}
+          </button>
+        </div>
+      )}
+    </PhoneFrame>
   );
 }

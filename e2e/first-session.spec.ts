@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { continuePastStudioArrival } from "./studio-arrival";
+import { continuePastStudioArrivalIfPresent, continuePastStudioArrival } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
 
 /**
@@ -242,6 +242,25 @@ test("schedule: repeated wrong days get specific help and the correct day still 
   await expect(page.getByRole("heading", { name: "My Calendar" })).toBeVisible();
   await expect(page.getByText("Your personal calendar")).toBeVisible();
   await expect(page.getByText("Which shift could you work instead?")).toBeVisible();
+
+  // Wave 4: filing the swap brings Maria's text. A vague reply is corrected;
+  // a yes with the day or time finishes the task. A reload keeps her text.
+  await page.getByRole("combobox").nth(1).selectOption("thu-late");
+  await page.getByRole("button", { name: "Submit request", exact: true }).click();
+  await expect(page.getByTestId("text-thread")).toContainText("I moved you to Thursday, 2 PM to 10 PM");
+  await expect(jobCard(page)).toContainText("Maria sent you a text");
+  await page.reload();
+  await waitForInteractive(page);
+  await continuePastStudioArrivalIfPresent(page);
+  const portal = page.getByTestId("bookmark-portal");
+  if (await portal.isVisible().catch(() => false)) await portal.click();
+  await expect(page.getByTestId("text-thread")).toBeVisible();
+  await page.getByTestId("text-reply").fill("ok thanks");
+  await page.getByTestId("text-send").click();
+  await expect(jobCard(page)).toContainText("Say the day or the time too");
+  await page.getByTestId("text-reply").fill("Yes, Thursday 2 to 10 works.");
+  await page.getByTestId("text-send").click();
+  await expect(page.getByTestId("text-thread")).toContainText("Yes, Thursday 2 to 10 works.");
 });
 
 test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) => {
