@@ -159,7 +159,7 @@ export const TRACKS: Track[] = [
   {
     key: "college-offer",
     title: { en: "An Offer", es: "Una oferta" },
-    subtitle: { en: "Read it, accept it, make it fit", es: "Léela, acéptala, hazla caber" },
+    subtitle: { en: "Pick a section. Make it fit.", es: "Elige una sección. Haz que quepa." },
     taskKeys: ["college-offer"],
     awardEmoji: "🎓",
   },
@@ -356,25 +356,25 @@ export function levelUpShowsConfetti(copy: Pick<LevelUpCopy, "problem">): boolea
   return !copy.problem;
 }
 
-/** The two Act V routes share dates, but never share a learner's assignment. */
+/** The two Act V routes never share a learner's assignment, or their dates: the College door runs from fall into the spring term. */
 export function levelUpCopyFor(level: Level, path?: BridgePath | null): LevelUpCopy | undefined {
   const copy = level.levelUp;
   if (!copy || !path || !level.pathTracks) return copy;
   const bodies: Record<string, { a: Localized<string>; b: Localized<string> }> = {
     level16: {
-      a: { en: 'Harborside will pay for a class. Marcus helps you get your college application ready.', es: 'Harborside pagará una clase. Marcus te ayuda a preparar la solicitud para la universidad.' },
+      a: { en: 'Harborside will pay for one class in the spring term. Marcus helps you get your college application ready before the deadline.', es: 'Harborside pagará una clase en el semestre de primavera. Marcus te ayuda a preparar la solicitud para la universidad antes de la fecha límite.' },
       b: { en: 'Try working at a clinic front desk. Thuy needs help booking a visit around the doctor’s schedule.', es: 'Prueba el trabajo en la recepción de una clínica. Thuy necesita ayuda para agendar una cita según el horario del médico.' },
     },
     level17: {
-      a: { en: 'Your college aid letter has arrived. Read the amount and the deadline.', es: 'Llegó tu carta de ayuda para la universidad. Lee la cantidad y la fecha límite.' },
+      a: { en: 'It is November now. Your college aid letter for the spring has arrived. Read the amount and the deadline.', es: 'Ya es noviembre. Llegó tu carta de ayuda para la primavera. Lee la cantidad y la fecha límite.' },
       b: { en: 'A patient has brought an intake form. Check the details and keep the visit information private.', es: 'Una paciente trajo un formulario. Revisa los datos y protege la información de la consulta.' },
     },
     level18: {
-      a: { en: 'Your class has a new assignment. Check the syllabus deadline before you answer Dana.', es: 'Tu clase tiene una tarea nueva. Revisa la fecha de entrega en el programa antes de responder a Dana.' },
+      a: { en: 'It is February. Your spring class started in January. Now it has a new assignment. Check the syllabus deadline before you answer Dana.', es: 'Ya es febrero. Tu clase de primavera empezó en enero. Ahora tiene una tarea nueva. Revisa la fecha de entrega en el programa antes de responder a Dana.' },
       b: { en: 'The clinic charges need checking. Compare the bill with the price list before you report a problem.', es: 'Hay que revisar los cargos de la clínica. Compara la factura con la lista de precios antes de reportar un problema.' },
     },
     level19: {
-      a: { en: 'Your class needs a source for a paper. Check who wrote it and what supports the information.', es: 'Necesitas una fuente para un trabajo de clase. Revisa quién la escribió y qué respalda la información.' },
+      a: { en: 'It is March. Your class needs a source for a paper. Check who wrote it and what supports the information.', es: 'Ya es marzo. Necesitas una fuente para un trabajo de clase. Revisa quién la escribió y qué respalda la información.' },
       b: { en: 'Someone calls asking about a patient’s visit. You cannot check who is calling. Protect the patient’s information.', es: 'Alguien llama para preguntar por una consulta. No puedes verificar quién llama. Protege la información de la paciente.' },
     },
   };
@@ -584,7 +584,7 @@ export const LEVELS: Level[] = [
       title: { en: "You checked your first paycheck.", es: "Revisaste tu primer recibo." },
       body: {
         en: "You found the net pay and paid hours. Stop for today. Your progress is saved. Next time you sign in, you're a Shift Lead.",
-        es: "Encontraste el pago neto y las horas pagadas. Termina por hoy. Tu progreso está guardado. La próxima vez que entres, serás líder de turno.",
+        es: "Encontraste el pago neto y las horas pagadas. Termina por hoy. Tu progreso está guardado. La próxima vez que entres, serás Shift Lead.",
       },
       cta: { en: "See what's next", es: "Ver qué sigue" },
       stoppingPoint: true,
@@ -705,7 +705,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "⭐",
       kicker: { en: "A promotion", es: "Un ascenso" },
-      title: { en: "You are a Shift Supervisor now!", es: "¡Ahora supervisas los turnos!" },
+      title: { en: "You are a Shift Supervisor now!", es: "¡Ahora eres Shift Supervisor!" },
       body: {
         en: "You run the crew now, and Saturday close has nobody.",
         es: "Ahora diriges al equipo, y el cierre del sábado no tiene a nadie.",
@@ -1057,11 +1057,11 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "⭐",
-      kicker: { en: "A new job from Anita", es: "Un puesto nuevo de Anita" },
-      title: { en: "You are the cafe crew's Team Lead now.", es: "Ahora eres líder de equipo del personal del café." },
+      kicker: { en: "April: a new job from Anita", es: "Abril: un puesto nuevo de Anita" },
+      title: { en: "You are the cafe crew's Team Lead now.", es: "Ahora eres Team Lead del personal del café." },
       body: {
-        en: "You know the crew from your cafe shifts, and you know the HQ tools. This morning the crew meets, and you run the meeting.",
-        es: "Conoces al equipo por tus turnos en el café, y conoces las herramientas de la oficina central. Esta mañana el equipo se reúne, y tú diriges la reunión.",
+        en: "It is April. You have worked at HQ for six months. You know the crew from your cafe shifts, and you know the HQ tools well. This morning the crew meets, and you run the meeting.",
+        es: "Ya es abril. Llevas seis meses en la oficina central. Conoces al equipo por tus turnos en el café, y conoces bien las herramientas de la oficina central. Esta mañana el equipo se reúne, y tú diriges la reunión.",
       },
       cta: { en: "Start the agenda", es: "Empezar la agenda" },
     },
@@ -1112,7 +1112,7 @@ export const LEVELS: Level[] = [
       title: { en: "Look at everything you can do now.", es: "Mira todo lo que ya puedes hacer." },
       body: {
         en: "From answering one email on day one to running a full weekly report as a Team Lead. Take a few minutes to look back and write it down.",
-        es: "Desde contestar un correo el primer día hasta hacer un reporte semanal completo como líder de equipo. Tómate unos minutos para mirar atrás y escribirlo.",
+        es: "Desde contestar un correo el primer día hasta hacer un reporte semanal completo como Team Lead. Tómate unos minutos para mirar atrás y escribirlo.",
       },
       cta: { en: "Look back", es: "Mirar atrás" },
       stoppingPoint: true,
@@ -1147,12 +1147,12 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
  */
 export const ACTS: Act[] = [
   { key: "act1", numeral: "I", role: { en: "New Hire", es: "Personal nuevo" }, levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3a3"], scene: "harborside-open" },
-  { key: "act2", numeral: "II", role: { en: "Shift Lead", es: "Líder de turno" }, levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
-  { key: "act3", numeral: "III", role: { en: "Shift Supervisor", es: "Supervisión" }, levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
-  { key: "act4", numeral: "IV", role: { en: "Assistant Manager", es: "Gerente asistente" }, levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
+  { key: "act2", numeral: "II", role: { en: "Shift Lead", es: "Shift Lead" }, levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
+  { key: "act3", numeral: "III", role: { en: "Shift Supervisor", es: "Shift Supervisor" }, levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
+  { key: "act4", numeral: "IV", role: { en: "Assistant Manager", es: "Assistant Manager" }, levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
   { key: "act5", numeral: "V", role: { en: "Bridge", es: "Puente" }, levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
-  { key: "act6", numeral: "VI", role: { en: "Office Administrator", es: "Administración" }, levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
-  { key: "act7", numeral: "VII", role: { en: "Team Lead", es: "Líder de equipo" }, levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
+  { key: "act6", numeral: "VI", role: { en: "Office Administrator", es: "Office Administrator" }, levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
+  { key: "act7", numeral: "VII", role: { en: "Team Lead", es: "Team Lead" }, levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
 ];
 
 /** "Act I: New Hire" / "Acto I: Personal nuevo" — the act's full learner-facing name. */
@@ -1471,7 +1471,7 @@ export const CORE_FINALE: Level = {
   levelUp: {
     emoji: "🧭",
     kicker: { en: "Act II: complete", es: "Acto II: terminado" },
-    title: { en: "You finished your time as a Shift Lead.", es: "Terminaste tu etapa como líder de turno." },
+    title: { en: "You finished your time as a Shift Lead.", es: "Terminaste tu etapa como Shift Lead." },
     body: {
       en: "Renata trusts you with shifts, shared files, and reports. Now you choose what comes next: stay at the cafe, try a clinic, take a class, or apply for an office job. You can also stop here and keep your skills summary.",
       es: "Renata confía en ti para los turnos, los archivos compartidos y los reportes. Ahora eliges qué sigue: quedarte en el café, probar una clínica, tomar una clase o solicitar un empleo de oficina. También puedes terminar aquí y guardar tu resumen de habilidades.",

@@ -1,9 +1,10 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
-import { ENROLLMENT_DEADLINE_DAY, yearDate } from "@/lib/story-dates";
+import { AID_ACCEPT_BY_DAY, ENROLLMENT_DEADLINE_DAY, SPRING_TERM_START, yearDate } from "@/lib/story-dates";
 
-export const PDF_DOC_ID = "award-letter-fall-2026";
+export const PDF_DOC_ID = "award-letter-spring-2027";
 export const AWARD_AMOUNT = 2400;
-export const ACCEPT_BY = { en: "October 15, 2026", es: "15 de octubre de 2026" };
+/** The accept-by date on the Spring 2027 award letter: December 4, 2026. */
+export const ACCEPT_BY = { en: yearDate(AID_ACCEPT_BY_DAY, "en"), es: yearDate(AID_ACCEPT_BY_DAY, "es") };
 
 export type CheckOption = { label: string; isTarget?: boolean; wrongHint?: Localized };
 
@@ -26,21 +27,26 @@ export const AMOUNT_CHECK: Record<Lang, { question: string; options: CheckOption
   },
 };
 
+const FIRST_CLASS_HINT: Localized = {
+  en: "That is the first day of class. The accept-by date is earlier.",
+  es: "Ese es el primer día de clase. La fecha para aceptar es antes.",
+};
+
 export const DATE_CHECK: Record<Lang, { question: string; options: CheckOption[] }> = {
   en: {
     question: "When must you accept?",
     options: [
       { label: yearDate(ENROLLMENT_DEADLINE_DAY, "en"), wrongHint: { en: "That was the application deadline.", es: "Esa era la fecha de la solicitud." } },
-      { label: "October 15, 2026", isTarget: true },
-      { label: "December 1, 2026", wrongHint: { en: "The accept-by date is earlier.", es: "La fecha para aceptar es antes." } },
+      { label: ACCEPT_BY.en, isTarget: true },
+      { label: yearDate(SPRING_TERM_START, "en"), wrongHint: FIRST_CLASS_HINT },
     ],
   },
   es: {
     question: "¿Para cuándo hay que aceptar?",
     options: [
       { label: yearDate(ENROLLMENT_DEADLINE_DAY, "es"), wrongHint: { en: "That was the application deadline.", es: "Esa era la fecha de la solicitud." } },
-      { label: "15 de octubre de 2026", isTarget: true },
-      { label: "1 de diciembre de 2026", wrongHint: { en: "The accept-by date is earlier.", es: "La fecha para aceptar es antes." } },
+      { label: ACCEPT_BY.es, isTarget: true },
+      { label: yearDate(SPRING_TERM_START, "es"), wrongHint: FIRST_CLASS_HINT },
     ],
   },
 };
@@ -64,7 +70,7 @@ export const FINANCIAL_AID_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     school: "Bunker Hill Community College",
     heading: "Financial aid",
-    letterName: "Award letter: Fall 2026",
+    letterName: "Award letter: Spring 2027",
     letterNote: "Open the letter. The amount and the accept-by date are on the page.",
     openLetter: "Open award letter",
     next: "Continue",
@@ -79,7 +85,7 @@ export const FINANCIAL_AID_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     school: "Bunker Hill Community College",
     heading: "Ayuda financiera",
-    letterName: "Carta de ayuda: otoño 2026",
+    letterName: "Carta de ayuda: primavera 2027",
     letterNote: "Abre la carta. El monto y la fecha para aceptar están en la página.",
     openLetter: "Abrir carta de ayuda",
     next: "Seguir",
@@ -96,9 +102,11 @@ export function amountLooksRight(answer: string): boolean {
   return /2,?400|2400/.test(answer.replace(/\s/g, ""));
 }
 
+/** December 4: "December 4, 2026", "Dec 4", "4 de diciembre", "12/4". */
 export function dateLooksRight(answer: string): boolean {
   const t = answer.toLowerCase();
-  return /oct|octubre/.test(t) && /15/.test(t);
+  if (/(?<!\d)12\/0?4(?!\d)/.test(t)) return true;
+  return /dec|dic/.test(t) && /(?<!\d)0?4(?!\d)/.test(t);
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {

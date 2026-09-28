@@ -358,7 +358,7 @@ export const DONE_COPY: Record<PlayableMailTask, Record<Lang, {
       kicker: "Mensaje enviado",
       body: "Dana recibió un sí claro. El resto del hilo no. Editaste el borrador informal antes de enviarlo.",
       badgeNumber: "18",
-      badgeWhere: "Cuenta para: Asistente de gerencia",
+      badgeWhere: "Cuenta para: Assistant Manager",
     },
   },
 };

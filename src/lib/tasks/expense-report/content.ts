@@ -3,12 +3,20 @@ import { openFileStep } from "../open-file-step";
 
 export const PLANTED_TOTAL = 188;
 export const MISSING_KEY = "dinner";
+/** The row whose sheet amount was typed with its digits swapped ($84 for a $48 receipt). */
+export const TYPO_KEY = "lunch";
 
 export interface ExpenseRow {
   key: string;
   merchant: Localized;
   category: Localized;
+  /** What the receipt shows. The source of truth, and what every total is built from. */
   amount: number;
+  /**
+   * What someone typed into the sheet, when it differs from the receipt. The
+   * sheet starts with this; the learner corrects it to `amount`.
+   */
+  typedAmount?: number;
   /** The receipt's file name in Drive. The name does not say the merchant, so the learner reads the receipt. */
   receipt: string | null;
   /** The date printed on the receipt, "Sep 12". */
@@ -37,6 +45,7 @@ export const EXPENSE_ROWS: ExpenseRow[] = [
     merchant: { en: "Harbor Deli", es: "Harbor Deli" },
     category: { en: "Meals", es: "Comidas" },
     amount: 48,
+    typedAmount: 84,
     receipt: "receipt-0911.pdf",
     receiptDate: "Sep 11",
   },
@@ -87,9 +96,75 @@ export function expenseReceiptMatches(key: string, receipt: string): boolean {
   return Boolean(row?.receipt && row.receipt === receipt);
 }
 
-export function expenseTotalIsCorrect(value: string): boolean {
+/** "$48", "48.00", "48,00" → 48. Anything else (empty, words, extra digits) → null. */
+export function parseAmount(value: string): number | null {
   const normalized = value.trim().replace(/^\$\s*/, "").replace(",", ".");
-  return /^\d+(?:\.\d{1,2})?$/.test(normalized) && Number(normalized) === PLANTED_TOTAL;
+  return /^\d+(?:\.\d{1,2})?$/.test(normalized) ? Number(normalized) : null;
+}
+
+/** The amount the sheet starts with for a row: the typo where there is one. */
+export function initialSheetAmount(key: string): number | undefined {
+  const row = EXPENSE_ROWS.find((r) => r.key === key);
+  return row ? row.typedAmount ?? row.amount : undefined;
+}
+
+/** Does this sheet amount say what the row's receipt shows? A row with no receipt never matches. */
+export function rowAmountMatchesReceipt(key: string, value: string): boolean {
+  const row = EXPENSE_ROWS.find((r) => r.key === key);
+  return Boolean(row?.receipt) && parseAmount(value) === row!.amount;
+}
+
+export function expenseTotalIsCorrect(value: string): boolean {
+  return parseAmount(value) === PLANTED_TOTAL;
+}
+
+/** Sum of the receipted rows as the sheet was typed, before the fix: 224. */
+export const TYPED_RECEIPTED_TOTAL = EXPENSE_ROWS.filter((r) => r.receipt).reduce((sum, r) => sum + (r.typedAmount ?? r.amount), 0);
+const DINNER_AMOUNT = EXPENSE_ROWS.find((r) => r.key === MISSING_KEY)!.amount;
+
+/**
+ * What a total says about the learner's work.
+ * - "ok": the receipted total, $188.
+ * - "typo": the typed deli amount is still in it ($224), so a row was not checked against its receipt.
+ * - "dinner": the flagged dinner was added in ($283, or $319 with the typo too).
+ * - "check": anything else.
+ */
+export type TotalVerdict = "ok" | "typo" | "dinner" | "check";
+export function expenseTotalVerdict(value: string): TotalVerdict {
+  const n = parseAmount(value);
+  if (n === PLANTED_TOTAL) return "ok";
+  if (n === TYPED_RECEIPTED_TOTAL) return "typo";
+  if (n === PLANTED_TOTAL + DINNER_AMOUNT || n === TYPED_RECEIPTED_TOTAL + DINNER_AMOUNT) return "dinner";
+  return "check";
+}
+
+export type ExpenseCorrection = "submitBlind" | "needMatch" | "rowMismatch" | "rowMismatchNamed" | "wrongTotal" | "checkTotal";
+
+/**
+ * The whole submit rule, in the order the learner meets it. Returns null when
+ * the report can go, otherwise the correction to show on the Job Card.
+ * `mismatchTries` is how many times the learner has already been told a row
+ * does not match its receipt: the first time names no row, after that the
+ * correction names the Harbor Deli receipt.
+ */
+export function expenseSubmitCorrection(input: {
+  flagged: string | null;
+  receipts: Readonly<Record<string, string>>;
+  typoAmount: string;
+  total: string;
+  mismatchTries: number;
+}): ExpenseCorrection | null {
+  if (input.flagged !== MISSING_KEY) return "submitBlind";
+  const matched = Object.keys(input.receipts).filter((k) => expenseReceiptMatches(k, input.receipts[k]));
+  if (input.receipts[MISSING_KEY] || !expenseReadyToSubmit(input.flagged, matched)) return "needMatch";
+  const verdict = expenseTotalVerdict(input.total);
+  if (verdict === "dinner") return "wrongTotal";
+  const mismatch = input.mismatchTries > 0 ? "rowMismatchNamed" : "rowMismatch";
+  if (verdict === "typo") return mismatch;
+  if (verdict === "check") return "checkTotal";
+  // $188 is right, but the sheet still says $84 next to a $48 receipt.
+  if (!rowAmountMatchesReceipt(TYPO_KEY, input.typoAmount)) return mismatch;
+  return null;
 }
 
 export const EXPENSE_COPY: Record<Lang, {
@@ -124,6 +199,9 @@ export const EXPENSE_COPY: Record<Lang, {
   chooseReceipt: string;
   totalLabel: string;
   wrongTotal: string;
+  rowMismatch: string;
+  rowMismatchNamed: string;
+  checkTotal: string;
   notToday: string;
   hasReceipt: string;
 }> = {
@@ -159,6 +237,9 @@ export const EXPENSE_COPY: Record<Lang, {
     chooseReceipt: "Choose receipt",
     totalLabel: "Total with receipts ($)",
     wrongTotal: "Add only the amounts with receipts. Leave out the expense you flagged.",
+    rowMismatch: "One row does not match its receipt. Check each amount against the receipt in Drive.",
+    rowMismatchNamed: "Look at the Harbor Deli receipt. What amount does it show?",
+    checkTotal: "That total does not match. Add the amounts of the rows that have receipts.",
     notToday: "That's not today's sheet. Open September expenses.",
     hasReceipt: "There is a receipt for this expense in Drive. Compare its merchant and amount.",
   },
@@ -194,6 +275,9 @@ export const EXPENSE_COPY: Record<Lang, {
     chooseReceipt: "Elegir recibo",
     totalLabel: "Total con recibos ($)",
     wrongTotal: "Suma solo los montos con recibos. No incluyas el gasto que marcaste.",
+    rowMismatch: "Una fila no coincide con su recibo. Compara cada monto con el recibo en Drive.",
+    rowMismatchNamed: "Mira el recibo de Harbor Deli. ¿Qué monto muestra?",
+    checkTotal: "Ese total no cuadra. Suma los montos de las filas que tienen recibo.",
     notToday: "Esa no es la hoja de hoy. Abre Gastos de septiembre.",
     hasReceipt: "Hay un recibo para este gasto en Drive. Compara el comercio y el monto.",
   },
@@ -222,20 +306,22 @@ export const RECEIPTS_COPY: Record<Lang, {
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {
-      t: "The row with no receipt is the point of this task",
+      t: "The receipt is the proof",
       s: [
-        "Open Drive to see the receipts. Match the four rows that have one.",
-        "The row with no file is the one to flag. If you submit the report without flagging it, it comes back to you.",
+        "Open Drive to see the receipts. For each row, find the receipt with the same merchant. Check that the amount is the same too.",
+        "If the sheet and the receipt show different amounts, the receipt is right. Change the amount on the sheet.",
+        "The row with no file is the one to flag. Leave it out of the total. If you submit the report without flagging it, it comes back to you.",
       ],
       tip: "If you cannot point at the PDF for a row, you have not matched that row yet.",
     },
   ],
   es: [
     {
-      t: "La fila sin recibo es el punto de esta tarea",
+      t: "El recibo es la prueba",
       s: [
-        "Abre Drive para ver los recibos. Empareja las cuatro filas que sí tienen uno.",
-        "La fila sin archivo es la que hay que marcar. Si envías el informe sin marcarla, te lo regresan.",
+        "Abre Drive para ver los recibos. Para cada fila, busca el recibo del mismo comercio. Revisa que el monto también sea igual.",
+        "Si la hoja y el recibo muestran montos distintos, el recibo tiene la razón. Cambia el monto en la hoja.",
+        "La fila sin archivo es la que hay que marcar. Déjala fuera del total. Si envías el informe sin marcarla, te lo regresan.",
       ],
       tip: "Si no puedes señalar el PDF de una fila, todavía no emparejaste esa fila.",
     },
@@ -245,6 +331,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(EXPENSE_COPY, (c) => c.sheetName),
-  { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Marca lo que falta." },
+  { en: "Check each row against its receipt. Flag what is missing.", es: "Compara cada fila con su recibo. Marca lo que falta." },
   { en: "Enter the total for expenses with receipts, then submit the report.", es: "Escribe el total de los gastos con recibos y envía el informe." },
 ];

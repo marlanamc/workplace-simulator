@@ -102,10 +102,14 @@ describe('route-specific story copy', () => {
   });
   it('says whose team Act VII is, before and at the act', () => {
     const slides = storyMailAfter('slide-deck')!;
-    expect(slides.body!.en.join(' ')).toMatch(/cafe crew needs a Team Lead/);
-    expect(slides.body!.en.join(' ')).not.toMatch(/choose another direction/);
+    expect(slides.body!.en.join(' ')).toMatch(/In the spring, the cafe crew will need a Team Lead/);
+    expect(slides.body!.en.join(' ')).not.toMatch(/choose another direction|Starting Monday/);
+    expect(slides.body!.es.join(' ')).not.toMatch(/Desde el lunes/);
     expect(slides.body!.es.length).toBe(slides.body!.en.length);
     expect(actIntroFor('act7')!.roleLine.en).toMatch(/cafe crew/);
+    // The act names the time that passed at HQ.
+    expect(actIntroFor('act7')!.roleLine.en).toMatch(/April.*six months/);
+    expect(actIntroFor('act7')!.roleLine.es).toMatch(/abril.*seis meses/);
   });
   it('does not send College or Front desk learners to HQ', () => {
     for (const task of ['research', 'confidentiality-call'] as const) {

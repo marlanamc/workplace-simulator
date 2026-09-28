@@ -133,7 +133,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
     doneTitle: "Arreglaste el rango, no solo el número.",
     doneBody: "El total se veía bien, pero la fórmula estaba dejando fuera a Casey. La abriste, corregiste las filas y le enviaste a Renata el total real.",
     badgeName: "Corregir el rango de una fórmula",
-    badgeWhere: "Cuenta para: Supervisor de turno",
+    badgeWhere: "Cuenta para: Shift Supervisor",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",

@@ -161,7 +161,7 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     doneTitle: "Tú llamaste a la reunión. Tiene un propósito.",
     doneBody: "Jueves 4:15 PM. El equipo está en la invitación. La agenda es de dos o tres puntos, no un discurso. Así se arma una reunión que un líder puede dirigir.",
     badgeName: "Crear una reunión con agenda",
-    badgeWhere: "Cuenta para: Supervisor de turno",
+    badgeWhere: "Cuenta para: Shift Supervisor",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",

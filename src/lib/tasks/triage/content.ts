@@ -139,7 +139,7 @@ export const TRIAGE_COPY: Record<Lang, {
     doneTitle: "Te encargaste de las dos.",
     doneBody: "La reunión salió de tu turno de cierre. Sam tiene la lista de alérgenos, solo ver. Las dos tareas están hechas.",
     badgeName: "Atender dos pedidos a la vez",
-    badgeWhere: "Cuenta para: Líder de turno",
+    badgeWhere: "Cuenta para: Shift Lead",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",

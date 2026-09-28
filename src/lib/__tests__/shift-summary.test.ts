@@ -18,8 +18,8 @@ describe("end-of-shift note", () => {
   });
 
   it("accepts a short note that does exactly what the card asked", () => {
-    // The instruction is "write a short shift summary, mention 11 AM". These
-    // do that. A 28-character floor nothing on screen mentioned used to reject
+    // The card asks "say what happened, and at what time"; the facts panel
+    // shows 11 AM. These do that. A 28-character floor nothing on screen mentioned used to reject
     // them, and a learner working alone cannot argue with a wrong no.
     expect(shiftSummaryIsComplete("Busy at 11 am.", "en")).toBe(true);
     expect(shiftSummaryIsComplete("Ocupado a las 11.", "es")).toBe(true);
@@ -44,9 +44,13 @@ describe("end-of-shift note", () => {
     expect(shiftSummaryIsComplete("11 am", "en")).toBe(false);
   });
 
-  it("has bilingual starters that mention 11", () => {
-    expect(STARTERS.en.join(" ")).toMatch(/11/i);
-    expect(STARTERS.es.join(" ")).toMatch(/11/i);
+  it("has bilingual starters that leave the time for the learner to find", () => {
+    // Option C: the starters help with the sentence, not the answer. The time
+    // is on the "What happened on your shift" panel.
+    expect(STARTERS.en.join(" ")).not.toMatch(/11|eleven/i);
+    expect(STARTERS.es.join(" ")).not.toMatch(/11|once/i);
     expect(STARTERS.es.length).toBe(STARTERS.en.length);
+    expect(shiftSummaryIsComplete(STARTERS.en.join(" "), "en")).toBe(false);
+    expect(shiftSummaryIsComplete(STARTERS.es.join(" "), "es")).toBe(false);
   });
 });

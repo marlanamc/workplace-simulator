@@ -1,4 +1,4 @@
-import { STORY_DAY_BY_LEVEL, STORY_YEAR, shortDate } from "./story-dates";
+import { AID_ACCEPT_BY_DAY, COLLEGE_STORY_DAY_BY_LEVEL, SPRING_TERM_START, shortDate, storyYear, yearDate } from "./story-dates";
 
 interface PdfBase {
   id: string;
@@ -53,8 +53,12 @@ export interface ScheduleDoc extends PdfBase {
 
 export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc | ScheduleDoc;
 
-/** Dated the day before the Paperwork sitting (level17), when the letter "arrived". */
-const AWARD_LETTER_DATE = `${shortDate(STORY_DAY_BY_LEVEL.level17 - 1, "en")}, ${STORY_YEAR}`;
+/**
+ * Dated the day before the College door's Paperwork sitting (level17, Wed
+ * Nov 18, 2026), when the letter "arrived": Tue Nov 17, 2026.
+ */
+const AWARD_LETTER_DAY = COLLEGE_STORY_DAY_BY_LEVEL.level17 - 1;
+const AWARD_LETTER_DATE = `${shortDate(AWARD_LETTER_DAY, "en")}, ${storyYear(AWARD_LETTER_DAY)}`;
 
 /**
  * The sitting a Downloads file first shows up in. A file with no entry has
@@ -65,7 +69,7 @@ const AWARD_LETTER_DATE = `${shortDate(STORY_DAY_BY_LEVEL.level17 - 1, "en")}, $
  */
 export const PDF_ARRIVES_WITH: Record<string, string> = {
   "paystub-first": "level3a3",
-  "award-letter-fall-2026": "level17",
+  "award-letter-spring-2027": "level17",
 };
 
 export const PDF_DOCUMENTS: PdfDocument[] = [
@@ -114,18 +118,18 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
   },
   {
     kind: "award-letter",
-    id: "award-letter-fall-2026",
-    name: "bhcc-award-letter-fall-2026.pdf",
+    id: "award-letter-spring-2027",
+    name: "bhcc-award-letter-spring-2027.pdf",
     size: "112 KB",
     date: AWARD_LETTER_DATE,
     school: "Bunker Hill Community College",
     student: "Jordan Rivera",
-    term: "Fall 2026",
+    term: "Spring 2027",
     awardName: "Federal Pell Grant",
     amount: "$2,400.00",
-    acceptBy: "October 15, 2026",
+    acceptBy: yearDate(AID_ACCEPT_BY_DAY, "en"),
     body: [
-      "We are pleased to offer the following financial aid for the Fall 2026 term.",
+      `We are pleased to offer the following financial aid for the Spring 2027 term. Classes start on ${yearDate(SPRING_TERM_START, "en")}.`,
       "This award is applied to tuition and fees. You must accept or decline by the date below. After that date the offer may be given to another student.",
     ],
     signedBy: "Office of Financial Aid, Bunker Hill Community College",

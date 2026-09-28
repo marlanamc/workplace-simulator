@@ -3,7 +3,7 @@ import { CORRECT_WEEK_TOTAL } from "@/lib/tasks/crew-week";
 import { emailMentionsFix, parseRange, rangeCoversCrew, sumProblem } from "@/lib/tasks/formula-check/content";
 import { replyIsSafe } from "@/lib/tasks/priority-call/content";
 import { agendaBulletCount, titleIsAboutSchedule } from "@/lib/tasks/team-meeting/content";
-import { replyAcceptsOffer, overlapMentionsShift } from "@/lib/tasks/college-offer/content";
+import { replyAcceptsOffer } from "@/lib/tasks/college-offer/content";
 import { BUDGET_ROWS, OVER_AMOUNT, OVER_KEY, emailFlagsOver, rowNumberFor, statusFor } from "@/lib/tasks/budget-sheet/content";
 import {
   casualDraftUntouched,
@@ -15,7 +15,7 @@ import {
 import { statementShowsInterest } from "@/lib/tasks/enrollment/content";
 import { amountLooksRight, dateLooksRight } from "@/lib/tasks/financial-aid/content";
 import { responseIsComplete } from "@/lib/tasks/coursework/content";
-import { whyHoldsUp } from "@/lib/tasks/research/content";
+import { STARTERS as RESEARCH_STARTERS, whyHoldsUp } from "@/lib/tasks/research/content";
 import { confirmationOffersOpenSlot } from "@/lib/tasks/appointment-scheduling/content";
 import { declineIsSafe } from "@/lib/tasks/patient-intake/content";
 import { emailFlagsMismatch } from "@/lib/tasks/billing-sheet/content";
@@ -191,7 +191,7 @@ describe("team meeting: title and agenda", () => {
   });
 });
 
-describe("college offer: accept and flag the overlap", () => {
+describe("college offer: the yes half of the reply to HR", () => {
   it.each([
     "I accept the offer for the Business Essentials class.",
     "Yes, I'll take the Tuesday BHCC class.",
@@ -207,23 +207,10 @@ describe("college offer: accept and flag the overlap", () => {
     expect(replyAcceptsOffer("I do not accept the class")).toBe(false);
   });
 
-  // Story Mode Audit #5: this is a reply to the offer email, so a clear yes
-  // is enough. The old rule also required naming the class and rejected these.
+  // Story Mode Audit #5: a clear yes accepts. Naming the section is checked
+  // separately (hrReplyVerdict, college-offer.test.ts).
   it.each(["I accept.", "yes ok thank you"])("accepts a plain yes to the offer: %j", (body) => {
     expect(replyAcceptsOffer(body)).toBe(true);
-  });
-
-  it.each([
-    "The class overlaps my Tuesday close.",
-    "Can we move my Tuesday shift before the semester?",
-    "La clase choca con el cierre del martes.",
-    "El turno del martes entra en conflicto.",
-  ])("accepts an overlap note: %j", (body) => {
-    expect(overlapMentionsShift(body)).toBe(true);
-  });
-
-  it("rejects an overlap note that never names the conflict", () => {
-    expect(overlapMentionsShift("Looks good, thanks")).toBe(false);
   });
 });
 
@@ -331,13 +318,16 @@ describe("financial aid: amount and accept-by date", () => {
     expect(amountLooksRight("$4,800")).toBe(false);
   });
 
-  it.each(["October 15, 2026", "Oct 15", "15 de octubre de 2026"])("accepts the accept-by date: %j", (answer) => {
+  it.each(["December 4, 2026", "Dec 4", "4 de diciembre de 2026", "12/4"])("accepts the accept-by date: %j", (answer) => {
     expect(dateLooksRight(answer)).toBe(true);
   });
 
   it("rejects a different deadline", () => {
-    expect(dateLooksRight("September 15, 2026")).toBe(false);
+    expect(dateLooksRight("November 6, 2026")).toBe(false);
+    expect(dateLooksRight("December 14")).toBe(false);
     expect(dateLooksRight("December 1")).toBe(false);
+    expect(dateLooksRight("January 19, 2027")).toBe(false);
+    expect(dateLooksRight("October 15, 2026")).toBe(false);
   });
 });
 
@@ -368,6 +358,10 @@ describe("research: cite the database", () => {
     "Peer-reviewed, 2024. Not an ad or a forum.",
     "Es de la base de datos de la biblioteca y nombra autores.",
     "Revisado por pares, 2024. No es un anuncio ni un foro.",
+    // The card asks "who wrote it or where it was published" (option C).
+    "It was written by L. Chen and R. Morales.",
+    "It was published in Workplace Communication Review.",
+    "La escribieron L. Chen y R. Morales.",
   ])("accepts a real why: %j", (body) => {
     expect(whyHoldsUp(body)).toBe(true);
   });
@@ -375,6 +369,13 @@ describe("research: cite the database", () => {
   it("rejects a why that never names a credible fact", () => {
     expect(whyHoldsUp("I like this one")).toBe(false);
     expect(whyHoldsUp("asdf")).toBe(false);
+  });
+
+  it("does not pass on the sentence starters alone", () => {
+    for (const lang of ["en", "es"] as const) {
+      for (const starter of RESEARCH_STARTERS[lang]) expect(whyHoldsUp(starter)).toBe(false);
+      expect(whyHoldsUp(RESEARCH_STARTERS[lang].join(" "))).toBe(false);
+    }
   });
 });
 

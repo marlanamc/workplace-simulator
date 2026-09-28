@@ -15,10 +15,10 @@ const messages: HiringMail[] = [
     key: 'hiring-interview', task: 'interview-practice', unlockAfter: 'resume-build',
     ...inboxSender(CAST.anita), time: '8:30 AM', story: true, unread: true,
     subject: { en: 'Your interview: preparation notes', es: 'Tu entrevista: notas de preparación' },
-    preview: { en: 'We would like to talk about the Office Administrator role.', es: 'Queremos hablar sobre el puesto de administración de oficina.' },
+    preview: { en: 'We would like to talk about the Office Administrator role.', es: 'Queremos hablar sobre el puesto de Office Administrator (administración de oficina).' },
     body: {
       en: ['Thank you for your application and résumé. We would like to interview you for the Office Administrator role.', 'Before we talk, prepare a few examples from your work and one question about the role. The attached practice document has four common questions. These notes are for you to use during the conversation.'],
-      es: ['Gracias por tu solicitud y currículum. Queremos entrevistarte para el puesto de administración de oficina.', 'Antes de hablar, prepara algunos ejemplos de tu trabajo y una pregunta sobre el puesto. El documento de práctica adjunto tiene cuatro preguntas comunes. Estas notas son para ti, para usarlas durante la conversación.'],
+      es: ['Gracias por tu solicitud y currículum. Queremos entrevistarte para el puesto de Office Administrator (administración de oficina).', 'Antes de hablar, prepara algunos ejemplos de tu trabajo y una pregunta sobre el puesto. El documento de práctica adjunto tiene cuatro preguntas comunes. Estas notas son para ti, para usarlas durante la conversación.'],
     },
     action: { tab: 'interview', label: { en: 'Open interview preparation', es: 'Abrir la preparación para la entrevista' } },
   },
@@ -29,7 +29,7 @@ const messages: HiringMail[] = [
     preview: { en: 'The offer letter includes your role, pay and start date.', es: 'La carta incluye tu puesto, sueldo y fecha de inicio.' },
     body: {
       en: ['Thank you for meeting with me. We would like to offer you the Office Administrator role.', 'Your offer letter is below. It includes the role, pay and start date. Please review it before sending your acceptance.'],
-      es: ['Gracias por reunirte conmigo. Queremos ofrecerte el puesto de administración de oficina.', 'Tu carta de oferta está abajo. Incluye el puesto, sueldo y fecha de inicio. Revísala antes de enviar tu aceptación.'],
+      es: ['Gracias por reunirte conmigo. Queremos ofrecerte el puesto de Office Administrator.', 'Tu carta de oferta está abajo. Incluye el puesto, sueldo y fecha de inicio. Revísala antes de enviar tu aceptación.'],
     },
     action: { tab: 'offer', label: { en: 'View offer and reply', es: 'Ver la oferta y responder' } },
   },

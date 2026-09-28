@@ -3,7 +3,7 @@ import { DATE_CHECK } from "@/lib/tasks/financial-aid/content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { ENROLLMENT_DEADLINE_DAY, yearDate } from "@/lib/story-dates";
 
-/** The application deadline, from the story calendar (Friday, October 9). */
+/** The application deadline for the spring term, from the story calendar (Friday, November 6, 2026). */
 export const DEADLINE = { en: yearDate(ENROLLMENT_DEADLINE_DAY, "en"), es: yearDate(ENROLLMENT_DEADLINE_DAY, "es") };
 
 export const MISSING_DOC = "immunization";
@@ -39,7 +39,7 @@ export const ENROLLMENT_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     school: "Bunker Hill Community College",
-    heading: "Fall 2026 application",
+    heading: "Spring 2027 application",
     deadlineLabel: "Apply by",
     docsHeading: "Required documents",
     missingNote: "One required document is missing.",
@@ -61,7 +61,7 @@ export const ENROLLMENT_COPY: Record<Lang, {
   es: {
     helpBtn: "Ayúdame con este paso",
     school: "Bunker Hill Community College",
-    heading: "Solicitud otoño 2026",
+    heading: "Solicitud primavera 2027",
     deadlineLabel: "Fecha límite",
     docsHeading: "Documentos requeridos",
     missingNote: "Falta un documento requerido.",

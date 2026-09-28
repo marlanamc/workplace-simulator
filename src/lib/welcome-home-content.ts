@@ -58,12 +58,12 @@ const ACT1_HOME: WelcomeHome = {
 };
 
 const PACKET_TITLES: Record<ActIntroActKey, Localized> = {
-  act2: { en: "Act II · Shift Lead", es: "Acto II · Líder de turno" },
-  act3: { en: "Act III · Shift Supervisor", es: "Acto III · Supervisión de turno" },
-  act4: { en: "Act IV · Assistant Manager", es: "Acto IV · Asistente de gerencia" },
+  act2: { en: "Act II · Shift Lead", es: "Acto II · Shift Lead" },
+  act3: { en: "Act III · Shift Supervisor", es: "Acto III · Shift Supervisor" },
+  act4: { en: "Act IV · Assistant Manager", es: "Acto IV · Assistant Manager" },
   act5: { en: "Act V · Pick a path", es: "Acto V · Elige un camino" },
-  act6: { en: "Act VI · Office Administrator", es: "Acto VI · Administración de oficina" },
-  act7: { en: "Act VII · Team Lead", es: "Acto VII · Líder de equipo" },
+  act6: { en: "Act VI · Office Administrator", es: "Acto VI · Office Administrator" },
+  act7: { en: "Act VII · Team Lead", es: "Acto VII · Team Lead" },
 };
 
 const PACKET_KICKER: Localized = {

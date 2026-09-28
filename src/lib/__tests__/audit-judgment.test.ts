@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { EXPENSE_ROWS, PLANTED_TOTAL, RECEIPT_FILES, expenseReceiptMatches, expenseTotalIsCorrect } from '../tasks/expense-report/content';
+import { EXPENSE_ROWS, MISSING_KEY, PLANTED_TOTAL, RECEIPT_FILES, TYPO_KEY, TYPED_RECEIPTED_TOTAL, expenseReceiptMatches, expenseSubmitCorrection, expenseTotalIsCorrect, expenseTotalVerdict, initialSheetAmount, rowAmountMatchesReceipt } from '../tasks/expense-report/content';
+import { PLANTED_TOTAL as SLIDE_TOTAL } from '../tasks/slide-deck/content';
 import { TRIAGE_SLOTS, triageSlotWorks } from '../tasks/triage/content';
 
 describe('audit judgment tasks', () => {
@@ -25,6 +26,62 @@ describe('audit judgment tasks', () => {
     expect(EXPENSE_ROWS.filter(r => r.receipt).reduce((sum, r) => sum + r.amount, 0)).toBe(PLANTED_TOTAL);
     for (const total of ['188', '$188.00', '188,00']) expect(expenseTotalIsCorrect(total)).toBe(true);
     for (const total of ['', '283', '1880', '188 dollars', '188.01']) expect(expenseTotalIsCorrect(total)).toBe(false);
+  });
+  it('plants one swapped-digit row: the sheet says $84, the Harbor Deli receipt says $48', () => {
+    const typo = EXPENSE_ROWS.filter((r) => r.typedAmount !== undefined);
+    expect(typo.map((r) => r.key)).toEqual([TYPO_KEY]);
+    expect(typo[0].merchant.en).toBe('Harbor Deli');
+    expect(typo[0].receipt).toBe('receipt-0911.pdf');
+    expect(initialSheetAmount(TYPO_KEY)).toBe(84);
+    // Drive shows the receipt amount, never the typo.
+    expect(RECEIPT_FILES.find((f) => f.key === TYPO_KEY)!.amount).toBe(48);
+    expect(initialSheetAmount('uber')).toBe(24);
+    // Totals downstream (Day 33 slides) come from receipts, so they stay $188.
+    expect(SLIDE_TOTAL).toBe(188);
+    expect(TYPED_RECEIPTED_TOTAL).toBe(224);
+  });
+  it('checks a sheet amount against its receipt', () => {
+    for (const v of ['48', '$48', '48.00', '48,00']) expect(rowAmountMatchesReceipt(TYPO_KEY, v)).toBe(true);
+    for (const v of ['84', '', '480', '48 dollars']) expect(rowAmountMatchesReceipt(TYPO_KEY, v)).toBe(false);
+    expect(rowAmountMatchesReceipt('uber', '24')).toBe(true);
+    expect(rowAmountMatchesReceipt(MISSING_KEY, '95')).toBe(false);
+    expect(rowAmountMatchesReceipt('unknown', '48')).toBe(false);
+  });
+  it('reads what a wrong total says about the work', () => {
+    expect(expenseTotalVerdict('188')).toBe('ok');
+    expect(expenseTotalVerdict('$224')).toBe('typo');
+    expect(expenseTotalVerdict('283')).toBe('dinner');
+    expect(expenseTotalVerdict('319')).toBe('dinner');
+    for (const v of ['', '999', '187', 'lots']) expect(expenseTotalVerdict(v)).toBe('check');
+  });
+  describe('submitting the report', () => {
+    const receipts = Object.fromEntries(EXPENSE_ROWS.filter((r) => r.receipt).map((r) => [r.key, r.receipt!]));
+    const good = { flagged: MISSING_KEY, receipts, typoAmount: '48', total: '188', mismatchTries: 0 };
+    it('passes only with every receipt matched, the dinner flagged, the deli fixed, and $188', () => {
+      expect(expenseSubmitCorrection(good)).toBeNull();
+      expect(expenseSubmitCorrection({ ...good, typoAmount: '$48.00' })).toBeNull();
+    });
+    it('sends back an unflagged or unmatched report first', () => {
+      expect(expenseSubmitCorrection({ ...good, flagged: null })).toBe('submitBlind');
+      expect(expenseSubmitCorrection({ ...good, flagged: 'uber' })).toBe('submitBlind');
+      expect(expenseSubmitCorrection({ ...good, receipts: { uber: receipts.uber } })).toBe('needMatch');
+      expect(expenseSubmitCorrection({ ...good, receipts: { ...receipts, [MISSING_KEY]: receipts.uber } })).toBe('needMatch');
+    });
+    it('does not name the deli until the learner has heard the unnamed correction once', () => {
+      expect(expenseSubmitCorrection({ ...good, typoAmount: '84', total: '224' })).toBe('rowMismatch');
+      expect(expenseSubmitCorrection({ ...good, typoAmount: '84', total: '224', mismatchTries: 1 })).toBe('rowMismatchNamed');
+      // The right total with the sheet left wrong still does not go.
+      expect(expenseSubmitCorrection({ ...good, typoAmount: '84' })).toBe('rowMismatch');
+      expect(expenseSubmitCorrection({ ...good, typoAmount: '58' })).toBe('rowMismatch');
+      // Fixed the row but kept the old total.
+      expect(expenseSubmitCorrection({ ...good, total: '224' })).toBe('rowMismatch');
+    });
+    it('treats the dinner in the total as the missing-receipt mistake, and anything else as a check', () => {
+      expect(expenseSubmitCorrection({ ...good, total: '283' })).toBe('wrongTotal');
+      expect(expenseSubmitCorrection({ ...good, typoAmount: '84', total: '319' })).toBe('wrongTotal');
+      expect(expenseSubmitCorrection({ ...good, total: '999' })).toBe('checkTotal');
+      expect(expenseSubmitCorrection({ ...good, total: '' })).toBe('checkTotal');
+    });
   });
   it('requires a time when both calendars are free', () => {
     expect(TRIAGE_SLOTS).toHaveLength(3);

@@ -8,7 +8,9 @@ describe("deskIdentityFor", () => {
     expect(deskIdentityFor("act1").title.en).toBe("New Hire");
     expect(deskIdentityFor("act1").company).toBe(CAFE_NAME);
     expect(deskIdentityFor("act2").title.en).toBe("Shift Lead");
-    expect(deskIdentityFor("act3").title.es).toBe("Supervisión de turno");
+    // Job titles are names, so they stay in English in Spanish mode too.
+    expect(deskIdentityFor("act3").title.es).toBe("Shift Supervisor");
+    expect(deskIdentityFor("act7").title.es).toBe("Team Lead");
     expect(deskIdentityFor("act4").company).toBe(CAFE_NAME);
   });
 
@@ -29,7 +31,7 @@ describe("deskIdentityFor", () => {
     expect(applying.company).toBe(CAFE_NAME);
     expect(applying.title.en).toBe("Shift Lead");
     expect(applying.title.en).not.toMatch(/Office Administrator/);
-    const earned = deskIdentityFor("act6", null, true, { en: "Assistant Manager", es: "Asistente de gerencia" });
+    const earned = deskIdentityFor("act6", null, true, { en: "Assistant Manager", es: "Assistant Manager" });
     expect(earned.title.en).toBe("Assistant Manager");
     expect(deskIdentityFor("act6", null, false).title.en).toBe("Office Administrator");
   });

@@ -1,23 +1,33 @@
 import { describe, expect, it } from "vitest";
-import { LEVELS, courseLevels, taskKeysForLevel } from "@/lib/tracks-content";
-import { COURSE_ROUTES } from "@/lib/course-route";
+import { LEVELS, courseLevels, levelUpCopyFor, taskKeysForLevel } from "@/lib/tracks-content";
+import { COURSE_ROUTES, routeBridgePath } from "@/lib/course-route";
+import { pathOfTask } from "@/lib/bridge-path";
 import { dayNumber } from "@/lib/shift-spine";
 import {
+  AID_ACCEPT_BY_DAY,
+  COLLEGE_STORY_DAY_BY_LEVEL,
+  ENROLLMENT_DEADLINE_DAY,
   HUDDLE_DAY,
+  SPRING_TERM_REGISTER_BY,
+  SPRING_TERM_START,
   SHIFT_BLOCKS,
   SHIFT_TIMES,
   STORY_CLOCK_BY_LEVEL,
   STORY_DAY_BY_LEVEL,
   longDate,
   mondayOf,
+  monthLabel,
+  numericDate,
+  yearDate,
   monthGrid,
   shortDate,
   storyDate,
   storyDayOf,
   storyWeekday,
+  storyYear,
   weekRange,
 } from "@/lib/story-dates";
-import { SHIFT_MOMENT } from "@/lib/story-beats";
+import { SHIFT_MOMENT, storyMailAfter } from "@/lib/story-beats";
 import { CREW, CREW_WEEK_SHEET, CREW_WEEK_START, GAP_SHIFT_LABEL } from "@/lib/tasks/crew-week";
 import { FORMULA_CHECK_COPY } from "@/lib/tasks/formula-check/content";
 import { TEAM_SCHEDULE_COPY } from "@/lib/tasks/team-schedule/content";
@@ -29,11 +39,13 @@ import { MEETING, CALENDAR_COPY, EVENT_INTRO as CAL_INTRO, HUDDLE_WEEK_MONDAY } 
 import { SCHEDULE } from "@/lib/tasks/schedule/content";
 import { TIMECLOCK } from "@/lib/tasks/timeclock/content";
 import { OFFER_LETTER, DATE_CHOICES, CORRECT_DATE_KEY } from "@/lib/tasks/job-offer/content";
-import { OFFER_LETTER as CLASS_OFFER, COLLEGE_OFFER_COPY } from "@/lib/tasks/college-offer/content";
+import { OFFER_LETTER as CLASS_OFFER, REGISTER_BY, TERM_START, shiftLabel } from "@/lib/tasks/college-offer/content";
 import { TRIAGE_COPY } from "@/lib/tasks/triage/content";
 import { PRIORITY_COPY } from "@/lib/tasks/priority-call/content";
-import { DEADLINE } from "@/lib/tasks/enrollment/content";
-import { ACCEPT_BY } from "@/lib/tasks/financial-aid/content";
+import { DEADLINE, ENROLLMENT_COPY } from "@/lib/tasks/enrollment/content";
+import { ACCEPT_BY, DATE_CHECK, FINANCIAL_AID_COPY } from "@/lib/tasks/financial-aid/content";
+import { sentOnForTask, storyTodayForTrack } from "@/lib/story-calendar";
+import type { TaskKey } from "@/lib/desktop-content";
 import { HQ_FILES } from "@/lib/tasks/office-drive/content";
 import { PDF_ARRIVES_WITH, PDF_DOCUMENTS } from "@/lib/pdf-content";
 import { OPENING_MESSAGES } from "@/lib/tasks/mail/opening";
@@ -54,22 +66,24 @@ describe("every sitting has a date on the story calendar", () => {
 
   it.each(routes)("never goes backwards on the %s route, and no two sittings share a day", (route) => {
     // Orientation (the tour) is not a sitting; it happens the same evening as the Night Before.
+    // The College route walks the College door's own dates.
+    const path = routeBridgePath(route);
     const sittings = courseLevels(route).filter((l) => dayNumber(l) > 0);
     for (let i = 1; i < sittings.length; i++) {
-      const prev = sittings[i - 1];
-      const here = sittings[i];
+      const prev = storyDayOf(sittings[i - 1].key, path);
+      const here = storyDayOf(sittings[i].key, path);
       expect(
-        STORY_DAY_BY_LEVEL[here.key],
-        `${here.key} (${shortDate(STORY_DAY_BY_LEVEL[here.key], "en")}) comes after ${prev.key} (${shortDate(STORY_DAY_BY_LEVEL[prev.key], "en")})`,
-      ).toBeGreaterThan(STORY_DAY_BY_LEVEL[prev.key]);
+        here,
+        `${sittings[i].key} (${yearDate(here, "en")}) comes after ${sittings[i - 1].key} (${yearDate(prev, "en")})`,
+      ).toBeGreaterThan(prev);
     }
   });
 
-  it("lands each sitting on the weekday its shift moment names", () => {
+  it("lands each sitting on the weekday its shift moment names, on each Act V door", () => {
     for (const level of LEVELS) {
-      const day = STORY_DAY_BY_LEVEL[level.key];
       const keys = new Set([...taskKeysForLevel(level, "a"), ...taskKeysForLevel(level, "b")]);
       for (const key of keys) {
+        const day = storyDayOf(level.key, pathOfTask(key));
         const moment = SHIFT_MOMENT[key].en;
         const named = WEEKDAYS.find((w) => moment.includes(w));
         if (!named) continue;
@@ -98,11 +112,12 @@ describe("labels come from the level's date", () => {
 
   it("names the ops report for the full week before it is sent", () => {
     expect(REPORT_WEEK).toBe(mondayOf(STORY_DAY_BY_LEVEL.level26) - 7);
-    expect(OPS_COPY.en.mailSubjectValue).toBe("Weekly report: week of Oct 5");
-    expect(OPS_COPY.en.sheetHeader).toBe("Week of Oct 5: daily sales");
+    expect(OPS_COPY.en.mailSubjectValue).toBe("Weekly report: week of Apr 5");
+    expect(OPS_COPY.en.sheetHeader).toBe("Week of Apr 5: daily sales");
+    expect(OPS_COPY.es.sheetHeader).toBe("Semana del 5 de abril: ventas por día");
     // The calendar strip is next week, Monday first, and the event is its Thursday.
     expect(WEEK_DAYS.map((d) => d.date)).toEqual([19, 20, 21, 22, 23, 24, 25]);
-    expect(CALENDAR_EVENT.detailWhen.en).toMatch(/^Thu, Oct 22/);
+    expect(CALENDAR_EVENT.detailWhen.en).toMatch(/^Thu, Apr 22/);
     expect(WEEK_DAYS.some((d) => d.today)).toBe(false);
   });
 
@@ -141,15 +156,60 @@ describe("labels come from the level's date", () => {
       expect(WEEKDAYS, choice.label.en).toContain(weekday);
     }
     expect(start).toBeGreaterThan(STORY_DAY_BY_LEVEL.level19h5);
-    // The college class starts after the offer, on a Tuesday.
-    expect(CLASS_OFFER.en[1]).toContain("starting October 20");
-    expect(storyWeekday(STORY_DAY_BY_LEVEL.level13 + 8)).toBe(2);
-    // The enrollment deadline is still ahead on Getting Ready, and before the aid accept-by date.
-    expect(DEADLINE.en).toBe("October 9, 2026");
-    expect(ACCEPT_BY.en).toBe("October 15, 2026");
+    // The college class is a spring class: register in the fall, start in January, on a Tuesday.
+    expect(CLASS_OFFER.en.rules[0]).toBe("Register by Friday, December 11, 2026.");
+    expect(CLASS_OFFER.es.rules[0]).toContain("viernes 11 de diciembre de 2026");
+    expect(REGISTER_BY).toBeGreaterThan(STORY_DAY_BY_LEVEL.level13);
+    expect(TERM_START).toBeGreaterThan(REGISTER_BY);
+    expect(storyDate(TERM_START).getFullYear()).toBe(2027);
+    expect(storyWeekday(TERM_START)).toBe(2);
+    // The College door's deadlines: see "the College door runs from fall into the spring term".
+    expect(DEADLINE.en).toBe("November 6, 2026");
+    expect(ACCEPT_BY.en).toBe("December 4, 2026");
     // The final Q3 notes are the newest file on day one at HQ.
     const target = HQ_FILES.find((f) => f.isTarget)!;
     expect(target.date).toBe("Oct 2");
+  });
+});
+
+describe("Act VII comes after months at HQ, not the next week", () => {
+  const ACT_VII = ["level24", "level25", "level26", "level27"] as const;
+
+  it("starts the Team Lead chapter at least five months after the first day at HQ", () => {
+    const hq = storyDate(STORY_DAY_BY_LEVEL.level20);
+    const lead = storyDate(STORY_DAY_BY_LEVEL.level24);
+    const months = (lead.getFullYear() - hq.getFullYear()) * 12 + (lead.getMonth() - hq.getMonth());
+    expect(months).toBeGreaterThanOrEqual(5);
+    expect(STORY_DAY_BY_LEVEL.level24 - STORY_DAY_BY_LEVEL.level23).toBeGreaterThanOrEqual(150);
+  });
+
+  it("puts Act VII in April 2027 on Mon, Tue, Thu, Fri of one week", () => {
+    expect(ACT_VII.map((k) => longDate(STORY_DAY_BY_LEVEL[k], "en"))).toEqual([
+      "Monday, April 12",
+      "Tuesday, April 13",
+      "Thursday, April 15",
+      "Friday, April 16",
+    ]);
+    for (const k of ACT_VII) expect(storyDate(STORY_DAY_BY_LEVEL[k]).getFullYear(), k).toBe(2027);
+    expect(new Set(ACT_VII.map((k) => mondayOf(STORY_DAY_BY_LEVEL[k]))).size).toBe(1);
+  });
+
+  it("reads the year from the day, across New Year", () => {
+    const lead = STORY_DAY_BY_LEVEL.level24;
+    expect(yearDate(lead, "en")).toBe("April 12, 2027");
+    expect(yearDate(lead, "es")).toBe("12 de abril de 2027");
+    expect(monthLabel(lead, "en")).toBe("April 2027");
+    expect(monthLabel(lead, "es")).toBe("Abril de 2027");
+    expect(numericDate(lead)).toBe("4/12/2027");
+    expect(weekRange(mondayOf(lead))).toBe("Apr 12 – 18, 2027");
+    // Dec 28, 2026 is day 150; its week ends in 2027.
+    expect(weekRange(150)).toBe("Dec 28, 2026 – Jan 3, 2027");
+    expect(yearDate(STORY_DAY_BY_LEVEL.level20, "en")).toBe("October 6, 2026");
+  });
+
+  it("names no October date in the Act VII documents", () => {
+    const text = JSON.stringify([OPS_COPY, WEEK_DAYS, CALENDAR_EVENT]);
+    expect(text).not.toMatch(/\bOct\b|October|octubre|2026/);
   });
 });
 
@@ -208,16 +268,109 @@ describe("shift times have one source", () => {
     expect(CREW.find((m) => m.key === "jordan")!.shifts.mon.label).toBe("2–10");
     expect(TRIAGE_COPY.en.meetingNote).toContain("close Thursday 4–10");
     expect(PRIORITY_COPY.en.coverNote).toContain("4–10 PM");
-    expect(COLLEGE_OFFER_COPY.en.shiftNote).toBe("You already close Tuesday 4:00–10:00 PM.");
-    expect(COLLEGE_OFFER_COPY.es.shiftNote).toBe("Ya cierras el martes de 4:00 a 10:00 PM.");
+    expect(shiftLabel("close")).toBe("4–10 PM");
   });
 });
 
 describe("files arrive on their story day", () => {
   it("holds the pay stub for payday and the award letter for the college Paperwork day", () => {
     expect(PDF_ARRIVES_WITH["paystub-first"]).toBe("level3a3");
-    expect(PDF_ARRIVES_WITH["award-letter-fall-2026"]).toBe("level17");
-    const letter = PDF_DOCUMENTS.find((d) => d.id === "award-letter-fall-2026")!;
-    expect(letter.date).toBe("Sep 29, 2026");
+    expect(PDF_ARRIVES_WITH["award-letter-spring-2027"]).toBe("level17");
+    const letter = PDF_DOCUMENTS.find((d) => d.id === "award-letter-spring-2027")!;
+    // The day before the College Paperwork sitting (Wed Nov 18, 2026).
+    expect(letter.date).toBe("Nov 17, 2026");
+    expect(letter.kind === "award-letter" && letter.term).toBe("Spring 2027");
+    expect(letter.kind === "award-letter" && letter.acceptBy).toBe(ACCEPT_BY.en);
+  });
+});
+
+describe("the College door runs from fall into the spring term", () => {
+  const COLLEGE = ["level16", "level17", "level18", "level19"] as const;
+  const college = (k: string) => storyDayOf(k, "a");
+
+  it("dates only Act V levels, and leaves the front desk door on the shared dates", () => {
+    const actV = LEVELS.filter((l) => l.pathTracks).map((l) => l.key);
+    for (const key of Object.keys(COLLEGE_STORY_DAY_BY_LEVEL)) expect(actV, key).toContain(key);
+    expect(COLLEGE.map((k) => longDate(storyDayOf(k, "b"), "en"))).toEqual([
+      "Monday, September 28",
+      "Wednesday, September 30",
+      "Thursday, October 1",
+      "Friday, October 2",
+    ]);
+    for (const k of COLLEGE) {
+      expect(storyDayOf(k), k).toBe(STORY_DAY_BY_LEVEL[k]);
+      expect(storyDayOf(k, null), k).toBe(STORY_DAY_BY_LEVEL[k]);
+    }
+    // Outside Act V the door changes nothing.
+    expect(storyDayOf("level8", "a")).toBe(STORY_DAY_BY_LEVEL.level8);
+  });
+
+  it("puts each College sitting on a weekday, fall to spring", () => {
+    expect(COLLEGE.map((k) => `${longDate(college(k), "en")}, ${storyDate(college(k)).getFullYear()}`)).toEqual([
+      "Monday, September 28, 2026",
+      "Wednesday, November 18, 2026",
+      "Thursday, February 11, 2027",
+      "Friday, March 5, 2027",
+    ]);
+    for (const day of [...COLLEGE.map(college), ENROLLMENT_DEADLINE_DAY, AID_ACCEPT_BY_DAY, SPRING_TERM_REGISTER_BY, SPRING_TERM_START]) {
+      expect(storyWeekday(day)).toBeGreaterThanOrEqual(1);
+      expect(storyWeekday(day)).toBeLessThanOrEqual(5);
+    }
+  });
+
+  it("applies and arranges aid before the term, and does coursework during it", () => {
+    // Getting Ready: the deadline is still ahead.
+    expect(ENROLLMENT_DEADLINE_DAY).toBeGreaterThan(college("level16"));
+    // The award letter comes after the application deadline, and the accept-by after the letter.
+    expect(college("level17")).toBeGreaterThan(ENROLLMENT_DEADLINE_DAY);
+    expect(AID_ACCEPT_BY_DAY).toBeGreaterThan(college("level17"));
+    // Both deadlines are before registration closes and before the first class.
+    expect(AID_ACCEPT_BY_DAY).toBeLessThan(SPRING_TERM_REGISTER_BY);
+    expect(SPRING_TERM_REGISTER_BY).toBeLessThan(SPRING_TERM_START);
+    // Coursework and research happen during the term, a few weeks in.
+    expect(college("level18") - SPRING_TERM_START).toBeGreaterThanOrEqual(14);
+    expect(college("level19")).toBeGreaterThan(college("level18"));
+    expect(storyYear(college("level19"))).toBe(2027);
+    // The Act IV class offer uses the same term.
+    expect(REGISTER_BY).toBe(SPRING_TERM_REGISTER_BY);
+    expect(TERM_START).toBe(SPRING_TERM_START);
+  });
+
+  it("dates College mail and the desktop on the College calendar", () => {
+    expect(sentOnForTask("enrollment")).toBe(college("level16"));
+    expect(sentOnForTask("financial-aid")).toBe(college("level17"));
+    expect(sentOnForTask("coursework")).toBe(college("level18"));
+    expect(sentOnForTask("research")).toBe(college("level19"));
+    // The front desk door keeps its week.
+    expect(sentOnForTask("patient-intake")).toBe(STORY_DAY_BY_LEVEL.level17);
+    expect(sentOnForTask("confidentiality-call")).toBe(STORY_DAY_BY_LEVEL.level19);
+    expect(storyTodayForTrack("coursework")).toBe(college("level18"));
+    expect(storyTodayForTrack("billing-sheet")).toBe(STORY_DAY_BY_LEVEL.level18);
+    expect(storyTodayForTrack("team-schedule")).toBe(STORY_DAY_BY_LEVEL.level9);
+  });
+
+  it("names the spring term on the College documents, not the fall", () => {
+    expect(ENROLLMENT_COPY.en.heading).toBe("Spring 2027 application");
+    expect(ENROLLMENT_COPY.es.heading).toBe("Solicitud primavera 2027");
+    expect(FINANCIAL_AID_COPY.en.letterName).toBe("Award letter: Spring 2027");
+    expect(FINANCIAL_AID_COPY.es.letterName).toBe("Carta de ayuda: primavera 2027");
+    const aidMail = storyMailAfter("financial-aid")!;
+    expect(aidMail.preview.en).toBe("$2,400. Accept by December 4.");
+    expect(aidMail.preview.es).toBe("$2,400. Aceptar antes del 4 de diciembre.");
+    const text = JSON.stringify([ENROLLMENT_COPY, FINANCIAL_AID_COPY, DATE_CHECK, PDF_DOCUMENTS.find((d) => d.kind === "award-letter"), ["enrollment", "financial-aid", "coursework", "research"].map((k) => storyMailAfter(k as TaskKey))]);
+    expect(text).not.toMatch(/October|octubre|Fall 2026|otoño 2026|Wednesday the award|Thursday, coursework|Friday, find/);
+  });
+
+  it("tells the learner that time passed, in both languages", () => {
+    const at = (key: string) => levelUpCopyFor(LEVELS.find((l) => l.key === key)!, "a")!.body;
+    expect(at("level17").en).toMatch(/^It is November/);
+    expect(at("level17").es).toMatch(/^Ya es noviembre/);
+    expect(at("level18").en).toMatch(/^It is February\. Your spring class started in January\./);
+    expect(at("level18").es).toMatch(/^Ya es febrero\. Tu clase de primavera empezó en enero\./);
+    expect(at("level19").en).toMatch(/^It is March/);
+    expect(at("level19").es).toMatch(/^Ya es marzo/);
+    // The front desk door has no jump: it is the same week.
+    const desk = (key: string) => levelUpCopyFor(LEVELS.find((l) => l.key === key)!, "b")!.body;
+    for (const k of ["level17", "level18", "level19"]) expect(desk(k).en).not.toMatch(/^It is/);
   });
 });

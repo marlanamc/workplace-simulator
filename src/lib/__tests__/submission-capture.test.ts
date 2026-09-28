@@ -83,7 +83,7 @@ const CAPTURED: Record<string, ((lang: Lang) => SubmissionContent) | "inline-in-
   "status-report": (lang) => statusReport({ formula: "=SUM(B2:B6)", body: "Here is the week of Aug 24 status. Total was 412." }, lang),
   "team-schedule": (lang) => teamSchedule("You're on Saturday close, 4 to 10.", lang),
   "college-offer": (lang) =>
-    collegeOffer({ reply: "I accept the offer for the Business Essentials class.", overlap: "The Tuesday class overlaps my close shift." }, lang),
+    collegeOffer({ renata: "My class is Tuesday 5 to 7:45. Can I change my Tuesday close?", reply: "I accept. I will take Section 02, CRN 20327." }, lang),
   enrollment: (lang) => enrollment("I want to enroll in the Business program at BHCC to move into an office role.", lang),
   "patient-intake": (lang) => patientIntake("I can't share that. Only the care team can see intake forms.", lang),
   "confidentiality-call": (lang) =>

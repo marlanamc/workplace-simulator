@@ -43,5 +43,7 @@ test("an Office learner's inbox holds Anita's notes, not another route's task", 
   await page.getByTestId("bookmark-mail").click();
 
   await expect(page.getByText("Three slides, one real number")).toBeVisible();
+  // Act VII is April 2027, and Anita's first-day note has arrived.
+  await expect(page.getByText("Your first day as Team Lead")).toBeVisible();
   await expect(page.getByText("Friday delivery window")).toHaveCount(0);
 });

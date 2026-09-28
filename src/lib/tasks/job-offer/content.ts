@@ -69,7 +69,7 @@ export const JOB_OFFER_COPY: Record<Lang, {
     appName: "Correo: Oferta",
     from: "Anita Raman",
     fromEmail: "anita.raman@harborsidehq.com",
-    subject: "Oferta: administración de oficina",
+    subject: "Oferta: Office Administrator",
     letterHeading: "Oferta de empleo",
     startDateLabel: "¿Cuándo empiezas? Elige la fecha de la carta.",
     startDateHint: "Lee la carta otra vez. La fecha de inicio está en el segundo párrafo.",
@@ -97,7 +97,7 @@ export const OFFER_LETTER: Record<Lang, string[]> = {
     "Please reply to accept. Before your first day, complete the new-hire forms. HR will send them.",
   ],
   es: [
-    "Hola: nos alegra ofrecerte el puesto de administración de oficina en Harborside HQ. El pago es de $25.50 por hora, tiempo completo, con beneficios después de 60 días.",
+    "Hola: nos alegra ofrecerte el puesto de Office Administrator en Harborside HQ. El pago es de $25.50 por hora, tiempo completo, con beneficios después de 60 días.",
     `Tu primer día es el ${START.es}. Vas a trabajar directamente conmigo. Planea llegar a las 9:00 AM para la orientación.`,
     "Por favor responde para aceptar. Antes de tu primer día, completa los formularios de nuevo empleado. RR. HH. te los enviará.",
   ],
@@ -181,7 +181,7 @@ export const REPLY_STARTERS: Record<Lang, string[]> = {
   ],
   es: [
     "Gracias por la oferta.",
-    "Me alegra aceptar el puesto de administración de oficina.",
+    "Me alegra aceptar el puesto de Office Administrator.",
     `Estaré ahí el ${START.es} a las 9:00 AM.`,
     "Estaré pendiente de los formularios de nuevo empleado de RR. HH.",
   ],

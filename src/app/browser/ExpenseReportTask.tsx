@@ -11,9 +11,12 @@ import {
   LESSONS,
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
+  TYPO_KEY,
   expenseReadyToSubmit,
   expenseReceiptMatches,
-  expenseTotalIsCorrect,
+  expenseSubmitCorrection,
+  initialSheetAmount,
+  rowAmountMatchesReceipt,
 } from "@/lib/tasks/expense-report/content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -40,15 +43,24 @@ export default function ExpenseReportTask() {
   const [total, setTotal] = useTaskDraft("expense-report", "total", "");
   const matched = Object.keys(receipts).filter(key => expenseReceiptMatches(key, receipts[key]));
   const [flagged, setFlagged] = useTaskDraft<string | null>("expense-report", "flagged", null);
+  // The one sheet amount that can be edited: the row typed with its digits
+  // swapped. It starts as typed, so the sheet looks the way it came in.
+  const typedStart = String(initialSheetAmount(TYPO_KEY) ?? "");
+  const [typoAmount, setTypoAmount] = useTaskDraft("expense-report", "typoAmount", typedStart);
+  // How many times the learner has heard that a row does not match its
+  // receipt. The first correction names no row; later ones point at it.
+  const [mismatchTries, setMismatchTries] = useState(0);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
   const c = EXPENSE_COPY[lang];
 
   const trySubmit = () => {
-    if (flagged !== MISSING_KEY) return say(c.submitBlind);
-    if (receipts[MISSING_KEY] || !expenseReadyToSubmit(flagged, matched)) return say(c.needMatch);
-    if (!expenseTotalIsCorrect(total)) return say(c.wrongTotal);
+    const correction = expenseSubmitCorrection({ flagged, receipts, typoAmount, total, mismatchTries });
+    if (correction) {
+      if (correction === "rowMismatch" || correction === "rowMismatchNamed") setMismatchTries((n) => n + 1);
+      return say(c[correction]);
+    }
     setView("done");
     markComplete("expense-report", "flag_missing_receipt");
   };
@@ -58,11 +70,14 @@ export default function ExpenseReportTask() {
     setReceipts({});
     setTotal('');
     setFlagged(null);
+    setTypoAmount(typedStart);
+    setMismatchTries(0);
   };
 
   const notYet = () => say(c.notToday);
 
-  const stepIndex = view === "home" ? 0 : expenseReadyToSubmit(flagged, matched) && !receipts[MISSING_KEY] ? 2 : 1;
+  const rowsChecked = expenseReadyToSubmit(flagged, matched) && !receipts[MISSING_KEY] && rowAmountMatchesReceipt(TYPO_KEY, typoAmount);
+  const stepIndex = view === "home" ? 0 : rowsChecked ? 2 : 1;
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-white text-[14px] text-[#202124]" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>
@@ -133,7 +148,22 @@ export default function ExpenseReportTask() {
                     <tr key={row.key} className="bg-white">
                       <td className="border border-[#c0c0c0] px-2 py-1.5">{row.merchant[lang]}</td>
                       <td className="border border-[#c0c0c0] px-2 py-1.5">{row.category[lang]}</td>
-                      <td className="border border-[#c0c0c0] px-2 py-1.5 tabular-nums">${row.amount}</td>
+                      <td className="border border-[#c0c0c0] px-1 py-0.5 tabular-nums">
+                        {/* Every amount looks like the same sheet cell, so the
+                            one that can change does not give itself away. */}
+                        <span className="flex items-center gap-0.5">
+                          <span aria-hidden>$</span>
+                          <input
+                            data-card-avoid
+                            aria-label={`${row.merchant[lang]} · ${c.amountHeader}`}
+                            inputMode="decimal"
+                            readOnly={row.key !== TYPO_KEY}
+                            value={row.key === TYPO_KEY ? typoAmount : String(row.amount)}
+                            onChange={row.key === TYPO_KEY ? (e) => setTypoAmount(e.target.value) : undefined}
+                            className="min-h-11 w-[72px] border border-transparent bg-transparent px-1 tabular-nums focus:border-[#1a73e8] focus:outline-none"
+                          />
+                        </span>
+                      </td>
                       <td className="border border-[#c0c0c0] px-2 py-1.5 text-[#5f6368]">
                         <select aria-label={`${row.merchant[lang]} · ${c.receiptHeader}`} value={receipts[row.key] ?? ''}
                           onChange={e => setReceipts(prev => ({ ...prev, [row.key]: e.target.value }))} className="min-h-11 max-w-[180px] border border-[#dadce0] p-1">

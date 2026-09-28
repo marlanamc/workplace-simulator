@@ -614,13 +614,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     lesson: {
       title: { en: "Answer a meeting invite with a new time", es: "Responder a una invitación con otro horario" },
       summary: {
-        en: "A meeting is on a day you do not work. Check your shifts, then reply with a better time.",
-        es: "Una reunión es un día que no trabajas. Revisa tus turnos y responde con un horario mejor.",
+        en: "A meeting invite came in. Check the day against your work shifts, then answer it.",
+        es: "Llegó una invitación a una reunión. Compara el día con tus turnos y luego respóndela.",
       },
       skills: ["scheduling"],
       minutes: 10,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
           en: `Renata invited you to a meeting on ${longDate(HUDDLE_DAY, "en")}. Your work shifts are on the same calendar. The meeting must be on a day you work.`,
@@ -694,7 +694,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["files"],
       minutes: 20,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
         people: [
           { name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } },
           { name: "Jordan Kim", role: { en: "New coworker. Starts today.", es: "Compañero nuevo. Empieza hoy." } },
@@ -939,7 +939,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["spreadsheets"],
       minutes: 12,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
         // No crew names here: finding who is missing is the lesson.
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
@@ -1014,12 +1014,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   "college-offer": {
     key: "college-offer",
     built: true,
-    label: { en: "Read and accept the offer", es: "Lee y acepta la oferta" },
+    label: { en: "Choose a class and make it fit", es: "Elige una clase y haz que quepa" },
     dispatch: {
       en: "Harborside will pay for a class. Read the offer, then make it fit your week.",
       es: "Harborside pagará una clase. Lee la oferta y haz que quepa en tu semana.",
     },
-    skill: { en: "Accept an offer and put it on a full calendar", es: "aceptar una oferta y acomodarla en un calendario lleno" },
+    skill: { en: "Choose a class section and plan work around it", es: "elegir una sección de clase y organizar el trabajo alrededor" },
     bookmarkLabel: "Offer",
     handoffCta: { en: "Open Offer from the bookmarks", es: "Abre Oferta en los marcadores" },
     shiftMoment: {
@@ -1060,7 +1060,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["spreadsheets"],
       minutes: 10,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
+        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
           en: "The cafe plans how much money to spend each week. That plan is the budget. This week's sheet has seven kinds of cost, with a note about each one. One went over the plan. Renata wants to know which one, and by how much.",
@@ -1829,6 +1829,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Sheets from the bookmarks"),
     jobCardLine: { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Marca lo que falta." },
+    jobCardDoneLine: {
+      en: "Receipts matched, a wrong amount fixed, the dinner flagged. Next: the slides.",
+      es: "Recibos emparejados, un monto equivocado corregido y la cena marcada. Sigue: las diapositivas.",
+    },
   },
 
   "slide-deck": {

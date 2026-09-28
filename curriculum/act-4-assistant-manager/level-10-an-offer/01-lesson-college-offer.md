@@ -27,15 +27,19 @@ title, new emails, an Assistant Manager's first week)
       on.
 
 ## Simulator practice (~15-20 min)
-1. Open **Mail** and read the offer letter carefully — what's being
-   offered, and what's expected in return (usually: keep your grades up,
-   stay employed).
-2. Reply, accepting the offer, in a professional tone — sentence starters
-   are there if you want them.
-3. Open **Calendar** and add the class as a recurring personal event.
-4. Notice it overlaps a work shift — the same "spot it, say something"
-   skill from Level 3/6 — and message your manager to sort out the
-   schedule change *before* the semester starts, not after.
+1. Open **Mail** and read HR's offer: Harborside pays for one BUS 101
+   class in Spring 2027. The rules: register by Friday, December 11, 2026;
+   the class cannot be during your shifts unless your manager approves a
+   change; keep a C or better; reply with your section.
+2. Open the **BHCC schedule**. Three sections: 01 (Mon/Wed mornings), 02
+   (Tue 5:00-7:45 PM, open seats), 03 (Thu evening, online, full with a
+   waitlist). Compare them with your spring shifts in **Calendar** and
+   choose one. Nothing on screen says which one works.
+3. Section 02 is during your Tuesday close. Write to Renata: say when the
+   class meets and ask for a shift change, before registration closes.
+4. Add the class to Calendar: Tuesday 5:00-7:45 PM, weekly, from the first
+   day of classes (Tuesday, January 19, 2027).
+5. Reply to HR: accept, and name Section 02 or its CRN.
 
 ## Confidence check-in
 - "I could read a formal offer like this and know what it's actually

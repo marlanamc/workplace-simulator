@@ -145,7 +145,7 @@ export const PRIORITY_COPY: Record<Lang, {
     doneTitle: "Mantuviste el local funcionando y respondiste las tres.",
     doneBody: "El cliente recibió una respuesta de verdad. El cierre del jueves ya tiene a alguien. La reunión de Renata se movió a una hora que funciona. Eso es lo que hace quien supervisa un turno. Renata te dejó una nota sobre lo que sigue.",
     badgeName: "Atender tres pedidos a la vez",
-    badgeWhere: "Cuenta para: Supervisor de turno",
+    badgeWhere: "Cuenta para: Shift Supervisor",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",

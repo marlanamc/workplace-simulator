@@ -82,7 +82,8 @@ export default function ShiftReviewTask() {
               <div className="mt-0.5 text-[15px] text-text-primary">{c.date}</div>
             </div>
             {/* The learner did not live this shift. Without these two lines the
-                card's "make sure it mentions 11 AM" refers to nothing. */}
+                card's "say what happened, and at what time" has nothing to
+                point to. The time itself is never on the card (option C). */}
             <div className="mb-4 rounded-xl bg-surface-muted px-4 py-3">
               <div className="text-[13px] font-medium text-text-secondary">{facts.heading}</div>
               <ul className="mt-1.5 flex flex-col gap-1">

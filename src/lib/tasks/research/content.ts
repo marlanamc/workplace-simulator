@@ -103,12 +103,12 @@ export const RESEARCH_COPY: Record<Lang, {
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "It is from the library database and names its authors.",
-    "Peer-reviewed, 2024. Not an ad or a forum.",
+    "I can trust it because",
+    "It was written by",
   ],
   es: [
-    "Es de la base de datos de la biblioteca y nombra autores.",
-    "Revisado por pares, 2024. No es un anuncio ni un foro.",
+    "Puedo confiar en ella porque",
+    "La escribieron",
   ],
 };
 
@@ -125,10 +125,16 @@ export function describeSubmission(picked: string | null, why: string, lang: Lan
   };
 }
 
+/**
+ * Lenient: any one checkable fact about the source. The card asks "who wrote
+ * it or where it was published", so the authors' names, the journal's name,
+ * and the BHCC Library all count, not only the words "author" or "database".
+ * The starters alone ("I can trust it because", "It was written by") do not.
+ */
 export function whyHoldsUp(body: string): boolean {
   const t = body.toLowerCase();
   if (t.trim().length < 12) return false;
-  return /database|base de datos|peer|revis|author|autor|journal|revista|library|biblioteca|2024|academic/.test(t);
+  return /database|base de datos|peer|revis|review|author|autor|journal|revista|library|biblioteca|bhcc|chen|morales|2024|academic|acad[eé]mic/.test(t);
 }
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -160,8 +166,9 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the four results.", es: "Lee los cuatro resultados." },
   // Which result to trust is the question; the card does not name it. The
-  // reason step names what the check accepts (completion-directions.test),
-  // and it only shows once a result is picked.
+  // reason step names the kind of fact the check accepts (who wrote it,
+  // where it was published) without naming the source (option C,
+  // completion-directions.test).
   { en: "Pick the one you would cite.", es: "Elige la que citarías." },
-  { en: "Write one reason you can trust it, like its authors or library database.", es: "Escribe una razón para confiar en ella, como sus autores o la base de datos de la biblioteca." },
+  { en: "Write why you can trust it, like who wrote it or where it was published.", es: "Escribe por qué puedes confiar en ella, como quién la escribió o dónde se publicó." },
 ];

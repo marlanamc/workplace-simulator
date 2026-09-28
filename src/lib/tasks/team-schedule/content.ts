@@ -116,7 +116,7 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
     doneTitle: "Llenaste el hueco y le avisaste a Jordan.",
     doneBody: "Revisaste las horas antes de elegir a alguien. Escribiste el día y la hora. Así se arma el horario de una semana.",
     badgeName: "Armar el horario del equipo",
-    badgeWhere: "Cuenta para: Supervisor de turno",
+    badgeWhere: "Cuenta para: Shift Supervisor",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",

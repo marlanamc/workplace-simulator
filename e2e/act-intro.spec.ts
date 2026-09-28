@@ -52,7 +52,7 @@ test("Act II intro: Shift Lead role, Renata as manager, new skills, stays dismis
 
   // Language toggle swaps the heading.
   await intro.getByRole("button", { name: "Español", exact: true }).click();
-  await expect(intro.getByRole("heading", { level: 1 })).toHaveText("Ahora eres líder de turno");
+  await expect(intro.getByRole("heading", { level: 1 })).toHaveText("Ahora eres Shift Lead (líder de turno)");
   await intro.getByRole("button", { name: "English", exact: true }).click();
 
   await page.getByTestId("act-intro-continue").click();
@@ -86,4 +86,5 @@ test("Act VII intro: Team Lead role and Anita as manager", async ({ page }) => {
   await expect(intro).toHaveAttribute("data-act", "act7");
   await expect(intro.getByRole("heading", { level: 1 })).toHaveText("You're a Team Lead now");
   await expect(intro.getByText("Anita Raman", { exact: false })).toBeVisible();
+  await expect(intro).toContainText("You have worked at HQ for six months");
 });
