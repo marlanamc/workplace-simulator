@@ -6,6 +6,7 @@ import { useLesson } from "@/lib/lesson-context";
 import { CAST } from "@/lib/cast";
 import { levelForTrack } from "@/lib/tracks-content";
 import { HUDDLE_DAY, leadHuddleVisible, shiftTimeOn, storyToday } from "@/lib/story-calendar";
+import { monthGrid, shortDate, monthDate } from "@/lib/story-dates";
 import {
   MEETING,
   CALENDAR_COPY,
@@ -15,7 +16,7 @@ import {
   HUDDLE_TIMES,
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
-  SHIFT_SPAN,
+  shiftSpanFor,
   SHIFT_WORD,
   checkHuddleReply,
   huddleReplyHint,
@@ -44,23 +45,8 @@ import {
 
 type View = "home" | "invite" | "compose" | "done";
 
-type Cell = { day: number; other: boolean };
-
-// August 2026: the 1st is a Saturday. Show Jul 26–31 and Sep 1–5 in gray.
-const MONTH_CELLS: Cell[] = [
-  { day: 26, other: true },
-  { day: 27, other: true },
-  { day: 28, other: true },
-  { day: 29, other: true },
-  { day: 30, other: true },
-  { day: 31, other: true },
-  ...Array.from({ length: 31 }, (_, i) => ({ day: i + 1, other: false })),
-  { day: 1, other: true },
-  { day: 2, other: true },
-  { day: 3, other: true },
-  { day: 4, other: true },
-  { day: 5, other: true },
-];
+// The month the huddle is in, with the grayed days of the months on either side.
+const MONTH_CELLS = monthGrid(HUDDLE_DAY);
 
 function CalendarMark() {
   return (
@@ -263,8 +249,8 @@ function CafeCalendarTask() {
   const wrongShift = () =>
     say(
       T(
-        "That's one of your work shifts. Open the meeting on Aug 26. It is called Weekly Lead Huddle.",
-        "Ese es uno de tus turnos. Abre la reunión del 26 de agosto. Se llama Reunión semanal de líderes."
+        `That's one of your work shifts. Open the meeting on ${shortDate(HUDDLE_DAY, "en")}. It is called Weekly Lead Huddle.`,
+        `Ese es uno de tus turnos. Abre la reunión del ${monthDate(HUDDLE_DAY, "es")}. Se llama Reunión semanal de líderes.`
       )
     );
   const notYet = () =>
@@ -394,7 +380,7 @@ function CafeCalendarTask() {
                             : "text-[#3c4043]"
                       }`}
                     >
-                      {cell.day}
+                      {cell.date}
                     </span>
                   </div>
                 ))}
@@ -446,8 +432,8 @@ function CafeCalendarTask() {
             <div className="grid min-h-0 flex-1 auto-rows-[minmax(min-content,1fr)] grid-cols-7 overflow-y-auto">
               {MONTH_CELLS.map((cell, i) => {
                 const inMonth = !cell.other;
-                const isToday = inMonth && cell.day === today;
-                const hasMeeting = inMonth && showHuddle && cell.day === HUDDLE_DAY;
+                const isToday = cell.day === today;
+                const hasMeeting = showHuddle && cell.day === HUDDLE_DAY;
                 const shiftTime = inMonth ? shiftTimeOn(cell.day) : undefined;
                 const hasShift = Boolean(shiftTime);
                 return (
@@ -464,7 +450,7 @@ function CafeCalendarTask() {
                             : "text-[#bdc1c6]"
                       }`}
                     >
-                      {cell.day}
+                      {cell.date}
                     </span>
                     {hasShift && (
                       <button
@@ -472,7 +458,7 @@ function CafeCalendarTask() {
                         className="rounded px-1 py-0.5 text-left text-[11px] font-medium leading-tight text-white [overflow-wrap:anywhere] cursor-pointer"
                         style={{ background: "#0b8043" }}
                       >
-                        {SHIFT_WORD[lang]} {SHIFT_SPAN[shiftTime!] ?? shiftTime}
+                        {SHIFT_WORD[lang]} {shiftSpanFor(shiftTime!)}
                       </button>
                     )}
                     {hasMeeting && (

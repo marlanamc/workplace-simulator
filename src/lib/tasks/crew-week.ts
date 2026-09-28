@@ -1,6 +1,19 @@
-import type { Lang } from "@/lib/task-types";
+import type { Lang, Localized } from "@/lib/task-types";
+import { SHIFT_BLOCKS, STORY_DAY_BY_LEVEL, mondayOf, shiftDash, shortDate } from "@/lib/story-dates";
 
 /** Shared Act III crew sheet. Level 9 fills Saturday close; Level 10 totals the same week. */
+
+/** The Monday of the crew week: the week of Scheduling the Team (level9). Level 10 is the Friday of it. */
+export const CREW_WEEK_START = mondayOf(STORY_DAY_BY_LEVEL.level9);
+
+/** "Crew Week: Sep 28" / "Semana del equipo: 28 sept" — the sheet's name, from the week it covers. */
+export const CREW_WEEK_SHEET: Localized = {
+  en: `Crew Week: ${shortDate(CREW_WEEK_START, "en")}`,
+  es: `Semana del equipo: ${shortDate(CREW_WEEK_START, "es")}`,
+};
+
+/** Jordan's late shift, 2–10. */
+const LATE = shiftDash(SHIFT_BLOCKS.late);
 
 export const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat"] as const;
 export type DayKey = (typeof DAYS)[number];
@@ -28,7 +41,8 @@ export interface CrewMember {
 }
 
 export const GAP_DAY: DayKey = "sat";
-export const GAP_SHIFT_LABEL = "4–10";
+/** Saturday close: the cafe's close block, 4–10 PM. */
+export const GAP_SHIFT_LABEL = shiftDash(SHIFT_BLOCKS.close);
 export const GAP_HOURS = 6;
 export const CORRECT_COVER = "jordan";
 
@@ -72,11 +86,11 @@ export const CREW: CrewMember[] = [
     name: "Jordan Kim",
     email: "jordan.kim@harborsidecafe.com",
     shifts: {
-      mon: { label: "2–10", hours: 8, locked: true },
+      mon: { label: LATE, hours: 8, locked: true },
       tue: { label: "", hours: 0, locked: true },
-      wed: { label: "2–10", hours: 8, locked: true },
+      wed: { label: LATE, hours: 8, locked: true },
       thu: { label: "", hours: 0, locked: true },
-      fri: { label: "2–10", hours: 8, locked: true },
+      fri: { label: LATE, hours: 8, locked: true },
       sat: { label: "", hours: 0 },
     },
     saturdayHint: {

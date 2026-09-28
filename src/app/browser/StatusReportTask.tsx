@@ -16,7 +16,7 @@ import {
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/status-report/content";
-import { STATUS_ROWS, totalCellShows, totalProblem } from "@/lib/tasks/status-sheet";
+import { COPY_NAME, STATUS_ROWS, totalCellShows, totalProblem } from "@/lib/tasks/status-sheet";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -66,7 +66,7 @@ export default function StatusReportTask() {
   };
 
   const notYet = () =>
-    say(lang === "en" ? "Open your copy, status-week-of-aug-24." : "Abre tu copia, status-week-of-aug-24.");
+    say(lang === "en" ? `Open your copy, ${COPY_NAME}.` : `Abre tu copia, ${COPY_NAME}.`);
 
   return (
     <div className="relative flex h-full min-h-0 flex-col bg-white text-[14px] text-[#202124]" style={{ fontFamily: "Arial, Helvetica, sans-serif" }}>

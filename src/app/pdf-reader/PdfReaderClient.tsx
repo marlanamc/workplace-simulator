@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { PDF_DOCUMENTS } from "@/lib/pdf-content";
+import { PDF_ARRIVES_WITH, PDF_DOCUMENTS as ALL_PDF_DOCUMENTS } from "@/lib/pdf-content";
+import { useLesson } from "@/lib/lesson-context";
+import { levelReached } from "@/lib/story-calendar";
+import { levelForTrack } from "@/lib/tracks-content";
 import { APP_COPY } from "@/lib/desktop-content";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
@@ -14,7 +17,13 @@ import { PdfSheet } from "@/components/task/PdfSheet";
 
 export default function PdfReaderClient() {
   const { pdfDocId, pdfDocToken } = useWindowManager();
-  const { displayName, lang } = useProgress();
+  const { displayName, lang, courseRoute, currentTrack } = useProgress();
+  const lesson = useLesson();
+  // Only the files that have arrived by this sitting. A lesson has no story, so it shows them all.
+  const here = levelForTrack(currentTrack.key).key;
+  const PDF_DOCUMENTS = lesson
+    ? ALL_PDF_DOCUMENTS
+    : ALL_PDF_DOCUMENTS.filter((d) => !PDF_ARRIVES_WITH[d.id] || levelReached(courseRoute, here, PDF_ARRIVES_WITH[d.id]));
   const [activeId, setActiveId] = useState(
     pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
   );

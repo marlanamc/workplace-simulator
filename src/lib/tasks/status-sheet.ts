@@ -1,6 +1,11 @@
 /** Shared numbers for the Weekly Status Template and the student's copy. */
+import { STORY_DAY_BY_LEVEL, mondayOf, shortDate } from "@/lib/story-dates";
 
-export const COPY_NAME = "status-week-of-aug-24";
+/** The week the status report covers: the week before Reporting In (level7). */
+export const STATUS_WEEK = mondayOf(STORY_DAY_BY_LEVEL.level7) - 7;
+
+/** "status-week-of-sep-14": the same pattern as the schedule file's name. */
+export const COPY_NAME = `status-week-of-${shortDate(STATUS_WEEK, "en").toLowerCase().replace(" ", "-")}`;
 
 export const STATUS_ROWS = [
   { key: "mon", day: "Monday", dayEs: "Lunes", value: 12 },

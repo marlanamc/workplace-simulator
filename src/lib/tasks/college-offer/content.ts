@@ -1,5 +1,9 @@
 import { acceptance } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { SHIFT_BLOCKS, STORY_DAY_BY_LEVEL, mondayOf, monthDate } from "@/lib/story-dates";
+
+/** The class starts the Tuesday after next, so there is time to fix the schedule first. */
+const CLASS_STARTS = mondayOf(STORY_DAY_BY_LEVEL.level13) + 8;
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -23,7 +27,7 @@ export const CLASS_SLOT = "tue-2pm";
 export const SLOTS = [
   {
     key: "tue-2pm",
-    label: { en: "Tue 2:00–4:00 PM, weekly", es: "Mar 2:00–4:00 PM, semanal" },
+    label: { en: "Tue 5:00–7:00 PM, weekly", es: "Mar 5:00–7:00 PM, semanal" },
     ok: true,
     hint: { en: "", es: "" },
   },
@@ -32,8 +36,8 @@ export const SLOTS = [
     label: { en: "Wed 10:00 AM–12:00 PM, weekly", es: "Mié 10:00 AM–12:00 PM, semanal" },
     ok: false,
     hint: {
-      en: "The offer says Tuesday 2 to 4. Put the real class time on the calendar.",
-      es: "La oferta dice martes de 2 a 4. Pon la hora real de la clase en el calendario.",
+      en: "The offer says Tuesday 5 to 7. Put the real class time on the calendar.",
+      es: "La oferta dice martes de 5 a 7. Pon la hora real de la clase en el calendario.",
     },
   },
   {
@@ -50,12 +54,12 @@ export const SLOTS = [
 export const OFFER_LETTER: Record<Lang, string[]> = {
   en: [
     "Harborside Cafe will pay tuition for one Business Essentials class at Bunker Hill Community College this fall.",
-    "The class meets Tuesdays, 2:00–4:00 PM, starting September 15. Stay employed here and keep a passing grade.",
+    `The class meets Tuesdays, 5:00–7:00 PM, starting ${monthDate(CLASS_STARTS, "en")}. Stay employed here and keep a passing grade.`,
     "Reply to this email if you accept. Then put the class on your work calendar. Tuesday close is already on that day.",
   ],
   es: [
     "Harborside Cafe pagará la matrícula de una clase de Business Essentials en Bunker Hill Community College este otoño.",
-    "La clase es los martes, de 2:00 a 4:00 PM, desde el 15 de septiembre. Sigue empleado aquí y mantén una nota de aprobado.",
+    `La clase es los martes, de 5:00 a 7:00 PM, desde el ${monthDate(CLASS_STARTS, "es")}. Sigue empleado aquí y mantén una nota de aprobado.`,
     "Responde a este correo si aceptas. Luego pon la clase en tu calendario de trabajo. El cierre del martes ya está ese día.",
   ],
 };
@@ -118,14 +122,14 @@ export const COLLEGE_OFFER_COPY: Record<Lang, {
     eventTitle: "BHCC Business Essentials",
     whenLabel: "When",
     repeatsLabel: "Repeats weekly",
-    shiftNote: "You already close Tuesday 2:00–8:00 PM.",
+    shiftNote: `You already close Tuesday ${SHIFT_BLOCKS.close.start.replace(" PM", "")}–${SHIFT_BLOCKS.close.end}.`,
     saveEvent: "Save",
     overlapTo: "To",
     overlapSubject: "Tuesday class overlaps close",
     overlapWrite: "Tell Renata the class hits Tuesday close…",
     sentKicker: "Offer accepted",
     doneTitle: "You made work and class share a week.",
-    doneBody: "You accepted the offer, put Tuesday 2 to 4 on a calendar that already had close, and told Renata before the semester. That is the whole skill.",
+    doneBody: "You accepted the offer, put Tuesday 5 to 7 on a calendar that already had close, and told Renata before the semester. That is the whole skill.",
     badgeName: "Accept an offer and put it on a full calendar",
     badgeWhere: "Counts toward: Assistant Manager",
     tryAgain: "Do it again",
@@ -155,14 +159,14 @@ export const COLLEGE_OFFER_COPY: Record<Lang, {
     eventTitle: "BHCC Business Essentials",
     whenLabel: "Cuándo",
     repeatsLabel: "Se repite cada semana",
-    shiftNote: "Ya cierras el martes de 2:00 a 8:00 PM.",
+    shiftNote: `Ya cierras el martes de ${SHIFT_BLOCKS.close.start.replace(" PM", "")} a ${SHIFT_BLOCKS.close.end}.`,
     saveEvent: "Guardar",
     overlapTo: "Para",
     overlapSubject: "La clase del martes choca con el cierre",
     overlapWrite: "Dile a Renata que la clase choca con el cierre del martes…",
     sentKicker: "Oferta aceptada",
     doneTitle: "Hiciste que el trabajo y la clase compartan una semana.",
-    doneBody: "Aceptaste la oferta, pusiste el martes de 2 a 4 en un calendario que ya tenía el cierre, y le avisaste a Renata antes del semestre. Esa es toda la destreza.",
+    doneBody: "Aceptaste la oferta, pusiste el martes de 5 a 7 en un calendario que ya tenía el cierre, y le avisaste a Renata antes del semestre. Esa es toda la destreza.",
     badgeName: "Aceptar una oferta y ponerla en un calendario lleno",
     badgeWhere: "Cuenta para: Asistente de gerencia",
     tryAgain: "Hacerlo otra vez",
@@ -188,11 +192,11 @@ export const STARTERS: Record<Lang, string[]> = {
 
 export const OVERLAP_STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Renata, the BHCC class is Tuesdays 2–4. That overlaps my Tuesday close.",
+    "Hi Renata, the BHCC class is Tuesdays 5–7. That overlaps my Tuesday close.",
     "The class hits the same hours as Tuesday close. Can we move my shift before the semester?",
   ],
   es: [
-    "Hola Renata, la clase de BHCC es martes de 2 a 4. Choca con mi cierre del martes.",
+    "Hola Renata, la clase de BHCC es martes de 5 a 7. Choca con mi cierre del martes.",
     "La clase cae a la misma hora que el cierre del martes. ¿Podemos mover mi turno antes del semestre?",
   ],
 };
@@ -206,14 +210,14 @@ export const HINTS: Record<Lang, {
 }> = {
   en: {
     accept: "Say yes to the offer. For example: Yes, I accept. Thank you.",
-    slot: "Pick the Tuesday 2 to 4 class time from the offer.",
+    slot: "Pick the Tuesday 5 to 7 class time from the offer.",
     repeats: "Check Repeats weekly. This is a class, not a one-time meeting.",
     overlap: "Tell Renata the class hits your Tuesday close.",
     empty: "Write a short message first. Even one sentence is fine.",
   },
   es: {
     accept: "Di que sí a la oferta. Por ejemplo: Sí, acepto. Gracias.",
-    slot: "Elige el horario del martes de 2 a 4 que dice la oferta.",
+    slot: "Elige el horario del martes de 5 a 7 que dice la oferta.",
     repeats: "Marca Se repite cada semana. Es una clase, no una reunión de una vez.",
     overlap: "Dile a Renata que la clase choca con tu cierre del martes.",
     empty: "Primero escribe un mensaje corto. Una oración está bien.",

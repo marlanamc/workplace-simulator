@@ -1,4 +1,5 @@
 import { mentionsAmount, parseMoney } from "@/lib/text-facts";
+import { STORY_DAY_BY_LEVEL, mondayOf, monthDate, shortDate } from "@/lib/story-dates";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { openFileStep } from "../open-file-step";
 import { fnName } from "../sheet-words";
@@ -115,7 +116,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     templateBudget: "Budget",
     templateSchedule: "Schedule",
     recentHeading: "Recent spreadsheets",
-    openedLabel: "Opened Aug 21",
+    openedLabel: `Opened ${shortDate(mondayOf(STORY_DAY_BY_LEVEL.level6), "en")}`,
     slipHeading: "This week's tip slip",
     fillAllFirst: "Type the tips for all five days first.",
     emailTotal: "Email the total to Renata",
@@ -151,7 +152,7 @@ export const SPREADSHEET_COPY: Record<Lang, {
     templateBudget: "Presupuesto",
     templateSchedule: "Horario",
     recentHeading: "Hojas de cálculo recientes",
-    openedLabel: "Abierta el 21 de agosto",
+    openedLabel: `Abierta el ${monthDate(mondayOf(STORY_DAY_BY_LEVEL.level6), "es")}`,
     slipHeading: "Tu papelito de propinas de esta semana",
     fillAllFirst: "Primero escribe las propinas de los cinco días.",
     emailTotal: "Enviar el total a Renata por correo",

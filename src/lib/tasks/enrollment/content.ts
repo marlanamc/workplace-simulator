@@ -1,8 +1,15 @@
 import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
 import { DATE_CHECK } from "@/lib/tasks/financial-aid/content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { STORY_DAY_BY_LEVEL, STORY_YEAR, monthDate } from "@/lib/story-dates";
 
-export const DEADLINE = { en: "September 15, 2026", es: "15 de septiembre de 2026" };
+/**
+ * The application deadline: the Friday after next from Getting Ready
+ * (level16), so it is still ahead of the learner, and before the aid letter's
+ * accept-by date (October 15).
+ */
+const DEADLINE_DAY = STORY_DAY_BY_LEVEL.level16 + 11;
+export const DEADLINE = { en: `${monthDate(DEADLINE_DAY, "en")}, ${STORY_YEAR}`, es: `${monthDate(DEADLINE_DAY, "es")} de ${STORY_YEAR}` };
 
 export const MISSING_DOC = "immunization";
 

@@ -25,6 +25,7 @@ import { CELL_FOCUS, SentEmailRecap, pickStarter } from "./sheet-lesson-parts";
 import {
   CREW,
   CORRECT_COVER,
+  CREW_WEEK_SHEET,
   DAYS,
   DAY_LABELS,
   GAP_DAY,
@@ -180,8 +181,8 @@ export default function FormulaCheckTask() {
   const notYet = () =>
     say(
       lang === "en"
-        ? "That's not today's sheet. Open Crew Week: Aug 24."
-        : "Esa no es la hoja de hoy. Abre Semana del equipo: 24 ago."
+        ? `That's not today's sheet. Open ${CREW_WEEK_SHEET.en}.`
+        : `Esa no es la hoja de hoy. Abre ${CREW_WEEK_SHEET.es}.`
     );
 
   const onFormulaChange = (value: string) => {

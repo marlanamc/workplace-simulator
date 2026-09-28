@@ -16,6 +16,7 @@ import {
 import {
   CREW,
   CORRECT_COVER,
+  CREW_WEEK_SHEET,
   DAYS,
   DAY_LABELS,
   GAP_DAY,
@@ -106,8 +107,8 @@ export default function TeamScheduleTask() {
   const notYet = () =>
     say(
       lang === "en"
-        ? "That's not today's sheet. Open Crew Week: Aug 24."
-        : "Esa no es la hoja de hoy. Abre Semana del equipo: 24 ago."
+        ? `That's not today's sheet. Open ${CREW_WEEK_SHEET.en}.`
+        : `Esa no es la hoja de hoy. Abre ${CREW_WEEK_SHEET.es}.`
     );
 
   const assignCover = (key: string, label: string) => {

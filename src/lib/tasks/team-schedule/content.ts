@@ -1,5 +1,5 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
-import { GAP_SHIFT_LABEL } from "../crew-week";
+import { CREW_WEEK_SHEET, GAP_SHIFT_LABEL } from "../crew-week";
 import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -57,7 +57,7 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     appName: "Sheets",
-    sheetName: "Crew Week: Aug 24",
+    sheetName: CREW_WEEK_SHEET.en,
     startNewHeading: "Start a new spreadsheet",
     blankLabel: "Blank",
     templateBudget: "Budget",
@@ -92,7 +92,7 @@ export const TEAM_SCHEDULE_COPY: Record<Lang, {
   es: {
     helpBtn: "Ayúdame con este paso",
     appName: "Sheets",
-    sheetName: "Semana del equipo: 24 ago",
+    sheetName: CREW_WEEK_SHEET.es,
     startNewHeading: "Iniciar una nueva hoja de cálculo",
     blankLabel: "En blanco",
     templateBudget: "Presupuesto",

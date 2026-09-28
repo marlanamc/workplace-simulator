@@ -35,7 +35,7 @@ import {
   ATTACH_CORRECTIONS,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
-import { formatInboxTime, inboxToday, HIRE_DAY } from "@/lib/story-calendar";
+import { formatInboxTime, hasArrived, inboxToday, NIGHT_BEFORE } from "@/lib/story-calendar";
 import { LEVELS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
 import { activeMailTaskFor } from "@/lib/mail-active-task";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
@@ -273,7 +273,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // Day One's replies happen the evening before the first shift ("Your first
   // day is tomorrow"), so that evening is today: they stamp 6:02 PM, not
   // Yesterday.
-  const storyTodayDay = opening ? HIRE_DAY - 1 : inboxToday(levelForTrack(currentTrack.key));
+  const storyTodayDay = opening ? NIGHT_BEFORE : inboxToday(levelForTrack(currentTrack.key));
   const stamp = (row: { time: string; sentOn?: number }) =>
     row.sentOn != null
       ? formatInboxTime({ sentOn: row.sentOn, clock: row.time, today: storyTodayDay, lang })
@@ -288,12 +288,13 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       ...(opening ? OPENING_MESSAGES.slice(0, openingIndex + 1).map((message, index) => ({
         key: `opening-${message.id}`, from: message.sender.name, initials: message.sender.initials, color: message.sender.color,
         // Sent the evening before Day One, so the inbox stamps them Yesterday.
-        time: message.time, sentOn: HIRE_DAY - 1, subject: message.subject, preview: message.body,
+        time: message.time, sentOn: NIGHT_BEFORE, subject: message.subject, preview: message.body,
         isTarget: index === openingIndex, unread: index === openingIndex, wrongHint: undefined,
         ...(index < openingIndex ? { story: true, body: { en: openingLines(message, "en"), es: openingLines(message, "es") } } : {}),
       })) : emailsForTask(activeMailTask)),
       ...(opening ? OPENING_CLUTTER : []),
-    ],
+      // Nothing arrives before its story day. The job's own email always shows.
+    ].filter((row) => ("isTarget" in row && row.isTarget) || hasArrived(row, storyTodayDay)),
     storyTodayDay,
   );
   // During the Welcome walkthrough the tour is doing the talking, so keep the
@@ -922,7 +923,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       </div>
                       <div className="text-[12px] text-[#5f6368]">
                         {stamp(
-                          opening ? { time: openingMessage.time, sentOn: HIRE_DAY - 1 } : darnellRead
+                          opening ? { time: openingMessage.time, sentOn: NIGHT_BEFORE } : darnellRead
                             ? DARNELL_APRON_STAMP
                             : {
                                 time: activeMailTask === "mail-attach" ? "10:10 AM" : "8:14 AM",

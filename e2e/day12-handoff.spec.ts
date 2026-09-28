@@ -35,7 +35,7 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
   await page.getByText("Weekly Status Template").first().click();
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("button", { name: "Make a copy" }).first().click();
-  await page.locator("input[autofocus], .rounded-3xl input").first().fill("status-week-of-aug-24");
+  await page.locator("input[autofocus], .rounded-3xl input").first().fill("status-week-of-sep-14");
   await page.getByRole("button", { name: "Make a copy" }).last().click();
   await page.getByPlaceholder("12").fill("12");
   await expect(page.getByText("You have your own copy").first()).toBeVisible();
@@ -49,7 +49,7 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
 
   // The bookmark now opens the status report.
   await page.getByTestId("bookmark-status-report").click();
-  await page.getByText("status-week-of-aug-24").first().click();
+  await page.getByText("status-week-of-sep-14").first().click();
   // The card goes back to the bottom-left corner on each task and covers the
   // total cell (audit #2, Stream A). Move it, as a learner would.
   await card.getByTestId("job-card-drag-handle").focus();

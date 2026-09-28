@@ -8,7 +8,8 @@ import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 import JobCard from "@/components/task/JobCard";
 import LessonInfoCard, { LESSON_RAIL_CLASS } from "@/components/lesson/LessonInfoCard";
 import { deskIdentityFor } from "@/lib/desk-identity";
-import { actForLevel, levelForTrack, sceneForLevel } from "@/lib/tracks-content";
+import { actForLevel, levelForTrack, nextTaskInTrack, sceneForLevel } from "@/lib/tracks-content";
+import { storyClockFor } from "@/lib/story-calendar";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { useLesson } from "@/lib/lesson-context";
@@ -88,13 +89,15 @@ export default function Desktop({
   /** Toasts and overlays that sit above the Job Card. */
   afterCard?: ReactNode;
 }) {
-  const { lang, currentTrack, progressEpoch, bridgePath, bigText } = useProgress();
+  const { lang, currentTrack, progressEpoch, bridgePath, bigText, completedTaskKeys } = useProgress();
   const { apps, active } = useWindowManager();
   const lesson = useLesson();
 
   const anyAppActive = active !== null;
 
   const currentLevel = levelForTrack(currentTrack.key);
+  // The story's time for this job, so the clock agrees with the scene.
+  const storyClock = storyClockFor(currentLevel, nextTaskInTrack(currentTrack, completedTaskKeys));
   const actKey = actForLevel(currentLevel)?.key ?? "act1";
   const identity = deskIdentityFor(actKey, bridgePath);
   const scene = sceneForLevel(currentLevel);
@@ -141,7 +144,7 @@ export default function Desktop({
             says what to do; this only orients who they are in the story. */}
         <div className={`flex flex-1 items-start px-10 pt-10 ${lesson ? "xl:pl-[480px]" : ""}`}>
           <div className="flex w-full max-w-[400px] flex-col">
-            <DesktopClock lang={lang} />
+            <DesktopClock lang={lang} startsAt={storyClock} />
             {/* A lesson has no Story job title ("Shift lead"), so no name note. */}
             {!lesson && <DesktopIdentity name={displayName} identity={identity} lang={lang} />}
           </div>

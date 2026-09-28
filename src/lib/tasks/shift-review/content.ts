@@ -1,4 +1,5 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { STORY_DAY_BY_LEVEL, shortDate } from "@/lib/story-dates";
 
 /**
  * What actually happened on the shift, shown on the form itself (see
@@ -57,7 +58,7 @@ export const REVIEW_COPY: Record<Lang, {
 }> = {
   en: {
     heading: "Shift notes",
-    date: "Friday, Aug 28",
+    date: `Friday, ${shortDate(STORY_DAY_BY_LEVEL.level3, "en")}`,
     dateLabel: "Shift date",
     summaryLabel: "Shift summary",
     writeHere: "How did your shift go?",
@@ -78,7 +79,7 @@ export const REVIEW_COPY: Record<Lang, {
   },
   es: {
     heading: "Notas del turno",
-    date: "Viernes, 28 ago",
+    date: `Viernes, ${shortDate(STORY_DAY_BY_LEVEL.level3, "es")}`,
     dateLabel: "Fecha del turno",
     summaryLabel: "Resumen del turno",
     writeHere: "¿Cómo te fue en el turno?",

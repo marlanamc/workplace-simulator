@@ -1,4 +1,11 @@
 import { mentionsAmount } from "@/lib/text-facts";
+import { STORY_DAY_BY_LEVEL, mondayOf, shortDate } from "@/lib/story-dates";
+
+/** "Cafe budget: week of Oct 12": the week of The Budget sitting (level14). */
+export const BUDGET_SHEET_NAME: Localized = {
+  en: `Cafe budget: week of ${shortDate(mondayOf(STORY_DAY_BY_LEVEL.level14), "en")}`,
+  es: `Presupuesto del café: sem. ${shortDate(mondayOf(STORY_DAY_BY_LEVEL.level14), "es")}`,
+};
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { openFileStep } from "../open-file-step";
 import { fnName } from "../sheet-words";
@@ -111,7 +118,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     appName: "Sheets",
-    sheetName: "Cafe budget: week of Aug 31",
+    sheetName: BUDGET_SHEET_NAME.en,
     startNewHeading: "Start a new spreadsheet",
     blankLabel: "Blank",
     templateBudget: "Budget",
@@ -151,7 +158,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
   es: {
     helpBtn: "Ayúdame con este paso",
     appName: "Sheets",
-    sheetName: "Presupuesto del café: sem. 31 ago",
+    sheetName: BUDGET_SHEET_NAME.es,
     startNewHeading: "Iniciar una nueva hoja de cálculo",
     blankLabel: "En blanco",
     templateBudget: "Presupuesto",

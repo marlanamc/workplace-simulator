@@ -1,4 +1,5 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import { SHIFT_TIMES, shiftBlockFor, shiftRange } from "@/lib/story-dates";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -35,13 +36,19 @@ export interface ShiftDay {
   conflict?: boolean;
 }
 
+/** The posted shift for a story day, read from SHIFT_TIMES: "7:00 AM – 3:00 PM", or null on a day off. */
+function postedShift(day: number): string | null {
+  const block = SHIFT_TIMES[day] ? shiftBlockFor(SHIFT_TIMES[day]) : undefined;
+  return block ? shiftRange(block) : null;
+}
+
 export const SCHEDULE: ShiftDay[] = [
-  { key: "mon", dayNum: "24", day: { en: "Mon", es: "Lun" }, date: { en: "Aug 24", es: "24 ago" }, shift: "7:00 AM – 3:00 PM" },
-  { key: "tue", dayNum: "25", day: { en: "Tue", es: "Mar" }, date: { en: "Aug 25", es: "25 ago" }, shift: "7:00 AM – 3:00 PM" },
+  { key: "mon", dayNum: "24", day: { en: "Mon", es: "Lun" }, date: { en: "Aug 24", es: "24 ago" }, shift: postedShift(24) },
+  { key: "tue", dayNum: "25", day: { en: "Tue", es: "Mar" }, date: { en: "Aug 25", es: "25 ago" }, shift: postedShift(25) },
   { key: "wed", dayNum: "26", day: { en: "Wed", es: "Mié" }, date: { en: "Aug 26", es: "26 ago" }, shift: null },
-  { key: "thu", dayNum: "27", day: { en: "Thu", es: "Jue" }, date: { en: "Aug 27", es: "27 ago" }, shift: "10:00 AM – 6:00 PM", conflict: true },
-  { key: "fri", dayNum: "28", day: { en: "Fri", es: "Vie" }, date: { en: "Aug 28", es: "28 ago" }, shift: "10:00 AM – 6:00 PM" },
-  { key: "sat", dayNum: "29", day: { en: "Sat", es: "Sáb" }, date: { en: "Aug 29", es: "29 ago" }, shift: "8:00 AM – 4:00 PM" },
+  { key: "thu", dayNum: "27", day: { en: "Thu", es: "Jue" }, date: { en: "Aug 27", es: "27 ago" }, shift: postedShift(27), conflict: true },
+  { key: "fri", dayNum: "28", day: { en: "Fri", es: "Vie" }, date: { en: "Aug 28", es: "28 ago" }, shift: postedShift(28) },
+  { key: "sat", dayNum: "29", day: { en: "Sat", es: "Sáb" }, date: { en: "Aug 29", es: "29 ago" }, shift: postedShift(29) },
   { key: "sun", dayNum: "30", day: { en: "Sun", es: "Dom" }, date: { en: "Aug 30", es: "30 ago" }, shift: null },
 ];
 

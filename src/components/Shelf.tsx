@@ -19,7 +19,8 @@ import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { APP_ICONS, TAB_ICONS, Briefcase, ChromeIcon, Languages, Lock, PdfIcon } from "@/lib/icons";
 import { logout } from "@/app/actions";
-import { levelForTrack, previousCourseLevel } from "@/lib/tracks-content";
+import { levelForTrack, nextTaskInTrack, previousCourseLevel } from "@/lib/tracks-content";
+import { storyClockFor } from "@/lib/story-calendar";
 import { dayTitle, remainingTasksInLevel } from "@/lib/shift-spine";
 
 /** Height of the taskbar. */
@@ -179,6 +180,8 @@ export default function Shelf({
   // While a level-up / clock-out card is up, celebrateLevel is the *next* sitting.
   // Keep the shelf on the day they just finished until they proceed.
   const liveLevel = levelForTrack(currentTrack.key);
+  // Same story time as the desktop clock.
+  const storyClock = storyClockFor(liveLevel, nextTaskInTrack(currentTrack, completedTaskKeys));
   const currentLevel =
     celebrateLevel?.levelUp
       ? (previousCourseLevel(celebrateLevel, courseRoute) ?? liveLevel)
@@ -390,7 +393,7 @@ export default function Shelf({
             </span>
             <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
-            <ShelfClock lang={lang} />
+            <ShelfClock lang={lang} startsAt={storyClock} />
           </button>
         </div>
       </div>
@@ -492,7 +495,7 @@ export default function Shelf({
 
                 {/* footer */}
                 <div className="flex items-center border-t border-white/10 pt-2.5 text-[12px] text-white/70">
-                  <span><QuickSettingsClock lang={lang} /></span>
+                  <span><QuickSettingsClock lang={lang} startsAt={storyClock} /></span>
                 </div>
         </div>
       )}

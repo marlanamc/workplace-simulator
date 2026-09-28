@@ -22,6 +22,7 @@ import {
   RIGHT_NOW_LABEL,
   SENT_LABELS,
   OVER_AMOUNT,
+  BUDGET_SHEET_NAME,
 } from "@/lib/tasks/budget-sheet/content";
 import { CELL_FOCUS, SentEmailRecap, pickStarter } from "./sheet-lesson-parts";
 import { useNudge } from "@/lib/use-nudge";
@@ -117,7 +118,7 @@ export default function BudgetSheetTask() {
   };
 
   const notYet = () =>
-    say(lang === "en" ? "That's not today's sheet. Open Cafe budget: week of Aug 31." : "Esa no es la hoja de hoy. Abre Presupuesto del café: sem. 31 ago.");
+    say(lang === "en" ? `That's not today's sheet. Open ${BUDGET_SHEET_NAME.en}.` : `Esa no es la hoja de hoy. Abre ${BUDGET_SHEET_NAME.es}.`);
 
   const formulaBarContent = (() => {
     if (selected.row === HEADER_ROW) return headerFor(selected.col);

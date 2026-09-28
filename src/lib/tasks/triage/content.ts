@@ -1,4 +1,13 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import { SHIFT_BLOCKS, SHIFT_TIMES, STORY_DAY_BY_LEVEL, WEEKDAY_SHORT, cardDate, hourOnly, mondayOf, shiftBlockFor, shiftDash, shortDate } from "@/lib/story-dates";
+
+/** Thursday of Covering More Ground's week: the learner closes (SHIFT_TIMES). */
+const CLOSE_THURSDAY = mondayOf(STORY_DAY_BY_LEVEL.level8) + 3;
+const CLOSE_BLOCK = shiftBlockFor(SHIFT_TIMES[CLOSE_THURSDAY]) ?? SHIFT_BLOCKS.close;
+const CLOSE = shiftDash(CLOSE_BLOCK);
+const CLOSE_ES = `${hourOnly(CLOSE_BLOCK.start)} a ${hourOnly(CLOSE_BLOCK.end)}`;
+/** "allergen-list-sep-21": this week's list, named for the week's Monday. */
+const ALLERGEN_FILE = `allergen-list-${shortDate(mondayOf(STORY_DAY_BY_LEVEL.level8), "en").toLowerCase().replace(" ", "-")}`;
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -61,13 +70,13 @@ export const TRIAGE_COPY: Record<Lang, {
     fileBody: "Find the file in Drive. Share it view only. Sam should not edit the master.",
     fileCta: "Open Drive",
     meetingTitle: "Thursday inventory huddle",
-    meetingWhen: "Thu, Aug 27 · 4:00–4:20 PM",
-    meetingNote: "You close Thursday 2–10. You cannot sit in a huddle at 4.",
+    meetingWhen: `${cardDate(CLOSE_THURSDAY, "en")} · 4:00–4:20 PM`,
+    meetingNote: `You close Thursday ${CLOSE}. You cannot sit in a huddle at 4.`,
     accept: "Yes",
     no: "No",
     propose: "Propose a new time",
     slotLabel: "Fri 10:00 AM",
-    fileName: "allergen-list-aug-24",
+    fileName: ALLERGEN_FILE,
     fileWrong: "prep-list-old",
     shareWith: "Share with Sam Rivera",
     canView: "Viewer",
@@ -95,13 +104,13 @@ export const TRIAGE_COPY: Record<Lang, {
     fileBody: "Encuentra el archivo en Drive. Compártelo en modo solo ver. Sam no debe editar el original.",
     fileCta: "Abrir Drive",
     meetingTitle: "Reunión de inventario del jueves",
-    meetingWhen: "Jue 27 ago · 4:00–4:20 PM",
-    meetingNote: "El jueves cierras de 2 a 10. No puedes estar en una reunión a las 4.",
+    meetingWhen: `${WEEKDAY_SHORT.es[4]} ${shortDate(CLOSE_THURSDAY, "es")} · 4:00–4:20 PM`,
+    meetingNote: `El jueves cierras de ${CLOSE_ES}. No puedes estar en una reunión a las 4.`,
     accept: "Sí",
     no: "No",
     propose: "Proponer otra hora",
     slotLabel: "Vie 10:00 AM",
-    fileName: "allergen-list-aug-24",
+    fileName: ALLERGEN_FILE,
     fileWrong: "prep-list-old",
     shareWith: "Compartir con Sam Rivera",
     canView: "Lector",
@@ -125,13 +134,13 @@ export const HINTS: Record<Lang, { accept: string; no: string; file: string; edi
   en: {
     accept: "That time is your close. Propose Friday 10 AM instead.",
     no: "Don't just say no. They still need a huddle. Propose Friday 10 AM.",
-    file: "That's last month's prep list. Open allergen-list-aug-24.",
+    file: `That's last month's prep list. Open ${ALLERGEN_FILE}.`,
     edit: "View only. If Sam can edit, the master changes.",
   },
   es: {
     accept: "Esa hora es tu cierre. Propón el viernes a las 10 AM.",
     no: "No solo digas que no. Igual necesitan la reunión. Propón el viernes a las 10 AM.",
-    file: "Esa es la lista de prep del mes pasado. Abre allergen-list-aug-24.",
+    file: `Esa es la lista de prep del mes pasado. Abre ${ALLERGEN_FILE}.`,
     edit: "Solo ver. Si Sam puede editar, cambia el original.",
   },
 };

@@ -1,3 +1,5 @@
+import { STORY_DAY_BY_LEVEL, STORY_YEAR, shortDate } from "./story-dates";
+
 interface PdfBase {
   id: string;
   name: string;
@@ -41,7 +43,7 @@ export interface AwardLetterDoc extends PdfBase {
 export interface ScheduleDoc extends PdfBase {
   kind: "schedule";
   title: string;
-  /** The line people check first: "Week of Aug 24 – 30, 2026". */
+  /** The line people check first: "Week of Sep 14 – 20, 2026". */
   week: string;
   days: string[];
   rows: { name: string; shifts: string[] }[];
@@ -50,6 +52,21 @@ export interface ScheduleDoc extends PdfBase {
 }
 
 export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc | ScheduleDoc;
+
+/** Dated the day before the Paperwork sitting (level17), when the letter "arrived". */
+const AWARD_LETTER_DATE = `${shortDate(STORY_DAY_BY_LEVEL.level17 - 1, "en")}, ${STORY_YEAR}`;
+
+/**
+ * The sitting a Downloads file first shows up in. A file with no entry has
+ * been there since Day One. Nothing arrives before its story moment: the
+ * first pay stub waits for payday, and the college award letter waits for
+ * the college route's Paperwork day (a learner on another route never gets
+ * it).
+ */
+export const PDF_ARRIVES_WITH: Record<string, string> = {
+  "paystub-first": "level3a3",
+  "award-letter-fall-2026": "level17",
+};
 
 export const PDF_DOCUMENTS: PdfDocument[] = [
   {
@@ -98,7 +115,7 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
     id: "award-letter-fall-2026",
     name: "bhcc-award-letter-fall-2026.pdf",
     size: "112 KB",
-    date: "Sep 10, 2026",
+    date: AWARD_LETTER_DATE,
     school: "Bunker Hill Community College",
     student: "Jordan Rivera",
     term: "Fall 2026",

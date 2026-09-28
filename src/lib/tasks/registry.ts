@@ -3,6 +3,21 @@ import type { Localized } from "@/lib/task-types";
 import type { LessonMeta } from "@/lib/lessons/types";
 import { LESSON_PASSWORD, RECOVERY_COPY } from "@/lib/tasks/account-recovery/content";
 import { JOB_SEEKER } from "@/lib/tasks/job-application/content";
+import { FILES_WEEK, RENAME_TARGET } from "@/lib/tasks/files/content";
+import {
+  HUDDLE_DAY,
+  SHIFT_TIMES,
+  STORY_DAY_BY_LEVEL,
+  cardDate,
+  hourOnly,
+  longDate,
+  monthDate,
+  shortDate,
+  storyDate,
+} from "@/lib/story-dates";
+
+/** "7": the sick-day shift, as the Day 2 schedule showed it. */
+const SICK_DAY_START = hourOnly(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3a2]);
 
 /**
  * The task registry — one entry per task, one place to edit.
@@ -183,8 +198,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     bookmarkLabel: "Mail",
     handoffCta: { en: "Open Mail", es: "Abrir correo" },
     shiftMoment: {
-      en: "Tuesday, 8:14 AM. Maria says welcome.",
-      es: "Martes, 8:14 AM. Maria te da la bienvenida.",
+      en: "Monday, 6:02 PM. Maria says welcome.",
+      es: "Lunes, 6:02 PM. Maria te da la bienvenida.",
     },
     location: browser("Open Mail", "mail"),
     // The inbox shows one new email at a time, so the card never promises three at once.
@@ -436,8 +451,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Tell Maria you can't come in", es: "Dile a Maria que no puedes ir" },
     dispatch: {
-      en: "You're sick and you're on at 10. Write Maria now.",
-      es: "Estás enfermo y entras a las 10. Escríbele a Maria ya.",
+      en: `You're sick and you're on at ${SICK_DAY_START}. Write Maria now.`,
+      es: `Estás enfermo y entras a las ${SICK_DAY_START}. Escríbele a Maria ya.`,
     },
     skill: { en: "Tell my manager I can't come in", es: "avisarle a mi gerente que no puedo ir" },
     bookmarkLabel: "Mail",
@@ -605,8 +620,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres líder de turno en Harborside Cafe." },
         people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
         need: {
-          en: "Renata invited you to a meeting on Wednesday, August 26. Your work shifts are on the same calendar. The meeting must be on a day you work.",
-          es: "Renata te invitó a una reunión el miércoles 26 de agosto. Tus turnos están en el mismo calendario. La reunión tiene que ser un día que trabajas.",
+          en: `Renata invited you to a meeting on ${longDate(HUDDLE_DAY, "en")}. Your work shifts are on the same calendar. The meeting must be on a day you work.`,
+          es: `Renata te invitó a una reunión el ${longDate(HUDDLE_DAY, "es")}. Tus turnos están en el mismo calendario. La reunión tiene que ser un día que trabajas.`,
         },
       },
       takeaway: {
@@ -614,8 +629,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         es: "Antes de responder a una invitación, compara el día con tus turnos. Si no te funciona, pide un día que trabajas y una hora.",
       },
       reference: [
-        { label: { en: "Meeting", es: "Reunión" }, value: { en: "Wed, Aug 26, 9:00 AM", es: "Miér., 26 de agosto, 9:00 AM" } },
-        { label: { en: "Your Thursday shift", es: "Tu turno del jueves" }, value: { en: "Thu, Aug 27, 10 AM to 6 PM", es: "Jue., 27 de agosto, 10 AM a 6 PM" } },
+        { label: { en: "Meeting", es: "Reunión" }, value: { en: `${cardDate(HUDDLE_DAY, "en")}, 9:00 AM`, es: `${cardDate(HUDDLE_DAY, "es")}, 9:00 AM` } },
+        { label: { en: "Your Thursday shift", es: "Tu turno del jueves" }, value: { en: `${cardDate(HUDDLE_DAY + 1, "en")}, 10 AM to 6 PM`, es: `${cardDate(HUDDLE_DAY + 1, "es")}, 10 AM a 6 PM` } },
       ],
       guide: {
         skills: [
@@ -629,7 +644,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain the ways to answer an invite: Yes, No, Maybe, or suggest a new time.", es: "Explica las formas de responder a una invitación: Sí, No, Quizá, o proponer otro horario." },
         ],
         stickingPoints: [
-          { en: "The Job Card asks: do you work on August 26? It does not give the answer. Some learners click Yes right away; the correction then says Wednesday has no green shift and names Propose a new time. Ask: is there a green shift on the 26th?", es: "La tarjeta de trabajo pregunta: ¿trabajas el 26 de agosto? No da la respuesta. Algunos hacen clic en Sí enseguida; la corrección dice que el miércoles no tiene turno verde y nombra Proponer otro horario. Pregunta: ¿hay un turno verde el 26?" },
+          { en: `The Job Card asks: do you work on ${monthDate(HUDDLE_DAY, "en")}? It does not give the answer. Some learners click Yes right away; the correction then says Wednesday has no green shift and names Propose a new time. Ask: is there a green shift on the ${storyDate(HUDDLE_DAY).getDate()}th?`, es: `La tarjeta de trabajo pregunta: ¿trabajas el ${monthDate(HUDDLE_DAY, "es")}? No da la respuesta. Algunos hacen clic en Sí enseguida; la corrección dice que el miércoles no tiene turno verde y nombra Proponer otro horario. Pregunta: ¿hay un turno verde el ${storyDate(HUDDLE_DAY).getDate()}?` },
           { en: "Some learners click one of their work shifts instead of the meeting. Ask them to find the event called Weekly Lead Huddle.", es: "Algunos hacen clic en uno de sus turnos en vez de la reunión. Pídeles buscar el evento que se llama Reunión semanal de líderes." },
           { en: "Some learners click No or Maybe. Renata still needs the meeting. Ask: what time can you suggest?", es: "Algunos hacen clic en No o Quizá. Renata todavía necesita la reunión. Pregunta: ¿qué horario puedes proponer?" },
           { en: "The message must name a day they work and a time in that shift. \"See you Wednesday\" gets \"Wednesday is your day off\"; \"I come Tuesday\" asks for a time; \"Monday at 5 PM\" names the Monday shift, 7 AM to 3 PM. The time buttons add only the words, like Thursday at 10 AM.", es: "El mensaje debe nombrar un día que trabajan y una hora dentro del turno. \"Nos vemos el miércoles\" recibe \"El miércoles es tu día libre\"; \"Voy el martes\" pide una hora; \"El lunes a las 5 PM\" nombra el turno del lunes, de 7 AM a 3 PM. Los botones de hora solo agregan las palabras, como el jueves a las 10 AM." },
@@ -688,8 +703,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       },
       takeaway: { en: "Check the version, the person, and the access needed for the authorized work.", es: "Revisa la versión, la persona y el acceso necesario para el trabajo autorizado." },
       reference: [
-        { label: { en: "This week", es: "Esta semana" }, value: { en: "Week of Aug 24", es: "Semana del 24 de agosto" } },
-        { label: { en: "New file name", es: "Nombre nuevo" }, value: "schedule-week-of-aug-24" },
+        { label: { en: "This week", es: "Esta semana" }, value: { en: `Week of ${shortDate(FILES_WEEK, "en")}`, es: `Semana del ${monthDate(FILES_WEEK, "es")}` } },
+        { label: { en: "New file name", es: "Nombre nuevo" }, value: RENAME_TARGET },
       ],
       guide: {
         skills: [
@@ -705,10 +720,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         ],
         stickingPoints: [
           { en: "Every file opens to its page. Opening the wrong one is fine; the Job Card says to read the week and the name (not a draft, not a copy) and click Close. A correction comes only if they click Rename on the wrong file, and it clears when they open another one.", es: "Cada archivo se abre y muestra su página. Abrir el equivocado está bien; la tarjeta de trabajo dice que lean la semana y el nombre (ni borrador ni copia) y hagan clic en Cerrar. Solo hay corrección si hacen clic en Cambiar nombre en el archivo equivocado, y se borra cuando abren otro." },
-          { en: "Search finds plain words too: aug 24, schedule, draft, horario. Show me points at a schedule to open, not at the right file.", es: "Buscar también encuentra palabras simples: aug 24, schedule, draft, horario. Muéstrame señala un horario para abrir, no el archivo correcto." },
+          { en: `Search finds plain words too: ${shortDate(FILES_WEEK, "en").toLowerCase()}, schedule, draft, horario. Show me points at a schedule to open, not at the right file.`, es: `Buscar también encuentra palabras simples: ${shortDate(FILES_WEEK, "en").toLowerCase()}, schedule, draft, horario. Muéstrame señala un horario para abrir, no el archivo correcto.` },
           { en: "Some learners click into the rename box, so the old name stays. The correction says: Delete the old name first. Enter works like Continue.", es: "Algunos hacen clic dentro de la casilla y el nombre viejo se queda. La corrección dice: Borra el nombre viejo primero. Enter funciona igual que Continuar." },
-          { en: "The schedule is in English. Spanish readers match Week of Aug 24 with the info card (semana del 24 de agosto).", es: "El horario está en inglés. Quienes leen en español comparan Week of Aug 24 con la tarjeta de información (semana del 24 de agosto)." },
-          { en: "Some learners type a different name. The name must be schedule-week-of-aug-24. Ask them to compare their name with the example, one word at a time.", es: "Algunos escriben otro nombre. El nombre debe ser schedule-week-of-aug-24. Pídeles comparar su nombre con el ejemplo, palabra por palabra." },
+          { en: `The schedule is in English. Spanish readers match Week of ${shortDate(FILES_WEEK, "en")} with the info card (semana del ${monthDate(FILES_WEEK, "es")}).`, es: `El horario está en inglés. Quienes leen en español comparan Week of ${shortDate(FILES_WEEK, "en")} con la tarjeta de información (semana del ${monthDate(FILES_WEEK, "es")}).` },
+          { en: `Some learners type a different name. The name must be ${RENAME_TARGET}. Ask them to compare their name with the example, one word at a time.`, es: `Algunos escriben otro nombre. El nombre debe ser ${RENAME_TARGET}. Pídeles comparar su nombre con el ejemplo, palabra por palabra.` },
           { en: "Some learners choose Can edit. Ask: does Jordan need to change the schedule, or only look at it?", es: "Algunos eligen Puede editar. Pregunta: ¿Jordan necesita cambiar el horario, o solo mirarlo?" },
         ],
         followUp: [
@@ -1755,8 +1770,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     bookmarkLabel: "Drive",
     handoffCta: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
     shiftMoment: {
-      en: "Monday at HQ. Chris needs the Q3 notes.",
-      es: "Lunes en HQ. Chris necesita las notas del T3.",
+      en: "Tuesday at HQ. Chris needs the Q3 notes.",
+      es: "Martes en HQ. Chris necesita las notas del T3.",
     },
     location: browser("Open Drive from the bookmarks"),
     jobCardLine: { en: "Find the current file. Then share it.", es: "Encuentra el archivo actual. Luego compártelo." },
