@@ -56,6 +56,20 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
   await card.getByTestId("job-card-drag-handle").focus();
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowUp");
+  // Wave 4 Undo practice: delete Friday's number on request, then Undo it.
+  await expect(card).toContainText("press Delete");
+  const friday = page.getByTestId("status-cell-fri");
+  await friday.click();
+  await page.keyboard.press("Delete");
+  await expect(friday).toHaveText("");
+  await page.getByRole("button", { name: "File", exact: true }).click();
+  await page.getByRole("button", { name: "Email", exact: true }).click();
+  await page.getByRole("button", { name: "Email collaborators", exact: true }).click();
+  await expect(card).toContainText("A number is missing");
+  await page.keyboard.press("Escape");
+  await page.keyboard.press("Control+z");
+  await expect(friday).toHaveText("15");
+
   const totalCell = page.getByTestId("status-total-cell");
   await totalCell.click();
   const fx = page.getByPlaceholder("=SUM(");

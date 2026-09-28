@@ -82,7 +82,7 @@ describe("option C, half 1: requirements are named before the check", () => {
     expectDirection(FORMULA_STEPS[1], /green.*every person.*formula bar/i, /verdes.*cada persona.*barra de fórmulas/i);
     // "Who was missing" is a requirement (say who), not the name.
     expectDirection(FORMULA_STEPS[3], /new total.*who was missing/i, /total nuevo.*quién faltaba/i);
-    expectDirection(STATUS_STEPS[2], /total.*cc Jordan/i, /total.*copia a Jordan/i);
+    expectDirection(STATUS_STEPS[4], /total.*cc Jordan/i, /total.*copia a Jordan/i);
     expectDirection(COURSEWORK_STEPS[2], /sorry.*what you will do/i, /lo sientes.*qué vas a hacer/i);
     expectDirection(ENROLLMENT_STEPS[2], /BHCC.*program/i, /BHCC.*programa/i);
     expectDirection(RESEARCH_STEPS[2], /who wrote it.*where it was published/i, /quién la escribió.*dónde se publicó/i);
