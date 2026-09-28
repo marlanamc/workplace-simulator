@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   COURSEWORK_COPY,
@@ -62,6 +62,8 @@ export default function CourseworkTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const done = completedTaskKeys.includes("coursework");
   const [submitted, setSubmitted] = useState(done);
+  const answerRef = useRef<HTMLTextAreaElement>(null);
+  const timeRef = useRef<HTMLSelectElement>(null);
   const [deadline, setDeadline] = useState("");
   const acked = deadlineIsCorrect(deadline);
   const [timeLeft, setTimeLeft] = useState("");
@@ -108,12 +110,14 @@ export default function CourseworkTask() {
     setDeadline(key);
     showMe.clear();
     if (key && !deadlineIsCorrect(key)) say(c.wrongDeadline);
+    else if (key) timeRef.current?.focus();
   };
   const chooseTimeLeft = (key: string) => {
     setTimeLeft(key);
     showMe.clear();
     const option = TIME_LEFT_OPTIONS.find((o) => o.key === key);
     if (option && !timeLeftIsCorrect(key)) say(option.hint[lang]);
+    else if (option) answerRef.current?.focus();
   };
 
   return (
@@ -252,6 +256,7 @@ export default function CourseworkTask() {
                     <select
                       aria-label={c.timeLabel}
                       data-showme="time-select"
+                      ref={timeRef}
                       value={timeLeft}
                       onChange={(e) => chooseTimeLeft(e.target.value)}
                       className="mt-1.5 block min-h-11 w-full rounded-md border bg-white px-2 font-normal"
@@ -269,6 +274,7 @@ export default function CourseworkTask() {
                     {c.answerLabel}
                     <textarea
                       data-showme="answer-box"
+                      ref={answerRef}
                       value={body}
                       onChange={(e) => setBody(e.target.value)}
                       placeholder={c.writeHere}

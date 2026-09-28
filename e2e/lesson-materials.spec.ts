@@ -14,6 +14,8 @@ for (const lang of ["en", "es"] as const) {
     await expect(page.getByTestId("practice-teacher-notes")).toBeHidden();
     await expect(page.getByRole("navigation")).toBeHidden();
     await expect(page.getByTestId("practice-documents")).toBeVisible();
+    await expect(page.getByTestId("practice-learner-task")).toBeVisible();
+    await expect(page.getByTestId("practice-learner-task").locator("li")).toHaveCount(3);
     await page.emulateMedia({ media: "screen" });
     await page.getByRole("link", { name: lang === "en" ? "Español" : "English", exact: true }).click();
     await expect(page.locator("main")).toHaveAttribute("lang", lang === "en" ? "es" : "en");

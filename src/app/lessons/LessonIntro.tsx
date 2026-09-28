@@ -1,11 +1,15 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
+
 import { useProgress } from "@/lib/progress-context";
 import { fill, LESSON_COPY } from "@/lib/lessons/copy";
 import type { LessonFact, LessonScene, WorkExample } from "@/lib/lessons/types";
 import type { Localized } from "@/lib/task-types";
 import { WelcomeShell } from "@/components/welcome-shell";
 import { INFO_PAPER, InfoCardBody } from "@/components/lesson/LessonInfoCard";
+
+const subscribe = () => () => {};
 
 /**
  * The scene a lesson opens on: who you are, who the task names, and what is
@@ -33,6 +37,7 @@ export default function LessonIntro({
   persona?: string;
 }) {
   const { lang } = useProgress();
+  const interactive = useSyncExternalStore(subscribe, () => true, () => false);
   const people = scene.people.map((p) => `${p.name}: ${p.role[lang]}.`);
   // Only the job names: the examples are for the teacher, and every extra
   // sentence here is reading before the learner has started.
@@ -76,6 +81,7 @@ export default function LessonIntro({
       <button
         type="button"
         data-testid="lesson-intro-start"
+        disabled={!interactive}
         onClick={onStart}
         className="job-card-primary mt-6 inline-flex min-h-14 w-full items-center justify-center gap-2 bg-[#0b57d0] text-lg font-semibold text-white sm:w-auto sm:min-w-72"
       >

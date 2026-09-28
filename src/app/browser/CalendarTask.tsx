@@ -28,6 +28,7 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
+import { SentEmailRecap } from "./sheet-lesson-parts";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import { extractHuddleTime, HUDDLE_TIME_FLAG } from "@/lib/story-beats";
@@ -225,7 +226,8 @@ function CafeCalendarTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
-  const inLesson = useLesson() !== null;
+  const lesson = useLesson();
+  const inLesson = lesson !== null;
   const replyRef = useRef<HTMLTextAreaElement>(null);
 
   // DOM sync: when the reply opens, bring the text box into view and put the cursor there.
@@ -287,7 +289,6 @@ function CafeCalendarTask() {
 
   const discard = () => {
     setView("invite");
-    setBody("");
   };
 
   const restart = () => {
@@ -338,6 +339,16 @@ function CafeCalendarTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
+            {body.trim() && (
+              <SentEmailRecap
+                heading={c.sentKicker}
+                toLabel={c.to}
+                to="renata.silva@harborsidecafe.com"
+                subjectLabel={c.subjectLabel}
+                subject={c.subject}
+                body={body}
+              />
+            )}
             <TaskDoneActions
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
@@ -573,7 +584,7 @@ function CafeCalendarTask() {
                       placeholder={c.writeHere}
                       className="min-h-[110px] w-full resize-y border-none py-3 text-[14px] leading-relaxed outline-none placeholder:text-[#767676]"
                     />
-                    <div className="mb-3">
+                    {(!inLesson || missed) && <div className="mb-3">
                       <div className="mb-2 text-[12px] text-[#5f6368]">{c.whatTime}</div>
                       <div className="mb-3 flex flex-wrap gap-2">
                         {HUDDLE_TIMES.map((slot) => (
@@ -598,7 +609,7 @@ function CafeCalendarTask() {
                           </button>
                         ))}
                       </div>
-                    </div>
+                    </div>}
                     {/* Send sits above the starters, so opening them never pushes it out of view. */}
                     <div className="flex items-center gap-2 pb-3">
                       <button

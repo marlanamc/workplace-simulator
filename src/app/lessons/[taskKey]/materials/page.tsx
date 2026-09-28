@@ -15,7 +15,7 @@ export async function generateMetadata({ params, searchParams }: Props) {
   return { title: `${C.open[lang]}${lesson ? ` · ${lesson.title[lang]}` : ""}` };
 }
 
-/** Teacher-facing extension. Source documents alone print; no simulator state or writes. */
+/** Teacher-facing extension. The documents and the learner task print; the teacher notes do not. No simulator state or writes. */
 export default async function MaterialsPage({ params, searchParams }: Props) {
   const [{ taskKey }, query] = await Promise.all([params, searchParams]);
   const lesson = lessonByKey(taskKey);
@@ -50,14 +50,30 @@ export default async function MaterialsPage({ params, searchParams }: Props) {
                 <div className="overflow-x-auto" role="region" aria-label={doc.title[lang]} tabIndex={0}>
                   <table className="w-full border-collapse text-left text-sm">
                     <caption className="sr-only">{doc.title[lang]}</caption>
-                    <thead><tr>{doc.table.columns.map(c => <th key={c.en} scope="col" className="border-b-2 border-[#dadce0] p-2 align-top font-semibold">{c[lang]}</th>)}</tr></thead>
-                    <tbody>{doc.table.rows.map((row, r) => <tr key={r}>{row.map((cell, c) => <td key={c} className="max-w-64 break-words border-b border-[#dadce0] p-2 align-top [overflow-wrap:anywhere]">{cell[lang]}</td>)}</tr>)}</tbody>
+                    <thead><tr>{doc.table.columns.map((c, i) => <th key={i} scope="col" className="border-b-2 border-[#dadce0] p-2 align-top font-semibold">{c?.[lang]}</th>)}</tr></thead>
+                    <tbody>{doc.table.rows.map((row, r) => <tr key={r}>{row.map((cell, c) => cell
+                      ? <td key={c} className="max-w-64 break-words border-b border-[#dadce0] p-2 align-top [overflow-wrap:anywhere]">{cell[lang]}</td>
+                      : <td key={c} data-testid="practice-blank-cell" className="min-w-28 border border-[#9aa0a6] p-2"><span className="sr-only">{C.blank[lang]}</span></td>)}</tr>)}</tbody>
                   </table>
                 </div>
               )}
             </div>
           </article>
         ))}
+      </section>
+      <section data-testid="practice-learner-task" aria-labelledby="learner-task-title" className="mt-8 break-inside-avoid rounded-lg border-2 border-[#202124] p-5 print:rounded-none">
+        <div className="flex flex-wrap items-baseline justify-between gap-4">
+          <h2 id="learner-task-title" className="text-xl font-semibold">{C.task[lang]}</h2>
+          <p className="min-w-56 text-base">{C.name[lang]} <span aria-hidden="true" className="inline-block w-44 border-b border-[#202124]" /></p>
+        </div>
+        <ol className="mt-4 list-decimal space-y-5 pl-6 text-lg leading-relaxed">
+          {pack.learnerTask.map(q => (
+            <li key={q.ask.en}>
+              {q.ask[lang]}
+              {Array.from({ length: q.lines }, (_, i) => <span key={i} aria-hidden="true" className="mt-7 block border-b border-[#5f6368]" />)}
+            </li>
+          ))}
+        </ol>
       </section>
       <section data-testid="practice-teacher-notes" className="mt-10 border-t border-[#dadce0] pt-6 print:hidden" aria-labelledby="teacher-notes-title">
         <h2 id="teacher-notes-title" className="text-xl font-semibold">{C.teacher[lang]}</h2>

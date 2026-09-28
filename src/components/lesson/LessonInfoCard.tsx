@@ -9,20 +9,8 @@ import { useProgress } from "@/lib/progress-context";
 import { LESSON_COPY, MENTIONS_INFO_CARD } from "@/lib/lessons/copy";
 import { CARD_W, EDGE } from "@/components/task/JobCard";
 
-/**
- * On wide screens a lesson keeps a left column: this card on top, the Job
- * Card in its home corner below, and the app window to the right of both.
- * Otherwise the 420px card sits on the left of every task, over whatever the
- * learner needs to read (the tip slips, a form's first fields). Tailwind
- * needs the literal class: 460 = the card's edge + width + a gap.
- *
- * Between 800px and xl (a Chromebook at 150% text is 911px wide) the column
- * is narrower, 340 = 24 + a 300px Job Card + a gap, and holds only the Job
- * Card: the info card opens over the card instead of over the task. Below
- * 800px there is no room for a column and the card floats as before.
- */
-export const LESSON_RAIL_CLASS =
-  "xl:[--app-left:460px] [@media(min-width:800px)_and_(max-width:1279px)]:[--app-left:340px]";
+/** Lessons reserve space for the Job Card at every viewport size. */
+export const LESSON_RAIL_CLASS = "lesson-desktop";
 
 /**
  * Facts a lesson learner needs while working: who they are, who the task
@@ -121,7 +109,7 @@ export default function LessonInfoCard({ top }: { top: number }) {
           height gives way to the card, and scrolls if the facts run long. */}
       <aside
         aria-label={LESSON_COPY.infoTitle[lang]}
-        className={`fixed z-[60] hidden overflow-y-auto rounded-[8px] xl:block ${glow}`}
+        className={`lesson-info-docked fixed z-[60] hidden overflow-y-auto rounded-[8px] xl:block ${glow}`}
         style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(180px, calc(100dvh - 440px))" }}
       >
         {body}

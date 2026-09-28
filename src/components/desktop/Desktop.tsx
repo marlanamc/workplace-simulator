@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { DesktopClock } from "@/components/LiveClock";
 import DesktopIdentity from "@/components/DesktopIdentity";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
@@ -45,6 +45,7 @@ function AppWindow({
   return (
     <div
       ref={ref}
+      data-app-window={active ? "active" : undefined}
       className={active ? "fixed flex flex-col overflow-hidden rounded-[12px] shadow-[0_12px_40px_rgba(0,0,0,0.28)]" : "hidden"}
       style={
         active
@@ -53,7 +54,7 @@ function AppWindow({
               // A lesson keeps a left column for its info card and the Job Card on wide screens (--app-left).
               left: `var(--app-left, ${SHELF_INSET}px)`,
               right: SHELF_INSET,
-              bottom: SHELF_RESERVE + 8,
+              bottom: `var(--app-bottom, ${SHELF_RESERVE + 8}px)`,
               zoom: bigText ? 1.15 : undefined,
             }
           : undefined
@@ -114,7 +115,7 @@ export default function Desktop({
   return (
     <div
       className={`relative min-h-screen overflow-hidden text-[15px] ${lesson ? LESSON_RAIL_CLASS : ""}`}
-      style={{ color: "var(--text-primary)" }}
+      style={{ color: "var(--text-primary)", "--lesson-top": `${windowTop}px` } as CSSProperties}
     >
       {/* wallpaper - the room of the current act, so New Hire is the cafe floor */}
       <div className="fixed inset-0 -z-10">

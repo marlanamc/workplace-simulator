@@ -270,3 +270,19 @@ practice, done badges after a finish, returning to filtered results, and
 phone/Chromebook widths for every view.
 The lesson suite also checks that sign-in preserves library context and shared student
 links omit it. Run these with `e2e/lessons.spec.ts` and `e2e/lessons-smoke.spec.ts`.
+
+## Beginner ESOL audit regressions
+
+`e2e/lesson-audit-regressions.spec.ts` checks English and Spanish at 683×384
+(200% Chromebook equivalent), 911×512 (150%), and phone width. The Job Card
+and app must occupy separate areas; Show me must reveal the password field;
+the selected text message and code field must remain readable together on
+narrow screens. Calendar tests cover both support modes, a first attempt
+without suggested times, wrong-day recovery, the sent-message recap, and
+clearing drafts/help state on Practice again. Preview mode prevents saving
+these regression attempts to an account.
+
+The lesson Start button stays disabled until its own client component is
+interactive. Library tests also wait for document hydration before acting.
+Viewport simulation does not replace actual browser zoom, screen-reader,
+read-aloud, or learner testing on Chromebooks.

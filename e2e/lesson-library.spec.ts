@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { waitForInteractive } from "./interactive";
 
 for (const lang of ["en", "es"] as const) {
   test(`${lang}: search, preview and completion preserve library context`, async ({ page }) => {
     await page.goto(`/lessons?teacher=1${lang === "es" ? "&lang=es" : ""}`);
+    await waitForInteractive(page);
     // Home is topics, not lessons.
     await expect(page.getByRole("heading", { name: lang === "es" ? "O elige un tema" : "Or choose a topic", exact: true })).toBeVisible();
     await expect(page.locator('[data-testid^="lesson-card-"]')).toHaveCount(0);
@@ -15,12 +17,14 @@ for (const lang of ["en", "es"] as const) {
     expect(new URL(page.url()).searchParams.get("skill")).toBe("forms");
     const card = page.getByTestId("lesson-card-w4-form");
     await card.getByRole("link", { name: /Teacher preview|Vista del docente/ }).click();
+    await waitForInteractive(page);
     await page.getByTestId("lesson-intro-start").click();
     await expect(page.getByTestId("teacher-preview")).toBeVisible();
     expect(new URL(page.url()).searchParams.get("returnTo")).toContain("q=W-4");
     await page.goBack();
     await expect(card).toBeVisible();
     await card.getByRole("link", { name: /^(Start|Empezar)/ }).click();
+    await waitForInteractive(page);
     await page.getByTestId("lesson-intro-start").click();
     await page.getByRole("button", { name: /Hide the rest|Ocultar el resto/ }).click();
     await page.getByRole("radio", { name: /^(Single,|Soltero\/a,)/ }).check();
