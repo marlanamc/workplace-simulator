@@ -4,6 +4,7 @@ import { CAST } from "@/lib/cast";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { COPY_NAME, STATUS_TOTAL, STATUS_WEEK } from "../status-sheet";
 import { openFileStep } from "../open-file-step";
+import { UNDO_STEPS } from "./undo";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -232,6 +233,8 @@ export function describeSubmission(
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(STATUS_REPORT_COPY, (c) => c.sheetName),
+  UNDO_STEPS.delete,
+  UNDO_STEPS.undo,
   {
     en: "The total cell is empty. Add the tickets with a formula, then check the number.",
     es: "La celda del total está vacía. Suma los pedidos con una fórmula y revisa el número.",

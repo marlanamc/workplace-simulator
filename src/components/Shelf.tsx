@@ -19,6 +19,8 @@ import { useClickOutside } from "@/lib/use-click-outside";
 import NudgeToast from "@/components/task/NudgeToast";
 import { APP_ICONS, TAB_ICONS, Briefcase, ChromeIcon, Languages, Lock, PdfIcon } from "@/lib/icons";
 import { logout } from "@/app/actions";
+import { WifiOff } from "lucide-react";
+import { OFFLINE_FLAG, WIFI_TILE, offlineIncidentActive, wifiOff } from "@/lib/tasks/handbook/offline";
 import { levelForTrack, nextTaskInTrack, previousCourseLevel } from "@/lib/tracks-content";
 import { storyClockFor } from "@/lib/story-calendar";
 import { dayTitle, remainingTasksInLevel } from "@/lib/shift-spine";
@@ -168,8 +170,12 @@ export default function Shelf({
   const myJobOpen = myJob?.open ?? false;
   const onMyJobOpenChange = (open: boolean) => myJob?.onOpenChange(open);
   const lesson = useLesson();
-  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath, celebrateLevel, courseRoute, bigText, setBigText } =
+  const { completedTaskKeys, currentTrack, lang, setLang, bridgePath, celebrateLevel, courseRoute, bigText, setBigText, storyFlags, setStoryFlag } =
     useProgress();
+  // Day 7's practice Wi-Fi drop: the status area and the Wi-Fi tile show it off.
+  const incidentNext = nextTaskInTrack(currentTrack, completedTaskKeys);
+  const offlineRunning = offlineIncidentActive(incidentNext, storyFlags[OFFLINE_FLAG], Boolean(lesson));
+  const wifiIsOff = wifiOff(incidentNext, storyFlags[OFFLINE_FLAG], Boolean(lesson));
   const [launcherOpen, setLauncherOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [infoApp, setInfoApp] = useState<AppKey | null>(null);
@@ -382,6 +388,7 @@ export default function Shelf({
             }}
             aria-label={lang === "en" ? "Me" : "Yo"}
             aria-expanded={accountOpen}
+            data-showme="shelf-status"
             className="flex items-center gap-2.5 rounded-md px-3 py-1 text-white/90 cursor-pointer hover:bg-white/10"
             style={accountOpen ? { background: "rgba(255,255,255,0.14)" } : undefined}
           >
@@ -391,7 +398,11 @@ export default function Shelf({
             >
               {displayName.slice(0, 1).toUpperCase()}
             </span>
-            <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
+            {wifiIsOff ? (
+              <span title={lang === "en" ? "Wi-Fi off" : "Wi-Fi apagado"}><WifiOff size={14} strokeWidth={2} aria-hidden /></span>
+            ) : (
+              <span title={lang === "en" ? "Wi-Fi connected" : "Wi-Fi conectado"}><WifiIcon /></span>
+            )}
             <span title={lang === "en" ? "Battery" : "Batería"}><BatteryIcon /></span>
             <ShelfClock lang={lang} startsAt={storyClock} />
           </button>
@@ -444,12 +455,24 @@ export default function Shelf({
                 {/* tile row */}
                 <div className="mb-3 grid grid-cols-3 gap-1.5">
                   <button
-                    onClick={() => say(lang === "en" ? "Wi-Fi is always on in this practice space." : "El Wi-Fi siempre está activo en este espacio de práctica.")}
+                    data-testid="quick-wifi"
+                    data-showme="wifi-tile"
+                    role="switch"
+                    aria-checked={!wifiIsOff}
+                    onClick={() => {
+                      if (wifiIsOff) {
+                        setStoryFlag(OFFLINE_FLAG, "wifi");
+                        return say(WIFI_TILE[lang].connectedTo);
+                      }
+                      say(offlineRunning ? WIFI_TILE[lang].connectedTo : lang === "en" ? "Wi-Fi is always on in this practice space." : "El Wi-Fi siempre está activo en este espacio de práctica.");
+                    }}
                     className="flex flex-col items-center gap-1.5 rounded-xl bg-white/8 py-2.5 hover:bg-white/12 cursor-pointer"
                   >
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white"><WifiIcon size={16} /></span>
+                    <span className={`flex h-8 w-8 items-center justify-center rounded-full ${wifiIsOff ? "bg-white/15 text-white/80" : "bg-accent text-white"}`}>
+                      {wifiIsOff ? <WifiOff size={16} strokeWidth={2} aria-hidden /> : <WifiIcon size={16} />}
+                    </span>
                     <span className="text-[11px] font-medium leading-none">{lang === "en" ? "Wi-Fi" : "Wi-Fi"}</span>
-                    <span className="text-[10px] leading-none text-white/60">{lang === "en" ? "Connected" : "Conectado"}</span>
+                    <span className="text-[10px] leading-none text-white/60">{wifiIsOff ? WIFI_TILE[lang].off : WIFI_TILE[lang].on}</span>
                   </button>
                   <button
                     onClick={() => setLang(lang === "en" ? "es" : "en")}

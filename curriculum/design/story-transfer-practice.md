@@ -37,13 +37,17 @@ Pilot transfer: with permission, supply a harmless PDF outside the simulator. Ob
 
 ## 2. Everyday recovery
 
-Placement: after the first independent bookmark task; optional practice rounds.
+Status: in progress on `feat/wave-4-everyday-recovery`. Owner choices (28 Sep): the three incidents are spread across Act II, one per existing task, with no new days. For the closed window, the Job Card asks the learner to close it; nothing fakes a crash.
 
-Use three separate incidents: accidentally close a task window and reopen it; type in the wrong field and use Undo; encounter a simulated failed load and retry after a clearly simulated connection returns. Add permission decisions only with an explicit app purpose and requested access. A permission decision needs enough context to justify allowing or declining; never teach blanket approval.
+| Incident | Host | What happens | Evidence |
+|---|---|---|---|
+| Page won't load | Day 7, `handbook` (the first Docs visit) | The practice Wi-Fi is off, so every browser page except Forms (whose done screen is up) shows Chrome's “No internet” page, and the shelf shows Wi-Fi off. The learner opens Quick Settings, turns on Wi-Fi, then clicks Reload, from the page or the toolbar. | The handbook loads only after Wi-Fi is on *and* Reload is pressed. Reload first gets a correction and resets nothing. One story flag holds the stage; it survives a reload, and replaying Day 7 clears it. Lessons skip it. |
+| Undo | Day 12, `status-report` (Sheets) | A paste lands in the wrong cells. The learner uses Undo (the toolbar button or Ctrl+Z) and the numbers come back. | The original values are restored; typing them back by hand is not Undo. |
+| Closed window | Day 13, `triage` (already saves drafts) | Mid-draft, the Job Card says the learner has to step away and asks them to close the browser. Then it asks them to reopen it and finish. | The draft is unchanged after reopening, and the task finishes from it. |
 
-Initial Job Card: “Your draft is still saved. Reopen Docs and finish your note.” / “Tu borrador sigue guardado. Vuelve a abrir Docs y termina tu nota.”
+Job Card (Day 7): “The page did not load. Check the Wi-Fi, then reload the page.” / “La página no cargó. Revisa el Wi-Fi y después vuelve a cargar la página.” The page itself says “Practice Wi-Fi. Your real computer is still connected.”
 
-Evidence: the original draft is unchanged after recovery; completion requires a successful recovered action, not merely clicking Reload. Help must remain reachable when the simulated page is unavailable. Do not actually disconnect the learner's computer or interrupt a real save to manufacture an exercise.
+Never disconnect the learner's real computer or interrupt a real save to manufacture an exercise. Help stays reachable while the simulated page is unavailable. Permission pop-ups are out of scope until a task has a real reason to ask.
 
 Pilot transfer: observe a harmless closed-tab recovery and Undo in a real editor. Distinguish knowing the control from recovering without losing content.
 

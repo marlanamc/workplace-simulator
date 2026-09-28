@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { CLOSE_FLAG, CLOSE_LINES, closeStage } from "@/lib/tasks/triage/close-window";
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
@@ -678,8 +679,11 @@ export default function JobCard() {
         return { badge: "✓", kicker: c.dayDoneKicker, line: c.allDoneLine, tone: "green", step: 4 };
       }
       const location = TASK_LOCATIONS[nextTaskKey];
-      const desktopLine =
-        JOB_CARD_LINE[nextTaskKey]?.[lang] ?? TASK_INFO[nextTaskKey].dispatch[lang];
+      // Day 13: the learner closed the browser because the card asked; now it asks them back.
+      const reopening = nextTaskKey === "triage" && !lesson && closeStage(storyFlags[CLOSE_FLAG]) === "closed";
+      const desktopLine = reopening
+        ? CLOSE_LINES.reopen[lang]
+        : JOB_CARD_LINE[nextTaskKey]?.[lang] ?? TASK_INFO[nextTaskKey].dispatch[lang];
       if (lesson) {
         return {
           badge,

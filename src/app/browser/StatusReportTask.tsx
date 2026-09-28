@@ -2,7 +2,24 @@
 
 import SheetEmailMenu from "@/components/task/SheetEmailMenu";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Undo2 } from "lucide-react";
+import { useTaskDraft } from "@/lib/use-task-draft";
+import {
+  CELLS_ARE_SET,
+  UNDO_FIRST,
+  UNDO_LABEL,
+  UNDO_STEPS,
+  UNDO_TARGET,
+  UNDONE_STATUS,
+  afterDelete,
+  afterUndo,
+  cellShows,
+  isDeleteKey,
+  isUndoShortcut,
+  type RowKey,
+  type UndoStage,
+} from "@/lib/tasks/status-report/undo";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
 import {
@@ -37,6 +54,11 @@ export default function StatusReportTask() {
   const [view, setView] = useState<View>(completedTaskKeys.includes("status-report") ? "done" : "home");
   const [formula, setFormula] = useState("");
   const [selectedTotal, setSelectedTotal] = useState(true);
+  // Day 12's Undo practice (Wave 4). Kept as a draft, so a reload does not repeat it.
+  const [undoStage, setUndoStage] = useTaskDraft<UndoStage>("status-report", "undo-stage", "delete");
+  const [cleared, setCleared] = useTaskDraft<RowKey | null>("status-report", "undo-cleared", null);
+  const [selectedRow, setSelectedRow] = useState<RowKey | null>(null);
+  const [undoneNote, setUndoneNote] = useState(false);
   const [body, setBody] = useState("");
   const [ccOpen, setCcOpen] = useState(false);
   const [cc, setCc] = useState<string | null>(null);
@@ -45,7 +67,40 @@ export default function StatusReportTask() {
   const showMe = useShowMe();
   const c = STATUS_REPORT_COPY[lang];
 
+  const deleteSelected = () => {
+    const next = afterDelete(undoStage, cleared, selectedRow);
+    if (next.stage === undoStage) return;
+    showMe.clear();
+    setCleared(next.cleared);
+    setUndoStage(next.stage);
+  };
+
+  const undo = () => {
+    const next = afterUndo(undoStage, cleared);
+    if (next.stage === undoStage) return;
+    showMe.clear();
+    setCleared(next.cleared);
+    setUndoStage(next.stage);
+    setSelectedRow(null);
+    setSelectedTotal(true);
+    setUndoneNote(true);
+  };
+
+  // Ctrl+Z works anywhere on the sheet, the way it does in Sheets. Only while
+  // there is something to undo, so the formula box keeps its own Undo.
+  useEffect(() => {
+    if (view !== "sheet" || undoStage !== "undo") return;
+    const onKey = (e: KeyboardEvent) => {
+      if (!isUndoShortcut(e)) return;
+      e.preventDefault();
+      undo();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  });
+
   const tryEmail = () => {
+    if (undoStage !== "done") return say(UNDO_FIRST[lang]);
     const problem = totalProblem(formula);
     if (problem) return say(HINTS[lang][problem]);
     setView("compose");
@@ -61,11 +116,17 @@ export default function StatusReportTask() {
 
   const restart = () => {
     setView("home");
+    setUndoStage("delete");
+    setCleared(null);
+    setUndoneNote(false);
     setFormula("");
     setBody("");
     setCc(null);
     setCcOpen(false);
   };
+
+  const showMeId =
+    view === "home" ? "open-file" : view === "sheet" && undoStage === "delete" ? "friday-cell" : view === "sheet" && undoStage === "undo" ? "undo-button" : null;
 
   const notYet = () =>
     say(lang === "en" ? `Open your copy, ${COPY_NAME}.` : `Abre tu copia, ${COPY_NAME}.`);
@@ -88,24 +149,46 @@ export default function StatusReportTask() {
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["status-report"]}
-          stepIndex={view === "home" ? 0 : view === "sheet" ? 1 : 2}
+          stepIndex={view === "home" ? 0 : view === "compose" ? 4 : undoStage === "delete" ? 1 : undoStage === "undo" ? 2 : 3}
           steps={RIGHT_NOW_STEPS}
+          // The Undo practice is spelled out even in Act II: it is asked for, not discovered.
+          goal={view === "sheet" && undoStage !== "done" ? UNDO_STEPS[undoStage] : undefined}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
-          showMeActive={showMe.targetId === "open-file"}
+          onShowMe={showMeId ? () => showMe.toggleFor(showMeId) : undefined}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
       <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
 
       {view === "sheet" && (
+        <div className="flex items-center gap-2 border-b border-[#e0e0e0] px-3 py-1">
+          <button
+            type="button"
+            data-testid="sheet-undo"
+            data-showme="undo-button"
+            data-card-avoid
+            aria-label={UNDO_LABEL[lang]}
+            title={UNDO_LABEL[lang]}
+            onClick={undo}
+            className="flex h-8 w-8 items-center justify-center rounded text-[#444746] hover:bg-[#f1f3f4] cursor-pointer"
+          >
+            <Undo2 size={18} strokeWidth={2} aria-hidden />
+          </button>
+          {undoneNote && <span role="status" className="text-[12px] text-[#137333]">{UNDONE_STATUS[lang]}</span>}
+        </div>
+      )}
+
+      {view === "sheet" && (
         <div className="flex items-center gap-2 border-b border-[#e0e0e0] px-3 py-1.5">
           <span className="min-w-[40px] rounded border border-[#e0e0e0] px-2 py-1 text-center text-[12px] font-medium">
-            {selectedTotal ? "B7" : "A1"}
+            {selectedRow ? `B${STATUS_ROWS.findIndex((r) => r.key === selectedRow) + 2}` : selectedTotal ? "B7" : "A1"}
           </span>
           <span className="text-[13px] italic text-[#5f6368]">fx</span>
-          {selectedTotal ? (
+          {selectedRow ? (
+            <span className="flex-1 border-l border-[#e0e0e0] px-2 py-1 text-[13px]">{cellShows(selectedRow, cleared)}</span>
+          ) : selectedTotal ? (
             <input
               value={formula}
               onChange={(e) => setFormula(e.target.value)}
@@ -159,14 +242,35 @@ export default function StatusReportTask() {
             </div>
             <div className="flex">
               <div className="flex h-7 w-8 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] text-[12px]">1</div>
-              <button onClick={() => setSelectedTotal(false)} className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium cursor-pointer">{c.dayHeader}</button>
+              <button onClick={() => { setSelectedRow(null); setSelectedTotal(false); }} className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium cursor-pointer">{c.dayHeader}</button>
               <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">{c.countHeader}</div>
             </div>
             {STATUS_ROWS.map((row, i) => (
               <div key={row.key} className="flex">
                 <div className="flex h-7 w-8 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] text-[12px]">{i + 2}</div>
                 <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5">{lang === "en" ? row.day : row.dayEs}</div>
-                <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5">{row.value}</div>
+                <button
+                  type="button"
+                  data-testid={`status-cell-${row.key}`}
+                  data-showme={row.key === UNDO_TARGET ? "friday-cell" : undefined}
+                  aria-label={`B${i + 2}`}
+                  onClick={() => {
+                    if (undoStage !== "delete") return say(CELLS_ARE_SET[lang]);
+                    showMe.clear();
+                    setSelectedTotal(false);
+                    setSelectedRow(row.key);
+                  }}
+                  onKeyDown={(e) => {
+                    if (isDeleteKey(e.key) && selectedRow === row.key) {
+                      e.preventDefault();
+                      deleteSelected();
+                    }
+                  }}
+                  className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5 text-left cursor-pointer"
+                  style={{ boxShadow: selectedRow === row.key ? "inset 0 0 0 2px #1a73e8" : undefined }}
+                >
+                  {cellShows(row.key, cleared)}
+                </button>
               </div>
             ))}
             <div className="flex">
@@ -174,7 +278,7 @@ export default function StatusReportTask() {
               <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] px-1.5 font-medium">{c.totalLabel}</div>
               <button
                 data-testid="status-total-cell"
-                onClick={() => setSelectedTotal(true)}
+                onClick={() => { setSelectedRow(null); setSelectedTotal(true); }}
                 className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#fef7e0] px-1.5 text-left font-medium cursor-pointer"
                 style={{ boxShadow: selectedTotal ? "inset 0 0 0 2px #1a73e8" : undefined }}
               >

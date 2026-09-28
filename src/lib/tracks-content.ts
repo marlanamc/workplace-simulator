@@ -1136,8 +1136,15 @@ export interface Act {
   scene: DesktopScene;
 }
 
-/** Places the learner's desktop looks out on. Built acts get a full scene; later acts reuse the closest room until they're painted. */
-export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-floor";
+/** Places the learner's desktop looks out on. Act V also has one room per path (see `sceneForLevel`). */
+export type DesktopScene =
+  | "harborside-open"
+  | "harborside-shift"
+  | "harborside-floor"
+  | "college-library"
+  | "clinic-front-desk"
+  | "hq-office"
+  | "hq-team-room";
 
 /**
  * Only lists acts that have at least one level actually built in `LEVELS` -
@@ -1151,8 +1158,8 @@ export const ACTS: Act[] = [
   { key: "act3", numeral: "III", role: { en: "Shift Supervisor", es: "Shift Supervisor" }, levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
   { key: "act4", numeral: "IV", role: { en: "Assistant Manager", es: "Assistant Manager" }, levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
   { key: "act5", numeral: "V", role: { en: "Bridge", es: "Puente" }, levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
-  { key: "act6", numeral: "VI", role: { en: "Office Administrator", es: "Office Administrator" }, levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
-  { key: "act7", numeral: "VII", role: { en: "Team Lead", es: "Team Lead" }, levelKeys: ["level24", "level25", "level26", "level27"], scene: "harborside-floor" },
+  { key: "act6", numeral: "VI", role: { en: "Office Administrator", es: "Office Administrator" }, levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "hq-office" },
+  { key: "act7", numeral: "VII", role: { en: "Team Lead", es: "Team Lead" }, levelKeys: ["level24", "level25", "level26", "level27"], scene: "hq-team-room" },
 ];
 
 /** "Act I: New Hire" / "Acto I: Personal nuevo" — the act's full learner-facing name. */
@@ -1194,8 +1201,13 @@ export function levelUpCardFor(level: Level): Level | null {
   return opensLaterAct && !level.levelUp.stoppingPoint ? null : level;
 }
 
-export function sceneForLevel(level: Level): DesktopScene {
-  return actForLevel(level)?.scene ?? "harborside-open";
+/** Act V's room is the door the learner picked; before they pick, they're still on the cafe floor. */
+const BRIDGE_SCENE: Record<BridgePath, DesktopScene> = { a: "college-library", b: "clinic-front-desk" };
+
+export function sceneForLevel(level: Level, path?: BridgePath | null): DesktopScene {
+  const act = actForLevel(level);
+  if (act?.key === "act5" && path) return BRIDGE_SCENE[path];
+  return act?.scene ?? "harborside-open";
 }
 
 export { TAB_LEVEL_KEYS } from "./tabs";
