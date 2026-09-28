@@ -310,9 +310,11 @@ See `level-3-shift-lead/01-lesson-calendar.md`.
 
 | Lesson | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 1 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Drive |
+| 1 | `upload-schedule` | Download an email attachment, find it in Downloads, upload it into the right Drive folder | Browser → Mail, Drive |
+| 2 | `files` | Find the right file in a shared drive, share it at "view" not "edit," rename it to match a naming convention | Browser → Drive |
+| 3 | `mail-send-link` | Email a coworker the link to a file, not an attached copy | Browser → Mail |
 
-See `level-3-shift-lead/02-lesson-files.md`.
+See `level-3-shift-lead/02a-lesson-upload-schedule.md`, `02-lesson-files.md` and `02b-lesson-mail-send-link.md`.
 
 ### Level 6: The Numbers
 

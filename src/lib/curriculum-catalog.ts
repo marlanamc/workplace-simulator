@@ -411,13 +411,20 @@ export const CATALOG_ACTS: CatalogAct[] = [
         lessons: [
           {
             n: "1",
+            taskKey: "upload-schedule",
+            skill: "Download an email attachment and upload it to the right Drive folder",
+            app: "Mail, Drive",
+            tab: "mail",
+          },
+          {
+            n: "2",
             taskKey: "files",
             skill: "Find a file in a shared drive and share it at view, not edit",
             app: "Drive",
             tab: "files",
           },
           {
-            n: "2",
+            n: "3",
             taskKey: "mail-send-link",
             skill: "Email a coworker the link to a file, not an attached copy",
             app: "Mail",

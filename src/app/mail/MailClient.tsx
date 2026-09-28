@@ -81,6 +81,15 @@ import { useLesson } from "@/lib/lesson-context";
 import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_CORRECTIONS, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyVerdict, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { useJobCardOptional } from '@/lib/job-card-context';
 import { storage } from '@/lib/storage';
+import {
+  SCHEDULE_MAIL,
+  UPLOAD_COPY,
+  RIGHT_NOW_STEPS as UPLOAD_STEPS,
+  GOAL as UPLOAD_GOAL,
+  NEXT_SCHEDULE_NAME,
+  NEXT_SCHEDULE_SIZE,
+  SCHEDULE_DOWNLOADED_FLAG,
+} from '@/lib/tasks/upload-schedule/content';
 
 const RIGHT_NOW_LABEL: Localized<string> = { en: "Right now", es: "Ahora mismo" };
 
@@ -184,6 +193,13 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // A Guided lesson spells out every click, so the opening's fading scaffold stays up.
   const lessonRun = useLesson();
   const hiring = lessonRun ? undefined : hiringMailForTask(nextKey);
+  // Day 10's upload job starts here: Renata's email carries the file to download.
+  // It is the job's own source, so a lesson shows it too.
+  const uploadMailActive = nextKey === "upload-schedule";
+  const showScheduleMail = uploadMailActive || (!lessonRun && completedTaskKeys.includes("upload-schedule"));
+  const scheduleDownloaded = storyFlags[SCHEDULE_DOWNLOADED_FLAG] === "true";
+  const setScheduleDownloaded = () => setStoryFlag(SCHEDULE_DOWNLOADED_FLAG, "true");
+  const uc = UPLOAD_COPY[lang];
   const [openingSaving, setOpeningSaving] = useState(false);
   const openingInFlight = useRef(false);
   const [openingSaveError, setOpeningSaveError] = useState(false);
@@ -291,6 +307,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       // Story mail answers what the learner did earlier in the game. A lesson
       // has no earlier, so those rows would only be unexplained decoys.
       ...(lessonRun ? [] : hiringMailsFor(nextKey, completedTaskKeys)),
+      ...(showScheduleMail ? [SCHEDULE_MAIL] : []),
       ...(lessonRun ? [] : storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags)),
       ...(opening ? OPENING_MESSAGES.slice(0, openingIndex + 1).map((message, index) => ({
         key: `opening-${message.id}`, from: message.sender.name, initials: message.sender.initials, color: message.sender.color,
@@ -617,6 +634,16 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]"
       style={{ fontFamily: "Roboto, Arial, sans-serif" }}
     >
+      {uploadMailActive && browserTab === 'mail' && (() => {
+        const scheduleOpen = view === 'story' && openStory?.key === SCHEDULE_MAIL.key;
+        const stepIndex = scheduleDownloaded ? 2 : scheduleOpen ? 1 : 0;
+        const showMeId = scheduleDownloaded ? 'open-drive' : scheduleOpen ? 'download-attachment' : 'schedule-mail-row';
+        return <RightNowBar
+          taskKey="upload-schedule" stepIndex={stepIndex} steps={UPLOAD_STEPS} goal={UPLOAD_GOAL} lang={lang}
+          onShowMe={() => setShowMeTarget(showMeTargetId === showMeId ? null : showMeId)}
+          showMeActive={showMeTargetId === showMeId}
+        />;
+      })()}
       {hiring && browserTab === 'mail' && <RightNowBar
         taskKey={hiring.task} stepIndex={view === 'story' && openStory?.key === hiring.key ? 1 : 0} stepCount={2}
         instruction={{ en: `Read Anita's email: ${hiring.subject.en}.`, es: `Lee el correo de Anita: ${hiring.subject.es}.` }}
@@ -691,7 +718,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 return (
                   <button
                     key={m.key}
-                    data-showme={m.isTarget ? "maria-row" : undefined}
+                    data-showme={m.isTarget ? "maria-row" : m.key === SCHEDULE_MAIL.key ? "schedule-mail-row" : undefined}
                     onClick={() => {
                       if (isStoryMail(m)) {
                         setOpenStory(m);
@@ -1155,6 +1182,33 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
+                    {openStory.key === SCHEDULE_MAIL.key && (
+                      <div data-testid="schedule-attachment" className="mt-5 flex max-w-[420px] flex-wrap items-center gap-3 rounded-xl border border-[#dadce0] px-4 py-3">
+                        <span className="flex h-6 w-5 shrink-0 items-center justify-center rounded-[2px] bg-[#ea4335] text-[8px] font-bold text-white">PDF</span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[14px] font-medium">{NEXT_SCHEDULE_NAME}</span>
+                          <span className="block text-[12px] text-[#5f6368]">
+                            {uc.attachmentLabel} · {NEXT_SCHEDULE_SIZE}
+                            {scheduleDownloaded && <> · <span role="status" className="text-[#137333]">{uc.downloaded}</span></>}
+                          </span>
+                        </span>
+                        {scheduleDownloaded ? (
+                          uploadMailActive && (
+                            <button type="button" data-testid="schedule-open-drive" data-showme="open-drive" data-card-avoid
+                              onClick={() => { setShowMeTarget(null); openApp('browser', { tab: 'files' }); }}
+                              className="min-h-11 rounded-full border border-[#dadce0] px-5 text-sm font-medium text-[#0b57d0] hover:bg-[#e8f0fe]">
+                              {uc.openDrive}
+                            </button>
+                          )
+                        ) : (
+                          <button type="button" data-testid="schedule-download" data-showme="download-attachment" data-card-avoid
+                            onClick={() => { setShowMeTarget(null); setScheduleDownloaded(); }}
+                            className="min-h-11 rounded-full bg-[#0b57d0] px-5 text-sm font-medium text-white hover:bg-[#0b57d0]/90">
+                            {uc.download}
+                          </button>
+                        )}
+                      </div>
+                    )}
                     {hiringMailForKey(openStory.key) && (() => {
                       const message = hiringMailForKey(openStory.key)!;
                       return <button type="button" data-testid="hiring-mail-action" data-card-avoid
@@ -1170,7 +1224,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               );
             })()}
 
-            {view === "done" && !hiring && (() => {
+            {view === "done" && !hiring && !uploadMailActive && (() => {
               const dc = DONE_COPY[activeMailTask][lang];
               const bridgeOutFlag = `bridge-out-shown:${activeMailTask}`;
               const showBridgeOut = bridgeOutEligible && storyFlags[bridgeOutFlag] !== "true";

@@ -9,10 +9,10 @@ import { STORY_DAY_BY_LEVEL, mondayOf, monthDate, shortDate, storyDate, weekRang
  */
 export const FILES_WEEK = mondayOf(STORY_DAY_BY_LEVEL.level5);
 const LAST_WEEK = FILES_WEEK - 7;
-const NEXT_WEEK = FILES_WEEK + 7;
+export const NEXT_WEEK = FILES_WEEK + 7;
 
 /** "sched_91426.pdf": the cafe's month/day/year code for a week's schedule. */
-function schedName(monday: number, suffix = ""): string {
+export function schedName(monday: number, suffix = ""): string {
   const d = storyDate(monday);
   return `sched_${d.getMonth() + 1}${String(d.getDate()).padStart(2, "0")}26${suffix}.pdf`;
 }
@@ -129,7 +129,8 @@ export const MESSY_FILES: DriveFile[] = [
     key: "sched-sept",
     name: schedName(NEXT_WEEK),
     folder: "Schedules",
-    date: POSTED,
+    // Uploaded this morning, in the Day 10 upload-schedule task.
+    date: shortDate(FILES_WEEK, "en"),
     isTarget: false,
     wrongHint: wrongHint(
       `That page says Week of ${NEXT}. That is next week. Jordan starts today, so close it and open this week's.`,

@@ -5,7 +5,7 @@
 folder structure with a couple of decoy files; sharing the right one
 requires renaming it to match a naming convention first, then choosing
 "Can view" instead of "Can edit."
-**Prerequisite:** Level 4 complete
+**Prerequisite:** `upload-schedule` complete (Level 5's first job)
 
 ## We will learn...
 - find a file in a shared drive (not just one inbox), and share it with the
