@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useTaskDraft } from "@/lib/use-task-draft";
+import { useLesson } from "@/lib/lesson-context";
+import { CLOSE_FIRST, CLOSE_FLAG, CLOSE_LINES, closeStage, mustCloseFirst, stageAfterRequest } from "@/lib/tasks/triage/close-window";
 import { useProgress } from "@/lib/progress-context";
 import {
   TRIAGE_COPY,
@@ -24,7 +26,10 @@ import { Calendar, FolderOpen } from "lucide-react";
 type View = "hub" | "calendar" | "files" | "done";
 
 export default function TriageTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, storyFlags, setStoryFlag } = useProgress();
+  const lesson = useLesson();
+  // Day 13's closed-window practice (Wave 4). Lessons skip it.
+  const stage = lesson ? "none" : closeStage(storyFlags[CLOSE_FLAG]);
   const [view, setView] = useState<View>(completedTaskKeys.includes("triage") ? "done" : "hub");
   const [calDone, setCalDone] = useTaskDraft("triage", "calDone", false);
   const [fileDone, setFileDone] = useTaskDraft("triage", "fileDone", false);
@@ -36,6 +41,8 @@ export default function TriageTask() {
   const h = HINTS[lang];
 
   const finishIfReady = (nextCal: boolean, nextFile: boolean) => {
+    const nextStage = lesson ? stage : stageAfterRequest(stage, nextCal, nextFile);
+    if (nextStage !== stage) setStoryFlag(CLOSE_FLAG, nextStage);
     if (nextCal && nextFile) {
       setView("done");
       markComplete("triage", "handle_two_requests");
@@ -45,12 +52,14 @@ export default function TriageTask() {
   };
 
   const proposeTime = () => {
+    if (!calDone && fileDone && mustCloseFirst(stage)) return say(CLOSE_FIRST[lang]);
     if (!triageSlotWorks(slot)) return say(TRIAGE_SLOT_COPY.notFree[lang]);
     setCalDone(true);
     finishIfReady(true, fileDone);
   };
 
   const tryShare = () => {
+    if (!fileDone && calDone && mustCloseFirst(stage)) return say(CLOSE_FIRST[lang]);
     if (permission === "edit") return say(h.edit);
     if (permission !== "view") {
       return say(lang === "en" ? "Choose Viewer." : "Elige Lector.");
@@ -82,6 +91,8 @@ export default function TriageTask() {
           stepIndex={view === "hub" ? 0 : view === "calendar" ? 1 : 2}
           stepCount={RIGHT_NOW_STEPS.length}
           instruction={RIGHT_NOW_STEPS[view === "hub" ? 0 : view === "calendar" ? 1 : 2]}
+          // The close is asked for, so the card says it plainly even in Act II.
+          goal={stage === "ask" ? CLOSE_LINES.ask : stage === "closed" && view === "hub" ? CLOSE_LINES.back : undefined}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onHelp={() => setHelp(true)}

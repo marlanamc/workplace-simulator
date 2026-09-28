@@ -6,6 +6,9 @@ import { useProgress } from "@/lib/progress-context";
 import { useNudge } from "@/lib/use-nudge";
 import NudgeToast from "@/components/task/NudgeToast";
 import { SHELF_RESERVE } from "@/components/Shelf";
+import { useLesson } from "@/lib/lesson-context";
+import { nextTaskInTrack } from "@/lib/tracks-content";
+import { CLOSE_FLAG, closeStage, stageAfterBrowserClosed } from "@/lib/tasks/triage/close-window";
 
 function MinimizeIcon() {
   return (
@@ -34,7 +37,18 @@ function CloseIcon() {
 /** The minimize/maximize/close trio real app windows have, for visual realism. */
 export default function WindowControls({ appKey, dark = false }: { appKey: AppKey; dark?: boolean }) {
   const { minimizeActive, closeApp } = useWindowManager();
-  const { lang } = useProgress();
+  const { lang, currentTrack, completedTaskKeys, storyFlags, setStoryFlag } = useProgress();
+  const lesson = useLesson();
+
+  const close = () => {
+    // Day 13 asks the learner to close the browser on purpose (Wave 4, everyday recovery).
+    if (appKey === "browser" && !lesson) {
+      const stage = closeStage(storyFlags[CLOSE_FLAG]);
+      const next = stageAfterBrowserClosed(nextTaskInTrack(currentTrack, completedTaskKeys), stage);
+      if (next !== stage) setStoryFlag(CLOSE_FLAG, next);
+    }
+    closeApp(appKey);
+  };
   const { nudge, say, dismiss } = useNudge();
   const iconColor = dark ? "text-white/70" : "text-[#5f6368]";
 
@@ -64,7 +78,7 @@ export default function WindowControls({ appKey, dark = false }: { appKey: AppKe
           <MaximizeIcon />
         </button>
         <button
-          onClick={() => closeApp(appKey)}
+          onClick={close}
           aria-label="Close"
           className={`flex h-8 w-9 items-center justify-center hover:bg-[#e81123] hover:text-white cursor-pointer ${iconColor}`}
         >
