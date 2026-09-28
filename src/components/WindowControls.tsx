@@ -41,7 +41,7 @@ export default function WindowControls({ appKey, dark = false }: { appKey: AppKe
   return (
     <>
       {/* data-card-avoid: the Job Card parks elsewhere when it can, so
-          Minimize and Close are never hidden under it. */}
+          Minimize and Close are not hidden under it. */}
       <div data-card-avoid className="flex items-center gap-0.5">
         <button
           onClick={minimizeActive}
