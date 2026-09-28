@@ -408,7 +408,6 @@ describe("learner-facing copy does not use em dashes", () => {
     }
     collectEmDashStrings(
       formatPortfolioSummary({
-        certificateTrackKeys: [],
         completedTaskKeys: [],
         answers: ["", "", "", ""],
         lang: "en",
@@ -418,7 +417,6 @@ describe("learner-facing copy does not use em dashes", () => {
     );
     collectEmDashStrings(
       formatPortfolioSummary({
-        certificateTrackKeys: [],
         completedTaskKeys: [],
         answers: ["", "", "", ""],
         lang: "es",

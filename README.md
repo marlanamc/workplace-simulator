@@ -11,7 +11,7 @@ rather than as separate desktop apps.
 
 ## First-release implementation (September 2026)
 
-Acts I–II are the shared core. The Job Card then offers **Stay and lead** (III–IV), **Healthcare/front desk** (V Path B), **Office/admin** (VI–VII), **College preparation** (V Path A), or **Stop here for now**. Direction is saved to the signed-in learner and can be changed at the desktop without erasing progress. Skipped tasks receive no credit. Route endings offer other directions as choices.
+Acts I–II are the shared core. The Job Card then offers **Stay and lead** (III–IV), **Healthcare/front desk** (V Path B), **Office/admin** (VI–VII), **College preparation** (V Path A), or **Stop here for now**. Direction is saved to the signed-in learner and can be changed at the desktop without erasing progress. Skipped tasks receive no credit. Every route ending, and **Stop here for now**, says on the Job Card what the learner finished and offers **See my summary**; another direction stays one "Change direction" link away.
 
 The runtime contains **37 levels and 51 active tasks**; older folder numbers are editorial labels. `LEVELS` in `src/lib/tracks-content.ts` is authoritative. There are no new levels in this release. Studio can start after Act II or at a later level and seeds only that route’s prerequisites. Studio progress is simulated test setup, not learner assessment.
 
@@ -61,7 +61,14 @@ intact, and the shelf can show a "running" indicator for open apps.
   session and loads real progress; `DesktopClient.tsx` renders the desktop and hosts the
   providers. `/browser`, `/pdf-reader`, and `/mail` are redirect shims to `/` for old links.
 - `/studio` — instructor/dev tools, including the time machine. Teachers and listed class codes only (see TESTING.md).
-- `/certificate/[learnerId]` — the printable certificate.
+- `/summary` — the learner's summary, opened from the Job Card's **See my summary** at every
+  route ending and at Stop here. It lists what they can now do as first-person skills
+  ("I can read a pay stub.") grouped under plain headings, with their name, class code,
+  the date, and the line "Simulated workplace practice, not employment history." It can be
+  copied, downloaded as a .txt, or printed. Signed-in learners only; it shows only their own
+  work. Built by `src/lib/portfolio-summary.ts`, the same builder as the Office route's Recap.
+- `/certificate` and `/certificate/[learnerId]` — the printable certificate is retired; both
+  redirect to `/summary` on purpose (the id is ignored).
 
 ### Apps
 

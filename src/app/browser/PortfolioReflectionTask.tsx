@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
-import { earnedAwardsByAct } from "@/lib/tracks-content";
-import { formatPortfolioSummary } from "@/lib/portfolio-summary";
+import { actLabel, earnedAwardsByAct } from "@/lib/tracks-content";
+import { HONEST_LINE, formatPortfolioSummary, summarySections } from "@/lib/portfolio-summary";
+import { copyText, downloadText, summaryFilename } from "@/lib/share-text";
 import { TASK_INFO } from "@/lib/tracks-content";
+import SummarySections from "@/components/SummarySections";
 import type { Lang } from "@/lib/task-types";
 import {
   REFLECTION_COPY,
@@ -43,7 +45,7 @@ function AwardList({
       {awards.map(({ act, tracks }) => (
         <section key={act.key}>
           <div className="text-[11px] font-medium tracking-wide text-[#5f6368]">
-            {lang === "en" ? "Act" : "Acto"} {act.numeral}
+            {actLabel(act, lang)}
           </div>
           <ul className="mt-1.5 flex flex-col gap-1.5">
             {tracks.map((track) =>
@@ -62,7 +64,7 @@ function AwardList({
 }
 
 export default function PortfolioReflectionTask() {
-  const { markComplete, completedTaskKeys, certificateTrackKeys, lang, writing, saving, saveError } = useProgress();
+  const { markComplete, completedTaskKeys, certificateTrackKeys, displayName, lang, writing, saving, saveError } = useProgress();
   const [view, setView] = useState<View>(
     completedTaskKeys.includes("portfolio-reflection") ? "done" : "review",
   );
@@ -90,33 +92,9 @@ export default function PortfolioReflectionTask() {
     setAnswers(PROMPTS.map(() => ""));
   };
 
-  const summaryText = formatPortfolioSummary({certificateTrackKeys, completedTaskKeys, answers, lang});
-  const downloadSummary = () => {
-    let url: string | undefined;
-    let anchor: HTMLAnchorElement | undefined;
-    try {
-      url = URL.createObjectURL(new Blob([summaryText], {type: 'text/plain;charset=utf-8'}));
-      anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = lang === 'en' ? 'workplace-practice-summary.txt' : 'resumen-practica-laboral.txt';
-      document.body.appendChild(anchor);
-      anchor.click();
-      say(c.downloadStarted);
-    } catch { say(c.downloadFailed); }
-    finally {
-      anchor?.remove();
-      if (url) { const objectUrl = url; setTimeout(() => URL.revokeObjectURL(objectUrl), 1000); }
-    }
-  };
-
-  const copySummary = async () => {
-    try {
-      await navigator.clipboard.writeText(summaryText);
-      say(c.copied);
-    } catch {
-      say(c.copyFailed);
-    }
-  };
+  const summaryText = formatPortfolioSummary({ displayName, completedTaskKeys, answers, lang });
+  const downloadSummary = () => say(downloadText(summaryText, summaryFilename(lang)) ? c.downloadStarted : c.downloadFailed);
+  const copySummary = async () => say((await copyText(summaryText)) ? c.copied : c.copyFailed);
 
   if (view === "done") {
     return (
@@ -127,10 +105,11 @@ export default function PortfolioReflectionTask() {
             <div className="rounded-2xl border border-[#dadce0] bg-white p-5">
               <h2 className="text-[18px] font-medium">{c.summaryTitle}</h2>
               <p className="mt-1 text-[13px] leading-relaxed text-[#5f6368]">{c.summaryIntro}</p>
+              <p className="mt-1 text-[13px] leading-relaxed text-[#5f6368]">{HONEST_LINE[lang]}</p>
 
               <div className="mt-4 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.canDoHeading}</div>
               <div className="mt-2">
-                <AwardList lang={lang} awards={awards} emptyLabel={c.noAwardsYet} />
+                <SummarySections sections={summarySections(completedTaskKeys, lang)} emptyLabel={c.noAwardsYet} />
               </div>
 
               <div className="mt-5 text-[12px] font-medium uppercase tracking-wide text-[#5f6368]">{c.reflectionHeading}</div>

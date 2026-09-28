@@ -3,7 +3,7 @@ import { RECIPIENT_OPTIONS, recipientIsAuthorized, describeSubmission as intakeS
 import { PRIORITY_OPTIONS, priorityIsSupported, describeSubmission as prioritySubmission } from '../tasks/priority-call/content';
 import { REVIEW_EVIDENCE, restoreReviewDraft, performanceReviewPasses, describeSubmission as reviewSubmission } from '../tasks/performance-review/content';
 import { formatPortfolioSummary } from '../portfolio-summary';
-import { TRACKS, TASK_INFO } from '../tracks-content';
+import { firstPersonSkill } from '../skills';
 
 describe('decisions grounded in the scenario', () => {
  it.each(RECIPIENT_OPTIONS)('grades recipient $key', (option) => {
@@ -38,19 +38,19 @@ describe('decisions grounded in the scenario', () => {
 
 describe('one accurate text artifact for clipboard and download', () => {
  it.each(['en','es'] as const)('includes saved reflection text and only earned tasks (%s)', (lang) => {
-  const track=TRACKS.find((track) => track.taskKeys.includes('mail-reply'))!;
-  const text=formatPortfolioSummary({lang,certificateTrackKeys:[track.key],completedTaskKeys:['mail-reply'],answers:['Aprendí a compartir archivos.','Second answer','Third answer','Fourth answer']});
+  const text=formatPortfolioSummary({lang,displayName:'Ana',completedTaskKeys:['mail-reply'],answers:['Aprendí a compartir archivos.','Second answer','Third answer','Fourth answer']});
   expect(text).toContain('Aprendí a compartir archivos.');
-  expect(text).toContain(TASK_INFO['mail-reply'].label[lang]);
-  expect(text).not.toContain(TASK_INFO['mail-attach'].label[lang]);
-  expect(text).not.toContain(TASK_INFO['priority-call'].label[lang]);
+  expect(text).toContain(firstPersonSkill('mail-reply',lang));
+  expect(text).not.toContain(firstPersonSkill('priority-call',lang));
+  expect(text).not.toContain(firstPersonSkill('job-application',lang));
   expect(text).toContain(lang === 'en' ? 'not employment history' : 'no es historial de empleo');
-  expect(text).toContain(lang === 'en' ? 'Act I' : 'Acto I');
+  expect(text).toContain(lang === 'en' ? 'Starting a new job' : 'Empezar en un trabajo nuevo');
+  expect(text).toContain('Ana');
+  expect(text).not.toMatch(/\bActo? I\b/);
  });
- it('does not fabricate awards without completed tasks', () => {
-  const text=formatPortfolioSummary({lang:'en',certificateTrackKeys:TRACKS.map((track)=>track.key),completedTaskKeys:[],answers:[]});
-  expect(text).not.toContain('Act I');
-  expect(text).not.toContain(TASK_INFO['job-application'].label.en);
+ it('does not fabricate skills without completed tasks', () => {
+  const text=formatPortfolioSummary({lang:'en',completedTaskKeys:[],answers:[]});
+  expect(text).not.toContain('- I can ');
  });
 });
 

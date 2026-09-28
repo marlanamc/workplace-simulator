@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -20,6 +21,7 @@ import {
 import {
   coreComplete,
   courseComplete,
+  courseLevels,
   TASK_INFO,
   TASK_LOCATIONS,
   actForLevel,
@@ -29,6 +31,7 @@ import {
   taskKeysForLevel,
 } from "@/lib/tracks-content";
 import { COURSE_ROUTES, COURSE_ROUTE_LABELS } from "@/lib/course-route";
+import { ENDING_COPY, SUMMARY_COPY, workdaysFinished } from "@/lib/portfolio-summary";
 import type { TaskKey } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import { dayLabel } from "@/lib/shift-spine";
@@ -162,6 +165,7 @@ export default function JobCard() {
     useProgress();
   const { active, openApp, minimizeActive } = useWindowManager();
   const lesson = useLesson();
+  const router = useRouter();
   const {
     step,
     finish,
@@ -536,12 +540,38 @@ export default function JobCard() {
       };
     }
 
-    if (!lesson && active === null && courseRoute === 'pause' && !choosingRoute && coreComplete(completedTaskKeys)) return {
-      badge: '✓', kicker: lang === 'en' ? 'Core course complete' : 'Curso básico terminado',
-      line: lang === 'en' ? 'You can stop here. Your skills and progress are saved.' : 'Puedes terminar aquí. Tus habilidades y tu progreso están guardados.',
-      tone: 'green', step: -1,
-      primaryLabel: lang === 'en' ? 'Explore another direction' : 'Explorar otro camino', onPrimary: () => setChoosingRoute(true),
+    // The end of the course, or of a route: say what they finished, and
+    // offer the summary they can keep. Another direction stays one quiet
+    // "Change direction" link away (below the line).
+    const seeSummary = {
+      primaryLabel: SUMMARY_COPY.seeSummary[lang],
+      onPrimary: () => router.push(`/summary?lang=${lang}`),
+      primaryTestId: "see-summary",
+      hint: ENDING_COPY.summaryHint[lang],
     };
+    if (!lesson && active === null && courseRoute === 'pause' && !choosingRoute && coreComplete(completedTaskKeys)) {
+      const days = workdaysFinished(completedTaskKeys);
+      const beyondCore = COURSE_ROUTES.some((r) => r !== 'pause' && courseComplete(completedTaskKeys, r));
+      return {
+        badge: '✓',
+        kicker: beyondCore
+          ? (lang === 'en' ? 'Finished for now' : 'Terminado por ahora')
+          : (lang === 'en' ? 'Core course complete' : 'Curso básico terminado'),
+        line: beyondCore
+          ? ENDING_COPY.stopLine(days, lang)
+          : `${ENDING_COPY.coreLine(days, lang)} ${lang === 'en' ? 'Your progress is saved.' : 'Tu progreso está guardado.'}`,
+        tone: 'green', step: -1,
+        ...seeSummary,
+      };
+    }
+    if (!lesson && active === null && !choosingRoute && courseRoute && courseRoute !== 'pause' && coreComplete(completedTaskKeys) && courseComplete(completedTaskKeys, courseRoute)) {
+      return {
+        badge: '✓', kicker: ENDING_COPY.routeKicker[lang],
+        line: ENDING_COPY.routeLine(courseRoute, workdaysFinished(completedTaskKeys), lang),
+        tone: 'green', step: -1,
+        ...seeSummary,
+      };
+    }
     if (!lesson && coreComplete(completedTaskKeys) && (choosingRoute || (active === null && courseComplete(completedTaskKeys, courseRoute)))) {
       return {
         badge: "✓", kicker: lang === "en" ? "Your next direction" : "Tu próximo camino",
@@ -560,11 +590,24 @@ export default function JobCard() {
       const justFinished = finishedTaskKey;
       const finishedTrack = justFinished ? findTrackForTask(justFinished) : undefined;
       // The day the learner just finished, not the one they are moving into.
+      const finishedLevel = finishedTrack ? levelForTrack(finishedTrack.key) : level;
       const finishedLevelKeys = finishedTrack
-        ? taskKeysForLevel(levelForTrack(finishedTrack.key), bridgePath)
+        ? taskKeysForLevel(finishedLevel, bridgePath)
         : levelTaskKeys;
       const remaining = finishedLevelKeys.filter((k) => !completedTaskKeys.includes(k)).length;
       const levelFinished = remaining === 0;
+      // The last day of the core, or of the chosen route: there is no
+      // tomorrow to start, so the card says what they finished instead.
+      const endRoute = courseRoute === 'pause' ? null : courseRoute;
+      const endLevels = courseLevels(endRoute);
+      const endsRoute = !lesson && levelFinished
+        && endLevels[endLevels.length - 1]?.key === finishedLevel.key
+        && courseComplete(completedTaskKeys, endRoute);
+      const endLine = endsRoute
+        ? (endRoute
+          ? ENDING_COPY.routeLine(endRoute, workdaysFinished(completedTaskKeys), lang)
+          : ENDING_COPY.coreLine(workdaysFinished(completedTaskKeys), lang))
+        : undefined;
       const doneLine = justFinished ? JOB_CARD_DONE_LINE[justFinished]?.[lang] : undefined;
       return {
         badge: "✓",
@@ -572,13 +615,14 @@ export default function JobCard() {
         tone: "green",
         step: 4,
         line:
+          endLine ??
           doneLine ??
           (levelFinished
             ? c.dayDoneLine
             : remaining === 1
               ? c.oneJobLeft
               : c.jobsLeft(remaining)),
-        primaryLabel: levelFinished ? c.startTomorrow : c.nextJob,
+        primaryLabel: endsRoute ? SUMMARY_COPY.backToDesk[lang] : levelFinished ? c.startTomorrow : c.nextJob,
         onPrimary: minimizeActive,
         secondaryLabel: finish.onTryAgain ? c.doItAgain : undefined,
         onSecondary: finish.onTryAgain,
