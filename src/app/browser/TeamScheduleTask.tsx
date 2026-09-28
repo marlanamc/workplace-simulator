@@ -261,7 +261,8 @@ export default function TeamScheduleTask() {
               </span>
             </button>
           </div>
-          <aside className="w-full shrink-0 lg:w-[300px]">
+          {/* Stacked (below lg), the voicemail comes first and sits left, clear of the Job Card. */}
+          <aside className={`w-fit shrink-0 lg:order-none lg:w-[300px] ${messageSent ? "" : "order-first"}`}>
             <PhoneFrame label={vm.phoneLabel} time="8:31">
               <h3 className="px-[16px] pt-[4px] pb-[8px] text-[22px] font-bold leading-none tracking-tight">{vm.heading}</h3>
               <div className="bg-white px-[14px] py-[10px]">

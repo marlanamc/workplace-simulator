@@ -92,6 +92,10 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
     }
     setFiled(true);
     setView("text");
+    // The page keeps the form's scroll position; bring Maria's text to the top.
+    requestAnimationFrame(() =>
+      document.querySelector('[data-testid="text-thread"]')?.scrollIntoView({ block: "start" }),
+    );
   };
 
   const sendText = () => {
@@ -215,11 +219,9 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       )}
 
       {view === "text" && (
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-          <p className="max-w-[440px] flex-1 text-[14px] text-text-secondary">{c.sentKicker}</p>
-          <aside className="w-full shrink-0 lg:w-[260px]">
-            <TextThread lang={lang} reply={reply} onReply={setReply} onSend={sendText} />
-          </aside>
+        // Just the phone, on the left: the Job Card parks on the right at Chromebook size.
+        <div className="w-fit">
+          <TextThread lang={lang} reply={reply} onReply={setReply} onSend={sendText} />
         </div>
       )}
 
@@ -285,7 +287,8 @@ function TextThread({
     <PhoneFrame label={t.label} time="4:12">
       <h3 className="px-[16px] pt-[4px] pb-[8px] text-center text-[15px] font-semibold">{MARIA_TEXT_FROM}</h3>
       <div data-testid="text-thread" className="flex min-h-[220px] flex-col gap-2 bg-white px-[10px] py-[12px]">
-        <p className="max-w-[85%] self-start rounded-[16px] rounded-bl-[4px] bg-[#e9e9eb] px-[10px] py-[7px] text-[13px] leading-snug">
+        {/* data-card-avoid: this is what the learner has to read, so the Job Card parks elsewhere. */}
+        <p data-card-avoid className="max-w-[85%] self-start rounded-[16px] rounded-bl-[4px] bg-[#e9e9eb] px-[10px] py-[7px] text-[13px] leading-snug">
           {MARIA_TEXT[lang]}
         </p>
         {sent && (
