@@ -1,5 +1,5 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
-import { DEADLINE } from "@/lib/tasks/enrollment/content";
+import { ENROLLMENT_DEADLINE_DAY, yearDate } from "@/lib/story-dates";
 
 export const PDF_DOC_ID = "award-letter-fall-2026";
 export const AWARD_AMOUNT = 2400;
@@ -30,7 +30,7 @@ export const DATE_CHECK: Record<Lang, { question: string; options: CheckOption[]
   en: {
     question: "When must you accept?",
     options: [
-      { label: DEADLINE.en, wrongHint: { en: "That was the application deadline.", es: "Esa era la fecha de la solicitud." } },
+      { label: yearDate(ENROLLMENT_DEADLINE_DAY, "en"), wrongHint: { en: "That was the application deadline.", es: "Esa era la fecha de la solicitud." } },
       { label: "October 15, 2026", isTarget: true },
       { label: "December 1, 2026", wrongHint: { en: "The accept-by date is earlier.", es: "La fecha para aceptar es antes." } },
     ],
@@ -38,7 +38,7 @@ export const DATE_CHECK: Record<Lang, { question: string; options: CheckOption[]
   es: {
     question: "¿Para cuándo hay que aceptar?",
     options: [
-      { label: DEADLINE.es, wrongHint: { en: "That was the application deadline.", es: "Esa era la fecha de la solicitud." } },
+      { label: yearDate(ENROLLMENT_DEADLINE_DAY, "es"), wrongHint: { en: "That was the application deadline.", es: "Esa era la fecha de la solicitud." } },
       { label: "15 de octubre de 2026", isTarget: true },
       { label: "1 de diciembre de 2026", wrongHint: { en: "The accept-by date is earlier.", es: "La fecha para aceptar es antes." } },
     ],

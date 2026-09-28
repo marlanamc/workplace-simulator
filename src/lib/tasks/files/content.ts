@@ -249,7 +249,7 @@ export const FILES_COPY: Record<Lang, {
     searchPlaceholder: "Search files…",
     allFolders: "All folders",
     renameLabel: "Rename this file",
-    renameHint: "New name: schedule-week-of-aug-24",
+    renameHint: `New name: ${RENAME_TARGET}`,
     renamePlaceholder: "Type the new file name…",
     renameContinue: "Continue",
     shareWith: "Share with",
@@ -287,7 +287,7 @@ export const FILES_COPY: Record<Lang, {
     searchPlaceholder: "Buscar archivos…",
     allFolders: "Todas las carpetas",
     renameLabel: "Cambia el nombre de este archivo",
-    renameHint: "Nombre nuevo: schedule-week-of-aug-24",
+    renameHint: `Nombre nuevo: ${RENAME_TARGET}`,
     renamePlaceholder: "Escribe el nuevo nombre…",
     renameContinue: "Continuar",
     shareWith: "Compartir con",
@@ -514,18 +514,18 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
 };
 
 export const WRONG_RENAME_HINT: Record<Lang, string> = {
-  en: "Check the name. Type these words with a dash - between them: schedule-week-of-aug-24",
-  es: "Revisa el nombre. Escribe estas palabras con un guion - entre ellas: schedule-week-of-aug-24",
+  en: `Check the name. Type these words with a dash - between them: ${RENAME_TARGET}`,
+  es: `Revisa el nombre. Escribe estas palabras con un guion - entre ellas: ${RENAME_TARGET}`,
 };
 
 export const RENAME_HINTS: Record<RenameProblem, Localized> = {
   empty: {
-    en: "The box is empty. Type the new name: schedule-week-of-aug-24",
-    es: "La casilla está vacía. Escribe el nombre nuevo: schedule-week-of-aug-24",
+    en: `The box is empty. Type the new name: ${RENAME_TARGET}`,
+    es: `La casilla está vacía. Escribe el nombre nuevo: ${RENAME_TARGET}`,
   },
   oldName: {
-    en: "The old name is still in the box. Delete the old name first. Then type schedule-week-of-aug-24",
-    es: "El nombre viejo sigue en la casilla. Borra el nombre viejo primero. Después escribe schedule-week-of-aug-24",
+    en: `The old name is still in the box. Delete the old name first. Then type ${RENAME_TARGET}`,
+    es: `El nombre viejo sigue en la casilla. Borra el nombre viejo primero. Después escribe ${RENAME_TARGET}`,
   },
   wrong: { en: WRONG_RENAME_HINT.en, es: WRONG_RENAME_HINT.es },
 };
@@ -581,7 +581,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Renaming a file",
       s: [
         "The old name is already in the box, and it is selected. Just start typing to replace it. If you click in the box, delete the old name first.",
-        "Type the new name exactly: schedule-week-of-aug-24",
+        `Type the new name exactly: ${RENAME_TARGET}`,
         "The dash - is next to the 0 key. Then click Continue, or press Enter.",
       ],
       tip: "A clear name helps the next person find the file.",
@@ -610,7 +610,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Cambiar el nombre de un archivo",
       s: [
         "El nombre viejo ya está en la casilla, y está seleccionado. Empieza a escribir para reemplazarlo. Si haces clic en la casilla, borra primero el nombre viejo.",
-        "Escribe el nombre nuevo tal cual: schedule-week-of-aug-24",
+        `Escribe el nombre nuevo tal cual: ${RENAME_TARGET}`,
         "El guion - está al lado de la tecla 0. Después haz clic en Continuar, o presiona Enter.",
       ],
       tip: "Un nombre claro ayuda a la próxima persona a encontrar el archivo.",

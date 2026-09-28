@@ -80,6 +80,13 @@ export const STORY_DAY_BY_LEVEL: Readonly<Record<string, number>> = {
   level27: 77, // Fri Oct 16
 };
 
+/**
+ * The college application deadline: the Friday after next from Getting Ready
+ * (level16), so it is still ahead of the learner, and before the aid letter's
+ * accept-by date (October 15). Enrollment and financial aid both read it.
+ */
+export const ENROLLMENT_DEADLINE_DAY = STORY_DAY_BY_LEVEL.level16 + 11;
+
 /** The story day a level takes place on. Throws on a level with no date, so a new level cannot quietly borrow another's. */
 export function storyDayOf(levelKey: string): number {
   const day = STORY_DAY_BY_LEVEL[levelKey];
@@ -191,6 +198,11 @@ export function monthDate(day: number, lang: Lang): string {
   return lang === "en"
     ? `${MONTH_LONG.en[d.getMonth()]} ${d.getDate()}`
     : `${d.getDate()} de ${MONTH_LONG.es[d.getMonth()]}`;
+}
+
+/** "October 9, 2026" / "9 de octubre de 2026". */
+export function yearDate(day: number, lang: Lang): string {
+  return lang === "en" ? `${monthDate(day, "en")}, ${STORY_YEAR}` : `${monthDate(day, "es")} de ${STORY_YEAR}`;
 }
 
 /** "Wednesday, September 16" / "miércoles 16 de septiembre". */

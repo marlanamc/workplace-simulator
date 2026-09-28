@@ -39,7 +39,7 @@ export const STORY_AUDIT_SENTENCES: AuditSentence[] = [
   // No field: the start date as the audit typed it inside a reply. Graded by the reply's date check.
   { task: "job-offer", day: "Day 28", lang: "en", text: "October 6th", expect: "accept", why: "The right start date, written with an ordinal." },
   { task: "job-offer", day: "Day 28", lang: "en", text: "6th of October", expect: "accept", why: "The right start date, day first." },
-  { task: "job-offer", day: "Day 28", lang: "en", field: "reply", text: "ok i come monday", expect: "accept", why: "A clear acceptance with the day." },
+  { task: "job-offer", day: "Day 28", lang: "en", field: "reply", text: "ok i come tuesday", expect: "accept", why: "A clear acceptance with the day." },
   // No field: the gap half of the summary. The full summary also needs the total (see the grading tests).
   { task: "ops-report-packet", day: "Day 36", lang: "en", text: "Thursday morning open no person", expect: "accept", why: "Names the coverage gap without the phrase \"coverage gap\"." },
   { task: "portfolio-reflection", day: "Day 37", lang: "en", text: "email / computer / no scared / is good", expect: "accept", why: "The card says a few words each is fine." },

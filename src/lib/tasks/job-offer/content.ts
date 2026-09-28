@@ -113,8 +113,8 @@ export const DATE_CHOICES: { key: string; label: Localized; ok: boolean }[] = [
 
 /** The start date in the letter, as a month and day. */
 export const START_DATE: MonthDay = { month: 10, day: 6 };
-/** The letter says "Monday, October 6", so "I come Monday" names the start day too. */
-const START_WEEKDAY = /\b(monday|mon|lunes)\b/;
+/** The letter says "Tuesday, October 6", so "I come Tuesday" names the start day too. */
+const START_WEEKDAY = /\b(tuesday|tues|tue|martes)\b/;
 
 /**
  * The start date in any common form: "October 6th", "6th of October",

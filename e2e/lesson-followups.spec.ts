@@ -77,9 +77,9 @@ for (const lang of ["en", "es"]) {
   test(`files change from viewing to authorized editing (${lang})`, async ({ page }) => {
     await start(page, "files", lang);
     await page.locator('[data-showme="shared-drive"]').click();
-    await page.getByRole("button", { name: /sched_82426.pdf/ }).click();
+    await page.getByRole("button", { name: /sched_91426.pdf/ }).click();
     await page.locator('[data-showme="preview-rename"]').click();
-    await page.locator('[data-showme="rename-input"]').fill("schedule-week-of-aug-24");
+    await page.locator('[data-showme="rename-input"]').fill("schedule-week-of-sep-14");
     await page.locator('[data-showme="rename-input"]').press("Enter");
     await page.locator('[data-showme="can-view"]').click();
     await page.getByRole("button", { name: lang === "en" ? "Share" : "Compartir", exact: true }).click();

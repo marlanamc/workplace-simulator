@@ -212,7 +212,7 @@ describe("each correction names what is missing", () => {
     expect(offerAcceptVerdict("I accept. See you October 6th.")).toBe("ok");
     expect(offerAcceptVerdict("I will start on the 6th of October, I accept")).toBe("ok");
     expect(offerAcceptVerdict("I accepted! see you october 6")).toBe("ok");
-    expect(offerAcceptVerdict("ok i come monday")).toBe("ok");
+    expect(offerAcceptVerdict("ok i come tuesday")).toBe("ok");
     expect(offerAcceptVerdict("I accept, thank you.")).toBe("no-date");
     expect(offerAcceptVerdict("I accept and will start October 9.")).toBe("wrong-date");
   });
