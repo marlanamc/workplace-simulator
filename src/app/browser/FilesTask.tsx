@@ -6,6 +6,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import type { PdfDocument } from "@/lib/pdf-content";
 import { useProgress } from "@/lib/progress-context";
 import { useJobCardOptional } from "@/lib/job-card-context";
+import { useWindowManager } from "@/lib/window-manager";
 import {
   FILES,
   MESSY_FILES,
@@ -35,7 +36,7 @@ import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 import SettingsPopover from "@/components/task/SettingsPopover";
-import { levelForTrack } from "@/lib/tracks-content";
+import { levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -44,26 +45,31 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import { Folder, Home, Plus, Users } from "lucide-react";
 import OfficeDriveTask from "./OfficeDriveTask";
+import UploadScheduleDrive from "./UploadScheduleDrive";
+import DriveMark from "./DriveMark";
 import { RECEIPT_FILES, RECEIPTS_COPY } from "@/lib/tasks/expense-report/content";
 
 type View = "home" | "mine" | "browse" | "preview" | "rename" | "share" | "done";
 
 const FOLDERS = ["Schedules", "Forms", "Manager Memos"];
 
-function DriveMark() {
-  return (
-    <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden>
-      <path fill="#0f9d58" d="M1.5 21 8.25 21 15.5 8 8.75 8z" />
-      <path fill="#4285f4" d="M15.5 8 22.5 21 15.75 21 8.75 8z" />
-      <path fill="#fbbc04" d="M8.25 21 15.75 21 12 14.5z" />
-    </svg>
-  );
-}
-
 export default function FilesTask() {
-  const { currentTrack } = useProgress();
+  const { currentTrack, completedTaskKeys } = useProgress();
+  const { browserTabToken } = useWindowManager();
+  // Day 10 opens with the upload job; the share job follows in the same Drive.
+  // Decided when Drive opens, not every render: finishing the upload must
+  // leave its done screen up, not swap in the share job under the learner.
+  // Reopening Drive (a new tab token, or a new mount) decides again.
+  const uploadNext = nextTaskInTrack(currentTrack, completedTaskKeys) === "upload-schedule";
+  const [uploadJob, setUploadJob] = useState(uploadNext);
+  const [lastToken, setLastToken] = useState(browserTabToken);
+  if (browserTabToken !== lastToken) {
+    setLastToken(browserTabToken);
+    setUploadJob(uploadNext);
+  }
   if (currentTrack.key === "office-drive") return <OfficeDriveTask />;
   if (currentTrack.key === "expense-report") return <ReceiptsDrive />;
+  if (uploadJob) return <UploadScheduleDrive />;
   return <CafeFilesTask />;
 }
 

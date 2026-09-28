@@ -13,6 +13,8 @@ import { TASK_LIST } from "@/lib/tasks/registry";
 export const HUDDLE_TIME_FLAG = "huddleTime";
 /** Set when the learner flags a hours mismatch and Mail should open to compose. */
 export const TIMECLOCK_MAIL_FLAG = "timeclock-mail-open";
+/** Set when the learner downloads next week's schedule from Renata's Day 10 email. */
+export const SCHEDULE_DOWNLOADED_FLAG = "schedule-downloaded";
 
 export type StoryFlags = Record<string, string>;
 
@@ -1041,6 +1043,7 @@ export function storyFlagKeysForTasks(taskKeys: Iterable<TaskKey>): string[] {
   for (const task of taskKeys) {
     if (task === "calendar") keys.push(HUDDLE_TIME_FLAG);
     if (task === "timeclock") keys.push(TIMECLOCK_MAIL_FLAG);
+    if (task === "upload-schedule") keys.push(SCHEDULE_DOWNLOADED_FLAG);
   }
   return keys;
 }

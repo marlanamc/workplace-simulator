@@ -228,6 +228,9 @@ export const TASK_KEYS = [
   "incident",
   "handbook",
   "calendar",
+  // Wave 4 file confidence: download next week's schedule from Renata's
+  // email and upload it to the Schedules folder, before the share task.
+  "upload-schedule",
   "files",
   // Second lesson of the Shared Files level: you shared the file, now send
   // the coworker the link (not an attached copy that goes stale).

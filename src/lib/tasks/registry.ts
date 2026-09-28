@@ -665,6 +665,28 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
   },
 
+  "upload-schedule": {
+    key: "upload-schedule",
+    built: true,
+    label: { en: "Upload next week's schedule", es: "Sube el horario de la próxima semana" },
+    dispatch: {
+      en: "Renata emailed next week's schedule. Download it and upload it to the Schedules folder in Drive.",
+      es: "Renata envió por correo el horario de la próxima semana. Descárgalo y súbelo a la carpeta Schedules en Drive.",
+    },
+    jobCardLine: {
+      en: "Download next week's schedule from Renata's email. Upload it to the Schedules folder in Drive.",
+      es: "Descarga el horario de la próxima semana del correo de Renata. Súbelo a la carpeta Schedules en Drive.",
+    },
+    skill: { en: "Download a file and upload it to the right folder", es: "descargar un archivo y subirlo a la carpeta correcta" },
+    bookmarkLabel: "Mail",
+    handoffCta: { en: "Open Mail from the bookmarks", es: "Abre Correo en los marcadores" },
+    shiftMoment: {
+      en: "Monday morning. Renata sent next week's schedule.",
+      es: "Lunes por la mañana. Renata envió el horario de la próxima semana.",
+    },
+    location: browser("Open Mail from the bookmarks"),
+  },
+
   files: {
     key: "files",
     built: true,

@@ -36,7 +36,18 @@ export function activeMailTaskFor(
   const reachable = mailTasksReachable(route, currentLevelKey);
   const next =
     reachable.find((k) => !completedTaskKeys.includes(k)) ?? reachable[reachable.length - 1] ?? "mail-reply";
-  // Mail remains browsable during the schedule job, but its next challenge
-  // must wait until that job is finished.
-  return next === "mail-attach" && !completedTaskKeys.includes("schedule") ? "mail-reply" : next;
+  // Mail remains browsable during a job that comes first in the same level,
+  // but its own challenge waits until that job is finished. Until then the
+  // previous mail job (already done) holds the window.
+  const waitsFor = WAITS_FOR[next];
+  if (waitsFor && !completedTaskKeys.includes(waitsFor)) {
+    return reachable[reachable.indexOf(next) - 1] ?? "mail-reply";
+  }
+  return next;
 }
+
+/** A mail job that comes after another job in its own level. */
+const WAITS_FOR: Partial<Record<PlayableMailTask, TaskKey>> = {
+  "mail-attach": "schedule",
+  "mail-send-link": "files",
+};

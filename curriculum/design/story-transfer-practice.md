@@ -1,8 +1,10 @@
 # Story audit follow-through: transfer practice
 
-Design proposal · 28 September 2026 · not implemented or learner-tested.
+Design · 28 September 2026 · family 1 in progress, not learner-tested.
 
-The existing story teaches a useful sequence of workplace tasks, but its simulated apps do not yet establish that someone can find a downloaded file, recover from a closed window, or reply in a different communication channel. Add these as short practice rounds after the relevant existing task, with a separate retry and no loss of earned story work. Do not lengthen every learner's required route before a pilot establishes the benefit.
+The existing story teaches a useful sequence of workplace tasks, but its simulated apps do not yet establish that someone can find a downloaded file, recover from a closed window, or reply in a different communication channel.
+
+**Owner decision (28 Sep 2026):** each family is built as **required steps inside an existing level**, not as optional practice rounds. Depth over breadth: use the story that is already there, add a task to a level only where no current task fits, and ship one PR per family. The pilot still decides whether any of it should get shorter or move.
 
 ## Shared design
 
@@ -12,17 +14,26 @@ Use fictional files and contacts. A simulated permission or upload task must nev
 
 ## 1. File confidence
 
-Placement: after the shared schedule task; optional Story practice round.
+Status: in progress on `feat/wave-4-file-confidence`.
 
-Scenario: Maria needs the updated schedule in the team folder, with a name she can recognize.
+Placement: Day 10, Shared Files (`level5`, Act II, manager Renata). It gets a new first task, `upload-schedule`, before `files` (rename and share) and `mail-send-link`. The level now has three tasks. The `files` task already teaches rename, so this task does not repeat it.
 
-Sequence: download the supplied PDF into simulated Downloads; reopen Downloads and identify the file; rename it; move it into the team folder; choose it in a simulated upload picker. Offer Print / Save as PDF as a separate follow-up, not a prerequisite to the whole sequence.
+Scenario: Renata's Monday email has **next week's** crew schedule attached. She asks you to put it in the Schedules folder in Drive so the crew can see it. Next week's file is used on purpose. In the following `files` task, the learner has to pick *this* week's schedule, and the file they just uploaded is one of the look-alikes. Reading the week at the top of the page is how they tell them apart.
 
-Initial Job Card: “Maria needs this schedule in the team folder. Download the PDF first.” / “Maria necesita este horario en la carpeta del equipo. Primero descarga el PDF.”
+Sequence:
+1. In Mail, open Renata's message.
+2. Download the attachment. It then appears in Downloads, both in the PDF app's list and in the upload picker.
+3. Open Drive and go to the Schedules folder.
+4. New → File upload opens a picker on Downloads.
+5. Choose next week's schedule, not this week's copy (the distractor), and upload it.
 
-Evidence: preserve file identity through rename/move; check the selected file's identity and destination, not just the typed name. A similarly named old schedule is a meaningful distractor. Wrong folder or old file receives a correction without resetting completed steps. Completion: “You downloaded, found, renamed and moved the schedule.” Do not claim the learner has uploaded a real file from their device.
+Print / Save as PDF is a later follow-up on the résumé day, not part of this task.
 
-Pilot transfer: with permission, supply a harmless PDF outside the simulator and observe whether the learner finds it in the device's Downloads folder. Record independent success, requested support, and recovery after a wrong file.
+Job Card (Act II states the goal, not the clicks): “Download next week's schedule from Renata's email. Upload it to the Schedules folder in Drive.” / “Descarga el horario de la próxima semana del correo de Renata. Súbelo a la carpeta Schedules en Drive.”
+
+Evidence: the uploaded file's identity plus the folder it went to. Neither a typed name nor a click counts. Each of these gets one factual correction and resets no step: opening Upload before downloading, uploading outside Schedules, or picking this week's schedule. Completion: “You downloaded next week's schedule and uploaded it to the Schedules folder.” It makes no claim about files on the learner's own device.
+
+Pilot transfer: with permission, supply a harmless PDF outside the simulator. Observe whether the learner finds it in the device's Downloads folder and uploads it to a shared folder. Record independent success, requested support, and recovery after a wrong file.
 
 ## 2. Everyday recovery
 

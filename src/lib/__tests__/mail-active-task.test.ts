@@ -77,4 +77,17 @@ describe("activeMailTaskFor", () => {
   it("still holds the attach job until the schedule is read", () => {
     expect(activeMailTaskFor(["tour", "mail-read", "mail-reply"], null, "level2")).toBe("mail-reply");
   });
+
+  it("holds Day 10's link email until the upload and the share are done", () => {
+    const levels = courseLevels(null);
+    const day10 = levels.findIndex((l) => l.key === "level5");
+    const before = doneBefore(null, day10);
+    for (const done of [before, [...before, "upload-schedule" as TaskKey]]) {
+      const active = activeMailTaskFor(done, null, "level5");
+      expect(active).not.toBe("mail-send-link");
+      // Mail opens on a job already done, so it is browsable, not a compose screen.
+      expect(done).toContain(active);
+    }
+    expect(activeMailTaskFor([...before, "upload-schedule", "files"], null, "level5")).toBe("mail-send-link");
+  });
 });

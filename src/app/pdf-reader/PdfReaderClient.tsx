@@ -14,16 +14,24 @@ import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { PdfIcon } from "@/lib/icons";
 import { PdfSheet } from "@/components/task/PdfSheet";
+import { SCHEDULE_DOWNLOADED_FLAG, NEXT_SCHEDULE_DOC, THIS_SCHEDULE_DOC } from "@/lib/tasks/upload-schedule/content";
 
 export default function PdfReaderClient() {
   const { pdfDocId, pdfDocToken } = useWindowManager();
-  const { displayName, lang, courseRoute, currentTrack } = useProgress();
+  const { displayName, lang, courseRoute, currentTrack, completedTaskKeys, storyFlags } = useProgress();
   const lesson = useLesson();
   // Only the files that have arrived by this sitting. A lesson has no story, so it shows them all.
   const here = levelForTrack(currentTrack.key).key;
+  // Day 10's schedules: this week's was already here; next week's arrives
+  // when the learner downloads it from Renata's email.
+  const nextScheduleHere = storyFlags[SCHEDULE_DOWNLOADED_FLAG] === "true" || completedTaskKeys.includes("upload-schedule");
   const PDF_DOCUMENTS = lesson
     ? ALL_PDF_DOCUMENTS
-    : ALL_PDF_DOCUMENTS.filter((d) => !PDF_ARRIVES_WITH[d.id] || levelReached(courseRoute, here, PDF_ARRIVES_WITH[d.id]));
+    : [
+        ...ALL_PDF_DOCUMENTS.filter((d) => !PDF_ARRIVES_WITH[d.id] || levelReached(courseRoute, here, PDF_ARRIVES_WITH[d.id])),
+        ...(levelReached(courseRoute, here, "level5") ? [THIS_SCHEDULE_DOC] : []),
+        ...(nextScheduleHere ? [NEXT_SCHEDULE_DOC] : []),
+      ];
   const [activeId, setActiveId] = useState(
     pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
   );

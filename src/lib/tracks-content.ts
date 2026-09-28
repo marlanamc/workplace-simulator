@@ -104,7 +104,7 @@ export const TRACKS: Track[] = [
     key: "files",
     title: { en: "Shared Files", es: "Archivos compartidos" },
     subtitle: { en: "Send the right file, the right way", es: "Envía el archivo correcto, de la forma correcta" },
-    taskKeys: ["files", "mail-send-link"],
+    taskKeys: ["upload-schedule", "files", "mail-send-link"],
     awardEmoji: "📁",
   },
   {
@@ -639,10 +639,10 @@ export const LEVELS: Level[] = [
       kicker: { en: "Monday", es: "Lunes" },
       title: { en: "Jordan starts today.", es: "Jordan empieza hoy." },
       body: {
-        en: "Renata asked you to send Jordan this week's schedule.",
-        es: "Renata te pidió enviarle a Jordan el horario de esta semana.",
+        en: "First, Renata emailed next week's schedule for the team folder. Then Jordan needs this week's schedule.",
+        es: "Primero, Renata envió por correo el horario de la próxima semana para la carpeta del equipo. Después, Jordan necesita el horario de esta semana.",
       },
-      cta: { en: "Find the file", es: "Buscar el archivo" },
+      cta: { en: "Open Mail", es: "Abrir Correo" },
     },
   },
   {
