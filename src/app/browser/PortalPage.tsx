@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import type { Localized } from "@/lib/task-types";
 import ScheduleTask from "./ScheduleTask";
@@ -33,10 +34,15 @@ function isPortalSection(value: string | null): value is Section {
 }
 
 export default function PortalPage() {
-  const { lang } = useProgress();
+  const { lang, completedTaskKeys } = useProgress();
   const { portalSection, portalSectionToken } = useWindowManager();
+  // Day 2: once the swap is filed, Maria's text is waiting on Shift Swap, so
+  // coming back to the schedule opens there instead of the finished step.
+  const [swapFiled] = useTaskDraft("schedule", "swap-filed", false);
+  const landOn = (wanted: Section): Section =>
+    wanted === "schedule" && swapFiled && !completedTaskKeys.includes("schedule") ? "swap-request" : wanted;
   const [section, setSection] = useState<Section>(() =>
-    isPortalSection(portalSection) ? portalSection : "schedule",
+    landOn(isPortalSection(portalSection) ? portalSection : "schedule"),
   );
   // The day picked on the Schedule tab, carried over so Shift Swap opens
   // with it already chosen instead of asking the learner to find it twice.
@@ -44,7 +50,7 @@ export default function PortalPage() {
   const [lastToken, setLastToken] = useState(portalSectionToken);
   if (portalSectionToken !== lastToken) {
     setLastToken(portalSectionToken);
-    if (isPortalSection(portalSection)) setSection(portalSection);
+    if (isPortalSection(portalSection)) setSection(landOn(portalSection));
   }
 
   return (
