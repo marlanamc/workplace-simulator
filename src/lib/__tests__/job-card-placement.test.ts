@@ -82,11 +82,35 @@ describe("chooseCorner", () => {
   it("keeps the window's Minimize and Close clear, but never over a target", () => {
     const windowControls = [box(1250, 10, 100, 36)];
     // A learner who parked the card top right does not lose the window controls.
-    expect(chooseCorner({ preferred: "tr", card: CARD, viewport: LAPTOP, insets: INSETS, targets: [], lesser: windowControls })).toBe("tl");
+    expect(chooseCorner({ preferred: "tr", card: CARD, viewport: LAPTOP, insets: INSETS, targets: [], avoid: windowControls })).toBe("tl");
     // But a target always outranks them: with only top right clear of
     // targets, the card covers the controls, not the button to press.
     const targets = [box(60, 600), box(1200, 600), box(60, 100)];
-    expect(chooseCorner({ preferred: "bl", card: CARD, viewport: LAPTOP, insets: INSETS, targets, lesser: windowControls })).toBe("tr");
+    expect(chooseCorner({ preferred: "bl", card: CARD, viewport: LAPTOP, insets: INSETS, targets, avoid: windowControls })).toBe("tr");
+  });
+
+  it("keeps the learner's corner over ordinary buttons, and weighs them only when it has to move", () => {
+    const pageButtons = [box(60, 600), box(160, 600)];
+    // Nothing that matters is under the learner's corner: it stays, even
+    // though another corner would cover fewer buttons.
+    expect(chooseCorner({ preferred: "bl", card: CARD, viewport: LAPTOP, insets: INSETS, targets: [], lesser: pageButtons })).toBe("bl");
+    // Forced off top right by the window controls, it skips the bookmarks
+    // (top left) and the corner with a Next button (bottom right) for the
+    // bottom-left corner that hides nothing.
+    const windowControls = [box(1250, 10, 100, 36)];
+    const bookmarks = [box(20, 60, 90, 28)];
+    const next = [box(1150, 610, 100, 40)];
+    expect(
+      chooseCorner({
+        preferred: "tr",
+        card: CARD,
+        viewport: LAPTOP,
+        insets: INSETS,
+        targets: [],
+        avoid: [...windowControls, ...bookmarks],
+        lesser: next,
+      }),
+    ).toBe("bl");
   });
 
   it("ignores targets well away from every corner", () => {

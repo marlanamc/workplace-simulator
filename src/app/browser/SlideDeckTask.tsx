@@ -212,9 +212,12 @@ export default function SlideDeckTask() {
           >
             {c.back}
           </button>
+          {/* data-card-avoid: the way forward sits in the bottom-right
+              corner, so the Job Card keeps off it. */}
           {index < 2 ? (
             <button
               type="button"
+              data-card-avoid
               onClick={goNext}
               className="min-h-[40px] rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer"
             >
@@ -223,6 +226,7 @@ export default function SlideDeckTask() {
           ) : (
             <button
               type="button"
+              data-card-avoid
               onClick={tryPresent}
               className="min-h-[40px] rounded-lg bg-[#c5221f] px-5 text-[14px] font-medium text-white cursor-pointer"
             >

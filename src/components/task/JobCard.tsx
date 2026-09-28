@@ -62,6 +62,22 @@ function readStoredCorner(): Corner {
   return isCorner(stored) ? stored : HOME;
 }
 
+/**
+ * Everything else a learner might press in the open window. Not every
+ * task's buttons carry a Show me id (a slide deck's Next slide does not), so
+ * when the card has to move it takes the corner that hides the fewest of
+ * these. `data-card-avoid` (the bookmarks, Minimize and Close) weighs more:
+ * the card moves off those even from the learner's own corner.
+ */
+const LESSER_CONTROLS = [
+  "[data-app-window] button",
+  "[data-app-window] a[href]",
+  "[data-app-window] input:not([type=hidden])",
+  "[data-app-window] select",
+  "[data-app-window] textarea",
+  "[data-app-window] [role=button]",
+].join(", ");
+
 /** Every element matching `selector` that a learner can see right now,
  *  outside the card: Show me targets, or the window controls. */
 function visibleTargets(card: HTMLElement, selector: string): Box[] {
@@ -339,7 +355,8 @@ export default function JobCard() {
             viewport,
             insets,
             targets: visibleTargets(card, "[data-showme]"),
-            lesser: visibleTargets(card, "[data-card-avoid]"),
+            avoid: visibleTargets(card, "[data-card-avoid]"),
+            lesser: visibleTargets(card, LESSER_CONTROLS),
           });
       setParked((prev) => (prev?.from === preferred && prev.corner === next ? prev : { from: preferred, corner: next }));
       updateScrollGutters(next[0] === "b" ? cornerBox(next, size, viewport, insets) : null);
