@@ -94,7 +94,7 @@ Design doc first; build one PR per gap family. Owner decision (28 Sep): each fam
 
 | Gap family | Status |
 |---|---|
-| File confidence: download, find, upload, rename or move, print or save as PDF | in progress on `feat/wave-4-file-confidence`: Day 10 gets `upload-schedule` (download from Mail, upload into Schedules). Rename is already in `files`. Print/Save as PDF is a later follow-up |
+| File confidence: download, find, upload, rename or move, print or save as PDF | in review, [PR #51](https://github.com/marlanamc/workplace-simulator/pull/51): Day 10 gets `upload-schedule` (download from Mail, upload into Schedules). Rename is already in `files`. Open: a `lesson` block, Print/Save as PDF, keyboard and 150% passes, and the Job Card over the picker preview at 911×512 |
 | Recovering from everyday problems: closed window, no Wi-Fi, Undo, reload, permission pop-up | design drafted; implementation open |
 | Work communication beyond email: manager text, voicemail, invite reply, doc comment, chat | design drafted; implementation open |
 
