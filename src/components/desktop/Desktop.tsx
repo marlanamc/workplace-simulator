@@ -17,6 +17,9 @@ import { useLesson } from "@/lib/lesson-context";
 import BrowserClient from "@/app/browser/BrowserClient";
 import PdfReaderClient from "@/app/pdf-reader/PdfReaderClient";
 
+/** Fields a learner types into; they must stay visible while focused. */
+const TYPING_TARGET = "input:not([type=checkbox]):not([type=radio]):not([type=hidden]), textarea, [contenteditable=true]";
+
 /** Wraps a window's content so it replays a subtle "open" animation each time
  *  it becomes the active window (first open or restore from minimize), while
  *  staying mounted (and its state intact) whenever it's minimized in the background. */
@@ -42,6 +45,22 @@ function AppWindow({
       el.classList.add("animate-window-in");
     }
     wasActive.current = active;
+  }, [active]);
+
+  // When the window gets shorter (on a phone the Job Card grows below it),
+  // the box the learner is typing in can slide under its bottom edge. Scroll
+  // it back into view, the least distance needed. A DOM measurement sync.
+  useEffect(() => {
+    const el = ref.current;
+    if (!active || !el || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(() => {
+      const focused = document.activeElement;
+      if (focused instanceof HTMLElement && el.contains(focused) && focused.matches(TYPING_TARGET)) {
+        focused.scrollIntoView({ block: "nearest", inline: "nearest" });
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [active]);
 
   return (

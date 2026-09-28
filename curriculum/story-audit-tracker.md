@@ -303,3 +303,10 @@ Every audit fix bullet for #15 is verified or fixed. `npm run check`: 60 files /
     - Nothing on this branch touches that lesson.
     - It passed in the Wave 3 164/164 run.
     - Needs its own look at the phone-width scroll after choosing the text message.
+
+### Flaky lesson test fixed (28 Sep)
+
+This was a real layout bug, not only a flaky test.
+- **Cause:** at phone width the Job Card sits below the app window. After the learner taps the Google text, the code box is focused, then the card moves to its next step, grows, and shortens the window, leaving the focused box partly cut off (70% in view). Spanish wraps the label to two lines, which makes it likelier.
+- **Fix:** `AppWindow` in `Desktop.tsx` watches its own size. When it resizes, any focused text field inside is scrolled back into view.
+- **Result:** under 6-worker load it failed 1 in 48 before and passed 96 of 96 after. The full e2e suite passes 164/164.
