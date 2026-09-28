@@ -42,7 +42,7 @@ test("Day 13: close the browser when asked, reopen, work is still there", async 
   await expect(card).toContainText("First close the browser");
 
   await page.getByRole("button", { name: "Close", exact: true }).first().click();
-  await expect(card).toContainText("Open the browser from the shelf");
+  await expect(card).toContainText("Open Today again");
 
   // Reopen from the shelf, then Today.
   await page.getByRole("button", { name: "Browser" }).click();

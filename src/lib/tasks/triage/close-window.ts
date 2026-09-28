@@ -40,8 +40,8 @@ export const CLOSE_LINES: Record<"ask" | "reopen" | "back", Localized> = {
     es: "Renata te necesita en el piso un minuto. Cierra el navegador con la X arriba a la derecha. Tu trabajo está guardado.",
   },
   reopen: {
-    en: "You are back. Open the browser from the shelf at the bottom, then open Today and finish the other request.",
-    es: "Ya volviste. Abre el navegador desde la barra de abajo. Después abre Today y termina la otra tarea.",
+    en: "You are back. Open Today again and finish the other request. Your work is saved.",
+    es: "Ya volviste. Abre Today otra vez y termina la otra tarea. Tu trabajo está guardado.",
   },
   back: {
     en: "Your work is still here. Finish the other request.",
