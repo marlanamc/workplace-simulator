@@ -1,5 +1,7 @@
 "use client";
 
+import SheetEmailMenu from "@/components/task/SheetEmailMenu";
+
 import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
@@ -70,7 +72,6 @@ export default function SpreadsheetTask() {
   const showMe = useShowMe();
   const clearCorrection = useJobCardOptional()?.clearCorrection;
   const tipInputs = useRef<(HTMLInputElement | null)[]>([]);
-  const emailButton = useRef<HTMLButtonElement | null>(null);
   const bodyBox = useRef<HTMLTextAreaElement | null>(null);
 
   const c = SPREADSHEET_COPY[lang];
@@ -101,13 +102,12 @@ export default function SpreadsheetTask() {
   };
 
   // Enter and the down arrow go to the next day, like a real sheet. After
-  // Friday, Enter goes on to the Email button.
+  // Friday, focus stays in the last editable row.
   const onCellKey = (i: number) => (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === "ArrowDown") {
       e.preventDefault();
       const next = tipInputs.current[i + 1];
       if (next) next.focus();
-      else if (e.key === "Enter") emailButton.current?.focus();
     } else if (e.key === "ArrowUp" && i > 0) {
       e.preventDefault();
       tipInputs.current[i - 1]?.focus();
@@ -183,6 +183,8 @@ export default function SpreadsheetTask() {
         <span className="text-[18px] text-[#3c4043]">{view === "home" ? c.appName : c.sheetName}</span>
         <div className="flex-1" />
       </div>
+
+      {(view === "sheet" || view === "compose") && <SheetEmailMenu lang={lang} onEmail={tryEmailTotal} showMeId="email-total" />}
 
       {view !== "done" && (
         <RightNowBar
@@ -445,14 +447,7 @@ export default function SpreadsheetTask() {
             })}
           </div>
 
-          <button
-            ref={emailButton}
-            onClick={tryEmailTotal}
-            data-showme="email-total"
-            className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-          >
-            {c.emailTotal}
-          </button>
+
         </div>
       </div>
       )}

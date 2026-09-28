@@ -13,9 +13,10 @@ import {
   levelForTrack,
   isLevelComplete,
   levelUpCardFor,
+  courseFinaleFor,
+  levelByArrivalKey,
   nextCourseLevel,
   taskKeysForLevel,
-  LEVELS,
   type Track,
   type Level,
 } from "@/lib/tracks-content";
@@ -160,11 +161,13 @@ export function ProgressProvider({
   const [certificateTrackKeys, setCertificateTrackKeys] = useState<string[]>(initialCertificateTrackKeys);
   const [justEarnedPoints, setJustEarnedPoints] = useState<number | null>(null);
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
-  const [celebrateLevel, setCelebrateLevel] = useState<Level | null>(() => {
-    if (!initialArriveLevelKey) return null;
-    const level = LEVELS.find((l) => l.key === initialArriveLevelKey);
-    return level ? arrivalLevelUp(level) : null;
-  });
+  const [celebrateLevelOverride, setCelebrateLevelOverride] = useState<Level | null | undefined>(undefined);
+  const arrivalKey = `ws-pending-arrival:${learnerId}`;
+  const setCelebrateLevel = useCallback((level: Level | null) => {
+    setCelebrateLevelOverride(level);
+    if (level) storage.setString(arrivalKey, level.key);
+    else storage.remove(arrivalKey);
+  }, [arrivalKey]);
   const [progressEpoch, setProgressEpoch] = useState(0);
   const chooseCourseRoute = useCallback(async (route: CourseRoute) => {
     routeAttempt.current = route;
@@ -179,7 +182,7 @@ export function ProgressProvider({
       setCelebrateTrack(null);
     } catch { setRouteError(true); }
     finally { setRouteSaving(false); }
-  }, []);
+  }, [setCelebrateLevel]);
   // 1. Hydration: story flags are localStorage-only. Reading them in a useState
   // initializer makes SSR paint Welcome/ActIntro while the client skips them.
   // Same pattern as LoginForm — server snapshot is empty (+ bridge path from
@@ -189,6 +192,10 @@ export function ProgressProvider({
     () => true,
     () => false,
   );
+  const storedArrival = isClient ? storage.getString(arrivalKey) : null;
+  const arrival = levelByArrivalKey(storedArrival ?? initialArriveLevelKey);
+  const celebrateLevel = celebrateLevelOverride !== undefined
+    ? celebrateLevelOverride : arrival ? (storedArrival ? levelUpCardFor(arrival) : arrivalLevelUp(arrival)) : null;
   const [storyFlagsOverride, setStoryFlags] = useState<StoryFlags | null>(null);
   const storedStoryFlags = withBridgePath(
     isClient ? loadStoryFlags(learnerId) : {},
@@ -335,7 +342,10 @@ export function ProgressProvider({
       const upcoming = isLevelComplete(level, next, path) ? nextCourseLevel(level, courseRoute) : null;
       // An act opener's moment belongs to ActIntro, so it records no card
       // (and no trophy either, as before) rather than one nobody can dismiss.
-      const card = upcoming ? levelUpCardFor(upcoming) : null;
+      // The last core day has no next level until a direction is chosen, so
+      // Act II's end moment is its own card (courseFinaleFor).
+      const card = upcoming ? levelUpCardFor(upcoming)
+        : isLevelComplete(level, next, path) ? courseFinaleFor(level, courseRoute) : null;
       if (card) setCelebrateLevel(card);
       else if (!upcoming?.levelUp) setCelebrateTrack(track);
     }
@@ -354,7 +364,7 @@ export function ProgressProvider({
     // Adjacent opening practice is not evidence of independent mastery.
     if (taskKey !== 'mail-reply' && !reportedSkillsRef.current.has(taskKey)) applySkillRun(taskKey, true);
     return true;
-  }, [courseRoute, applySkillRun, queueKey]);
+  }, [courseRoute, applySkillRun, queueKey, setCelebrateLevel]);
 
   const restartLevel = useCallback(async (level: Level) => {
     const result = await restartLevelProgress(level.key);
@@ -365,6 +375,7 @@ export function ProgressProvider({
     }
     const path = routeBridgePath(courseRoute);
     const taskKeys = new Set(taskKeysForLevel(level, path));
+    for (const task of taskKeys) storage.removePrefix(`ws-task-draft:${learnerId}:${task}:`);
     const trackKeys = new Set(path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys);
     pendingRef.current = pendingRef.current.filter(item => !taskKeys.has(item.taskKey));
     setPending(pendingRef.current);
@@ -383,7 +394,7 @@ export function ProgressProvider({
     setMariaNoteTaskKey(null);
     setProgressEpoch((n) => n + 1);
 
-  }, [learnerId, storyFlags, courseRoute, queueKey]);
+  }, [learnerId, storyFlags, courseRoute, queueKey, setCelebrateLevel]);
 
   const getRung = useCallback((skillKey: string) => rungFor(rungMap, skillKey), [rungMap]);
 
@@ -392,7 +403,7 @@ export function ProgressProvider({
   }, [applySkillRun]);
 
   const dismissCelebration = useCallback(() => setCelebrateTrack(null), []);
-  const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), []);
+  const dismissLevelCelebration = useCallback(() => setCelebrateLevel(null), [setCelebrateLevel]);
   const dismissMariaNote = useCallback(() => setMariaNoteTaskKey(null), []);
 
   // One object identity per real state change. Without this every provider

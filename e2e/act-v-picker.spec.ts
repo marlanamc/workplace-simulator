@@ -33,18 +33,30 @@ test("after Act II the learner chooses a route and can change it without losing 
     await expect(card.getByTestId(`course-route-${route}`)).toBeVisible({timeout:20000});
   }
   await card.getByTestId('course-route-office').click();
+  await expect(card).toContainText('13 story days');
+  await expect(page.getByTestId('act-intro')).toHaveCount(0);
+  await card.getByRole('button', { name: 'Back to choices' }).click();
+  await expect(card.getByTestId('course-route-pause')).toBeVisible();
+  await card.getByTestId('course-route-office').click();
+  await card.getByTestId('course-route-confirm').click();
   await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', 'act6', {timeout:20000});
   await page.getByTestId('act-intro-continue').click();
   await expect(card.getByText('Read the posting. Check what you have done, then write why you fit.')).toBeVisible();
   await page.reload();
   await waitForInteractive(page);
   await expect(card.getByText('Read the posting. Check what you have done, then write why you fit.')).toBeVisible({timeout:20000});
-  await card.getByRole('button',{name:'Change direction'}).click();
+  // Mid-direction, Change direction lives inside the desktop card's Help.
+  await card.getByTestId('job-card-route-help').click();
+  await card.getByTestId('change-direction').click();
   await card.getByTestId('course-route-healthcare').click();
+  await card.getByTestId('course-route-confirm').click();
   await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act','act5',{timeout:20000});
   await page.getByTestId('act-intro-continue').click();
-  await card.getByRole('button',{name:'Change direction'}).click();
+  // Mid-direction, Change direction lives inside the desktop card's Help.
+  await card.getByTestId('job-card-route-help').click();
+  await card.getByTestId('change-direction').click();
   await card.getByTestId('course-route-pause').click();
+  await card.getByTestId('course-route-confirm').click();
   await expect(card.getByText('Core course complete')).toBeVisible({timeout:20000});
   await page.reload();
   await waitForInteractive(page);

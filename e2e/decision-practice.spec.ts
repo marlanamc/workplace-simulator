@@ -51,7 +51,7 @@ for(const lang of ['en','es'] as const) {
   await page.getByTestId('priority-choice').selectOption('manager-title');
   await page.getByRole('button',{name:/That's what I'll do first|Eso es lo que voy a hacer primero/}).click();
   await expect(page.getByTestId('priority-choice')).toBeVisible();
-  await expect(page.locator('[data-job-card]')).toContainText(lang==='en'?'immediate consequence':'consecuencia inmediata');
+  await expect(page.locator('[data-job-card]')).toContainText(lang==='en'?'What is happening now':'Qué está pasando ahora');
   await page.getByTestId('priority-choice').selectOption('cover-start');
   await page.screenshot({path:testInfo.outputPath(`priority-${lang}.png`),fullPage:true});
   await page.getByRole('button',{name:/That's what I'll do first|Eso es lo que voy a hacer primero/}).click();
@@ -69,6 +69,10 @@ for(const lang of ['en','es'] as const) {
   await page.screenshot({path:testInfo.outputPath(`review-${lang}.png`),fullPage:true});
   await page.getByRole('button',{name:/^Submit the review$|^Enviar la evaluación$/}).click();
   await expect(page.getByText(/Review submitted|Evaluación enviada/).first()).toBeVisible({timeout:20000});
+  await page.goto('/?task=performance-review');
+  await waitForInteractive(page);
+  await continuePastStudioArrivalIfPresent(page);
+  // Continuing the saved arrival opens the next day; explicitly revisit the earned review.
   await page.goto('/?task=performance-review');
   await waitForInteractive(page);
   await page.locator('[data-job-card]').getByRole('button',{name:/Do it again|Hazlo otra vez/}).click();

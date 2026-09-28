@@ -163,7 +163,7 @@ export const portalSections: PortalSection[] = [
     icon: Banknote,
     render: () => (
       <div className="overflow-hidden rounded-xl border border-[#dadce0] bg-white">
-        {["Aug 30, 2026", "Aug 16, 2026", "Aug 2, 2026"].map((date) => (
+        {["Aug 28, 2026"].map((date) => (
           <button key={date} className="flex w-full items-center justify-between border-b border-[#eef0f3] px-4 py-3 text-left last:border-b-0">
             <span className="text-[14px] text-[#202124]">{date}</span>
             <span className="text-[13px] text-[#1a73e8]">View PDF</span>
@@ -225,9 +225,10 @@ export const pdfDocuments: PdfDocument[] = [
     deductions: [
       { label: "Federal tax withheld", amount: "-$72.00" },
       { label: "State tax withheld", amount: "-$21.60" },
-      { label: "Social Security / Medicare", amount: "-$8.00" },
+      // Standard employee rates: 6.2% + 1.45% of $720 = $55.08.
+      { label: "Social Security / Medicare", amount: "-$55.08" },
     ],
-    netPay: "$618.40",
+    netPay: "$571.32",
   },
 ];
 

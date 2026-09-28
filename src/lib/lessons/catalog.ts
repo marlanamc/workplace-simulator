@@ -13,6 +13,7 @@ import { routeBridgePath, routeForLevel, type CourseRoute } from "@/lib/course-r
 import type { BridgePath } from "@/lib/bridge-path";
 import { BRIDGE_PATH_FLAG } from "@/lib/bridge-path";
 import { jumpTabForTask } from "@/lib/curriculum-catalog";
+import { hiringMailForTask } from "@/lib/hiring-mail";
 import { WELCOME_FLAG } from "@/lib/welcome-content";
 import { actIntroFlag } from "@/lib/act-intro-content";
 import { ACTS } from "@/lib/tracks-content";
@@ -33,6 +34,9 @@ export type LessonEntry = LessonMeta & {
 
 /** The browser tab a task opens on. Act II+ locations drop `tab`, so the catalog is the fallback. */
 export function lessonTabFor(taskKey: TaskKey): string | undefined {
+  // In Story, the hiring steps start in Mail: HR's message opens the form.
+  // A lesson gets no hiring mail, so it opens on the task's own tab instead.
+  if (hiringMailForTask(taskKey)) return jumpTabForTask(taskKey) ?? TASK_LOCATIONS[taskKey]?.tab;
   return TASK_LOCATIONS[taskKey]?.tab ?? jumpTabForTask(taskKey);
 }
 

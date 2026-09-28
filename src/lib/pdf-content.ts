@@ -106,9 +106,11 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
     deductions: [
       { label: "Federal tax withheld", amount: "-$72.00" },
       { label: "State tax withheld", amount: "-$21.60" },
-      { label: "Social Security / Medicare", amount: "-$8.00" },
+      // Standard employee rates: 6.2% + 1.45% of $720 = $55.08.
+      // IRS Publication 15 (2026): https://www.irs.gov/publications/p15
+      { label: "Social Security / Medicare", amount: "-$55.08" },
     ],
-    netPay: "$618.40",
+    netPay: "$571.32",
   },
   {
     kind: "award-letter",

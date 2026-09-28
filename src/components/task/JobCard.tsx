@@ -30,7 +30,18 @@ import {
   nextTaskInTrack,
   taskKeysForLevel,
 } from "@/lib/tracks-content";
-import { COURSE_ROUTES, COURSE_ROUTE_LABELS } from "@/lib/course-route";
+import {
+  COURSE_ROUTES,
+  COURSE_ROUTE_LABELS,
+  COURSE_ROUTE_DESCRIPTIONS,
+  COURSE_ROUTE_TAGS,
+  ROUTE_CHOOSER_LINES,
+  ROUTE_HELP_COPY,
+  changeDirectionPlacement,
+  routeChoiceState,
+  routeChooserMode,
+  type CourseRoute,
+} from "@/lib/course-route";
 import { ENDING_COPY, SUMMARY_COPY, workdaysFinished } from "@/lib/portfolio-summary";
 import type { TaskKey } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
@@ -197,6 +208,14 @@ export default function JobCard() {
     : (actForLevel(level)?.key ?? "act1");
 
   const [choosingRoute, setChoosingRoute] = useState(false);
+  const [previewRoute, setPreviewRoute] = useState<CourseRoute | null>(null);
+  // Mid-direction, "Change direction" waits inside this Help panel on the
+  // desktop card instead of sitting above the day's main button.
+  const [routeHelpOpen, setRouteHelpOpen] = useState(false);
+  const routeFinished = courseComplete(completedTaskKeys, courseRoute);
+  const chooserMode = routeChooserMode(courseRoute, routeFinished);
+  const directionPlacement = changeDirectionPlacement(courseRoute, routeFinished);
+  const closeChooser = () => { setPreviewRoute(null); setChoosingRoute(false); };
   // The learner's own corner: what they chose this session, else what this
   // device remembers, read through isClient so hydration stays clean. A
   // lesson keeps its own left column (LESSON_RAIL_CLASS), so it neither reads
@@ -575,9 +594,20 @@ export default function JobCard() {
     if (!lesson && coreComplete(completedTaskKeys) && (choosingRoute || (active === null && courseComplete(completedTaskKeys, courseRoute)))) {
       return {
         badge: "✓", kicker: lang === "en" ? "Your next direction" : "Tu próximo camino",
-        line: lang === "en" ? "You have finished this part. Choose another direction, or stop here with the skills you earned."
-          : "Terminaste esta parte. Elige otro camino o termina aquí con las habilidades que ganaste.",
+        line: ROUTE_CHOOSER_LINES[chooserMode][lang],
         tone: "green", step: -1, routeChoices: true,
+      };
+    }
+    if (routeHelpOpen && !lesson && active === null && directionPlacement === 'help' && coreComplete(completedTaskKeys) && courseRoute) {
+      return {
+        badge: "?", kicker: ROUTE_HELP_COPY.kicker[lang],
+        line: `${ROUTE_HELP_COPY.current(courseRoute)[lang]} ${ROUTE_HELP_COPY.line[lang]}`,
+        tone: "blue", step: -1,
+        primaryLabel: ROUTE_HELP_COPY.change[lang],
+        onPrimary: () => { setRouteHelpOpen(false); setChoosingRoute(true); },
+        primaryTestId: "change-direction",
+        secondaryLabel: ROUTE_HELP_COPY.back[lang],
+        onSecondary: () => setRouteHelpOpen(false),
       };
     }
     // Finished a job. One green header, one button — no done screen, no
@@ -741,7 +771,9 @@ export default function JobCard() {
       // backdrop without covering the picker: a correction for a wrong file
       // stays readable instead of dimmed behind the overlay.
       // Lessons reserve a rail or bottom panel for this card at every size.
-      className={`job-card-compact ${lesson ? "lesson-rail-card " : ""}animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
+      // The route chooser only shows on the desktop (no task under it), so it
+      // skips the short-screen size cap and keeps all five choices in view.
+      className={`${script.routeChoices && active === null ? "" : "job-card-compact "}${lesson ? "lesson-rail-card " : ""}animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
       style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div
@@ -807,6 +839,25 @@ export default function JobCard() {
             ?
           </button>
         )}
+        {!lesson && !practicing && !busy && active === null && !choosingRoute && directionPlacement === "help"
+          && coreComplete(completedTaskKeys) && introBeat >= INTRO_BEATS.length && (
+          <button
+            type="button"
+            data-testid="job-card-route-help"
+            aria-label={routeHelpOpen ? ROUTE_HELP_COPY.close[lang] : ROUTE_HELP_COPY.open[lang]}
+            aria-pressed={routeHelpOpen}
+            title={routeHelpOpen ? ROUTE_HELP_COPY.close[lang] : ROUTE_HELP_COPY.open[lang]}
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => setRouteHelpOpen((v) => !v)}
+            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold"
+            style={{
+              background: routeHelpOpen ? "#fff" : "rgba(255,255,255,0.18)",
+              color: routeHelpOpen ? tone : "#fff",
+            }}
+          >
+            ?
+          </button>
+        )}
         {preferred !== HOME && (
           <button
             type="button"
@@ -856,7 +907,7 @@ export default function JobCard() {
             <p role="status" className="m-0 text-[22px] font-medium leading-tight text-[#202124]">{script.line}</p>
             {practice.stage === "click" && (
               <div className="mt-3 rounded-xl bg-[#f1f3f4] p-3">
-                <button data-practice-focus type="button" className="flex min-h-16 w-full items-center justify-center gap-3 rounded-xl border-2 border-[#0b57d0] bg-white px-3 text-[#0b57d0]"
+                <button data-practice-focus type="button" className="flex min-h-16 w-full items-center justify-center gap-3 rounded-xl border-2 border-[#0b57d0] bg-[#0b57d0] px-3 text-white"
                   onClick={() => {
                     setPractice({ ...practice, stage: "scroll" });
                     requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>('[data-practice-notice]')?.focus());
@@ -867,7 +918,7 @@ export default function JobCard() {
             )}
             {practice.stage === "scroll" && (
               <div data-practice-notice tabIndex={0} role="region" aria-label={pc.notice[lang]}
-                className="mt-3 h-36 overflow-y-auto overscroll-contain rounded-xl bg-[#f1f3f4] p-3 text-[#202124]" style={{ touchAction: "pan-y" }}>
+                className="mt-3 h-36 overflow-y-auto overscroll-contain rounded-xl bg-[#f1f3f4] p-3 text-[#202124]" style={{ touchAction: "pan-y", scrollbarGutter: "stable" }}>
                 <p className="font-semibold">{pc.notice[lang]}</p>
                 {pc.paragraphs.map((line, index) => <p key={index} className="my-6">{line[lang]}</p>)}
                 <button type="button" className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 text-white"
@@ -923,7 +974,7 @@ export default function JobCard() {
           role="status"
           aria-live="polite"
           data-card-line
-          className="m-0 text-[27px] font-medium leading-[1.2] tracking-[-0.01em] text-[#202124]"
+          className={`m-0 ${script.routeChoices ? "text-[20px]" : "text-[27px]"} font-medium leading-[1.2] tracking-[-0.01em] text-[#202124]`}
         >
           {script.line}
         </p>
@@ -948,23 +999,49 @@ export default function JobCard() {
           </div>
         )}
 
-        {script.routeChoices && (
+        {script.routeChoices && (previewRoute ? (
           <div className="mt-3 grid gap-2">
-            {COURSE_ROUTES.map((route) => (
-              <button key={route} type="button" data-testid={`course-route-${route}`}
-                disabled={routeSaving}
-                className="min-h-11 rounded-xl border border-[#dadce0] px-3 py-2 text-left text-[15px] font-medium hover:bg-[#e8f0fe] disabled:opacity-50"
-                onClick={async () => { await chooseCourseRoute(route); setChoosingRoute(false); }}>
-                {COURSE_ROUTE_LABELS[route][lang]}
-              </button>
-            ))}
+            <p className="m-0 font-semibold">{COURSE_ROUTE_LABELS[previewRoute][lang]}</p>
+            <p className="m-0 text-[15px] leading-relaxed">{COURSE_ROUTE_DESCRIPTIONS[previewRoute][lang]}</p>
+            {previewRoute !== "pause" && <p className="m-0 text-[14px] text-[#5f6368]">{ROUTE_HELP_COPY.storyDays[lang]}</p>}
+            <button type="button" data-testid="course-route-confirm" disabled={routeSaving}
+              className="job-card-primary min-h-11 bg-[#0b57d0] px-3 py-2 font-semibold text-white"
+              onClick={async () => { await chooseCourseRoute(previewRoute); closeChooser(); }}>
+              {(previewRoute === "pause" ? ROUTE_HELP_COPY.confirmPause : ROUTE_HELP_COPY.confirm)[lang]}
+            </button>
+            <button type="button" disabled={routeSaving} className="min-h-11 text-[#0b57d0]" onClick={() => setPreviewRoute(null)}>
+              {ROUTE_HELP_COPY.backToChoices[lang]}
+            </button>
           </div>
-        )}
-        {!lesson && active === null && coreComplete(completedTaskKeys) && !script.routeChoices && !saving && !saveError && (
-          <button type="button" className="mt-2 min-h-11 text-[14px] text-[#0b57d0]" onClick={() => setChoosingRoute(true)}>
-            {lang === "en" ? "Change direction" : "Cambiar de camino"}
-          </button>
-        )}
+        ) : (
+          // Two columns, short tags: all five options stay visible on a
+          // Chromebook at 150% zoom (911x512) without scrolling the card.
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {COURSE_ROUTES.map((route) => {
+              const state = routeChoiceState(route, courseRoute, route !== "pause" && courseComplete(completedTaskKeys, route));
+              const wide = route === "pause" && !choosingRoute;
+              return (
+                <button key={route} type="button" data-testid={`course-route-${route}`}
+                  disabled={routeSaving || state !== "open"}
+                  aria-describedby={`course-route-tag-${route}`}
+                  className={`${wide ? "col-span-2 " : ""}min-h-11 rounded-xl border border-[#dadce0] px-3 py-2 text-left text-[15px] font-medium leading-tight hover:bg-[#e8f0fe] disabled:opacity-50`}
+                  onClick={() => setPreviewRoute(route)}>
+                  {COURSE_ROUTE_LABELS[route][lang]}
+                  <span id={`course-route-tag-${route}`} className="mt-1 block text-[13px] font-normal leading-snug text-[#5f6368]">
+                    {state === "finished" ? ROUTE_HELP_COPY.finished[lang]
+                      : state === "current" ? ROUTE_HELP_COPY.inProgress[lang]
+                      : COURSE_ROUTE_TAGS[route][lang]}
+                  </span>
+                </button>
+              );
+            })}
+            {choosingRoute && (
+              <button type="button" className="min-h-11 rounded-xl px-3 text-[15px] text-[#0b57d0]" onClick={closeChooser}>
+                {(chooserMode === "change" ? ROUTE_HELP_COPY.keep : ROUTE_HELP_COPY.notNow)[lang]}
+              </button>
+            )}
+          </div>
+        ))}
         {/* A lesson needs no account. Signing in (to carry this finish to a
             teacher) is a quiet link for a guest, so it never reads as a step
             the lesson requires; only a failed save gets a real button. */}
@@ -1001,6 +1078,13 @@ export default function JobCard() {
             style={{ background: tone }}
           >
             {script.primaryLabel}
+          </button>
+        )}
+        {/* After a direction ends (or at Stop here), another one is a quiet
+            link under the main button. Mid-direction it lives in Help. */}
+        {!lesson && active === null && directionPlacement === "link" && coreComplete(completedTaskKeys) && !script.routeChoices && !saving && !saveError && (
+          <button type="button" className="mt-2 min-h-11 w-full text-[15px] text-[#0b57d0]" onClick={() => setChoosingRoute(true)}>
+            {ROUTE_HELP_COPY.change[lang]}
           </button>
         )}
 
@@ -1051,7 +1135,15 @@ export default function JobCard() {
                 ? "job-card-primary mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
                 : "mt-2.5 flex min-h-[48px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
             }
-            style={script.equalPair ? { background: tone } : { color: "var(--text-secondary)" }}
+            style={
+              script.equalPair
+                ? { background: tone }
+                : introBeat < INTRO_BEATS.length
+                  // The practice offer is the one secondary that beginners
+                  // most need, so it gets an outline instead of grey text.
+                  ? { color: "var(--text-primary)", border: "2px solid var(--border)" }
+                  : { color: "var(--text-secondary)" }
+            }
           >
             {script.secondaryLabel}
           </button>
@@ -1126,7 +1218,7 @@ export default function JobCard() {
       )}
       {showPractice && (
         <div className="shrink-0 border-t border-[#dadce0] bg-white p-2">
-          <button type="button" data-practice-exit className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 font-medium text-white" onClick={exitPractice}>
+          <button type="button" data-practice-exit className={`min-h-12 w-full rounded-xl px-3 font-medium ${practice.stage === "complete" ? "bg-[#0b57d0] text-white" : "text-[#5f6368] underline hover:bg-[#f1f3f4]"}`} onClick={exitPractice}>
             {practice.stage === "complete" ? INTRO_BEATS[0].cta?.[lang] : pc.skip[lang]}
           </button>
         </div>

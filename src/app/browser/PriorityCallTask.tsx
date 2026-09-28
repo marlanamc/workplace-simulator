@@ -5,6 +5,7 @@ import { useProgress } from "@/lib/progress-context";
 import {
   PRIORITY_COPY,
   PRIORITY_REFERENCE, PRIORITY_OPTIONS, PRIORITY_CHOICE_LABEL, priorityIsSupported,
+  COVER_TABLE_COPY, MEETING_SLOTS, YOUR_SHIFTS, coverWorks, meetingSlotWorks,
   COVER,
   MAIL_STARTERS,
   HINTS,
@@ -74,12 +75,15 @@ export default function PriorityCallTask() {
     const person = COVER.find((p) => p.key === key);
     if (!person) return;
     setCoverKey(key);
-    if (!person.free) return say(person.hint[lang]);
+    if (!coverWorks(person.key)) return say(person.hint[lang]);
     setCoverDone(true);
     finishIfReady(mailDone, true, calDone);
   };
 
-  const proposeTime = () => {
+  const proposeTime = (key: string) => {
+    const slot = MEETING_SLOTS.find((s) => s.key === key);
+    if (!slot) return;
+    if (!meetingSlotWorks(slot.key)) return say(slot.hint[lang]);
     setCalDone(true);
     finishIfReady(mailDone, coverDone, true);
   };
@@ -100,7 +104,7 @@ export default function PriorityCallTask() {
     <div className="relative flex h-full min-h-0 flex-col bg-white text-[14px] text-[#202124]" style={{ fontFamily: "Roboto, Arial, sans-serif" }}>
       <div className="flex items-center gap-3 border-b border-[#e0e0e0] px-4 py-2.5">
         <span className="text-[18px] text-[#3c4043]">
-          {view === "mail" ? "Mail" : view === "cover" ? "Sheets" : view === "calendar" ? "Calendar" : lang === "en" ? "On the floor" : "En el piso"}
+          {view === "mail" ? "Mail" : view === "cover" ? "Sheets" : view === "calendar" ? "Calendar" : lang === "en" ? "On the floor" : "En el salón"}
         </span>
         <div className="flex-1" />
       </div>
@@ -148,7 +152,7 @@ export default function PriorityCallTask() {
 
       {view === "hub" && named && (
         <div className="min-h-0 flex-1 overflow-auto">
-          <details className="mx-5 mt-4 rounded border p-3"><summary>{lang === 'en' ? 'Situation reference' : 'Referencia de la situación'}</summary><p className="mt-2">{PRIORITY_REFERENCE[lang]}</p></details>
+          <details className="mx-5 mt-4 rounded border p-3"><summary>{COVER_TABLE_COPY.reference[lang]}</summary><p className="mt-2">{PRIORITY_REFERENCE[lang]}</p></details>
           <TaskHub
             heading={c.hubHeading}
             items={[
@@ -194,14 +198,16 @@ export default function PriorityCallTask() {
           <div className="mb-3 max-w-[420px] rounded-sm border border-[#f9ab00] bg-[#fef7e0] px-3 py-2 text-[13px]">{c.coverNote}</div>
           <div className="inline-block border border-[#c0c0c0] text-[13px]">
             <div className="flex bg-[#f8f9fa] font-medium">
-              <div className="w-[160px] border-b border-r border-[#c0c0c0] px-2 py-1.5">{lang === "en" ? "Name" : "Nombre"}</div>
+              <div className="w-[160px] border-b border-r border-[#c0c0c0] px-2 py-1.5">{COVER_TABLE_COPY.name[lang]}</div>
               <div className="w-[72px] border-b border-r border-[#c0c0c0] px-2 py-1.5">{c.hoursHeader}</div>
-              <div className="w-[120px] border-b border-[#c0c0c0] px-2 py-1.5">Thu</div>
+              <div className="w-[160px] border-b border-r border-[#c0c0c0] px-2 py-1.5">{COVER_TABLE_COPY.thursday[lang]}</div>
+              <div className="w-[120px] border-b border-[#c0c0c0] px-2 py-1.5">{COVER_TABLE_COPY.addShift[lang]}</div>
             </div>
             {COVER.map((p) => (
               <div key={p.key} className="flex">
                 <div className="flex w-[160px] items-center border-b border-r border-[#c0c0c0] px-2 py-1.5">{p.name}</div>
                 <div className={`flex w-[72px] items-center border-b border-r border-[#c0c0c0] px-2 py-1.5 ${p.hours >= 40 ? "text-[#c5221f]" : ""}`}>{p.hours}</div>
+                <div className={`flex w-[160px] items-center border-b border-r border-[#c0c0c0] px-2 py-1.5 ${p.freeThursday ? "" : "text-[#5f6368]"}`}>{p.thursday[lang]}</div>
                 <div className="flex w-[120px] items-center border-b border-[#c0c0c0] bg-[#fef7e0] px-1">
                   <select
                     aria-label={`${p.name} · ${c.pickShift}`}
@@ -231,13 +237,23 @@ export default function PriorityCallTask() {
               <h2 className="text-[22px] font-normal">{c.meetingTitle}</h2>
               <p className="mt-1 text-[14px]">{c.meetingWhen}</p>
               <p className="mt-3 text-[13px] text-[#c5221f]">{c.meetingNote}</p>
+              <p className="mt-2 text-[13px] text-[#3c4043]">{YOUR_SHIFTS[lang]}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <button onClick={() => say(h.accept)} className="min-h-[40px] rounded-full border border-[#dadce0] px-4 text-[14px] font-medium cursor-pointer">{c.accept}</button>
                 <button onClick={() => say(h.no)} className="min-h-[40px] rounded-full border border-[#dadce0] px-4 text-[14px] font-medium cursor-pointer">{c.no}</button>
               </div>
-              <button onClick={proposeTime} className="mt-3 inline-flex min-h-[40px] items-center text-[14px] font-medium text-[#0b57d0] cursor-pointer">
-                {c.propose} · {c.slotLabel}
-              </button>
+              <div className="mt-4 text-[13px] font-medium text-[#3c4043]">{c.propose}</div>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {MEETING_SLOTS.map((slot) => (
+                  <button
+                    key={slot.key}
+                    onClick={() => proposeTime(slot.key)}
+                    className="min-h-[40px] rounded-full border border-[#0b57d0] px-4 text-[14px] font-medium text-[#0b57d0] cursor-pointer"
+                  >
+                    {slot.label[lang]}
+                  </button>
+                ))}
+              </div>
               <button aria-label={lang === "en" ? "Back to open jobs" : "Volver a las tareas pendientes"} onClick={() => setView("hub")} className="mt-4 block text-[13px] text-[#5f6368] cursor-pointer">←</button>
             </div>
           </div>

@@ -30,16 +30,6 @@ async function everythingDone(page: Page) {
   await continuePastStudioArrivalIfPresent(page);
 }
 
-async function passActIntro(page: Page) {
-  const intro = page.getByTestId("act-intro");
-  try {
-    await intro.waitFor({ state: "visible", timeout: 4_000 });
-  } catch {
-    return;
-  }
-  await page.getByTestId("act-intro-continue").click();
-}
-
 async function checkSummaryPage(page: Page, name: string, lang: "en" | "es", skill: string) {
   const summary = page.getByTestId("course-summary");
   await expect(summary).toBeVisible();
@@ -82,11 +72,12 @@ test("a finished route and Stop here both offer a summary the learner can keep",
   await everythingDone(page);
   const card = page.locator("[data-job-card]");
 
-  // Choosing a route that is already finished lands on its ending.
-  await card.getByTestId("course-route-lead").click();
-  await passActIntro(page);
-  await expect(card).toContainText("Route finished");
-  await expect(card).toContainText("You finished the “Stay and lead” route");
+  // Finished routes are labelled and cannot send the learner back into them.
+  await expect(card.getByTestId("course-route-lead")).toBeDisabled();
+  await expect(card.getByTestId("course-route-lead")).toContainText("Finished");
+  await card.getByTestId("course-route-pause").click();
+  await card.getByTestId('course-route-confirm').click();
+  await expect(card).toContainText("Finished for now");
   await card.getByTestId("see-summary").click();
   await page.waitForURL(/\/summary/);
   await checkSummaryPage(page, name, "en", "I can build a crew schedule.");
@@ -95,6 +86,7 @@ test("a finished route and Stop here both offer a summary the learner can keep",
   await waitForInteractive(page);
   await card.getByRole("button", { name: "Change direction" }).click();
   await card.getByTestId("course-route-pause").click();
+  await card.getByTestId('course-route-confirm').click();
   await expect(card).toContainText("Finished for now");
   await expect(card).toContainText(/You finished \d+ days of work/);
   await card.getByTestId("see-summary").click();
@@ -109,6 +101,7 @@ test("Stop here offers the summary in Spanish", async ({ page }) => {
   await everythingDone(page);
   const card = page.locator("[data-job-card]");
   await card.getByTestId("course-route-pause").click();
+  await card.getByTestId('course-route-confirm').click();
   await expect(card).toContainText("Terminado por ahora");
   await expect(card.getByTestId("see-summary")).toHaveText("Ver mi resumen");
   await card.getByTestId("see-summary").click();

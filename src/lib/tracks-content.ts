@@ -270,7 +270,7 @@ export const TRACKS: Track[] = [
   },
   {
     key: "office-drive",
-    title: { en: "Welcome to HQ", es: "Bienvenida a la oficina central" },
+    title: { en: "Welcome to HQ", es: "Te damos la bienvenida a la oficina central" },
     subtitle: { en: "Find the current file. Then share it.", es: "Encuentra el archivo actual. Luego compártelo." },
     taskKeys: ["office-drive"],
     awardEmoji: "🏢",
@@ -343,6 +343,43 @@ export interface LevelUpCopy {
   cta: Localized<string>;
   /** When true, clocking out is the primary action — for natural session end points. */
   stoppingPoint?: boolean;
+  /**
+   * A card that opens on a problem ("You're locked out.", "You woke up
+   * sick."). It still marks the new day, but without confetti: celebrating
+   * bad news reads as a mistake (Story Mode Audit finding #18).
+   */
+  problem?: boolean;
+}
+
+/** Confetti belongs to good news only. */
+export function levelUpShowsConfetti(copy: Pick<LevelUpCopy, "problem">): boolean {
+  return !copy.problem;
+}
+
+/** The two Act V routes share dates, but never share a learner's assignment. */
+export function levelUpCopyFor(level: Level, path?: BridgePath | null): LevelUpCopy | undefined {
+  const copy = level.levelUp;
+  if (!copy || !path || !level.pathTracks) return copy;
+  const bodies: Record<string, { a: Localized<string>; b: Localized<string> }> = {
+    level16: {
+      a: { en: 'Harborside will pay for a class. Marcus helps you get your college application ready.', es: 'Harborside pagará una clase. Marcus te ayuda a preparar la solicitud para la universidad.' },
+      b: { en: 'Try working at a clinic front desk. Thuy needs help booking a visit around the doctor’s schedule.', es: 'Prueba el trabajo en la recepción de una clínica. Thuy necesita ayuda para agendar una cita según el horario del médico.' },
+    },
+    level17: {
+      a: { en: 'Your college aid letter has arrived. Read the amount and the deadline.', es: 'Llegó tu carta de ayuda para la universidad. Lee la cantidad y la fecha límite.' },
+      b: { en: 'A patient has brought an intake form. Check the details and keep the visit information private.', es: 'Una paciente trajo un formulario. Revisa los datos y protege la información de la consulta.' },
+    },
+    level18: {
+      a: { en: 'Your class has a new assignment. Check the syllabus deadline before you answer Dana.', es: 'Tu clase tiene una tarea nueva. Revisa la fecha de entrega en el programa antes de responder a Dana.' },
+      b: { en: 'The clinic charges need checking. Compare the bill with the price list before you report a problem.', es: 'Hay que revisar los cargos de la clínica. Compara la factura con la lista de precios antes de reportar un problema.' },
+    },
+    level19: {
+      a: { en: 'Your class needs a source for a paper. Check who wrote it and what supports the information.', es: 'Necesitas una fuente para un trabajo de clase. Revisa quién la escribió y qué respalda la información.' },
+      b: { en: 'Someone calls asking about a patient’s visit. You cannot check who is calling. Protect the patient’s information.', es: 'Alguien llama para preguntar por una consulta. No puedes verificar quién llama. Protege la información de la paciente.' },
+    },
+  };
+  const body = bodies[level.key]?.[path];
+  return body ? { ...copy, title: level.title, body } : copy;
 }
 
 export interface Level {
@@ -439,7 +476,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "👋",
       kicker: { en: "Your first shift is tomorrow", es: "Tu primer turno es mañana" },
-      title: { en: "You know how this computer works.", es: "Ya sabes cómo funciona esta computadora." },
+      title: { en: "You found your way around.", es: "Ya recorriste las partes principales." },
       body: {
         en: "Maria Delgado runs the cafe, and she already emailed you.",
         es: "Maria Delgado dirige el café, y ya te envió un correo.",
@@ -454,11 +491,11 @@ export const LEVELS: Level[] = [
     firstTabKey: "portal",
     levelUp: {
       emoji: "🎉",
-      kicker: { en: "Ready for tomorrow", es: "Listo para mañana" },
+      kicker: { en: "Ready for tomorrow", es: "Todo listo para mañana" },
       title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
       body: {
         en: "You sent three replies. You are ready for tomorrow. Your progress is saved. Next time you sign in, your schedule will be waiting.",
-        es: "Enviaste tres respuestas. Estás listo para mañana. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
+        es: "Enviaste tres respuestas. Ya tienes todo para mañana. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
       },
       cta: { en: "See my schedule", es: "Ver mi horario" },
       stoppingPoint: true,
@@ -493,8 +530,8 @@ export const LEVELS: Level[] = [
         es: "Le dejaste a Maria una nota clara.",
       },
       body: {
-        en: "You checked your hours and summed up the shift. Clock out for today. Your progress is saved. Next time you sign in, reply to Darnell.",
-        es: "Revisaste tus horas y resumiste el turno. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, respóndele a Darnell.",
+        en: "You checked your hours and summed up the shift. Stop for today. Your progress is saved. Next time you sign in, reply to Darnell.",
+        es: "Revisaste tus horas y resumiste el turno. Termina por hoy. Tu progreso está guardado. La próxima vez que entres, respóndele a Darnell.",
       },
       cta: { en: "Reply to Darnell", es: "Responderle a Darnell" },
       stoppingPoint: true,
@@ -508,12 +545,13 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "🤒",
       kicker: { en: "Monday morning", es: "Lunes por la mañana" },
-      title: { en: "You woke up sick.", es: "Te despertaste enfermo." },
+      title: { en: "You woke up sick.", es: "Hoy despertaste con malestar." },
       body: {
         en: `You're on the schedule at ${SICK_DAY_START}. Write Maria before your shift, not after it starts.`,
         es: `Hoy tienes turno a las ${SICK_DAY_START}. Escríbele a Maria antes de tu turno, no después.`,
       },
       cta: { en: "Write to Maria", es: "Escribirle a Maria" },
+      problem: true,
     },
   },
   {
@@ -545,8 +583,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Day 6: complete", es: "Día 6: listo" },
       title: { en: "You checked your first paycheck.", es: "Revisaste tu primer recibo." },
       body: {
-        en: "Net pay and hours look right. Clock out for today. Your progress is saved. Next time you sign in, you're a Shift Lead.",
-        es: "El pago neto y las horas están bien. Marca salida por hoy. Tu progreso está guardado. La próxima vez que entres, serás líder de turno.",
+        en: "You found the net pay and paid hours. Stop for today. Your progress is saved. Next time you sign in, you're a Shift Lead.",
+        es: "Encontraste el pago neto y las horas pagadas. Termina por hoy. Tu progreso está guardado. La próxima vez que entres, serás líder de turno.",
       },
       cta: { en: "See what's next", es: "Ver qué sigue" },
       stoppingPoint: true,
@@ -566,6 +604,7 @@ export const LEVELS: Level[] = [
         es: "Le pasa a todo líder. Con calma, vuelve a entrar.",
       },
       cta: { en: "Get back in", es: "Volver a entrar" },
+      problem: true,
     },
   },
   {
@@ -579,8 +618,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "A lead plans ahead", es: "Un líder planea" },
       title: { en: "Renata put you on the calendar.", es: "Renata te puso en el calendario." },
       body: {
-        en: "A meeting invite landed right on top of your shift.",
-        es: "Llegó una invitación a reunión justo encima de tu turno.",
+        en: "A meeting invite for next week just came in.",
+        es: "Acaba de llegar una invitación a una reunión para la semana que viene.",
       },
       cta: { en: "Open Calendar from the bookmarks", es: "Abrir Calendar desde los marcadores" },
     },
@@ -666,7 +705,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "⭐",
       kicker: { en: "A promotion", es: "Un ascenso" },
-      title: { en: "You are a Shift Supervisor now!", es: "¡Ahora eres supervisor de turno!" },
+      title: { en: "You are a Shift Supervisor now!", es: "¡Ahora supervisas los turnos!" },
       body: {
         en: "You run the crew now, and Saturday close has nobody.",
         es: "Ahora diriges al equipo, y el cierre del sábado no tiene a nadie.",
@@ -685,8 +724,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Trust, then check", es: "Confía, luego revisa" },
       title: { en: "The total looks fine. It isn't.", es: "El total se ve bien. No lo está." },
       body: {
-        en: "Someone's hours got left out of the week's total.",
-        es: "Las horas de alguien quedaron fuera del total de la semana.",
+        en: "Renata runs payroll from the week's hours. Check the total before she does.",
+        es: "Renata hace la nómina con las horas de la semana. Revisa el total antes que ella.",
       },
       cta: { en: "Open the sheet", es: "Abrir la hoja" },
     },
@@ -702,8 +741,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Your meeting now", es: "Ahora es tu reunión" },
       title: { en: "You call the huddle.", es: "Tú convocas la reunión." },
       body: {
-        en: "Pick a time when nobody is on shift.",
-        es: "Elige una hora en que nadie esté en turno.",
+        en: "Find a time the whole crew can come.",
+        es: "Busca una hora en la que todo el equipo pueda venir.",
       },
       cta: { en: "Set it up", es: "Organizarla" },
     },
@@ -768,12 +807,12 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "📬",
       kicker: { en: "HQ is on the thread", es: "HQ está en el hilo" },
-      title: { en: "Not everyone needs your answer.", es: "No todos necesitan tu respuesta." },
+      title: { en: "A long thread from HQ.", es: "Un hilo largo de HQ." },
       body: {
-        en: "Read the whole thread. Reply to the person who asked, not the whole list.",
-        es: "Lee todo el hilo. Responde a quien preguntó, no a toda la lista.",
+        en: "Several people are on this thread. Read all of it, then answer what was asked of you.",
+        es: "Hay varias personas en este hilo. Léelo completo y luego responde lo que te pidieron.",
       },
-      cta: { en: "Open Mail", es: "Abrir correo" },
+      cta: { en: "Open Mail", es: "Abrir Correo" },
     },
   },
   {
@@ -862,10 +901,10 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "🏢",
       kicker: { en: "Moving up", es: "Subiendo" },
-      title: { en: "Time to apply for the office job.", es: "Hora de aplicar al puesto de oficina." },
+      title: { en: "Time to apply for the office job.", es: "Hora de solicitar el puesto de oficina." },
       body: {
-        en: "You've run shifts, schedules, and budgets at the cafe. Harborside HQ has an Office Administrator opening, and Anita Raman shared it with you.",
-        es: "Has manejado turnos, horarios y presupuestos en el café. Harborside HQ tiene una vacante de Administrador de Oficina, y Anita Raman te la compartió.",
+        en: "You have practiced email, schedules, and shared files at the cafe. Anita Raman shared an office job opening at Harborside HQ. You can use those skills in a new workplace.",
+        es: "Has practicado correo, horarios y archivos compartidos en el café. Anita Raman te compartió una vacante en la oficina central de Harborside. Puedes usar esas habilidades en otro lugar de trabajo.",
       },
       cta: { en: "See the posting", es: "Ver el anuncio" },
     },
@@ -882,8 +921,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Show your experience", es: "Muestra tu experiencia" },
       title: { en: "The application wants a résumé.", es: "La solicitud pide un currículum." },
       body: {
-        en: "You have real experience now, new hire to assistant manager. Put it on one page: a summary, your last two roles, and your skills.",
-        es: "Ahora tienes experiencia real, de nuevo empleado a asistente de gerencia. Ponla en una página: un resumen, tus últimos dos puestos y tus habilidades.",
+        en: "Use the roles and tasks you have practiced in this story. Put them on one page: a summary, your work history, and your skills.",
+        es: "Usa los puestos y las tareas que has practicado en esta historia. Ponlos en una página: un resumen, tu historial de trabajo y tus habilidades.",
       },
       cta: { en: "Build my résumé", es: "Armar mi currículum" },
     },
@@ -897,13 +936,13 @@ export const LEVELS: Level[] = [
     preHire: true,
     levelUp: {
       emoji: "💬",
-      kicker: { en: "Last step before the offer", es: "Último paso antes de la oferta" },
+      kicker: { en: "Before the interview", es: "Antes de la entrevista" },
       title: { en: "Anita wants to talk.", es: "Anita quiere hablar." },
       body: {
-        en: "The interview is four common questions. Answer each one the way you'd say it out loud, then ask a question of your own.",
-        es: "La entrevista son cuatro preguntas comunes. Responde cada una como lo dirías en voz alta, y luego haz una pregunta tuya.",
+        en: "Anita sent an interview invitation. Read her email, then prepare written notes for four common questions and a question of your own.",
+        es: "Anita envió una invitación a una entrevista. Lee su correo y prepara notas escritas para cuatro preguntas comunes y una pregunta tuya.",
       },
-      cta: { en: "Start the interview", es: "Empezar la entrevista" },
+      cta: { en: "Read Anita’s email", es: "Leer el correo de Anita" },
     },
   },
   {
@@ -918,8 +957,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "They said yes", es: "Dijeron que sí" },
       title: { en: "The offer is in.", es: "Llegó la oferta." },
       body: {
-        en: "Read the letter. Find your start date. Read the exact line, don't guess. Then reply that you accept.",
-        es: "Lee la carta. Encuentra tu fecha de inicio. Lee la línea exacta, no adivines. Luego responde que aceptas.",
+        en: "In the story, your interview took place between these days. Today Anita’s offer arrives in Mail. Read the letter, find your start date, then reply.",
+        es: "En la historia, tu entrevista ocurrió entre estos días. Hoy llega la oferta de Anita a Correo. Lee la carta, encuentra tu fecha de inicio y responde.",
       },
       cta: { en: "Read the offer", es: "Leer la oferta" },
     },
@@ -936,25 +975,25 @@ export const LEVELS: Level[] = [
       kicker: { en: "Almost day one", es: "Casi el primer día" },
       title: { en: "HR sent the new-hire forms.", es: "RR. HH. envió los formularios de nuevo empleado." },
       body: {
-        en: "Three forms before your first day: the W-4 (taxes), the I-9 (work authorization), and direct deposit. Each one has a 2-minute lesson if you need it.",
-        es: "Tres formularios antes de tu primer día: el W-4 (impuestos), el I-9 (autorización de trabajo) y el depósito directo. Cada uno tiene una lección de 2 minutos si la necesitas.",
+        en: "HR sent fictional forms for Robin Avery. Practice on Robin's copy before your first day: the W-4, I-9, and direct deposit. Use Robin's facts, not your personal details.",
+        es: "RR. HH. envió formularios ficticios de Robin Avery. Practica con su copia antes de tu primer día: el W-4, el I-9 y el depósito directo. Usa los datos de Robin, no tus datos personales.",
       },
       cta: { en: "Open the forms", es: "Abrir los formularios" },
     },
   },
   {
     key: "level20",
-    title: { en: "Welcome to HQ", es: "Bienvenida a la oficina central" },
+    title: { en: "Welcome to HQ", es: "Te damos la bienvenida a la oficina central" },
     trackKeys: ["office-drive"],
     firstTabKey: "files",
     freeTabbing: true,
     levelUp: {
       emoji: "🏢",
       kicker: { en: "You got the job", es: "Conseguiste el puesto" },
-      title: { en: "Welcome to HQ.", es: "Bienvenida a HQ." },
+      title: { en: "Welcome to HQ.", es: "Te damos la bienvenida a HQ." },
       body: {
-        en: "You're an Office Administrator now. The drive is bigger here. Search first, then read the file name twice. Share the current file, not last quarter's.",
-        es: "Ahora eres Administrador de Oficina. Aquí el drive es más grande. Busca primero, luego lee el nombre del archivo dos veces. Comparte el archivo actual, no el del trimestre pasado.",
+        en: "You're an Office Administrator now. Chris needs a file from the team drive, and the drive is bigger here.",
+        es: "Ahora trabajas en administración de oficina. Chris necesita un archivo del drive del equipo, y aquí el drive es más grande.",
       },
       cta: { en: "Open Drive", es: "Abrir Drive" },
     },
@@ -987,8 +1026,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Do not submit it blind", es: "No lo envíes sin revisar" },
       title: { en: "One row has no receipt.", es: "Una fila no tiene recibo." },
       body: {
-        en: "Match the rows you can. Flag the one that is missing a receipt. That is the whole task.",
-        es: "Empareja las filas que puedas. Marca la que no tiene recibo. Esa es toda la tarea.",
+        en: "Check the expense rows against the receipts. Flag missing documentation and report the total supported by receipts.",
+        es: "Compara las filas de gastos con los recibos. Marca la documentación que falta e informa el total respaldado por recibos.",
       },
       cta: { en: "Open the sheet", es: "Abrir la hoja" },
     },
@@ -1004,8 +1043,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Three slides", es: "Tres diapositivas" },
       title: { en: "A title, a number, a main point.", es: "Un título, un número, una idea." },
       body: {
-        en: "Use the expense total that is already on the slide. Present it. Do not add a fourth slide.",
-        es: "Usa el total de gastos que ya está en la diapositiva. Preséntalo. No agregues una cuarta diapositiva.",
+        en: "The team meeting needs three slides: a title, the expense total, and one main point. The total comes from the receipts you checked.",
+        es: "La reunión del equipo necesita tres diapositivas: un título, el total de gastos y una idea principal. El total sale de los recibos que revisaste.",
       },
       cta: { en: "Open Slides", es: "Abrir Diapositivas" },
     },
@@ -1018,11 +1057,11 @@ export const LEVELS: Level[] = [
     freeTabbing: true,
     levelUp: {
       emoji: "⭐",
-      kicker: { en: "A promotion", es: "Un ascenso" },
-      title: { en: "You are a Team Lead now!", es: "¡Ahora eres Team Lead!" },
+      kicker: { en: "A new job from Anita", es: "Un puesto nuevo de Anita" },
+      title: { en: "You are the cafe crew's Team Lead now.", es: "Ahora eres líder de equipo del personal del café." },
       body: {
-        en: "New title, and for the first time you run the room instead of just showing up. There is a meeting this morning. It is yours to run.",
-        es: "Nuevo puesto, y por primera vez tú diriges la sala en vez de solo asistir. Hay una reunión esta mañana. Te toca dirigirla.",
+        en: "You know the crew from your cafe shifts, and you know the HQ tools. This morning the crew meets, and you run the meeting.",
+        es: "Conoces al equipo por tus turnos en el café, y conoces las herramientas de la oficina central. Esta mañana el equipo se reúne, y tú diriges la reunión.",
       },
       cta: { en: "Start the agenda", es: "Empezar la agenda" },
     },
@@ -1073,7 +1112,7 @@ export const LEVELS: Level[] = [
       title: { en: "Look at everything you can do now.", es: "Mira todo lo que ya puedes hacer." },
       body: {
         en: "From answering one email on day one to running a full weekly report as a Team Lead. Take a few minutes to look back and write it down.",
-        es: "Desde contestar un correo el primer día hasta hacer un reporte semanal completo como Team Lead. Tómate unos minutos para mirar atrás y escribirlo.",
+        es: "Desde contestar un correo el primer día hasta hacer un reporte semanal completo como líder de equipo. Tómate unos minutos para mirar atrás y escribirlo.",
       },
       cta: { en: "Look back", es: "Mirar atrás" },
       stoppingPoint: true,
@@ -1109,7 +1148,7 @@ export type DesktopScene = "harborside-open" | "harborside-shift" | "harborside-
 export const ACTS: Act[] = [
   { key: "act1", numeral: "I", role: { en: "New Hire", es: "Personal nuevo" }, levelKeys: ["level0", "level1", "level2", "level3", "level3a", "level3a2", "level3a3"], scene: "harborside-open" },
   { key: "act2", numeral: "II", role: { en: "Shift Lead", es: "Líder de turno" }, levelKeys: ["level3b", "level3c", "level4", "level5", "level6", "level7", "level8"], scene: "harborside-shift" },
-  { key: "act3", numeral: "III", role: { en: "Shift Supervisor", es: "Supervisor" }, levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
+  { key: "act3", numeral: "III", role: { en: "Shift Supervisor", es: "Supervisión" }, levelKeys: ["level9", "level10", "level11", "level12"], scene: "harborside-floor" },
   { key: "act4", numeral: "IV", role: { en: "Assistant Manager", es: "Gerente asistente" }, levelKeys: ["level13", "level14", "level15"], scene: "harborside-floor" },
   { key: "act5", numeral: "V", role: { en: "Bridge", es: "Puente" }, levelKeys: ["level16", "level17", "level18", "level19"], scene: "harborside-floor" },
   { key: "act6", numeral: "VI", role: { en: "Office Administrator", es: "Administración" }, levelKeys: ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5", "level20", "level21", "level22", "level23"], scene: "harborside-floor" },
@@ -1418,6 +1457,41 @@ export function nextHandoff(completedTaskKeys: TaskKey[], path?: BridgePath | nu
 export function courseLevels(route: CourseRoute | null): Level[] {
   return LEVELS.filter((l) => routeIncludesLevel(route, l.key));
 }
+/**
+ * Act II's end moment. The core course ends on level8, and no level follows
+ * it until a direction is chosen, so there is no next level to carry a
+ * level-up card. This stand-in (not in LEVELS) carries it instead. Its
+ * button closes the card so the Job Card can show the directions.
+ */
+export const CORE_FINALE: Level = {
+  key: "core-finale",
+  title: { en: "Act II complete", es: "Acto II terminado" },
+  trackKeys: [],
+  firstTabKey: "mail",
+  levelUp: {
+    emoji: "🧭",
+    kicker: { en: "Act II: complete", es: "Acto II: terminado" },
+    title: { en: "You finished your time as a Shift Lead.", es: "Terminaste tu etapa como líder de turno." },
+    body: {
+      en: "Renata trusts you with shifts, shared files, and reports. Now you choose what comes next: stay at the cafe, try a clinic, take a class, or apply for an office job. You can also stop here and keep your skills summary.",
+      es: "Renata confía en ti para los turnos, los archivos compartidos y los reportes. Ahora eliges qué sigue: quedarte en el café, probar una clínica, tomar una clase o solicitar un empleo de oficina. También puedes terminar aquí y guardar tu resumen de habilidades.",
+    },
+    cta: { en: "See my choices", es: "Ver mis opciones" },
+  },
+};
+
+/** The finale card when finishing `level` ends the core with no direction chosen yet. */
+export function courseFinaleFor(level: Level, route: CourseRoute | null): Level | null {
+  if (route !== null) return null;
+  return courseLevels(null).at(-1)?.key === level.key ? CORE_FINALE : null;
+}
+
+/** A stored arrival key, including the finale that is not a real level. */
+export function levelByArrivalKey(key: string | null | undefined): Level | undefined {
+  if (!key) return undefined;
+  return key === CORE_FINALE.key ? CORE_FINALE : LEVELS.find((l) => l.key === key);
+}
+
 export function coreComplete(done: readonly TaskKey[]): boolean {
   return courseLevels(null).flatMap((l) => taskKeysForLevel(l)).every((k) => done.includes(k));
 }

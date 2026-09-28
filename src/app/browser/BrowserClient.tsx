@@ -10,7 +10,9 @@ import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { useLesson } from "@/lib/lesson-context";
-import { LEVELS, levelForTrack, nextTaskInTrack, unlockedLevels } from "@/lib/tracks-content";
+import { LEVELS, TASK_LOCATIONS, levelForTrack, nextTaskInTrack, unlockedLevels } from "@/lib/tracks-content";
+import { jumpTabForTask } from "@/lib/curriculum-catalog";
+import { bookmarkToPulse } from "@/lib/bookmark-pulse";
 import { TAB_META, TAB_COLORS, bookmarkTabKeys, tabLabel } from "@/lib/tabs";
 import { newTabHint } from "@/lib/shift-spine";
 import { useNudge } from "@/lib/use-nudge";
@@ -240,6 +242,8 @@ export default function BrowserClient() {
   // relying on whether the *value* changed doesn't work, since re-picking
   // the same level/tab twice in a row is a real, common case.
   const [lastToken, setLastToken] = useState(browserTabToken);
+  // A bookmark to flash, and a counter so the same one can flash again.
+  const [pulse, setPulse] = useState<{ key: string; n: number } | null>(null);
   if (browserTabToken !== lastToken) {
     setLastToken(browserTabToken);
     if (lesson) {
@@ -287,6 +291,20 @@ export default function BrowserClient() {
           setOpenTabs(tabsForLevel(newLevelKey, newLevelDef?.firstTabKey));
           setActiveTab((newLevelDef?.firstTabKey as TabKey | undefined) ?? "mail");
         }
+      }
+      // A re-press of the card's "Open X from the bookmarks" with the Browser
+      // already up: nothing else changes on screen, so flash the bookmark it
+      // names. It points; the learner still clicks it (see bookmark-pulse.ts).
+      if (newLevelDef?.freeTabbing) {
+        const task = nextTaskInTrack(currentTrack, completedTaskKeys);
+        const target = task
+          ? bookmarkToPulse(
+              [TASK_LOCATIONS[task]?.tab, jumpTabForTask(task), task],
+              visibleBookmarks,
+              staleTab ? "newtab" : activeTab,
+            )
+          : null;
+        if (target) setPulse((p) => ({ key: target, n: (p?.n ?? 0) + 1 }));
       }
     }
   }
@@ -391,6 +409,7 @@ export default function BrowserClient() {
 
   const goToBookmark = (t: TabDef) => {
     if (lesson && !visibleBookmarks.has(t.key)) return;
+    setPulse(null);
     if (openTabs.some((ot) => ot.key === t.key)) {
       setActiveTab(t.key);
       return;
@@ -491,7 +510,10 @@ export default function BrowserClient() {
         </button>
       </div>
 
+      <a href="#bookmarks-bar" className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded focus:bg-white focus:p-3 focus:text-[#0b57d0]">{lang === "en" ? "Skip to bookmarks" : "Ir a los marcadores"}</a>
       <div
+        id="bookmarks-bar"
+        tabIndex={-1}
         data-testid="bookmarks-row"
         className="flex items-center gap-0.5 border-b border-[#dadce0] bg-white px-3 py-[3px]"
       >
@@ -503,7 +525,7 @@ export default function BrowserClient() {
             // Card keeps off the bookmarks when a corner allows it.
             data-card-avoid
             onClick={() => goToBookmark(t)}
-            className={`flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] ${
+            className={`relative flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] ${
               active?.key === t.key
                 ? "bg-[#e8eaed] text-[#202124]"
                 : "text-[#3c4043] hover:bg-[#f1f3f4]"
@@ -519,6 +541,15 @@ export default function BrowserClient() {
               })()}
             </span>
             {tabLabel(t.key, t.label, lang)}
+            {pulse?.key === t.key && (
+              <span
+                key={pulse.n}
+                aria-hidden
+                data-testid="bookmark-pulse"
+                onAnimationEnd={() => setPulse(null)}
+                className="pointer-events-none absolute inset-0 rounded-md animate-bookmark-flash"
+              />
+            )}
           </button>
         ))}
       </div>

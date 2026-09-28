@@ -6,7 +6,7 @@ import { openFileStep } from "../open-file-step";
 export const MISMATCH_KEY = "ekg";
 export const CORRECT_CHARGE = 85;
 export const WRONG_CHARGE = 185;
-export const OFFICE_EMAIL = "pat.okonkwo@harborsidehealth.com";
+export const OFFICE_EMAIL = "pat.brennan@harborsidehealth.com";
 
 export const REFERENCE = [
   { code: "99213", label: { en: "Office visit", es: "Consulta" }, charge: 145 },
@@ -18,7 +18,7 @@ export const REFERENCE = [
 export const BILLING_ROWS = [
   { key: "visit", patient: "Maya Ansari", code: "99213", charge: 145 },
   { key: "shot", patient: "Nadia Halloran", code: "90471", charge: 40 },
-  { key: "ekg", patient: "Pat Okonkwo", code: "93000", charge: 185 },
+  { key: "ekg", patient: "Morgan Okonkwo", code: "93000", charge: 185 },
   { key: "labs", patient: "Omar Whitfield", code: "36415", charge: 22 },
 ] as const;
 
@@ -115,12 +115,10 @@ export const STARTERS: Record<Lang, string[]> = {
   en: [
     "Pat, the EKG for Okonkwo is $185. The list says $85.",
     "93000 should be $85, not $185.",
-    "Pat, el EKG de Okonkwo está en $185. La lista dice $85.",
   ],
   es: [
     "Pat, el EKG de Okonkwo está en $185. La lista dice $85.",
     "El 93000 debería ser $85, no $185.",
-    "Pat, the EKG for Okonkwo is $185. The list says $85.",
   ],
 };
 
@@ -203,5 +201,5 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(BILLING_COPY, (c) => c.sheetName),
   { en: "Click the row that does not match the list.", es: "Haz clic en la fila que no cuadra con la lista." },
-  { en: "Email Pat the row and the correct charge.", es: "Escríbele a Pat la fila y el cargo correcto." },
+  { en: "Choose File → Email → Email collaborators. Tell Pat the row and the correct charge.", es: "Elige Archivo → Correo electrónico → Enviar correo a colaboradores. Dile a Pat la fila y el cargo correcto." },
 ];

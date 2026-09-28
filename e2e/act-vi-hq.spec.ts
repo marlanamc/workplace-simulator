@@ -32,6 +32,6 @@ test("the office preset starts HQ without an elective prerequisite", async ({ pa
   await continuePastStudioArrivalIfPresent(page);
 
   const card = jobCard(page);
-  await expect(card.getByText("Find the current file. Then share it.")).toBeVisible({ timeout: 20_000 });
+  await expect(card.getByText("Your coworker Chris asked for the Q3 notes. Share the current file.")).toBeVisible({ timeout: 20_000 });
   await expect(card.getByRole("button", { name: /Open Drive|Abrir Drive/ })).toBeVisible();
 });

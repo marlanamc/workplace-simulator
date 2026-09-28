@@ -47,5 +47,9 @@ test('failed writing stays retryable across reload without claiming success', as
   await expect(card.getByRole('button',{name:'Retry save'})).toHaveCount(0);
   await page.goto('/?task=performance-review');
   await waitForInteractive(page);
+  await expect(page.getByRole('dialog')).toContainText('The full weekly report is yours this week.');
+  await continuePastStudioArrivalIfPresent(page);
+  await page.goto('/?task=performance-review');
+  await waitForInteractive(page);
   await expect(card.getByText('Review submitted',{exact:true})).toBeVisible({timeout:20000});
 });

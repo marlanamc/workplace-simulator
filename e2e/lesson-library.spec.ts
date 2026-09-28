@@ -28,7 +28,7 @@ for (const lang of ["en", "es"] as const) {
     await page.getByTestId("lesson-intro-start").click();
     await page.getByRole("button", { name: /Hide the rest|Ocultar el resto/ }).click();
     await page.getByRole("radio", { name: /^(Single,|Soltero\/a,)/ }).check();
-    await page.getByRole("textbox", { name: /^(Number of dependents|Número de dependientes)/ }).fill("0");
+    await page.getByRole("textbox", { name: /^(Total dependent and other credits|Total de créditos por dependientes)/ }).fill("0.00");
     await page.getByRole("textbox", { name: /^(Signature|Firma)/ }).fill("Robin Avery");
     await page.getByRole("textbox", { name: /^(Date|Fecha)/ }).fill("10/01/2026");
     await page.getByRole("button", { name: /^(Submit W-4|Enviar W-4)$/ }).click();
@@ -38,7 +38,7 @@ for (const lang of ["en", "es"] as const) {
     // Complete again, then switch language to verify the return uses live language.
     await page.getByRole("button", { name: /Hide the rest|Ocultar el resto/ }).click();
     await page.getByRole("radio", { name: /^(Single,|Soltero\/a,)/ }).check();
-    await page.getByRole("textbox", { name: /^(Number of dependents|Número de dependientes)/ }).fill("0");
+    await page.getByRole("textbox", { name: /^(Total dependent and other credits|Total de créditos por dependientes)/ }).fill("0.00");
     await page.getByRole("textbox", { name: /^(Signature|Firma)/ }).fill("Robin Avery");
     await page.getByRole("textbox", { name: /^(Date|Fecha)/ }).fill("10/01/2026");
     await page.getByRole("button", { name: /^(Submit W-4|Enviar W-4)$/ }).click();

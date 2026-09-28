@@ -62,6 +62,15 @@ export const storage = {
       /* nothing stored, nothing to clear */
     }
   },
+
+  removePrefix(prefix: string): void {
+    try {
+      const local = area();
+      if (!local) return;
+      const keys = Array.from({ length: local.length }, (_, i) => local.key(i));
+      for (const key of keys) if (key?.startsWith(prefix)) local.removeItem(key);
+    } catch { /* Storage may be unavailable on this device. */ }
+  },
 };
 
 /**

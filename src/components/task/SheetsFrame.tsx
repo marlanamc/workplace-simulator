@@ -2,6 +2,7 @@
 
 import type { CSSProperties, ReactNode } from "react";
 import { TAB_ICONS } from "@/lib/icons";
+import { handleGridKey } from "@/lib/sheet-grid-keys";
 
 /**
  * The Google Sheets chrome — the green header bar with the Sheets mark and the
@@ -65,7 +66,8 @@ export interface GridRow {
 
 /**
  * A read-only spreadsheet grid. Clicking a cell selects it and surfaces its
- * value (or the caller-supplied formula) in the `fx` bar above.
+ * value (or the caller-supplied formula) in the `fx` bar above. The grid is
+ * one Tab stop; the arrow keys move the selection, as in Sheets.
  */
 export function ReadOnlyGrid({
   columns,
@@ -108,7 +110,11 @@ export function ReadOnlyGrid({
       </div>
 
       <div className="overflow-auto p-4">
-        <div className="inline-block border border-[#c0c0c0]" style={{ fontSize: 13 }}>
+        <div
+          className="inline-block border border-[#c0c0c0]"
+          style={{ fontSize: 13 }}
+          onKeyDown={(e) => handleGridKey(e, selected, allRows, columns.map((c) => c.key), onSelect)}
+        >
           <div className="flex">
             <div
               className="flex shrink-0 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa]"
@@ -150,6 +156,9 @@ export function ReadOnlyGrid({
                   return (
                     <button
                       key={col.key}
+                      type="button"
+                      tabIndex={isSelected ? 0 : -1}
+                      data-grid-cell={`${row}:${col.key}`}
                       onClick={() => onSelect({ row, col: col.key })}
                       className={`shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer ${
                         isHeader || isTotal ? "font-medium" : ""

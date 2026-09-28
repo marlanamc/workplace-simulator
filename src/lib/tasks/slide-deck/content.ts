@@ -12,6 +12,16 @@ export interface SlideDeckInput {
   coworkerAnswer: string;
 }
 
+/**
+ * The slide's big number, with one dollar sign however the learner typed it:
+ * "188", "$188" and "$ 188" all show "$188" (the slide used to add its own $
+ * in front of theirs, so "$188" became "$$188"). Empty stays empty.
+ */
+export function slideFigure(typed: string): string {
+  const bare = typed.trim().replace(/^\$+\s*/, "");
+  return bare ? `$${bare}` : "";
+}
+
 export function takeawayIsASentence(text: string): boolean {
   const words = text.trim().split(/\s+/).filter(Boolean);
   return words.length >= 3;

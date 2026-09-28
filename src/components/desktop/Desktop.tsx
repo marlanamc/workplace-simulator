@@ -8,6 +8,7 @@ import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 import JobCard from "@/components/task/JobCard";
 import LessonInfoCard, { LESSON_RAIL_CLASS } from "@/components/lesson/LessonInfoCard";
 import { deskIdentityFor } from "@/lib/desk-identity";
+import { practicedHistory } from "@/lib/tasks/job-application/content";
 import { actForLevel, levelForTrack, nextTaskInTrack, sceneForLevel } from "@/lib/tracks-content";
 import { storyClockFor } from "@/lib/story-calendar";
 import { useWindowManager } from "@/lib/window-manager";
@@ -99,7 +100,7 @@ export default function Desktop({
   // The story's time for this job, so the clock agrees with the scene.
   const storyClock = storyClockFor(currentLevel, nextTaskInTrack(currentTrack, completedTaskKeys));
   const actKey = actForLevel(currentLevel)?.key ?? "act1";
-  const identity = deskIdentityFor(actKey, bridgePath);
+  const identity = deskIdentityFor(actKey, bridgePath, currentLevel.preHire, practicedHistory(completedTaskKeys)[0]?.title);
   const scene = sceneForLevel(currentLevel);
   const windowTop = topInset ? topInset + 8 : 8;
 

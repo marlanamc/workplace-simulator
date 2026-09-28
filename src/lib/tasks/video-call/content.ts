@@ -53,7 +53,6 @@ export const VIDEO_CALL_COPY: Record<Lang, {
   chatPlaceholder: string;
   send: string;
   latePrompt: string;
-  lateHint: string;
   unmuteHint: string;
   sentKicker: string;
   tryAgain: string;
@@ -81,7 +80,6 @@ export const VIDEO_CALL_COPY: Record<Lang, {
     chatPlaceholder: "Type your question in the chat…",
     send: "Send",
     latePrompt: "You came in late. Everyone is already talking.",
-    lateHint: "Keep your mic off. Turn the camera on and off. Type your question in the chat.",
     unmuteHint: "Mute your mic again, then continue in chat. Your work is still here.",
     sentKicker: "You joined well",
     tryAgain: "Do it again",
@@ -109,7 +107,6 @@ export const VIDEO_CALL_COPY: Record<Lang, {
     chatPlaceholder: "Escribe tu pregunta en el chat…",
     send: "Enviar",
     latePrompt: "Llegaste tarde. Todos ya están hablando.",
-    lateHint: "Deja el micrófono apagado. Prende y apaga la cámara. Escribe tu pregunta en el chat.",
     unmuteHint: "Apaga el micrófono otra vez y continúa en el chat. Tu trabajo sigue aquí.",
     sentKicker: "Entraste bien",
     tryAgain: "Hacerlo otra vez",
@@ -126,7 +123,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Join with your mic off",
       s: [
         "Join with your mic off. If you turn it on accidentally, mute again and continue.",
-        "Turn the camera on and off so you know where the buttons are. When you have a question, type it in the chat instead of saying it out loud.",
+        "Use Start video to turn on your camera. When you have a question, type it in the chat instead of saying it out loud.",
       ],
       tip: "If you turn your mic on, mute it again and continue. When you come in late, you type your question in the chat instead of speaking up.",
     },
@@ -136,7 +133,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Entra con el micrófono apagado",
       s: [
         "Entra con el micrófono apagado. Si lo prendes por accidente, apágalo y continúa.",
-        "Prende y apaga la cámara para saber dónde están los botones. Cuando tengas una pregunta, escríbela en el chat en lugar de decirla en voz alta.",
+        "Usa Iniciar video para encender la cámara. Cuando tengas una pregunta, escríbela en el chat en lugar de decirla en voz alta.",
       ],
       tip: "Si prendes el micrófono, apágalo otra vez y continúa. Cuando llegas tarde, escribes tu pregunta en el chat en lugar de hablar.",
     },
@@ -150,7 +147,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Únete a la reunión. El micrófono empieza apagado.",
   },
   {
-    en: "Try the camera. Ask your question in chat.",
-    es: "Prueba la cámara. Haz tu pregunta en el chat.",
+    en: "Choose Start video to turn on the camera. Ask in chat who will share the meeting notes.",
+    es: "Elige Iniciar video para encender la cámara. Pregunta en el chat quién compartirá las notas de la reunión.",
   },
 ];

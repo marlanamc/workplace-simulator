@@ -30,6 +30,7 @@ for (const lang of ['en', 'es'] as const) {
     await clickIntoPage(page, () => page.getByRole('button', { name: /After Act II \(pick a direction\)/ }).click());
     const card = page.locator('[data-job-card]');
     await card.getByTestId('course-route-office').click();
+    await card.getByTestId('course-route-confirm').click();
     await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', 'act6');
     await page.getByTestId('act-intro-continue').click();
     const core = courseLevels(null).flatMap(level => taskKeysForLevel(level)).sort();
@@ -56,12 +57,16 @@ for (const lang of ['en', 'es'] as const) {
     for (const choice of [
       { key: 'lead', act: 'act3', task: 'team-schedule' },
       { key: 'healthcare', act: 'act5', task: 'appointment-scheduling' },
-      { key: 'college', act: null, task: 'enrollment' },
+      { key: 'college', act: 'act5', task: 'enrollment' },
       { key: 'pause', act: null, task: null },
       { key: 'office', act: null, task: 'job-application' },
     ] as const) {
-      await card.getByRole('button', { name: /Change direction|Cambiar de camino/ }).click();
+      // Mid-direction the link waits inside Help; after Stop here it is on the card.
+      const routeHelp = card.getByTestId('job-card-route-help');
+      if (await routeHelp.count()) await routeHelp.click();
+      await card.getByRole('button', { name: /^(Change direction|Cambiar de camino)$/ }).click();
       await card.getByTestId(`course-route-${choice.key}`).click();
+      await card.getByTestId('course-route-confirm').click();
       if (choice.act) {
         await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', choice.act);
         await page.getByTestId('act-intro-continue').click();

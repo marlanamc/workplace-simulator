@@ -40,7 +40,7 @@ async function passCelebration(page: Page) {
     if (await levelUp.first().isVisible().catch(() => false)) {
       // "Keep going" is a plain <button>; "Stop for today" is a submit inside a
       // <form>. Click the plain one so the walk never logs itself out.
-      const keep = levelUp.locator('button:not([type="submit"])').first();
+      const keep = levelUp.locator('[data-celebration-continue]');
       await expect(keep).toBeVisible({ timeout: 10_000 });
       await keep.click();
       cleared++;
@@ -153,7 +153,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await expect(page.getByRole("heading", { name: "The weekly report" })).toBeVisible({ timeout: 20_000 });
 
   await page.getByRole("button", { name: "Open Sheets" }).click();
-  await page.getByRole("checkbox", { name: /the total is/ }).check();
+  await page.getByLabel("Weekly total ($)", { exact: true }).fill("4820");
   await page.getByRole("button", { name: "Done here" }).click();
 
   await page.getByRole("button", { name: "Open Calendar" }).click();

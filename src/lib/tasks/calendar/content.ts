@@ -21,15 +21,15 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Next week",
-    headline: "Renata put a meeting on your day off.",
-    body: `The Weekly Lead Huddle is on ${HUDDLE_LONG.en}. You do not work that day. Ask her for a different time.`,
+    headline: "Renata sent you a meeting invite.",
+    body: `The Weekly Lead Huddle is on ${HUDDLE_LONG.en}. Check it against your work shifts before you answer.`,
     cta: "Open Calendar",
   },
   es: {
     emoji: "📅",
     kicker: "La semana que viene",
-    headline: "Renata puso una reunión en tu día libre.",
-    body: `La reunión semanal de líderes es el ${HUDDLE_LONG.es}. Ese día no trabajas. Pídele otro horario.`,
+    headline: "Renata te mandó una invitación a una reunión.",
+    body: `La reunión semanal de líderes es el ${HUDDLE_LONG.es}. Compárala con tus turnos antes de responder.`,
     cta: "Abrir Calendar",
   },
 };

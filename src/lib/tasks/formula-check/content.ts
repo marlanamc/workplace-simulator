@@ -9,14 +9,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "🧮",
     kicker: "Friday. Hours are due.",
     headline: "The total looks fine, but the formula is not.",
-    body: "Open the Hours cell and look at which rows the formula adds up. Someone on the list is being left out.",
+    body: "Renata runs payroll from this sheet. Check that the Hours total counts everyone on the crew.",
     cta: "Open the sheet",
   },
   es: {
     emoji: "🧮",
     kicker: "Viernes. Hay que entregar las horas.",
     headline: "El total se ve bien, pero la fórmula no.",
-    body: "Abre la celda de Horas y mira qué filas está sumando la fórmula. Está dejando fuera a alguien de la lista.",
+    body: "Renata hace la nómina con esta hoja. Revisa que el total de Horas cuente a todo el equipo.",
     cta: "Abrir la hoja",
   },
 };
@@ -424,8 +424,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Mira las celdas verdes en la columna Horas. El total suma solo esas. ¿Cada persona tiene una? Haz clic en la barra de fórmulas y corrige la fórmula.",
   },
   {
-    en: "The total changed. Click Email Renata the corrected total.",
-    es: "El total cambió. Haz clic en Enviar a Renata el total corregido.",
+    en: "The total changed. Choose File → Email → Email collaborators.",
+    es: "El total cambió. Elige Archivo → Correo electrónico → Enviar correo a colaboradores.",
   },
   {
     en: "Tell Renata the new total and who was missing. Then click Send.",

@@ -29,8 +29,8 @@ export const RESULTS = [
     title: { en: "My manager is the worst, what should I do lol", es: "Mi gerente es lo peor, ¿qué hago jaja" },
     source: { en: "r/jobs", es: "r/jobs" },
     blurb: {
-      en: "Anonymous replies. No names. No sources.",
-      es: "Respuestas anónimas. Sin nombres. Sin fuentes.",
+      en: "Posted by cafehelper42 · 18 replies. “I would stop replying after my shift. That worked for me.”",
+      es: "Publicado por cafehelper42 · 18 respuestas. «Yo dejaría de responder después de mi turno. A mí me funcionó».",
     },
   },
   {
@@ -39,8 +39,8 @@ export const RESULTS = [
     title: { en: "Workplace communication: a review of professional email practice", es: "Comunicación en el trabajo: una revisión del correo profesional" },
     source: { en: "BHCC Library · Academic Search", es: "Biblioteca BHCC · Academic Search" },
     blurb: {
-      en: "Peer-reviewed, 2024. Authors and a journal are named.",
-      es: "Revisado por pares, 2024. Nombran autores y una revista.",
+      en: "L. Chen and R. Morales · Workplace Communication Review (practice source), 2024 · Peer reviewed. Reviews how subject lines, tone and clear requests affect email communication.",
+      es: "L. Chen y R. Morales · Revista de Comunicación Laboral (fuente de práctica), 2024 · Revisión por pares. Analiza cómo el asunto, el tono y los pedidos claros afectan la comunicación por correo.",
     },
   },
 ] as const;
@@ -105,12 +105,10 @@ export const STARTERS: Record<Lang, string[]> = {
   en: [
     "It is from the library database and names its authors.",
     "Peer-reviewed, 2024. Not an ad or a forum.",
-    "Es de la base de datos y tiene autores.",
   ],
   es: [
     "Es de la base de datos de la biblioteca y nombra autores.",
     "Revisado por pares, 2024. No es un anuncio ni un foro.",
-    "It is from the library database and names its authors.",
   ],
 };
 
@@ -161,6 +159,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the four results.", es: "Lee los cuatro resultados." },
-  { en: "Pick the library database.", es: "Elige la base de datos." },
+  // Which result to trust is the question; the card does not name it. The
+  // reason step names what the check accepts (completion-directions.test),
+  // and it only shows once a result is picked.
+  { en: "Pick the one you would cite.", es: "Elige la que citarías." },
   { en: "Write one reason you can trust it, like its authors or library database.", es: "Escribe una razón para confiar en ella, como sus autores o la base de datos de la biblioteca." },
 ];

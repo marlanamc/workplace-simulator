@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Paperclip } from "lucide-react";
 
 /**
@@ -61,6 +61,8 @@ export default function GmailCompose({
   /** Extra controls (e.g. sentence starters) rendered under the body. */
   children?: ReactNode;
 }) {
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { bodyRef.current?.focus({ preventScroll: true }); }, []);
   return (
     <div className="overflow-hidden rounded-2xl border border-[#e0e3e8] shadow-[0_1px_3px_rgba(60,64,67,.15)]">
       <div className="flex items-center gap-2 border-b border-[#e0e3e8] px-4 py-2 text-[13px]">
@@ -72,6 +74,8 @@ export default function GmailCompose({
         <span>{subject}</span>
       </div>
       <textarea
+        ref={bodyRef}
+        aria-label={placeholder}
         value={body}
         onChange={(e) => onBody(e.target.value)}
         placeholder={placeholder}

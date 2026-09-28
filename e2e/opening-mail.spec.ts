@@ -78,7 +78,7 @@ for (const lang of ['en','es'] as const) {
     await expect.poll(completions).toEqual(['tour']);
     // Reload uses server progress, without needing to click Next first.
     await page.goto('/');
-    await card.getByRole('button', {name:/Open Mail|Abrir correo/}).click();
+    await card.getByRole('button', {name:/Open Mail|Abrir Correo/}).click();
     await parkCard(page);
     await expect(page.locator('[data-showme="maria-row"]')).toContainText(lang === 'en' ? 'Tomorrow at 10 AM' : 'Mañana a las 10');
     await reply(page, 'No');
@@ -114,7 +114,7 @@ for (const lang of ['en','es'] as const) {
     await expect.poll(saved).toEqual(['start-time','welcome']);
     // The failed payload survives reload, but the saved replies remain authoritative.
     await page.goto('/');
-    await card.getByRole('button', {name:/Open Mail|Abrir correo/}).click();
+    await card.getByRole('button', {name:/Open Mail|Abrir Correo/}).click();
     await parkCard(page);
     await page.locator('[data-showme="maria-row"]').click();
     await page.locator('[data-showme="reply-button"]').click();
@@ -125,7 +125,9 @@ for (const lang of ['en','es'] as const) {
     await expect.poll(completions).toEqual(['mail-reply','tour']);
     // Reopening finished progress cannot fabricate another completion or redo replies.
     await page.goto('/');
-    await expect(card).toContainText(lang === 'en' ? 'schedule' : 'horario');
+    await expect(page.getByRole('dialog')).toContainText(lang === 'en' ? 'Maria noticed you.' : 'Maria se fijó en ti.');
+    await continuePastStudioArrivalIfPresent(page);
+    await expect(card).toContainText(lang === 'en' ? 'Find the shift' : 'Busca el turno');
     await expect.poll(completions).toEqual(['mail-reply','tour']);
     // Explicit Studio replay clears only the opening steps.
     await startOpening(page);
@@ -194,4 +196,6 @@ test('concurrent saves and completion retries do not duplicate credit', async ({
   }
   await Promise.all([recordCompletion(id,'mail-reply'),recordCompletion(id,'mail-reply')]);
   expect(await sql`SELECT task_key FROM task_completions WHERE learner_id=${id} AND task_key='mail-reply'`).toHaveLength(1);
+  await Promise.all([recordCompletion(id,'schedule'),recordCompletion(id,'schedule')]);
+  expect(await sql`SELECT task_key FROM task_completions WHERE learner_id=${id} AND task_key='schedule'`).toHaveLength(1);
 });

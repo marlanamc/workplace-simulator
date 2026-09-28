@@ -30,6 +30,7 @@ async function preset(page:Page, name:RegExp, tab:string) {
 }
 for (const lang of ['en', 'es'] as const) {
   test(`meeting keeps drafts through Help and alternate view order (${lang})`, async ({ page }) => {
+    test.slow(); // Includes sign-in, a Studio navigation and a full reload.
     await signup(page, lang);
     await preset(page, /Run the Meeting/, 'meeting-minutes');
     const c = MEETING_COPY[lang];
@@ -58,6 +59,15 @@ for (const lang of ['en', 'es'] as const) {
     await transcript.locator('summary').click();
     await expect(transcript.getByText(MEETING_SCRIPT[lang].at(-2)!, { exact: true })).toBeVisible();
     await back.click();
+    await page.getByRole('button', { name: c.notesCta }).click();
+    await expect(notes).toHaveValue(draft);
+    await back.click();
+    await page.getByRole('button', { name: c.agendaCta }).click();
+    await expect(agenda).toHaveValue('Coverage / Cobertura');
+    await page.reload();
+    await waitForInteractive(page);
+    await card.getByRole('button', { name: /^Open |^Abre |^Abrir / }).click();
+    await page.getByTestId('bookmark-meeting-minutes').click();
     await page.getByRole('button', { name: c.notesCta }).click();
     await expect(notes).toHaveValue(draft);
     await back.click();

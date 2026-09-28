@@ -133,7 +133,7 @@ export default function PdfReaderClient() {
                 <PdfSheet
                   doc={active}
                   scale={scale}
-                  employeeName={active.id === "paystub-first" ? displayName : undefined}
+                  employeeName={displayName}
                 />
               </div>
             </div>

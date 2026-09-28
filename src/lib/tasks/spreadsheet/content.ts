@@ -300,8 +300,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Mira el papelito. Escribe las propinas de cada día en la columna Propinas.",
   },
   {
-    en: "The sheet added the total. Click Email the total to Renata.",
-    es: "La hoja sumó el total. Haz clic en Enviar el total a Renata por correo.",
+    en: "The sheet added the total. Choose File → Email → Email collaborators.",
+    es: "La hoja sumó el total. Elige Archivo → Correo electrónico → Enviar correo a colaboradores.",
   },
   {
     en: "Write Renata the total from the sheet. Then click Send.",

@@ -11,8 +11,8 @@ import { CafeMotif, SkillRow, WelcomeShell } from "@/components/welcome-shell";
  * layout as `SimulatorWelcome`. Gated once per act in `DesktopClient`.
  */
 export default function ActIntro({ act, onContinue }: { act: Act; onContinue: () => void }) {
-  const { lang } = useProgress();
-  const intro = actIntroFor(act.key);
+  const { lang, bridgePath } = useProgress();
+  const intro = actIntroFor(act.key, bridgePath);
   // Guard: an act without copy (shouldn't happen — content-integrity covers it)
   // falls through so the learner is never stuck on a blank screen.
   if (!intro) {

@@ -1,5 +1,7 @@
 "use client";
 
+import SheetEmailMenu from "@/components/task/SheetEmailMenu";
+
 import { useState, type CSSProperties } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
@@ -25,6 +27,7 @@ import RightNowBar from "@/components/task/RightNowBar";
 import NeedAStart from "@/components/task/NeedAStart";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
+import { handleGridKey } from "@/lib/sheet-grid-keys";
 
 type View = "home" | "sheet" | "compose" | "done";
 type Col = "A" | "B" | "C";
@@ -33,6 +36,8 @@ type Cell = { row: number; col: Col };
 const COLS: Col[] = ["A", "B", "C"];
 const HEADER_ROW = 1;
 const FIRST_DATA_ROW = 2;
+/** The data rows, top to bottom, for arrow-key movement (the header is not a button). */
+const GRID_ROWS = BILLING_ROWS.map((_, i) => FIRST_DATA_ROW + i);
 const COL_WIDTH: Record<Col, number> = { A: 160, B: 88, C: 88 };
 
 function SheetsIcon() {
@@ -91,6 +96,8 @@ export default function BillingSheetTask() {
         <span className="text-[18px] text-[#3c4043]">{view === "home" ? c.appName : c.sheetName}</span>
       </div>
 
+      {(view === "sheet" || view === "compose") && <SheetEmailMenu lang={lang} onEmail={tryEmail} />}
+
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["billing-sheet"]}
@@ -146,7 +153,11 @@ export default function BillingSheetTask() {
               </div>
             ))}
           </div>
-          <div className="inline-block border border-[#c0c0c0]" style={{ fontSize: 13 }}>
+          <div
+            className="inline-block border border-[#c0c0c0]"
+            style={{ fontSize: 13 }}
+            onKeyDown={(e) => handleGridKey(e, selected, GRID_ROWS, COLS, select)}
+          >
             <div className="flex">
               <div className="flex shrink-0 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa]" style={{ width: 32, height: 24 }} />
               {COLS.map((col) => (
@@ -189,6 +200,8 @@ export default function BillingSheetTask() {
                       <button
                         key={col}
                         type="button"
+                        tabIndex={isSelected ? 0 : -1}
+                        data-grid-cell={`${r}:${col}`}
                         onClick={() => select({ row: r, col })}
                         className="shrink-0 border-b border-r border-[#c0c0c0] px-1.5 text-left text-[13px] cursor-pointer"
                         style={cellStyle}
@@ -202,13 +215,7 @@ export default function BillingSheetTask() {
             })}
           </div>
           <div>
-            <button
-              type="button"
-              onClick={tryEmail}
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-            >
-              {c.emailCta}
-            </button>
+
           </div>
         </div>
       )}

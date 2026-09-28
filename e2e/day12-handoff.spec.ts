@@ -35,6 +35,7 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
   await page.getByText("Weekly Status Template").first().click();
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("button", { name: "Make a copy" }).first().click();
+  await expect(card).toContainText("status-week-of-sep-14");
   await page.locator("input[autofocus], .rounded-3xl input").first().fill("status-week-of-sep-14");
   await page.getByRole("button", { name: "Make a copy" }).last().click();
   await page.getByPlaceholder("12").fill("12");
@@ -60,7 +61,9 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
   const fx = page.getByPlaceholder("=SUM(");
   await fx.fill("61");
   await expect(totalCell).toHaveText("61");
-  await page.getByRole("button", { name: /^Email/ }).click();
+  await page.getByRole("button", { name: "File", exact: true }).click();
+  await page.getByRole("button", { name: "Email", exact: true }).click();
+  await page.getByRole("button", { name: "Email collaborators", exact: true }).click();
   await expect(card).toContainText("Right number. Now let the sheet add it");
 
   await fx.fill("=SUM(B2:B6)");

@@ -270,6 +270,22 @@ textarea:focus-visible,
   animation: card-pop 0.24s ease-out;
 }
 
+/* A bookmark the Job Card names, flashed when its button is pressed again
+   with the Browser already open. Three beats, then gone. */
+@keyframes bookmark-flash {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(232, 116, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(232, 116, 0, 0.9), 0 0 0 7px rgba(232, 116, 0, 0.2);
+  }
+}
+
+.animate-bookmark-flash {
+  animation: bookmark-flash 0.7s ease-in-out 3;
+}
+
 /* Respect the OS "reduce motion" setting: keep every animation's end state,
    skip the movement — including the infinitely looping Show-me pulse. */
 @media (prefers-reduced-motion: reduce) {
@@ -282,8 +298,14 @@ textarea:focus-visible,
   .animate-harbor-wave,
   .animate-card-pop,
   .animate-showme-pulse,
-  .animate-showme-pulse-compact {
+  .animate-showme-pulse-compact,
+  .animate-bookmark-flash {
     animation: none;
+  }
+
+  /* Without motion, the flashed bookmark keeps a still ring. */
+  .animate-bookmark-flash {
+    box-shadow: 0 0 0 3px rgba(232, 116, 0, 0.9);
   }
 
   /* The Show-me ring must still be visible without its pulse. */
@@ -403,5 +425,39 @@ textarea:focus-visible,
     left: 8px;
     width: calc(100vw - 16px);
     max-height: var(--lesson-card-height);
+  }
+}
+
+/* Pointer practice (finding #17): the notice has to look scrollable before
+   anyone scrolls it. Chromebooks and Macs hide overlay scrollbars until the
+   pointer moves, so this box keeps a classic, always-drawn scrollbar and a
+   soft shadow at whichever edge still has more to read. No words: the Job
+   Card already says "Scroll down to find Ready." */
+[data-practice-notice] {
+  background-image:
+    linear-gradient(#f1f3f4 30%, rgba(241, 243, 244, 0)),
+    linear-gradient(rgba(241, 243, 244, 0), #f1f3f4 70%),
+    radial-gradient(farthest-side at 50% 0, rgba(32, 33, 36, 0.28), rgba(32, 33, 36, 0)),
+    radial-gradient(farthest-side at 50% 100%, rgba(32, 33, 36, 0.28), rgba(32, 33, 36, 0));
+  background-position: center top, center bottom, center top, center bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 28px, 100% 28px, 100% 14px, 100% 14px;
+  background-attachment: local, local, scroll, scroll;
+}
+[data-practice-notice]::-webkit-scrollbar {
+  width: 12px;
+}
+[data-practice-notice]::-webkit-scrollbar-track {
+  background: #dadce0;
+  border-radius: 6px;
+}
+[data-practice-notice]::-webkit-scrollbar-thumb {
+  background: #5f6368;
+  border-radius: 6px;
+  border: 2px solid #dadce0;
+}
+@supports not selector(::-webkit-scrollbar) {
+  [data-practice-notice] {
+    scrollbar-color: #5f6368 #dadce0;
   }
 }

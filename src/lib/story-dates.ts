@@ -10,6 +10,11 @@ import type { Lang, Localized } from "./task-types";
  * numbers, and every later sitting is just a bigger number, so "never goes
  * backwards" is plain `<`.
  *
+ * These dates are editable story fixtures, not a required course duration.
+ * Learning sittings need not be consecutive workdays; chapters may span months
+ * or years. Retiming must keep related task documents and deadlines consistent.
+ * Forward dates alone do not establish believable career progression.
+ *
  * Nothing here reads the wall clock. Every function takes the day it is
  * asked about.
  */

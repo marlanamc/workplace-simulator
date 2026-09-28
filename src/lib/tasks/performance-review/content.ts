@@ -25,7 +25,7 @@ export const PROFILE: ReviewProfile = {
   wins: [
     { en: "Trained two new hires this month and stayed patient with both.", es: "Capacitó a dos personas nuevas este mes y tuvo paciencia con las dos." },
     { en: "Noticed a delivery that was short three boxes and reported it same day.", es: "Notó una entrega que venía corta por tres cajas y lo reportó el mismo día." },
-    { en: "Covered two close shifts on short notice.", es: "Cubrió dos cierres avisando con poco tiempo." },
+    { en: "Covered two close shifts on short notice.", es: "Cubrió dos turnos de cierre con poca anticipación." },
   ],
   issue: {
     en: "Runs late for the morning open about once a week, usually 10 to 15 minutes.",

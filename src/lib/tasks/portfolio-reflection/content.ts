@@ -104,7 +104,7 @@ export const REFLECTION_COPY: Record<Lang, {
 export const PROMPTS: Localized[] = [
   {
     en: "Out of everything in this program, what do you feel most ready for at a real job?",
-    es: "De todo lo que hiciste en este programa, ¿para qué te sientes más listo en un trabajo de verdad?",
+    es: "De todo lo que hiciste en este programa, ¿qué podrías hacer con más confianza en un trabajo de verdad?",
   },
   {
     en: "What are you still building confidence in?",

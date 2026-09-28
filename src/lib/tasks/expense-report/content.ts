@@ -9,7 +9,10 @@ export interface ExpenseRow {
   merchant: Localized;
   category: Localized;
   amount: number;
+  /** The receipt's file name in Drive. The name does not say the merchant, so the learner reads the receipt. */
   receipt: string | null;
+  /** The date printed on the receipt, "Sep 12". */
+  receiptDate?: string;
 }
 
 export const EXPENSE_ROWS: ExpenseRow[] = [
@@ -18,28 +21,32 @@ export const EXPENSE_ROWS: ExpenseRow[] = [
     merchant: { en: "Uber", es: "Uber" },
     category: { en: "Travel", es: "Viaje" },
     amount: 24,
-    receipt: "uber-0912.pdf",
+    receipt: "receipt-0912-a.pdf",
+    receiptDate: "Sep 12",
   },
   {
     key: "staples",
     merchant: { en: "Staples", es: "Staples" },
     category: { en: "Supplies", es: "Suministros" },
     amount: 42,
-    receipt: "staples-0910.pdf",
+    receipt: "receipt-0910.pdf",
+    receiptDate: "Sep 10",
   },
   {
     key: "lunch",
     merchant: { en: "Harbor Deli", es: "Harbor Deli" },
     category: { en: "Meals", es: "Comidas" },
     amount: 48,
-    receipt: "deli-0911.pdf",
+    receipt: "receipt-0911.pdf",
+    receiptDate: "Sep 11",
   },
   {
     key: "parking",
     merchant: { en: "Garage 4", es: "Garage 4" },
     category: { en: "Travel", es: "Viaje" },
     amount: 74,
-    receipt: "parking-0912.pdf",
+    receipt: "receipt-0912-b.pdf",
+    receiptDate: "Sep 12",
   },
   {
     key: MISSING_KEY,
@@ -50,12 +57,21 @@ export const EXPENSE_ROWS: ExpenseRow[] = [
   },
 ];
 
-export const RECEIPT_FILES = EXPENSE_ROWS.filter((r) => r.receipt).map((r) => ({
-  key: r.key,
-  name: r.receipt!,
-  folder: "Receipts",
-  date: "Sep 2",
-}));
+/**
+ * The receipts in Drive, in file-name order (not sheet order). Two are from
+ * Sep 12 and both are Travel, so only the merchant and amount printed on the
+ * receipt tell them apart.
+ */
+export const RECEIPT_FILES = EXPENSE_ROWS.filter((r) => r.receipt)
+  .map((r) => ({
+    key: r.key,
+    name: r.receipt!,
+    folder: "Receipts",
+    date: r.receiptDate ?? "",
+    merchant: r.merchant,
+    amount: r.amount,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 export function receiptedKeys(): string[] {
   return EXPENSE_ROWS.filter((r) => r.receipt).map((r) => r.key);
@@ -64,6 +80,16 @@ export function receiptedKeys(): string[] {
 export function expenseReadyToSubmit(flagged: string | null, matched: readonly string[]): boolean {
   const needed = receiptedKeys();
   return flagged === MISSING_KEY && needed.every((k) => matched.includes(k));
+}
+
+export function expenseReceiptMatches(key: string, receipt: string): boolean {
+  const row = EXPENSE_ROWS.find(r => r.key === key);
+  return Boolean(row?.receipt && row.receipt === receipt);
+}
+
+export function expenseTotalIsCorrect(value: string): boolean {
+  const normalized = value.trim().replace(/^\$\s*/, "").replace(",", ".");
+  return /^\d+(?:\.\d{1,2})?$/.test(normalized) && Number(normalized) === PLANTED_TOTAL;
 }
 
 export const EXPENSE_COPY: Record<Lang, {
@@ -95,6 +121,11 @@ export const EXPENSE_COPY: Record<Lang, {
   tipLabel: string;
   gotIt: string;
   receiptsHint: string;
+  chooseReceipt: string;
+  totalLabel: string;
+  wrongTotal: string;
+  notToday: string;
+  hasReceipt: string;
 }> = {
   en: {
     helpBtn: "Help me with this step",
@@ -117,7 +148,7 @@ export const EXPENSE_COPY: Record<Lang, {
     noReceipt: "No receipt",
     submit: "Submit report",
     submitBlind: "Do not submit it like this. First, flag the row that has no receipt.",
-    needMatch: "Match the rows that have receipts first. Open Drive if you need to see them.",
+    needMatch: "Compare each selected receipt with its merchant and amount. Open Drive to read the receipts. Leave an expense without a receipt empty.",
     sentKicker: "Report submitted",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
@@ -125,6 +156,11 @@ export const EXPENSE_COPY: Record<Lang, {
     tipLabel: "Tip",
     gotIt: "Got it. Back to my task",
     receiptsHint: "Receipts live in Drive. Open Drive from the bookmarks.",
+    chooseReceipt: "Choose receipt",
+    totalLabel: "Total with receipts ($)",
+    wrongTotal: "Add only the amounts with receipts. Leave out the expense you flagged.",
+    notToday: "That's not today's sheet. Open September expenses.",
+    hasReceipt: "There is a receipt for this expense in Drive. Compare its merchant and amount.",
   },
   es: {
     helpBtn: "Ayúdame con este paso",
@@ -147,7 +183,7 @@ export const EXPENSE_COPY: Record<Lang, {
     noReceipt: "Sin recibo",
     submit: "Enviar informe",
     submitBlind: "No lo envíes así. Primero, marca la fila que no tiene recibo.",
-    needMatch: "Empareja primero las filas que sí tienen recibo. Abre Drive si necesitas verlos.",
+    needMatch: "Compara cada recibo elegido con su comercio y monto. Abre Drive para leer los recibos. Deja vacío el gasto sin recibo.",
     sentKicker: "Informe enviado",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
@@ -155,6 +191,11 @@ export const EXPENSE_COPY: Record<Lang, {
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
     receiptsHint: "Los recibos están en Drive. Abre Drive en los marcadores.",
+    chooseReceipt: "Elegir recibo",
+    totalLabel: "Total con recibos ($)",
+    wrongTotal: "Suma solo los montos con recibos. No incluyas el gasto que marcaste.",
+    notToday: "Esa no es la hoja de hoy. Abre Gastos de septiembre.",
+    hasReceipt: "Hay un recibo para este gasto en Drive. Compara el comercio y el monto.",
   },
 };
 
@@ -162,16 +203,19 @@ export const RECEIPTS_COPY: Record<Lang, {
   heading: string;
   body: string;
   back: string;
+  shows: string;
 }> = {
   en: {
     heading: "Receipts: September",
-    body: "There are four PDFs here. There is no receipt for the team dinner.",
-    back: "You can only read these. Match them to the rows on the sheet.",
+    body: "Four receipts received for September.",
+    back: "Read-only receipt files.",
+    shows: "Receipt shows",
   },
   es: {
     heading: "Recibos: septiembre",
-    body: "Aquí hay cuatro PDFs. No hay recibo de la cena del equipo.",
-    back: "Estos solo se pueden leer. Emparéjalos con las filas de la hoja.",
+    body: "Cuatro recibos recibidos de septiembre.",
+    back: "Archivos de recibos de solo lectura.",
+    shows: "El recibo dice",
   },
 };
 
@@ -202,5 +246,5 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(EXPENSE_COPY, (c) => c.sheetName),
   { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Marca lo que falta." },
-  { en: "Submit the report.", es: "Envía el informe." },
+  { en: "Enter the total for expenses with receipts, then submit the report.", es: "Escribe el total de los gastos con recibos y envía el informe." },
 ];

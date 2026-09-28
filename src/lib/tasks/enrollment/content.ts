@@ -62,7 +62,7 @@ export const ENROLLMENT_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     school: "Bunker Hill Community College",
     heading: "Solicitud otoño 2026",
-    deadlineLabel: "Aplicar antes del",
+    deadlineLabel: "Fecha límite",
     docsHeading: "Documentos requeridos",
     missingNote: "Falta un documento requerido.",
     markReady: "Elegir archivo",
@@ -115,7 +115,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Una lista con una casilla abierta no está lista para enviar.",
         "La carta solo tiene que decir por qué quieres estudiar aquí. Corta está bien.",
       ],
-      tip: "Si no puedes señalar la fecha, no estás listo para enviar.",
+      tip: "Si no puedes señalar la fecha, todavía falta revisar antes de enviar.",
     },
   ],
 };
@@ -163,15 +163,15 @@ export const DEADLINE_COPY: Record<Lang, { question: string; wrong: string; need
     need: "First, find the apply-by date. Pick it below the heading.",
   },
   es: {
-    question: "¿Cuál es el último día para aplicar?",
-    wrong: "Esa no es la fecha para aplicar. Mira arriba en la página.",
-    need: "Primero, encuentra la fecha para aplicar. Elígela debajo del título.",
+    question: "¿Cuál es el último día para enviar la solicitud?",
+    wrong: "Esa no es la fecha límite. Mira arriba en la página.",
+    need: "Primero, encuentra la fecha límite. Elígela debajo del título.",
   },
 };
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Find the apply-by date.", es: "Encuentra la fecha para aplicar." },
+  { en: "Find the apply-by date.", es: "Encuentra la fecha límite para la solicitud." },
   { en: "Mark the missing document.", es: "Marca el documento que falta." },
   { en: "Write a short statement: why you want to study at BHCC or in the program. Then submit.", es: "Escribe una carta corta: por qué quieres estudiar en BHCC o en el programa. Luego envía." },
 ];

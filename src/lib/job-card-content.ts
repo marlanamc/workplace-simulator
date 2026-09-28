@@ -19,14 +19,14 @@ export interface IntroBeat {
 
 export const INTRO_BEATS: IntroBeat[] = [{
   kicker: { en: "Your first day", es: "Tu primer día" },
-  line: { en: "Welcome, {name}. This card tells you what to do.", es: "Bienvenida, {name}. Esta tarjeta te dice qué hacer." },
+  line: { en: "Welcome, {name}. This card tells you what to do.", es: "Te damos la bienvenida, {name}. Esta tarjeta te dice qué hacer." },
   cta: { en: "Start looking around", es: "Empezar a mirar" },
 }];
 
 export const CARD_PRACTICE = {
   title: { en: "Practice clicking and scrolling", es: "Practicar clics y desplazamiento" },
   label: { en: "Practice only", es: "Solo práctica" },
-  click: { en: "Open the practice envelope.", es: "Abre el sobre de práctica." },
+  click: { en: "Open the practice notice.", es: "Abre el aviso de práctica." },
   scroll: { en: "Scroll down to find Ready.", es: "Desplázate hacia abajo hasta Listo." },
   complete: { en: "Practice complete. You're ready to continue.", es: "Práctica terminada. Puedes continuar." },
   envelope: { en: "Open practice notice", es: "Abrir aviso de práctica" },
@@ -40,6 +40,17 @@ export const CARD_PRACTICE = {
   ready: { en: "Ready", es: "Listo" },
   skip: { en: "Skip practice", es: "Omitir práctica" },
 };
+
+/**
+ * Whether the first-run beats are behind the learner. Only finished work
+ * counts: a learner who pressed "Start looking around" and then reloaded
+ * before finishing the tour gets the welcome beat back, and with it the
+ * optional click-and-scroll practice (Story Mode Audit finding #17). The
+ * beat's one button opens the tour again, so nothing is repeated by hand.
+ */
+export function introBeatsDone(completedTaskKeys: readonly string[]): boolean {
+  return completedTaskKeys.length > 0;
+}
 
 /**
  * Day One, once: the Job Card points at the orange shelf pin so nobody has
@@ -163,7 +174,7 @@ export const JOB_CARD_COPY: Record<
     jobOf: (n, total) => (total <= 1 ? "" : `Tarea ${n} de ${total}`),
     doneKicker: "Listo",
     dayDoneKicker: "Día terminado",
-    dayDoneLine: "El día de hoy está listo.",
+    dayDoneLine: "Terminaste este día.",
     startTomorrow: "Empezar mañana",
     nextJob: "Siguiente tarea",
     oneJobLeft: "Listo. Queda una tarea más por hoy.",

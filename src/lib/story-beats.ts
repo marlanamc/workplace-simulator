@@ -121,7 +121,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "Lo tengo. Gracias por enviar el reporte de julio tan rápido.",
-        "Nos vemos en el piso.",
+        "Nos vemos en el café.",
         "Tu horario está resuelto y ya tengo el reporte. Gracias.",
       ],
     },
@@ -227,7 +227,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "Tengo el reporte del resbalón. Gracias.",
-        "Voy a dar seguimiento en el piso.",
+        "Voy a revisar cómo va el trabajo en el café.",
         "Ahora yo soy la gerente general, así que esto me llega a mí. El manual está en tu escritorio si te preguntan algo.",
       ],
     },
@@ -298,7 +298,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "Recibí el enlace y se abrió bien. Gracias por no mandar una copia. Así sé que va a estar al día.",
-        "Nos vemos en el piso.",
+        "Nos vemos en el café.",
       ],
     },
   },
@@ -433,12 +433,12 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "A short agenda is a good huddle.", es: "Una agenda corta es una buena reunión." },
     body: {
       en: [
-        "Thursday 10 AM. I saw the agenda.",
+        "Thursday 4:15 PM. I saw the agenda.",
         "Two or three points is the right size for a huddle a lead can run.",
         "Thursday will be busy. Three things at once.",
       ],
       es: [
-        "Jueves 10 AM. Vi la agenda.",
+        "Jueves 4:15 PM. Vi la agenda.",
         "Dos o tres puntos es el tamaño justo para una reunión que un líder puede dirigir.",
         "El jueves va a estar movido. Tres cosas a la vez.",
       ],
@@ -460,7 +460,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "Dana recibió una respuesta real. El cierre del jueves está cubierto. El sábado a las 10 AM me funciona.",
-        "Hay una vacante de asistente de gerencia. Quiero que leas la oferta cuando estés listo.",
+        "Hay una vacante de asistente de gerencia. Quiero que leas la oferta cuando puedas.",
       ],
     },
   },
@@ -538,7 +538,7 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "enrollment",
     subject: { en: "You sent the application", es: "Enviaste la solicitud" },
-    preview: { en: "Find the deadline first, then apply.", es: "Primero busca la fecha límite, luego aplica." },
+    preview: { en: "Find the deadline first, then apply.", es: "Primero busca la fecha límite, luego envía tu solicitud." },
     body: {
       en: [
         "You found the deadline and sent the statement. That is how you use a portal.",
@@ -646,7 +646,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "El EKG se cobró a $185. La lista dice $85. Le dijiste a la oficina los dos números.",
-        "El viernes va a sonar el teléfono. No vas a poder estar seguro de quién llama.",
+        "El viernes va a sonar el teléfono. No vas a poder confirmar quién llama.",
       ],
     },
   },
@@ -662,11 +662,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You picked the library database and said why. The ad and the forum looked easier, but you did not use them.",
-        "That path is done. Monday, Anita needs you at HQ.",
+        "That finishes your college practice. Your work is saved.",
       ],
       es: [
         "Elegiste la base de datos de la biblioteca y dijiste por qué. El anuncio y el foro se veían más fáciles, pero no los usaste.",
-        "Ese camino ya está terminado. El lunes Anita te necesita en HQ.",
+        "Con esto terminas tu práctica para la universidad. Tu trabajo queda guardado.",
       ],
     },
   },
@@ -682,11 +682,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You did not share the visit. You offered to have the patient call back. That was the right call.",
-        "That path is done. Monday, Anita needs you at HQ.",
+        "That finishes your practice at the front desk. Your work is saved.",
       ],
       es: [
         "No compartiste la visita. Ofreciste que el paciente devuelva la llamada. Esa fue la decisión correcta.",
-        "Ese camino ya está terminado. El lunes Anita te necesita en HQ.",
+        "Con esto terminas tu práctica en la recepción. Tu trabajo queda guardado.",
       ],
     },
   },
@@ -782,11 +782,13 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "A title, the $188, and one main point. You presented it. That is all HQ needs for now.",
-        "There is more to come. When you finish, you can choose another direction.",
+        "I have a new job for you. The cafe crew needs a Team Lead who knows the cafe and our HQ tools. You know both.",
+        "Starting Monday, you lead the crew's meetings, reviews, and weekly report. Renata still runs the cafe, and you still report to me.",
       ],
       es: [
         "Un título, los $188, y una idea. Lo presentaste. Eso es todo lo que HQ necesita por ahora.",
-        "Viene más. Cuando termines, puedes elegir otro camino.",
+        "Tengo un puesto nuevo para ti. El personal del café necesita a alguien que dirija el equipo y que conozca el café y nuestras herramientas de la oficina central. Tú conoces las dos cosas.",
+        "Desde el lunes, diriges las reuniones, las evaluaciones y el reporte semanal del equipo. Renata sigue a cargo del café, y yo sigo siendo tu jefa.",
       ],
     },
   },
@@ -854,7 +856,7 @@ const STORY_MAILS: InboxRow[] = [
       ],
       es: [
         "El número, la nota del calendario y el resumen llegaron juntos, en un solo correo. No tres adjuntos sueltos.",
-        "Ese es el reporte semanal completo, de principio a fin, tú solo.",
+        "Ese es el reporte semanal completo, de principio a fin, por tu cuenta.",
         "Una última cosa antes de irte. Mira atrás, a dónde empezaste.",
       ],
     },
@@ -877,7 +879,7 @@ const STORY_MAILS: InboxRow[] = [
       es: [
         "Todavía tengo tu primer correo, ese donde me agradeciste la bienvenida. Mira todo lo que ya puedes hacer.",
         "Este resumen es tuyo. Muéstraselo a quien quieras.",
-        "Lo que siga para ti, estás lista para eso.",
+        "Ya tienes herramientas para lo que venga después.",
       ],
     },
   },

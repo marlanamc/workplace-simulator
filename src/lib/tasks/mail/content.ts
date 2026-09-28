@@ -91,9 +91,11 @@ export const MAIL_JOB_CARD_STEPS: {
     es: "Revisa la página: July 2026 (julio de 2026) y sin DRAFT (borrador). Luego haz clic en Adjuntar.",
   },
   write: { en: "Write one short line.", es: "Escribe una línea corta." },
+  // The question, not the answer. Where the aprons are is a fact of the
+  // scene (the arrival card and the starter chips); a wrong reply names it.
   writeEtiquette: {
-    en: "Tell Darnell the extra aprons are in the storage room.",
-    es: "Dile a Darnell que los delantales de más están en el almacén.",
+    en: "Tell Darnell where the extra aprons are.",
+    es: "Dile a Darnell dónde están los delantales de más.",
   },
   writeForTask: {
     "mail-send-link": {
@@ -172,8 +174,8 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
     es: {
       emoji: "🤒",
       kicker: "Lunes, 6:12 AM",
-      headline: `Estás enfermo. Entras a las ${hourOnly(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3a2])}.`,
-      body: "Te despertaste enfermo y hoy tienes turno. Escríbele a Maria ahora, antes de tu turno, no después de que empiece.",
+      headline: `Te sientes mal. Entras a las ${hourOnly(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3a2])}.`,
+      body: "Te despertaste sintiéndote mal y hoy tienes turno. Escríbele a Maria ahora, antes de tu turno, no después de que empiece.",
       cta: "Escribirle a Maria",
     },
   },
@@ -197,15 +199,15 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
     en: {
       emoji: "📬",
       kicker: "Friday. HQ wrote.",
-      headline: "Not everyone needs your answer.",
-      body: "Read the whole thread. One message is FYI. One asks you a yes or no. Reply to the person who asked.",
+      headline: "A long thread from HQ.",
+      body: "Several people are on this thread. Read all of it, then answer what was asked of you.",
       cta: "Open the thread",
     },
     es: {
       emoji: "📬",
       kicker: "Viernes. Escribió HQ.",
-      headline: "No todos necesitan tu respuesta.",
-      body: "Lee todo el hilo. Un mensaje es solo FYI. Otro te pide un sí o no. Responde a quien preguntó.",
+      headline: "Un hilo largo de HQ.",
+      body: "Hay varias personas en este hilo. Léelo completo y luego responde lo que te pidieron.",
       cta: "Abrir el hilo",
     },
   },
@@ -371,7 +373,7 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
     es: {
       subject: "Te damos la bienvenida a Harborside Cafe",
       reSubject: "Re: Te damos la bienvenida a Harborside Cafe",
-      preview: "Estás en el horario para 5 turnos esta semana.",
+      preview: "Esta semana tienes 5 turnos en el horario.",
     },
   },
   "mail-send-link": {
@@ -486,7 +488,7 @@ export const MAIL_COPY: Record<Lang, {
     drafts: "Drafts",
     searchPlaceholder: "Search mail",
     compose: "Compose",
-    emptyPane: "Click an email on the left to open it.",
+    emptyPane: "No email open.",
     helpBtn: "Help me with this step",
     langBtn: "Español",
     reply: "Reply",
@@ -528,7 +530,7 @@ export const MAIL_COPY: Record<Lang, {
     drafts: "Borradores",
     searchPlaceholder: "Buscar en el correo",
     compose: "Redactar",
-    emptyPane: "Haz clic en un correo a la izquierda para abrirlo.",
+    emptyPane: "Ningún correo abierto.",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     reply: "Responder",
@@ -791,14 +793,14 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       plain: [
         GREETING,
         "Te damos la bienvenida a Harborside Cafe. Me alegra que estés aquí.",
-        "Estás en el horario para 5 turnos esta semana.",
+        "Esta semana tienes 5 turnos en el horario.",
         "Llámame o escríbeme si necesitas algo.",
-        "Nos vemos en el piso,",
+        "Nos vemos en el café,",
       ],
       full: [
         GREETING,
         "Te damos la bienvenida al equipo de Harborside Cafe. Me alegra que empieces con nosotros.",
-        "Estás en el horario para 5 turnos esta semana. Con eso te basta por ahora.",
+        "Esta semana tienes 5 turnos en el horario. Con eso basta por ahora.",
         "Si necesitas algo (horario, acceso o solo una pregunta), llámame o escríbeme. Aquí estoy.",
         "Espero trabajar contigo.",
         "Gracias,",
@@ -941,7 +943,7 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
       "Let me know if you need anything from me.",
     ],
     es: [
-      "Hola Maria, estoy enfermo y no puedo ir hoy.",
+      "Hola Maria, me siento mal y no puedo ir hoy.",
       "Perdón por avisar con tan poco tiempo.",
       "Puedo trabajar mi siguiente turno como estaba planeado.",
       "Avísame si necesitas algo de mí.",
@@ -1345,7 +1347,7 @@ export const COMPOSE_LESSONS: Partial<Record<PlayableMailTask, Record<Lang, Less
     },
     es: {
       t: "Avísale a Maria que no puedes ir",
-      s: ["Revisa que la línea Para diga Maria.", "Di que estás enfermo y no puedes trabajar tu turno de hoy.", "Sé breve. No necesitas describir tus síntomas."],
+      s: ["Revisa que la línea Para diga Maria.", "Di que te sientes mal y no puedes trabajar tu turno de hoy.", "Sé breve. No necesitas describir tus síntomas."],
       tip: "Esta práctica usa correo. En tu trabajo, sigue su proceso y sus reglas para avisar de una ausencia.",
     },
   },

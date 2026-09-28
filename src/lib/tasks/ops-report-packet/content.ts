@@ -30,6 +30,11 @@ const WEEK_ES = monthDate(REPORT_WEEK, "es");
 /** Planted from the week's tally. Learners confirm it; they do not invent it. */
 export const PLANTED_WEEK_TOTAL = 4820;
 
+export function weeklyTotalMatches(value: string): boolean {
+  const normalized = value.trim().replace(/^\$\s*/, '').replace(/,/g, '');
+  return /^\d+(?:\.00)?$/.test(normalized) && Number(normalized) === PLANTED_WEEK_TOTAL;
+}
+
 export interface SheetRow {
   label: Localized;
   value: number;
@@ -128,7 +133,7 @@ export const OPS_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     hubHeading: "The weekly report",
     sheetTitle: "Check the week's total",
-    sheetBody: "Open the tally. Confirm the total. Do not retype it.",
+    sheetBody: "The week's tally is ready in Sheets.",
     sheetCta: "Open Sheets",
     calTitle: "Note what's coming up",
     calBody: "One thing on the calendar is worth flagging.",
@@ -163,7 +168,7 @@ export const OPS_COPY: Record<Lang, {
     attachmentName: `Weekly report: ${WEEK_EN}`,
     send: "Send",
     backHub: "Back to the report",
-    needConfirm: "Confirm the total that's already there. Don't type a different number.",
+    needConfirm: "Read the total cell and enter the weekly amount.",
     needNoted: "Open the calendar item and note it first.",
     needSummary: "Report the sheet total and Thursday morning’s coverage gap. You can reopen both sources.",
     needSend: "Finish the other three parts, then send.",
@@ -179,7 +184,7 @@ export const OPS_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     hubHeading: "El reporte semanal",
     sheetTitle: "Revisa el total de la semana",
-    sheetBody: "Abre la tabla. Confirma el total. No lo vuelvas a escribir.",
+    sheetBody: "La tabla de la semana está lista en Sheets.",
     sheetCta: "Abrir Sheets",
     calTitle: "Anota lo que viene",
     calBody: "Una cosa en el calendario vale la pena mencionar.",
@@ -189,7 +194,7 @@ export const OPS_COPY: Record<Lang, {
     docsCta: "Abrir Docs",
     mailTitle: "Envía el paquete",
     mailBody: "Envía el resumen a tu gerente en un solo correo.",
-    mailCta: "Abrir Mail",
+    mailCta: "Abrir Correo",
     sheetFileName: `Ventas de la semana: ${WEEK_ES}`,
     sheetHeader: `Semana del ${WEEK_ES}: ventas por día`,
     dayCol: "Día",
@@ -214,7 +219,7 @@ export const OPS_COPY: Record<Lang, {
     attachmentName: `Reporte semanal: ${WEEK_ES}`,
     send: "Enviar",
     backHub: "Volver al reporte",
-    needConfirm: "Confirma el total que ya está ahí. No escribas otro número.",
+    needConfirm: "Lee la celda del total y escribe el monto semanal.",
     needNoted: "Abre el punto del calendario y anótalo primero.",
     needSummary: "Incluye el total y la falta de cobertura del jueves por la mañana. Puedes abrir ambas fuentes.",
     needSend: "Termina las otras tres partes, luego envía.",
@@ -274,7 +279,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Open Sheets. Check the week's total.", es: "Abre Sheets. Revisa el total de la semana." },
   { en: "Open Calendar. Note what's coming up.", es: "Abre Calendar. Anota lo que viene." },
   { en: "Open Docs. Include the weekly total and Thursday's uncovered morning opening.", es: "Abre Docs. Incluye el total semanal y la apertura de la mañana del jueves sin cobertura." },
-  { en: "Open Mail. Send the summary as one packet.", es: "Abre Mail. Envía el resumen como un solo paquete." },
+  { en: "Open Mail. Send the summary as one packet.", es: "Abre Correo. Envía el resumen como un solo paquete." },
 ];
 
 /** Nobody there, in any beginner phrasing: "no person", "nobody", "is empty", "needs someone". */

@@ -50,6 +50,6 @@ for (const lang of ["en", "es"] as const) {
 
     await expect(card).toBeVisible();
     await expect(card.getByRole("button", { name: /^Open |^Abrir |^Abre / })).toBeVisible();
-    await expect(page.getByText(/This day is done|Este día está hecho/)).toHaveCount(0);
+    await expect(page.getByText(/This day is done|Terminaste este día/)).toHaveCount(0);
   });
 }

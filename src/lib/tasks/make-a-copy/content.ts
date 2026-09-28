@@ -197,7 +197,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Es solo para ver. Haz tu propia copia.",
   },
   {
-    en: "Name your copy so you can find it later.",
-    es: "Ponle nombre a tu copia para encontrarla después.",
+    en: `Name your copy ${COPY_NAME} so you can find it later.`,
+    es: `Ponle el nombre ${COPY_NAME} a tu copia para encontrarla después.`,
   },
+  { en: "Type in your copy to check that you can edit it.", es: "Escribe en tu copia para comprobar que puedes editarla." },
 ];

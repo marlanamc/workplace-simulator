@@ -10,14 +10,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "✉️",
     kicker: "Same sheet, your own copy.",
     headline: "Write the total yourself. Then cc a co-lead.",
-    body: "The numbers are all in. The total cell is empty. Type =SUM, check the number, and email it to Renata. Jordan needs to see it too.",
+    body: "The numbers are all in, but the total cell is empty. Add them up with a formula, check the number, and email it to Renata. Jordan needs to see it too.",
     cta: "Open my copy",
   },
   es: {
     emoji: "✉️",
     kicker: "La misma hoja, tu propia copia.",
     headline: "Escribe el total tú. Luego pon en copia a un co-líder.",
-    body: "Ya están todos los números. La celda del total está vacía. Escribe =SUM, revisa el número, y envíaselo a Renata. Jordan también tiene que verlo.",
+    body: "Ya están todos los números, pero la celda del total está vacía. Súmalos con una fórmula, revisa el número y envíaselo a Renata. Jordan también tiene que verlo.",
     cta: "Abrir mi copia",
   },
 };
@@ -190,7 +190,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
   ],
   es: [
     {
-      t: "Escribe tú mismo la fórmula",
+      t: "Escribe la fórmula por tu cuenta",
       s: [
         "Haz clic en la celda del total vacía. Escribe =SUM( luego haz clic en las celdas con números, luego escribe ).",
         "Presiona Enter. Revisa que el número se vea más o menos bien.",
@@ -233,11 +233,11 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(STATUS_REPORT_COPY, (c) => c.sheetName),
   {
-    en: "The total cell is empty. Type =SUM and check the number.",
-    es: "La celda del total está vacía. Escribe =SUM y revisa el número.",
+    en: "The total cell is empty. Add the tickets with a formula, then check the number.",
+    es: "La celda del total está vacía. Suma los pedidos con una fórmula y revisa el número.",
   },
   {
-    en: "Email Renata the total from the report, and cc Jordan.",
-    es: "Envía a Renata el total del reporte, con copia a Jordan.",
+    en: "Choose File → Email → Email collaborators. Tell Renata the total, and cc Jordan.",
+    es: "Elige Archivo → Correo electrónico → Enviar correo a colaboradores. Dile a Renata el total, con copia a Jordan.",
   },
 ];

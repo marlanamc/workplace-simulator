@@ -22,6 +22,6 @@ export async function continuePastStudioArrivalIfPresent(page: Page) {
   } catch {
     return;
   }
-  await modal.locator("button:not([type='submit'])").first().click();
+  await modal.locator("[data-celebration-continue]").click();
   await expect(modal).toHaveCount(0);
 }

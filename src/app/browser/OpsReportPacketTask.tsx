@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   OPS_COPY,
+  weeklyTotalMatches,
   SHEET_ROWS,
   WEEK_DAYS,
   CALENDAR_EVENT,
@@ -45,6 +46,7 @@ export default function OpsReportPacketTask() {
     completedTaskKeys.includes("ops-report-packet") ? "done" : "hub",
   );
   const [confirmed, setConfirmed] = useState(false);
+  const [enteredTotal, setEnteredTotal] = useState("");
   const [noted, setNoted] = useState(false);
   const [eventOpen, setEventOpen] = useState(false);
   const [summary, setSummary] = useState("");
@@ -68,7 +70,8 @@ export default function OpsReportPacketTask() {
   };
 
   const saveSheet = () => {
-    if (!confirmed) return say(c.needConfirm);
+    if (!weeklyTotalMatches(enteredTotal)) return say(c.needConfirm);
+    setConfirmed(true);
     finishIfReady(true, noted, summarySaved, false);
   };
 
@@ -93,6 +96,7 @@ export default function OpsReportPacketTask() {
   const restart = () => {
     setView("hub");
     setConfirmed(false);
+    setEnteredTotal("");
     setNoted(false);
     setEventOpen(false);
     setSummary("");
@@ -187,9 +191,9 @@ export default function OpsReportPacketTask() {
               onSelect={setSelectedCell}
             />
             <div className="border-t border-[#e0e0e0] bg-white px-4 py-3">
-              <label className="flex items-center gap-2 text-[14px] cursor-pointer">
-                <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} />
-                {c.confirmTotal}
+              <label className="block text-[14px]">
+                <span>{lang === "en" ? "Weekly total ($)" : "Total semanal ($)"}</span>
+                <input inputMode="decimal" value={enteredTotal} onChange={e => { setEnteredTotal(e.target.value); setConfirmed(false); }} className="ml-2 min-h-11 rounded border border-[#747775] px-2" />
               </label>
               <div className="mt-3 flex items-center gap-4">
                 <button onClick={saveSheet} className="inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer">
@@ -219,10 +223,7 @@ export default function OpsReportPacketTask() {
               ]}
             />
             <div className="border-t border-[#dadce0] bg-white px-4 py-3">
-              <label className="flex items-center gap-2 text-[14px] cursor-pointer">
-                <input type="checkbox" checked={noted} onChange={(e) => setNoted(e.target.checked)} />
-                {c.calNoted}
-              </label>
+              <p className="text-[14px]">{noted ? c.calNoted : (lang === "en" ? "Event details not yet recorded" : "Detalles del evento aún sin registrar")}</p>
               <div className="mt-3 flex items-center gap-4">
                 <button onClick={saveCalendar} className="inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer">
                   {lang === "en" ? "Done here" : "Listo aquí"}

@@ -19,7 +19,6 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 
 export const SWAP_COPY: Record<Lang, {
   heading: string;
-  subhead: string;
   helpBtn: string;
   shiftLabel: string;
   shiftPlaceholder: string;
@@ -38,7 +37,6 @@ export const SWAP_COPY: Record<Lang, {
 }> = {
   en: {
     heading: "Shift Swap Request",
-    subhead: "Your Thursday shift covers your 11 AM doctor's appointment. Ask for a shift that same day, after it.",
     helpBtn: "Help me with this step",
     shiftLabel: "Which shift?",
     shiftPlaceholder: "Choose a shift",
@@ -57,7 +55,6 @@ export const SWAP_COPY: Record<Lang, {
   },
   es: {
     heading: "Solicitud de cambio de turno",
-    subhead: "Tu turno del jueves cubre tu cita con el doctor a las 11 AM. Pide un turno ese mismo día, después de la cita.",
     helpBtn: "Ayúdame con este paso",
     shiftLabel: "¿Qué turno?",
     shiftPlaceholder: "Elige un turno",
@@ -79,8 +76,10 @@ export const SWAP_COPY: Record<Lang, {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
+  // The question, not the rule: which shift works is the learner's call. A
+  // wrong pick explains why (SWAP_OPTIONS.wrongHint); Help has the rule.
   {
-    en: "Look at the personal calendar on your phone. Pick a shift that starts after your appointment.",
-    es: "Mira el calendario personal de tu teléfono. Elige un turno que empiece después de tu cita.",
+    en: "Look at the personal calendar on your phone. Pick a shift you can work instead.",
+    es: "Mira el calendario personal de tu teléfono. Elige un turno que sí puedas trabajar.",
   },
 ];

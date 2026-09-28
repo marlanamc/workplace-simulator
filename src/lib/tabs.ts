@@ -54,7 +54,7 @@ export const TAB_META: TabMeta[] = [
   { key: "billing-sheet", ...SHEETS, levelKey: "level18" },
   { key: "jobs", label: "Jobs", url: "jobs.harborsidehq.com/openings", color: "#1a73e8", levelKey: "level19h1" },
   { key: "resume", label: "Résumé", url: "docs.harborsidehq.com/resume", color: "#4285f4", levelKey: "level19h2" },
-  { key: "interview", label: "Interview", url: "meet.harborsidehq.com/interview", color: "#8430ce", levelKey: "level19h3" },
+  { key: "interview", label: "Interview", url: "docs.harborsidehq.com/interview-preparation", color: "#8430ce", levelKey: "level19h3" },
   { key: "offer", label: "Offer", url: "mail.harborsidehq.com/offer", color: "#8430ce", levelKey: "level19h4" },
   { key: "onboarding", label: "Onboarding", url: "hr.harborsidehq.com/forms", color: "#7248b9", levelKey: "level19h5" },
   { key: "expense-report", label: "Sheets", url: "sheets.harborsidehq.com", color: "#0f9d58", levelKey: "level22" },
@@ -77,16 +77,24 @@ export const TAB_META: TabMeta[] = [
  */
 const TAB_LABEL_ES: Record<string, string> = {
   tour: "Bienvenida",
+  mail: "Correo",
+  slides: "Diapositivas",
+  "performance-review": "Evaluación",
+  "portfolio-reflection": "Resumen",
   "account-recovery": "Iniciar sesión",
   jobs: "Empleos",
   resume: "Currículum",
   interview: "Entrevista",
   offer: "Oferta",
-  onboarding: "Ingreso",
-  coursework: "Tareas",
+  onboarding: "Documentos",
+  "meeting-minutes": "Reunión",
+  "ops-report-packet": "Reporte",
+  coursework: "Curso",
   library: "Biblioteca",
   "front-desk": "Recepción",
   "college-portal": "Universidad",
+  "college-offer": "Oferta",
+  "priority-call": "Salón",
 };
 
 /** The tab's name in the learner's language. */
@@ -113,9 +121,16 @@ export const TAB_COLORS: Record<string, string> = Object.fromEntries(
  */
 const SHEET_TABS = ["spreadsheet", "make-a-copy", "status-report", "team-schedule", "formula-check", "budget-sheet", "billing-sheet", "expense-report"];
 
+/**
+ * The job posting stays on the bar for the whole hiring arc (finding #18): a
+ * résumé, an interview and an offer are all checked against the posting, so
+ * the learner must be able to go back and read it again.
+ */
+const JOBS_POSTING_LEVELS = ["level19h1", "level19h2", "level19h3", "level19h4", "level19h5"];
+
 /** Tabs that appear on the bookmark bar only while their own level is in view. */
-const GATED_TABS: Record<string, string> = {
-  jobs: "level19h1",
+const GATED_TABS: Record<string, string | readonly string[]> = {
+  jobs: JOBS_POSTING_LEVELS,
   resume: "level19h2",
   interview: "level19h3",
   offer: "level19h4",
@@ -187,7 +202,10 @@ export function bookmarkTabKeys(
         if (locksOff) return true;
         return !unlocked || unlocked.has(t.levelKey) || unlocked.has(viewedLevelKey);
       }
-      if (t.key in GATED_TABS) return GATED_TABS[t.key] === viewedLevelKey;
+      if (t.key in GATED_TABS) {
+        const gate = GATED_TABS[t.key];
+        return typeof gate === "string" ? gate === viewedLevelKey : gate.includes(viewedLevelKey);
+      }
       if (locksOff) return true;
       if (!unlocked) return true;
       return unlocked.has(t.levelKey);

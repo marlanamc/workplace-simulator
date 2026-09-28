@@ -161,13 +161,13 @@ export const DESKTOP_COPY: Record<Lang, {
     replayCancel: "Mejor no",
     comingSoonHeadline: "Muy pronto más",
     comingSoonBody: "Ya estás al día. La siguiente tarea de esta ruta todavía no está lista. Vuelve más tarde, o repite cualquier tarea para practicar más.",
-    welcomeBack: "Bienvenido otra vez.",
+    welcomeBack: "Qué bueno verte otra vez.",
     mariaNote: "Maria dejó una nota",
     someoneNote: "Llegó una nota",
     bookmarkOnramp: "A partir de ahora, abres tus apps desde la barra de marcadores. Empieza por la del botón.",
     leftoverOne: "1 queda",
     leftoverMany: "{n} quedan",
-    clockOut: "Terminar por hoy",
+    clockOut: "Terminar por hoy (tu trabajo está guardado)",
   },
 };
 

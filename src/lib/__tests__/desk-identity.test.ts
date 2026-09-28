@@ -8,7 +8,7 @@ describe("deskIdentityFor", () => {
     expect(deskIdentityFor("act1").title.en).toBe("New Hire");
     expect(deskIdentityFor("act1").company).toBe(CAFE_NAME);
     expect(deskIdentityFor("act2").title.en).toBe("Shift Lead");
-    expect(deskIdentityFor("act3").title.es).toBe("Supervisor de turno");
+    expect(deskIdentityFor("act3").title.es).toBe("Supervisión de turno");
     expect(deskIdentityFor("act4").company).toBe(CAFE_NAME);
   });
 
@@ -22,6 +22,16 @@ describe("deskIdentityFor", () => {
   it("moves to HQ for Acts VI–VII", () => {
     expect(deskIdentityFor("act6").company).toBe(HQ_NAME);
     expect(deskIdentityFor("act7").title.en).toBe("Team Lead");
+  });
+
+  it("keeps the cafe role while the learner is still applying to HQ", () => {
+    const applying = deskIdentityFor("act6", null, true);
+    expect(applying.company).toBe(CAFE_NAME);
+    expect(applying.title.en).toBe("Shift Lead");
+    expect(applying.title.en).not.toMatch(/Office Administrator/);
+    const earned = deskIdentityFor("act6", null, true, { en: "Assistant Manager", es: "Asistente de gerencia" });
+    expect(earned.title.en).toBe("Assistant Manager");
+    expect(deskIdentityFor("act6", null, false).title.en).toBe("Office Administrator");
   });
 
   it("covers every built act", () => {

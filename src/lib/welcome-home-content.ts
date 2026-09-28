@@ -59,11 +59,11 @@ const ACT1_HOME: WelcomeHome = {
 
 const PACKET_TITLES: Record<ActIntroActKey, Localized> = {
   act2: { en: "Act II · Shift Lead", es: "Acto II · Líder de turno" },
-  act3: { en: "Act III · Shift Supervisor", es: "Acto III · Supervisor de turno" },
+  act3: { en: "Act III · Shift Supervisor", es: "Acto III · Supervisión de turno" },
   act4: { en: "Act IV · Assistant Manager", es: "Acto IV · Asistente de gerencia" },
   act5: { en: "Act V · Pick a path", es: "Acto V · Elige un camino" },
-  act6: { en: "Act VI · Office Administrator", es: "Acto VI · Administrador de oficina" },
-  act7: { en: "Act VII · Team Lead", es: "Acto VII · Team Lead" },
+  act6: { en: "Act VI · Office Administrator", es: "Acto VI · Administración de oficina" },
+  act7: { en: "Act VII · Team Lead", es: "Acto VII · Líder de equipo" },
 };
 
 const PACKET_KICKER: Localized = {
@@ -72,17 +72,17 @@ const PACKET_KICKER: Localized = {
 };
 
 /** Orientation for the Welcome tab, keyed by the learner's current act. */
-export function welcomeHomeFor(actKey: string): WelcomeHome {
+export function welcomeHomeFor(actKey: string, path?: 'a' | 'b' | null): WelcomeHome {
   if (actKey === "act1") return ACT1_HOME;
 
-  const intro = actIntroFor(actKey);
+  const intro = actIntroFor(actKey, path);
   const key = actKey as ActIntroActKey;
   if (!intro || !(key in ACT_INTROS)) return ACT1_HOME;
 
   return {
     actLabel: intro.actLabel,
     packetKicker: PACKET_KICKER,
-    packetTitle: PACKET_TITLES[key],
+    packetTitle: actKey === 'act5' && path ? intro.role : PACKET_TITLES[key],
     role: intro.role,
     roleLine: intro.roleLine,
     manager: intro.manager,

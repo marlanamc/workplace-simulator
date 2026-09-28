@@ -55,22 +55,15 @@ export async function recordCompletion(
   confidence: string | null = null,
 ) {
   const db = getDb();
-  if (taskKey === 'mail-reply') {
-    // Serialize concurrent tabs and retries without changing historical rows.
-    await db.batch([
-      db.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${learnerId}), hashtext('mail-reply'))`),
-      db.execute(sql`INSERT INTO ${taskCompletions} (learner_id, task_key, confidence)
-        SELECT ${learnerId}::uuid, ${taskKey}, ${confidence}
-        WHERE NOT EXISTS (SELECT 1 FROM ${taskCompletions}
-          WHERE learner_id = ${learnerId}::uuid AND task_key = ${taskKey})`),
-    ]);
-    return;
-  }
-  const rows = await db
-    .insert(taskCompletions)
-    .values({ learnerId, taskKey, confidence })
-    .returning();
-  return rows[0];
+  // Serialize all completion retries per learner/task. Replays remove the
+  // original completion explicitly; a lost acknowledgement must not add credit.
+  await db.batch([
+    db.execute(sql`SELECT pg_advisory_xact_lock(hashtext(${learnerId}), hashtext(${taskKey}))`),
+    db.execute(sql`INSERT INTO ${taskCompletions} (learner_id, task_key, confidence)
+      SELECT ${learnerId}::uuid, ${taskKey}, ${confidence}
+      WHERE NOT EXISTS (SELECT 1 FROM ${taskCompletions}
+        WHERE learner_id = ${learnerId}::uuid AND task_key = ${taskKey})`),
+  ]);
 }
 
 export async function awardBadge(learnerId: string, badgeKey: string) {

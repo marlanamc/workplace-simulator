@@ -512,7 +512,7 @@ function PhoneDesk() {
           icon={TASK_ICONS["confidentiality-call"]}
           stepIndex={0}
           stepCount={CALL_STEPS.length}
-          instruction={CALL_STEPS[2]}
+          instruction={CALL_STEPS[0]}
           lang={lang}
           rightNowLabel={CALL_LABEL}
           onHelp={() => setHelp(true)}
@@ -528,7 +528,6 @@ function PhoneDesk() {
               <h2 className="mt-1 text-[22px] font-medium">{c.heading}</h2>
               <p className="mt-4 text-[16px] leading-relaxed text-white/90">{c.caller}</p>
             </div>
-            <p className="text-[14px] text-[#5f6368]">{c.script}</p>
             <div className="rounded-xl border border-[#dadce0] bg-white p-4">
               <div className="text-[13px] font-medium text-[#5f6368]">{c.pick}</div>
               <textarea

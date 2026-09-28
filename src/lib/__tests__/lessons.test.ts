@@ -43,6 +43,14 @@ describe("lesson catalog", () => {
   it.each(LESSONS.map((l) => [l.taskKey, l] as const))("%s opens on a tab", (_key, lesson) => {
     expect(lesson.tabs.length).toBeGreaterThan(0);
   });
+
+  // Story starts the hiring steps in Mail, where HR's message opens the form.
+  // Lessons get no hiring mail, so a lesson that opened on Mail would strand
+  // the learner in an inbox with nothing to open.
+  it.each(reachable.map((k) => [k] as const))("%s opens in Mail only if it is a Mail task", (key) => {
+    const lesson = lessonByKey(key) ?? draftLessonFor(key);
+    if (lesson?.tabs[0] === "mail") expect(TASKS[key].bookmarkLabel).toBe("Mail");
+  });
 });
 
 /**

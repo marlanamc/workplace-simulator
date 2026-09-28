@@ -2,6 +2,7 @@ import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { hasBlank, looksLikeKeyboardMash, realWordCount, sameEmail, sameName, samePhone } from "@/lib/grading-jobs";
 import { sameDate } from "@/lib/tasks/onboarding-paperwork/content";
+import { HIRE_DAY, STORY_DAY_BY_LEVEL, localized, monthLabel } from "@/lib/story-dates";
 
 /**
  * The character a hiring lesson's learner plays. A lesson has no account and
@@ -105,10 +106,10 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   },
   es: {
     siteName: "Empleos Harborside",
-    heading: "Solicitud · Administrador de Oficina",
+    heading: "Solicitud · Administración de oficina",
     intro: "Unas secciones cortas. Tu historial de trabajo ya está lleno. Es práctica, no una solicitud real.",
-    positionLabel: "Puesto al que aplicas",
-    position: "Administrador de Oficina: Harborside HQ",
+    positionLabel: "Puesto al que te postulas",
+    position: "Administración de oficina: Harborside HQ",
     positionHours: "$24–27 / hora · Tiempo completo (40 horas por semana)",
     contactLabel: "Datos de contacto",
     contactHint: "Copia cada uno tal como está.",
@@ -157,7 +158,7 @@ export const WORK_HISTORY: HistoryRow[] = [
     span: { en: "This year – Present", es: "Este año – Presente" },
   },
   {
-    title: { en: "Shift Supervisor", es: "Supervisor de turno" },
+    title: { en: "Shift Supervisor", es: "Supervisión de turno" },
     org: "Harborside Cafe",
     span: { en: "Last year", es: "El año pasado" },
   },
@@ -167,7 +168,7 @@ export const WORK_HISTORY: HistoryRow[] = [
     span: { en: "Last year", es: "El año pasado" },
   },
   {
-    title: { en: "Team Member / New Hire", es: "Miembro del equipo / Nuevo empleado" },
+    title: { en: "Team Member / New Hire", es: "Miembro del equipo / Personal nuevo" },
     org: "Harborside Cafe",
     span: { en: "Two years ago", es: "Hace dos años" },
   },
@@ -320,6 +321,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Go section by section. Do not skip one because it looks long. Most are short once you start.",
         "For \"why do you want this role,\" say something true and specific. \"I need a job\" is honest but weak; \"I want to keep growing and I'm good at organizing\" is better.",
         "Read the parts that are already filled in, like your work history.",
+        "The work history shows Harborside Cafe jobs from this story. They are practice. On a real application, write your own real jobs.",
         "Copy names, phone numbers, emails, and dates exactly. One wrong number and they cannot call you.",
         "Check the job's hours. Choose the availability that fits them.",
       ],
@@ -331,8 +333,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Llenar una solicitud",
       s: [
         "Ve sección por sección. No te saltes una porque se ve larga. Casi todas son cortas cuando empiezas.",
-        "Para \"por qué quieres este puesto,\" di algo verdadero y específico. \"Necesito un trabajo\" es honesto pero débil; \"quiero seguir creciendo y soy bueno organizando\" es mejor.",
+        "Para \"por qué quieres este puesto,\" di algo verdadero y específico. \"Necesito un trabajo\" es honesto pero débil; \"quiero seguir creciendo y se me da bien organizar\" es mejor.",
         "Lee las partes que ya están llenas, como tu historial de trabajo.",
+        "El historial muestra trabajos en Harborside Cafe de esta historia. Son de práctica. En una solicitud real, escribe tus propios trabajos reales.",
         "Copia nombres, teléfonos, correos y fechas tal como están. Con un número equivocado no te pueden llamar.",
         "Mira las horas del trabajo. Elige la disponibilidad que encaja con ellas.",
       ],
@@ -424,7 +427,37 @@ export function historyFor(done: readonly TaskKey[], inLesson: boolean): History
   return inLesson ? LESSON_HISTORY : practicedHistory(done);
 }
 
+/**
+ * Each WORK_HISTORY row, newest first: the task that earns it and the story
+ * level the role starts on. Assistant Manager (Act IV), Shift Supervisor
+ * (Act III), Shift Lead (Act II), Team Member (Act I). A direct office route
+ * earns only the last two.
+ */
+const ROLE_EARNED_BY = ['reply-all', 'priority-call', 'triage', 'mail-reply'] as const;
+const ROLE_STARTS_ON_LEVEL = ['level13', 'level9', 'level3b', 'level1'] as const;
+
+function roleStartDay(i: number): number {
+  return i === ROLE_STARTS_ON_LEVEL.length - 1 ? HIRE_DAY : STORY_DAY_BY_LEVEL[ROLE_STARTS_ON_LEVEL[i]];
+}
+
+/**
+ * The Story learner's own Harborside Cafe roles, with story dates: "August
+ * 2026 – September 2026", and "– Present" on the newest role they earned.
+ * Only roles they played appear. The "this is practice" note lives in Job
+ * Card Help, not on the application.
+ */
 export function practicedHistory(done: readonly TaskKey[]): HistoryRow[] {
-  return WORK_HISTORY.filter((_, i) => done.includes((['reply-all', 'priority-call', 'triage', 'mail-reply'] as const)[i]))
-    .map((r) => ({ ...r, org: 'Harborside · Simulator', span: { en: 'Simulated practice', es: 'Práctica simulada' } }));
+  const earned = WORK_HISTORY.map((row, i) => ({ row, i })).filter(({ i }) => done.includes(ROLE_EARNED_BY[i]));
+  return earned.map(({ row, i }, n) => {
+    const newer = n > 0 ? earned[n - 1].i : null;
+    const from = localized((lang) => monthLabel(roleStartDay(i), lang));
+    const to: Localized = newer === null
+      ? { en: 'Present', es: 'Presente' }
+      : localized((lang) => monthLabel(roleStartDay(newer), lang));
+    return {
+      ...row,
+      org: 'Harborside Cafe',
+      span: from.en === to.en ? from : { en: `${from.en} – ${to.en}`, es: `${from.es} – ${to.es}` },
+    };
+  });
 }

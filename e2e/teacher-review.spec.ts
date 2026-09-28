@@ -99,6 +99,7 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
   // Next login: the note is waiting.
   await page.goto("/");
   await waitForInteractive(page);
+  await continuePastStudioArrivalIfPresent(page);
   const toast = page.getByText(/Your teacher left a note/);
   await expect(toast).toBeVisible({ timeout: 20_000 });
   await toast.click();

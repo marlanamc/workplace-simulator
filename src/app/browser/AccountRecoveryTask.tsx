@@ -15,7 +15,9 @@ import {
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
   LESSON_FIRST_STEP,
-  LESSON_PASSWORD,
+  practicePasswordMatches,
+  STORY_SIGNIN_GOAL,
+  STORY_WRONG_PASSWORD,
   HELP_LESSON,
   checkCode,
 } from "@/lib/tasks/account-recovery/content";
@@ -53,8 +55,7 @@ const SHOW_ME_IDS = ["password-field", "phone", "code-field"] as const;
 
 export default function AccountRecoveryTask() {
   const { markComplete, completedTaskKeys, lang, currentTrack } = useProgress();
-  // A lesson gives the password on the info card, so it can check it. Story
-  // mode has no card, so any password gets through there.
+  // Both modes use a provided fictional password; never ask for a real one.
   const lesson = useLesson();
   const [view, setView] = useState<View>(completedTaskKeys.includes("account-recovery") ? "done" : "signin");
   const [password, setPassword] = useState("");
@@ -89,8 +90,8 @@ export default function AccountRecoveryTask() {
       recordWrong({ title: lang === "en" ? "Almost." : "Casi.", body: c.emptyPassword });
       return;
     }
-    if (lesson && password.trim() !== LESSON_PASSWORD) {
-      recordWrong({ title: lang === "en" ? "Not quite." : "No es así.", body: c.wrongPassword });
+    if (!practicePasswordMatches(password)) {
+      recordWrong({ title: lang === "en" ? "Not quite." : "No es así.", body: lesson ? c.wrongPassword : STORY_WRONG_PASSWORD[lang] });
       return;
     }
     setView("code");
@@ -155,6 +156,7 @@ export default function AccountRecoveryTask() {
           icon={TASK_ICONS["account-recovery"]}
           stepIndex={stepIndex}
           steps={steps}
+          goal={!lesson && stepIndex === 0 ? STORY_SIGNIN_GOAL : undefined}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(SHOW_ME_IDS[stepIndex])}

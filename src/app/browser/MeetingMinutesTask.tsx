@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   MEETING_COPY,
@@ -38,14 +39,14 @@ export default function MeetingMinutesTask() {
   const [view, setView] = useState<View>(
     completedTaskKeys.includes("meeting-minutes") ? "done" : "hub",
   );
-  const [commitments, setCommitments] = useState<ActionCommitments>({});
-  const [agenda, setAgenda] = useState("");
-  const [notes, setNotes] = useState("");
-  const [followup, setFollowup] = useState("");
-  const [agendaDone, setAgendaDone] = useState(false);
-  const [notesDone, setNotesDone] = useState(false);
-  const [followupDone, setFollowupDone] = useState(false);
-  const [scriptStep, setScriptStep] = useState(0);
+  const [commitments, setCommitments] = useTaskDraft<ActionCommitments>("meeting-minutes", "commitments", {});
+  const [agenda, setAgenda] = useTaskDraft("meeting-minutes", "agenda", "");
+  const [notes, setNotes] = useTaskDraft("meeting-minutes", "notes", "");
+  const [followup, setFollowup] = useTaskDraft("meeting-minutes", "followup", "");
+  const [agendaDone, setAgendaDone] = useTaskDraft("meeting-minutes", "agendaDone", false);
+  const [notesDone, setNotesDone] = useTaskDraft("meeting-minutes", "notesDone", false);
+  const [followupDone, setFollowupDone] = useTaskDraft("meeting-minutes", "followupDone", false);
+  const [scriptStep, setScriptStep] = useTaskDraft("meeting-minutes", "scriptStep", 0);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = MEETING_COPY[lang];

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   TRIAGE_COPY,
+  TRIAGE_SLOTS, TRIAGE_AVAILABILITY, TRIAGE_SLOT_COPY, triageSlotWorks,
   HINTS,
   LESSONS,
   RIGHT_NOW_STEPS,
@@ -24,9 +26,10 @@ type View = "hub" | "calendar" | "files" | "done";
 export default function TriageTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("triage") ? "done" : "hub");
-  const [calDone, setCalDone] = useState(false);
-  const [fileDone, setFileDone] = useState(false);
-  const [permission, setPermission] = useState<"view" | "edit" | null>(null);
+  const [calDone, setCalDone] = useTaskDraft("triage", "calDone", false);
+  const [fileDone, setFileDone] = useTaskDraft("triage", "fileDone", false);
+  const [permission, setPermission] = useTaskDraft<"view" | "edit" | null>("triage", "permission", null);
+  const [slot, setSlot] = useTaskDraft("triage", "slot", "");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = TRIAGE_COPY[lang];
@@ -42,6 +45,7 @@ export default function TriageTask() {
   };
 
   const proposeTime = () => {
+    if (!triageSlotWorks(slot)) return say(TRIAGE_SLOT_COPY.notFree[lang]);
     setCalDone(true);
     finishIfReady(true, fileDone);
   };
@@ -60,6 +64,7 @@ export default function TriageTask() {
     setCalDone(false);
     setFileDone(false);
     setPermission(null);
+    setSlot("");
   };
 
   return (
@@ -129,11 +134,20 @@ export default function TriageTask() {
                   {c.no}
                 </button>
               </div>
+              <p className="mt-4 text-[14px]">{TRIAGE_AVAILABILITY[lang]}</p>
+              <label className="mt-4 block">
+                <span className="block">{TRIAGE_SLOT_COPY.label[lang]}</span>
+                <select aria-label={TRIAGE_SLOT_COPY.label[lang]} value={slot} onChange={e => setSlot(e.target.value)} className="min-h-11 w-full rounded border border-[#747775] px-2">
+                  <option value="">{TRIAGE_SLOT_COPY.choose[lang]}</option>
+                  {TRIAGE_SLOTS.map(option => <option key={option.key} value={option.key}>{option.label[lang]}</option>)}
+                </select>
+              </label>
               <button
+                data-card-avoid
                 onClick={proposeTime}
                 className="mt-3 inline-flex min-h-[40px] items-center text-[14px] font-medium text-[#0b57d0] cursor-pointer"
               >
-                {c.propose} · {c.slotLabel}
+                {c.propose}
               </button>
               <button onClick={() => setView("hub")} className="mt-4 block text-[13px] text-[#5f6368] cursor-pointer">
                 ← {c.hubHeading}

@@ -128,7 +128,7 @@ function HqFindATime() {
           ))}
         </div>
         <div className="mt-4 overflow-x-auto">
-          <table className="min-w-[520px] border-collapse text-[13px]">
+          <table data-card-avoid className="min-w-[520px] border-collapse text-[13px]">
             <thead>
               <tr>
                 <th className="border border-[#dadce0] bg-[#f8f9fa] px-2 py-1.5 text-left font-medium" />
@@ -165,6 +165,7 @@ function HqFindATime() {
             <button
               key={s.key}
               type="button"
+              data-card-avoid
               onClick={() => pick(s.key)}
               className="min-h-[40px] rounded-lg border px-3 text-[13px] font-medium cursor-pointer"
               style={{
@@ -179,6 +180,7 @@ function HqFindATime() {
         </div>
         <button
           type="button"
+          data-card-avoid
           onClick={invite}
           className="mt-4 inline-flex min-h-[40px] items-center rounded-lg bg-[#1a73e8] px-5 text-[14px] font-medium text-white cursor-pointer"
         >

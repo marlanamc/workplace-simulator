@@ -55,7 +55,7 @@ export const JOB_POSTING_COPY: Record<Lang, {
     postedBy: "Shared with you by Anita Raman",
     aboutLabel: "About the role",
     about:
-      "The Office Administrator keeps the HQ office running: files and shared drives, calendars and meetings, expense reports, and helping teams get what they need. You do not need an office background. We are looking for someone organized who has led a team before.",
+      "The Office Administrator keeps the HQ office running: files and shared drives, calendars and meetings, expense reports, and helping teams get what they need. You do not need an office background. We are looking for someone organized who has helped lead a shift or a team.",
     reqLabel: "What we're looking for",
     reqHint: "Check each thing you have already done.",
     fitLabel: "In one line: why are you a good fit?",
@@ -84,20 +84,20 @@ export const JOB_POSTING_COPY: Record<Lang, {
     siteName: "Empleos Harborside",
     heading: "Anuncio de empleo",
     company: "Harborside HQ",
-    jobTitle: "Administrador de Oficina",
+    jobTitle: "Administración de oficina",
     location: "Boston, MA",
     pay: "$24–27 / hora · Tiempo completo",
     postedBy: "Anita Raman te lo compartió",
     aboutLabel: "Sobre el puesto",
     about:
-      "El Administrador de Oficina mantiene la oficina de HQ funcionando: archivos y drives compartidos, calendarios y reuniones, informes de gastos, y ayudar a los equipos con lo que necesitan. No necesitas experiencia de oficina. Buscamos a alguien organizado que ya haya dirigido un equipo.",
+      "La persona en administración de oficina mantiene la oficina de HQ funcionando: archivos y drives compartidos, calendarios y reuniones, informes de gastos, y ayudar a los equipos con lo que necesitan. No necesitas experiencia de oficina. Buscamos a una persona organizada que haya ayudado a dirigir un turno o un equipo.",
     reqLabel: "Lo que buscamos",
     reqHint: "Marca cada cosa que ya hiciste.",
     fitLabel: "En una línea: ¿por qué eres una buena opción?",
     fitHint: "Di una cosa que hiciste en Harborside Cafe que encaje con este trabajo.",
-    apply: "Aplicar a este trabajo",
+    apply: "Postularme a este empleo",
     needPicks: "Marca al menos tres cosas que ya hiciste. Lee cada línea y pregúntate: ¿ya hice esto?",
-    needFit: "Escribe una oración sobre por qué eres buena opción. Después haz clic en Aplicar.",
+    needFit: "Escribe una oración sobre por qué eres buena opción. Después haz clic en Postularme a este empleo.",
     degreeNote: "Tu trabajo en el café no incluye un título universitario. Este trabajo no lo necesita. Deja esa casilla vacía.",
     lessonDegreeNote: `${JOB_SEEKER.first} no tiene título universitario. Este trabajo no lo necesita. Deja esa casilla vacía.`,
     needFitWords: "Escribe unas palabras más: di una cosa que hiciste, como \"Arreglé el horario.\"",
@@ -106,9 +106,9 @@ export const JOB_POSTING_COPY: Record<Lang, {
     needFitWork: "Nombra una cosa que hiciste en Harborside Cafe y que este trabajo pide, como arreglar el horario.",
     doneChecked: "Marcaste",
     doneFit: "Por qué encajas",
-    sentKicker: "Listo para aplicar",
+    sentKicker: "Ya puedes postularte",
     doneTitle: "Comparaste el anuncio con tu experiencia.",
-    doneBody: "Tienes casi todo lo que piden. Que falten uno o dos puntos es normal. Aplica de todos modos.",
+    doneBody: "Tienes casi todo lo que piden. Que falten uno o dos puntos es normal. Postúlate de todos modos.",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",
@@ -254,13 +254,13 @@ export const STARTERS: Record<Lang, string[]> = {
     "At Harborside Cafe, I ___.",
     "I am good at ___.",
     "At work I used ___ every day.",
-    "I led a team when I ___.",
+    "I led a shift when I ___.",
   ],
   es: [
     "En Harborside Cafe, yo ___.",
     "Se me da bien ___.",
     "En el trabajo usaba ___ todos los días.",
-    "Dirigí un equipo cuando ___.",
+    "Dirigí un turno cuando ___.",
   ],
 };
 
@@ -281,10 +281,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "No necesitas todos los puntos",
       s: [
         "Un anuncio de empleo es una lista de deseos. La mayoría de quienes son contratados no cumplen cada línea.",
-        "Busca las líneas que sí cubres y cuéntalas. Tres o cuatro coincidencias fuertes bastan para aplicar.",
+        "Busca las líneas que sí cubres y cuéntalas. Tres o cuatro coincidencias fuertes bastan para postularte.",
         "Lee con cuidado la línea del título. Esta dice \"de preferencia\". Eso quiere decir que ayuda, pero no es obligatorio.",
       ],
-      tip: "Si cumples casi toda la lista, aplica. Que decidan ellos, no tú.",
+      tip: "Si cumples casi toda la lista, postúlate. Deja que la empresa decida.",
     },
   ],
 };
@@ -297,7 +297,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   },
   {
     en: "Write one sentence: why are you a good fit? Then click Apply for this job.",
-    es: "Escribe una oración: ¿por qué eres buena opción? Después haz clic en Aplicar a este trabajo.",
+    es: "Escribe una oración: ¿por qué eres buena opción? Después haz clic en Postularme a este empleo.",
   },
 ];
 
@@ -309,7 +309,7 @@ export const LESSON_RIGHT_NOW_STEPS: Localized[] = [
   },
   {
     en: `Write one sentence as ${JOB_SEEKER.first}: why are you a good fit? Then click Apply for this job.`,
-    es: `Escribe una oración como ${JOB_SEEKER.first}: ¿por qué eres buena opción? Después haz clic en Aplicar a este trabajo.`,
+    es: `Escribe una oración como ${JOB_SEEKER.first}: ¿por qué eres buena opción? Después haz clic en Postularme a este empleo.`,
   },
 ];
 

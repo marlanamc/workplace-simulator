@@ -1,5 +1,7 @@
 "use client";
 
+import { useTaskDraft } from "@/lib/use-task-draft";
+
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -34,9 +36,9 @@ export default function InterviewTask() {
     setDone(completedTaskKeys.includes("interview-practice"));
   }
 
-  const [answers, setAnswers] = useState<Record<string, string>>(() => Object.fromEntries(QUESTIONS.map((q, i) => [q.key, writing["interview-practice"]?.fields[i]?.value ?? (i === 0 ? writing["resume-build"]?.fields[0]?.value ?? "" : "")])));
-  const [askBackKey, setAskBackKey] = useState<string | null>(null);
-  const [askBackCustom, setAskBackCustom] = useState("");
+  const [answers, setAnswers] = useTaskDraft<Record<string, string>>("interview-practice", "answers", () => Object.fromEntries(QUESTIONS.map((q, i) => [q.key, writing["interview-practice"]?.fields[i]?.value ?? (i === 0 ? writing["resume-build"]?.fields[0]?.value ?? "" : "")])));
+  const [askBackKey, setAskBackKey] = useTaskDraft<string | null>("interview-practice", "askBackKey", null);
+  const [askBackCustom, setAskBackCustom] = useTaskDraft("interview-practice", "askBackCustom", "");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
 
@@ -108,19 +110,15 @@ export default function InterviewTask() {
             </>
           ) : (
             <>
-              <p className="text-[13px] leading-relaxed text-[#5f6368]">{c.intro}</p>
 
               {QUESTIONS.map((q, i) => (
                 <section key={q.key} className="rounded-xl border border-[#dadce0] bg-white p-4">
                   <div className="flex gap-2">
                     <span className="text-[13px] font-semibold text-[#8430ce]">{i + 1}.</span>
-                    <span className="text-[15px] font-medium text-[#202124]">{q.question[lang]}</span>
-                  </div>
-                  <div className="mt-1.5 rounded-lg bg-[#f3e9fb] px-3 py-2 text-[12px] leading-snug text-[#5b3a8a]">
-                    <span className="font-medium">{c.listeningForLabel}: </span>
-                    {q.listeningFor[lang]}
+                    <label htmlFor={`interview-${q.key}`} className="text-[15px] font-medium text-[#202124]">{q.question[lang]}</label>
                   </div>
                   <textarea
+                    id={`interview-${q.key}`}
                     value={answers[q.key] ?? ""}
                     onChange={(e) => setAnswer(q.key, e.target.value)}
                     placeholder={c.answerHint}
@@ -138,7 +136,6 @@ export default function InterviewTask() {
 
               <section className="rounded-xl border border-[#dadce0] bg-white p-4">
                 <div className="text-[14px] font-medium text-[#202124]">{c.askBackLabel}</div>
-                <div className="mt-0.5 text-[12px] text-[#5f6368]">{c.askBackHint}</div>
                 <div className="mt-3 flex flex-col gap-2">
                   {ASK_BACK_CHOICES.map((a) => {
                     const on = askBackKey === a.key;
@@ -166,6 +163,7 @@ export default function InterviewTask() {
                   </button>
                   {askBackKey === "custom" && (
                     <input
+                      aria-label={c.askBackLabel}
                       value={askBackCustom}
                       onChange={(e) => setAskBackCustom(e.target.value)}
                       placeholder={lang === "en" ? "Your question…" : "Tu pregunta…"}
@@ -177,6 +175,7 @@ export default function InterviewTask() {
 
               <button
                 type="button"
+                data-card-avoid
                 onClick={tryFinish}
                 className="inline-flex min-h-[46px] items-center justify-center self-start rounded-full bg-[#8430ce] px-6 text-[15px] font-medium text-white cursor-pointer hover:brightness-95"
               >
