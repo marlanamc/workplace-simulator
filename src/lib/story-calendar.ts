@@ -1,61 +1,47 @@
 import type { TaskKey } from "./desktop-content";
 import type { Lang } from "./task-types";
-import { LEVELS, taskKeysForLevel, type Level } from "./tracks-content";
+import type { CourseRoute } from "./course-route";
+import { LEVELS, courseLevels, taskKeysForLevel, type Level } from "./tracks-content";
 import { dayNumber } from "./shift-spine";
+import { TASK_LIST } from "./tasks/registry";
+import {
+  HIRE_DAY,
+  clockMinutes,
+  STORY_CLOCK_BY_LEVEL,
+  SHIFT_TIMES,
+  WEEKDAY_SHORT,
+  shortDate,
+  storyDate,
+  storyDayFor,
+  storyDayOf,
+} from "./story-dates";
 
 /**
- * The cafe runs in a frozen August 2026 (the 1st is a Saturday). "Today" on
- * Calendar is not the learner's real date — it is which workday of the story
- * they are on. A hardcoded Friday made a brand-new hire look like they had
- * already worked Mon–Thu.
+ * The cafe runs on a fixed 2026 calendar. "Today" on Calendar and in Mail is
+ * not the learner's real date — it is which sitting of the story they are
+ * on. The dates themselves live in `story-dates.ts` (plain data, no game
+ * imports), so task content can read them too.
  *
- * Day One is Tuesday. That is the hire date. Shifts before it do not exist.
+ * Day One is Tuesday, August 18. That is the hire date. Shifts before it do
+ * not exist.
  */
-export const HIRE_DAY = 18;
-export const HUDDLE_DAY = 26;
+export {
+  HIRE_DAY,
+  addClockMinutes,
+  clockMinutes,
+  HUDDLE_DAY,
+  NIGHT_BEFORE,
+  SHIFT_TIMES,
+  STORY_DAY_BY_LEVEL,
+} from "./story-dates";
 
 /**
- * Real start times per shift day, not a repeated "Opening" placeholder.
- * Same two shift blocks Portal's own schedule uses (7–3 open, 10–6 mid,
- * 8–4 Saturday), so a learner who has already read their schedule there
- * recognizes the same shape here.
- *
- * Monday the 17th is deliberately absent: they have not started yet.
+ * The story day of this sitting. Every level has its own row in
+ * `STORY_DAY_BY_LEVEL`; there is no fallback day, because a fallback is how
+ * later acts used to land back in the first week.
  */
-export const SHIFT_TIMES: Record<number, string> = {
-  18: "7:00 AM",
-  19: "10:00 AM",
-  20: "10:00 AM",
-  21: "7:00 AM",
-  22: "8:00 AM",
-  24: "7:00 AM",
-  25: "7:00 AM",
-  27: "10:00 AM",
-  28: "10:00 AM",
-  29: "8:00 AM",
-  31: "7:00 AM",
-};
-
-/**
- * August day-of-month for "today", keyed by level. Matches each sitting's
- * shiftMoment weekday (Tuesday first shift, Wednesday schedule, Friday
- * payday, Monday sick call). Later sittings keep the Friday the Calendar
- * task was built around, so the huddle-vs-day-off puzzle still reads.
- */
-const TODAY_BY_LEVEL: Partial<Record<string, number>> = {
-  level0: HIRE_DAY,
-  level1: HIRE_DAY,
-  level2: 19,
-  level3: 21,
-  level3a: 22,
-  level3a2: 24,
-  level3a3: 28,
-};
-
-const FALLBACK_TODAY = 21;
-
 export function storyToday(level: Level): number {
-  return TODAY_BY_LEVEL[level.key] ?? FALLBACK_TODAY;
+  return storyDayOf(level.key);
 }
 
 /** A shift chip only if they have already been hired. */
@@ -72,29 +58,32 @@ export function leadHuddleVisible(level: Level): boolean {
 }
 
 /**
- * Inbox / desktop "today" that never rewinds. Later sittings fall back to the
- * 21st for Calendar's huddle puzzle; mail should keep the latest day already
- * reached so Day 3 notes do not look like they arrived this morning on Day 6.
+ * Inbox / desktop "today". Every level has a date and no route ever goes
+ * backwards (`story-dates.test.ts`), so this is the sitting's own day.
  */
 export function inboxToday(level: Level): number {
-  const idx = LEVELS.findIndex((l) => l.key === level.key);
-  let latest = HIRE_DAY;
-  for (let i = 0; i <= Math.max(idx, 0); i++) {
-    latest = Math.max(latest, storyToday(LEVELS[i]));
-  }
-  return latest;
+  return storyToday(level);
 }
 
-/** August day the task's sitting takes place. */
+/** Story day the task's sitting takes place. */
 export function sentOnForTask(taskKey: TaskKey): number {
-  const level = LEVELS.find((l) => taskKeysForLevel(l, null).includes(taskKey));
+  const level = LEVELS.find((l) => taskKeysForLevel(l, "a").includes(taskKey) || taskKeysForLevel(l, "b").includes(taskKey));
   return level ? storyToday(level) : HIRE_DAY;
 }
 
-const WEEKDAY_SHORT: Record<Lang, string[]> = {
-  en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  es: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-};
+const CLOCK_IN_MOMENT = /\b(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\b/i;
+
+/**
+ * The time on the desktop clock when this sitting (or this task) starts.
+ * A task whose shift moment names a time ("Thursday, 3:40 PM") uses that
+ * time; otherwise the sitting's own start.
+ */
+export function storyClockFor(level: Level, taskKey?: TaskKey | null): string {
+  const moment = taskKey ? TASK_LIST.find((d) => d.key === taskKey)?.shiftMoment.en : undefined;
+  const hit = moment?.match(CLOCK_IN_MOMENT);
+  if (hit) return `${hit[1]}:${hit[2] ?? "00"} ${hit[3].toUpperCase()}`;
+  return STORY_CLOCK_BY_LEVEL[level.key] ?? "9:00 AM";
+}
 
 const WEEKDAY_INDEX: Record<string, number> = {
   sun: 0, sunday: 0, dom: 0, domingo: 0,
@@ -106,32 +95,26 @@ const WEEKDAY_INDEX: Record<string, number> = {
   sat: 6, saturday: 6, sáb: 6, sab: 6, sábado: 6, sabado: 6,
 };
 
-function augustDate(day: number): Date {
-  return new Date(2026, 7, day);
-}
+const MONTH_INDEX: Record<string, number> = {
+  jan: 0, ene: 0, feb: 1, mar: 2, apr: 3, abr: 3, may: 4, jun: 5, jul: 6,
+  aug: 7, ago: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11, dic: 11,
+};
 
-export function clockMinutes(time: string): number {
-  const clock = time.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
-  if (!clock) return 0;
-  let hours = Number(clock[1]);
-  const minutes = Number(clock[2]);
-  const ap = clock[3].toUpperCase();
-  if (ap === "PM" && hours !== 12) hours += 12;
-  if (ap === "AM" && hours === 12) hours = 0;
-  return hours * 60 + minutes;
-}
-
-function augustDayFromLabel(time: string, today: number): number {
+function storyDayFromLabel(time: string, today: number): number {
   const t = time.trim();
   if (/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.test(t)) return today;
   if (/^(yesterday|ayer)$/i.test(t)) return today - 1;
-  const monthDay = t.match(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\s+(\d{1,2})$/i);
-  if (monthDay) return Number(monthDay[2]);
-  const ago = t.match(/^(\d{1,2})\s+ago$/i);
-  if (ago) return Number(ago[1]);
+  const monthDay = t.match(/^([a-z]{3,4})\.?\s+(\d{1,2})$/i);
+  if (monthDay && MONTH_INDEX[monthDay[1].toLowerCase()] != null) {
+    return storyDayFor(MONTH_INDEX[monthDay[1].toLowerCase()], Number(monthDay[2]));
+  }
+  const dayMonth = t.match(/^(\d{1,2})\s+([a-z]{3,4})\.?$/i);
+  if (dayMonth && MONTH_INDEX[dayMonth[2].toLowerCase()] != null) {
+    return storyDayFor(MONTH_INDEX[dayMonth[2].toLowerCase()], Number(dayMonth[1]));
+  }
   const weekday = WEEKDAY_INDEX[t.toLowerCase().replace(/\.$/, "")];
   if (weekday != null) {
-    const todayDow = augustDate(today).getDay();
+    const todayDow = storyDate(today).getDay();
     const back = (todayDow - weekday + 7) % 7 || 7;
     return today - back;
   }
@@ -140,8 +123,20 @@ function augustDayFromLabel(time: string, today: number): number {
 
 /** Higher = newer. Uses the story day when present, else the authored label. */
 export function inboxSortKey(row: { time: string; sentOn?: number }, today: number): number {
-  const day = row.sentOn ?? augustDayFromLabel(row.time, today);
+  const day = row.sentOn ?? storyDayFromLabel(row.time, today);
   return day * 10_000 + clockMinutes(row.time);
+}
+
+/**
+ * Whether a row has arrived yet at this moment of the story: not on a later
+ * day, and not later today than `now` when a clock is given. Rows without a
+ * `sentOn` are authored for the day they appear on, so they always count.
+ */
+export function hasArrived(row: { time: string; sentOn?: number }, today: number, now?: string): boolean {
+  if (row.sentOn == null) return true;
+  if (row.sentOn !== today) return row.sentOn < today;
+  if (!now || !/^\d{1,2}:\d{2}\s*(AM|PM)$/i.test(row.time.trim())) return true;
+  return clockMinutes(row.time) <= clockMinutes(now);
 }
 
 /**
@@ -158,7 +153,18 @@ export function formatInboxTime(opts: {
   if (sentOn === today) return clock;
   if (sentOn === today - 1) return lang === "en" ? "Yesterday" : "Ayer";
   if (sentOn < today && today - sentOn < 7) {
-    return WEEKDAY_SHORT[lang][augustDate(sentOn).getDay()];
+    return WEEKDAY_SHORT[lang][storyDate(sentOn).getDay()];
   }
-  return lang === "en" ? `Aug ${sentOn}` : `${sentOn} ago`;
+  return shortDate(sentOn, lang);
+}
+
+/**
+ * Whether a learner on this route, sitting at `currentLevelKey`, has reached
+ * `levelKey` yet. False when that level is not on their route at all.
+ */
+export function levelReached(route: CourseRoute | null, currentLevelKey: string, levelKey: string): boolean {
+  const levels = courseLevels(route);
+  const target = levels.findIndex((l) => l.key === levelKey);
+  if (target === -1) return false;
+  return levels.findIndex((l) => l.key === currentLevelKey) >= target;
 }

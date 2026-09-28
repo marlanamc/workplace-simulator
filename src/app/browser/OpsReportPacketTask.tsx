@@ -206,7 +206,7 @@ export default function OpsReportPacketTask() {
         <div className="relative min-h-0 flex-1 overflow-hidden">
           <CalendarFrame appName={c.calAppName}>
             <WeekStrip
-              days={WEEK_DAYS.map((d, i) => ({ label: d.label[lang], date: d.date, today: i === 0 }))}
+              days={WEEK_DAYS.map((d) => ({ label: d.label[lang], date: d.date, today: d.today }))}
               events={[
                 {
                   key: "morning-open",

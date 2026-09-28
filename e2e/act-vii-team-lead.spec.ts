@@ -163,7 +163,7 @@ test("Act VII walks from the meeting to the final look-back", async ({ page }) =
   await page.getByRole("button", { name: "Done here" }).click();
 
   await page.getByRole("button", { name: "Open Docs" }).click();
-  await page.getByPlaceholder(/This week's total was/).fill("This week's total was $4,820, up from last week. Coming up: Thursday's morning open still needs someone.");
+  await page.getByPlaceholder(/Last week's total was/).fill("Last week's total was $4,820, up from last week. Coming up: Thursday's morning open still needs someone.");
   await page.getByRole("button", { name: "Save the summary" }).click();
 
   await page.getByRole("button", { name: "Open Mail" }).click();

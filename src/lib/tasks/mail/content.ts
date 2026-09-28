@@ -1,6 +1,6 @@
 import { CAST, inboxSender } from "@/lib/cast";
 import { mailGreeting } from "@/lib/mail-greeting";
-import { HIRE_DAY, sentOnForTask } from "@/lib/story-calendar";
+import { HIRE_DAY, NIGHT_BEFORE, SHIFT_TIMES, STORY_DAY_BY_LEVEL, hourOnly } from "@/lib/story-dates";
 import { OPENING_MESSAGES, openingLines } from "@/lib/tasks/mail/opening";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
 import { affirms, looksLikeRealText, normalizeReply, saysCannotAttend, wordCount, yesNoAnswer } from "@/lib/grading/meaning";
@@ -116,14 +116,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
   "mail-reply": {
     en: {
       emoji: "📬",
-      kicker: "Tuesday, 8:14 AM",
+      kicker: "Monday, 6:02 PM",
       headline: "Your manager says welcome.",
       body: "Maria Delgado runs Harborside Cafe. She sent a short hello and said to call if you need anything. Write her a thank-you back.",
       cta: "Open my inbox",
     },
     es: {
       emoji: "📬",
-      kicker: "Martes, 8:14 AM",
+      kicker: "Lunes, 6:02 PM",
       headline: "Tu gerente te da la bienvenida.",
       body: "Maria Delgado dirige Harborside Cafe. Te envió un saludo corto y dijo que la llames si necesitas algo. Escríbele un agradecimiento.",
       cta: "Abrir mi bandeja",
@@ -165,14 +165,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
     en: {
       emoji: "🤒",
       kicker: "Monday, 6:12 AM",
-      headline: "You're sick. You're on at 10.",
+      headline: `You're sick. You're on at ${hourOnly(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3a2])}.`,
       body: "You woke up sick and you're on the schedule this morning. Write Maria now, before your shift, not after it starts.",
       cta: "Write to Maria",
     },
     es: {
       emoji: "🤒",
       kicker: "Lunes, 6:12 AM",
-      headline: "Estás enfermo. Entras a las 10.",
+      headline: `Estás enfermo. Entras a las ${hourOnly(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3a2])}.`,
       body: "Te despertaste enfermo y hoy tienes turno. Escríbele a Maria ahora, antes de tu turno, no después de que empiece.",
       cta: "Escribirle a Maria",
     },
@@ -1059,19 +1059,19 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
     },
     wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
   { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
-    subject: { en: "Your schedule for Aug 17–23", es: "Tu horario del 17–23 de ago" },
-    preview: { en: "This week's shifts have been posted.", es: "Ya se publicaron los turnos de esta semana." },
+    subject: { en: "Your schedule for Aug 24–30", es: "Tu horario del 24–30 de ago" },
+    preview: { en: "Next week's shifts have been posted.", es: "Ya se publicaron los turnos de la próxima semana." },
     body: {
-      en: ["Your schedule for Aug 17 to 23 is posted. Open the Harborside app to see your shifts.", "Need to swap a shift? Ask your manager at least 48 hours before it starts.", "This is an automatic message. Please do not reply."],
-      es: ["Tu horario del 17 al 23 de agosto ya está publicado. Abre la app de Harborside para ver tus turnos.", "¿Necesitas cambiar un turno? Pídeselo a tu gerente por lo menos 48 horas antes.", "Este es un mensaje automático. Por favor, no respondas."],
+      en: ["Your schedule for Aug 24 to 30 is posted. Open the Harborside app to see your shifts.", "Need to swap a shift? Ask your manager at least 48 hours before it starts.", "This is an automatic message. Please do not reply."],
+      es: ["Tu horario del 24 al 30 de agosto ya está publicado. Abre la app de Harborside para ver tus turnos.", "¿Necesitas cambiar un turno? Pídeselo a tu gerente por lo menos 48 horas antes.", "Este es un mensaje automático. Por favor, no respondas."],
     },
     wrongHint: wrongHint("That's an automatic message about the schedule. Maria's email has her name on the left.", "Ese es un mensaje automático del horario. El correo de Maria tiene su nombre a la izquierda.") },
   { key: "hr", ...inboxSender(CAST.hr), time: "Yesterday", isTarget: false,
-    subject: { en: "Your paystub is ready", es: "Tu recibo de pago está listo" },
-    preview: { en: "View your paystub in the portal.", es: "Ve tu recibo en el portal." },
+    subject: { en: "Your first payday", es: "Tu primer día de pago" },
+    preview: { en: "Your first pay date is Friday, Aug 28.", es: "Tu primer día de pago es el viernes 28 de agosto." },
     body: {
-      en: ["Hello team,", "Paystubs for Aug 3 to 16 are ready. Sign in to the employee portal and click Pay to see yours.", "Pay date: Friday, Aug 21.", "Questions about your pay? Reply to this email or call (617) 555-0114."],
-      es: ["Hola, equipo:", "Ya están los recibos de pago del 3 al 16 de agosto. Entra al portal de empleados y haz clic en Pago para ver el tuyo.", "Día de pago: viernes 21 de agosto.", "¿Preguntas sobre tu pago? Responde a este correo o llama al (617) 555-0114."],
+      en: ["Welcome to Harborside!", "We pay every two weeks. Your first pay date is Friday, Aug 28. It pays your hours from Aug 18 to 28.", "On that day, sign in to the employee portal and click Pay to see your pay stub.", "Questions about your pay? Reply to this email or call (617) 555-0114."],
+      es: ["¡Te damos la bienvenida a Harborside!", "Pagamos cada dos semanas. Tu primer día de pago es el viernes 28 de agosto. Paga tus horas del 18 al 28 de agosto.", "Ese día, entra al portal de empleados y haz clic en Pago para ver tu recibo.", "¿Preguntas sobre tu pago? Responde a este correo o llama al (617) 555-0114."],
     },
     wrongHint: wrongHint("That's from HR about pay. Today's task is the email from Maria Delgado.", "Eso es de RR.HH. sobre el pago. La tarea de hoy es el correo de Maria Delgado.") },
   { key: "it", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Yesterday", isTarget: false,
@@ -1114,7 +1114,7 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
  * first inbox a learner sees is a real one without pulling focus.
  */
 export const OPENING_CLUTTER: InboxEmail[] = ([
-  { key: "it-setup", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "9:30 AM", sentOn: HIRE_DAY - 2, isTarget: false, unread: false,
+  { key: "it-setup", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "9:30 AM", sentOn: NIGHT_BEFORE - 1, isTarget: false, unread: false,
     subject: { en: "Your Harborside account is ready", es: "Tu cuenta de Harborside está lista" },
     preview: { en: "Your email is set up. Sign in on your first day.", es: "Tu correo está listo. Entra el primer día." },
     wrongHint: wrongHint("That's from IT. Open Maria's email.", "Eso es de sistemas. Abre el correo de Maria."),
@@ -1122,7 +1122,7 @@ export const OPENING_CLUTTER: InboxEmail[] = ([
       en: ["Welcome to Harborside!", "Your work email is set up. You will sign in on the cafe computer on your first day. Your manager will give you your password.", "IT will never ask for your password by email or text.", "IT Helpdesk · ext. 204"],
       es: ["¡Te damos la bienvenida a Harborside!", "Tu correo de trabajo ya está listo. Vas a entrar en la computadora del café tu primer día. Tu gerente te va a dar tu contraseña.", "Sistemas nunca te va a pedir tu contraseña por correo ni por mensaje de texto.", "Sistemas · ext. 204"],
     } },
-  { key: "hr-paperwork", ...inboxSender(CAST.hr), time: "11:05 AM", sentOn: HIRE_DAY - 2, isTarget: false, unread: false,
+  { key: "hr-paperwork", ...inboxSender(CAST.hr), time: "11:05 AM", sentOn: NIGHT_BEFORE - 1, isTarget: false, unread: false,
     subject: { en: "New hire paperwork: what to bring", es: "Papeles de ingreso: qué traer" },
     preview: { en: "A photo ID, and your bank details for direct deposit.", es: "Una identificación con foto y los datos de tu banco para el depósito directo." },
     wrongHint: wrongHint("That's from HR. Open Maria's email.", "Eso es de RR.HH. Abre el correo de Maria."),
@@ -1173,7 +1173,7 @@ const ETIQUETTE_DECOYS: DecoyEmail[] = [
 
 /** Monday morning of week two, before your shift — you're writing Maria that you're sick. */
 const SICK_CALL_DECOYS: DecoyEmail[] = [
-  { key: "benefits", ...inboxSender(CAST.hr), time: "7:30 AM", isTarget: false,
+  { key: "benefits", ...inboxSender(CAST.hr), time: "Fri", isTarget: false,
     subject: { en: "Open enrollment starts next week", es: "La inscripción abierta empieza la próxima semana" },
     preview: { en: "You'll get the forms by email.", es: "Recibirás los formularios por correo." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
@@ -1235,7 +1235,7 @@ function openable(decoy: DecoyEmail): InboxEmail {
 /** Saturday sitting — later than the same-day decoys so Darnell is on top. */
 export const DARNELL_APRON_STAMP = {
   time: "9:48 AM",
-  sentOn: sentOnForTask("mail-etiquette"),
+  sentOn: STORY_DAY_BY_LEVEL.level3a,
 } as const;
 
 /** Inbox rows for the active Day One job. Job 2 keeps the welcome mail as a non-target. */
@@ -1246,7 +1246,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     key: "maria-welcome",
     ...inboxSender(CAST.maria),
     time: "8:14 AM",
-    sentOn: 18,
+    sentOn: HIRE_DAY,
     isTarget: task === "mail-reply",
     unread: task === "mail-reply",
     subject: { en: welcomeMeta.en.subject, es: welcomeMeta.es.subject },
@@ -1256,7 +1256,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
     key: "maria-safety",
     ...inboxSender(CAST.maria),
     time: "10:10 AM",
-    sentOn: 19,
+    sentOn: STORY_DAY_BY_LEVEL.level2,
     isTarget: true,
     unread: true,
     subject: { en: safetyMeta.en.subject, es: safetyMeta.es.subject },
@@ -1276,7 +1276,7 @@ export function emailsForTask(task: PlayableMailTask): InboxEmail[] {
       key: "maria-welcome",
       ...inboxSender(CAST.maria),
       time: opened.time,
-      sentOn: HIRE_DAY - 1,
+      sentOn: NIGHT_BEFORE,
       isTarget: false,
       unread: false,
       subject: opened.subject,

@@ -1,5 +1,9 @@
 import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { STORY_DAY_BY_LEVEL, mondayOf, shortDate } from "@/lib/story-dates";
+
+/** The huddle the learner calls meets Thursday of the First Team Meeting week (the right slot is Thu 10 AM). */
+const HUDDLE_THURSDAY = mondayOf(STORY_DAY_BY_LEVEL.level11) + 3;
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -71,7 +75,7 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     whenLabel: "When",
     guestsLabel: "Guests",
     saveEvent: "Save",
-    agendaName: "Huddle agenda: Aug 28",
+    agendaName: `Huddle agenda: ${shortDate(HUDDLE_THURSDAY, "en")}`,
     agendaPh: "Type two or three bullets…",
     startersLabel: "Sentence starters",
     sentKicker: "Invite sent",
@@ -102,7 +106,7 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     whenLabel: "Cuándo",
     guestsLabel: "Invitados",
     saveEvent: "Guardar",
-    agendaName: "Agenda de la reunión: 28 ago",
+    agendaName: `Agenda de la reunión: ${shortDate(HUDDLE_THURSDAY, "es")}`,
     agendaPh: "Escribe dos o tres puntos…",
     startersLabel: "Frases de ayuda",
     sentKicker: "Invitación enviada",

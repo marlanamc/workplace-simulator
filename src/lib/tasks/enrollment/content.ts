@@ -1,8 +1,10 @@
 import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
 import { DATE_CHECK } from "@/lib/tasks/financial-aid/content";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { ENROLLMENT_DEADLINE_DAY, yearDate } from "@/lib/story-dates";
 
-export const DEADLINE = { en: "September 15, 2026", es: "15 de septiembre de 2026" };
+/** The application deadline, from the story calendar (Friday, October 9). */
+export const DEADLINE = { en: yearDate(ENROLLMENT_DEADLINE_DAY, "en"), es: yearDate(ENROLLMENT_DEADLINE_DAY, "es") };
 
 export const MISSING_DOC = "immunization";
 

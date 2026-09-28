@@ -5,6 +5,8 @@ import { useProgress } from "@/lib/progress-context";
 import { useLesson } from "@/lib/lesson-context";
 import { useJobCard } from "@/lib/job-card-context";
 import { useLiveClock } from "@/components/LiveClock";
+import { storyClockFor } from "@/lib/story-calendar";
+import { levelForTrack } from "@/lib/tracks-content";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 import {
@@ -50,7 +52,7 @@ function GoogleWord() {
 const SHOW_ME_IDS = ["password-field", "phone", "code-field"] as const;
 
 export default function AccountRecoveryTask() {
-  const { markComplete, completedTaskKeys, lang } = useProgress();
+  const { markComplete, completedTaskKeys, lang, currentTrack } = useProgress();
   // A lesson gives the password on the info card, so it can check it. Story
   // mode has no card, so any password gets through there.
   const lesson = useLesson();
@@ -64,7 +66,7 @@ export default function AccountRecoveryTask() {
   const showMe = useShowMe();
   const { clearCorrection } = useJobCard();
   // The phone's status bar shows the same time as the taskbar clock.
-  const phoneTime = useLiveClock(lang).time.split(" ")[0];
+  const phoneTime = useLiveClock(lang, storyClockFor(levelForTrack(currentTrack.key), "account-recovery")).time.split(" ")[0];
   const passwordRef = useRef<HTMLInputElement>(null);
   const codeRef = useRef<HTMLInputElement>(null);
 

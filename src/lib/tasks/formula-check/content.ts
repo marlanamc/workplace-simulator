@@ -1,6 +1,6 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import { mentionsAmount } from "@/lib/text-facts";
-import { CORRECT_WEEK_TOTAL, SHORT_WEEK_TOTAL } from "../crew-week";
+import { CORRECT_WEEK_TOTAL, CREW_WEEK_SHEET, SHORT_WEEK_TOTAL } from "../crew-week";
 import { openFileStep } from "../open-file-step";
 import { fnName, fnPattern } from "../sheet-words";
 
@@ -72,7 +72,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
   en: {
     helpBtn: "Help me with this step",
     appName: "Sheets",
-    sheetName: "Crew Week: Aug 24",
+    sheetName: CREW_WEEK_SHEET.en,
     startNewHeading: "Start a new spreadsheet",
     blankLabel: "Blank",
     templateBudget: "Budget",
@@ -108,7 +108,7 @@ export const FORMULA_CHECK_COPY: Record<Lang, {
   es: {
     helpBtn: "Ayúdame con este paso",
     appName: "Sheets",
-    sheetName: "Semana del equipo: 24 ago",
+    sheetName: CREW_WEEK_SHEET.es,
     startNewHeading: "Iniciar una nueva hoja de cálculo",
     blankLabel: "En blanco",
     templateBudget: "Presupuesto",

@@ -1,6 +1,7 @@
 import { routeIncludesLevel, routeBridgePath, type CourseRoute } from "./course-route";
 import type { TaskKey } from "./desktop-content";
 import type { Lang, Localized } from "./task-types";
+import { SHIFT_TIMES, STORY_DAY_BY_LEVEL, hourOnly } from "./story-dates";
 import { TASK_LIST, type PortalSection, type TaskLocation } from "./tasks/registry";
 import {
   inferBridgePath,
@@ -419,6 +420,9 @@ export function isEarlyLevel(level: Level): boolean {
   return EARLY_LEVEL_KEYS.has(level.key);
 }
 
+/** "7": the sick-day shift the learner studied on the Day 2 schedule. */
+const SICK_DAY_START = hourOnly(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3a2]);
+
 export const LEVELS: Level[] = [
   {
     key: "level0",
@@ -506,8 +510,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Monday morning", es: "Lunes por la mañana" },
       title: { en: "You woke up sick.", es: "Te despertaste enfermo." },
       body: {
-        en: "You're on the schedule at 10. Write Maria before your shift, not after it starts.",
-        es: "Hoy tienes turno a las 10. Escríbele a Maria antes de tu turno, no después.",
+        en: `You're on the schedule at ${SICK_DAY_START}. Write Maria before your shift, not after it starts.`,
+        es: `Hoy tienes turno a las ${SICK_DAY_START}. Escríbele a Maria antes de tu turno, no después.`,
       },
       cta: { en: "Write to Maria", es: "Escribirle a Maria" },
     },
@@ -555,7 +559,7 @@ export const LEVELS: Level[] = [
     firstTabKey: "account-recovery",
     levelUp: {
       emoji: "🔐",
-      kicker: { en: "Monday morning", es: "Lunes por la mañana" },
+      kicker: { en: "Wednesday morning", es: "Miércoles por la mañana" },
       title: { en: "You're locked out.", es: "Tu cuenta está bloqueada." },
       body: {
         en: "It happens to every lead. Stay calm and sign back in.",

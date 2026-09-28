@@ -1,5 +1,6 @@
 import { affirms, normalizeReply } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { STORY_DAY_BY_LEVEL, WEEKDAY_SHORT, cardDate, shortDate } from "@/lib/story-dates";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -90,7 +91,7 @@ export const PRIORITY_COPY: Record<Lang, {
     hoursHeader: "Hours",
     pickShift: "Add 4–10…",
     meetingTitle: "Friday numbers: Renata",
-    meetingWhen: "Thu, Aug 27 · 5:00–5:20 PM",
+    meetingWhen: `${cardDate(STORY_DAY_BY_LEVEL.level12, "en")} · 5:00–5:20 PM`,
     meetingNote: "Close starts at 4. You cannot leave the floor at 5.",
     accept: "Yes",
     no: "No",
@@ -137,7 +138,7 @@ export const PRIORITY_COPY: Record<Lang, {
     hoursHeader: "Horas",
     pickShift: "Agregar 4–10…",
     meetingTitle: "Números del viernes: Renata",
-    meetingWhen: "Jue 27 ago · 5:00–5:20 PM",
+    meetingWhen: `${WEEKDAY_SHORT.es[4]} ${shortDate(STORY_DAY_BY_LEVEL.level12, "es")} · 5:00–5:20 PM`,
     meetingNote: "El cierre empieza a las 4. No puedes salir del piso a las 5.",
     accept: "Sí",
     no: "No",

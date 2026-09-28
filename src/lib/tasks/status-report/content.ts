@@ -1,7 +1,8 @@
 import { mentionsAmount } from "@/lib/text-facts";
+import { shortDate } from "@/lib/story-dates";
 import { CAST } from "@/lib/cast";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
-import { COPY_NAME, STATUS_TOTAL } from "../status-sheet";
+import { COPY_NAME, STATUS_TOTAL, STATUS_WEEK } from "../status-sheet";
 import { openFileStep } from "../open-file-step";
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -76,7 +77,7 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     cc: "Cc",
     ccAdd: "Cc",
     subjectLabel: "Subject",
-    subject: "Week of Aug 24 status",
+    subject: `Week of ${shortDate(STATUS_WEEK, "en")} status`,
     writeHere: "Write your message here…",
     send: "Send",
     discard: "Discard",
@@ -110,7 +111,7 @@ export const STATUS_REPORT_COPY: Record<Lang, {
     cc: "Cc",
     ccAdd: "Cc",
     subjectLabel: "Asunto",
-    subject: "Estado de la semana del 24 ago",
+    subject: `Estado de la semana del ${shortDate(STATUS_WEEK, "es")}`,
     writeHere: "Escribe tu mensaje aquí…",
     send: "Enviar",
     discard: "Descartar",

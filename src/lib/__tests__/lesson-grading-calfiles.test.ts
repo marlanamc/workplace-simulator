@@ -3,6 +3,7 @@ import {
   checkHuddleReply,
   huddleReplyHint,
   HUDDLE_WEEK_SHIFTS,
+  HUDDLE_WEEK_MONDAY,
   STARTERS as CAL_STARTERS,
   HUDDLE_TIMES,
   RIGHT_NOW_STEPS as CAL_STEPS,
@@ -14,7 +15,10 @@ import {
   CHECK_OTHER_WEEK,
   fileMatchesQuery,
   renameProblem,
+  FILES_WEEK,
+  RENAME_TARGET,
 } from "@/lib/tasks/files/content";
+import { STORY_DAY_BY_LEVEL, storyDayFor, weekRange } from "@/lib/story-dates";
 import { SHIFT_TIMES, HUDDLE_DAY, clockMinutes } from "@/lib/story-calendar";
 
 describe("calendar: the reply names a day you work and a time", () => {
@@ -27,7 +31,8 @@ describe("calendar: the reply names a day you work and a time", () => {
     "thursday 10am",
     "Can we meet Friday at 11 AM?",
     "Tuesday morning?",
-    "Aug 27 at 2 PM",
+    "Sep 17 at 2 PM",
+    "the 17th at 2 PM",
     "I can't come Wednesday, how about Thursday at 3?",
     "Not Wednesday. Friday at 1 pm please",
     "thrusday at 10 am ok?",
@@ -79,9 +84,9 @@ describe("calendar: the reply names a day you work and a time", () => {
   });
 
   it("the grader's week matches the shifts on the calendar", () => {
-    // Aug 24 is a Monday; the huddle is Wednesday the 26th.
+    // Sep 14 is a Monday; the huddle is Wednesday the 16th.
     for (let weekday = 1; weekday <= 6; weekday++) {
-      const time = SHIFT_TIMES[23 + weekday];
+      const time = SHIFT_TIMES[HUDDLE_WEEK_MONDAY - 1 + weekday];
       const shift = HUDDLE_WEEK_SHIFTS[weekday];
       if (!time) expect(shift, `weekday ${weekday}`).toBeNull();
       else expect(shift?.start).toBe(clockMinutes(time) / 60);
@@ -115,7 +120,7 @@ describe("calendar: the reply names a day you work and a time", () => {
 describe("files: search finds plain words", () => {
   const found = (q: string) => MESSY_FILES.filter((f) => fileMatchesQuery(f, q)).map((f) => f.key).sort();
   const aug24 = ["sched-aug24", "sched-aug24-copy", "sched-aug24-draft"];
-  it.each(["aug 24", "Aug 24", "aug24", "august 24", "week of aug 24", "schedule-week-of-aug-24", "8/24", "24 de agosto", "semana del 24 de agosto"])(
+  it.each(["sep 14", "Sep 14", "sep14", "september 14", "sept 14", "week of sep 14", "schedule-week-of-sep-14", "9/14", "14 de septiembre", "semana del 14 de septiembre"])(
     "%j finds this week's schedules",
     (q) => expect(found(q)).toEqual(aug24),
   );
@@ -124,26 +129,27 @@ describe("files: search finds plain words", () => {
     expect(found("horario")).toHaveLength(5);
     expect(found("vacation")).toEqual(["vacation-form"]);
     expect(found("draft")).toEqual(["sched-aug24-draft"]);
-    expect(found("82426")).toEqual(aug24);
-    expect(found("sched_8")).toHaveLength(5);
+    expect(found("91426")).toEqual(aug24);
+    expect(found("sched_9")).toHaveLength(5);
     expect(found("zebra")).toEqual([]);
   });
 });
 
 describe("files: rename corrections name the problem", () => {
-  const old = "sched_82426.pdf";
+  const old = "sched_91426.pdf";
   it.each([
     ["", "empty"],
     ["   ", "empty"],
-    ["sched_82426schedule-week-of-aug-24", "oldName"],
-    ["schedule-week-of-aug-24sched_82426", "oldName"],
-    ["sched_82426 schedule", "oldName"],
-    ["schedule-aug-24", "wrong"],
+    ["sched_91426schedule-week-of-sep-14", "oldName"],
+    ["schedule-week-of-sep-14sched_91426", "oldName"],
+    ["sched_91426 schedule", "oldName"],
+    ["schedule-sep-14", "wrong"],
+    ["schedule-week-of-aug-24", "wrong"],
   ])("%j -> %s", (value, problem) => {
     expect(renameProblem(value, old)).toBe(problem);
   });
   it("passes the forgiving forms", () => {
-    for (const v of ["schedule-week-of-aug-24", "Schedule Week Of August 24.pdf", "schedule_week_of_aug24"]) {
+    for (const v of ["schedule-week-of-sep-14", "Schedule Week Of September 14.pdf", "schedule_week_of_sep14", "schedule-week-of-sept-14"]) {
       expect(renameProblem(v, old)).toBeNull();
     }
   });
@@ -154,26 +160,30 @@ describe("files: rename corrections name the problem", () => {
 });
 
 describe("files: the data adds up", () => {
-  const TODAY = 24; // Monday, Aug 24: Jordan starts today.
-  const day = (d: string) => Number(d.match(/Aug (\d+)/)?.[1] ?? 0);
+  const TODAY = STORY_DAY_BY_LEVEL.level5; // Monday, Sep 14: Jordan starts today.
+  const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const day = (d: string) => {
+    const m = d.match(/^([A-Z][a-z]{2}) (\d+)/)!;
+    return storyDayFor(MONTHS.indexOf(m[1]), Number(m[2]));
+  };
   it("nothing is posted after today", () => {
-    for (const f of MESSY_FILES) if (f.date.startsWith("Aug")) expect(day(f.date), f.key).toBeLessThanOrEqual(TODAY);
+    for (const f of MESSY_FILES) expect(day(f.date), f.key).toBeLessThanOrEqual(TODAY);
   });
   it("schedule name codes match the week on the page (M DD YY)", () => {
     for (const f of MESSY_FILES) {
       const doc = FILE_PAGES[f.key].doc;
       if (doc.kind !== "schedule") continue;
       const code = f.name.match(/sched_(\d)(\d{2})(\d{2})/)!;
-      expect(doc.week, f.key).toMatch(new RegExp(`^Week of Aug ${Number(code[2])}\\b`));
-      expect(code[1]).toBe("8");
+      expect(doc.week, f.key).toMatch(new RegExp(`^Week of ${MONTHS[Number(code[1]) - 1]} ${Number(code[2])}\\b`));
       expect(code[3]).toBe("26");
     }
   });
-  it("Labor Day is not placed inside a week it is not in", () => {
-    const sept = FILE_PAGES["sched-sept"].doc;
-    if (sept.kind !== "schedule") throw new Error("not a schedule");
-    expect(sept.notes.join(" ")).not.toMatch(/^Monday, Sep 7 is Labor Day/);
-    expect(sept.notes.join(" ")).toMatch(/after this week/);
+  it("the week Jordan starts is the Monday of the Shared Files sitting", () => {
+    const target = FILE_PAGES["sched-aug24"].doc;
+    if (target.kind !== "schedule") throw new Error("not a schedule");
+    expect(FILES_WEEK).toBe(TODAY);
+    expect(target.week).toBe(`Week of ${weekRange(FILES_WEEK)}`);
+    expect(RENAME_TARGET).toBe("schedule-week-of-sep-14");
   });
   it("the check-the-week rule mentions drafts and copies", () => {
     expect(CHECK_OTHER_WEEK.en).toMatch(/draft/);

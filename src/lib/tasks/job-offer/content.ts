@@ -1,5 +1,15 @@
 import { acceptance, mentionsDate, mentionsOtherDayOfMonth, normalizeReply, type MonthDay } from "@/lib/grading/meaning";
 import type { Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
+import { STORY_DAY_BY_LEVEL, longDate } from "@/lib/story-dates";
+
+/**
+ * The start date: the first day at HQ (level20), Tuesday, October 6. The
+ * reply check below looks for October 6, so the date stays; the weekday is
+ * read off the calendar instead of written by hand.
+ */
+const START_DAY = STORY_DAY_BY_LEVEL.level20;
+const START = { en: longDate(START_DAY, "en"), es: longDate(START_DAY, "es") };
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 /**
  * "The Offer" — the fifth step of the getting-hired arc. Harborside HQ makes
@@ -83,12 +93,12 @@ export const JOB_OFFER_COPY: Record<Lang, {
 export const OFFER_LETTER: Record<Lang, string[]> = {
   en: [
     "Dear applicant, we're glad to offer you the Office Administrator role at Harborside HQ. The pay is $25.50 per hour, full time, with benefits after 60 days.",
-    "Your first day is Monday, October 6. You'll report to me. Plan to arrive at 9:00 AM for orientation.",
+    `Your first day is ${START.en}. You'll report to me. Plan to arrive at 9:00 AM for orientation.`,
     "Please reply to accept. Before your first day, complete the new-hire forms. HR will send them.",
   ],
   es: [
     "Estimado solicitante, nos alegra ofrecerte el puesto de Administrador de Oficina en Harborside HQ. El pago es de $25.50 por hora, tiempo completo, con beneficios después de 60 días.",
-    "Tu primer día es el lunes 6 de octubre. Vas a reportarte conmigo. Planea llegar a las 9:00 AM para la orientación.",
+    `Tu primer día es el ${START.es}. Vas a reportarte conmigo. Planea llegar a las 9:00 AM para la orientación.`,
     "Por favor responde para aceptar. Antes de tu primer día, completa los formularios de nuevo empleado. RR. HH. te los enviará.",
   ],
 };
@@ -96,15 +106,15 @@ export const OFFER_LETTER: Record<Lang, string[]> = {
 export const CORRECT_DATE_KEY = "oct-6";
 
 export const DATE_CHOICES: { key: string; label: Localized; ok: boolean }[] = [
-  { key: "oct-6", label: { en: "Monday, October 6", es: "Lunes 6 de octubre" }, ok: true },
-  { key: "oct-9", label: { en: "Thursday, October 9", es: "Jueves 9 de octubre" }, ok: false },
-  { key: "sep-6", label: { en: "Friday, September 6", es: "Viernes 6 de septiembre" }, ok: false },
+  { key: "oct-6", label: { en: START.en, es: cap(START.es) }, ok: true },
+  { key: "oct-9", label: { en: longDate(START_DAY + 3, "en"), es: cap(longDate(START_DAY + 3, "es")) }, ok: false },
+  { key: "sep-6", label: { en: longDate(START_DAY - 30, "en"), es: cap(longDate(START_DAY - 30, "es")) }, ok: false },
 ];
 
 /** The start date in the letter, as a month and day. */
 export const START_DATE: MonthDay = { month: 10, day: 6 };
-/** The letter says "Monday, October 6", so "I come Monday" names the start day too. */
-const START_WEEKDAY = /\b(monday|mon|lunes)\b/;
+/** The letter says "Tuesday, October 6", so "I come Tuesday" names the start day too. */
+const START_WEEKDAY = /\b(tuesday|tues|tue|martes)\b/;
 
 /**
  * The start date in any common form: "October 6th", "6th of October",
@@ -166,13 +176,13 @@ export const REPLY_STARTERS: Record<Lang, string[]> = {
   en: [
     "Thank you for the offer.",
     "I'm glad to accept the Office Administrator role.",
-    "I'll be there Monday, October 6 at 9:00 AM.",
+    `I'll be there ${START.en} at 9:00 AM.`,
     "I'll watch for the new-hire forms from HR.",
   ],
   es: [
     "Gracias por la oferta.",
     "Me alegra aceptar el puesto de Administrador de Oficina.",
-    "Estaré ahí el lunes 6 de octubre a las 9:00 AM.",
+    `Estaré ahí el ${START.es} a las 9:00 AM.`,
     "Estaré pendiente de los formularios de nuevo empleado de RR. HH.",
   ],
 };

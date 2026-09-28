@@ -1,18 +1,35 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import {
+  HUDDLE_DAY,
+  cardDate,
+  longDate,
+  mondayOf,
+  monthDate,
+  monthLabel,
+  shiftBlockFor,
+  shiftSpan,
+  storyDate,
+  storyWeekday,
+} from "@/lib/story-dates";
+
+/** "Wednesday, September 16" / "miércoles 16 de septiembre": the day the huddle lands on. */
+const HUDDLE_LONG = { en: longDate(HUDDLE_DAY, "en"), es: longDate(HUDDLE_DAY, "es") };
+/** "September 16" / "16 de septiembre". */
+const HUDDLE_DATE = { en: monthDate(HUDDLE_DAY, "en"), es: monthDate(HUDDLE_DAY, "es") };
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "📅",
     kicker: "Next week",
     headline: "Renata put a meeting on your day off.",
-    body: "The Weekly Lead Huddle is on Wednesday, August 26. You do not work that day. Ask her for a different time.",
+    body: `The Weekly Lead Huddle is on ${HUDDLE_LONG.en}. You do not work that day. Ask her for a different time.`,
     cta: "Open Calendar",
   },
   es: {
     emoji: "📅",
     kicker: "La semana que viene",
     headline: "Renata puso una reunión en tu día libre.",
-    body: "La reunión semanal de líderes es el miércoles 26 de agosto. Ese día no trabajas. Pídele otro horario.",
+    body: `La reunión semanal de líderes es el ${HUDDLE_LONG.es}. Ese día no trabajas. Pídele otro horario.`,
     cta: "Abrir Calendar",
   },
 };
@@ -43,7 +60,7 @@ export const HUDDLE_TIMES = [
 export const MEETING = {
   title: { en: "Weekly Lead Huddle", es: "Reunión semanal de líderes" } as Localized,
   organizer: { en: "Renata Silva · General Manager", es: "Renata Silva · Gerente general" } as Localized,
-  when: { en: "Wed, Aug 26 · 9:00 AM – 9:30 AM", es: "Mié., 26 de agosto · 9:00 AM – 9:30 AM" } as Localized,
+  when: { en: `${cardDate(HUDDLE_DAY, "en")} · 9:00 AM – 9:30 AM`, es: `${cardDate(HUDDLE_DAY, "es")} · 9:00 AM – 9:30 AM` } as Localized,
   chipTime: "9:00 AM",
   description: {
     en: "A short weekly check-in with the shift leads. Counts, callouts, and anything coming up.",
@@ -103,7 +120,7 @@ export const CALENDAR_COPY: Record<Lang, {
     myCalendars: "My calendars",
     workShifts: "Work shifts",
     cafeCalendar: "Harborside Cafe",
-    monthLabel: "August 2026",
+    monthLabel: monthLabel(HUDDLE_DAY, "en"),
     viewDay: "Day",
     viewWeek: "Week",
     viewMonth: "Month",
@@ -145,7 +162,7 @@ export const CALENDAR_COPY: Record<Lang, {
     myCalendars: "Mis calendarios",
     workShifts: "Turnos",
     cafeCalendar: "Harborside Cafe",
-    monthLabel: "Agosto de 2026",
+    monthLabel: monthLabel(HUDDLE_DAY, "es"),
     viewDay: "Día",
     viewWeek: "Semana",
     viewMonth: "Mes",
@@ -181,8 +198,8 @@ export const CALENDAR_COPY: Record<Lang, {
 
 /** Said only after a wrong answer: this is where the lesson gives the conclusion. */
 export const WRONG_ACCEPT_HINT: Record<Lang, string> = {
-  en: "Look at your green work shifts. Wednesday, August 26 has no shift. That is your day off (a day you do not work). Click Propose a new time. It means: ask for a different time.",
-  es: "Mira tus turnos verdes. El miércoles 26 de agosto no tiene turno. Es tu día libre (un día que no trabajas). Haz clic en Proponer otro horario. Quiere decir: pedir otro horario.",
+  en: `Look at your green work shifts. ${HUDDLE_LONG.en} has no shift. That is your day off (a day you do not work). Click Propose a new time. It means: ask for a different time.`,
+  es: `Mira tus turnos verdes. El ${HUDDLE_LONG.es} no tiene turno. Es tu día libre (un día que no trabajas). Haz clic en Proponer otro horario. Quiere decir: pedir otro horario.`,
 };
 
 /**
@@ -253,14 +270,14 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Find the meeting on Wednesday, August 26. Click it.",
-    es: "Busca la reunión del miércoles 26 de agosto. Haz clic en ella.",
+    en: `Find the meeting on ${HUDDLE_LONG.en}. Click it.`,
+    es: `Busca la reunión del ${HUDDLE_LONG.es}. Haz clic en ella.`,
   },
   // A looking question, not the answer. The conclusion comes only as a
   // correction after a wrong choice (WRONG_ACCEPT_HINT).
   {
-    en: "Look at your green work shifts. Do you work on August 26? Answer the invite.",
-    es: "Mira tus turnos verdes. ¿Trabajas el 26 de agosto? Responde a la invitación.",
+    en: `Look at your green work shifts. Do you work on ${HUDDLE_DATE.en}? Answer the invite.`,
+    es: `Mira tus turnos verdes. ¿Trabajas el ${HUDDLE_DATE.es}? Responde a la invitación.`,
   },
   {
     en: "Write Renata a day you work and a time. Then click Send.",
@@ -269,11 +286,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 ];
 
 /** A shift's start and end, so a chip on the calendar says "Shift 10 AM–6 PM", like the info card. */
-export const SHIFT_SPAN: Record<string, string> = {
-  "7:00 AM": "7 AM–3 PM",
-  "10:00 AM": "10 AM–6 PM",
-  "8:00 AM": "8 AM–4 PM",
-};
+export function shiftSpanFor(start: string): string {
+  const block = shiftBlockFor(start);
+  return block ? shiftSpan(block) : start;
+}
 
 export const SHIFT_WORD: Localized = { en: "Shift", es: "Turno" };
 
@@ -282,19 +298,22 @@ export const SHIFT_WORD: Localized = { en: "Shift", es: "Turno" };
 // time. Kept here as pure functions so the phrase table can test them.
 
 /**
- * The week of the huddle (Aug 24–30, 2026), by weekday (0 = Sunday). Start
+ * The week of the huddle (Sep 14–20, 2026), by weekday (0 = Sunday). Start
  * and end hours on a 24-hour clock; null is a day off. Matches SHIFT_TIMES in
- * story-calendar.ts (a test keeps them in step).
+ * story-dates.ts (a test keeps them in step).
  */
 export const HUDDLE_WEEK_SHIFTS: ({ start: number; end: number } | null)[] = [
-  null, // Sun 30
-  { start: 7, end: 15 }, // Mon 24
-  { start: 7, end: 15 }, // Tue 25
-  null, // Wed 26: the huddle
-  { start: 10, end: 18 }, // Thu 27
-  { start: 10, end: 18 }, // Fri 28
-  { start: 8, end: 16 }, // Sat 29
+  null, // Sun 20
+  { start: 7, end: 15 }, // Mon 14
+  { start: 7, end: 15 }, // Tue 15
+  null, // Wed 16: the huddle
+  { start: 10, end: 18 }, // Thu 17
+  { start: 10, end: 18 }, // Fri 18
+  { start: 8, end: 16 }, // Sat 19
 ];
+
+/** The Monday of the huddle week, as a story day. */
+export const HUDDLE_WEEK_MONDAY = mondayOf(HUDDLE_DAY);
 
 const DAY_NAMES: Record<Lang, string[]> = {
   en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -311,13 +330,15 @@ const DAY_PATTERNS: RegExp[] = [
   /\bsat(urday)?\b|\bsabado\b|\bsab\b/g,
 ];
 
-// Aug 2026: the 1st is a Saturday.
-const augustWeekday = (day: number) => (day + 5) % 7;
+// A date the learner types ("Sep 17", "the 17th") is read in the huddle's
+// month, September 2026.
+const HUDDLE_MONTH_FIRST = HUDDLE_DAY - (storyDate(HUDDLE_DAY).getDate() - 1);
+const huddleMonthWeekday = (day: number) => storyWeekday(HUDDLE_MONTH_FIRST + day - 1);
 
 const DATE_PATTERNS: RegExp[] = [
-  /\baug(?:ust)?\.?\s*(\d{1,2})(?:st|nd|rd|th)?\b/g,
-  /\b(\d{1,2})\s*(?:de\s+)?agosto\b/g,
-  /\b8\/(\d{1,2})\b/g,
+  /\bsep(?:t(?:ember)?)?\.?\s*(\d{1,2})(?:st|nd|rd|th)?\b/g,
+  /\b(\d{1,2})\s*(?:de\s+)?sept?iembre\b/g,
+  /\b9\/(\d{1,2})\b/g,
   /\bthe\s+(\d{1,2})(?:st|nd|rd|th)\b/g,
   /\b(\d{1,2})(?:st|nd|rd|th)\b/g,
 ];
@@ -343,7 +364,7 @@ function dayMentions(t: string): DayMention[] {
       const day = Number(m[1]);
       if (day < 1 || day > 31) continue;
       if (found.some((f) => m.index! < f.end && f.start < m.index! + m[0].length)) continue;
-      found.push({ weekday: augustWeekday(day), start: m.index!, end: m.index! + m[0].length });
+      found.push({ weekday: huddleMonthWeekday(day), start: m.index!, end: m.index! + m[0].length });
     }
   }
   found.sort((a, b) => a.start - b.start);
@@ -356,7 +377,7 @@ function dayMentions(t: string): DayMention[] {
   });
 }
 
-/** Removes dates so "Aug 27" is not read as 27 o'clock. */
+/** Removes dates so "Sep 17" is not read as 17 o'clock. */
 function withoutDates(t: string): string {
   return DATE_PATTERNS.reduce((acc, re) => acc.replace(re, " "), t);
 }

@@ -260,7 +260,8 @@ test("payday starts with a forgotten clock-in, not clock-out", async ({ page }) 
   await jobCard(page).getByTestId("job-card-collapse").click();
   await page.getByRole("button", { name: "Clock In", exact: true }).click();
   await expect(page.getByText("Clock-in time", { exact: true })).toBeVisible();
-  await expect(page.getByText("8:15 AM").first()).toBeVisible();
+  // The hidden desktop clock also reads 8:15 AM now (story time), so look at the visible one.
+  await expect(page.getByText("8:15 AM").filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByText("You arrived", { exact: true })).toHaveCount(0);
   await jobCard(page).getByTestId("job-card-collapse").click();
   await jobCard(page).getByTestId("job-card-drag-handle").focus();

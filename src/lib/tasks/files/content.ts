@@ -1,6 +1,28 @@
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
 import type { PdfDocument } from "@/lib/pdf-content";
 import { CREW, DAYS, DAY_LABELS } from "@/lib/tasks/crew-week";
+import { STORY_DAY_BY_LEVEL, mondayOf, monthDate, shortDate, storyDate, weekRange } from "@/lib/story-dates";
+
+/**
+ * The week Jordan starts: the Monday of the Shared Files sitting. Every date
+ * in this task (file names, "Week of", the rename target) comes from it.
+ */
+export const FILES_WEEK = mondayOf(STORY_DAY_BY_LEVEL.level5);
+const LAST_WEEK = FILES_WEEK - 7;
+const NEXT_WEEK = FILES_WEEK + 7;
+
+/** "sched_91426.pdf": the cafe's month/day/year code for a week's schedule. */
+function schedName(monday: number, suffix = ""): string {
+  const d = storyDate(monday);
+  return `sched_${d.getMonth() + 1}${String(d.getDate()).padStart(2, "0")}26${suffix}.pdf`;
+}
+
+/** "Sep 14" / "14 de septiembre". */
+const WEEK = { en: shortDate(FILES_WEEK, "en"), es: monthDate(FILES_WEEK, "es") };
+const LAST = shortDate(LAST_WEEK, "en");
+const NEXT = shortDate(NEXT_WEEK, "en");
+/** Posted the Friday before the week, like the real schedule. */
+const POSTED = shortDate(FILES_WEEK - 3, "en");
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -33,20 +55,20 @@ const wrongHint = (en: string, es: string): Localized => ({ en, es });
 export const FILES: DriveFile[] = [
   {
     key: "sched-aug17",
-    name: "sched_81726.pdf",
+    name: schedName(LAST_WEEK),
     folder: "Schedules",
-    date: "Aug 14",
+    date: shortDate(LAST_WEEK - 3, "en"),
     isTarget: false,
     wrongHint: wrongHint(
-      "That page says Week of Aug 17. That is last week. Close it and open this week's schedule (Aug 24).",
-      "Esa página dice Week of Aug 17. Es la semana pasada. Ciérrala y abre el horario de esta semana (24 de agosto)."
+      `That page says Week of ${LAST}. That is last week. Close it and open this week's schedule (${WEEK.en}).`,
+      `Esa página dice Week of ${LAST}. Es la semana pasada. Ciérrala y abre el horario de esta semana (${WEEK.es}).`
     ),
   },
   {
     key: "sched-aug24",
-    name: "sched_82426.pdf",
+    name: schedName(FILES_WEEK),
     folder: "Schedules",
-    date: "Aug 21",
+    date: POSTED,
     isTarget: true,
   },
   {
@@ -83,9 +105,9 @@ export const MESSY_FILES: DriveFile[] = [
   ...FILES,
   {
     key: "sched-aug24-draft",
-    name: "sched_82426_draft.pdf",
+    name: schedName(FILES_WEEK, "_draft"),
     folder: "Schedules",
-    date: "Aug 19",
+    date: shortDate(FILES_WEEK - 5, "en"),
     isTarget: false,
     wrongHint: wrongHint(
       "That page says DRAFT, and Friday is not filled in. Close it and open the one without draft in the name.",
@@ -94,9 +116,9 @@ export const MESSY_FILES: DriveFile[] = [
   },
   {
     key: "sched-aug24-copy",
-    name: "sched_82426_copy.pdf",
+    name: schedName(FILES_WEEK, "_copy"),
     folder: "Schedules",
-    date: "Aug 24",
+    date: shortDate(FILES_WEEK, "en"),
     isTarget: false,
     wrongHint: wrongHint(
       "Same week, but this is a copy someone made. Rename the original, the one without copy in the name.",
@@ -105,22 +127,23 @@ export const MESSY_FILES: DriveFile[] = [
   },
   {
     key: "sched-sept",
-    name: "sched_83126.pdf",
+    name: schedName(NEXT_WEEK),
     folder: "Schedules",
-    date: "Aug 21",
+    date: POSTED,
     isTarget: false,
     wrongHint: wrongHint(
-      "That page says Week of Aug 31. That is next week. Jordan starts today, so close it and open this week's.",
-      "Esa página dice Week of Aug 31. Es la próxima semana. Jordan empieza hoy, así que ciérrala y abre el de esta semana."
+      `That page says Week of ${NEXT}. That is next week. Jordan starts today, so close it and open this week's.`,
+      `Esa página dice Week of ${NEXT}. Es la próxima semana. Jordan empieza hoy, así que ciérrala y abre el de esta semana.`
     ),
   },
 ];
 
-export const RENAME_TARGET = "schedule-week-of-aug-24";
+/** "schedule-week-of-sep-14". */
+export const RENAME_TARGET = `schedule-week-of-${WEEK.en.toLowerCase().replace(" ", "-")}`;
 
 /**
  * How FilesTask forgives a rename: case, spaces or underscores instead of
- * dashes, doubled or spaced dashes, "August" or "aug24", a kept ".pdf", and a
+ * dashes, doubled or spaced dashes, "September" or "sep14", a kept ".pdf", and a
  * stray period all normalize away before comparing to RENAME_TARGET. The
  * skill is finding and renaming the file, not dash placement.
  */
@@ -134,6 +157,8 @@ export function normalizeRename(value: string) {
     .replace(/-+/g, "-")
     .replace(/august/g, "aug")
     .replace(/aug\.?-?(\d)/g, "aug-$1")
+    .replace(/sept(ember)?/g, "sep")
+    .replace(/sep\.?-?(\d)/g, "sep-$1")
     .replace(/^-|-$/g, "");
 }
 
@@ -145,17 +170,17 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Haz clic en Unidad compartida del café. Ahí están los horarios.",
   },
   {
-    en: "Click a schedule to open it. Find the week of Aug 24. Not a draft, not a copy.",
-    es: "Haz clic en un horario para abrirlo. Busca la semana del 24 de agosto. Ni borrador ni copia.",
+    en: `Click a schedule to open it. Find the week of ${WEEK.en}. Not a draft, not a copy.`,
+    es: `Haz clic en un horario para abrirlo. Busca la semana del ${WEEK.es}. Ni borrador ni copia.`,
   },
   // Advances when the right file is open, not when any file is.
   {
-    en: "The top says Week of Aug 24. This is the one. Click Rename.",
-    es: "Arriba dice Week of Aug 24 (semana del 24 de agosto). Es este. Haz clic en Cambiar nombre.",
+    en: `The top says Week of ${WEEK.en}. This is the one. Click Rename.`,
+    es: `Arriba dice Week of ${WEEK.en} (semana del ${WEEK.es}). Es este. Haz clic en Cambiar nombre.`,
   },
   {
-    en: "Type the new name: schedule-week-of-aug-24. Then click Continue.",
-    es: "Escribe el nombre nuevo: schedule-week-of-aug-24. Después haz clic en Continuar.",
+    en: `Type the new name: ${RENAME_TARGET}. Then click Continue.`,
+    es: `Escribe el nombre nuevo: ${RENAME_TARGET}. Después haz clic en Continuar.`,
   },
   {
     en: "Choose Can view. Then click Share.",
@@ -224,7 +249,7 @@ export const FILES_COPY: Record<Lang, {
     searchPlaceholder: "Search files…",
     allFolders: "All folders",
     renameLabel: "Rename this file",
-    renameHint: "New name: schedule-week-of-aug-24",
+    renameHint: `New name: ${RENAME_TARGET}`,
     renamePlaceholder: "Type the new file name…",
     renameContinue: "Continue",
     shareWith: "Share with",
@@ -262,7 +287,7 @@ export const FILES_COPY: Record<Lang, {
     searchPlaceholder: "Buscar archivos…",
     allFolders: "Todas las carpetas",
     renameLabel: "Cambia el nombre de este archivo",
-    renameHint: "Nombre nuevo: schedule-week-of-aug-24",
+    renameHint: `Nombre nuevo: ${RENAME_TARGET}`,
     renamePlaceholder: "Escribe el nuevo nombre…",
     renameContinue: "Continuar",
     shareWith: "Compartir con",
@@ -287,8 +312,8 @@ export const FILES_COPY: Record<Lang, {
 
 /** While a file that is not the job is open: what to look at, and the way back. */
 export const CHECK_OTHER_WEEK: Localized = {
-  en: "Read the week at the top and the file name. You need Week of Aug 24, not a draft or a copy. If this is not it, click Close and open another file.",
-  es: "Lee la semana arriba y el nombre del archivo. Necesitas Week of Aug 24 (24 de agosto), sin borrador (draft) ni copia (copy). Si no es este, haz clic en Cerrar y abre otro archivo.",
+  en: `Read the week at the top and the file name. You need Week of ${WEEK.en}, not a draft or a copy. If this is not it, click Close and open another file.`,
+  es: `Lee la semana arriba y el nombre del archivo. Necesitas Week of ${WEEK.en} (${WEEK.es}), sin borrador (draft) ni copia (copy). Si no es este, haz clic en Cerrar y abre otro archivo.`,
 };
 
 /**
@@ -319,7 +344,7 @@ function searchWords(text: string): string[] {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/\b(august|agosto)\b/g, "aug")
-    .replace(/\bsept\b/g, "sep")
+    .replace(/\b(sept|september|septiembre)\b/g, "sep")
     .replace(/([a-z])(\d)/g, "$1 $2")
     .replace(/(\d)([a-z])/g, "$1 $2")
     .split(/[^a-z0-9]+/)
@@ -403,14 +428,14 @@ const SWAP_NOTE = "Need to swap? Ask Renata at least 48 hours before the shift."
 /** The page each Drive file opens to, keyed by `DriveFile.key`. */
 export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = {
   "sched-aug24": {
-    doc: schedule("sched-aug24", "sched_82426.pdf", "Aug 21", "Week of Aug 24 – 30, 2026", THIS_WEEK_ROWS, [
+    doc: schedule("sched-aug24", schedName(FILES_WEEK), POSTED, `Week of ${weekRange(FILES_WEEK)}`, THIS_WEEK_ROWS, [
       "The cafe is closed on Sunday.",
       "Saturday 4–10 PM is not filled yet.",
       SWAP_NOTE,
     ]),
   },
   "sched-aug24-copy": {
-    doc: schedule("sched-aug24-copy", "sched_82426_copy.pdf", "Aug 21", "Week of Aug 24 – 30, 2026", THIS_WEEK_ROWS, [
+    doc: schedule("sched-aug24-copy", schedName(FILES_WEEK, "_copy"), POSTED, `Week of ${weekRange(FILES_WEEK)}`, THIS_WEEK_ROWS, [
       "The cafe is closed on Sunday.",
       "Saturday 4–10 PM is not filled yet.",
       SWAP_NOTE,
@@ -420,9 +445,9 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
     stamp: "DRAFT",
     doc: schedule(
       "sched-aug24-draft",
-      "sched_82426_draft.pdf",
-      "Aug 19",
-      "Week of Aug 24 – 30, 2026",
+      schedName(FILES_WEEK, "_draft"),
+      shortDate(FILES_WEEK - 5, "en"),
+      `Week of ${weekRange(FILES_WEEK)}`,
       crewRows((m, d) => (d === "fri" ? "TBD" : m.shifts[d].label)),
       ["Friday shifts: to be decided."],
     ),
@@ -430,9 +455,9 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
   "sched-aug17": {
     doc: schedule(
       "sched-aug17",
-      "sched_81726.pdf",
-      "Aug 14",
-      "Week of Aug 17 – 23, 2026",
+      schedName(LAST_WEEK),
+      shortDate(LAST_WEEK - 3, "en"),
+      `Week of ${weekRange(LAST_WEEK)}`,
       // Last week: the same crew on different days.
       crewRows((m, d) => m.shifts[DAYS[(DAYS.indexOf(d) + 2) % DAYS.length]].label || (d === "sat" ? "8–4" : "")),
       ["The cafe is closed on Sunday.", SWAP_NOTE],
@@ -441,11 +466,11 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
   "sched-sept": {
     doc: schedule(
       "sched-sept",
-      "sched_83126.pdf",
-      "Aug 21",
-      "Week of Aug 31 – Sep 6, 2026",
+      schedName(NEXT_WEEK),
+      POSTED,
+      `Week of ${weekRange(NEXT_WEEK)}`,
       crewRows((m, d) => m.shifts[DAYS[(DAYS.indexOf(d) + 1) % DAYS.length]].label),
-      ["Labor Day is the Monday after this week, Sep 7. The cafe opens at 10 AM that day.", SWAP_NOTE],
+      ["The cafe is closed on Sunday.", SWAP_NOTE],
     ),
   },
   "vacation-form": {
@@ -489,18 +514,18 @@ export const FILE_PAGES: Record<string, { doc: PdfDocument; stamp?: string }> = 
 };
 
 export const WRONG_RENAME_HINT: Record<Lang, string> = {
-  en: "Check the name. Type these words with a dash - between them: schedule-week-of-aug-24",
-  es: "Revisa el nombre. Escribe estas palabras con un guion - entre ellas: schedule-week-of-aug-24",
+  en: `Check the name. Type these words with a dash - between them: ${RENAME_TARGET}`,
+  es: `Revisa el nombre. Escribe estas palabras con un guion - entre ellas: ${RENAME_TARGET}`,
 };
 
 export const RENAME_HINTS: Record<RenameProblem, Localized> = {
   empty: {
-    en: "The box is empty. Type the new name: schedule-week-of-aug-24",
-    es: "La casilla está vacía. Escribe el nombre nuevo: schedule-week-of-aug-24",
+    en: `The box is empty. Type the new name: ${RENAME_TARGET}`,
+    es: `La casilla está vacía. Escribe el nombre nuevo: ${RENAME_TARGET}`,
   },
   oldName: {
-    en: "The old name is still in the box. Delete the old name first. Then type schedule-week-of-aug-24",
-    es: "El nombre viejo sigue en la casilla. Borra el nombre viejo primero. Después escribe schedule-week-of-aug-24",
+    en: `The old name is still in the box. Delete the old name first. Then type ${RENAME_TARGET}`,
+    es: `El nombre viejo sigue en la casilla. Borra el nombre viejo primero. Después escribe ${RENAME_TARGET}`,
   },
   wrong: { en: WRONG_RENAME_HINT.en, es: WRONG_RENAME_HINT.es },
 };
@@ -539,7 +564,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Open the folder. You can also search, for example: aug 24, or schedule.",
         "Click a file to open it. Opening a file does not change it.",
-        "Read the top of the page. A schedule says which week it is for, like Week of Aug 24.",
+        `Read the top of the page. A schedule says which week it is for, like Week of ${WEEK.en}.`,
       ],
       tip: "File names can be hard to read. The page itself tells you what the file is.",
     },
@@ -556,7 +581,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Renaming a file",
       s: [
         "The old name is already in the box, and it is selected. Just start typing to replace it. If you click in the box, delete the old name first.",
-        "Type the new name exactly: schedule-week-of-aug-24",
+        `Type the new name exactly: ${RENAME_TARGET}`,
         "The dash - is next to the 0 key. Then click Continue, or press Enter.",
       ],
       tip: "A clear name helps the next person find the file.",
@@ -568,7 +593,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Abre la carpeta. También puedes buscar, por ejemplo: aug 24, o horario.",
         "Haz clic en un archivo para abrirlo. Abrir un archivo no lo cambia.",
-        "Lee la parte de arriba de la página. Un horario dice de qué semana es, por ejemplo Week of Aug 24 (semana del 24 de agosto).",
+        `Lee la parte de arriba de la página. Un horario dice de qué semana es, por ejemplo Week of ${WEEK.en} (semana del ${WEEK.es}).`,
       ],
       tip: "Los nombres de archivo pueden ser difíciles de leer. La página misma te dice qué es el archivo.",
     },
@@ -585,7 +610,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Cambiar el nombre de un archivo",
       s: [
         "El nombre viejo ya está en la casilla, y está seleccionado. Empieza a escribir para reemplazarlo. Si haces clic en la casilla, borra primero el nombre viejo.",
-        "Escribe el nombre nuevo tal cual: schedule-week-of-aug-24",
+        `Escribe el nombre nuevo tal cual: ${RENAME_TARGET}`,
         "El guion - está al lado de la tecla 0. Después haz clic en Continuar, o presiona Enter.",
       ],
       tip: "Un nombre claro ayuda a la próxima persona a encontrar el archivo.",

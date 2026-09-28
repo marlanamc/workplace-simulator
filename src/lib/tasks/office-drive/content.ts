@@ -1,4 +1,11 @@
 import type { Lang, Lesson, Localized } from "@/lib/task-types";
+import { STORY_DAY_BY_LEVEL, shortDate } from "@/lib/story-dates";
+
+/**
+ * Day one at HQ (level20). The quarter ended the week before, so the final
+ * Q3 notes were saved just before it: v1, then a copy, then the final.
+ */
+const FIRST_DAY = STORY_DAY_BY_LEVEL.level20;
 
 export const SHARE_WITH = "Chris Okafor";
 export const TARGET_FILE = "q3-final";
@@ -24,15 +31,15 @@ export const HQ_FILES: HqDriveFile[] = [
     date: "Jun 12",
     isTarget: false,
     wrongHint: hint(
-      "That's last quarter, sitting in Q2. Open Q3 2026.",
-      "Ese es el trimestre pasado, en Q2. Abre Q3 2026.",
+      "That one is from June, in the Q2 folder. It is old. Open Q3 2026.",
+      "Ese es de junio, en la carpeta Q2. Es viejo. Abre Q3 2026.",
     ),
   },
   {
     key: "q3-v1",
     name: "Q3_notes_FINAL_v1.pdf",
     folder: "Q3 2026",
-    date: "Aug 28",
+    date: shortDate(FIRST_DAY - 11, "en"),
     isTarget: false,
     wrongHint: hint(
       "That's version 1. Chris asked for the current file, not the draft.",
@@ -43,7 +50,7 @@ export const HQ_FILES: HqDriveFile[] = [
     key: "q3-copy",
     name: "Q3_notes_FINAL_copy.pdf",
     folder: "Q3 2026",
-    date: "Aug 30",
+    date: shortDate(FIRST_DAY - 8, "en"),
     isTarget: false,
     wrongHint: hint(
       "That's a copy. Share the current file, not a duplicate.",
@@ -54,7 +61,7 @@ export const HQ_FILES: HqDriveFile[] = [
     key: TARGET_FILE,
     name: "Q3_notes_FINAL.pdf",
     folder: "Q3 2026",
-    date: "Sep 1",
+    date: shortDate(FIRST_DAY - 4, "en"),
     isTarget: true,
   },
   {

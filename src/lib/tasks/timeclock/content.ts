@@ -1,5 +1,10 @@
 import { mentionsTime } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
+import { HIRE_DAY, SHIFT_TIMES, STORY_DAY_BY_LEVEL, WEEKDAY_SHORT, shiftBlockFor, shortDate } from "@/lib/story-dates";
+
+/** Friday's shift (Day 3), straight from the schedule. */
+const TODAY_SHIFT = shiftBlockFor(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3])!;
+const punchDate = (day: number) => `${WEEKDAY_SHORT.en[new Date(2026, 7, day).getDay()]}, ${shortDate(day, "en")}`;
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -19,16 +24,17 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
 };
 
 export const TIMECLOCK = {
-  scheduledStart: "7:00 AM",
-  scheduledEnd: "3:00 PM",
-  arrivedAt: "7:00 AM",
+  scheduledStart: TODAY_SHIFT.start,
+  scheduledEnd: TODAY_SHIFT.end,
+  arrivedAt: TODAY_SHIFT.start,
   now: "8:15 AM",
   clockedInAt: "8:15 AM",
   // Day 3 morning: only Day 1 + Day 2 are finished punches.
   weekHours: "16h 05m this week",
   recent: [
-    { date: "Tue, Aug 18", in: "6:58 AM", out: "3:04 PM", total: "8h 06m" },
-    { date: "Wed, Aug 19", in: "10:01 AM", out: "6:00 PM", total: "7h 59m" },
+    // Day One started at 10, the time Maria gave in her email the night before.
+    { date: punchDate(HIRE_DAY), in: "9:58 AM", out: "6:04 PM", total: "8h 06m" },
+    { date: punchDate(STORY_DAY_BY_LEVEL.level2), in: "10:01 AM", out: "6:00 PM", total: "7h 59m" },
   ],
 };
 

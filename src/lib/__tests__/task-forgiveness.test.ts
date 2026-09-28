@@ -16,21 +16,22 @@ import { firstMismatch, sameDate } from "@/lib/tasks/onboarding-paperwork/conten
  */
 describe("Files rename forgiveness", () => {
   it.each([
-    "schedule-week-of-aug-24",
-    "Schedule Week Of Aug 24",
-    "  schedule-week-of-aug-24.pdf ",
-    "SCHEDULE-WEEK-OF-AUG-24",
-    "schedule week of aug 24.pdf",
-    "schedule_week_of_aug_24",
-    "schedule - week - of - aug - 24",
-    "schedule-week-of-aug24",
-    "schedule-week-of-august-24",
-    "schedule-week-of-aug-24.",
+    "schedule-week-of-sep-14",
+    "Schedule Week Of Sep 14",
+    "  schedule-week-of-sep-14.pdf ",
+    "SCHEDULE-WEEK-OF-SEP-14",
+    "schedule week of sep 14.pdf",
+    "schedule_week_of_sep_14",
+    "schedule - week - of - sep - 14",
+    "schedule-week-of-sep14",
+    "schedule-week-of-september-14",
+    "schedule-week-of-sept-14",
+    "schedule-week-of-sep-14.",
   ])("accepts %j", (input) => {
     expect(normalizeRename(input)).toBe(RENAME_TARGET);
   });
 
-  it.each(["schedule-aug-24", "schedule-week-of-aug-25", ""])("rejects %j", (input) => {
+  it.each(["schedule-sep-14", "schedule-week-of-sep-15", ""])("rejects %j", (input) => {
     expect(normalizeRename(input)).not.toBe(RENAME_TARGET);
   });
 });
@@ -63,10 +64,10 @@ describe("Files decoys", () => {
     }
   });
 
-  it("only this week's schedules say Week of Aug 24, and the copy and draft are still wrong", () => {
+  it("only this week's schedules say Week of Sep 14, and the copy and draft are still wrong", () => {
     const aug24 = MESSY_FILES.filter((f) => {
       const doc = FILE_PAGES[f.key].doc;
-      return doc.kind === "schedule" && doc.week.startsWith("Week of Aug 24");
+      return doc.kind === "schedule" && doc.week.startsWith("Week of Sep 14");
     });
     expect(aug24.map((f) => f.key).sort()).toEqual(["sched-aug24", "sched-aug24-copy", "sched-aug24-draft"]);
     expect(aug24.filter((f) => f.isTarget).map((f) => f.key)).toEqual(["sched-aug24"]);
