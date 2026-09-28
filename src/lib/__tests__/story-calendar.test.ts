@@ -94,6 +94,26 @@ describe("inbox stamps follow the sitting", () => {
     expect(formatInboxTime({ sentOn: sent, clock: "9:06 AM", today, lang: "es" })).toBe("10 sept");
   });
 
+  it("stamps last year's mail with the year once Act VII reaches April 2027", () => {
+    const sent = sentOnForTask("slide-deck");
+    const today = inboxToday(byKey("level24"));
+    expect(formatInboxTime({ sentOn: sent, clock: "3:22 PM", today, lang: "en" })).toBe("10/9/26");
+    expect(formatInboxTime({ sentOn: sent, clock: "3:22 PM", today, lang: "es" })).toBe("9/10/26");
+    // Same year still reads as a short date.
+    expect(formatInboxTime({ sentOn: today - 10, clock: "9:00 AM", today, lang: "en" })).toBe("Apr 2");
+    // A dated label with no sentOn is last year's when this year's is still ahead.
+    expect(inboxSortKey({ time: "Oct 9" }, today)).toBeLessThan(inboxSortKey({ time: "Apr 2" }, today));
+  });
+
+  it("holds Anita's Team Lead mail until the first morning of Act VII", async () => {
+    const { storyMailsFor } = await import("@/lib/story-beats");
+    const start = storyMailsFor(["slide-deck"], {}).find((m) => m.key === "story-team-lead-start")!;
+    expect(start.sentOn).toBe(storyToday(byKey("level24")));
+    expect(hasArrived(start, storyToday(byKey("level23")))).toBe(false);
+    expect(hasArrived(start, storyToday(byKey("level24")))).toBe(true);
+    expect(start.body!.es.length).toBe(start.body!.en.length);
+  });
+
   it("sorts today's clock time above Wednesday above Tuesday", () => {
     const today = 21;
     const tue = inboxSortKey({ time: "8:22 AM", sentOn: 18 }, today);

@@ -393,7 +393,7 @@ scoped around landing near "Level 10."
 
 | Level | Task key | Skill focus | Simulator app |
 |---|---|---|---|
-| 10 | `college-offer` | Read a formal offer letter, reply professionally, add a personal commitment to a calendar already full of shifts | Browser → Mail + Calendar |
+| 10 | `college-offer` | Read a formal offer and a Spring 2027 class schedule, choose the one section that can work (one clashes with two shifts, one is full), ask the manager for a shift change, add the weekly class to the calendar, reply to HR with the section | Browser → Mail + BHCC schedule + Calendar |
 | 11 | `budget-sheet` | Read a budget with an `IF`-based status column and a chart, flag what's over budget | Browser → Sheets |
 | 12 | `reply-all` | Read a multi-department thread, decide reply vs. reply-all, edit a casual draft into a professional one | Browser → Mail |
 

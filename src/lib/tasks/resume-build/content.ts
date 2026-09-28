@@ -84,7 +84,7 @@ export const RESUME_COPY: Record<Lang, {
     intro: "Tus empleos están abajo. Escribe un resumen corto, una cosa que hiciste bien en cada empleo, y elige tus habilidades.",
     contactLabel: "Contacto",
     summaryLabel: "Resumen: una o dos oraciones",
-    summaryHint: "Por ejemplo: Soy líder de turno, entreno a trabajadores nuevos y mantengo el horario organizado.",
+    summaryHint: "Por ejemplo: Soy Shift Lead, entreno a trabajadores nuevos y mantengo el horario organizado.",
     experienceLabel: "Experiencia",
     bulletHint: "Una cosa que hiciste bien en este puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé.",
     skillsLabel: "Habilidades",
@@ -269,7 +269,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       s: [
         "Una página. Una línea de resumen, tus últimos dos o tres trabajos, y tus habilidades. Eso es todo.",
         "Para cada trabajo, escribe una cosa que hiciste bien, no toda la descripción del puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé, armé.",
-        "Usa los trabajos que tienes. \"Miembro del equipo\" y \"Líder de turno\" en un café son experiencia real y cuentan.",
+        "Usa los trabajos que tienes. \"Miembro del equipo\" y \"Shift Lead\" en un café son experiencia real y cuentan.",
         "En esta historia, tus puestos y fechas vienen de Harborside Cafe. Son de práctica. En un currículum real, usa tus propios trabajos y fechas reales.",
       ],
       tip: "Los números ayudan: \"capacité a 4 empleados nuevos\" es mejor que \"capacité a empleados nuevos.\"",

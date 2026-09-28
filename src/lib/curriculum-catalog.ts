@@ -566,8 +566,8 @@ export const CATALOG_ACTS: CatalogAct[] = [
           {
             n: "1",
             taskKey: "college-offer",
-            skill: "Read a formal offer letter, reply, add a commitment to a full calendar",
-            app: "Mail + Calendar",
+            skill: "Read a formal offer and a class schedule, choose a section, ask for a shift change, add a weekly class to the calendar, reply with the section",
+            app: "Mail + BHCC schedule + Calendar",
             tab: "college-offer",
           },
         ],

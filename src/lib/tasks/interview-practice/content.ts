@@ -53,7 +53,7 @@ export const INTERVIEW_COPY: Record<Lang, {
     gotIt: "Got it. Back to my task",
   },
   es: {
-    appName: "Preparación: administración de oficina",
+    appName: "Preparación: Office Administrator",
     interviewer: "Anita Raman",
     interviewerTitle: "Directora de Operaciones, Harborside HQ",
     heading: "Preparación para la entrevista",
@@ -103,7 +103,7 @@ export const QUESTIONS: InterviewQuestion[] = [
       ],
       es: [
         "Empecé como miembro del equipo en Harborside Cafe.",
-        "Después fui líder de turno en el café.",
+        "Después fui Shift Lead en el café.",
         "Leí horarios, revisé totales y envié mensajes de trabajo.",
         "Busco un puesto de oficina de tiempo completo donde pueda seguir creciendo.",
       ],

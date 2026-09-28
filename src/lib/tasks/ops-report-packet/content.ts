@@ -170,7 +170,7 @@ export const OPS_COPY: Record<Lang, {
     backHub: "Back to the report",
     needConfirm: "Read the total cell and enter the weekly amount.",
     needNoted: "Open the calendar item and note it first.",
-    needSummary: "Report the sheet total and Thursday morning’s coverage gap. You can reopen both sources.",
+    needSummary: "Report the sheet total and what on the calendar needs attention. You can reopen both sources.",
     needSend: "Finish the other three parts, then send.",
     sentKicker: "Packet sent",
     tryAgain: "Do it again",
@@ -221,7 +221,7 @@ export const OPS_COPY: Record<Lang, {
     backHub: "Volver al reporte",
     needConfirm: "Lee la celda del total y escribe el monto semanal.",
     needNoted: "Abre el punto del calendario y anótalo primero.",
-    needSummary: "Incluye el total y la falta de cobertura del jueves por la mañana. Puedes abrir ambas fuentes.",
+    needSummary: "Incluye el total y lo que en el calendario necesita atención. Puedes abrir ambas fuentes.",
     needSend: "Termina las otras tres partes, luego envía.",
     sentKicker: "Paquete enviado",
     tryAgain: "Hacerlo otra vez",
@@ -235,11 +235,11 @@ export const OPS_COPY: Record<Lang, {
 export const SUMMARY_STARTERS: Record<Lang, string[]> = {
   en: [
     `Last week's total was $${PLANTED_WEEK_TOTAL.toLocaleString("en-US")}.`,
-    "Coming up: next Thursday's morning open still needs someone.",
+    "Coming up on the calendar:",
   ],
   es: [
     `El total de la semana pasada fue $${PLANTED_WEEK_TOTAL.toLocaleString("en-US")}.`,
-    "Lo que viene: la apertura del próximo jueves todavía necesita a alguien.",
+    "Lo que viene en el calendario:",
   ],
 };
 
@@ -278,7 +278,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "A total and a calendar commitment, combined in one packet.", es: "Un total y un compromiso del calendario, juntos en un paquete." },
   { en: "Open Sheets. Check the week's total.", es: "Abre Sheets. Revisa el total de la semana." },
   { en: "Open Calendar. Note what's coming up.", es: "Abre Calendar. Anota lo que viene." },
-  { en: "Open Docs. Include the weekly total and Thursday's uncovered morning opening.", es: "Abre Docs. Incluye el total semanal y la apertura de la mañana del jueves sin cobertura." },
+  { en: "Open Docs. Include the weekly total, and the calendar item that needs attention: which day, which shift, and why.", es: "Abre Docs. Incluye el total semanal y el evento del calendario que necesita atención: qué día, qué turno y por qué." },
   { en: "Open Mail. Send the summary as one packet.", es: "Abre Correo. Envía el resumen como un solo paquete." },
 ];
 
@@ -316,23 +316,27 @@ export function summaryPullsBoth(text: string): boolean {
   return summaryVerdict(text) === "ok";
 }
 
-/** The Job Card's correction for each verdict, in plain words (no "coverage gap"). */
+/**
+ * The Job Card's correction for each verdict, in plain words (no "coverage
+ * gap"). Option C: a correction points back to the calendar item; it does
+ * not say what the item is. The lesson (Help) walks through it.
+ */
 export const SUMMARY_CORRECTIONS: Record<Exclude<SummaryVerdict, "ok">, Localized> = {
   empty: {
-    en: "Write the total and who is missing on Thursday morning.",
-    es: "Escribe el total y quién falta el jueves por la mañana.",
+    en: "Write the total, and what on the calendar needs attention.",
+    es: "Escribe el total y lo que en el calendario necesita atención.",
   },
   "no-total": {
     en: "Add this week's total from the sheet.",
     es: "Agrega el total de esta semana de la hoja.",
   },
   "no-gap": {
-    en: "Say that nobody is working the Thursday morning open.",
-    es: "Di que nadie trabaja en la apertura del jueves por la mañana.",
+    en: "Open the calendar item again. Say which day and shift needs attention, and why.",
+    es: "Abre otra vez el evento del calendario. Di qué día y qué turno necesita atención, y por qué.",
   },
   "all-fine": {
-    en: "Not everything is fine. Nobody is working Thursday morning. Say that.",
-    es: "No todo está bien. Nadie trabaja el jueves por la mañana. Dilo.",
+    en: "Not everything is fine. Open the calendar item again, and say what needs attention.",
+    es: "No todo está bien. Abre otra vez el evento del calendario y di lo que necesita atención.",
   },
 };
 

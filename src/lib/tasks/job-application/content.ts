@@ -106,10 +106,10 @@ export const JOB_APPLICATION_COPY: Record<Lang, {
   },
   es: {
     siteName: "Empleos Harborside",
-    heading: "Solicitud · Administración de oficina",
+    heading: "Solicitud · Office Administrator",
     intro: "Unas secciones cortas. Tu historial de trabajo ya está lleno. Es práctica, no una solicitud real.",
     positionLabel: "Puesto al que te postulas",
-    position: "Administración de oficina: Harborside HQ",
+    position: "Office Administrator: Harborside HQ",
     positionHours: "$24–27 / hora · Tiempo completo (40 horas por semana)",
     contactLabel: "Datos de contacto",
     contactHint: "Copia cada uno tal como está.",
@@ -153,17 +153,17 @@ export interface HistoryRow {
 
 export const WORK_HISTORY: HistoryRow[] = [
   {
-    title: { en: "Assistant Manager", es: "Asistente de gerencia" },
+    title: { en: "Assistant Manager", es: "Assistant Manager" },
     org: "Harborside Cafe",
     span: { en: "This year – Present", es: "Este año – Presente" },
   },
   {
-    title: { en: "Shift Supervisor", es: "Supervisión de turno" },
+    title: { en: "Shift Supervisor", es: "Shift Supervisor" },
     org: "Harborside Cafe",
     span: { en: "Last year", es: "El año pasado" },
   },
   {
-    title: { en: "Shift Lead", es: "Líder de turno" },
+    title: { en: "Shift Lead", es: "Shift Lead" },
     org: "Harborside Cafe",
     span: { en: "Last year", es: "El año pasado" },
   },
@@ -403,7 +403,7 @@ export function describeSubmission(
  */
 export const LESSON_HISTORY: HistoryRow[] = [
   {
-    title: { en: "Shift Lead", es: "Líder de turno" },
+    title: { en: "Shift Lead", es: "Shift Lead" },
     org: "Harborside Cafe",
     span: { en: "2025 to now", es: "2025 a hoy" },
     duties: {

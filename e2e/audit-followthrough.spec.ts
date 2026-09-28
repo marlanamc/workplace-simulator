@@ -43,6 +43,18 @@ test('expenses require correct receipt matches and a receipted total', async ({ 
   await page.getByLabel('Total with receipts ($)', { exact: true }).fill('283');
   await page.getByRole('button', { name: 'Submit report', exact: true }).click();
   await expect(card).toContainText('Add only the amounts with receipts');
+  // The sheet's Harbor Deli row says $84; its receipt says $48. The unfixed
+  // total is checked against the receipts before the deli is named.
+  const deli = page.getByLabel('Harbor Deli · Amount', { exact: true });
+  await expect(deli).toHaveValue('84');
+  await expect(page.getByLabel('Uber · Amount', { exact: true })).toHaveAttribute('readonly', '');
+  await page.getByLabel('Total with receipts ($)', { exact: true }).fill('224');
+  await page.getByRole('button', { name: 'Submit report', exact: true }).click();
+  await expect(card).toContainText('One row does not match its receipt');
+  await expect(card).not.toContainText('Harbor Deli');
+  await page.getByRole('button', { name: 'Submit report', exact: true }).click();
+  await expect(card).toContainText('Look at the Harbor Deli receipt');
+  await deli.fill('48');
   await page.getByLabel('Total with receipts ($)', { exact: true }).fill('188');
   await page.getByRole('button', { name: 'Submit report', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Submit report', exact: true })).toHaveCount(0);

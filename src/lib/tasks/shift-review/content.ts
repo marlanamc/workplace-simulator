@@ -23,14 +23,14 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "📝",
     kicker: "Friday, end of shift.",
     headline: "Maria has to leave early.",
-    body: "Write a short note about the shift for her to read. Include that something happened around 11 AM. You don't need to invent anything else.",
+    body: "Write a short note about the shift for her to read. Use what happened on your shift: say what happened, and at what time. You don't need to invent anything else.",
     cta: "Write the note",
   },
   es: {
     emoji: "📝",
     kicker: "Viernes, fin de turno.",
     headline: "Maria tiene que irse temprano.",
-    body: "Escríbele una nota corta del turno para que la lea. Incluye que algo pasó alrededor de las 11 AM. No hace falta inventar nada más.",
+    body: "Escríbele una nota corta del turno para que la lea. Usa lo que pasó en tu turno: di qué pasó y a qué hora. No hace falta inventar nada más.",
     cta: "Escribir la nota",
   },
 };
@@ -75,7 +75,7 @@ export const REVIEW_COPY: Record<Lang, {
     tipLabel: "Tip",
     gotIt: "I understand. Back to my task",
     shortNudge: "Write a full sentence. One or two is enough.",
-    factsNudge: "Mention 11 in your note. The rest can be in your own words.",
+    factsNudge: "Look at What happened on your shift. Say what time it got busy. The rest can be in your own words.",
   },
   es: {
     heading: "Notas del turno",
@@ -96,19 +96,19 @@ export const REVIEW_COPY: Record<Lang, {
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
     shortNudge: "Escribe una oración completa. Una o dos bastan.",
-    factsNudge: "Menciona las 11 en tu nota. Lo demás puede estar en tus propias palabras.",
+    factsNudge: "Mira Lo que pasó en tu turno. Di a qué hora se puso ocupado. Lo demás puede estar en tus propias palabras.",
   },
 };
 
 export const STARTERS: Record<Lang, string[]> = {
   en: [
-    "Hi Maria,\nI am leaving a note about the 11 AM part of the shift.",
-    "Around 11 AM, things needed my attention.",
+    "Hi Maria,\nHere is a note about today's shift.",
+    "It got busy around",
     "Nothing else unusual to report. Thanks.",
   ],
   es: [
-    "Hola Maria,\nDejo una nota sobre la parte del turno de las 11 AM.",
-    "Alrededor de las 11 AM, las cosas necesitaron mi atención.",
+    "Hola Maria,\nTe dejo una nota sobre el turno de hoy.",
+    "Se puso ocupado alrededor de las",
     "Nada más raro que reportar. Gracias.",
   ],
 };
@@ -173,7 +173,7 @@ export function describeSubmission(summary: string, lang: Lang): SubmissionConte
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Write a short shift summary. Make sure it mentions 11 AM.",
-    es: "Escribe un resumen corto del turno. Asegúrate de mencionar las 11 AM.",
+    en: "Write a short shift summary. Say what happened, and at what time.",
+    es: "Escribe un resumen corto del turno. Di qué pasó y a qué hora.",
   },
 ];

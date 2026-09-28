@@ -2,7 +2,11 @@ import type { TaskKey } from "@/lib/desktop-content";
 import { CAST, inboxSender } from "@/lib/cast";
 import { firstName, mailGreeting, signatureFor } from "@/lib/mail-greeting";
 import type { Lang, Localized } from "@/lib/task-types";
-import { inboxSortKey, sentOnForTask } from "@/lib/story-calendar";
+import { STORY_DAY_BY_LEVEL, inboxSortKey, sentOnForTask } from "@/lib/story-calendar";
+import { AID_ACCEPT_BY_DAY, monthDate } from "@/lib/story-dates";
+
+/** "December 4" / "4 de diciembre": the award letter's accept-by date, in Marcus's mail. */
+const ACCEPT_BY_DATE = { en: monthDate(AID_ACCEPT_BY_DAY, "en"), es: monthDate(AID_ACCEPT_BY_DAY, "es") };
 import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 import { TASK_LIST } from "@/lib/tasks/registry";
 
@@ -18,7 +22,7 @@ export type InboxRow = {
   initials: string;
   color: string;
   time: string;
-  /** August day this row was sent. Used to stamp past days once the sitting moves on. */
+  /** Story day this row was sent (see story-dates.ts). Used to stamp past days once the sitting moves on. Set it only for a beat that lands later than its unlocking task. */
   sentOn?: number;
   isTarget?: boolean;
   unread?: boolean;
@@ -471,17 +475,17 @@ const STORY_MAILS: InboxRow[] = [
     unread: true,
     story: true,
     unlockAfter: "college-offer",
-    subject: { en: "Class is on the calendar", es: "La clase ya está en el calendario" },
-    preview: { en: "We'll work out Tuesday's close before the semester.", es: "Resolvemos el cierre del martes antes del semestre." },
+    subject: { en: "Your spring class", es: "Tu clase de primavera" },
+    preview: { en: "You asked about Tuesday early.", es: "Preguntaste por el martes a tiempo." },
     body: {
       en: [
-        "You accepted the offer and put the class on a week that already had a close shift.",
-        "We'll work out Tuesday before the semester starts. That is why it helps to say it now.",
+        "HR told me you chose the Tuesday evening section. You asked me about your Tuesday close now, not in the first week of class.",
+        "That gave me time to fix the spring schedule. That is why it helps to ask early.",
         "Wednesday I need you to read this week's budget. One category is over.",
       ],
       es: [
-        "Aceptaste la oferta y pusiste la clase en una semana que ya tenía un turno de cierre.",
-        "Resolvemos lo del martes antes de que empiece el semestre. Por eso ayuda decirlo ahora.",
+        "RR.HH. me dijo que elegiste la sección del martes por la noche. Me preguntaste por tu cierre del martes ahora, no en la primera semana de clase.",
+        "Así tuve tiempo de arreglar el horario de primavera. Por eso ayuda preguntar temprano.",
         "El miércoles necesito que leas el presupuesto de esta semana. Una categoría se pasó.",
       ],
     },
@@ -542,11 +546,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You found the deadline and sent the statement. That is how you use a portal.",
-        "Wednesday the award letter lands. The amount and the accept-by date are on the page.",
+        "In November, the college will send your award letter for the spring. The amount and the accept-by date are on the page.",
       ],
       es: [
         "Encontraste la fecha y enviaste la carta. Así se usa un portal.",
-        "El miércoles llega la carta de ayuda financiera. El monto y la fecha para aceptar están en la página.",
+        "En noviembre, la universidad te va a enviar la carta de ayuda financiera para la primavera. El monto y la fecha para aceptar están en la página.",
       ],
     },
   },
@@ -578,15 +582,15 @@ const STORY_MAILS: InboxRow[] = [
     story: true,
     unlockAfter: "financial-aid",
     subject: { en: "You read the letter", es: "Leíste la carta" },
-    preview: { en: "$2,400. Accept by October 15.", es: "$2,400. Aceptar antes del 15 de octubre." },
+    preview: { en: `$2,400. Accept by ${ACCEPT_BY_DATE.en}.`, es: `$2,400. Aceptar antes del ${ACCEPT_BY_DATE.es}.` },
     body: {
       en: [
-        "The award is $2,400. Accept by October 15. You pulled both numbers off the page.",
-        "Thursday, coursework is due. Read the syllabus first.",
+        `The award is $2,400. Accept by ${ACCEPT_BY_DATE.en}. You pulled both numbers off the page.`,
+        "Your class starts in January. When you get an assignment, read the syllabus first.",
       ],
       es: [
-        "La ayuda es $2,400. Acepta antes del 15 de octubre. Sacaste los dos números de la página.",
-        "El jueves hay que entregar la tarea del curso. Lee el temario primero.",
+        `La ayuda es $2,400. Acepta antes del ${ACCEPT_BY_DATE.es}. Sacaste los dos números de la página.`,
+        "Tu clase empieza en enero. Cuando te den una tarea, lee el temario primero.",
       ],
     },
   },
@@ -622,11 +626,11 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "You saw the due date was Friday 11:59 PM and still sent it Thursday. That is the whole skill here.",
-        "Friday, find one source you would actually cite.",
+        "In March, your class needs a source for a paper. Find one you would actually cite.",
       ],
       es: [
         "Viste que la fecha de entrega era el viernes a las 11:59 PM y aun así lo enviaste el jueves. Esa es toda la habilidad aquí.",
-        "El viernes, encuentra una fuente que de verdad citarías.",
+        "En marzo, tu clase necesita una fuente para un trabajo. Encuentra una que de verdad citarías.",
       ],
     },
   },
@@ -761,11 +765,11 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "The receipts added up to $188.", es: "Los recibos sumaron $188." },
     body: {
       en: [
-        "You matched the four receipts and flagged the team dinner. You did not submit it as-is.",
+        "You matched the four receipts, fixed the Harbor Deli amount to match its receipt, and flagged the team dinner. You did not submit it as-is.",
         "Friday, that $188 goes on the middle slide. Present the slides.",
       ],
       es: [
-        "Emparejaste los cuatro recibos y marcaste la cena del equipo. No lo enviaste así como estaba.",
+        "Emparejaste los cuatro recibos, corregiste el monto de Harbor Deli para que coincida con su recibo y marcaste la cena del equipo. No lo enviaste así como estaba.",
         "El viernes, esos $188 van en la diapositiva del medio. Presenta las diapositivas.",
       ],
     },
@@ -782,18 +786,44 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "A title, the $188, and one main point. You presented it. That is all HQ needs for now.",
-        "I have a new job for you. The cafe crew needs a Team Lead who knows the cafe and our HQ tools. You know both.",
-        "Starting Monday, you lead the crew's meetings, reviews, and weekly report. Renata still runs the cafe, and you still report to me.",
+        "One more thing. In the spring, the cafe crew will need a Team Lead who knows the cafe and our HQ tools. Keep learning the office work, and we will talk about it then.",
       ],
       es: [
         "Un título, los $188, y una idea. Lo presentaste. Eso es todo lo que HQ necesita por ahora.",
-        "Tengo un puesto nuevo para ti. El personal del café necesita a alguien que dirija el equipo y que conozca el café y nuestras herramientas de la oficina central. Tú conoces las dos cosas.",
-        "Desde el lunes, diriges las reuniones, las evaluaciones y el reporte semanal del equipo. Renata sigue a cargo del café, y yo sigo siendo tu jefa.",
+        "Una cosa más. En la primavera, el personal del café va a necesitar a alguien que dirija el equipo y que conozca el café y nuestras herramientas de la oficina central. Sigue aprendiendo el trabajo de oficina, y hablamos de eso entonces.",
       ],
     },
   },
 
   // ---- Act VII: Team Lead ----
+
+  // Six months after the slides. Unlocked by the slides, but dated the first
+  // morning of Act VII, so it waits in the inbox until April (hasArrived).
+  {
+    key: "story-team-lead-start",
+    ...ANITA,
+    time: "8:40 AM",
+    sentOn: STORY_DAY_BY_LEVEL.level24,
+    unread: true,
+    story: true,
+    unlockAfter: "slide-deck",
+    subject: { en: "Your first day as Team Lead", es: "Tu primer día como Team Lead" },
+    preview: { en: "Six months at HQ. Today you lead the cafe crew.", es: "Seis meses en la oficina central. Hoy diriges al personal del café." },
+    body: {
+      en: [
+        "It has been six months since your first day at HQ. You know the office tools well now, and you still know the cafe.",
+        "Last week I asked if you would lead the cafe crew, and you said yes. Today is your first day as Team Lead.",
+        "You lead the crew's meetings, reviews, and weekly report. Renata still runs the cafe, and you still report to me.",
+        "The crew meets this morning. You run the meeting.",
+      ],
+      es: [
+        "Ya pasaron seis meses desde tu primer día en la oficina central. Ahora conoces bien las herramientas de la oficina, y todavía conoces el café.",
+        "La semana pasada te pregunté si querías dirigir al personal del café, y dijiste que sí. Hoy es tu primer día como Team Lead.",
+        "Diriges las reuniones, las evaluaciones y el reporte semanal del equipo. Renata sigue a cargo del café, y yo sigo siendo tu jefa.",
+        "El equipo se reúne esta mañana. Tú diriges la reunión.",
+      ],
+    },
+  },
 
   {
     key: "story-meeting-minutes",
@@ -972,7 +1002,8 @@ export function storyMailsFor(completedTaskKeys: TaskKey[], flags: StoryFlags): 
     (a, b) => completedTaskKeys.indexOf(b.unlockAfter) - completedTaskKeys.indexOf(a.unlockAfter),
   );
   return unlocked.map((mail) => {
-    const sentOn = sentOnForTask(mail.unlockAfter);
+    // A beat dated past its unlocking task (Act VII's first morning) keeps its own day.
+    const sentOn = mail.sentOn ?? sentOnForTask(mail.unlockAfter);
     if (mail.key !== "story-calendar") return { ...mail, sentOn };
     const reply = huddleReply(flags);
     return { ...mail, ...reply, sentOn };

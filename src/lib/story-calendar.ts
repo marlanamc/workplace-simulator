@@ -1,9 +1,10 @@
 import type { TaskKey } from "./desktop-content";
 import type { Lang } from "./task-types";
 import type { CourseRoute } from "./course-route";
-import { LEVELS, courseLevels, taskKeysForLevel, type Level } from "./tracks-content";
+import { LEVELS, courseLevels, levelForTrack, taskKeysForLevel, type Level } from "./tracks-content";
 import { dayNumber } from "./shift-spine";
 import { TASK_LIST } from "./tasks/registry";
+import { pathOfTask } from "./bridge-path";
 import {
   HIRE_DAY,
   clockMinutes,
@@ -14,10 +15,14 @@ import {
   storyDate,
   storyDayFor,
   storyDayOf,
+  storyYear,
+  STORY_YEAR,
+  type StoryPath,
 } from "./story-dates";
 
 /**
- * The cafe runs on a fixed 2026 calendar. "Today" on Calendar and in Mail is
+ * The cafe runs on a fixed calendar that starts in August 2026 (Act VII is
+ * April 2027). "Today" on Calendar and in Mail is
  * not the learner's real date — it is which sitting of the story they are
  * on. The dates themselves live in `story-dates.ts` (plain data, no game
  * imports), so task content can read them too.
@@ -32,16 +37,31 @@ export {
   HUDDLE_DAY,
   NIGHT_BEFORE,
   SHIFT_TIMES,
+  COLLEGE_STORY_DAY_BY_LEVEL,
   STORY_DAY_BY_LEVEL,
 } from "./story-dates";
 
 /**
  * The story day of this sitting. Every level has its own row in
  * `STORY_DAY_BY_LEVEL`; there is no fallback day, because a fallback is how
- * later acts used to land back in the first week.
+ * later acts used to land back in the first week. On the College door of
+ * Act V (path "a") the sitting has its own date (`COLLEGE_STORY_DAY_BY_LEVEL`).
  */
-export function storyToday(level: Level): number {
-  return storyDayOf(level.key);
+export function storyToday(level: Level, path?: StoryPath | null): number {
+  return storyDayOf(level.key, path);
+}
+
+/** The Act V door a track belongs to, or null for a track outside Act V. */
+export function pathOfTrack(level: Level, trackKey: string): StoryPath | null {
+  if (level.pathTracks?.a === trackKey) return "a";
+  if (level.pathTracks?.b === trackKey) return "b";
+  return null;
+}
+
+/** The story day of the sitting this track is played in, on its own door. */
+export function storyTodayForTrack(trackKey: string): number {
+  const level = levelForTrack(trackKey);
+  return storyToday(level, pathOfTrack(level, trackKey));
 }
 
 /** A shift chip only if they have already been hired. */
@@ -61,14 +81,14 @@ export function leadHuddleVisible(level: Level): boolean {
  * Inbox / desktop "today". Every level has a date and no route ever goes
  * backwards (`story-dates.test.ts`), so this is the sitting's own day.
  */
-export function inboxToday(level: Level): number {
-  return storyToday(level);
+export function inboxToday(level: Level, path?: StoryPath | null): number {
+  return storyToday(level, path);
 }
 
-/** Story day the task's sitting takes place. */
+/** Story day the task's sitting takes place: a College task on the College calendar. */
 export function sentOnForTask(taskKey: TaskKey): number {
   const level = LEVELS.find((l) => taskKeysForLevel(l, "a").includes(taskKey) || taskKeysForLevel(l, "b").includes(taskKey));
-  return level ? storyToday(level) : HIRE_DAY;
+  return level ? storyToday(level, pathOfTask(taskKey)) : HIRE_DAY;
 }
 
 const CLOCK_IN_MOMENT = /\b(\d{1,2})(?::(\d{2}))?\s*(AM|PM)\b/i;
@@ -100,17 +120,24 @@ const MONTH_INDEX: Record<string, number> = {
   aug: 7, ago: 7, sep: 8, sept: 8, oct: 9, nov: 10, dec: 11, dic: 11,
 };
 
+/** A dated label ("Aug 18") names a day already past: this year's, or last year's if this year's is still ahead. */
+function pastDayFor(month: number, date: number, today: number): number {
+  const year = storyYear(today);
+  const day = storyDayFor(month, date, year);
+  return day > today && year > STORY_YEAR ? storyDayFor(month, date, year - 1) : day;
+}
+
 function storyDayFromLabel(time: string, today: number): number {
   const t = time.trim();
   if (/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i.test(t)) return today;
   if (/^(yesterday|ayer)$/i.test(t)) return today - 1;
   const monthDay = t.match(/^([a-z]{3,4})\.?\s+(\d{1,2})$/i);
   if (monthDay && MONTH_INDEX[monthDay[1].toLowerCase()] != null) {
-    return storyDayFor(MONTH_INDEX[monthDay[1].toLowerCase()], Number(monthDay[2]));
+    return pastDayFor(MONTH_INDEX[monthDay[1].toLowerCase()], Number(monthDay[2]), today);
   }
   const dayMonth = t.match(/^(\d{1,2})\s+([a-z]{3,4})\.?$/i);
   if (dayMonth && MONTH_INDEX[dayMonth[2].toLowerCase()] != null) {
-    return storyDayFor(MONTH_INDEX[dayMonth[2].toLowerCase()], Number(dayMonth[1]));
+    return pastDayFor(MONTH_INDEX[dayMonth[2].toLowerCase()], Number(dayMonth[1]), today);
   }
   const weekday = WEEKDAY_INDEX[t.toLowerCase().replace(/\.$/, "")];
   if (weekday != null) {
@@ -141,7 +168,8 @@ export function hasArrived(row: { time: string; sentOn?: number }, today: number
 
 /**
  * Gmail-style stamp relative to story today: clock, Yesterday/Ayer, Tue/Mar,
- * or Aug 18 / 18 ago.
+ * Aug 18 / 18 ago, or, for mail from an earlier year, 10/9/26 / 9/10/26
+ * (so an October 2026 mail read in April 2027 does not look like next fall).
  */
 export function formatInboxTime(opts: {
   sentOn: number;
@@ -154,6 +182,12 @@ export function formatInboxTime(opts: {
   if (sentOn === today - 1) return lang === "en" ? "Yesterday" : "Ayer";
   if (sentOn < today && today - sentOn < 7) {
     return WEEKDAY_SHORT[lang][storyDate(sentOn).getDay()];
+  }
+  const sent = storyDate(sentOn);
+  if (sent.getFullYear() !== storyDate(today).getFullYear()) {
+    const yy = String(sent.getFullYear()).slice(-2);
+    const m = sent.getMonth() + 1;
+    return lang === "en" ? `${m}/${sent.getDate()}/${yy}` : `${sent.getDate()}/${m}/${yy}`;
   }
   return shortDate(sentOn, lang);
 }

@@ -16,7 +16,7 @@ import { CLOCK_NOTE_CORRECTIONS, clockNoteVerdict } from "@/lib/tasks/timeclock/
 import { INCIDENT_CORRECTIONS, incidentNarrativeIsComplete, incidentVerdict } from "@/lib/tasks/incident/content";
 import { agendaIsReady, titleIsAboutSchedule } from "@/lib/tasks/team-meeting/content";
 import { customerReplyVerdict, replyIsSafe, HINTS as PRIORITY_HINTS } from "@/lib/tasks/priority-call/content";
-import { offerReplyVerdict, replyAcceptsOffer } from "@/lib/tasks/college-offer/content";
+import { hrReplyVerdict, replyAcceptsOffer } from "@/lib/tasks/college-offer/content";
 import { DEADLINE, DEADLINE_CHOICES, deadlinePickIsRight, statementShowsInterest } from "@/lib/tasks/enrollment/content";
 import { intakeFormVerdict } from "@/lib/tasks/patient-intake/content";
 import { MISMATCH_ROW, billingEmailVerdict, emailFlagsMismatch } from "@/lib/tasks/billing-sheet/content";
@@ -207,8 +207,8 @@ describe("each correction names what is missing", () => {
   });
 
   it("Day 18 and Day 28 tell a no, a maybe, and a missing date apart", () => {
-    expect(offerReplyVerdict("I do not accept the class")).toBe("declines");
-    expect(offerReplyVerdict("maybe")).toBe("unsure");
+    expect(hrReplyVerdict("I do not accept the class")).toBe("declines");
+    expect(hrReplyVerdict("maybe")).toBe("unsure");
     expect(offerAcceptVerdict("I accept. See you October 6th.")).toBe("ok");
     expect(offerAcceptVerdict("I will start on the 6th of October, I accept")).toBe("ok");
     expect(offerAcceptVerdict("I accepted! see you october 6")).toBe("ok");

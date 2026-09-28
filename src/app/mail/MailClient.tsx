@@ -39,7 +39,7 @@ import {
   ATTACH_CORRECTIONS,
   type PlayableMailTask,
 } from "@/lib/tasks/mail/content";
-import { formatInboxTime, hasArrived, inboxToday, NIGHT_BEFORE } from "@/lib/story-calendar";
+import { formatInboxTime, hasArrived, NIGHT_BEFORE, storyTodayForTrack } from "@/lib/story-calendar";
 import { LEVELS, levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
 import { activeMailTaskFor } from "@/lib/mail-active-task";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
@@ -278,7 +278,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // Day One's replies happen the evening before the first shift ("Your first
   // day is tomorrow"), so that evening is today: they stamp 6:02 PM, not
   // Yesterday.
-  const storyTodayDay = opening ? NIGHT_BEFORE : inboxToday(levelForTrack(currentTrack.key));
+  // The track, not only the level: the College door of Act V has its own dates.
+  const storyTodayDay = opening ? NIGHT_BEFORE : storyTodayForTrack(currentTrack.key);
   const stamp = (row: { time: string; sentOn?: number }) =>
     row.sentOn != null
       ? formatInboxTime({ sentOn: row.sentOn, clock: row.time, today: storyTodayDay, lang })

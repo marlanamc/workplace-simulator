@@ -6,9 +6,11 @@ import type { Lang, Localized } from "./task-types";
  * (tracks-content → registry → content → here).
  *
  * A story day is a day count from August 1, 2026 (a Saturday): Aug 18 is 18,
- * Aug 31 is 31, Sep 1 is 32, Oct 1 is 62. Act I keeps its familiar August
- * numbers, and every later sitting is just a bigger number, so "never goes
- * backwards" is plain `<`.
+ * Aug 31 is 31, Sep 1 is 32, Oct 1 is 62, Jan 1, 2027 is 154, Apr 12, 2027
+ * is 255. Act I keeps its familiar August numbers, and every later sitting is
+ * just a bigger number, so "never goes backwards" is plain `<`. The count
+ * runs past New Year: every helper below reads the year from the day, never
+ * assumes 2026.
  *
  * These dates are editable story fixtures, not a required course duration.
  * Learning sittings need not be consecutive workdays; chapters may span months
@@ -19,6 +21,7 @@ import type { Lang, Localized } from "./task-types";
  * asked about.
  */
 
+/** The year the story starts in. Day 154 and later fall in 2027; read the year from `storyDate(day)`. */
 export const STORY_YEAR = 2026;
 
 /** The evening before the first shift: Monday, August 17. */
@@ -63,7 +66,8 @@ export const STORY_DAY_BY_LEVEL: Readonly<Record<string, number>> = {
   level13: 73, // Mon Oct 12
   level14: 75, // Wed Oct 14
   level15: 77, // Fri Oct 16
-  // Act V: College or front desk (both doors share each day)
+  // Act V: the front desk door (path B). The College door (path A) runs
+  // from fall into the spring term: see COLLEGE_STORY_DAY_BY_LEVEL.
   level16: 59, // Mon Sep 28
   level17: 61, // Wed Sep 30
   level18: 62, // Thu Oct 1
@@ -78,22 +82,65 @@ export const STORY_DAY_BY_LEVEL: Readonly<Record<string, number>> = {
   level21: 68, // Wed Oct 7
   level22: 69, // Thu Oct 8
   level23: 70, // Fri Oct 9
-  // Act VII: Team Lead
-  level24: 73, // Mon Oct 12
-  level25: 74, // Tue Oct 13
-  level26: 76, // Thu Oct 15
-  level27: 77, // Fri Oct 16
+  // Act VII: Team Lead. About six months at HQ first: the fall, the winter,
+  // and the start of spring. Anita offers the role in April, not the week
+  // after the slides (see story-pacing.md, "HQ → Team Lead").
+  level24: 255, // Mon Apr 12, 2027
+  level25: 256, // Tue Apr 13, 2027
+  level26: 258, // Thu Apr 15, 2027
+  level27: 259, // Fri Apr 16, 2027
+};
+
+// --- The college term ----------------------------------------------------------
+
+// Bunker Hill Community College's Spring 2027 term. The Act IV class offer
+// (college-offer) and the College door of Act V both use it: you apply and
+// arrange aid in the fall, and the class meets in the spring.
+/** The last day to register for spring: Friday, December 11, 2026. */
+export const SPRING_TERM_REGISTER_BY = storyDayFor(11, 11, 2026);
+/** Martin Luther King Jr. Day, Monday, January 18, 2027. No classes. */
+export const SPRING_TERM_NO_CLASS_DAY = storyDayFor(0, 18, 2027);
+/** The first day of the Spring 2027 term: Tuesday, January 19, 2027. */
+export const SPRING_TERM_START = storyDayFor(0, 19, 2027);
+
+/** The Act V door a level is played on: "a" is College, "b" is the front desk. */
+export type StoryPath = "a" | "b";
+
+/**
+ * The College door (Act V path A) on its own calendar. Applying and aid
+ * happen in the fall, before the term; coursework and research happen during
+ * the spring term. The front desk door keeps the shared dates above. A level
+ * not listed here uses STORY_DAY_BY_LEVEL on both doors.
+ */
+export const COLLEGE_STORY_DAY_BY_LEVEL: Readonly<Record<string, number>> = {
+  level16: 59, // Mon Sep 28, 2026: apply for the Spring 2027 term
+  level17: storyDayFor(10, 18, 2026), // Wed Nov 18, 2026: the award letter arrived
+  level18: storyDayFor(1, 11, 2027), // Thu Feb 11, 2027: week 4 of the term
+  level19: storyDayFor(2, 5, 2027), // Fri Mar 5, 2027: a source for a paper
 };
 
 /**
- * The college application deadline: the Friday after next from Getting Ready
- * (level16), so it is still ahead of the learner, and before the aid letter's
- * accept-by date (October 15). Enrollment and financial aid both read it.
+ * The college application deadline for the spring term: Friday, November 6,
+ * 2026. Still ahead of the learner on Getting Ready (Sep 28), before the
+ * award letter arrives, and well before the term.
  */
-export const ENROLLMENT_DEADLINE_DAY = STORY_DAY_BY_LEVEL.level16 + 11;
+export const ENROLLMENT_DEADLINE_DAY = storyDayFor(10, 6, 2026);
 
-/** The story day a level takes place on. Throws on a level with no date, so a new level cannot quietly borrow another's. */
-export function storyDayOf(levelKey: string): number {
+/**
+ * The award letter's accept-by date: Friday, December 4, 2026. After the
+ * letter arrives (The Paperwork, Nov 18), before registration closes
+ * (Dec 11) and before the first class (Jan 19, 2027).
+ */
+export const AID_ACCEPT_BY_DAY = storyDayFor(11, 4, 2026);
+
+/**
+ * The story day a level takes place on. Pass the Act V door when you know it:
+ * the College door (`"a"`) has its own dates for Act V. Without a door, or on
+ * the front desk door, it is the shared date. Throws on a level with no date,
+ * so a new level cannot quietly borrow another's.
+ */
+export function storyDayOf(levelKey: string, path?: StoryPath | null): number {
+  if (path === "a" && COLLEGE_STORY_DAY_BY_LEVEL[levelKey] != null) return COLLEGE_STORY_DAY_BY_LEVEL[levelKey];
   const day = STORY_DAY_BY_LEVEL[levelKey];
   if (day == null) throw new Error(`No story date for ${levelKey}. Add it to STORY_DAY_BY_LEVEL.`);
   return day;
@@ -163,9 +210,14 @@ export function mondayOf(day: number): number {
   return day - ((storyWeekday(day) + 6) % 7);
 }
 
-/** The story day for a calendar month (0 = January) and day of the month in 2026. */
-export function storyDayFor(month: number, date: number): number {
-  const ms = new Date(STORY_YEAR, month, date).getTime() - new Date(STORY_YEAR, 7, 0).getTime();
+/** The calendar year of a story day: 2026 until December 31 (day 153), then 2027. */
+export function storyYear(day: number): number {
+  return storyDate(day).getFullYear();
+}
+
+/** The story day for a calendar month (0 = January) and day of the month, in 2026 unless a year is given. */
+export function storyDayFor(month: number, date: number, year: number = STORY_YEAR): number {
+  const ms = new Date(year, month, date).getTime() - new Date(STORY_YEAR, 7, 0).getTime();
   return Math.round(ms / 86_400_000);
 }
 
@@ -207,7 +259,8 @@ export function monthDate(day: number, lang: Lang): string {
 
 /** "October 9, 2026" / "9 de octubre de 2026". */
 export function yearDate(day: number, lang: Lang): string {
-  return lang === "en" ? `${monthDate(day, "en")}, ${STORY_YEAR}` : `${monthDate(day, "es")} de ${STORY_YEAR}`;
+  const year = storyYear(day);
+  return lang === "en" ? `${monthDate(day, "en")}, ${year}` : `${monthDate(day, "es")} de ${year}`;
 }
 
 /** "Wednesday, September 16" / "miércoles 16 de septiembre". */
@@ -232,9 +285,10 @@ export function weekdayName(day: number, lang: Lang): string {
 /** "September 2026" / "Septiembre de 2026". */
 export function monthLabel(day: number, lang: Lang): string {
   const m = storyDate(day).getMonth();
-  if (lang === "en") return `${MONTH_LONG.en[m]} ${STORY_YEAR}`;
+  const year = storyYear(day);
+  if (lang === "en") return `${MONTH_LONG.en[m]} ${year}`;
   const name = MONTH_LONG.es[m];
-  return `${name.charAt(0).toUpperCase()}${name.slice(1)} de ${STORY_YEAR}`;
+  return `${name.charAt(0).toUpperCase()}${name.slice(1)} de ${year}`;
 }
 
 /** "Sep 14 – 20, 2026", or "Aug 31 – Sep 6, 2026" across a month. The line a posted schedule leads with. */
@@ -242,13 +296,14 @@ export function weekRange(monday: number): string {
   const start = storyDate(monday);
   const end = storyDate(monday + 6);
   const tail = end.getMonth() === start.getMonth() ? `${end.getDate()}` : shortDate(monday + 6, "en");
-  return `${shortDate(monday, "en")} – ${tail}, ${STORY_YEAR}`;
+  const head = start.getFullYear() === end.getFullYear() ? shortDate(monday, "en") : `${shortDate(monday, "en")}, ${start.getFullYear()}`;
+  return `${head} – ${tail}, ${end.getFullYear()}`;
 }
 
 /** "9/14/2026". */
 export function numericDate(day: number): string {
   const d = storyDate(day);
-  return `${d.getMonth() + 1}/${d.getDate()}/${STORY_YEAR}`;
+  return `${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
 }
 
 /** Both languages at once, for a `Localized` field. */

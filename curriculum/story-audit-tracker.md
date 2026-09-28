@@ -267,3 +267,39 @@ Every audit fix bullet for #15 is verified or fixed. `npm run check`: 60 files /
 - Full e2e against the production build: **164/164 passed** (`LESSON_SMOKE=1 E2E_PROD=1 npx playwright test --workers=2`).
 - An earlier run caught a regression: the W-4, interview and offer lessons opened on Mail, because hiring now starts from Mail in Story, and lessons get no hiring mail. `lessonTabFor` now opens hiring lessons on their own tab, and `lessons.test.ts` guards every lesson.
 - Wave 3 fix lists are complete. Still open: browser observation at 100%/150%, the Spanish-first replay, the owner decisions listed in each stream note, the comparable 42-sitting replay, and the pilot.
+
+## Owner decisions · 28 Sep (after PR #48)
+
+1. **Pacing:** new dates are fine and may be in the future. Act VII moves to about six months after the first HQ day (from Mon Apr 12, 2027), with bilingual time-jump copy and every dependent document moved together.
+2. **Question first vs. naming requirements: option C.** What a good answer must *contain* stays visible before the check, like a manager's instructions (who, when, a request, cc Jordan, a full sentence). The *answer to the judgment* (which source, which time, what is missing, the formula) is never stated before the first try; the card asks the question instead. `completion-directions.test.ts` checks both: requirements present, and answer words absent before the try.
+3. **College-offer rebuilt.** HR's conditions; a Spring 2027 BHCC schedule with three sections (01 overlaps morning opens, 02 overlaps Tuesday close, 03 is full); nothing points out the clash. The learner picks 02, asks Renata for a shift change in their own words, calendars the class weekly, and replies to HR with the section.
+4. **Realistic college dates.** Registration happens before the term, not mid-semester. The Act IV offer (October) is for a Spring 2027 class: register by Dec 11, 2026, first class Tue Jan 19, 2027. The College route is retimed the same way: apply and aid in the fall, then coursework and research during the spring term.
+5. **Day 32:** one row has swapped digits (Harbor Deli typed $84, receipt $48). The learner corrects it to match the receipt; the receipted total stays $188, so Day 33 is unchanged.
+6. **Job titles stay in English** as names ("Office Administrator", "Shift Lead", "Team Lead"), with a Spanish gloss at first mention. Running Spanish sentences stay neutral ("trabajas en administración de oficina").
+
+### Owner decisions: implemented (28 Sep, branch `fix/wave-3-decisions`)
+
+- **Act VII in April 2027:** Mon Apr 12 – Fri Apr 16.
+  - The date helpers now know the year, and older mail shows as "10/9/26".
+  - Anita's October slides email only hints at the spring role. Her Apr 12 email explains the six months.
+  - The Act VII intro and first card open with "It is April now."
+  - A test keeps Act VII at least five months after the first HQ day.
+- **Option C:** `completion-directions.test.ts` enforces both halves: requirements present, and an answer list absent from all pre-try text (steps, dispatch, jobCardLine, arrival, lesson summary and scene).
+  - Rewritten: shift-review, research, ops-report-packet and the calendar lesson summary.
+  - The research grader now accepts author or journal reasons.
+  - budget-sheet keeps "Subtract: Actual minus Budget" as reading support (owner-confirmed 28 Sep): it shows how to work it out, not which category is over.
+- **College-offer rebuilt:**
+  - HR's rules; a BHCC Spring 2027 schedule (01 clashes twice a week, 02 has seats and clashes with Tuesday close, 03 is full); spring shifts on the calendar with no conflict note.
+  - The learner requests a change from Renata, who approves it; the class goes on the calendar weekly from Jan 19; the HR reply names Section 02 or CRN 20327.
+  - Every step is graded by pure functions (`college-offer.test.ts`, 36 tests).
+- **Day 32:** Harbor Deli is typed $84 and its receipt shows $48.
+  - An uncorrected total of $224 gets "One row does not match its receipt"; a second try names the deli.
+  - The total stays $188. Anita's praise email mentions the fix.
+- **English job titles:** Shift Lead, Shift Supervisor, Assistant Manager, Office Administrator and Team Lead stay English in Spanish mode, with a gloss at first mention. Other characters' titles (Cafe Manager, Academic Advisor…) stay translated as descriptions.
+- **College route dates:** apply Mon Sep 28, 2026 (application deadline Fri Nov 6); award letter Wed Nov 18 (accept by Fri Dec 4); register by Dec 11; first class Tue Jan 19, 2027; coursework Thu Feb 11 (week 4); research Fri Mar 5. Path-specific dates via `COLLEGE_STORY_DAY_BY_LEVEL` and `storyDayOf(level, path)`; Front desk keeps Sep 28 – Oct 2. Act IV and the College route share one spring term (`SPRING_TERM_*`).
+- **Validation (decisions branch):** `npm run check` passes with 2,439 unit tests, and the webpack build passes.
+  - Full e2e: 161/164. The two failures besides the lesson layout test were one stale Act II intro expectation (Spanish heading), now updated and passing.
+  - **Known flaky test (follow-up):** `lesson-audit-regressions.spec.ts` "lesson work area stays separate from instructions", **en 390px**. The account-recovery code field is left 70% in view in about 1 of 4 runs.
+    - Nothing on this branch touches that lesson.
+    - It passed in the Wave 3 164/164 run.
+    - Needs its own look at the phone-width scroll after choosing the text message.

@@ -23,15 +23,15 @@ const CAFE_TITLES: Record<"act1" | "act2" | "act3" | "act4", DeskIdentity> = {
     company: CAFE_NAME,
   },
   act2: {
-    title: { en: "Shift Lead", es: "Líder de turno" },
+    title: { en: "Shift Lead", es: "Shift Lead" },
     company: CAFE_NAME,
   },
   act3: {
-    title: { en: "Shift Supervisor", es: "Supervisión de turno" },
+    title: { en: "Shift Supervisor", es: "Shift Supervisor" },
     company: CAFE_NAME,
   },
   act4: {
-    title: { en: "Assistant Manager", es: "Asistente de gerencia" },
+    title: { en: "Assistant Manager", es: "Assistant Manager" },
     company: CAFE_NAME,
   },
 };
@@ -52,12 +52,12 @@ const ACT5_HEALTH: DeskIdentity = {
 };
 
 const ACT6: DeskIdentity = {
-  title: { en: "Office Administrator", es: "Administración de oficina" },
+  title: { en: "Office Administrator", es: "Office Administrator" },
   company: HQ_NAME,
 };
 
 const ACT7: DeskIdentity = {
-  title: { en: "Team Lead", es: "Líder de equipo" },
+  title: { en: "Team Lead", es: "Team Lead" },
   company: HQ_NAME,
 };
 

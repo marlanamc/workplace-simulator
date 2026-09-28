@@ -45,7 +45,7 @@ const NEW_SKILLS_TITLE: Localized = { en: "New skills you'll build:", es: "Nueva
 export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
   act2: {
     actLabel: { en: "Act II", es: "Acto II" },
-    role: { en: "You're a Shift Lead now", es: "Ahora eres líder de turno" },
+    role: { en: "You're a Shift Lead now", es: "Ahora eres Shift Lead (líder de turno)" },
     roleLine: {
       en: "You lead a shift, not just work one. People ask you what to do.",
       es: "Diriges un turno, no solo trabajas en él. La gente te pregunta qué hacer.",
@@ -68,7 +68,7 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
 
   act3: {
     actLabel: { en: "Act III", es: "Acto III" },
-    role: { en: "You're a Shift Supervisor now", es: "Ahora supervisas los turnos" },
+    role: { en: "You're a Shift Supervisor now", es: "Ahora eres Shift Supervisor (supervisión de turnos)" },
     roleLine: {
       en: "You decide for the whole crew, not just for yourself.",
       es: "Decides por todo el equipo, no solo por ti.",
@@ -146,7 +146,7 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
     role: { en: "Moving to the office", es: "Te mueves a la oficina" },
     roleLine: {
       en: "Harborside HQ has an Office Administrator opening. First you apply for it: a posting, an application, a résumé, an interview. Then you start the job.",
-      es: "Harborside HQ tiene una vacante en administración de oficina. Primero te postulas: un anuncio, una solicitud, un currículum, una entrevista. Luego empiezas el trabajo.",
+      es: "Harborside HQ tiene una vacante de Office Administrator (administración de oficina). Primero te postulas: un anuncio, una solicitud, un currículum, una entrevista. Luego empiezas el trabajo.",
     },
     manager: managerLine("anita"),
     bridge: {
@@ -166,10 +166,10 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
 
   act7: {
     actLabel: { en: "Act VII", es: "Acto VII" },
-    role: { en: "You're a Team Lead now", es: "Ahora eres líder de equipo" },
+    role: { en: "You're a Team Lead now", es: "Ahora eres Team Lead (líder de equipo)" },
     roleLine: {
-      en: "Anita gives you a new job: Team Lead for the cafe crew. You know the crew from your cafe shifts, and now you know the HQ tools. You plan their meetings, write a review, and send their weekly report.",
-      es: "Anita te da un puesto nuevo: líder de equipo del personal del café. Conoces al equipo por tus turnos en el café, y ahora conoces las herramientas de la oficina central. Organizas sus reuniones, escribes una evaluación y envías su reporte semanal.",
+      en: "It is April now. You have worked at HQ for six months, through the fall and the winter. Anita gives you a new job: Team Lead for the cafe crew. You know the crew from your cafe shifts, and now you know the HQ tools well. You plan their meetings, write a review, and send their weekly report.",
+      es: "Ya es abril. Llevas seis meses trabajando en la oficina central, durante el otoño y el invierno. Anita te da un puesto nuevo: Team Lead (líder de equipo) del personal del café. Conoces al equipo por tus turnos en el café, y ahora conoces bien las herramientas de la oficina central. Organizas sus reuniones, escribes una evaluación y envías su reporte semanal.",
     },
     manager: {
       en: `${CAST.anita.name} is still your manager at HQ. Renata still runs the cafe. This is the last part of the story so far.`,
@@ -197,13 +197,13 @@ export function actIntroFor(actKey: string, path?: 'a' | 'b' | null): ActIntro |
       ...ACT_INTROS.act5,
       role: college ? { en: 'Getting ready for college', es: 'Preparación para la universidad' } : { en: 'Trying the clinic front desk', es: 'Práctica en la recepción de una clínica' },
       roleLine: college
-        ? { en: `Harborside will pay for one class at ${COLLEGE_NAME}. You keep your cafe job. ${CAST.marcus.name}, an advisor there, helps you apply and get ready.`, es: `Harborside pagará una clase en ${COLLEGE_NAME}. Sigues con tu trabajo en el café. ${CAST.marcus.name}, un asesor de allí, te ayuda con la solicitud y la preparación.` }
+        ? { en: `Harborside will pay for one class at ${COLLEGE_NAME} in the spring term, which starts in January. You keep your cafe job. ${CAST.marcus.name}, an advisor there, helps you apply and get ready.`, es: `Harborside pagará una clase en ${COLLEGE_NAME} en el semestre de primavera, que empieza en enero. Sigues con tu trabajo en el café. ${CAST.marcus.name}, un asesor de allí, te ayuda con la solicitud y la preparación.` }
         : { en: `${HEALTH_NAME} is a clinic in the same neighborhood as the cafe. It is a different workplace, not part of the cafe. The clinic needs front desk help, and Renata shared your name. ${CAST.thuy.name} agreed to let you try the work.`, es: `${HEALTH_NAME} es una clínica en el mismo barrio que el café. Es otro lugar de trabajo, no es parte del café. La clínica necesita ayuda en la recepción, y Renata les dio tu nombre. ${CAST.thuy.name} aceptó que pruebes el trabajo.` },
       manager: college
         ? { en: `${CAST.marcus.name} is your college advisor.`, es: `${CAST.marcus.name} es tu asesor universitario.` }
         : { en: `${CAST.thuy.name} is your front desk supervisor. You help at the desk. You do not give medical advice.`, es: `${CAST.thuy.name} es tu supervisora de recepción. Ayudas en la recepción. No das consejos médicos.` },
       bridge: college
-        ? { en: 'Read college documents, plan your coursework, and check a source before using it.', es: 'Lee documentos de la universidad, organiza tus tareas y revisa una fuente antes de usarla.' }
+        ? { en: 'In the fall, you apply and read your aid letter. In the spring term, you do your coursework and check a source before you use it.', es: 'En el otoño, envías la solicitud y lees tu carta de ayuda. En el semestre de primavera, haces tus tareas y revisas una fuente antes de usarla.' }
         : { en: 'Book appointments, check patient forms and charges, and keep private information safe.', es: 'Agenda citas, revisa formularios y cargos, y protege la información privada.' },
       skills: college ? ACT_INTROS.act5.skills.filter((_, i) => i === 0 || i === 1 || i === 4) : ACT_INTROS.act5.skills.slice(2),
       skillsTitle: NEW_SKILLS_TITLE,

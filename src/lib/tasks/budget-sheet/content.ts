@@ -188,7 +188,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     doneTitle: "Leíste el SI, no solo el total.",
     doneBody: "Mano de obra se pasó $450 del presupuesto. La fórmula y el gráfico dijeron lo mismo. Le dijiste a Renata cuál categoría era y por cuánto.",
     badgeName: "Leer un SI de presupuesto y un gráfico",
-    badgeWhere: "Cuenta para: Asistente de gerencia",
+    badgeWhere: "Cuenta para: Assistant Manager",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
     lessonKicker: "Lección de 2 minutos",

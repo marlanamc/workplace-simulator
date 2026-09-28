@@ -25,8 +25,8 @@ export const COURSE_ROUTE_DESCRIPTIONS: Record<CourseRoute, Localized> = {
     es: '13 días de la historia. Solicitas un empleo en la oficina central de Harborside y dejas el café. Luego trabajas con Anita en archivos, llamadas y reportes.',
   },
   college: {
-    en: '4 story days. Harborside will pay for one class. Marcus, a college advisor, helps you apply, read an aid letter, and plan your coursework.',
-    es: '4 días de la historia. Harborside pagará una clase. Marcus, un asesor universitario, te ayuda con la solicitud, la carta de ayuda y las tareas del curso.',
+    en: '4 story days, from fall to spring. Harborside will pay for one class. Marcus, a college advisor, helps you apply, read an aid letter, and plan your coursework.',
+    es: '4 días de la historia, del otoño a la primavera. Harborside pagará una clase. Marcus, un asesor universitario, te ayuda con la solicitud, la carta de ayuda y las tareas del curso.',
   },
   pause: {
     en: 'Keep a summary of your skills. Your finished work stays saved. You can choose a direction later.',

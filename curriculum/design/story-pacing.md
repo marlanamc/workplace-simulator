@@ -24,4 +24,4 @@ When a scene moves, inspect its emails, calendar, source documents, filenames/qu
 
 ## Status
 
-Direction recorded; calendar retiming and bilingual transition revisions remain open. The existing August–October fixtures have not been retimed by this document. The original audit calendar is historical evidence, not a target schedule.
+Direction recorded; calendar retiming and bilingual transition revisions remain open. College (Act V path A) is retimed: apply Mon Sep 28, 2026 (deadline Fri Nov 6), award letter Wed Nov 18 (accept by Fri Dec 4), BHCC Spring 2027 term from Tue Jan 19, coursework Thu Feb 11, 2027, research Fri Mar 5, 2027 (`COLLEGE_STORY_DAY_BY_LEVEL` in `story-dates.ts`). The front desk path keeps Sep 28 – Oct 2, 2026. The existing August–October fixtures have not been retimed by this document. The original audit calendar is historical evidence, not a target schedule.

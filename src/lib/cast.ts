@@ -82,7 +82,7 @@ export const CAST: Record<CastKey, CastMember> = {
     initials: "JK",
     color: "#0f9d58",
     email: at("jordan.kim"),
-    title: { en: "Shift Lead", es: "Líder de turno" },
+    title: { en: "Shift Lead", es: "Shift Lead" },
     org: CAFE_NAME,
   },
   darnell: {
