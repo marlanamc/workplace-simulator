@@ -96,7 +96,7 @@ Design doc first; build one PR per gap family. Owner decision (28 Sep): each fam
 |---|---|
 | File confidence: download, find, upload, rename or move, print or save as PDF | merged, [PR #51](https://github.com/marlanamc/workplace-simulator/pull/51): Day 10 gets `upload-schedule` (download from Mail, upload into Schedules). Rename is already in `files`. Open: a `lesson` block, Print/Save as PDF, keyboard and 150% passes, and the Job Card over the picker preview at 911×512 |
 | Recovering from everyday problems: closed window, no Wi-Fi, Undo, reload, permission pop-up | merged, [PR #52](https://github.com/marlanamc/workplace-simulator/pull/52): Day 7 Wi-Fi off → reload, Day 12 Delete → Undo, Day 13 close the browser → reopen. Permission pop-ups are out of scope until a task needs one |
-| Work communication beyond email: manager text, voicemail, invite reply, doc comment, chat | in progress on `feat/wave-4-communication` |
+| Work communication beyond email: manager text, voicemail, invite reply, doc comment, chat | in review on `feat/wave-4-communication`: Day 2 text reply, Day 14 voicemail → phone message, Day 12 template comment. Invite reply already on Days 9/13; chat in Act VI Zoom, privacy part left for the pilot |
 
 ## Closing checks
 
