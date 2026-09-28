@@ -90,11 +90,11 @@ Assign each note to the stream that owns its file during the Wave 3 sweep. Copy 
 
 ## Wave 4: transfer gaps (new content)
 
-Design doc first; build one PR per gap family.
+Design doc first; build one PR per gap family. Owner decision (28 Sep): each family is a required step inside an existing level, not an optional round.
 
 | Gap family | Status |
 |---|---|
-| File confidence: download, find, upload, rename or move, print or save as PDF | design drafted; implementation open |
+| File confidence: download, find, upload, rename or move, print or save as PDF | in progress on `feat/wave-4-file-confidence`: Day 10 gets `upload-schedule` (download from Mail, upload into Schedules). Rename is already in `files`. Print/Save as PDF is a later follow-up |
 | Recovering from everyday problems: closed window, no Wi-Fi, Undo, reload, permission pop-up | design drafted; implementation open |
 | Work communication beyond email: manager text, voicemail, invite reply, doc comment, chat | design drafted; implementation open |
 
