@@ -52,3 +52,6 @@ next-env.d.ts
 *.dc.html
 /design_*/
 /*handoff*/
+
+# Playwright screenshots from lesson specs
+output/
