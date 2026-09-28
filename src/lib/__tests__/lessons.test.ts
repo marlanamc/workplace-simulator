@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { TRACKS, activeTrack, nextTaskInTrack } from "@/lib/tracks-content";
+import { TRACKS, activeTrack, levelForTrack, nextTaskInTrack, sceneForLevel } from "@/lib/tracks-content";
+import { PATH_A_TASKS, PATH_B_TASKS } from "@/lib/bridge-path";
 import { TASKS } from "@/lib/tasks/registry";
 import { LESSONS, draftLessonFor, lessonByKey, seedForLesson } from "@/lib/lessons/catalog";
 import { CAST } from "@/lib/cast";
@@ -28,6 +29,15 @@ describe("lesson seeding", () => {
 
   it.each(reachable)("%s has a tab to open on", (taskKey) => {
     expect(draftLessonFor(taskKey)?.tabs[0]).toBeTruthy();
+  });
+
+  // Desktop picks the wallpaper from the seed's path, so an Act V lesson has to carry it.
+  it.each([
+    ...PATH_A_TASKS.map((k) => [k, "college-library"] as const),
+    ...PATH_B_TASKS.map((k) => [k, "clinic-front-desk"] as const),
+  ])("%s opens in its path's room", (taskKey, scene) => {
+    const seed = seedForLesson(taskKey);
+    expect(sceneForLevel(levelForTrack(seed!.track.key), seed!.bridgePath)).toBe(scene);
   });
 
   it("returns null for a key that is not in any track", () => {

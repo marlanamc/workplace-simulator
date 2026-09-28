@@ -1,17 +1,24 @@
 import type { DesktopScene } from "@/lib/tracks-content";
 
 /**
- * One Unsplash room per act. Later acts reuse the closest painted room
- * until their photo lands.
+ * One Unsplash room per act. Act V has one per path.
  *
- *  harborside-open  — Jonas Jacobsson  https://unsplash.com/photos/RFHFV7lVQBY
- *  harborside-shift — Rendy Novantino  https://unsplash.com/photos/X0gqzFEjvkU
- *  harborside-floor — Adrien Olichon   https://unsplash.com/photos/s640Zvexccc
+ *  harborside-open   — Jonas Jacobsson      https://unsplash.com/photos/RFHFV7lVQBY
+ *  harborside-shift  — Rendy Novantino      https://unsplash.com/photos/X0gqzFEjvkU
+ *  harborside-floor  — Adrien Olichon       https://unsplash.com/photos/s640Zvexccc
+ *  college-library   — Priscilla Du Preez   https://unsplash.com/photos/ggeZ9oyI-PE
+ *  clinic-front-desk — Raj Rana             https://unsplash.com/photos/zCQsBI7ZltQ
+ *  hq-office         — Annie Spratt         https://unsplash.com/photos/FSFfEQkd1sc
+ *  hq-team-room      — S O C I A L . C U T  https://unsplash.com/photos/1RT4txDDAbM
  */
 const WALLPAPER: Record<DesktopScene, string> = {
   "harborside-open": "/wallpapers/latte.jpg",
   "harborside-shift": "/wallpapers/espresso.jpg",
   "harborside-floor": "/wallpapers/dining.jpg",
+  "college-library": "/wallpapers/college.jpg",
+  "clinic-front-desk": "/wallpapers/front-desk.jpg",
+  "hq-office": "/wallpapers/office.jpg",
+  "hq-team-room": "/wallpapers/team-lead.jpg",
 };
 
 export default function DesktopWallpaper({ scene }: { scene: DesktopScene }) {

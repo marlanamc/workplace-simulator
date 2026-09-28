@@ -120,7 +120,7 @@ export default function Desktop({
   const storyClock = storyClockFor(currentLevel, nextTaskInTrack(currentTrack, completedTaskKeys));
   const actKey = actForLevel(currentLevel)?.key ?? "act1";
   const identity = deskIdentityFor(actKey, bridgePath, currentLevel.preHire, practicedHistory(completedTaskKeys)[0]?.title);
-  const scene = sceneForLevel(currentLevel);
+  const scene = sceneForLevel(currentLevel, bridgePath);
   const windowTop = topInset ? topInset + 8 : 8;
 
   // Wallpaper follows the act (the room), not the individual level. The
