@@ -129,7 +129,9 @@ export const DESKTOP_COPY: Record<Lang, {
     bookmarkOnramp: "From here on, you open your own apps from the bookmarks bar. Start with the one named in the button.",
     leftoverOne: "1 left",
     leftoverMany: "{n} left",
-    clockOut: "Clock out for today",
+    // Not "Clock out": this signs out of the computer, and Act I teaches
+    // clocking out as a real timeclock skill.
+    clockOut: "Stop for today (your work is saved)",
   },
   es: {
     practiceBanner: "Espacio de práctica. Nada aquí es real.",

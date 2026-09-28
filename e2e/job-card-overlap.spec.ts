@@ -10,10 +10,9 @@ import { clickIntoPage, waitForInteractive } from "./interactive";
  * window. Show me then pointed underneath the card.
  *
  * For every day, this opens the day's first task and checks that no visible
- * Show me target (`[data-showme]`) is under the card. It is `fixme` until the
- * card learns to move out of the way (Stream A in
- * `curriculum/story-audit-tracker.md`), then it becomes that work's
- * acceptance test.
+ * Show me target (`[data-showme]`) is under the card. The card moves to a
+ * clear corner on its own (`chooseCorner` in `job-card-placement.ts`); this
+ * is that work's acceptance test.
  */
 
 const CLASS_CODE = "TEST-E2E";
@@ -41,16 +40,30 @@ async function signUp(page: Page, name: string) {
   await page.getByTestId("welcome-continue").click();
 }
 
-/** Jump to the start of a day and press the card's "Open …" hand-off, if it has one. */
+/**
+ * Jump to the start of a day, step past whatever opens it (an act's intro
+ * screen, the arrival card), then press the card's hand-off button until the
+ * day's first task window is on screen.
+ */
 async function openDay(page: Page, studioLabel: string) {
   await page.goto("/studio");
   await waitForInteractive(page);
   await clickIntoPage(page, () => page.getByRole("button", { name: studioLabel, exact: true }).click());
-  await continuePastStudioArrivalIfPresent(page);
   const card = page.locator("[data-job-card]");
+  const intro = page.getByTestId("act-intro");
+  const arrival = page.locator("div.fixed.inset-0.z-\\[80\\]");
+  await expect(card.or(intro).or(arrival).first()).toBeVisible({ timeout: 20_000 });
+  if (await intro.isVisible()) await page.getByTestId("act-intro-continue").click();
+  await continuePastStudioArrivalIfPresent(page);
   await expect(card).toBeVisible({ timeout: 20_000 });
-  const open = card.getByRole("button", { name: /^(Open|Abr)/ }).first();
-  if (await open.isVisible()) await open.click();
+  const appWindow = page.locator("[data-app-window]");
+  // Day One's first sitting asks the learner to look at the list pin before
+  // the hand-off, so there can be two card buttons before the task opens.
+  for (let press = 0; press < 3 && !(await appWindow.isVisible()); press++) {
+    await card.locator(".job-card-primary").first().click();
+    await appWindow.waitFor({ state: "visible", timeout: 3_000 }).catch(() => {});
+  }
+  await expect(appWindow).toBeVisible();
 }
 
 /** Every visible Show me target that the card's box overlaps, by its data-showme id. */
@@ -76,7 +89,6 @@ const STUDIO_DAYS: string[] = LEVELS.slice(1).flatMap((level) => {
 
 for (const viewport of VIEWPORTS) {
   test.describe(`Job Card never covers a Show me target (${viewport.name})`, () => {
-    test.fixme(true, "Stream A (#2): the card does not move out of the way yet.");
     test.use({ viewport: { width: viewport.width, height: viewport.height } });
 
     test("every day's first task", async ({ page }) => {
@@ -86,7 +98,13 @@ for (const viewport of VIEWPORTS) {
       const failures: string[] = [];
       for (const day of STUDIO_DAYS) {
         await openDay(page, day);
-        const covered = await coveredTargets(page);
+        // The card glides to a clear corner (a 0.22s move) once the task has
+        // laid out; give it a moment before reading what it still covers.
+        let covered: string[] = [];
+        await expect
+          .poll(async () => (covered = await coveredTargets(page)), { timeout: 3_000 })
+          .toEqual([])
+          .catch(() => {});
         if (covered.length) failures.push(`${day}: ${covered.join(", ")}`);
       }
       expect(failures, "Show me targets under the Job Card").toEqual([]);

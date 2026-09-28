@@ -324,6 +324,13 @@ textarea:focus-visible,
   .job-card-primary { transition: none; }
 }
 
+/* A page that scrolls under a Job Card parked at the bottom gets a gutter as
+   tall as the part the card covers, so its last control can scroll clear.
+   JobCard sets both the attribute and the height (updateScrollGutters). */
+[data-card-gutter] {
+  padding-bottom: max(var(--job-card-gutter, 0px), 24px) !important;
+}
+
 /* The Job Card on a short screen (a Chromebook at 150% text is 911x512):
    narrower, smaller type, at most about half the height, so it never covers
    most of the task. Inline width/max-height need !important to yield. */

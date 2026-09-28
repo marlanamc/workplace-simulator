@@ -98,10 +98,11 @@ for (const width of [390, 640, 1366]) {
   }
 }
 
-test("search and topic links work without JavaScript", async ({ browser }) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
+test("search and topic links work without JavaScript", async ({ browser, baseURL }) => {
+  // A new context does not inherit the config's baseURL (E2E_PORT), so pass it.
+  const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
   const page = await context.newPage();
-  await page.goto("http://localhost:3000/lessons?lang=es");
+  await page.goto("/lessons?lang=es");
   await page.getByTestId("skill-filter-forms").click();
   await page.getByLabel("Buscar lecciones").fill("W-4");
   await page.getByRole("button", { name: "Buscar", exact: true }).click();

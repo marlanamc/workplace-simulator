@@ -38,7 +38,7 @@ async function passCelebration(page: Page) {
     const levelUp = page.locator("div.fixed.inset-0.z-\\[80\\]");
     const trophy = page.locator("div.fixed.inset-0.z-\\[70\\]");
     if (await levelUp.first().isVisible().catch(() => false)) {
-      // "Keep going" is a plain <button>; "Clock out" is a submit inside a
+      // "Keep going" is a plain <button>; "Stop for today" is a submit inside a
       // <form>. Click the plain one so the walk never logs itself out.
       const keep = levelUp.locator('button:not([type="submit"])').first();
       await expect(keep).toBeVisible({ timeout: 10_000 });
