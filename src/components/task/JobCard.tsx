@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AlertCircle, ArrowLeft, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -34,10 +34,20 @@ import { HANDOFF_CTA } from "@/lib/story-beats";
 import { dayLabel } from "@/lib/shift-spine";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import { speakText } from "@/lib/read-aloud";
+import { DEVICE_KEY, storage } from "@/lib/storage";
+import {
+  HOME_CORNER as HOME,
+  chooseCorner,
+  cornerBox,
+  cornerNearest,
+  isCorner,
+  nudgedCorner,
+  type Box,
+  type Corner,
+} from "@/lib/job-card-placement";
 
-/** Four parking spots. The card can never end up half off-screen. */
-type Corner = "bl" | "br" | "tl" | "tr";
-const HOME: Corner = "bl";
+/** Four parking spots (see `job-card-placement.ts`). The card can never end
+ *  up half off-screen. */
 export const EDGE = 24;
 /** 48px shelf + 24px of air, so the card never sits on the shelf. */
 const BOTTOM = SHELF_RESERVE + EDGE;
@@ -45,6 +55,72 @@ export const CARD_W = 420;
 
 const TONE = { blue: "#0b57d0", green: "#1e8e3e" } as const;
 type Tone = keyof typeof TONE;
+
+/** The corner this device's learner last moved the card to. */
+function readStoredCorner(): Corner {
+  const stored = storage.getString(DEVICE_KEY.jobCardCorner);
+  return isCorner(stored) ? stored : HOME;
+}
+
+/**
+ * Everything else a learner might press in the open window. Not every
+ * task's buttons carry a Show me id (a slide deck's Next slide does not), so
+ * when the card has to move it takes the corner that hides the fewest of
+ * these. `data-card-avoid` (the bookmarks, Minimize and Close) weighs more:
+ * the card moves off those even from the learner's own corner.
+ */
+const LESSER_CONTROLS = [
+  "[data-app-window] button",
+  "[data-app-window] a[href]",
+  "[data-app-window] input:not([type=hidden])",
+  "[data-app-window] select",
+  "[data-app-window] textarea",
+  "[data-app-window] [role=button]",
+].join(", ");
+
+/** Every element matching `selector` that a learner can see right now,
+ *  outside the card: Show me targets, or the window controls. */
+function visibleTargets(card: HTMLElement, selector: string): Box[] {
+  const boxes: Box[] = [];
+  document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+    if (card.contains(el)) return;
+    const r = el.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return;
+    if (typeof el.checkVisibility === "function" && !el.checkVisibility({ visibilityProperty: true })) return;
+    boxes.push({ left: r.left, top: r.top, width: r.width, height: r.height });
+  });
+  return boxes;
+}
+
+/**
+ * A card parked at the bottom sits over the end of whatever page scrolls
+ * under it. Give that page a gutter as tall as the part of it the card
+ * covers, so its last control can always be scrolled up clear of the card.
+ * Only page-sized scroll areas get one: a small list box inside a form does
+ * not need to grow by a card's height.
+ */
+function updateScrollGutters(card: Box | null) {
+  document
+    .querySelectorAll<HTMLElement>("[data-app-window] .overflow-y-auto, [data-app-window] .overflow-auto")
+    .forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const under =
+        card !== null &&
+        r.height >= window.innerHeight * 0.4 &&
+        el.scrollHeight > el.clientHeight + 1 &&
+        r.left < card.left + card.width &&
+        card.left < r.right &&
+        card.top < r.bottom;
+      const gutter = under ? `${Math.ceil(r.bottom - card.top + EDGE)}px` : "";
+      if (el.style.getPropertyValue("--job-card-gutter") !== gutter) {
+        if (gutter) el.style.setProperty("--job-card-gutter", gutter);
+        else el.style.removeProperty("--job-card-gutter");
+      }
+      if (el.hasAttribute("data-card-gutter") !== under) el.toggleAttribute("data-card-gutter", under);
+    });
+}
+
+const noSubscribe = () => () => {};
 
 
 interface Script {
@@ -117,7 +193,22 @@ export default function JobCard() {
     : (actForLevel(level)?.key ?? "act1");
 
   const [choosingRoute, setChoosingRoute] = useState(false);
-  const [corner, setCorner] = useState<Corner>(HOME);
+  // The learner's own corner: what they chose this session, else what this
+  // device remembers, read through isClient so hydration stays clean. A
+  // lesson keeps its own left column (LESSON_RAIL_CLASS), so it neither reads
+  // nor writes the Story corner.
+  const isClient = useSyncExternalStore(noSubscribe, () => true, () => false);
+  const [cornerChoice, setCornerChoice] = useState<Corner | null>(null);
+  const preferred = cornerChoice ?? (isClient && !lesson ? readStoredCorner() : HOME);
+  // Where the card really parks: `preferred`, unless that would cover a Show
+  // me target (measured from the page, below). Keyed by the preference it was
+  // worked out from, so a new choice never shows a stale answer.
+  const [parked, setParked] = useState<{ from: Corner; corner: Corner } | null>(null);
+  // The moment the learner last moved the card by hand. For the rest of that
+  // step the card stays exactly where they put it, even over a button:
+  // fighting a learner's drag would be worse than covering something they
+  // can see they covered.
+  const [heldAt, setHeldAt] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
@@ -148,9 +239,9 @@ export default function JobCard() {
   const doneInLevel = levelTaskKeys.filter((k) => completedTaskKeys.includes(k)).length;
   const jobNumber = Math.min(doneInLevel + 1, levelTaskKeys.length);
 
-  // When the job changes: the card goes home, so a job always begins in the
-  // same corner and the learner never has to hunt for it; and the job they
-  // moved *off* is remembered. Completing a job advances `currentTrack`
+  // When the job changes: the card opens again, and the job they moved
+  // *off* is remembered. The corner stays the learner's: a card they moved
+  // out of the way stays out of the way. Completing a job advances `currentTrack`
   // immediately while the finish is reported a render later, so without this
   // the finish would talk about the day starting, not the one just ended.
   // Adjusted during render, the pattern this codebase already uses.
@@ -163,7 +254,6 @@ export default function JobCard() {
     setFinishedTaskKey(jobShown);
     setJobShown(nextTaskKey);
     setHeldStep(null);
-    setCorner(HOME);
     setCollapsed(false);
   }
 
@@ -192,13 +282,17 @@ export default function JobCard() {
   // correction when they are up, because those are the words a learner who
   // needs the audio is most likely stuck on.
   const spokenLine = [script.line, script.hint, visibleCorrection].filter(Boolean).join(". ");
-  // A new sentence or a correction is the card talking again — open it so
-  // the learner cannot miss the line they just hid.
-  const voice = `${script.line}\0${visibleCorrection}\0${visibleHelp?.lesson.t ?? ""}`;
+  // A new sentence is the card talking again — open it so the learner cannot
+  // miss the line they just hid. A correction does not: it is usually raised
+  // by a click next to the button they need, and a card that springs open
+  // over that button hides the fix. A folded card says the correction in its
+  // header instead (below).
+  const voice = `${script.line}\0${visibleHelp?.lesson.t ?? ""}`;
   if (heardVoice !== voice) {
     setHeardVoice(voice);
     setCollapsed(false);
   }
+  const headerCorrection = collapsed && !(visibleHelp && !finish) ? visibleCorrection : "";
 
   // A new instruction starts at its first line, even if Help or Show me
   // scrolled the previous card to a lower control.
@@ -206,10 +300,109 @@ export default function JobCard() {
     if (bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [voice]);
 
-  const moveToCorner = useCallback((next: Corner) => setCorner(next), [setCorner]);
+  // A celebration owns the whole screen for a moment. The card stepping back
+  // is the same rule as everywhere else: one voice at a time, and right now
+  // the level screen is the one talking.
+  const celebrating = Boolean((celebrateLevel?.levelUp || celebrateTrack) && !saving && !saveError);
+
+  // ─── the corner ──────────────────────────────────────────────────────────
+  // One step of one job, in one window. A hand move holds for this long.
+  const moment = `${nextTaskKey}|${active}|${effectiveStep?.id ?? ""}:${effectiveStep?.stepIndex ?? ""}`;
+  const held = heldAt === moment;
+  // A lesson docks the card in its own rail or bottom panel (lesson-rail-card
+  // in globals.css) and the window makes room for it, so it never parks.
+  const inLesson = Boolean(lesson);
+  const corner: Corner = inLesson
+    ? HOME
+    : held
+      ? preferred
+      : parked?.from === preferred
+        ? parked.corner
+        : preferred;
+
+  function moveToCorner(next: Corner) {
+    setCornerChoice(next);
+    setHeldAt(moment);
+    if (!lesson) storage.setString(DEVICE_KEY.jobCardCorner, next);
+  }
+  function snapHome() {
+    setCornerChoice(HOME);
+    setHeldAt(null);
+    if (!lesson) storage.remove(DEVICE_KEY.jobCardCorner);
+  }
+
+  // Keep the card off the controls the learner has to press. The page is the
+  // external system here: what is under the card depends on the task's own
+  // layout, the scroll position and the window size, so it is measured, not
+  // derived. It re-measures when any of those change, a frame at a time.
+  const dragging = drag !== null;
+  useEffect(() => {
+    if (dragging || celebrating || inLesson) return;
+    const card = cardRef.current;
+    if (!card) return;
+    let frame = 0;
+    const measure = () => {
+      frame = 0;
+      const box = card.getBoundingClientRect();
+      const size = { width: box.width, height: box.height };
+      const viewport = { width: window.innerWidth, height: window.innerHeight };
+      const insets = { edge: EDGE, bottom: BOTTOM };
+      const next = held
+        ? preferred
+        : chooseCorner({
+            preferred,
+            card: size,
+            viewport,
+            insets,
+            targets: visibleTargets(card, "[data-showme]"),
+            avoid: visibleTargets(card, "[data-card-avoid]"),
+            lesser: visibleTargets(card, LESSER_CONTROLS),
+          });
+      setParked((prev) => (prev?.from === preferred && prev.corner === next ? prev : { from: preferred, corner: next }));
+      updateScrollGutters(next[0] === "b" ? cornerBox(next, size, viewport, insets) : null);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(measure);
+    };
+    schedule();
+    const pageChanges = new MutationObserver(schedule);
+    pageChanges.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class", "style", "hidden", "open"],
+    });
+    const cardSize = new ResizeObserver(schedule);
+    cardSize.observe(card);
+    window.addEventListener("resize", schedule);
+    window.addEventListener("scroll", schedule, true);
+    return () => {
+      cancelAnimationFrame(frame);
+      pageChanges.disconnect();
+      cardSize.disconnect();
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("scroll", schedule, true);
+      updateScrollGutters(null);
+    };
+  }, [dragging, celebrating, inLesson, held, preferred]);
+
+  // After a hand-off (a celebration or an act's first screen closing, a task
+  // window closing on the finished job) the control that had focus is gone
+  // and focus falls to the page. Put it on the card's one button, so a
+  // keyboard learner is one key away from the next job, not eleven Tabs.
+  // Only when focus really is lost: never take it from something they chose.
+  useEffect(() => {
+    if (celebrating) return;
+    const frame = requestAnimationFrame(() => {
+      const current = document.activeElement;
+      if (current && current !== document.body) return;
+      cardRef.current?.querySelector<HTMLElement>(".job-card-primary")?.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [celebrating, nextTaskKey, active]);
 
   // ─── dragging ────────────────────────────────────────────────────────────
-  const startDrag = useCallback((e: React.PointerEvent) => {
+  function startDrag(e: React.PointerEvent) {
     if (e.button !== 0) return;
     const card = cardRef.current;
     if (!card) return;
@@ -235,28 +428,24 @@ export default function JobCard() {
         setCollapsed((v) => (v ? false : v));
         return;
       }
-      const cx = last.x + box.width / 2;
-      const cy = last.y + box.height / 2;
       moveToCorner(
-        ((cy < window.innerHeight / 2 ? "t" : "b") +
-          (cx < window.innerWidth / 2 ? "l" : "r")) as Corner,
+        cornerNearest(
+          { x: last.x + box.width / 2, y: last.y + box.height / 2 },
+          { width: window.innerWidth, height: window.innerHeight },
+        ),
       );
     };
     window.addEventListener("pointermove", move);
     window.addEventListener("pointerup", up);
     e.preventDefault();
-  }, [moveToCorner]);
+  }
 
   const nudgeCorner = (e: React.KeyboardEvent) => {
     if (e.target !== e.currentTarget) return;
-    const set = (next: Corner) => {
-      e.preventDefault();
-      moveToCorner(next);
-    };
-    if (e.key === "ArrowLeft") set((corner[0] + "l") as Corner);
-    else if (e.key === "ArrowRight") set((corner[0] + "r") as Corner);
-    else if (e.key === "ArrowUp") set(("t" + corner[1]) as Corner);
-    else if (e.key === "ArrowDown") set(("b" + corner[1]) as Corner);
+    const next = nudgedCorner(corner, e.key);
+    if (!next) return;
+    e.preventDefault();
+    moveToCorner(next);
   };
 
   // ─── the one instruction, derived from state ─────────────────────────────
@@ -482,10 +671,7 @@ export default function JobCard() {
 
   const tone = TONE[script.tone];
 
-  // A celebration owns the whole screen for a moment. The card stepping back
-  // is the same rule as everywhere else: one voice at a time, and right now
-  // the level screen is the one talking.
-  if ((celebrateLevel?.levelUp || celebrateTrack) && !saving && !saveError) return null;
+  if (celebrating) return null;
 
   const position: React.CSSProperties = drag
     ? {
@@ -531,13 +717,32 @@ export default function JobCard() {
           style={{ background: "rgba(255,255,255,0.22)" }}
           aria-hidden
         >
-          {script.badge === "✓" ? <Check size={15} strokeWidth={3} /> : script.badge}
+          {headerCorrection ? (
+            <AlertCircle size={16} strokeWidth={2.5} />
+          ) : script.badge === "✓" ? (
+            <Check size={15} strokeWidth={3} />
+          ) : (
+            script.badge
+          )}
         </span>
         {/* Two lines before it cuts off: a lesson's name is the only thing
-            telling the learner which lesson this is. */}
-        <span className="line-clamp-2 min-w-0 flex-1 text-[15px] leading-tight font-medium">
-          {visibleHelp && !finish ? visibleHelp.kicker : script.kicker}
-        </span>
+            telling the learner which lesson this is. Folded, a correction
+            takes this line, so it is heard without the card opening over
+            the button the learner needs. */}
+        {headerCorrection ? (
+          <span
+            role="status"
+            aria-live="polite"
+            data-card-header-correction
+            className="line-clamp-2 min-w-0 flex-1 text-[15px] leading-tight font-medium"
+          >
+            {headerCorrection}
+          </span>
+        ) : (
+          <span className="line-clamp-2 min-w-0 flex-1 text-[15px] leading-tight font-medium">
+            {visibleHelp && !finish ? visibleHelp.kicker : script.kicker}
+          </span>
+        )}
         {!practicing && !busy && liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
           <button
             type="button"
@@ -558,11 +763,11 @@ export default function JobCard() {
             ?
           </button>
         )}
-        {corner !== HOME && (
+        {preferred !== HOME && (
           <button
             type="button"
             onPointerDown={(e) => e.stopPropagation()}
-            onClick={() => setCorner(HOME)}
+            onClick={snapHome}
             aria-label={c.snapBack}
             title={c.snapBack}
             className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-white"

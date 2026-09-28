@@ -499,6 +499,9 @@ export default function BrowserClient() {
           <button
             key={t.key}
             data-testid={`bookmark-${t.key}`}
+            // From Act II the learner opens their own apps here, so the Job
+            // Card keeps off the bookmarks when a corner allows it.
+            data-card-avoid
             onClick={() => goToBookmark(t)}
             className={`flex items-center gap-1.5 rounded-md px-2 py-[5px] text-[13px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] ${
               active?.key === t.key

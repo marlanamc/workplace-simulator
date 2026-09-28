@@ -72,6 +72,8 @@ export const DEVICE_KEY = {
   lang: "ws-lang",
   bigText: "ws-big-text",
   loginRecents: "ws-login-recents",
+  /** The corner the learner moved the Job Card to. */
+  jobCardCorner: "ws-job-card-corner",
 } as const;
 
 /** Per-learner keys — namespaced by learner id so accounts don't cross over. */

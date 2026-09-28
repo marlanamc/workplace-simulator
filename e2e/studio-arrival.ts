@@ -13,7 +13,7 @@ export async function continuePastStudioArrival(page: Page, cta: string | RegExp
 
 /**
  * Same card, when the test does not care which CTA label it is — clicks the
- * keep-going control (not "Clock out for today").
+ * keep-going control (not "Stop for today", which signs out).
  */
 export async function continuePastStudioArrivalIfPresent(page: Page) {
   const modal = page.locator("div.fixed.inset-0.z-\\[80\\]");
