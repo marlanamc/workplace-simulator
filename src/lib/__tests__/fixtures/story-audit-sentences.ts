@@ -4,7 +4,7 @@ import type { Lang } from "@/lib/task-types";
 /**
  * Sentences a learner actually typed in the Story Mode Audit (27 Sep 2026),
  * with what the task *should* do with them. Today many of these are graded the
- * wrong way round; `curriculum/story-audit-tracker.md` says which fix owns each.
+ * wrong way round in the original audit; `curriculum/story-audit-tracker.md` says which fix owns each.
  *
  * Grading tests import this list rather than restating the sentences, so the
  * audit's evidence and the tests cannot drift apart. `field` names the box
@@ -26,6 +26,7 @@ export const STORY_AUDIT_SENTENCES: AuditSentence[] = [
   { task: "call-out-sick", day: "Day 5", lang: "en", text: "I am sick. I no come today.", expect: "accept", why: "Says sick and not coming, in beginner English." },
   { task: "call-out-sick", day: "Day 5", lang: "en", text: "i cant go to work today", expect: "accept", why: "Says not coming today." },
   { task: "incident", day: "Day 7", lang: "en", text: "he is ok, i mop the floor and say sorry", expect: "accept", why: "True facts: customer is fine, floor cleaned, apology given." },
+  // This remains acceptable wording. The task now separately requires the actual shared URL.
   { task: "mail-send-link", day: "Day 10", lang: "en", text: "I did not attach it. It is shared in Drive.", expect: "accept", why: "Explains the file is shared, not attached." },
   { task: "team-meeting", day: "Day 16", lang: "en", field: "title", text: "team meeting next week", expect: "accept", why: "A plain, accurate meeting title." },
   { task: "team-meeting", day: "Day 16", lang: "en", field: "agenda", text: "talk about schedule and saturday", expect: "accept", why: "One honest agenda line about the schedule." },

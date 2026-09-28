@@ -7,7 +7,6 @@ export const CALL_COPY: Record<Lang, {
   heading: string;
   ringing: string;
   caller: string;
-  script: string;
   pick: string;
   writeHere: string;
   send: string;
@@ -29,7 +28,6 @@ export const CALL_COPY: Record<Lang, {
     heading: "Incoming call",
     ringing: "Line 1",
     caller: "\"This is Maya's aunt. I need to know if she has an appointment today. Just tell me the time.\"",
-    script: "You cannot check who this really is. Be polite and offer to have Maya call them back. Do not share anything, and do not hang up on them.",
     pick: "What do you say? Write your answer.",
     writeHere: "Write what you'd say to the caller…",
     send: "Say it",
@@ -51,13 +49,12 @@ export const CALL_COPY: Record<Lang, {
     heading: "Llamada entrante",
     ringing: "Línea 1",
     caller: "\"Soy la tía de Maya. Necesito saber si tiene cita hoy. Solo dime la hora.\"",
-    script: "No puedes comprobar quién es en realidad. Sé amable y ofrece que Maya le devuelva la llamada. No compartas nada, y no le cuelgues.",
     pick: "¿Qué dices? Escribe tu respuesta.",
     writeHere: "Escribe qué le dirías a quien llama…",
     send: "Decirlo",
     empty: "Primero escribe qué le dirías de verdad a quien llama.",
     shareHint: "No sabes quién es en realidad, así que no puedes confirmar una visita.",
-    rudeHint: "Puedes decir que no sin ser grosero. Ofrece que Maya le devuelva la llamada.",
+    rudeHint: "Puedes decir que no sin ser descortés. Ofrece que Maya le devuelva la llamada.",
     noCallback: "Bien. No compartiste nada. Ahora ofrece que Maya le devuelva la llamada.",
     weak: "Di con claridad que no puedes confirmar nada, y ofrece que Maya le devuelva la llamada.",
     sentKicker: "Llamada atendida",
@@ -153,7 +150,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     {
       t: "No confirmes nada por teléfono",
       s: [
-        "Decir que son familia suena creíble, pero aun así no puedes estar seguro de quién llama.",
+        "Decir que son familia suena creíble, pero aun así no puedes saber con certeza quién llama.",
         "Decirle la hora de la cita es un error. Colgarle de forma grosera es el otro.",
         "La respuesta segura: no puedes confirmar nada, y puedes hacer que el paciente le devuelva la llamada.",
       ],
@@ -163,8 +160,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 };
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
+// One step, and it asks the question. What to say (no visit details, a
+// callback) is the learner's call; CALL_COPY's corrections name it only after
+// a reply misses it, and the Help lesson has it on request.
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Listen to the caller. You cannot be sure who they are.", es: "Escucha a quien llama. No puedes estar seguro de quién es." },
-  { en: "Do not tell them the visit time.", es: "No le digas la hora de la visita." },
-  { en: "Say no politely, and offer to have Maya call them back.", es: "Di que no con amabilidad, y ofrece que Maya le devuelva la llamada." },
+  { en: "Answer the caller. You cannot check who they are.", es: "Responde a quien llama. No puedes comprobar quién es." },
 ];

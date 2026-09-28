@@ -252,6 +252,19 @@ export default function JobsTask() {
                   ))}
               </dl>
               )}
+              {/* The posting stays readable after it is done: the résumé,
+                  interview and offer are all checked against it. */}
+              <section data-testid="jobs-posting-reference" className="rounded-xl border border-[#dadce0] bg-white p-5">
+                <div className="text-[11px] font-medium uppercase tracking-wide text-[#5f6368]">{pc.heading}</div>
+                <h2 className="mt-1 text-[18px] font-semibold text-[#202124]">{pc.jobTitle}</h2>
+                <div className="mt-1 text-[13px] text-[#5f6368]">{pc.company} · {pc.location}</div>
+                <div className="mt-0.5 text-[13px] text-[#188038]">{pc.pay}</div>
+                <p className="mt-3 text-[14px] leading-relaxed text-[#3c4043]">{pc.about}</p>
+                <div className="mt-3 text-[14px] font-medium text-[#202124]">{pc.reqLabel}</div>
+                <ul className="mt-1 list-disc pl-5 text-[14px] leading-snug text-[#3c4043]">
+                  {REQUIREMENTS.map((r) => <li key={r.key} className="mt-1">{r.text[lang]}</li>)}
+                </ul>
+              </section>
               <TaskDoneActions
                 kicker={isPosting ? pc.sentKicker : ac.sentKicker}
                 tryAgainLabel={isPosting ? pc.tryAgain : ac.tryAgain}

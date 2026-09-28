@@ -23,7 +23,7 @@ import ActIntro from "@/components/ActIntro";
 import { WELCOME_FLAG } from "@/lib/welcome-content";
 import { actIntroFlag } from "@/lib/act-intro-content";
 import ListIntroSpotlight from "@/components/task/ListIntroSpotlight";
-import { LIST_INTRO_FLAG, shouldShowListIntro } from "@/lib/job-card-content";
+import { LIST_INTRO_FLAG, introBeatsDone, shouldShowListIntro } from "@/lib/job-card-content";
 import { WindowManagerProvider } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import { JobCardProvider } from "@/lib/job-card-context";
@@ -72,17 +72,17 @@ function JobCardHost({ children }: { children: ReactNode }) {
     act.key !== "act1" &&
     act.levelKeys[0] === currentLevel.key &&
     !isLevelComplete(currentLevel, completedTaskKeys, bridgePath) &&
-    storyFlags[actIntroFlag(act.key)] !== "true" &&
+    storyFlags[actIntroFlag(act.key, bridgePath)] !== "true" &&
     !celebrateLevel?.levelUp?.stoppingPoint
   ) {
-    return <ActIntro act={act} onContinue={() => setStoryFlag(actIntroFlag(act.key), "true")} />;
+    return <ActIntro act={act} onContinue={() => setStoryFlag(actIntroFlag(act.key, bridgePath), "true")} />;
   }
 
   return (
     <JobCardProvider
-      // A returning learner has already met the card; only a genuinely fresh
-      // start gets the intro beats.
-      introSeen={storyFlags[INTRO_FLAG] === "true" || completedTaskKeys.length > 0}
+      // Until the first task is done, a reload returns to the welcome beat, so
+      // the optional pointer practice it offers is still there (finding #17).
+      introSeen={introBeatsDone(completedTaskKeys)}
       onIntroDone={() => setStoryFlag(INTRO_FLAG, "true")}
     >
       {children}

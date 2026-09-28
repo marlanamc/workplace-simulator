@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
-import { levelUpCardFor, nextHandoff } from "@/lib/tracks-content";
+import { CORE_FINALE, LEVELS, levelUpCardFor, levelUpCopyFor, levelUpShowsConfetti, nextHandoff } from "@/lib/tracks-content";
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import Confetti from "@/components/task/Confetti";
@@ -18,12 +18,17 @@ import { logout } from "@/app/actions";
  * clocking in and out, and this button signs the learner out of the computer.
  *
  * It is a modal: focus moves into it when it opens and Tab stays inside it,
- * so a keyboard learner never walks the dimmed page behind it. Escape does
- * what a click on the dimmed page does.
+ * so a keyboard learner never walks the dimmed page behind it. It is also the
+ * day's premise, and it is kept until it is answered (see progress-context's
+ * pending arrival), so a stray click on the dimmed page does not close it.
+ * Escape presses the continue button: it opens the task rather than dropping
+ * the learner on a desktop with no scene.
  */
+const FIRST_FREE_TABBING_KEY = LEVELS.find((l) => l.freeTabbing)?.key;
+
 export default function LevelUpCelebration() {
-  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, bridgePath, courseRoute, saving, saveError } = useProgress();
-  const { openApp } = useWindowManager();
+  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, setLang, bridgePath, courseRoute, saving, saveError } = useProgress();
+  const { openApp, minimizeActive } = useWindowManager();
   const dialogRef = useRef<HTMLDivElement>(null);
   // Act II+ openers normally defer to ActIntro and never get recorded here
   // (see levelUpCardFor). A stoppingPoint card is the stop-for-today pause
@@ -40,7 +45,7 @@ export default function LevelUpCelebration() {
     dialog.querySelector<HTMLElement>("[data-celebration-continue]")?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        dismissLevelCelebration();
+        dialog.querySelector<HTMLElement>("[data-celebration-continue]")?.click();
         return;
       }
       if (e.key !== "Tab") return;
@@ -60,10 +65,10 @@ export default function LevelUpCelebration() {
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, dismissLevelCelebration]);
+  }, [open]);
 
   if (!open || !celebrateLevel?.levelUp) return null;
-  const { levelUp } = celebrateLevel;
+  const levelUp = levelUpCopyFor(celebrateLevel, bridgePath)!;
   const kicker = levelUp.kicker[lang];
   const title = levelUp.title[lang];
   const body = levelUp.body[lang];
@@ -76,6 +81,8 @@ export default function LevelUpCelebration() {
   const keepGoing = () => {
     const handoff = nextHandoff(completedTaskKeys, bridgePath, courseRoute);
     dismissLevelCelebration();
+    // Act II's end: back to the desktop, where the Job Card lists the directions.
+    if (celebrateLevel.key === CORE_FINALE.key) { minimizeActive(); return; }
     if (!handoff) return;
     openApp(handoff.location.appKey, {
       tab: handoff.location.tab,
@@ -86,7 +93,6 @@ export default function LevelUpCelebration() {
   return (
     <div
       className="fixed inset-0 z-[80] flex items-center justify-center bg-black/60 p-6"
-      onClick={dismissLevelCelebration}
     >
       <div
         ref={dialogRef}
@@ -96,15 +102,18 @@ export default function LevelUpCelebration() {
         className="relative w-full max-w-[460px] overflow-hidden rounded-2xl bg-white p-8 text-center shadow-2xl animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <Confetti count={22} />
+        {levelUpShowsConfetti(levelUp) && <Confetti count={22} />}
         <div className="relative z-10">
+        <button type="button" onClick={() => setLang(lang === "en" ? "es" : "en")} className="mb-2 min-h-10 rounded-full px-3 text-[14px] text-text-secondary hover:bg-surface-muted">{lang === "en" ? "Español" : "English"}</button>
         <div className="mx-auto animate-pop-in text-[48px] leading-none" aria-hidden>
           {levelUp.emoji}
         </div>
         <div className="mt-3 text-[12px] font-semibold uppercase tracking-wide text-warning">{kicker}</div>
         <h2 id="level-up-title" className="mt-2 text-[26px] font-medium leading-tight">{title}</h2>
         <p className="mt-3 text-[16px] leading-relaxed text-text-secondary">{body}</p>
-        {celebrateLevel.freeTabbing ? (
+        {/* Once, on the first level where the learner opens their own apps
+            (Day 9). Every later freeTabbing level already knows the bar. */}
+        {celebrateLevel.key === FIRST_FREE_TABBING_KEY ? (
           <p className="mt-4 rounded-xl bg-surface-muted px-4 py-3 text-[14px] leading-snug text-text-primary">
             {DESKTOP_COPY[lang].bookmarkOnramp}
           </p>

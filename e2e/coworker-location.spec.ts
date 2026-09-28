@@ -35,7 +35,9 @@ for (const lang of ['en', 'es'] as const) {
     await expect(card).toContainText(lang === 'en' ? "Open Darnell's email." : 'Abre el correo de Darnell.');
     await page.getByRole('button', { name: /Darnell Washington/ }).click();
     await page.getByRole('button', { name: /^(Reply|Responder)$/ }).click();
-    await expect(card).toContainText(lang === 'en' ? 'storage room' : 'almacén');
+    // The card asks the question; the answer only arrives after a wrong try.
+    await expect(card).toContainText(lang === 'en' ? 'where the extra aprons are' : 'dónde están los delantales');
+    await expect(card).not.toContainText(lang === 'en' ? 'storage room' : 'almacén');
     const body = page.locator('textarea').first();
     const send = page.getByRole('button', { name: /^(Send|Enviar)$/ });
     const incomplete = lang === 'en' ? 'I placed a supply order this morning.' : 'Dejé los delantales en la cocina hoy.';

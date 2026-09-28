@@ -196,7 +196,7 @@ function EnrollmentPortal() {
 
 function FinancialAidPortal() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
-  const { openApp } = useWindowManager();
+  const { openApp, active } = useWindowManager();
   const [view, setView] = useState<AidView>(completedTaskKeys.includes("financial-aid") ? "done" : "home");
   const [opened, setOpened] = useState(false);
   const [help, setHelp] = useState(false);
@@ -227,6 +227,8 @@ function FinancialAidPortal() {
           stepCount={AID_STEPS.length}
           instruction={AID_STEPS[stepIndex]}
           lang={lang}
+          primaryLabel={active === "pdf" ? (lang === "en" ? "Back to Browser" : "Volver al navegador") : undefined}
+          onPrimary={active === "pdf" ? () => openApp("browser", { tab: "college-portal" }) : undefined}
           rightNowLabel={AID_LABEL}
           onHelp={() => setHelp(true)}
         />
@@ -235,7 +237,6 @@ function FinancialAidPortal() {
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto max-w-[640px] rounded-xl border border-[#dadce0] bg-white p-5">
             <h2 className="text-[20px] font-medium">{c.heading}</h2>
-            <p className="mt-2 text-[15px] text-[#5f6368]">{c.letterNote}</p>
             <button
               type="button"
               onClick={openLetter}

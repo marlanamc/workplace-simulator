@@ -48,6 +48,10 @@ describe('core plus optional course routes', () => {
   it('does not credit management employment on a direct office route', () => {
     const history = practicedHistory(core);
     expect(history.map((h) => h.title.en)).not.toContain('Assistant Manager');
-    expect(history.every((h) => h.span.en === 'Simulated practice')).toBe(true);
+    expect(history.map((h) => [h.title.en, h.org, h.span.en])).toEqual([
+      ['Shift Lead', 'Harborside Cafe', 'September 2026 – Present'],
+      ['Team Member / New Hire', 'Harborside Cafe', 'August 2026 – September 2026'],
+    ]);
+    expect(JSON.stringify(history)).not.toMatch(/simulat/i);
   });
 });

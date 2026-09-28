@@ -98,7 +98,6 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       <div className="mb-1 flex items-center justify-between gap-3">
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
       </div>
-      <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 
       {view !== "done" && (
         <RightNowBar

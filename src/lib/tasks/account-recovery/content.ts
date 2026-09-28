@@ -82,11 +82,33 @@ export const TEXTS: RecoveryText[] = [
 export const FAKE_CODE = "915482";
 
 /**
- * The password a lesson learner is given on their info card. Story mode has no
- * card, so there any password gets through; a lesson checks this one, because
- * typing a password exactly is the skill.
+ * Fictional password supplied on the lesson info card or Story Job Card.
  */
 export const LESSON_PASSWORD = "Harbor2026";
+
+/**
+ * "Locked out" means the password is checked (finding #18): only the practice
+ * password gets through, in Story and in a lesson. Spaces around it are
+ * forgiven; capital letters are not, because a real sign-in does not forgive them.
+ */
+export function practicePasswordMatches(typed: string): boolean {
+  return typed.trim() === LESSON_PASSWORD;
+}
+
+/**
+ * Story mode has no info card. From Act II the Job Card shows a task's goal,
+ * not each click, so the password rides on the sign-in step's goal.
+ */
+export const STORY_SIGNIN_GOAL: Localized = {
+  en: "Sign in with the practice password Harbor2026.",
+  es: "Entra con la contraseña de práctica Harbor2026.",
+};
+
+/** Story correction for a wrong password (a lesson points at the info card). */
+export const STORY_WRONG_PASSWORD: Localized = {
+  en: "Use the practice password Harbor2026, with a capital H.",
+  es: "Usa la contraseña de práctica Harbor2026, con H mayúscula.",
+};
 
 /** Spaces and dashes are not part of a code: "482 915" is the same code. */
 function digitsOf(typed: string): string {
@@ -211,8 +233,8 @@ export const RECOVERY_COPY: Record<Lang, {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
-    en: "Type your password. Then click Sign in.",
-    es: "Escribe tu contraseña. Después haz clic en Iniciar sesión.",
+    en: "Type the practice password Harbor2026. Then click Sign in.",
+    es: "Escribe la contraseña de práctica Harbor2026. Después haz clic en Iniciar sesión.",
   },
   {
     en: "Look at your phone. See who sent each text. Click the real text from Google.",

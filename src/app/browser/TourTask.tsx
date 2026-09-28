@@ -36,7 +36,7 @@ export default function TourTask({
   /** Tell BrowserClient to begin the one-instruction-at-a-time walkthrough overlay. */
   onStartWalkthrough: () => void;
 }) {
-  const { markComplete, completedTaskKeys, lang, displayName, currentTrack } = useProgress();
+  const { markComplete, completedTaskKeys, lang, displayName, currentTrack, bridgePath } = useProgress();
   const [ownView, setView] = useState<View>(
     completedTaskKeys.includes("tour") ? "done" : startAtHelp ? "help" : "intro",
   );
@@ -54,7 +54,7 @@ export default function TourTask({
   const c = TOUR_COPY[lang];
   const intro = tourEventIntro(lang, displayName);
   const actKey = actForLevel(levelForTrack(currentTrack.key))?.key ?? "act1";
-  const home = welcomeHomeFor(actKey);
+  const home = welcomeHomeFor(actKey, bridgePath);
   const chrome =
     view === "done"
       ? { kicker: home.packetKicker[lang], title: home.packetTitle[lang] }

@@ -77,8 +77,9 @@ export default function MakeACopyTask() {
         {view !== "done" && (
           <RightNowBar
             icon={TASK_ICONS["make-a-copy"]}
-            stepIndex={view === "home" ? 0 : view === "template" ? 1 : 2}
+            stepIndex={view === "home" ? 0 : view === "copy" ? 3 : dialog ? 2 : 1}
             steps={RIGHT_NOW_STEPS}
+            goal={dialog ? { en: MAKE_COPY_COPY.en.nameHint, es: MAKE_COPY_COPY.es.nameHint } : undefined}
             lang={lang}
             rightNowLabel={RIGHT_NOW_LABEL}
             onShowMe={view === "home" ? () => showMe.toggleFor("open-file") : undefined}
@@ -157,11 +158,6 @@ export default function MakeACopyTask() {
 
       {(view === "template" || view === "copy") && (
         <div className="min-h-0 flex-1 overflow-auto p-4">
-          {view === "copy" && (
-            <div className="mb-3 max-w-[420px] rounded-sm border border-[#137333] bg-[#e6f4ea] px-3 py-2 text-[13px] text-[#137333]">
-              {c.typeHint}
-            </div>
-          )}
           <div className="inline-block border border-[#c0c0c0] text-[13px]">
             <div className="flex">
               <div className="h-6 w-8 border-b border-r border-[#c0c0c0] bg-[#f8f9fa]" />
@@ -173,8 +169,8 @@ export default function MakeACopyTask() {
             </div>
             <div className="flex">
               <div className="flex h-7 w-8 items-center justify-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] text-[12px] text-[#5f6368]">1</div>
-              <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">Day</div>
-              <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">Tickets</div>
+              <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">{lang === "en" ? "Day" : "Día"}</div>
+              <div className="flex h-7 w-[140px] items-center border-b border-r border-[#c0c0c0] bg-[#f8f9fa] px-1.5 font-medium">{lang === "en" ? "Tickets" : "Pedidos"}</div>
             </div>
             {STATUS_ROWS.map((row, i) => (
               <div key={row.key} className="flex">
@@ -205,14 +201,14 @@ export default function MakeACopyTask() {
         <div className="absolute inset-0 z-30 flex items-start justify-center bg-black/32 pt-16">
           <div className="w-[min(100%-2rem,420px)] rounded-3xl bg-white p-6 shadow-[0_4px_8px_3px_rgba(60,64,67,.15)]">
             <h2 className="mb-4 text-[22px] font-normal">{c.copyTitle}</h2>
-            <label className="mb-1 block text-[12px] text-[#5f6368]">{c.nameLabel}</label>
+            <label htmlFor="copy-file-name" className="mb-1 block text-[12px] text-[#5f6368]">{c.nameLabel}</label>
             <input
               autoFocus
+              id="copy-file-name"
               value={copyName}
               onChange={(e) => setCopyName(e.target.value)}
               className="w-full rounded border border-[#747775] px-3 py-2 text-[14px] outline-none focus:border-2 focus:border-[#0b57d0]"
             />
-            <p className="mt-2 text-[12px] text-[#5f6368]">{c.nameHint}</p>
             <div className="mt-6 flex justify-end gap-2">
               <button onClick={() => setDialog(false)} className="h-10 rounded-full px-4 text-[14px] font-medium text-[#0b57d0] cursor-pointer">
                 {c.cancel}

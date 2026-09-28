@@ -62,6 +62,11 @@ for (const lang of ['en', 'es'] as const) {
     await card.getByRole('button', { name: skipName }).click();
     await expect(card).toHaveAttribute('data-practice', 'inactive');
     await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
+    // Until the tour is finished, a reload brings the welcome beat back, and
+    // the practice with it: skipping once is not skipping for good.
+    await page.reload();
+    await expect(card.getByRole('button', { name: practiceName })).toBeVisible();
+    await expect(card.getByRole('button', { name: startName })).toBeVisible();
   });
 }
 

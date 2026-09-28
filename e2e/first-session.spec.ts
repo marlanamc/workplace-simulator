@@ -62,7 +62,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   // First a look beat: the address bar and back arrow are display-only here;
   // you navigate with the bookmarks.
   await expect(page.getByText("These are your bookmarks.", { exact: false })).toBeVisible();
-  await page.getByRole("button", { name: "Show me", exact: true }).click();
+  await page.getByRole("button", { name: "Next", exact: true }).click();
 
   // One instruction at a time; it advances only on the real click.
   await expect(page.getByText("Click Mail.")).toBeVisible();
@@ -84,7 +84,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
 
   // Level 0 done — the level-up celebration takes over, and its one button
   // hands off to the first real job.
-  await expect(page.getByText("You know how this computer works.")).toBeVisible();
+  await expect(page.getByText("You found your way around.")).toBeVisible();
   await page.getByRole("button", { name: "Open my first task" }).click();
 
   // Day One: the list on the shelf is now real. Point at the orange pin so
@@ -196,14 +196,14 @@ test("language choice on the login page sticks after signing in and reloading", 
   await card.getByTestId("job-card-collapse").click();
   await card.getByRole("button", { name: "Empezar a mirar", exact: true }).click();
   await expect(card.getByText("Estos son tus marcadores.", { exact: false })).toBeVisible();
-  await card.getByRole("button", { name: "Muéstramelos", exact: true }).click();
+  await card.getByRole("button", { name: "Siguiente", exact: true }).click();
   await page.getByTestId("bookmark-mail").click();
   await card.getByRole("button", { name: "Entiendo", exact: true }).click();
   await expect(card.getByText("Toca el ? en esta tarjeta para probar Ayuda.")).toBeVisible();
   await card.getByTestId("job-card-help").click();
   await expect(card.getByText("Dónde mirar", { exact: true })).toBeVisible();
   await card.getByRole("button", { name: "Entiendo. Volver a mi tarea", exact: true }).click();
-  await card.getByRole("button", { name: "Estoy listo para la tarea", exact: true }).click();
+  await card.getByRole("button", { name: "Empezar la tarea", exact: true }).click();
   await page.getByRole("button", { name: "Abrir mi primera tarea", exact: true }).click();
   await expect(card.getByText("Este botón naranja en la barra de abajo abre tu lista de tareas.")).toBeVisible();
   await card.getByRole("button", { name: "Entiendo", exact: true }).click();

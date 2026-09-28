@@ -125,15 +125,6 @@ export const BOOKMARK_LABEL: Record<TaskKey, string> = Object.fromEntries(
   TASK_LIST.map((d) => [d.key, d.bookmarkLabel]),
 ) as Record<TaskKey, string>;
 
-export function newTabHint(level: Level, taskKey: TaskKey | null, lang: Lang): string {
-  const sitting = sittingTitle(level, lang);
-  if (!taskKey) {
-    return lang === "en"
-      ? `${sitting}. Use the bookmarks bar to open your apps.`
-      : `${sitting}. Usa la barra de marcadores para abrir tus apps.`;
-  }
-  const bookmark = BOOKMARK_LABEL[taskKey];
-  return lang === "en"
-    ? `${sitting} · open ${bookmark} from the bar`
-    : `${sitting} · abre ${bookmark} en la barra`;
+export function newTabHint(level: Level, _taskKey: TaskKey | null, lang: Lang): string {
+  return sittingTitle(level, lang);
 }

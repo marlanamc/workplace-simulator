@@ -76,7 +76,7 @@ export default function PaystubTask() {
       </div>
 
       {/* Fallbacks so a Show me raised while the stub is hidden still resolves;
-          the PDF Reader marks the real, circled figures `data-showme-primary`. */}
+          the PDF Reader marks the real figures `data-showme-primary` (no circles until Show me). */}
       <span data-showme="stub-net-pay" className="sr-only" />
       <span data-showme="stub-hours" className="sr-only" />
       {view !== "done" && (
@@ -105,7 +105,6 @@ export default function PaystubTask() {
 
       {view === "list" && (
         <div>
-          <p className="mb-3 max-w-[52ch] text-[14px] leading-relaxed text-text-secondary">{c.listLead}</p>
           <div className="overflow-hidden rounded-xl border border-border bg-white">
             {PAY_STUBS.map((p, i) => (
               <button
@@ -135,6 +134,7 @@ export default function PaystubTask() {
           <div className="mb-2.5 text-[15px] font-medium">
             {view === "check1" ? netCheck.question : hoursCheck.question}
           </div>
+          {view === "check2" && <p className="mb-3 text-[14px]">{lang === "en" ? "Corrected time record · 6 shifts × 8 hours. Maria included the clock-in correction you requested." : "Registro de horas corregido · 6 turnos × 8 horas. Maria incluyó la corrección de entrada que pediste."}</p>}
           <div className="flex flex-wrap gap-2" data-showme="paystub-choices">
             {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
               <button

@@ -87,9 +87,9 @@ export const W4_COPY: Record<Lang, {
     blurb: "This form tells payroll how much tax to hold back from each paycheck.",
     nameLabel: "Employee name",
     statusLabel: "Filing status",
-    dependentsLabel: "Number of dependents (children or others the employee supports)",
+    dependentsLabel: "Total dependent and other credits ($)",
     dependentsHint: "If none, enter 0.",
-    dependentsShort: "Dependents",
+    dependentsShort: "Credits ($)",
     submit: "Submit W-4",
     doneTitle: "W-4 submitted.",
     doneBody: "Payroll now knows Robin's filing status.",
@@ -100,9 +100,9 @@ export const W4_COPY: Record<Lang, {
     blurb: "Este formulario le dice a nómina cuánto impuesto retener de cada cheque.",
     nameLabel: "Nombre del empleado",
     statusLabel: "Estado civil para impuestos",
-    dependentsLabel: "Número de dependientes (hijos u otras personas que el empleado mantiene)",
+    dependentsLabel: "Total de créditos por dependientes y otros créditos ($)",
     dependentsHint: "Si no hay, escribe 0.",
-    dependentsShort: "Dependientes",
+    dependentsShort: "Créditos ($)",
     submit: "Enviar W-4",
     doneTitle: "W-4 enviado.",
     doneBody: "Nómina ya conoce el estado civil para impuestos de Robin.",
@@ -188,7 +188,7 @@ export const DEPOSIT_COPY: Record<Lang, {
     accountTypeLabel: "Account type",
     submit: "Submit direct deposit",
     doneTitle: "Direct deposit set up.",
-    doneBody: "Your pay will land in your account each payday. That's all the paperwork. Day one is next.",
+    doneBody: "You entered Robin's practice bank details. These forms do not change any real bank account. Your first day at HQ is next.",
   },
   es: {
     formName: "Autorización de Depósito Directo",
@@ -201,7 +201,7 @@ export const DEPOSIT_COPY: Record<Lang, {
     accountTypeLabel: "Tipo de cuenta",
     submit: "Enviar depósito directo",
     doneTitle: "Depósito directo configurado.",
-    doneBody: "Tu pago llegará a tu cuenta cada día de pago. Eso es todo el papeleo. Sigue el primer día.",
+    doneBody: "Ingresaste los datos bancarios de práctica de Robin. Estos formularios no cambian ninguna cuenta real. Sigue tu primer día en la oficina central.",
   },
 };
 
@@ -234,7 +234,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
       s: [
         "It tells your job how much tax to hold back from each paycheck.",
         "Filing status (single, married, head of household) is the main choice. Choose the one for the person on the form.",
-        "A dependent is someone the person supports, usually a child. If there are none, type 0.",
+        "Step 3 is the total dollar amount of dependent and other credits. Robin has none, so this practice total is $0.",
         "In this practice, the person is Robin Avery. Read Robin's facts and decide for Robin, not for you.",
       ],
       tip: "On your own W-4 at a real job, you choose what is true for you. You can change it later.",
@@ -244,7 +244,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
       s: [
         "Le dice a tu trabajo cuánto impuesto retener de cada cheque.",
         "El estado civil para impuestos (soltero, casado, cabeza de familia) es la decisión principal. Elige el de la persona del formulario.",
-        "Un dependiente es alguien que esa persona mantiene, normalmente un hijo. Si no hay, escribe 0.",
+        "El Paso 3 es el monto total en dólares de créditos por dependientes y otros créditos. Robin no tiene ninguno, así que el total de práctica es $0.",
         "En esta práctica, la persona es Robin Avery. Lee los datos de Robin y decide por Robin, no por ti.",
       ],
       tip: "En tu propio W-4 en un trabajo real, eliges lo que es verdad para ti. Lo puedes cambiar después.",
@@ -305,8 +305,8 @@ export const PRACTICE_PROFILE = {
   status: 'single', dependents: '0', workStatus: 'citizen', bank: 'Practice Bank', routing: '000000000', account: '1234567890', accountType: 'checking',
 };
 export const PRACTICE_REFERENCE: Localized = {
- en: 'Fictional applicant: Robin Avery. Born 04/12/1990. Address: 123 Practice Lane. Form date: 10/01/2026. Single; no dependents. U.S. citizen. Practice Bank; routing 000000000; account 1234567890; checking. These are simplified practice forms, not real submissions.',
- es: 'Solicitante ficticio: Robin Avery. Nació el 04/12/1990 (mes/día/año). Dirección: 123 Practice Lane. Fecha del formulario: 10/01/2026. Soltero; sin dependientes. Ciudadano de EE. UU. Practice Bank; ruta 000000000; cuenta 1234567890; cuenta corriente. Son formularios simplificados de práctica, no trámites reales.',
+ en: 'Fictional applicant: Robin Avery. Born 04/12/1990. Address: 123 Practice Lane. Form date: 10/01/2026. Single; no dependents or other credits; Step 3 total $0. U.S. citizen. Practice Bank; routing 000000000; account 1234567890; checking. These are simplified practice forms, not real submissions.',
+ es: 'Persona ficticia: Robin Avery. Fecha de nacimiento: 04/12/1990 (mes/día/año). Dirección: 123 Practice Lane. Fecha del formulario: 10/01/2026. No está casado/a; sin dependientes ni otros créditos; total del Paso 3 $0. Ciudadanía de EE. UU. Practice Bank; ruta 000000000; cuenta 1234567890; cuenta corriente. Son formularios simplificados de práctica, no trámites reales.',
 };
 /**
  * Two month/day/year dates are the same day however they are written:
@@ -323,11 +323,19 @@ export function sameDate(typed: string, expected: string): boolean {
   return a !== null && a === parts(expected);
 }
 
+/** Step 3 is a dollar amount on the 2026 W-4, not a dependent count.
+ * Keep the legacy field key for saved practice data. */
+export function readW4CreditAmount(value: string): number | null {
+  const text = value.trim().replace(/^\$\s*/, '');
+  if (/^\d+(?:[.,]\d{1,2})?$/.test(text)) return Number(text.replace(',', '.'));
+  return readCount(text) === 0 ? 0 : null;
+}
+
 type PracticeKey = keyof typeof PRACTICE_PROFILE;
 
 function fieldMatches(key: PracticeKey, value: string): boolean {
   if (key === "date" || key === "dob") return sameDate(value, PRACTICE_PROFILE[key]);
-  if (key === "dependents") return readCount(value) === Number(PRACTICE_PROFILE.dependents);
+  if (key === "dependents") return readW4CreditAmount(value) === Number(PRACTICE_PROFILE.dependents);
   return value.trim().toLowerCase().replace(/\s+/g, " ") === PRACTICE_PROFILE[key].toLowerCase();
 }
 
@@ -348,8 +356,8 @@ export const W4_FIELD_HINT: Partial<Record<PracticeKey, Localized>> = {
     es: "Robin no está casado/a y no tiene hijos. Elige \"Soltero/a, o casado/a declarando por separado\".",
   },
   dependents: {
-    en: "Check Step 3. Robin has no children and supports no one else, so the number of dependents is 0.",
-    es: "Revisa el Paso 3. Robin no tiene hijos ni mantiene a nadie más, así que el número de dependientes es 0.",
+    en: "Check Step 3. Robin has no dependents or other credits, so the credit amount is $0.",
+    es: "Revisa el Paso 3. Robin no tiene dependientes ni otros créditos, así que el monto es $0.",
   },
   date: {
     en: "Check the Date box. Write the form date from Robin's facts: 10/01/2026 (month/day/year: October 1).",
@@ -382,8 +390,8 @@ export const W4_EMPTY_HINT: Record<W4Field, Localized> = {
     es: "Paso 1: elige el estado civil de Robin.",
   },
   dependents: {
-    en: "Step 3: type Robin's number of dependents in the box. If there are none, type 0.",
-    es: "Paso 3: escribe el número de dependientes de Robin en la casilla. Si no hay, escribe 0.",
+    en: "Step 3: enter Robin's dependent and other credits in dollars. Robin's total is $0.",
+    es: "Paso 3: escribe los créditos de Robin en dólares. El total de Robin es $0.",
   },
   signature: {
     en: "Step 5: the Signature box is empty. Type Robin's full name there.",
@@ -396,8 +404,8 @@ export const W4_EMPTY_HINT: Record<W4Field, Localized> = {
 };
 
 export const W4_NOT_A_COUNT: Localized = {
-  en: "Step 3 needs a number, like 0, 1, or 2.",
-  es: "El Paso 3 necesita un número, como 0, 1 o 2.",
+  en: "Step 3 needs a dollar amount, such as 0 or $0.00.",
+  es: "El Paso 3 necesita un monto en dólares, como 0 o $0.00.",
 };
 
 export const W4_SIGNATURE_HINT: Localized = {
@@ -420,7 +428,7 @@ export function w4Problem(v: W4Values): { field: W4Field; hint: Localized } | nu
   if (!v.status) return { field: "status", hint: W4_EMPTY_HINT.status };
   if (v.status !== PRACTICE_PROFILE.status) return { field: "status", hint: W4_STATUS_WRONG[v.status] ?? W4_FIELD_HINT.status! };
   if (!v.dependents.trim()) return { field: "dependents", hint: W4_EMPTY_HINT.dependents };
-  if (readCount(v.dependents) === null) return { field: "dependents", hint: W4_NOT_A_COUNT };
+  if (readW4CreditAmount(v.dependents) === null) return { field: "dependents", hint: W4_NOT_A_COUNT };
   if (!fieldMatches("dependents", v.dependents)) return { field: "dependents", hint: W4_FIELD_HINT.dependents! };
   if (!v.signature.trim()) return { field: "signature", hint: W4_EMPTY_HINT.signature };
   if (!signatureMatches(v.signature, PRACTICE_PROFILE.name)) return { field: "signature", hint: W4_SIGNATURE_HINT };
@@ -448,8 +456,8 @@ export const W4_STEPS: Localized[] = [
     es: "Lee los datos de Robin arriba. Elige el estado civil que corresponde a Robin.",
   },
   {
-    en: "Type how many dependents Robin has. A dependent is a child or someone Robin supports.",
-    es: "Escribe cuántos dependientes tiene Robin. Un dependiente es un hijo o alguien que Robin mantiene.",
+    en: "Enter Robin's total credits in Step 3. This box is a dollar amount, not a count of people.",
+    es: "Escribe el total de créditos de Robin en el Paso 3. Esta casilla es un monto en dólares, no un número de personas.",
   },
   {
     en: "Sign with Robin's full name. Write the form date. Then click Submit W-4.",

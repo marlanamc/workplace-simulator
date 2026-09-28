@@ -5,21 +5,21 @@ import { PAPERWORK_SHELL, PRACTICE_PROFILE, W4_COPY, W4_STATUS_OPTIONS } from "@
 const COPY = {
   en: {
     viewer: "Payroll documents", practice: "SIMPLIFIED PRACTICE COPY", page: "Page 1 of 1",
-    personal: "Personal information", dependents: "Dependents", sign: "Signature",
+    personal: "Personal information", dependents: "Dependent and other credits", sign: "Signature",
     step: "Step", address: "Address", reference: "Robin's facts",
-    details: "Robin Avery · Not married · No children, supports no one else · Form date: 10/01/2026",
+    details: "Robin Avery · Not married · No dependents or other credits · Step 3 total $0 · Form date: 10/01/2026",
     omitted: "Steps 2 and 4 · Multiple jobs and other adjustments are not included in this practice copy.",
     note: "Practice version • Fictional information • Not for filing",
-    simplified: "Dependent count only; tax-credit calculations are omitted in this practice version.",
+    simplified: "Step 3 records a dollar amount. This practice example has no credits; calculations for other situations are omitted.",
   },
   es: {
     viewer: "Documentos de nómina", practice: "COPIA SIMPLIFICADA DE PRÁCTICA", page: "Página 1 de 1",
-    personal: "Información personal", dependents: "Dependientes", sign: "Firma",
+    personal: "Información personal", dependents: "Créditos por dependientes y otros créditos", sign: "Firma",
     step: "Paso", address: "Dirección", reference: "Datos de Robin",
-    details: "Robin Avery · No está casado/a · Sin hijos, no mantiene a nadie más · Fecha del formulario: 10/01/2026 (1 de octubre)",
+    details: "Robin Avery · No está casado/a · Sin dependientes ni otros créditos · Total del Paso 3 $0 · Fecha del formulario: 10/01/2026 (1 de octubre)",
     omitted: "Pasos 2 y 4 · Los empleos múltiples y otros ajustes no se incluyen en esta copia de práctica.",
     note: "Versión de práctica • Datos ficticios • No válida para trámites",
-    simplified: "Solo el número de dependientes; esta versión de práctica omite el cálculo de créditos fiscales.",
+    simplified: "El Paso 3 registra un monto en dólares. Este ejemplo no tiene créditos; se omiten los cálculos para otras situaciones.",
   },
 };
 

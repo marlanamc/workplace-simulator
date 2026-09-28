@@ -13,6 +13,8 @@ import {
   RIGHT_NOW_LABEL,
   RIGHT_NOW_STEPS,
   isCurrentHqFile,
+  hqFileMatches,
+  NO_FILES_MATCH,
   shareIsViewOnly,
   type HqDriveFile,
 } from "@/lib/tasks/office-drive/content";
@@ -49,12 +51,7 @@ export default function OfficeDriveTask() {
   const c = HQ_DRIVE_COPY[lang];
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return HQ_FILES.filter((f) => {
-      if (folder && f.folder !== folder) return false;
-      if (q && !f.name.toLowerCase().includes(q) && !f.folder.toLowerCase().includes(q)) return false;
-      return true;
-    });
+    return HQ_FILES.filter((f) => (!folder || f.folder === folder) && hqFileMatches(f, query));
   }, [query, folder]);
 
   const pickFile = (f: HqDriveFile) => {
@@ -196,6 +193,7 @@ export default function OfficeDriveTask() {
                   {folder ?? (query.trim() ? c.filesHeading : c.navShared)}
                 </h2>
                 <div className="flex flex-col">
+                  {filtered.length === 0 && <p role="status" className="py-4">{NO_FILES_MATCH[lang]}</p>}
                   {filtered.map((f) => (
                     <button
                       key={f.key}
@@ -221,7 +219,7 @@ export default function OfficeDriveTask() {
                   <label className="mb-1 block text-[12px] font-medium text-[#5f6368]">{c.addPeople}</label>
                   <div className="mb-3 flex items-center gap-2 rounded-lg border border-[#dadce0] px-3 py-2">
                     <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#7248b9] text-[11px] font-medium text-white">
-                      DO
+                      CO
                     </span>
                     <span className="text-[14px]">{SHARE_WITH}</span>
                   </div>

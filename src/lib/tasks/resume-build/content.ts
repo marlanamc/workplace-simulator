@@ -193,15 +193,15 @@ export function bulletHint(problem: BulletProblem, role: string, lang: Lang): st
 
 export const SUMMARY_STARTERS: Record<Lang, string[]> = {
   en: [
-    "I practiced workplace tools in the Harborside simulator.",
+    "I used email, schedules, and shared files at Harborside Cafe.",
     "I practiced checking schedules and sharing accurate information.",
     "Comfortable with email, calendars, and spreadsheets.",
     "Looking for a full-time office role.",
   ],
   es: [
-    "Practiqué herramientas de trabajo en el simulador Harborside.",
+    "Usé correo, horarios y archivos compartidos en Harborside Cafe.",
     "Practiqué revisar horarios y compartir información correcta.",
-    "Cómodo con correo, calendarios y hojas de cálculo.",
+    "Con experiencia en correo, calendarios y hojas de cálculo.",
     "Busco un puesto de oficina de tiempo completo.",
   ],
 };
@@ -246,8 +246,8 @@ export const LESSON_BULLET_STARTERS: Record<Lang, string[]> = {
 };
 
 export const BULLET_STARTERS: Record<Lang, string[]> = {
-  en: ['Found a schedule conflict and requested a swap in the simulator.', 'Entered figures and reported a spreadsheet total.', 'Shared a current file with view-only access.', 'Sent a clear message to a simulated coworker.'],
-  es: ['Encontré un conflicto de horario y pedí un cambio en el simulador.', 'Ingresé cifras y reporté el total de una hoja de cálculo.', 'Compartí un archivo actual con acceso de solo lectura.', 'Envié un mensaje claro a un compañero simulado.'],
+  en: ['Found a schedule conflict and requested a swap.', 'Entered figures and reported a spreadsheet total.', 'Shared a current file with view-only access.', 'Sent a clear message to a coworker.'],
+  es: ['Encontré un conflicto de horario y pedí un cambio.', 'Ingresé cifras y reporté el total de una hoja de cálculo.', 'Compartí un archivo actual con acceso de solo lectura.', 'Envié un mensaje claro a un compañero.'],
 };
 
 export const LESSONS: Record<Lang, Lesson[]> = {
@@ -258,6 +258,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "One page. A summary line, your last two or three jobs, and your skills. That's it.",
         "For each job, write one thing you did well, not your whole job description. Start with an action word: ran, checked, trained, fixed, built.",
         "Use the jobs you have. \"Team Member\" and \"Shift Lead\" at a cafe are real experience and they count.",
+        "In this story, your roles and dates come from Harborside Cafe. They are practice. On a real résumé, use your own real jobs and dates.",
       ],
       tip: "Numbers help: \"trained 4 new hires\" beats \"trained new hires.\"",
     },
@@ -269,6 +270,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
         "Una página. Una línea de resumen, tus últimos dos o tres trabajos, y tus habilidades. Eso es todo.",
         "Para cada trabajo, escribe una cosa que hiciste bien, no toda la descripción del puesto. Empieza con un verbo: manejé, revisé, capacité, arreglé, armé.",
         "Usa los trabajos que tienes. \"Miembro del equipo\" y \"Líder de turno\" en un café son experiencia real y cuentan.",
+        "En esta historia, tus puestos y fechas vienen de Harborside Cafe. Son de práctica. En un currículum real, usa tus propios trabajos y fechas reales.",
       ],
       tip: "Los números ayudan: \"capacité a 4 empleados nuevos\" es mejor que \"capacité a empleados nuevos.\"",
     },

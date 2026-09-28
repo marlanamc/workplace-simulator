@@ -35,8 +35,12 @@ type View = "form" | "done";
 export default function IncidentTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("incident") ? "done" : "form");
-  const [when, setWhen] = useState(DEFAULTS.en.when);
-  const [where, setWhere] = useState(DEFAULTS.en.where);
+  // null = untouched: the prefilled answer follows the language switch until
+  // the learner types (the `override ?? stored` pattern, no effect needed).
+  const [whenEdit, setWhen] = useState<string | null>(null);
+  const [whereEdit, setWhere] = useState<string | null>(null);
+  const when = whenEdit ?? DEFAULTS[lang].when;
+  const where = whereEdit ?? DEFAULTS[lang].where;
   const [what, setWhat] = useState("");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
@@ -59,8 +63,8 @@ export default function IncidentTask() {
 
   const restart = () => {
     setView("form");
-    setWhen(DEFAULTS[lang].when);
-    setWhere(DEFAULTS[lang].where);
+    setWhen(null);
+    setWhere(null);
     setWhat("");
   };
 

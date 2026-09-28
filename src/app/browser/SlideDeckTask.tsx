@@ -3,6 +3,7 @@
 import { EXPENSE_ROWS } from "@/lib/tasks/expense-report/content";
 import { mentionsAmount } from "@/lib/text-facts";
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   SLIDES_COPY,
@@ -13,6 +14,7 @@ import {
   COWORKER_QUESTION,
   COWORKER_ANSWERS,
   slideDeckPasses,
+  slideFigure,
   describeSubmission,
 } from "@/lib/tasks/slide-deck/content";
 import { useNudge } from "@/lib/use-nudge";
@@ -26,12 +28,12 @@ import RightNowBar from "@/components/task/RightNowBar";
 export default function SlideDeckTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [done, setDone] = useState(completedTaskKeys.includes("slide-deck"));
-  const [index, setIndex] = useState(0);
-  const [title, setTitle] = useState("");
-  const [takeaway, setTakeaway] = useState("");
-  const [figure, setFigure] = useState("");
+  const [index, setIndex] = useTaskDraft("slide-deck", "index", 0);
+  const [title, setTitle] = useTaskDraft("slide-deck", "title", "");
+  const [takeaway, setTakeaway] = useTaskDraft("slide-deck", "takeaway", "");
+  const [figure, setFigure] = useTaskDraft("slide-deck", "figure", "");
   const confirmed = mentionsAmount(figure, PLANTED_TOTAL);
-  const [coworkerAnswer, setCoworkerAnswer] = useState("");
+  const [coworkerAnswer, setCoworkerAnswer] = useTaskDraft("slide-deck", "coworkerAnswer", "");
   const [presenting, setPresenting] = useState(false);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
@@ -89,7 +91,7 @@ export default function SlideDeckTask() {
   /** What each slide shows in a thumbnail — a tiny echo of the real slide. */
   const thumbBody = (i: number): string => {
     if (i === 0) return title.trim() || c.slideLabels[0];
-    if (i === 1) return figure.trim() || c.slideLabels[1];
+    if (i === 1) return slideFigure(figure) || c.slideLabels[1];
     return takeaway.trim() ? takeaway.trim().slice(0, 40) : c.slideLabels[2];
   };
 
@@ -157,7 +159,7 @@ export default function SlideDeckTask() {
           >
             {presenting ? (
               <div className="space-y-3">
-                <h2 className="text-xl">{title}</h2><p>${figure}</p><p>{takeaway}</p>
+                <h2 className="text-xl">{title}</h2><p>{slideFigure(figure)}</p><p>{takeaway}</p>
                 <p>{COWORKER_QUESTION[lang]}</p>
                 <select aria-label={COWORKER_QUESTION[lang]} value={coworkerAnswer} onChange={(e) => setCoworkerAnswer(e.target.value)} className="min-h-11 w-full rounded border bg-white p-2 text-[#202124]">
                   <option value="">{lang === "en" ? "Choose a response" : "Elige una respuesta"}</option>

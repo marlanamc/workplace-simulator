@@ -11,8 +11,8 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   es: {
     emoji: "🤒",
     kicker: "Uy no",
-    headline: "Te sientes enferma/o y no sabes qué hacer.",
-    body: "Tu turno es mañana, pero no crees que puedas ir. Antes de adivinar, revisa el manual para ver cómo avisar que estás enfermo.",
+    headline: "Te sientes mal y no sabes qué hacer.",
+    body: "Tu turno es mañana, pero no crees que puedas ir. Antes de adivinar, revisa el manual para ver cómo avisar que faltas por enfermedad.",
     cta: "Revisar el manual",
   },
 };
@@ -25,8 +25,8 @@ export interface CheckOption {
 
 export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; options: CheckOption[] }> = {
   en: {
-    scenario: "Jordan, I heard you might not make it tomorrow. The handbook says how early you have to tell us. Can you check and tell me? I need to cover your shift.",
-    question: "How early do I have to call if I can't come in?",
+    scenario: "I heard you might not make it tomorrow. The handbook says how early you have to tell us. Can you check and tell me? I need to cover your shift.",
+    question: "How early do you have to call if you can't come in?",
     options: [
       {
         label: "At least 2 hours before",
@@ -37,7 +37,7 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         isTarget: false,
         wrongHint: {
           en: "That's how long a meal break is, not how early you must call out. Check the \"Calling out sick\" article again.",
-          es: "Esa es la duración de un descanso para comer, no la ventana para avisar. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
+          es: "Esa es la duración de un descanso para comer, no la ventana para avisar. Revisa otra vez el artículo \"Calling out sick\" (avisar por enfermedad).",
         },
       },
       {
@@ -45,14 +45,14 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         isTarget: false,
         wrongHint: {
           en: "The handbook gives an exact number of hours. Look at the \"Calling out sick\" article again.",
-          es: "El manual da un número exacto de horas. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
+          es: "El manual da un número exacto de horas. Revisa otra vez el artículo \"Calling out sick\" (avisar por enfermedad).",
         },
       },
     ],
   },
   es: {
-    scenario: "Jordan, oí que tal vez no puedas venir mañana. El manual dice con cuánta anticipación hay que avisarnos. ¿Puedes revisar y decirme? Necesito cubrir tu turno.",
-    question: "¿Con cuánta anticipación tengo que llamar si no puedo ir?",
+    scenario: "Oí que tal vez no puedas venir mañana. El manual dice con cuánta anticipación hay que avisarnos. ¿Puedes revisar y decirme? Necesito cubrir tu turno.",
+    question: "¿Con cuánta anticipación tienes que avisar si no puedes venir?",
     options: [
       {
         label: "Al menos 2 horas antes",
@@ -63,7 +63,7 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         isTarget: false,
         wrongHint: {
           en: "That's how long a meal break is, not how early you must call out. Check the \"Calling out sick\" article again.",
-          es: "Esa es la duración de un descanso para comer, no la ventana para avisar. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
+          es: "Esa es la duración de un descanso para comer, no la ventana para avisar. Revisa otra vez el artículo \"Calling out sick\" (avisar por enfermedad).",
         },
       },
       {
@@ -71,7 +71,7 @@ export const SCENARIO_CHECK: Record<Lang, { scenario: string; question: string; 
         isTarget: false,
         wrongHint: {
           en: "The handbook gives an exact number of hours. Look at the \"Calling out sick\" article again.",
-          es: "El manual da un número exacto de horas. Revisa otra vez el artículo \"Cómo avisar si estás enfermo\".",
+          es: "El manual da un número exacto de horas. Revisa otra vez el artículo \"Calling out sick\" (avisar por enfermedad).",
         },
       },
     ],
@@ -148,7 +148,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Encontrar el artículo correcto",
       s: [
         "Usa la caja de búsqueda, o revisa las secciones a la izquierda.",
-        "Relaciona las palabras de la situación con el título del artículo. \"Enfermo\" apunta a \"Cómo avisar si estás enfermo\".",
+        "Relaciona las palabras de la situación con el título del artículo. La palabra sick (enfermedad) apunta al artículo \"Calling out sick\".",
         "Lee todo el artículo antes de responder. El número o la regla exacta suele estar en las primeras líneas.",
       ],
       tip: "Adivinar parece más rápido, pero revisar toma menos tiempo que arreglar una respuesta equivocada.",
@@ -161,6 +161,6 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   {
     en: "Read the handbook and find the rule for calling out sick.",
-    es: "Lee el manual y busca la regla para avisar que estás enfermo.",
+    es: "Lee el manual y busca la regla para avisar por enfermedad.",
   },
 ];

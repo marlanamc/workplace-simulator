@@ -1,5 +1,7 @@
 "use client";
 
+import SheetEmailMenu from "@/components/task/SheetEmailMenu";
+
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
@@ -80,6 +82,8 @@ export default function StatusReportTask() {
         <span className="text-[18px] text-[#3c4043]">{view === "home" ? c.appName : c.sheetName}</span>
         <div className="flex-1" />
       </div>
+
+      {(view === "sheet" || view === "compose") && <SheetEmailMenu lang={lang} onEmail={tryEmail} />}
 
       {view !== "done" && (
         <RightNowBar
@@ -178,12 +182,7 @@ export default function StatusReportTask() {
               </button>
             </div>
           </div>
-          <button
-            onClick={tryEmail}
-            className="mt-3 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white cursor-pointer"
-          >
-            {c.emailCta}
-          </button>
+
         </div>
       )}
 

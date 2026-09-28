@@ -243,7 +243,7 @@ export default function Shelf({
             // ("That's today done"), and two names for one thing is the
             // confusion this pass exists to remove.
             <p className="mt-0.5 truncate text-[11px] leading-tight text-white/55">
-              {lang === "en" ? "This day is done" : "Este día está hecho"}
+              {lang === "en" ? "This day is done" : "Terminaste este día"}
             </p>
           )}
         </div>

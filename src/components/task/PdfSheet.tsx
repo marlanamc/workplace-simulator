@@ -175,7 +175,7 @@ function PayStubPage({
                       data-showme="stub-hours"
                       data-showme-primary=""
                       data-showme-oval=""
-                      className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.45em] py-[0.08em]"
+                      className="inline-block"
                     >
                       {hours[0]}
                     </span>
@@ -219,7 +219,7 @@ function PayStubPage({
                 data-showme="stub-net-pay"
                 data-showme-primary=""
                 data-showme-oval=""
-                className="inline-block -rotate-2 rounded-[50%] border-[2.5px] border-[#e87400] px-[0.55em] py-[0.12em]"
+                className="inline-block"
               >
                 {doc.netPay}
               </span>
@@ -307,7 +307,7 @@ export function PdfSheet({
           {doc.kind === "report" ? (
             <ReportPage doc={doc} />
           ) : doc.kind === "award-letter" ? (
-            <AwardLetterPage doc={doc} />
+            <AwardLetterPage doc={employeeName ? { ...doc, student: employeeName } : doc} />
           ) : doc.kind === "schedule" ? (
             <SchedulePage doc={doc} />
           ) : (

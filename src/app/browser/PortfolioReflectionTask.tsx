@@ -185,12 +185,12 @@ export default function PortfolioReflectionTask() {
             <>
               <div>
                 <h2 className="text-[20px] font-medium leading-tight">{c.reflectTitle}</h2>
-                <p className="mt-1 text-[13px] leading-relaxed text-[#5f6368]">{c.reflectIntro}</p>
               </div>
               {PROMPTS.map((prompt, i) => (
                 <div key={i}>
-                  <label className="text-[14px] font-medium text-[#3c4043]">{prompt[lang]}</label>
+                  <label htmlFor={`reflection-${i}`} className="text-[14px] font-medium text-[#3c4043]">{prompt[lang]}</label>
                   <textarea
+                    id={`reflection-${i}`}
                     value={answers[i]}
                     onChange={(e) => setAnswer(i, e.target.value)}
                     placeholder={c.answerPlaceholder}

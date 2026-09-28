@@ -1,5 +1,7 @@
 "use client";
 
+import SheetEmailMenu from "@/components/task/SheetEmailMenu";
+
 import { useRef, useState, type CSSProperties } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
@@ -25,6 +27,7 @@ import {
   BUDGET_SHEET_NAME,
 } from "@/lib/tasks/budget-sheet/content";
 import { CELL_FOCUS, SentEmailRecap, pickStarter } from "./sheet-lesson-parts";
+import { handleGridKey } from "@/lib/sheet-grid-keys";
 import { useNudge } from "@/lib/use-nudge";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -43,9 +46,11 @@ type Cell = { row: number; col: Col };
 const COLS: Col[] = ["A", "B", "C", "D", "E"];
 const HEADER_ROW = 1;
 const FIRST_DATA_ROW = 2;
-const COL_WIDTH: Record<Col, number> = { A: 168, B: 84, C: 84, D: 72, E: 236 };
+const COL_WIDTH: Record<Col, number> = { A: 168, B: 84, C: 84, D: 180, E: 236 };
 /** The last line's row; the Total row's SUMs run from row 2 to here. */
 const LAST_DATA_ROW = FIRST_DATA_ROW + BUDGET_ROWS.length - 1;
+/** Every drawn row, top to bottom, for arrow-key movement. */
+const GRID_ROWS = [HEADER_ROW, ...BUDGET_ROWS.map((_, i) => FIRST_DATA_ROW + i), TOTAL_ROW];
 
 // One slot per budget line, so the chart fits however many lines there are.
 const CHART_PAD = 10;
@@ -165,6 +170,8 @@ export default function BudgetSheetTask() {
         <div className="flex-1" />
       </div>
 
+      {(view === "sheet" || view === "compose") && <SheetEmailMenu lang={lang} onEmail={tryEmail} showMeId="email-cta" />}
+
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["budget-sheet"]}
@@ -245,7 +252,11 @@ export default function BudgetSheetTask() {
             </div>
 
             <div className="flex flex-wrap items-start gap-6">
-              <div className="inline-block border border-[#c0c0c0]" style={{ fontSize: 13 }}>
+              <div
+                className="inline-block border border-[#c0c0c0]"
+                style={{ fontSize: 13 }}
+                onKeyDown={(e) => handleGridKey(e, selected, GRID_ROWS, COLS, (cell) => { showMe.clear(); select(cell); })}
+              >
                 {/* The two header rows stay on screen while the sheet
                     scrolls, so Budget and Actual are always labeled. */}
                 <div className="sticky top-0 z-10">
@@ -268,6 +279,8 @@ export default function BudgetSheetTask() {
                   {COLS.map((col) => (
                     <button
                       key={col}
+                      tabIndex={selected.row === HEADER_ROW && selected.col === col ? 0 : -1}
+                      data-grid-cell={`${HEADER_ROW}:${col}`}
                       data-showme={col === "D" ? "status-column" : undefined}
                       data-showme-look={col === "D" ? SHOW_ME_LOOK[lang] : undefined}
                       onClick={() => select({ row: HEADER_ROW, col })}
@@ -295,7 +308,7 @@ export default function BudgetSheetTask() {
                         if (col === "A") text = row.label[lang];
                         else if (col === "B") text = dollars(row.budget);
                         else if (col === "C") text = dollars(row.actual);
-                        else if (col === "D") text = status === "over" ? c.overLabel : c.underLabel;
+                        else if (col === "D") text = status === "over" ? c.overLabel : c.withinLabel;
                         else text = row.note[lang];
                         // No red fill on the "over" cell: finding it means
                         // reading the words and numbers, not spotting a color.
@@ -309,6 +322,8 @@ export default function BudgetSheetTask() {
                         return (
                           <button
                             key={col}
+                            tabIndex={isSelected ? 0 : -1}
+                            data-grid-cell={`${r}:${col}`}
                             onClick={() => { showMe.clear(); select({ row: r, col }); }}
                             className={`shrink-0 truncate border-b border-r border-[#c0c0c0] px-1.5 text-[13px] cursor-pointer ${CELL_FOCUS} ${
                               col === "B" || col === "C" ? "text-right tabular-nums" : col === "E" ? "text-left text-[#5f6368]" : "text-left"
@@ -331,6 +346,8 @@ export default function BudgetSheetTask() {
                     return (
                       <button
                         key={col}
+                        tabIndex={selected.row === TOTAL_ROW && selected.col === col ? 0 : -1}
+                        data-grid-cell={`${TOTAL_ROW}:${col}`}
                         onClick={() => { showMe.clear(); select({ row: TOTAL_ROW, col }); }}
                         className={`shrink-0 border-b border-r border-t-2 border-[#c0c0c0] border-t-[#5f6368] bg-[#f8f9fa] px-1.5 text-[13px] font-bold cursor-pointer ${CELL_FOCUS} ${
                           col === "B" || col === "C" ? "text-right tabular-nums" : "text-left"
@@ -374,13 +391,7 @@ export default function BudgetSheetTask() {
               </div>
             </div>
 
-            <button
-              onClick={tryEmail}
-              data-showme="email-cta"
-              className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-            >
-              {c.emailCta}
-            </button>
+
           </div>
         </div>
       )}

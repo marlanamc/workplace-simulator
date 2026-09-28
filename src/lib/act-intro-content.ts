@@ -1,5 +1,5 @@
 import type { SkillTile } from "@/components/welcome-shell";
-import { CAST } from "@/lib/cast";
+import { CAST, COLLEGE_NAME, HEALTH_NAME } from "@/lib/cast";
 import type { Lang, Localized } from "@/lib/task-types";
 
 /**
@@ -13,7 +13,7 @@ import type { Lang, Localized } from "@/lib/task-types";
  * The same copy stays readable on the Browser Welcome tab (`welcomeHomeFor`).
  */
 
-export const actIntroFlag = (actKey: string) => `act-intro-seen:${actKey}`;
+export const actIntroFlag = (actKey: string, path?: 'a' | 'b' | null) => `act-intro-seen:${actKey}${actKey === 'act5' && path ? `:${path}` : ''}`;
 
 export type ActIntroActKey = "act2" | "act3" | "act4" | "act5" | "act6" | "act7";
 
@@ -68,7 +68,7 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
 
   act3: {
     actLabel: { en: "Act III", es: "Acto III" },
-    role: { en: "You're a Shift Supervisor now", es: "Ahora eres supervisor de turno" },
+    role: { en: "You're a Shift Supervisor now", es: "Ahora supervisas los turnos" },
     roleLine: {
       en: "You decide for the whole crew, not just for yourself.",
       es: "Decides por todo el equipo, no solo por ti.",
@@ -119,8 +119,8 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
     actLabel: { en: "Act V", es: "Acto V" },
     role: { en: "Pick a path", es: "Elige un camino" },
     roleLine: {
-      en: "You can try one path, both, or skip this act. Nothing here is required.",
-      es: "Puedes probar un camino, los dos, o saltarte este acto. Nada aquí es obligatorio.",
+      en: "This part has two directions: getting ready for college, or a clinic front desk. You work on the one you chose.",
+      es: "Esta parte tiene dos caminos: prepararte para la universidad o la recepción de una clínica. Trabajas en el que elegiste.",
     },
     manager: {
       en: `Path A: ${CAST.marcus.name}, a college advisor. Path B: ${CAST.thuy.name}, a front desk supervisor.`,
@@ -146,7 +146,7 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
     role: { en: "Moving to the office", es: "Te mueves a la oficina" },
     roleLine: {
       en: "Harborside HQ has an Office Administrator opening. First you apply for it: a posting, an application, a résumé, an interview. Then you start the job.",
-      es: "Harborside HQ tiene una vacante de Administrador de Oficina. Primero aplicas: un anuncio, una solicitud, un currículum, una entrevista. Luego empiezas el trabajo.",
+      es: "Harborside HQ tiene una vacante en administración de oficina. Primero te postulas: un anuncio, una solicitud, un currículum, una entrevista. Luego empiezas el trabajo.",
     },
     manager: managerLine("anita"),
     bridge: {
@@ -166,14 +166,14 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
 
   act7: {
     actLabel: { en: "Act VII", es: "Acto VII" },
-    role: { en: "You're a Team Lead now", es: "Ahora eres Team Lead" },
+    role: { en: "You're a Team Lead now", es: "Ahora eres líder de equipo" },
     roleLine: {
-      en: "You run the room. Every skill from before comes back together.",
-      es: "Diriges la sala. Cada habilidad de antes vuelve a juntarse.",
+      en: "Anita gives you a new job: Team Lead for the cafe crew. You know the crew from your cafe shifts, and now you know the HQ tools. You plan their meetings, write a review, and send their weekly report.",
+      es: "Anita te da un puesto nuevo: líder de equipo del personal del café. Conoces al equipo por tus turnos en el café, y ahora conoces las herramientas de la oficina central. Organizas sus reuniones, escribes una evaluación y envías su reporte semanal.",
     },
     manager: {
-      en: `${CAST.anita.name} is still your manager. This is the last part of the story so far.`,
-      es: `${CAST.anita.name} sigue siendo tu jefa. Esta es la última parte de la historia hasta ahora.`,
+      en: `${CAST.anita.name} is still your manager at HQ. Renata still runs the cafe. This is the last part of the story so far.`,
+      es: `${CAST.anita.name} sigue siendo tu jefa en la oficina central. Renata sigue a cargo del café. Esta es la última parte de la historia hasta ahora.`,
     },
     bridge: {
       en: "Nothing here is a brand-new tool. You run a meeting start to finish, write a fair review, and send one full weekly report.",
@@ -190,7 +190,25 @@ export const ACT_INTROS: Record<ActIntroActKey, ActIntro> = {
   },
 };
 
-export function actIntroFor(actKey: string): ActIntro | undefined {
+export function actIntroFor(actKey: string, path?: 'a' | 'b' | null): ActIntro | undefined {
+  if (actKey === 'act5' && path) {
+    const college = path === 'a';
+    return {
+      ...ACT_INTROS.act5,
+      role: college ? { en: 'Getting ready for college', es: 'Preparación para la universidad' } : { en: 'Trying the clinic front desk', es: 'Práctica en la recepción de una clínica' },
+      roleLine: college
+        ? { en: `Harborside will pay for one class at ${COLLEGE_NAME}. You keep your cafe job. ${CAST.marcus.name}, an advisor there, helps you apply and get ready.`, es: `Harborside pagará una clase en ${COLLEGE_NAME}. Sigues con tu trabajo en el café. ${CAST.marcus.name}, un asesor de allí, te ayuda con la solicitud y la preparación.` }
+        : { en: `${HEALTH_NAME} is a clinic in the same neighborhood as the cafe. It is a different workplace, not part of the cafe. The clinic needs front desk help, and Renata shared your name. ${CAST.thuy.name} agreed to let you try the work.`, es: `${HEALTH_NAME} es una clínica en el mismo barrio que el café. Es otro lugar de trabajo, no es parte del café. La clínica necesita ayuda en la recepción, y Renata les dio tu nombre. ${CAST.thuy.name} aceptó que pruebes el trabajo.` },
+      manager: college
+        ? { en: `${CAST.marcus.name} is your college advisor.`, es: `${CAST.marcus.name} es tu asesor universitario.` }
+        : { en: `${CAST.thuy.name} is your front desk supervisor. You help at the desk. You do not give medical advice.`, es: `${CAST.thuy.name} es tu supervisora de recepción. Ayudas en la recepción. No das consejos médicos.` },
+      bridge: college
+        ? { en: 'Read college documents, plan your coursework, and check a source before using it.', es: 'Lee documentos de la universidad, organiza tus tareas y revisa una fuente antes de usarla.' }
+        : { en: 'Book appointments, check patient forms and charges, and keep private information safe.', es: 'Agenda citas, revisa formularios y cargos, y protege la información privada.' },
+      skills: college ? ACT_INTROS.act5.skills.filter((_, i) => i === 0 || i === 1 || i === 4) : ACT_INTROS.act5.skills.slice(2),
+      skillsTitle: NEW_SKILLS_TITLE,
+    };
+  }
   return (ACT_INTROS as Record<string, ActIntro>)[actKey];
 }
 

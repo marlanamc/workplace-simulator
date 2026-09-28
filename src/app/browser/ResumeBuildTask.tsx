@@ -6,6 +6,7 @@ import { useLesson } from "@/lib/lesson-context";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { SHOW_ME_POINTER, useShowMe } from "@/lib/use-show-me";
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { TASK_ICONS } from "@/lib/icons";
@@ -123,12 +124,12 @@ export default function ResumeBuildTask() {
     if (skill.key === 'customer') return completedTaskKeys.includes('priority-call');
     return true;
   });
-  const [summary, setSummary] = useState(() => writing['resume-build']?.fields[0]?.value ?? writing['job-application']?.fields.at(-1)?.value ?? '');
-  const [bullets, setBullets] = useState<string[]>(() => {
+  const [summary, setSummary] = useTaskDraft("resume-build", "summary", () => writing['resume-build']?.fields[0]?.value ?? writing['job-application']?.fields.at(-1)?.value ?? '');
+  const [bullets, setBullets] = useTaskDraft<string[]>("resume-build", "bullets", () => {
     const saved = writing['resume-build'];
     return BULLET_ROLES.map((role) => saved?.fields.find((field) => field.label === role.title[saved.lang])?.value ?? '');
   });
-  const [skills, setSkills] = useState<string[]>(() => {
+  const [skills, setSkills] = useTaskDraft<string[]>("resume-build", "skills", () => {
     const saved = writing['resume-build'];
     const labels = saved?.fields.at(-1)?.value.split(', ') ?? [];
     return ALL_SKILL_CHOICES.filter((skill) => saved && labels.includes(skill.label[saved.lang])).map((skill) => skill.key);
@@ -234,7 +235,6 @@ export default function ResumeBuildTask() {
             <div className="grid gap-5 md:grid-cols-[1fr_300px]">
               {/* form */}
               <div className="flex flex-col gap-4">
-                <p className="text-[13px] leading-relaxed text-[#5f6368]">{c.intro}</p>
                 {contactLine && (
                   <section className="rounded-xl border border-[#dadce0] bg-white p-4 text-[13px] text-[#3c4043]">
                     <div className="font-medium text-[#202124]">{c.contactLabel}</div>

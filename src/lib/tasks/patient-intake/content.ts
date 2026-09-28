@@ -85,12 +85,10 @@ export const STARTERS: Record<Lang, string[]> = {
   en: [
     "I can't share that. It stays with the care team.",
     "Sorry Tomás,\nI'm not allowed to show patient forms.",
-    "No puedo compartirlo. Se queda con el equipo de cuidado.",
   ],
   es: [
     "No puedo compartirlo. Se queda con el equipo de cuidado.",
     "Perdón Tomás,\nNo puedo mostrar formularios de pacientes.",
-    "I can't share that. It stays with the care team.",
   ],
 };
 

@@ -1,5 +1,7 @@
 "use client";
 
+import ScheduleLink from "@/components/task/ScheduleLink";
+
 import { useMemo, useState, type ReactNode } from "react";
 import type { PdfDocument } from "@/lib/pdf-content";
 import { useProgress } from "@/lib/progress-context";
@@ -84,8 +86,10 @@ function ReceiptsDrive() {
             <div key={f.key} className="flex items-center gap-3 border-b border-[#e8eaed] py-3">
               <Folder size={18} className="shrink-0 text-[#5f6368]" />
               <span className="min-w-0 flex-1 font-medium">{f.name}</span>
+              <span className="text-[13px] text-[#3c4043]">
+                {c.shows}: {f.merchant[lang]} · {f.date} · ${f.amount.toFixed(2)}
+              </span>
               <span className="text-[12px] text-[#5f6368]">{f.folder}</span>
-              <span className="text-[12px] text-[#5f6368]">{f.date}</span>
             </div>
           ))}
         </div>
@@ -272,6 +276,7 @@ function CafeFilesTask() {
           icon={TASK_ICONS.files}
           stepIndex={stepIndex}
           steps={RIGHT_NOW_STEPS}
+          goal={view === "rename" ? RIGHT_NOW_STEPS[3] : undefined}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           instruction={previewWrong ? CHECK_OTHER_WEEK : view === "mine" ? MY_DRIVE_STEP : undefined}
@@ -303,6 +308,7 @@ function CafeFilesTask() {
               </span>
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#0f9d58] text-[11px] font-medium text-white">JK</span>
             </div>
+            <ScheduleLink lang={lang} />
             <TaskDoneActions
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
@@ -435,10 +441,10 @@ function CafeFilesTask() {
                 confirmLabel={c.renameContinue}
                 onConfirm={tryRename}
               >
-                <p className="mb-2 text-[12px] text-[#5f6368]">{c.renameHint}</p>
                 <input
                   autoFocus
                   data-showme="rename-input"
+                  aria-label={c.renameLabel}
                   // The old name starts selected, as in Drive: typing replaces it.
                   onFocus={(e) => e.currentTarget.select()}
                   onKeyDown={(e) => {
@@ -463,6 +469,7 @@ function CafeFilesTask() {
                 confirmLabel={c.share}
                 onConfirm={tryShare}
               >
+                <ScheduleLink lang={lang} />
                 {/* Real Drive: you add the person first, then pick their role. */}
                 <label className="mb-1 block text-[12px] font-medium text-[#5f6368]">{c.addPeople}</label>
                 <div className="mb-3 flex items-center gap-2 rounded-lg border border-[#dadce0] px-3 py-2">

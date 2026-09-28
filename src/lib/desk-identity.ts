@@ -27,7 +27,7 @@ const CAFE_TITLES: Record<"act1" | "act2" | "act3" | "act4", DeskIdentity> = {
     company: CAFE_NAME,
   },
   act3: {
-    title: { en: "Shift Supervisor", es: "Supervisor de turno" },
+    title: { en: "Shift Supervisor", es: "Supervisión de turno" },
     company: CAFE_NAME,
   },
   act4: {
@@ -52,17 +52,28 @@ const ACT5_HEALTH: DeskIdentity = {
 };
 
 const ACT6: DeskIdentity = {
-  title: { en: "Office Administrator", es: "Administrador de oficina" },
+  title: { en: "Office Administrator", es: "Administración de oficina" },
   company: HQ_NAME,
 };
 
 const ACT7: DeskIdentity = {
-  title: { en: "Team Lead", es: "Team Lead" },
+  title: { en: "Team Lead", es: "Líder de equipo" },
   company: HQ_NAME,
 };
 
-/** Job title and workplace for the desktop clock plaque. */
-export function deskIdentityFor(actKey: string, path?: BridgePath | null): DeskIdentity {
+/**
+ * Job title and workplace for the desktop clock plaque.
+ *
+ * Before the HQ offer (`preHire` levels), the learner still works at the
+ * cafe: the plaque shows their newest cafe role, never the HQ job they are
+ * applying for. Pass `cafeRole` (the newest role they earned) when known.
+ */
+export function deskIdentityFor(
+  actKey: string,
+  path?: BridgePath | null,
+  preHire = false,
+  cafeRole?: Localized,
+): DeskIdentity {
   if (actKey === "act1" || actKey === "act2" || actKey === "act3" || actKey === "act4") {
     return CAFE_TITLES[actKey];
   }
@@ -71,7 +82,7 @@ export function deskIdentityFor(actKey: string, path?: BridgePath | null): DeskI
     if (path === "b") return ACT5_HEALTH;
     return ACT5_PICK;
   }
-  if (actKey === "act6") return ACT6;
+  if (actKey === "act6") return preHire ? { title: cafeRole ?? CAFE_TITLES.act2.title, company: CAFE_NAME } : ACT6;
   if (actKey === "act7") return ACT7;
   return CAFE_TITLES.act1;
 }

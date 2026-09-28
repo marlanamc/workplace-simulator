@@ -123,11 +123,11 @@ describe("shift-spine naming", () => {
     expect(jobTitle(level1, "es")).toBe("Personal nuevo");
   });
 
-  it("newTabHint names the right bookmark in both languages", () => {
+  it("new-tab context identifies the sitting without adding another instruction voice", () => {
     const level4 = LEVELS.find((l) => l.key === "level4")!;
     expect(newTabHint(level4, "calendar", "en")).toContain("Calendar");
-    expect(newTabHint(level4, "calendar", "es")).toContain("Calendar");
-    expect(newTabHint(level4, null, "es")).toContain("marcadores");
+    expect(newTabHint(level4, "calendar", "es")).toBe(sittingTitle(level4, "es"));
+    expect(newTabHint(level4, null, "es")).toBe(sittingTitle(level4, "es"));
   });
 });
 

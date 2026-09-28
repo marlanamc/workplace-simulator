@@ -38,7 +38,7 @@ export const PAY_STUBS: PayStub[] = [
     period: "Aug 18 – Aug 28",
     payDate: "Aug 28, 2026",
     gross: "$720.00",
-    net: "$618.40",
+    net: "$571.32",
     pdfDocId: "paystub-first",
   },
 ];
@@ -56,7 +56,7 @@ export const NET_PAY_CHECK: Record<Lang, { question: string; options: CheckOptio
     question: "What was the net pay on your stub?",
     options: [
       { label: "$720.00", isTarget: false, wrongHint: { en: "That's the gross pay, before taxes come out. Look for Net pay.", es: "Ese es el pago bruto, antes de impuestos y deducciones. Busca el pago neto." } },
-      { label: "$618.40", isTarget: true },
+      { label: "$571.32", isTarget: true },
       { label: "$600.00", isTarget: false, wrongHint: { en: "Close, but not the number on this stub. Find Net pay at the bottom.", es: "Casi, pero no es el número de este recibo. Busca el pago neto al final." } },
     ],
   },
@@ -64,7 +64,7 @@ export const NET_PAY_CHECK: Record<Lang, { question: string; options: CheckOptio
     question: "¿Cuál fue el pago neto en tu recibo?",
     options: [
       { label: "$720.00", isTarget: false, wrongHint: { en: "That's the gross pay, before taxes come out. Look for Net pay.", es: "Ese es el pago bruto, antes de impuestos y deducciones. Busca el pago neto." } },
-      { label: "$618.40", isTarget: true },
+      { label: "$571.32", isTarget: true },
       { label: "$600.00", isTarget: false, wrongHint: { en: "Close, but not the number on this stub. Find Net pay at the bottom.", es: "Casi, pero no es el número de este recibo. Busca el pago neto al final." } },
     ],
   },
@@ -72,7 +72,7 @@ export const NET_PAY_CHECK: Record<Lang, { question: string; options: CheckOptio
 
 export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[] }> = {
   en: {
-    question: "How many total hours were paid on your stub?",
+    question: "Your time record shows 6 shifts of 8 hours. Which paid hours on the stub match it?",
     options: [
       { label: "40 hours", isTarget: false, wrongHint: { en: "That's a full week, but this stub covers more days. Add up Regular hours on the document.", es: "Eso es una semana completa, pero este recibo cubre más días. Suma las horas regulares en el documento." } },
       { label: "48 hours", isTarget: true },
@@ -80,7 +80,7 @@ export const HOURS_CHECK: Record<Lang, { question: string; options: CheckOption[
     ],
   },
   es: {
-    question: "¿Cuántas horas totales se pagaron en tu recibo?",
+    question: "Tu registro de horas muestra 6 turnos de 8 horas. ¿Qué horas pagadas del recibo coinciden?",
     options: [
       { label: "40 horas", isTarget: false, wrongHint: { en: "That's a full week, but this stub covers more days. Add up Regular hours on the document.", es: "Eso es una semana completa, pero este recibo cubre más días. Suma las horas regulares en el documento." } },
       { label: "48 horas", isTarget: true },
@@ -230,7 +230,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Encuentra las horas en este recibo.",
   },
   {
-    en: "Pick the hours.",
-    es: "Elige las horas.",
+    en: "Compare the paid hours with your corrected time record: six shifts of 8 hours.",
+    es: "Compara las horas pagadas con tu registro corregido: seis turnos de 8 horas.",
   },
 ];

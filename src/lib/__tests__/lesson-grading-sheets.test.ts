@@ -152,8 +152,8 @@ describe("budget-sheet", () => {
     }
   });
   it("shows SI on the Spanish screen", () => {
-    expect(statusFormula(3, "en")).toBe('=IF(C3>B3,"over","under")');
-    expect(statusFormula(3, "es")).toBe('=SI(C3>B3,"sobre","bajo")');
+    expect(statusFormula(3, "en")).toBe('=IF(C3>B3,"over","within budget")');
+    expect(statusFormula(3, "es")).toBe('=SI(C3>B3,"sobre","dentro del presupuesto")');
   });
   it.each(["Labor is over by $450.", "labor 450 over", "Mano de obra se pasó por 450."])("passes %j", (b) =>
     expect(emailFlagsOver(b)).toBe(true),

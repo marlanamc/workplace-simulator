@@ -77,6 +77,25 @@ export const HQ_FILES: HqDriveFile[] = [
   },
 ];
 
+/**
+ * Drive search the way a beginner types it: "q3 notes" finds
+ * "Q3_notes_FINAL.pdf". Case, underscores, hyphens and extra spaces are ignored.
+ */
+export function normalizeDriveSearch(text: string): string {
+  return text.toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+export function hqFileMatches(file: Pick<HqDriveFile, "name" | "folder">, query: string): boolean {
+  const q = normalizeDriveSearch(query);
+  if (!q) return true;
+  return normalizeDriveSearch(file.name).includes(q) || normalizeDriveSearch(file.folder).includes(q);
+}
+
+export const NO_FILES_MATCH: Localized = {
+  en: "No files match your search.",
+  es: "Ningún archivo coincide con tu búsqueda.",
+};
+
 export function isCurrentHqFile(key: string): boolean {
   return key === TARGET_FILE;
 }

@@ -223,6 +223,8 @@ describe("w4-form", () => {
     { dependents: "Cero" },
     { dependents: "ninguno" },
     { dependents: " 0 " },
+    { dependents: "$0.00" },
+    { dependents: "0,00" },
     { date: "10/1/2026" },
     { date: "10-01-2026" },
     { signature: "robin avery" },
@@ -230,7 +232,7 @@ describe("w4-form", () => {
 
   it("names the empty box, top to bottom", () => {
     expect(w4Problem({ ...done, status: null })?.hint.en).toMatch(/Step 1.*filing status/);
-    expect(w4Problem({ ...done, dependents: "" })?.hint.en).toMatch(/Step 3.*dependents/);
+    expect(w4Problem({ ...done, dependents: "" })?.hint.en).toMatch(/Step 3.*credits/);
     expect(w4Problem({ ...done, signature: "" })?.hint.en).toMatch(/Signature box is empty/);
     expect(w4Problem({ ...done, date: "" })?.hint.en).toMatch(/Date box is empty/);
     expect(w4Problem({ status: null, dependents: "", signature: "", date: "" })?.field).toBe("status");
@@ -247,9 +249,9 @@ describe("w4-form", () => {
     expect(w4StepIndex({ ...done, signature: "" })).toBe(2);
   });
 
-  it("rejects a wrong count, a non-count, a day-first date and another name", () => {
+  it("rejects a wrong amount, nonnumeric text, a day-first date and another name", () => {
     expect(w4Problem({ ...done, dependents: "2" })?.field).toBe("dependents");
-    expect(w4Problem({ ...done, dependents: "kids" })?.hint.en).toMatch(/needs a number/);
+    expect(w4Problem({ ...done, dependents: "kids" })?.hint.en).toMatch(/needs a dollar amount/);
     expect(w4Problem({ ...done, date: "01/10/2026" })?.hint.es).toMatch(/1 de octubre/);
     expect(w4Problem({ ...done, signature: "Maria Lopez" })?.field).toBe("signature");
   });

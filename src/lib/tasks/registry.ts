@@ -90,7 +90,11 @@ export interface TaskDescriptor {
   location?: TaskLocation;
   /** Short Job Card instruction line (under six words). Falls back to `dispatch`. */
   jobCardLine?: Localized;
-  /** The Job Card's green finish line. Falls back to the generic done copy. */
+  /**
+   * The Job Card's green finish line, only when it adds something the header kicker
+   * (the task's own "Offer accepted" style line) does not already say.
+   * Without it the card says how much of the day is left.
+   */
   jobCardDoneLine?: Localized;
   /** Makes this task a standalone classroom lesson at `/lessons/<key>`. */
   lesson?: LessonMeta;
@@ -164,7 +168,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Reply with an attachment", es: "responder con un archivo adjunto" },
     bookmarkLabel: "Mail",
-    handoffCta: { en: "Open Mail", es: "Abrir correo" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
     location: browser("Open Mail", "mail"),
   },
@@ -181,7 +185,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Find and read a message from a manager", es: "encontrar y leer un mensaje de mi gerente" },
     bookmarkLabel: "Mail",
-    handoffCta: { en: "Open Mail", es: "Abrir correo" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: { en: "Tuesday, 8:14 AM. First shift.", es: "Martes, 8:14 AM. Primer turno." },
     location: browser("Open Mail", "mail"),
   },
@@ -196,7 +200,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Read and reply to short work emails", es: "leer y responder correos cortos de trabajo" },
     bookmarkLabel: "Mail",
-    handoffCta: { en: "Open Mail", es: "Abrir correo" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: {
       en: "Monday, 6:02 PM. Maria says welcome.",
       es: "Lunes, 6:02 PM. Maria te da la bienvenida.",
@@ -278,7 +282,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     shiftMoment: { en: "Wednesday, 10:10 AM. She needs a file.", es: "Miércoles, 10:10 AM. Necesita un archivo." },
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria needs a file. Read her email, then send it.", es: "Maria necesita un archivo. Lee su correo y envíaselo." },
-    jobCardDoneLine: { en: "Sent, with the file.", es: "Enviado, con el archivo." },
     lesson: {
       title: { en: "Attach a file to an email", es: "Adjuntar un archivo a un correo" },
       summary: {
@@ -452,7 +455,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     label: { en: "Tell Maria you can't come in", es: "Dile a Maria que no puedes ir" },
     dispatch: {
       en: `You're sick and you're on at ${SICK_DAY_START}. Write Maria now.`,
-      es: `Estás enfermo y entras a las ${SICK_DAY_START}. Escríbele a Maria ya.`,
+      es: `Te sientes mal y entras a las ${SICK_DAY_START}. Escríbele a Maria ya.`,
     },
     skill: { en: "Tell my manager I can't come in", es: "avisarle a mi gerente que no puedo ir" },
     bookmarkLabel: "Mail",
@@ -465,7 +468,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["email", "workplace-systems"],
       minutes: 20,
       scene: {
-        you: { en: "You work at Harborside Cafe. Today you are sick.", es: "Trabajas en Harborside Cafe. Hoy estás enfermo/a." },
+        you: { en: "You work at Harborside Cafe. Today you are sick.", es: "Trabajas en Harborside Cafe. Hoy te sientes mal." },
         people: [{ name: "Maria", role: { en: "Your supervisor", es: "Tu supervisora" } }],
         need: { en: "It is Monday at 6:12 AM. You cannot work your 10:00 AM shift today. Maria needs to know. After this email, two hotel situations use a different contact rule.", es: "Es lunes a las 6:12 a. m. No puedes trabajar tu turno de las 10:00 a. m. de hoy. Maria necesita saberlo. Después de este correo, dos situaciones en un hotel usan otra regla de contacto." },
       },
@@ -568,8 +571,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Write an incident report", es: "escribir un reporte de incidente" },
     bookmarkLabel: "Forms",
-    handoffCta: { en: "Next: Open Forms", es: "Siguiente: Abrir Formularios" },
-    shiftMoment: { en: "Tuesday. The floor is busy.", es: "Martes. El piso está lleno." },
+    handoffCta: { en: "Next: Open Forms", es: "Siguiente: Abrir Forms" },
+    shiftMoment: { en: "Tuesday. The floor is busy.", es: "Martes. El café está lleno." },
     location: browser("Open Forms", "incident"),
   },
 
@@ -597,8 +600,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Renata te mandó una invitación a una reunión. Compárala con tus turnos.",
     },
     jobCardLine: {
-      en: "Check the meeting day against your work shifts. If you do not work that day, ask Renata for a new day and time.",
-      es: "Compara el día de la reunión con tus turnos. Si ese día no trabajas, pídele a Renata otro día y otra hora.",
+      en: "Check the meeting day against your work shifts. Then answer Renata.",
+      es: "Compara el día de la reunión con tus turnos. Luego respóndele a Renata.",
     },
     skill: { en: "Handle a meeting invite the right way", es: "responder bien a una invitación de reunión" },
     bookmarkLabel: "Calendar",
@@ -749,12 +752,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Send Jordan the link", es: "Envíale el enlace a Jordan" },
     dispatch: {
-      en: "You shared the file. Now email Jordan the link, not an attached copy.",
-      es: "Compartiste el archivo. Ahora envíale el enlace a Jordan por correo, no una copia adjunta.",
+      en: "You shared the file. Now email Jordan the link.",
+      es: "Compartiste el archivo. Ahora envíale el enlace a Jordan por correo.",
     },
     skill: { en: "Send a link to a file instead of a copy", es: "enviar el enlace de un archivo en vez de una copia" },
     bookmarkLabel: "Mail",
-    handoffCta: { en: "Open Mail", es: "Abrir correo" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: {
       en: "Monday, 10:15 AM. Jordan needs the schedule.",
       es: "Lunes, 10:15 AM. Jordan necesita el horario.",
@@ -908,8 +911,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Fix the hours formula", es: "Arregla la fórmula de horas" },
     dispatch: {
-      en: "The hours formula leaves someone out. Fix it and send Renata the total.",
-      es: "La fórmula de horas deja fuera a alguien. Arréglala y envíale el total a Renata.",
+      en: "Check that the hours formula counts everyone. Then send Renata the total.",
+      es: "Revisa que la fórmula de horas cuente a todos. Luego envíale el total a Renata.",
     },
     jobCardLine: {
       en: "Fix the hours formula so it counts everyone. Then email Renata.",
@@ -1000,7 +1003,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Handle three asks at once", es: "atender tres peticiones a la vez" },
     bookmarkLabel: "Floor",
-    handoffCta: { en: "Open Floor from the bookmarks", es: "Abre Floor en los marcadores" },
+    handoffCta: { en: "Open Floor from the bookmarks", es: "Abre Salón en los marcadores" },
     shiftMoment: {
       en: "Thursday, 3:40 PM. It's busy out on the floor.",
       es: "Jueves, 3:40 PM. Hay mucho movimiento en el local.",
@@ -1105,8 +1108,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     built: true,
     label: { en: "Reply to the right people", es: "Responde a las personas correctas" },
     dispatch: {
-      en: "HQ asked a question. Not everyone on the thread needs your answer.",
-      es: "HQ hizo una pregunta. No todos en el hilo necesitan tu respuesta.",
+      en: "HQ asked a question in a long thread. Answer it.",
+      es: "HQ hizo una pregunta en un hilo largo. Respóndela.",
     },
     skill: { en: "Choose reply instead of reply-all", es: "elegir responder en vez de responder a todos" },
     bookmarkLabel: "Mail",
@@ -1116,13 +1119,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. Un hilo largo de HQ.",
     },
     location: browser("Open Mail from the bookmarks"),
-    jobCardLine: { en: "Reply to who asked. Not everyone.", es: "Responde a quien preguntó. No a todos." },
+    jobCardLine: { en: "Answer what you were asked.", es: "Responde lo que te pidieron." },
   },
 
   enrollment: {
     key: "enrollment",
     built: true,
-    label: { en: "Apply before the deadline", es: "Aplica antes de la fecha" },
+    label: { en: "Apply before the deadline", es: "Envía la solicitud antes de la fecha límite" },
     dispatch: {
       en: "The college portal has a deadline and a list. Find both. Then write.",
       es: "El portal de la universidad tiene una fecha y una lista. Encuentra las dos. Luego escribe.",
@@ -1135,7 +1138,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. La solicitud está abierta.",
     },
     location: browser("Open College from the bookmarks"),
-    jobCardLine: { en: "Find the deadline. Then apply.", es: "Encuentra la fecha. Luego aplica." },
+    jobCardLine: { en: "Find the deadline. Then apply.", es: "Encuentra la fecha. Luego envía la solicitud." },
   },
 
   "appointment-scheduling": {
@@ -1154,7 +1157,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. Ya está la lista de la mañana.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "Maya's time is taken. Offer her a free time.", es: "La hora de Maya está ocupada. Ofrécele una hora libre." },
+    jobCardLine: { en: "Offer Maya a time that works.", es: "Ofrécele a Maya una hora que sirva." },
     lesson: {
       title: { en: "Book an appointment at an open time", es: "Dar una cita en un horario libre" },
       summary: {
@@ -1169,7 +1172,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         people: [{ name: "Maya Ansari", role: { en: "A patient. She called the clinic.", es: "Una paciente. Llamó a la clínica." } }],
         need: {
           en: "Maya called while you were busy. A coworker wrote her phone message on a pink note. She wants an appointment today at 10:00. Check the schedule, find a time that is free, and text her back.",
-          es: "Maya llamó mientras estabas ocupado/a. Una compañera anotó su mensaje en una nota rosada. Quiere una cita hoy a las 10:00. Revisa la agenda, busca una hora libre y contéstale con un mensaje de texto.",
+          es: "Maya llamó mientras atendías otra cosa. Una compañera anotó su mensaje en una nota rosada. Quiere una cita hoy a las 10:00. Revisa la agenda, busca una hora libre y contéstale con un mensaje de texto.",
         },
       },
       guide: {
@@ -1245,7 +1248,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. Un paciente nuevo acaba de llegar.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "File it. Choose the verified recipient, then reply to Sam.", es: "Archívalo. Elige al destinatario verificado y responde a Sam." },
+    jobCardLine: { en: "File the form. Choose who may see it, then reply to Tomás.", es: "Archiva el formulario. Elige quién puede verlo y responde a Tomás." },
   },
 
   coursework: {
@@ -1371,7 +1374,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. Está sonando el teléfono.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "Stay polite. Do not confirm.", es: "Sé amable. No confirmes." },
+    jobCardLine: { en: "Answer the call about Maya.", es: "Atiende la llamada sobre Maya." },
   },
 
   // ---- Act VI: Getting the Office Job (the hiring arc) ----
@@ -1420,13 +1423,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       persona: JOB_SEEKER.name,
       takeaway: {
         en: "Most people who get hired do not match every line. If you match most of the list, apply.",
-        es: "La mayoría de las personas contratadas no cumplen cada línea. Si cumples casi toda la lista, aplica.",
+        es: "La mayoría de las personas contratadas no cumplen cada línea. Si cumples casi toda la lista, postúlate.",
       },
       guide: {
         skills: [
           { en: "Read the parts of a job posting: the role, the pay, the requirements", es: "Leer las partes de un anuncio de empleo: el puesto, el pago, los requisitos" },
           { en: "Match requirements to your own experience", es: "Comparar los requisitos con tu propia experiencia" },
-          { en: "Know that you can apply without every requirement", es: "Saber que puedes aplicar aunque no cumplas todos los requisitos" },
+          { en: "Know that you can apply without every requirement", es: "Saber que puedes postularte aunque no cumplas todos los requisitos" },
           { en: "Write one sentence about why you fit the job", es: "Escribir una oración sobre por qué eres buena opción para el trabajo" },
         ],
         prepare: [
@@ -1467,7 +1470,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Jobs from the bookmarks"),
     jobCardLine: { en: "Fill each section. Then submit.", es: "Llena cada sección. Luego envía." },
-    jobCardDoneLine: { en: "Application sent.", es: "Solicitud enviada." },
     lesson: {
       title: { en: "Fill out a job application", es: "Llenar una solicitud de empleo" },
       summary: {
@@ -1541,7 +1543,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Write a summary, one thing you did well at each job, and your skills.",
       es: "Escribe un resumen, una cosa que hiciste bien en cada empleo y tus habilidades.",
     },
-    jobCardDoneLine: { en: "Résumé saved.", es: "Currículum guardado." },
     lesson: {
       title: { en: "Write a one-page résumé", es: "Escribir un currículum de una página" },
       summary: {
@@ -1598,21 +1599,20 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   "interview-practice": {
     key: "interview-practice",
     built: true,
-    label: { en: "Do the interview", es: "Haz la entrevista" },
+    label: { en: "Prepare for the interview", es: "Prepara la entrevista" },
     dispatch: {
-      en: "Anita has four questions. Answer each one, then ask one of your own.",
-      es: "Anita tiene cuatro preguntas. Responde cada una, luego haz una tuya.",
+      en: "Anita sent an interview invitation. Prepare four answers and a question of your own.",
+      es: "Anita envió una invitación a una entrevista. Prepara cuatro respuestas y una pregunta tuya.",
     },
     skill: { en: "Answer common interview questions", es: "responder preguntas comunes de entrevista" },
     bookmarkLabel: "Interview",
-    handoffCta: { en: "Open Interview from the bookmarks", es: "Abre Entrevista en los marcadores" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: {
       en: "Before HQ. The interview is scheduled.",
       es: "Antes de HQ. La entrevista está agendada.",
     },
-    location: browser("Open Interview from the bookmarks"),
+    location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Answer each question. Then ask one.", es: "Responde cada pregunta. Luego haz una." },
-    jobCardDoneLine: { en: "Interview done.", es: "Entrevista terminada." },
   },
 
   "job-offer": {
@@ -1625,14 +1625,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Read an offer letter and accept it", es: "leer una carta de oferta y aceptarla" },
     bookmarkLabel: "Offer",
-    handoffCta: { en: "Open Offer from the bookmarks", es: "Abre Oferta en los marcadores" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: {
       en: "Before HQ. The offer is in your inbox.",
       es: "Antes de HQ. La oferta está en tu bandeja.",
     },
-    location: browser("Open Offer from the bookmarks"),
+    location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Find the start date. Then accept.", es: "Encuentra la fecha de inicio. Luego acepta." },
-    jobCardDoneLine: { en: "Offer accepted.", es: "Oferta aceptada." },
   },
 
   "w4-form": {
@@ -1645,17 +1644,16 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     skill: { en: "Fill out a W-4", es: "llenar un formulario W-4" },
     bookmarkLabel: "Onboarding",
-    handoffCta: { en: "Open Onboarding from the bookmarks", es: "Abre Documentos en los marcadores" },
+    handoffCta: { en: "Open Mail", es: "Abrir Correo" },
     shiftMoment: {
       en: "Before HQ. HR sent the new-hire forms.",
       es: "Antes de HQ. RR. HH. envió los formularios.",
     },
-    location: browser("Open Onboarding from the bookmarks"),
+    location: browser("Open Mail", "mail"),
     jobCardLine: {
       en: "Fill out Robin's W-4 with Robin's facts. Then sign and date it.",
       es: "Llena el W-4 de Robin con los datos de Robin. Después fírmalo y ponle la fecha.",
     },
-    jobCardDoneLine: { en: "W-4 submitted.", es: "W-4 enviado." },
     lesson: {
       title: { en: "Fill out a W-4 tax form", es: "Llenar el formulario de impuestos W-4" },
       summary: {
@@ -1677,7 +1675,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         },
       },
       // Facts about Robin, not the answers: the learner decides the filing
-      // status and the dependents count from them.
+      // status and credit amount from them.
       reference: [
         { label: { en: "Name", es: "Nombre" }, value: "Robin Avery" },
         { label: { en: "Married", es: "Casado/a" }, value: { en: "No", es: "No" } },
@@ -1692,19 +1690,19 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         skills: [
           { en: "Know what a W-4 is for", es: "Saber para qué sirve un W-4" },
           { en: "Choose a filing status", es: "Elegir el estado civil para impuestos" },
-          { en: "Enter the number of dependents", es: "Escribir el número de dependientes" },
+          { en: "Enter the total credit amount", es: "Escribir el monto total de créditos" },
           { en: "Sign with a typed full name and write the date", es: "Firmar escribiendo el nombre completo y poner la fecha" },
         ],
         prepare: [
           { en: "Explain that a W-4 tells the job how much tax to take from each paycheck.", es: "Explica que el W-4 le dice al trabajo cuánto impuesto quitar de cada cheque." },
-          { en: "Tell students the form is for a fictional person, Robin Avery. Robin is not married and has no children. They decide the filing status and dependents from those facts, not from their own life.", es: "Diles que el formulario es de una persona ficticia, Robin Avery. Robin no está casado/a y no tiene hijos. Deciden el estado civil y los dependientes con esos datos, no con su propia vida." },
+          { en: "Tell students the form is for a fictional person, Robin Avery. Robin is not married and has no children. Robin has no other credits. They use Robin’s filing status and $0 credit total, not their own information.", es: "Diles que el formulario es de una persona ficticia, Robin Avery. Robin no está casado/a y no tiene hijos. Robin no tiene otros créditos. Usan el estado civil de Robin y su total de créditos de $0, no su propia información." },
           { en: "Go over the three filing statuses in plain words: single, married filing jointly (a married couple), head of household (pays for a home for a child or family member).", es: "Repasa los tres estados civiles con palabras sencillas: soltero/a, casado/a declarando en conjunto (una pareja casada), cabeza de familia (paga una casa para un hijo o familiar)." },
         ],
         stickingPoints: [
           { en: "Some learners choose Head of household or Married. The card explains right away why that does not fit Robin. Ask: is Robin married? Does Robin pay for a home for a child?", es: "Algunos eligen Cabeza de familia o Casado/a. La tarjeta explica enseguida por qué no le corresponde a Robin. Pregunta: ¿Robin está casado/a? ¿Paga una casa para un hijo?" },
           { en: "Some learners type their own name as the signature. It must match the name on the form, Robin Avery. The empty box says Type the full name. Ask: whose form is this?", es: "Algunos escriben su propio nombre como firma. Debe ser igual al nombre del formulario, Robin Avery. La casilla vacía dice Escribe el nombre completo. Pregunta: ¿de quién es este formulario?" },
           { en: "The date is October 1, 2026, month first. 10/01/2026, 10/1/2026 and 10-01-2026 all pass. 01/10/2026 (day first) does not. Ask: which number is the month?", es: "La fecha es el 1 de octubre de 2026, con el mes primero. 10/01/2026, 10/1/2026 y 10-01-2026 son correctas. 01/10/2026 (el día primero) no. Pregunta: ¿cuál número es el mes?" },
-          { en: "Some learners leave dependents empty. The card names the box. If there are none, the answer is 0; none or zero also count. Ask: does Robin have children or other people to support?", es: "Algunos dejan vacíos los dependientes. La tarjeta nombra la casilla. Si no hay, la respuesta es 0; también vale ninguno o cero. Pregunta: ¿Robin tiene hijos u otras personas que mantiene?" },
+          { en: "Step 3 is a dollar amount, not a head count. Robin has no dependent or other credits, so the total is $0; 0, $0.00 and zero are accepted.", es: "El Paso 3 es un monto en dólares, no un número de personas. Robin no tiene créditos por dependientes ni otros créditos, así que el total es $0; se aceptan 0, $0.00 y cero." },
         ],
         followUp: [
           { en: "What other forms might you fill out on your first day at a new job?", es: "¿Qué otros formularios podrías llenar tu primer día en un trabajo nuevo?" },
@@ -1735,7 +1733,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Onboarding from the bookmarks"),
     jobCardLine: { en: "I-9: name, birth date, status, sign.", es: "I-9: nombre, fecha de nacimiento, estado, firma." },
-    jobCardDoneLine: { en: "I-9 submitted.", es: "I-9 enviado." },
   },
 
   "direct-deposit": {
@@ -1755,7 +1752,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Onboarding from the bookmarks"),
     jobCardLine: { en: "Routing number is 9 digits.", es: "El número de ruta tiene 9 dígitos." },
-    jobCardDoneLine: { en: "Direct deposit set up. You're ready for day one.", es: "Depósito directo listo. Estás listo para el primer día." },
+    jobCardDoneLine: { en: "Direct deposit set up. You're ready for day one.", es: "Depósito directo listo. Ya tienes todo para el primer día." },
   },
 
   "office-drive": {
@@ -1774,7 +1771,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes en HQ. Chris necesita las notas del T3.",
     },
     location: browser("Open Drive from the bookmarks"),
-    jobCardLine: { en: "Find the current file. Then share it.", es: "Encuentra el archivo actual. Luego compártelo." },
+    jobCardLine: { en: "Your coworker Chris asked for the Q3 notes. Share the current file.", es: "Tu colega Chris pidió las notas del T3. Comparte el archivo actual." },
   },
 
   "multi-person-scheduling": {
@@ -1812,7 +1809,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. La reunión está empezando.",
     },
     location: browser("Open Zoom from the bookmarks"),
-    jobCardLine: { en: "Join muted. Ask in chat.", es: "Entra en silencio. Pregunta en el chat." },
+    jobCardLine: { en: "Join muted. Start video. Ask in chat.", es: "Entra con el micrófono apagado. Inicia el video. Pregunta en el chat." },
   },
 
   "expense-report": {
@@ -1872,7 +1869,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Meeting from the bookmarks"),
     jobCardLine: { en: "Agenda, notes, follow-up.", es: "Agenda, notas, seguimiento." },
-    jobCardDoneLine: { en: "The follow-up is sent.", es: "El seguimiento está enviado." },
   },
 
   "performance-review": {
@@ -1892,7 +1888,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Forms from the bookmarks"),
     jobCardLine: { en: "Choose a profile fact. Write one strength and one area to grow.", es: "Elige un dato del perfil. Escribe una fortaleza y un área para mejorar." },
-    jobCardDoneLine: { en: "The review is submitted.", es: "La evaluación está enviada." },
   },
 
   "ops-report-packet": {
@@ -1912,7 +1907,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Report from the bookmarks"),
     jobCardLine: { en: "Four apps. One packet.", es: "Cuatro apps. Un paquete." },
-    jobCardDoneLine: { en: "The packet is sent.", es: "El paquete está enviado." },
   },
 
   "portfolio-reflection": {
@@ -1932,7 +1926,6 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Recap from the bookmarks"),
     jobCardLine: { en: "Look back. Then write it down.", es: "Mira atrás. Luego escríbelo." },
-    jobCardDoneLine: { en: "Your summary is ready.", es: "Tu resumen está listo." },
   },
 };
 

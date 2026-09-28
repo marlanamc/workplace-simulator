@@ -9,6 +9,28 @@ const CLOSE_ES = `${hourOnly(CLOSE_BLOCK.start)} a ${hourOnly(CLOSE_BLOCK.end)}`
 /** "allergen-list-sep-21": this week's list, named for the week's Monday. */
 const ALLERGEN_FILE = `allergen-list-${shortDate(mondayOf(STORY_DAY_BY_LEVEL.level8), "en").toLowerCase().replace(" ", "-")}`;
 
+export const TRIAGE_SLOTS = [
+  { key: 'thu16', label: { en: 'Thu 4:00 PM', es: 'Jue 4:00 PM' }, available: false },
+  { key: 'fri10', label: { en: 'Fri 10:00 AM', es: 'Vie 10:00 AM' }, available: true },
+  { key: 'fri14', label: { en: 'Fri 2:00 PM', es: 'Vie 2:00 PM' }, available: false },
+] as const;
+export const TRIAGE_AVAILABILITY: Localized = {
+  en: `Your shifts: Thursday ${CLOSE}; Friday off. Renata's calendar: Friday 9–11 AM available; 1–3 PM supplier meeting. The huddle needs 20 minutes.`,
+  es: `Tus turnos: jueves ${CLOSE_ES}; viernes libre. Calendario de Renata: viernes de 9 a 11 AM disponible; de 1 a 3 PM reunión con proveedores. La reunión de inventario dura 20 minutos.`,
+};
+/** The new-time picker's words, and what the Job Card says when the time does not work. */
+export const TRIAGE_SLOT_COPY: Record<"label" | "choose" | "notFree", Localized> = {
+  label: { en: "New time", es: "Nueva hora" },
+  choose: { en: "Choose a time", es: "Elige una hora" },
+  notFree: {
+    en: "Compare both calendars. The full 20 minutes must be free for both people.",
+    es: "Compara ambos calendarios. Las dos personas deben tener los 20 minutos libres.",
+  },
+};
+export function triageSlotWorks(key: string): boolean {
+  return TRIAGE_SLOTS.some(slot => slot.key === key && slot.available);
+}
+
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
     emoji: "🔔",
@@ -41,7 +63,6 @@ export const TRIAGE_COPY: Record<Lang, {
   accept: string;
   no: string;
   propose: string;
-  slotLabel: string;
   fileName: string;
   fileWrong: string;
   shareWith: string;
@@ -64,18 +85,17 @@ export const TRIAGE_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     hubHeading: "Open items",
     calTitle: "Inventory huddle",
-    calBody: "Thursday 4:00 PM. That is your close. Propose a time that is not a shift.",
+    calBody: "Thursday 4:00 PM. Renata and you are invited for 20 minutes.",
     calCta: "Open Calendar",
     fileTitle: "Sam needs the allergen list",
-    fileBody: "Find the file in Drive. Share it view only. Sam should not edit the master.",
+    fileBody: "Sam needs the current allergen list for reference; the master must stay unchanged.",
     fileCta: "Open Drive",
     meetingTitle: "Thursday inventory huddle",
     meetingWhen: `${cardDate(CLOSE_THURSDAY, "en")} · 4:00–4:20 PM`,
-    meetingNote: `You close Thursday ${CLOSE}. You cannot sit in a huddle at 4.`,
+    meetingNote: `You close Thursday ${CLOSE}.`,
     accept: "Yes",
     no: "No",
     propose: "Propose a new time",
-    slotLabel: "Fri 10:00 AM",
     fileName: ALLERGEN_FILE,
     fileWrong: "prep-list-old",
     shareWith: "Share with Sam Rivera",
@@ -98,18 +118,17 @@ export const TRIAGE_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     hubHeading: "Pendientes",
     calTitle: "Reunión de inventario",
-    calBody: "Jueves 4:00 PM. Ese es tu cierre. Propón una hora que no sea un turno.",
+    calBody: "Jueves 4:00 PM. Renata y tú tienen una reunión de 20 minutos.",
     calCta: "Abrir Calendar",
     fileTitle: "Sam necesita la lista de alérgenos",
-    fileBody: "Encuentra el archivo en Drive. Compártelo en modo solo ver. Sam no debe editar el original.",
+    fileBody: "Sam necesita consultar la lista actual de alérgenos; el original debe quedar sin cambios.",
     fileCta: "Abrir Drive",
     meetingTitle: "Reunión de inventario del jueves",
     meetingWhen: `${WEEKDAY_SHORT.es[4]} ${shortDate(CLOSE_THURSDAY, "es")} · 4:00–4:20 PM`,
-    meetingNote: `El jueves cierras de ${CLOSE_ES}. No puedes estar en una reunión a las 4.`,
+    meetingNote: `El jueves cierras de ${CLOSE_ES}.`,
     accept: "Sí",
     no: "No",
     propose: "Proponer otra hora",
-    slotLabel: "Vie 10:00 AM",
     fileName: ALLERGEN_FILE,
     fileWrong: "prep-list-old",
     shareWith: "Compartir con Sam Rivera",
@@ -132,14 +151,14 @@ export const TRIAGE_COPY: Record<Lang, {
 
 export const HINTS: Record<Lang, { accept: string; no: string; file: string; edit: string }> = {
   en: {
-    accept: "That time is your close. Propose Friday 10 AM instead.",
-    no: "Don't just say no. They still need a huddle. Propose Friday 10 AM.",
+    accept: "That time overlaps your shift. Compare both calendars for an available time.",
+    no: "The team still needs a huddle. Compare both calendars and propose another time.",
     file: `That's last month's prep list. Open ${ALLERGEN_FILE}.`,
     edit: "View only. If Sam can edit, the master changes.",
   },
   es: {
-    accept: "Esa hora es tu cierre. Propón el viernes a las 10 AM.",
-    no: "No solo digas que no. Igual necesitan la reunión. Propón el viernes a las 10 AM.",
+    accept: "Esa hora coincide con tu turno. Compara ambos calendarios para encontrar una hora disponible.",
+    no: "El equipo todavía necesita reunirse. Compara ambos calendarios y propón otra hora.",
     file: `Esa es la lista de prep del mes pasado. Abre ${ALLERGEN_FILE}.`,
     edit: "Solo ver. Si Sam puede editar, cambia el original.",
   },
@@ -182,7 +201,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Resuelve la reunión que cae en tu turno de cierre.",
   },
   {
-    en: "Now send Sam the file. Do not forget this one.",
-    es: "Ahora envíale el archivo a Sam. No te olvides de este.",
+    en: "Share the current allergen list with Sam for reference.",
+    es: "Comparte la lista actual de alérgenos con Sam para que pueda consultarla.",
   },
 ];

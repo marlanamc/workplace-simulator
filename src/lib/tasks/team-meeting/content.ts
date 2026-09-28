@@ -1,8 +1,9 @@
 import { looksLikeRealText, normalizeReply } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { STORY_DAY_BY_LEVEL, mondayOf, shortDate } from "@/lib/story-dates";
+import { CREW, type DayKey } from "@/lib/tasks/crew-week";
 
-/** The huddle the learner calls meets Thursday of the First Team Meeting week (the right slot is Thu 10 AM). */
+/** The huddle the learner calls meets Thursday of the First Team Meeting week (the right slot is Thu 4:15 PM). */
 const HUDDLE_THURSDAY = mondayOf(STORY_DAY_BY_LEVEL.level11) + 3;
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
@@ -10,23 +11,70 @@ export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
     emoji: "🗣️",
     kicker: "You call the huddle now.",
     headline: "The crew needs 15 minutes on next week's schedule.",
-    body: "Create the invite. Pick a time nobody is on shift. Write two or three bullets so the meeting has a point.",
+    body: "Create the invite for a time the whole crew can come. Write two or three bullets so the meeting has a point.",
     cta: "Set it up",
   },
   es: {
     emoji: "🗣️",
     kicker: "Ahora tú llamas a la reunión.",
     headline: "El equipo necesita 15 minutos para el horario de la semana que viene.",
-    body: "Crea la invitación. Elige una hora en la que nadie esté de turno. Escribe dos o tres puntos para que la reunión tenga un propósito.",
+    body: "Crea la invitación para una hora en la que todo el equipo pueda venir. Escribe dos o tres puntos para que la reunión tenga un propósito.",
     cta: "Armarla",
   },
 };
 
 export const SLOTS = [
-  { key: "wed", label: { en: "Wed 3:00 PM", es: "Mié 3:00 PM" }, ok: false, hint: { en: "Alex and Jordan close Wednesday. They cannot leave the floor.", es: "Alex y Jordan cierran el miércoles. No pueden salir del piso." } },
-  { key: "thu", label: { en: "Thu 10:00 AM", es: "Jue 10:00 AM" }, ok: true, hint: { en: "", es: "" } },
-  { key: "fri", label: { en: "Fri 8:00 AM", es: "Vie 8:00 AM" }, ok: false, hint: { en: "Friday 8 AM is the open. Half the crew is already on the floor.", es: "El viernes a las 8 AM es la apertura. La mitad del equipo ya está en el piso." } },
+  {
+    key: "wed", day: "wed", hour: 15, label: { en: "Wed 3:00 PM", es: "Mié 3:00 PM" }, ok: false,
+    hint: {
+      en: "On Wednesday at 3 PM, Alex, Riley, Sam, and Jordan are working. Look at the shifts again.",
+      es: "El miércoles a las 3 PM, Alex, Riley, Sam y Jordan están trabajando. Mira los turnos otra vez.",
+    },
+  },
+  { key: "thu", day: "thu", hour: 16.25, label: { en: "Thu 4:15 PM", es: "Jue 4:15 PM" }, ok: true, hint: { en: "", es: "" } },
+  {
+    key: "fri", day: "fri", hour: 8, label: { en: "Fri 8:00 AM", es: "Vie 8:00 AM" }, ok: false,
+    hint: {
+      en: "On Friday at 8 AM, Alex is working. Look at the shifts again.",
+      es: "El viernes a las 8 AM, Alex está trabajando. Mira los turnos otra vez.",
+    },
+  },
 ] as const;
+
+/**
+ * A crew-sheet cell like "8–4", "12–4" or "2–10" as 24-hour start and end.
+ * Cafe shifts start between 7 AM and 2 PM, so a start under 7 is PM, and an
+ * end at or before the start is PM too. Empty or "Off" is no shift.
+ */
+export function shiftHours(label: string): { start: number; end: number } | null {
+  const m = label.trim().match(/^(\d{1,2})\s*[–-]\s*(\d{1,2})$/);
+  if (!m) return null;
+  const a = Number(m[1]);
+  const b = Number(m[2]);
+  const start = a < 7 ? a + 12 : a;
+  return { start, end: b <= start ? b + 12 : b };
+}
+
+/** First names of the crew on shift at this hour of this day, from the crew sheet the learner sees. */
+export function crewWorkingAt(day: DayKey, hour: number): string[] {
+  return CREW.filter((person) => {
+    const shift = shiftHours(person.shifts[day].label);
+    return shift !== null && hour >= shift.start && hour < shift.end;
+  }).map((person) => person.name.split(" ")[0]);
+}
+
+/** The crew-shift table beside the time choices, so the learner can check who is working. */
+export const CREW_TABLE_COPY: Record<"caption" | "name" | "off", Localized> = {
+  caption: { en: "Crew shifts this week", es: "Turnos del equipo esta semana" },
+  name: { en: "Name", es: "Nombre" },
+  off: { en: "Off", es: "Libre" },
+};
+
+/** A meeting slot works only when nobody on the crew sheet is on shift then. */
+export function slotIsFree(key: string): boolean {
+  const slot = SLOTS.find((s) => s.key === key);
+  return slot !== undefined && crewWorkingAt(slot.day, slot.hour).length === 0;
+}
 
 export const TEAM_MEETING_COPY: Record<Lang, {
   helpBtn: string;
@@ -63,10 +111,10 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     hubHeading: "Get the huddle on the calendar",
     calTitle: "Create the invite",
-    calBody: "One-line title. A time that is not a shift. The crew is already on the guest list.",
+    calBody: "The crew is on the guest list. Their shifts are available in the calendar.",
     calCta: "Open Calendar",
     docTitle: "Write a short agenda",
-    docBody: "Two or three bullets. What the meeting is for, not formal minutes.",
+    docBody: "Agenda for next week’s schedule discussion.",
     docCta: "Open Docs",
     sendCta: "Send the invite with the agenda",
     sendNeed: "Finish the invite and the agenda first.",
@@ -80,7 +128,7 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     startersLabel: "Sentence starters",
     sentKicker: "Invite sent",
     doneTitle: "You called the meeting. It has a point.",
-    doneBody: "Thursday 10 AM. The crew is on the invite. The agenda is two or three bullets, not a speech. That is a huddle a lead can run.",
+    doneBody: "Thursday 4:15 PM. The crew is on the invite. The agenda is two or three bullets, not a speech. That is a huddle a lead can run.",
     badgeName: "Create a meeting with an agenda",
     badgeWhere: "Counts toward: Shift Supervisor",
     tryAgain: "Do it again",
@@ -94,10 +142,10 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     hubHeading: "Pon la reunión en el calendario",
     calTitle: "Crear la invitación",
-    calBody: "Un título de una línea. Una hora que no sea un turno. El equipo ya está en la lista.",
+    calBody: "El equipo está en la lista de invitados. Sus turnos aparecen en el calendario.",
     calCta: "Abrir Calendar",
     docTitle: "Escribir una agenda corta",
-    docBody: "Dos o tres puntos. Para qué es la reunión, no actas formales.",
+    docBody: "Agenda para hablar del horario de la próxima semana.",
     docCta: "Abrir Docs",
     sendCta: "Enviar la invitación con la agenda",
     sendNeed: "Primero termina la invitación y la agenda.",
@@ -111,7 +159,7 @@ export const TEAM_MEETING_COPY: Record<Lang, {
     startersLabel: "Frases de ayuda",
     sentKicker: "Invitación enviada",
     doneTitle: "Tú llamaste a la reunión. Tiene un propósito.",
-    doneBody: "Jueves 10 AM. El equipo está en la invitación. La agenda es de dos o tres puntos, no un discurso. Así se arma una reunión que un líder puede dirigir.",
+    doneBody: "Jueves 4:15 PM. El equipo está en la invitación. La agenda es de dos o tres puntos, no un discurso. Así se arma una reunión que un líder puede dirigir.",
     badgeName: "Crear una reunión con agenda",
     badgeWhere: "Cuenta para: Supervisor de turno",
     tryAgain: "Hacerlo otra vez",
@@ -134,7 +182,7 @@ export const AGENDA_STARTERS: Record<Lang, string[]> = {
   es: [
     "- Revisar la cobertura del cierre del sábado",
     "- Confirmar quién abre el lunes",
-    "- Una pregunta del piso",
+    "- Una pregunta del equipo",
   ],
 };
 

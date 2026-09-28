@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   TEAM_MEETING_COPY,
   SLOTS,
+  CREW_TABLE_COPY,
+  slotIsFree,
   GUESTS,
   AGENDA_STARTERS,
   HINTS,
@@ -25,16 +28,17 @@ import TaskDoneCard from "@/components/task/TaskDoneCard";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import { Calendar, FileText } from "lucide-react";
+import { CREW, DAY_LABELS } from "@/lib/tasks/crew-week";
 
 type View = "hub" | "calendar" | "docs" | "done";
 
 export default function TeamMeetingTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("team-meeting") ? "done" : "hub");
-  const [title, setTitle] = useState("");
-  const [slot, setSlot] = useState<string | null>(null);
-  const [eventSaved, setEventSaved] = useState(false);
-  const [agenda, setAgenda] = useState("");
+  const [title, setTitle] = useTaskDraft("team-meeting", "title", "");
+  const [slot, setSlot] = useTaskDraft<string | null>("team-meeting", "slot", null);
+  const [eventSaved, setEventSaved] = useTaskDraft("team-meeting", "eventSaved", false);
+  const [agenda, setAgenda] = useTaskDraft("team-meeting", "agenda", "");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = TEAM_MEETING_COPY[lang];
@@ -45,7 +49,7 @@ export default function TeamMeetingTask() {
     if (!titleIsAboutSchedule(title)) return say(h.title);
     const picked = SLOTS.find((s) => s.key === slot);
     if (!picked) return say(h.time);
-    if (!picked.ok) return say(picked.hint[lang]);
+    if (!slotIsFree(picked.key)) return say(picked.hint[lang]);
     setEventSaved(true);
     setView("hub");
   };
@@ -130,9 +134,20 @@ export default function TeamMeetingTask() {
 
       {view === "calendar" && (
         <div className="min-h-0 flex-1 overflow-auto p-6">
+          <div className="mx-auto mb-4 max-w-[640px] overflow-x-auto">
+            <table className="w-full border-collapse text-left text-[13px]">
+              <caption className="mb-2 text-left font-semibold">{CREW_TABLE_COPY.caption[lang]}</caption>
+              <thead><tr><th className="p-2">{CREW_TABLE_COPY.name[lang]}</th>{(['wed', 'thu', 'fri'] as const).map(day => <th className="p-2" key={day}>{DAY_LABELS[lang][day]}</th>)}</tr></thead>
+              <tbody>{CREW.map(person => <tr key={person.key} className="border-t border-[#dadce0]">
+                <th scope="row" className="p-2 font-medium">{person.name}</th>
+                {(['wed', 'thu', 'fri'] as const).map(day => <td key={day} className="p-2">{person.shifts[day].label || CREW_TABLE_COPY.off[lang]}</td>)}
+              </tr>)}</tbody>
+            </table>
+          </div>
           <div className="mx-auto max-w-[480px] rounded-3xl border border-[#dadce0] bg-white p-6 shadow-sm">
-            <label className="mb-1 block text-[12px] text-[#5f6368]">{c.eventTitleLabel}</label>
+            <label htmlFor="team-meeting-title" className="mb-1 block text-[12px] text-[#5f6368]">{c.eventTitleLabel}</label>
             <input
+              id="team-meeting-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={c.eventTitlePh}
@@ -145,7 +160,7 @@ export default function TeamMeetingTask() {
                   key={s.key}
                   onClick={() => {
                     setSlot(s.key);
-                    if (!s.ok) say(s.hint[lang]);
+                    if (!slotIsFree(s.key)) say(s.hint[lang]);
                   }}
                   className={`min-h-[40px] rounded-lg border px-3 text-left text-[14px] cursor-pointer ${
                     slot === s.key ? "border-[#0b57d0] bg-[#e8f0fe]" : "border-[#dadce0]"

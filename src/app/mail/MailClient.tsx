@@ -1,5 +1,9 @@
 "use client";
 
+import { hiringMailsFor, hiringMailForTask, hiringMailForKey } from "@/lib/hiring-mail";
+import ScheduleLink from "@/components/task/ScheduleLink";
+import { includesScheduleUrl } from "@/lib/schedule-link";
+
 import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
@@ -155,7 +159,7 @@ function isStoryMail(m: { key: string }): m is InboxRow {
 export default function MailClient({ welcomeWalkthroughActive = false }: { welcomeWalkthroughActive?: boolean }) {
   const { learnerId, openingReplies, saveOpeningReply, restartLevel, markComplete, completedTaskKeys, currentTrack, courseRoute, displayName, lang, storyFlags, setStoryFlag, bigText, setBigText } = useProgress();
   const currentLevelKey = levelForTrack(currentTrack.key).key;
-  const { browserTabToken, openApp } = useWindowManager();
+  const { browserTabToken, browserTab, openApp } = useWindowManager();
   const timeclockMailActive =
     !completedTaskKeys.includes("timeclock") && storyFlags[TIMECLOCK_MAIL_FLAG] === "true";
   const nextKey = nextTaskInTrack(currentTrack, completedTaskKeys);
@@ -179,6 +183,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [explicitOpeningHelp, setExplicitOpeningHelp] = useState(false);
   // A Guided lesson spells out every click, so the opening's fading scaffold stays up.
   const lessonRun = useLesson();
+  const hiring = lessonRun ? undefined : hiringMailForTask(nextKey);
   const [openingSaving, setOpeningSaving] = useState(false);
   const openingInFlight = useRef(false);
   const [openingSaveError, setOpeningSaveError] = useState(false);
@@ -284,6 +289,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     [
       // Story mail answers what the learner did earlier in the game. A lesson
       // has no earlier, so those rows would only be unexplained decoys.
+      ...(lessonRun ? [] : hiringMailsFor(nextKey, completedTaskKeys)),
       ...(lessonRun ? [] : storyMailsUpTo(mailDone ? null : activeMailTask, completedTaskKeys, storyFlags)),
       ...(opening ? OPENING_MESSAGES.slice(0, openingIndex + 1).map((message, index) => ({
         key: `opening-${message.id}`, from: message.sender.name, initials: message.sender.initials, color: message.sender.color,
@@ -544,12 +550,12 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           ),
         });
       }
-      if (!sendsLinkNotFile(body)) {
+      if (!sendsLinkNotFile(body) || !includesScheduleUrl(body)) {
         return recordWrong({
           title: T("Say where the file is.", "Di dónde está el archivo."),
           body: T(
-            "Tell Jordan it's the schedule and that the link is here. One or two lines.",
-            "Dile a Jordan que es el horario y que el enlace está aquí. Una o dos líneas.",
+            "Copy the shared schedule link and paste it into a short message to Jordan.",
+            "Copia el enlace del horario compartido y pégalo en un mensaje breve para Jordan.",
           ),
         });
       }
@@ -610,6 +616,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       className="flex h-full min-h-0 flex-col bg-[#f6f8fc] text-[14px] text-[#202124]"
       style={{ fontFamily: "Roboto, Arial, sans-serif" }}
     >
+      {hiring && browserTab === 'mail' && <RightNowBar
+        taskKey={hiring.task} stepIndex={view === 'story' && openStory?.key === hiring.key ? 1 : 0} stepCount={2}
+        instruction={{ en: `Read Anita's email: ${hiring.subject.en}.`, es: `Lee el correo de Anita: ${hiring.subject.es}.` }}
+        goal={{ en: `Read Anita's email: ${hiring.subject.en}.`, es: `Lee el correo de Anita: ${hiring.subject.es}.` }}
+      />}
       <div className="flex items-center gap-3 px-3 py-2">
         <div
           data-testid="mail-app-title"
@@ -815,10 +826,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                 view === "empty" || view === "story"
                   ? MAIL_JOB_CARD_STEPS.openMail[activeMailTask]
                   : view === "read"
-                    // Reply-all names the safer button so the card does not
-                    // say Reply all.
+                    // Reply-all asks the question, not which button: picking
+                    // Reply over Reply all is the task. The wrong audience
+                    // gets its correction at Send.
                     ? activeMailTask === "reply-all"
-                      ? { en: "Click Reply. Not Reply all.", es: "Haz clic en Responder. No en Responder a todos." }
+                      ? { en: "Answer the person who asked you.", es: "Responde a la persona que te preguntó." }
                       : clickLine(BUTTON_LABEL.reply)
                     : view === "confirm"
                       ? MAIL_JOB_CARD_STEPS.confirm
@@ -1021,6 +1033,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                       <span className="w-10 shrink-0 text-[#5f6368]">{c.subjectLabel}</span>
                       <span>{subjectMeta.reSubject}</span>
                     </div>
+                    {activeMailTask === "mail-send-link" && <ScheduleLink lang={lang} />}
                     <textarea
                       data-showme="compose-body"
                       aria-label={T("Your reply", "Tu respuesta")}
@@ -1141,6 +1154,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                         <p key={i} className="m-0">{p}</p>
                       ))}
                     </div>
+                    {hiringMailForKey(openStory.key) && (() => {
+                      const message = hiringMailForKey(openStory.key)!;
+                      return <button type="button" data-testid="hiring-mail-action" data-card-avoid
+                        onClick={() => openApp('browser', { tab: message.action.tab })}
+                        className="mt-5 min-h-11 rounded-full border border-[#dadce0] px-5 text-sm font-medium text-[#0b57d0] hover:bg-[#e8f0fe]">
+                        {message.action.label[lang]}
+                      </button>;
+                    })()}
                     {storySig && <MailSignature sig={storySig} lang={lang} />}
                   </div>
                 </div>
@@ -1148,7 +1169,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
               );
             })()}
 
-            {view === "done" && (() => {
+            {view === "done" && !hiring && (() => {
               const dc = DONE_COPY[activeMailTask][lang];
               const bridgeOutFlag = `bridge-out-shown:${activeMailTask}`;
               const showBridgeOut = bridgeOutEligible && storyFlags[bridgeOutFlag] !== "true";

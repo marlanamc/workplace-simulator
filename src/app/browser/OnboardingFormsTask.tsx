@@ -65,6 +65,7 @@ function Radio({
           <button
             key={o.key}
             type="button"
+            aria-pressed={on}
             onClick={() => onChange(o.key)}
             className={`flex items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-[15px] cursor-pointer ${
               on ? "border-[#673ab7] bg-[#f0ebf8]" : "border-[#dadce0] bg-white hover:bg-[#faf9fd]"
@@ -267,22 +268,22 @@ export default function OnboardingFormsTask() {
             <>
               <FormTitleCard title={I9_COPY[lang].formName} description={I9_COPY[lang].blurb} requiredLabel={s.requiredLabel} />
               <QuestionCard label={I9_COPY[lang].nameLabel}>
-                <FormInput value={PRACTICE_PROFILE.name} readOnly className="text-[#5f6368]" />
+                <FormInput aria-label={I9_COPY[lang].nameLabel} value={PRACTICE_PROFILE.name} readOnly className="text-[#5f6368]" />
               </QuestionCard>
               <QuestionCard label={I9_COPY[lang].dobLabel} required>
-                <FormInput value={dob} onChange={(e) => setDob(e.target.value)} placeholder={s.datePlaceholder} />
+                <FormInput aria-label={I9_COPY[lang].dobLabel} value={dob} onChange={(e) => setDob(e.target.value)} placeholder={s.datePlaceholder} />
               </QuestionCard>
               <QuestionCard label={I9_COPY[lang].addressLabel} required>
-                <FormInput value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, Boston, MA" />
+                <FormInput aria-label={I9_COPY[lang].addressLabel} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="123 Main St, Boston, MA" />
               </QuestionCard>
               <QuestionCard label={I9_COPY[lang].statusLabel} required>
                 <Radio options={I9_STATUS_OPTIONS} value={i9Status} onChange={setI9Status} lang={lang} />
               </QuestionCard>
               <QuestionCard label={s.signLabel} required>
-                <FormInput value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={s.signPlaceholder} />
+                <FormInput aria-label={s.signLabel} value={signature} onChange={(e) => setSignature(e.target.value)} placeholder={s.signPlaceholder} />
               </QuestionCard>
               <QuestionCard label={s.dateLabel} required>
-                <FormInput value={date} onChange={(e) => setDate(e.target.value)} placeholder={s.datePlaceholder} />
+                <FormInput aria-label={s.dateLabel} value={date} onChange={(e) => setDate(e.target.value)} placeholder={s.datePlaceholder} />
               </QuestionCard>
               <FormSubmitButton onClick={submitI9}>{I9_COPY[lang].submit}</FormSubmitButton>
             </>
@@ -290,10 +291,11 @@ export default function OnboardingFormsTask() {
             <>
               <FormTitleCard title={DEPOSIT_COPY[lang].formName} description={DEPOSIT_COPY[lang].blurb} requiredLabel={s.requiredLabel} />
               <QuestionCard label={DEPOSIT_COPY[lang].bankLabel} required>
-                <FormInput value={bank} onChange={(e) => setBank(e.target.value)} placeholder="Bay State Bank" />
+                <FormInput aria-label={DEPOSIT_COPY[lang].bankLabel} value={bank} onChange={(e) => setBank(e.target.value)} placeholder="Bay State Bank" />
               </QuestionCard>
               <QuestionCard label={DEPOSIT_COPY[lang].routingLabel} required>
                 <FormInput
+                  aria-label={DEPOSIT_COPY[lang].routingLabel}
                   inputMode="numeric"
                   value={routing}
                   onChange={(e) => setRouting(e.target.value.replace(/\D/g, "").slice(0, 9))}
@@ -303,6 +305,7 @@ export default function OnboardingFormsTask() {
               </QuestionCard>
               <QuestionCard label={DEPOSIT_COPY[lang].accountLabel} required>
                 <FormInput
+                  aria-label={DEPOSIT_COPY[lang].accountLabel}
                   inputMode="numeric"
                   value={account}
                   onChange={(e) => setAccount(e.target.value.replace(/\D/g, ""))}

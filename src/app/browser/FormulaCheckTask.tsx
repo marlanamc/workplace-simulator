@@ -1,5 +1,7 @@
 "use client";
 
+import SheetEmailMenu from "@/components/task/SheetEmailMenu";
+
 import { useRef, useState, type CSSProperties } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { CAST } from "@/lib/cast";
@@ -238,6 +240,8 @@ export default function FormulaCheckTask() {
         <div className="flex-1" />
       </div>
 
+      {(view === "sheet" || view === "compose") && <SheetEmailMenu lang={lang} onEmail={tryEmail} showMeId="email-total" />}
+
       {view !== "done" && (
         <RightNowBar
           icon={TASK_ICONS["formula-check"]}
@@ -460,13 +464,7 @@ export default function FormulaCheckTask() {
               ))}
             </div>
 
-            <button
-              onClick={tryEmail}
-              data-showme="email-total"
-              className="mt-4 flex w-fit min-h-[44px] items-center rounded-full bg-accent px-5 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
-            >
-              {c.emailCta}
-            </button>
+
           </div>
         </div>
       )}

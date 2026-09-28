@@ -32,7 +32,7 @@ export const OVER_KEY = "labor";
 /**
  * One week of a real cafe budget. Only Labor is over. Two lines sit close on
  * purpose, the way real numbers do: Utilities is $2 under, and Repairs is
- * exactly on budget, which the IF calls "under" because it is not bigger.
+ * exactly on budget, which the IF correctly groups as "within budget".
  * `chart` is the short name under each bar. `note` is column E.
  */
 export const BUDGET_ROWS = [
@@ -62,14 +62,14 @@ export const ACTUAL_TOTAL = BUDGET_ROWS.reduce((sum, r) => sum + r.actual, 0);
 const OVER_ROW = BUDGET_ROWS.find((r) => r.key === OVER_KEY)!;
 export const OVER_AMOUNT = OVER_ROW.actual - OVER_ROW.budget;
 
-export function statusFor(actual: number, budget: number): "over" | "under" {
-  return actual > budget ? "over" : "under";
+export function statusFor(actual: number, budget: number): "over" | "within" {
+  return actual > budget ? "over" : "within";
 }
 
 /** The formula as the sheet shows it, with the same words the cells show. */
 export function statusFormula(row: number, lang: Lang = "en"): string {
-  const [over, under] = lang === "en" ? ["over", "under"] : ["sobre", "bajo"];
-  return `=${fnName("IF", lang)}(C${row}>B${row},"${over}","${under}")`;
+  const [over, within] = lang === "en" ? ["over", "within budget"] : ["sobre", "dentro del presupuesto"];
+  return `=${fnName("IF", lang)}(C${row}>B${row},"${over}","${within}")`;
 }
 
 /** Money as the sheet and the corrections both write it: $2,850. */
@@ -94,7 +94,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
   actualHeader: string;
   statusHeader: string;
   overLabel: string;
-  underLabel: string;
+  withinLabel: string;
   chartTitle: string;
   emailCta: string;
   readFirst: string;
@@ -134,7 +134,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     actualHeader: "Actual",
     statusHeader: "Status",
     overLabel: "over",
-    underLabel: "under",
+    withinLabel: "within budget",
     chartTitle: "Actual by category",
     emailCta: "Email Renata what is over",
     readFirst: "First, find the Status cell that says \"over\". Click it and read its formula.",
@@ -174,7 +174,7 @@ export const BUDGET_SHEET_COPY: Record<Lang, {
     actualHeader: "Real",
     statusHeader: "Estado",
     overLabel: "sobre",
-    underLabel: "bajo",
+    withinLabel: "dentro del presupuesto",
     chartTitle: "Real por categoría",
     emailCta: "Escribirle a Renata qué se pasó",
     readFirst: "Primero busca la celda de Estado que dice \"sobre\". Haz clic en ella y lee su fórmula.",
@@ -227,10 +227,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "An IF formula is a yes-or-no question in a cell",
       s: [
         `Click the Status cell. The formula bar shows ${statusFormula(rowNumberFor(OVER_KEY), "en")}.`,
-        "In plain words: if Actual (column C) is bigger than Budget (column B), the cell says \"over\". If not, it says \"under\".",
+        "In plain words: if Actual (column C) is bigger than Budget (column B), the cell says \"over\". If not, it says \"within budget\".",
         "The chart shows the same thing. One bar goes past its dashed budget line.",
         "To find how much over, subtract: Actual minus Budget.",
-        "Repairs is exactly on budget. The IF says under, because Actual is not bigger than Budget.",
+        "Repairs is exactly on budget. Within budget includes spending exactly the budget and spending less than it.",
       ],
       tip: "In this lesson you only read the formula. You do not write one. Once you can read an IF, writing one later is easier.",
     },
@@ -240,10 +240,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Una fórmula SI (IF en inglés) es una pregunta de sí o no dentro de una celda",
       s: [
         `Haz clic en la celda de Estado. La barra de fórmulas muestra ${statusFormula(rowNumberFor(OVER_KEY), "es")}.`,
-        "En palabras simples: si Real (columna C) es más grande que Presupuesto (columna B), la celda dice \"sobre\". Si no, dice \"bajo\".",
+        "En palabras simples: si Real (columna C) es más grande que Presupuesto (columna B), la celda dice \"sobre\". Si no, dice \"dentro del presupuesto\".",
         "El gráfico muestra lo mismo. Una barra pasa su línea punteada de presupuesto.",
         "Para saber por cuánto se pasó, resta: Real menos Presupuesto.",
-        "Reparaciones está justo en el presupuesto. El SI dice bajo, porque Real no es más grande que Presupuesto.",
+        "Reparaciones está justo en el presupuesto. Dentro del presupuesto incluye gastar exactamente lo presupuestado y gastar menos.",
       ],
       tip: "En esta lección solo lees la fórmula. No escribes ninguna. Cuando puedas leer un SI, escribir uno después es más fácil.",
     },
@@ -273,8 +273,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   },
   // Said in plain words where the learner is looking, right after the click.
   {
-    en: "The formula means: if Actual is bigger than Budget, show over. If not, show under. Now click Email Renata what is over.",
-    es: "La fórmula quiere decir: si Real es más grande que Presupuesto, muestra sobre. Si no, muestra bajo. Ahora haz clic en Escribirle a Renata qué se pasó.",
+    en: "The formula means: if Actual is bigger than Budget, show over. If not, show within budget. Choose File → Email → Email collaborators.",
+    es: "La fórmula quiere decir: si Real es más grande que Presupuesto, muestra sobre. Si no, muestra dentro del presupuesto. Elige Archivo → Correo electrónico → Enviar correo a colaboradores.",
   },
   {
     en: "Write Renata the category and how much it is over. Subtract: Actual minus Budget.",
