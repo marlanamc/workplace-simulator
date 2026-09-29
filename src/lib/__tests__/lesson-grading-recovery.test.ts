@@ -32,8 +32,8 @@ describe("account-recovery texts", () => {
 
   it("names the evidence in every wrong-text correction", () => {
     for (const t of TEXTS.filter((x) => !x.isTarget)) {
-      expect(t.wrongHint?.en).toMatch(/phone number|coworker/);
-      expect(t.wrongHint?.es).toMatch(/número de teléfono|compañero/);
+      expect(t.wrongHint?.en).toMatch(/send back a sign-in code|wants your code/);
+      expect(t.wrongHint?.es).toMatch(/envíes un código|quiere tu código/);
     }
   });
 

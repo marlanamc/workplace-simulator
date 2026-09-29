@@ -8,7 +8,9 @@ import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
 import { useLesson } from "@/lib/lesson-context";
-import { LESSON_COPY, MENTIONS_INFO_CARD } from "@/lib/lessons/copy";
+import LessonInfoCard from "@/components/lesson/LessonInfoCard";
+import { LESSON_WHY } from "@/lib/lessons/why";
+import { LESSON_COPY } from "@/lib/lessons/copy";
 import {
   INTRO_BEATS,
   CARD_PRACTICE,
@@ -983,6 +985,13 @@ export default function JobCard() {
           {script.line}
         </p>
 
+        {lesson && script.tone !== "green" && LESSON_WHY[lesson.taskKey] && (
+          <details key={lesson.taskKey} className="mt-3 text-[16px] leading-relaxed" data-testid="lesson-why">
+            <summary className="min-h-11 cursor-pointer py-2 font-medium text-[#0b57d0]">{LESSON_COPY.why[lang]}</summary>
+            <p className="mt-1 text-[#3c4043]">{LESSON_WHY[lesson.taskKey]?.[lang]}</p>
+          </details>
+        )}
+
         {script.hint && (
           <p role="status" aria-live="polite" className="mt-2 mb-0 text-[17px] leading-[1.35] text-[#5f6368]">
             {script.hint}
@@ -1153,6 +1162,8 @@ export default function JobCard() {
           </button>
         )}
 
+        {lesson && script.tone !== "green" && <LessonInfoCard />}
+
         {/* A lesson's one setting: how much the card spells out. It lives on
             the card because the card is what it changes, but as one quiet
             link offering the other level, so it reads as an option and never
@@ -1160,9 +1171,7 @@ export default function JobCard() {
         {lesson && script.tone !== "green" && (() => {
           const other = lesson.mode === "guided" ? "independent" : "guided";
           const hintLabel = LESSON_COPY[other === "independent" ? "fewerHints" : "moreHints"][lang];
-          // Narrow screens have no docked info card, so the card offers it.
-          // It glows when the step or correction sends the learner there.
-          const pointedAt = MENTIONS_INFO_CARD.test(`${script.line} ${visibleCorrection}`);
+          // Context-only lessons can reopen their introduction facts.
           const quiet =
             "flex min-h-10 cursor-pointer items-center gap-1.5 rounded-full px-3 text-[14px] font-medium text-[#5f6368] underline-offset-4 hover:text-[#1f1f1f] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0b57d0]";
           return (
@@ -1179,16 +1188,16 @@ export default function JobCard() {
                 <ArrowLeft size={16} aria-hidden />
                 {LESSON_COPY.leave[lang]}
               </button>
-              <button
+              {lesson.reference.length === 0 && <button
                 type="button"
                 data-testid="lesson-info-open"
                 aria-expanded={lesson.infoOpen}
                 onClick={() => lesson.setInfoOpen(!lesson.infoOpen)}
-                className={`${quiet} lesson-info-control xl:hidden ${pointedAt && !lesson.infoOpen ? "animate-showme-pulse-compact text-[#5b3a1e]" : ""}`}
+                className={quiet}
               >
                 <IdCard size={16} aria-hidden />
                 {LESSON_COPY.infoOpen[lang]}
-              </button>
+              </button>}
               <button
                 type="button"
                 data-testid={`lesson-mode-${other}`}

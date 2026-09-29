@@ -48,8 +48,8 @@ export const TEXTS: RecoveryText[] = [
     when: { en: "Now", es: "Ahora" },
     isTarget: false,
     wrongHint: wrongHint(
-      "That text is fake. It comes from a phone number, not from Google, and it asks you to reply with the code. Google never asks that. Look for the text from Google.",
-      "Ese mensaje es falso. Viene de un número de teléfono, no de Google, y te pide que respondas con el código. Google nunca pide eso. Busca el mensaje de Google."
+      "That text is fake. It asks you to send back a sign-in code and threatens to close your account. Do not reply with your code. Find the code for the sign-in you started.",
+      "Ese mensaje es falso. Te pide que envíes un código de inicio de sesión y amenaza con cerrar tu cuenta. No respondas con tu código. Busca el código del inicio de sesión que tú empezaste."
     ),
   },
   {
@@ -186,9 +186,9 @@ export const RECOVERY_COPY: Record<Lang, {
     phoneLabel: "Your phone",
     wrongCode: "That is not the code. Look at the text from Google on your phone. Type its 6 numbers.",
     emptyCode: "The box is empty. Type the 6 numbers from the text from Google.",
-    fakeCode: "That code is from the fake text. It came from a phone number and asked you to reply. Type the code from the text from Google.",
+    fakeCode: "That code is from the fake text. It asks you to send a code back. Keep your code private. Type the Google code for the sign-in you started.",
     sentKicker: "Signed back in",
-    doneBody: "Getting signed out happens to everyone. Type your password, find the real code from the account, and never give that code to anyone.",
+    doneBody: "Two-factor authentication adds protection if someone steals your password. Keep your code private, even from friends or coworkers. Only enter it on the sign-in page you opened.",
     badgeName: "Get back into a locked account",
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
@@ -216,9 +216,9 @@ export const RECOVERY_COPY: Record<Lang, {
     phoneLabel: "Tu teléfono",
     wrongCode: "Ese no es el código. Mira el mensaje de Google en tu teléfono. Escribe sus 6 números.",
     emptyCode: "La casilla está vacía. Escribe los 6 números del mensaje de Google.",
-    fakeCode: "Ese código es del mensaje falso. Vino de un número de teléfono y te pedía responder. Escribe el código del mensaje de Google.",
+    fakeCode: "Ese código es del mensaje falso. Te pide responder con un código. No compartas tu código. Escribe el código de Google del inicio de sesión que tú empezaste.",
     sentKicker: "Sesión iniciada",
-    doneBody: "A todos se les cierra la sesión alguna vez. Escribe tu contraseña, busca el código real de la cuenta y nunca le des ese código a nadie.",
+    doneBody: "La autenticación de dos factores añade protección si alguien roba tu contraseña. No compartas tu código, ni con amigos o compañeros. Escríbelo solo en la página de inicio de sesión que abriste.",
     badgeName: "Volver a entrar a una cuenta bloqueada",
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
@@ -258,7 +258,7 @@ export const HELP_LESSON: Record<Lang, Lesson> = {
     s: [
       "Type your password.",
       "The account sends a text message with a code to your phone. It takes a few seconds.",
-      "Find the real code. Look at who sent the text. The real code comes from the account, not from a phone number or a coworker.",
+      "Your password is something you know; your phone is something you have. Using both is called two-factor authentication, or 2-Step Verification. It adds protection if someone steals your password.",
       "A real code text never asks you to reply with the code. If a text asks for your code, it is a trick.",
       "Type the numbers exactly as they appear. Never give the code to anyone.",
     ],
@@ -269,7 +269,7 @@ export const HELP_LESSON: Record<Lang, Lesson> = {
     s: [
       "Escribe tu contraseña.",
       "La cuenta te envía un mensaje de texto con un código al teléfono. Tarda unos segundos.",
-      "Busca el código real. Mira quién envió el mensaje. El código real viene de la cuenta, no de un número de teléfono ni de un compañero.",
+      "Tu contraseña es algo que sabes; tu teléfono es algo que tienes. Usar ambos se llama autenticación de dos factores, o verificación en dos pasos. Añade protección si alguien roba tu contraseña.",
       "Un mensaje con un código real nunca te pide que respondas con el código. Si un mensaje te pide tu código, es una trampa.",
       "Escribe los números tal como aparecen. Nunca le des el código a nadie.",
     ],

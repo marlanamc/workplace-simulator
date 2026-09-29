@@ -229,8 +229,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         },
       },
       takeaway: {
-        en: "A good work reply is short: say hello, answer the question, and sign your name.",
-        es: "Una buena respuesta de trabajo es corta: saluda, contesta la pregunta y firma con tu nombre.",
+        en: "Reply keeps your answer with the original email so the other person can follow the conversation. Say hello, answer the question, and sign your name.",
+        es: "Responder mantiene tu respuesta junto al correo original para que la otra persona pueda seguir la conversación. Saluda, contesta la pregunta y firma con tu nombre.",
       },
       guide: {
         skills: [
@@ -298,7 +298,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           es: "Maria te envió un correo. Necesita un reporte de seguridad de tu carpeta Descargas. Ahí hay varios reportes. Lee su correo para saber cuál, y luego envíaselo.",
         },
       },
-      takeaway: { en: "Check the actual attachment before sending. If the required file is missing, ask for it.", es: "Revisa el adjunto real antes de enviar. Si falta el archivo solicitado, pídelo." },
+      takeaway: { en: "An attachment sends a file with your email; writing its name does not send it. Check the actual attachment before sending. If the required file is missing, ask for it.", es: "Un adjunto envía un archivo con tu correo; escribir su nombre no lo envía. Revisa el adjunto real antes de enviar. Si falta el archivo solicitado, pídelo." },
       guide: {
         skills: [
           { en: "Read an email to find what someone needs and when", es: "Leer un correo para saber qué necesita alguien y para cuándo" },
@@ -544,7 +544,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Explain that the code changes every time, so you cannot save it.", es: "Explica que el código cambia cada vez, así que no se puede guardar." },
         ],
         stickingPoints: [
-          { en: "Two texts have a code and both say Google. Some learners pick the fake one from a phone number, or type its code. Ask: who sent this text? Does it ask you to reply?", es: "Dos mensajes tienen un código y los dos dicen Google. Algunos eligen el falso, que viene de un número de teléfono, o escriben su código. Pregunta: ¿quién envió este mensaje? ¿Te pide que respondas?" },
+          { en: "Two texts have a code and both say Google. Some learners pick the text that asks them to send a code back, or type its code. Ask: did you start this sign-in? Does this text ask you to share your code? A sender name alone does not prove a message is safe.", es: "Dos mensajes tienen un código y los dos dicen Google. Algunos eligen el mensaje que pide responder con un código, o escriben su código. Pregunta: ¿tú empezaste este inicio de sesión? ¿El mensaje te pide compartir tu código? El nombre del remitente por sí solo no demuestra que un mensaje sea seguro." },
           { en: "Sam, a coworker, asks for the code. Some learners want to help. Talk about why nobody should get your code, even a friend.", es: "Sam, un compañero, pide el código. Algunos quieren ayudar. Hablen de por qué nadie debe recibir tu código, ni un amigo." },
           { en: "Some learners type the whole message. The box only takes the 6 numbers.", es: "Algunos escriben todo el mensaje. La casilla solo acepta los 6 números." },
           { en: "The password is on the info card, and capital letters count. Point to the big H.", es: "La contraseña está en la tarjeta de información, y las mayúsculas cuentan. Señala la H mayúscula." },
@@ -628,8 +628,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         },
       },
       takeaway: {
-        en: "Before you answer an invite, check the day against your work shifts. If it does not work, ask for a day you work and a time.",
-        es: "Antes de responder a una invitación, compara el día con tus turnos. Si no te funciona, pide un día que trabajas y una hora.",
+        en: "An invitation asks whether you can attend. Check your shifts before answering. Suggesting a new time starts a conversation; the new time still needs to be agreed on.",
+        es: "Una invitación pregunta si puedes asistir. Revisa tus turnos antes de responder. Proponer otra hora inicia una conversación; todavía tienen que ponerse de acuerdo.",
       },
       reference: [
         { label: { en: "Meeting", es: "Reunión" }, value: { en: `${cardDate(HUDDLE_DAY, "en")}, 9:00 AM`, es: `${cardDate(HUDDLE_DAY, "es")}, 9:00 AM` } },
@@ -726,7 +726,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           es: "Jordan necesita el horario de trabajo de esta semana. Es un archivo en el Drive compartido del café. Renata quiere que el archivo tenga un nombre claro. Jordan lo puede ver, pero no cambiar.",
         },
       },
-      takeaway: { en: "Check the version, the person, and the access needed for the authorized work.", es: "Revisa la versión, la persona y el acceso necesario para el trabajo autorizado." },
+      takeaway: { en: "Sharing gives someone access to your file: view means read; edit means change. Check the version and the person, and give only the access needed for the work.", es: "Compartir da acceso a tu archivo: ver permite leer; editar permite cambiar. Revisa la versión y la persona, y da solo el acceso necesario para el trabajo." },
       reference: [
         { label: { en: "This week", es: "Esta semana" }, value: { en: `Week of ${shortDate(FILES_WEEK, "en")}`, es: `Semana del ${monthDate(FILES_WEEK, "es")}` } },
         { label: { en: "New file name", es: "Nombre nuevo" }, value: RENAME_TARGET },
@@ -951,8 +951,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     lesson: {
       title: { en: "Fix a total formula in a spreadsheet", es: "Corregir la fórmula de un total en una hoja de cálculo" },
       takeaway: {
-        en: "A total can look right and still leave someone out. Click it and read which rows the formula adds.",
-        es: "Un total puede verse bien y aun así dejar a alguien fuera. Haz clic en él y lee qué filas suma la fórmula.",
+        en: "A formula tells the sheet which numbers to add. It can add correctly and still leave someone out. Click the total and check which rows the formula includes.",
+        es: "Una fórmula le indica a la hoja qué números sumar. Puede sumar bien y aun así dejar a alguien fuera. Haz clic en el total y revisa qué filas incluye la fórmula.",
       },
       summary: {
         en: "The hours total looks right, but the formula leaves out one person. Fix the formula and email the correct total.",
@@ -1297,8 +1297,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         es: "Lee una tarea de clase, busca la fecha de entrega, calcula cuánto tiempo queda y escribe una respuesta corta que dice lo siento y una cosa que vas a hacer.",
       },
       takeaway: {
-        en: "Look for the due date first and count how much time you have. A good reply to a customer says sorry and one thing you will do.",
-        es: "Busca primero la fecha de entrega y cuenta cuánto tiempo tienes. Una buena respuesta a un cliente dice lo siento y una cosa que vas a hacer.",
+        en: "Check the due date, including the time. Typing your work does not turn it in: submitting sends it to your teacher. Look for a message confirming it was submitted.",
+        es: "Revisa la fecha de entrega, incluida la hora. Escribir tu tarea no la entrega: al entregarla, se envía a tu maestra. Busca un mensaje que confirme la entrega.",
       },
       skills: ["workplace-systems"],
       minutes: 8,
@@ -1514,8 +1514,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       reference: APPLICATION_FACTS,
       persona: JOB_SEEKER.name,
       takeaway: {
-        en: "On an application, copy names, numbers and dates exactly, and give one clear reason you want the job.",
-        es: "En una solicitud, copia nombres, números y fechas tal como están, y da una razón clara de por qué quieres el trabajo.",
+        en: "The employer uses your phone and email to contact you. One wrong letter or number could mean a missed message. Check your contact details before submitting.",
+        es: "La empresa usa tu teléfono y correo para contactarte. Una letra o un número incorrecto podría impedir que te llegue un mensaje. Revisa tus datos de contacto antes de enviar la solicitud.",
       },
       guide: {
         skills: [
@@ -1702,6 +1702,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         { label: { en: "Name", es: "Nombre" }, value: "Robin Avery" },
         { label: { en: "Married", es: "Casado/a" }, value: { en: "No", es: "No" } },
         { label: { en: "Children", es: "Hijos" }, value: { en: "None. Supports no one else.", es: "No tiene. No mantiene a nadie." } },
+        { label: { en: "Other credits", es: "Otros créditos" }, value: { en: "None", es: "Ninguno" } },
         { label: { en: "Form date", es: "Fecha del formulario" }, value: { en: "10/01/2026", es: "10/01/2026 (1 de octubre)" } },
       ],
       takeaway: {

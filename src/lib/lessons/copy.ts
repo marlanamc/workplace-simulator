@@ -2,6 +2,7 @@ import type { Localized } from "@/lib/task-types";
 
 /** Words the lesson frame adds around a game task. Everything else is the task's own copy. */
 export const LESSON_COPY = {
+  why: { en: "Why this matters", es: "Por qué es importante" },
   kicker: { en: "Lesson", es: "Lección" },
   guest: { en: "Student", es: "Estudiante" },
   doneLine: { en: "You did it. Lesson complete.", es: "Lo lograste. Terminaste la lección." },
@@ -43,8 +44,8 @@ export const LESSON_COPY = {
   /** A lesson played as a pretend person: the card holds their facts, not the learner's. `{name}` is their first name. */
   introCardTitlePersona: { en: "{name}'s info card", es: "La tarjeta de información de {name}" },
   introCard: {
-    en: "This card stays on your screen while you work. When you need a name, a password, or a date, look here.",
-    es: "Esta tarjeta se queda en tu pantalla mientras trabajas. Cuando necesites un nombre, una contraseña o una fecha, mira aquí.",
+    en: "These details are in the Job Card while you work. Look for Info card when you need them.",
+    es: "Estos datos están en la tarjeta de trabajo mientras practicas. Busca Tarjeta de información cuando los necesites.",
   },
   introStart: { en: "I'm ready", es: "Empezar" },
   // "Your info" read as facts about the real learner ("No college degree").

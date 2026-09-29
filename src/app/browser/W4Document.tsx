@@ -1,3 +1,6 @@
+"use client";
+
+import { useLesson } from "@/lib/lesson-context";
 import type { ReactNode } from "react";
 import type { Lang } from "@/lib/task-types";
 import { PAPERWORK_SHELL, PRACTICE_PROFILE, W4_COPY, W4_STATUS_OPTIONS } from "@/lib/tasks/onboarding-paperwork/content";
@@ -55,6 +58,7 @@ export default function W4Document({ lang, status, onStatus, dependents, onDepen
   signature: string; onSignature: (value: string) => void;
   date: string; onDate: (value: string) => void; onDateBlur?: () => void; onSubmit: () => void;
 }) {
+  const lesson = useLesson();
   const c = COPY[lang];
   const w = W4_COPY[lang];
   const s = PAPERWORK_SHELL[lang];
@@ -62,10 +66,10 @@ export default function W4Document({ lang, status, onStatus, dependents, onDepen
     <>
       {/* Stays in view while the learner scrolls to the signature and date,
           the two boxes that have to match it. */}
-      <aside className="sticky top-0 z-10 border-l-4 border-[#245b94] bg-[#eef3fa] px-4 py-2 text-[14px] leading-relaxed shadow-sm">
+      {!lesson && <aside className="sticky top-0 z-10 border-l-4 border-[#245b94] bg-[#eef3fa] px-4 py-2 text-[14px] leading-relaxed shadow-sm">
         <h2 className="font-semibold">{c.reference}</h2>
         <p>{c.details}</p>
-      </aside>
+      </aside>}
       <form noValidate autoComplete="off" onSubmit={(event) => { event.preventDefault(); onSubmit(); }} className="mt-2">
         <article className="border border-[#b8bcc1] bg-white p-4 text-[13px] text-[#171717] shadow-[0_3px_12px_#00000012] sm:p-7" aria-label={w.formName}>
           <div className="mb-3 flex flex-wrap justify-between gap-2 text-[10px] font-semibold tracking-[0.12em]">

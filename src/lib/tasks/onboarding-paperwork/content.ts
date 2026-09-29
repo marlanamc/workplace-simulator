@@ -452,8 +452,8 @@ export const REFERENCE_HINT: Localized = {
 /** The W-4's own steps, so the card moves as the form fills. */
 export const W4_STEPS: Localized[] = [
   {
-    en: "Read Robin's facts at the top. Choose the filing status that fits Robin.",
-    es: "Lee los datos de Robin arriba. Elige el estado civil que corresponde a Robin.",
+    en: "Read Robin's facts. Choose the filing status that fits Robin.",
+    es: "Lee los datos de Robin. Elige el estado civil que corresponde a Robin.",
   },
   {
     en: "Enter Robin's total credits in Step 3. This box is a dollar amount, not a count of people.",

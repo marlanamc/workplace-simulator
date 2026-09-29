@@ -1,13 +1,11 @@
 "use client";
 
-import { IdCard, X } from "lucide-react";
+import { IdCard } from "lucide-react";
 import { useLesson } from "@/lib/lesson-context";
-import { useJobCardOptional } from "@/lib/job-card-context";
 import type { LessonFact, LessonScene } from "@/lib/lessons/types";
 import type { Lang } from "@/lib/task-types";
 import { useProgress } from "@/lib/progress-context";
-import { LESSON_COPY, MENTIONS_INFO_CARD } from "@/lib/lessons/copy";
-import { CARD_W, EDGE } from "@/components/task/JobCard";
+import { LESSON_COPY } from "@/lib/lessons/copy";
 
 /** Lessons reserve space for the Job Card at every viewport size. */
 export const LESSON_RAIL_CLASS = "lesson-desktop";
@@ -19,18 +17,20 @@ export const LESSON_RAIL_CLASS = "lesson-desktop";
  *
  * Facts only, never a step. The Job Card is the one instruction voice.
  *
- * Wide screens dock it at the top of the lesson's left column; narrow ones
- * fold it into a tab the learner opens when they need it.
+ * The Job Card contains these facts at every screen size. Context without
+ * copyable reference facts is available through its Info card control.
  */
 /** The card's face, shared by the docked card and the preview on the intro screen. */
 export function InfoCardBody({
   scene,
   reference,
   lang,
+  compact = false,
 }: {
   scene: LessonScene;
   reference: LessonFact[];
   lang: Lang;
+  compact?: boolean;
 }) {
   return (
     <div data-testid="lesson-info-card" className="text-[#2a1810]">
@@ -40,6 +40,7 @@ export function InfoCardBody({
         {LESSON_COPY.infoTitle[lang]}
       </p>
       <div className="flex flex-col gap-2.5 px-5 pb-3.5 pt-3">
+        {(!compact || reference.length === 0) && <>
         <p className="m-0 text-[16px] leading-snug">{scene.you[lang]}</p>
         {scene.people.length > 0 && (
           <ul className="m-0 flex list-none flex-col gap-1 p-0">
@@ -51,6 +52,7 @@ export function InfoCardBody({
             ))}
           </ul>
         )}
+        </>}
         {reference.length > 0 && (
           // Label beside value, one line each where it fits: the card has to
           // stay short on a Chromebook screen, above the Job Card.
@@ -88,53 +90,14 @@ export const INFO_PAPER = {
 };
 
 
-export default function LessonInfoCard({ top }: { top: number }) {
+/** Reference facts stay next to the task, inside the single lesson panel. */
+export default function LessonInfoCard() {
   const lesson = useLesson();
   const { lang } = useProgress();
-  const card = useJobCardOptional();
-  if (!lesson) return null;
-
-  // When the Job Card's step or correction sends the learner here ("Type the
-  // password from your info card"), the card glows until they move on. It
-  // also pulses a few times on arrival, so the eye finds it once.
-  const pointedAt = MENTIONS_INFO_CARD.test(`${card?.step?.line.en ?? ""} ${card?.step?.line.es ?? ""} ${card?.correction ?? ""}`);
-  const glow = pointedAt ? "animate-showme-pulse" : "animate-[showme-pulse_1.6s_ease-in-out_3]";
-
-  const body = <InfoCardBody scene={lesson.scene} reference={lesson.reference} lang={lang} />;
-  const paper = INFO_PAPER;
-
+  if (!lesson || (!lesson.reference.length && !lesson.infoOpen)) return null;
   return (
-    <>
-      {/* Wide screens: the top of the left column, above the Job Card. Its
-          height gives way to the card, and scrolls if the facts run long. */}
-      <aside
-        aria-label={LESSON_COPY.infoTitle[lang]}
-        className={`lesson-info-docked fixed z-[60] hidden overflow-y-auto rounded-[8px] xl:block ${glow}`}
-        style={{ ...paper, top, left: EDGE, width: CARD_W, maxHeight: "max(180px, calc(100dvh - 440px))" }}
-      >
-        {body}
-      </aside>
-
-      {/* Narrow screens: opened from the Job Card's "Your info" link, so no
-          floating button can ever sit under the card. Above the card while
-          open, with its own Close. */}
-      {lesson.infoOpen && (
-        <aside
-          aria-label={LESSON_COPY.infoTitle[lang]}
-          className="lesson-info-pop fixed right-2 z-[84] max-h-[calc(100vh-140px)] w-[min(340px,calc(100vw-16px))] overflow-y-auto rounded-[8px] xl:hidden"
-          style={{ ...paper, top: top + 52 }}
-        >
-          <button
-            type="button"
-            onClick={() => lesson.setInfoOpen(false)}
-            aria-label={LESSON_COPY.infoClose[lang]}
-            className="absolute right-1.5 top-1 flex h-9 w-9 items-center justify-center rounded-full text-white hover:bg-white/15"
-          >
-            <X size={18} aria-hidden />
-          </button>
-          {body}
-        </aside>
-      )}
-    </>
+    <section aria-label={LESSON_COPY.infoTitle[lang]} className="lesson-reference mt-4 border-t border-[#dadce0] pt-3">
+      <InfoCardBody scene={lesson.scene} reference={lesson.reference} lang={lang} compact />
+    </section>
   );
 }

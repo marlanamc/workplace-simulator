@@ -628,6 +628,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       body: T("Today's mail is in Inbox.", "El correo de hoy está en Recibidos."),
     });
 
+  const lessonReading = Boolean(lessonRun && view !== "empty");
+
   return (
     <div
       ref={mailRoot}
@@ -652,7 +654,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       <div className="flex items-center gap-3 px-3 py-2">
         <div
           data-testid="mail-app-title"
-          className="flex w-[200px] shrink-0 items-center gap-2 px-2"
+          className={`flex shrink-0 items-center gap-2 px-2 ${lessonRun ? "w-auto" : "w-[200px]"}`}
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#ea4335] text-[15px] font-bold text-white">M</span>
           <span className="text-[22px] font-normal text-[#5f6368]">Mail</span>
@@ -671,7 +673,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       </div>
 
       <div className="flex min-h-0 flex-1">
-        <div className="flex w-[200px] shrink-0 flex-col px-3 pt-1">
+        <div className={`${lessonRun ? "hidden" : "flex"} w-[200px] shrink-0 flex-col px-3 pt-1`}>
           <button
             onClick={wrongCompose}
             className="mb-4 flex h-14 items-center gap-3 rounded-2xl bg-white px-4 text-[14px] font-medium text-[#001d35] shadow-[0_1px_3px_0_rgba(60,64,67,.3),0_4px_8px_3px_rgba(60,64,67,.15)] hover:shadow-[0_1px_3px_0_rgba(60,64,67,.3),0_4px_8px_3px_rgba(60,64,67,.2)] cursor-pointer"
@@ -702,10 +704,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         </div>
 
         <div className="flex min-w-0 flex-1 overflow-hidden rounded-tl-2xl bg-white">
-          <div className="flex w-[300px] shrink-0 flex-col border-r border-[#e0e3e8] sm:w-[340px]">
+          <div data-testid="mail-inbox-list" className={`${lessonReading ? "hidden" : "flex"} ${lessonRun ? "w-full" : "w-[300px] sm:w-[340px]"} shrink-0 flex-col border-r border-[#e0e3e8]`}>
             <div className="flex items-center justify-between px-4 py-3 text-[14px] font-medium text-[#1f1f1f]">
               <span>{c.inbox}</span>
-              <span className="text-[12px] font-normal text-[#444746]">{inbox.length}</span>
+              {lessonRun && composeOnly ? (
+                <button type="button" data-testid="mail-new-message" className="min-h-11 rounded-full bg-[#d3e3fd] px-4 font-medium text-[#001d35]" onClick={() => { setView("compose"); setHelp(false); }}>
+                  {c.compose}
+                </button>
+              ) : <span className="text-[12px] font-normal text-[#444746]">{inbox.length}</span>}
             </div>
             <div className="flex-1 overflow-y-auto">
               {inbox.map((m) => {
@@ -764,7 +770,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
             </div>
           </div>
 
-          <div className="flex min-w-0 flex-1 flex-col overflow-y-auto">
+          <div className={`${lessonRun && !lessonReading ? "hidden" : "flex"} min-w-0 flex-1 flex-col overflow-y-auto`}>
+            {lessonReading && <button type="button" data-testid="mail-back-inbox" className="sticky top-0 z-10 min-h-11 shrink-0 border-b border-[#e0e3e8] bg-white px-5 py-2 text-left text-[15px] font-medium text-[#0b57d0]" onClick={() => { setView("empty"); setHelp(false); }}>
+              {lang === "en" ? "Back to inbox" : "Volver a Recibidos"}
+            </button>}
             {timeclockMailActive ? (
               <>
                 {ownsJobCard && (

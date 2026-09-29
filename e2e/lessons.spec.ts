@@ -53,7 +53,7 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   await finishAccountRecovery(page);
   await expect(card).toContainText("Sign in with a text code");
   // The finish says what the learner can now do.
-  await expect(card).toContainText("never give that code to anyone");
+  await expect(card).toContainText("Keep your code private");
   const again = card.getByTestId("lesson-practice-again");
   await expect(again).toBeVisible();
   await expect(card.getByTestId("lesson-back")).toBeVisible();

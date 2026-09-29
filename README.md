@@ -157,6 +157,12 @@ retired into this; their old URLs redirect (`next.config.ts`).
   like Act III), and the finish buttons (Practice again, Back to lessons). The Browser keeps
   to the lesson's tabs (a task's own deep links still work). The Shelf drops sign-out and
   My tasks.
+- **Lesson workspace:** one compact Job Card panel holds instructions and reference
+  facts. Copyable facts stay visible in its scroll area; context-only info can be
+  reopened with **Info card**. **Why this matters** expands inside the same card.
+  Opened lesson emails use the available reading area, with **Back to inbox**
+  preserving the draft. The W-4 uses the lesson reference facts instead of repeating
+  them above the form; Story retains its own reference strip.
 - **Practice again** resets the provider to the seed and bumps `progressEpoch`, which
   remounts the Browser, so every task restarts on its first step.
 - **Making a lesson:** add a `lesson` block (`LessonMeta`: title, summary, skill tags from

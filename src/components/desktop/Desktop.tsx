@@ -6,7 +6,7 @@ import DesktopIdentity from "@/components/DesktopIdentity";
 import DesktopWallpaper from "@/components/DesktopWallpaper";
 import Shelf, { SHELF_INSET, SHELF_RESERVE } from "@/components/Shelf";
 import JobCard from "@/components/task/JobCard";
-import LessonInfoCard, { LESSON_RAIL_CLASS } from "@/components/lesson/LessonInfoCard";
+import { LESSON_RAIL_CLASS } from "@/components/lesson/LessonInfoCard";
 import { deskIdentityFor } from "@/lib/desk-identity";
 import { practicedHistory } from "@/lib/tasks/job-application/content";
 import { actForLevel, levelForTrack, nextTaskInTrack, sceneForLevel } from "@/lib/tracks-content";
@@ -185,7 +185,6 @@ export default function Desktop({
         </AppWindow>
       )}
 
-      {lesson && <LessonInfoCard top={windowTop} />}
       {beforeShelf}
       <Shelf displayName={displayName} myJob={myJob} />
       {/* The one instruction voice. Above the app windows, below the Help

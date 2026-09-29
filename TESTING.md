@@ -286,3 +286,11 @@ The lesson Start button stays disabled until its own client component is
 interactive. Library tests also wait for document hydration before acting.
 Viewport simulation does not replace actual browser zoom, screen-reader,
 read-aloud, or learner testing on Chromebooks.
+
+## Compact lesson workspace
+
+`e2e/lesson-workspace.spec.ts` checks English and Spanish reference details inside
+one Job Card panel, optional explanation disclosure, a full-width email reader,
+return to the inbox without losing a draft, and one W-4 reference source. Layout
+checks cover desktop, zoom-equivalent Chromebook, and phone viewports and save
+screenshots. These checks do not replace real browser zoom or learner testing.

@@ -373,42 +373,33 @@ textarea:focus-visible,
   }
 }
 
-/* Reserve a rail for instructions; moving/collapsing the card is never
-   required to reach the task. Narrow phones use a separate bottom panel. */
-.lesson-desktop { --app-left: 460px; --lesson-info-height: min(32dvh, 300px); }
-.lesson-rail-card { left: 24px !important; right: auto !important; }
-@media (min-width: 1280px) and (min-height: 641px) {
-  .lesson-info-docked { max-height: var(--lesson-info-height) !important; }
-  .lesson-rail-card {
-    max-height: calc(100dvh - var(--lesson-top, 8px) - var(--lesson-info-height) - 80px) !important;
-  }
+/* One compact lesson panel: instruction, optional explanation, reference facts.
+   The app has its own area; neither surface can cover the other. */
+.lesson-desktop { --app-left: 336px; }
+.lesson-rail-card {
+  left: 12px !important;
+  top: var(--lesson-top, 8px) !important;
+  bottom: auto !important;
+  width: 312px !important;
+  max-height: calc(100dvh - var(--lesson-top, 8px) - 76px) !important;
 }
-@media (max-width: 1279px), (max-height: 640px) {
-  .lesson-desktop { --app-left: 340px; }
-  .lesson-rail-card {
-    top: var(--lesson-top, 8px) !important;
-    bottom: auto !important;
-    width: 300px !important;
-    max-height: calc(100dvh - var(--lesson-top, 8px) - 64px) !important;
-  }
-  .lesson-info-docked { display: none; }
-  .lesson-info-control { display: inline-flex; }
-  .lesson-info-pop {
-    display: block;
-    left: 24px;
-    right: auto;
-    width: 300px;
-  }
+.lesson-rail-card [data-card-line] { font-size: 22px; line-height: 1.35; }
+.lesson-rail-card > div { padding-left: 16px; padding-right: 16px; }
+.lesson-reference [data-testid="lesson-info-card"] > p {
+  background: none;
+  color: #3c4043;
+  padding: 0 0 8px;
 }
+.lesson-reference [data-testid="lesson-info-card"] > div { padding: 0; }
 @media (min-width: 600px) and (max-width: 799px) {
   .lesson-desktop { --app-left: 260px; }
-  .lesson-rail-card, .lesson-info-pop { left: 8px !important; width: 244px !important; }
+  .lesson-rail-card { left: 8px !important; width: 244px !important; }
   .lesson-rail-card > div { padding-left: 12px; padding-right: 12px; }
 }
 @media (max-width: 599px) {
   .lesson-desktop {
     --app-left: 8px;
-    --lesson-card-height: min(260px, 38dvh);
+    --lesson-card-height: min(300px, 42dvh);
     --app-bottom: calc(64px + var(--lesson-card-height) + 8px);
   }
   .lesson-rail-card {
@@ -418,13 +409,6 @@ textarea:focus-visible,
     width: calc(100vw - 16px) !important;
     max-width: none !important;
     max-height: var(--lesson-card-height) !important;
-  }
-  .lesson-info-pop {
-    top: auto !important;
-    bottom: 64px;
-    left: 8px;
-    width: calc(100vw - 16px);
-    max-height: var(--lesson-card-height);
   }
 }
 
