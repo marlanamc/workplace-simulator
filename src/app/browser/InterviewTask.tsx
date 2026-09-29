@@ -101,7 +101,7 @@ export default function InterviewTask() {
             <>
               <TaskDoneCard kicker={c.sentKicker} />
               <p className="text-[14px] leading-relaxed text-[#3c4043]">{c.doneBody}</p>
-              <TaskDoneActions
+              <TaskDoneActions taskKey="interview-practice"
                 kicker={c.sentKicker}
                 tryAgainLabel={c.tryAgain}
                 backToDeskLabel={c.backToDesk}

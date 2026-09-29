@@ -99,6 +99,8 @@ export const PAYSTUB_COPY: Record<Lang, {
   openInPdfHint: string;
   /** Card button on the step where the PDF Reader covers the questions. */
   backToBrowser: string;
+  /** On the questions, reopens the stub (after a reload closed the reader). */
+  seeStubAgain: string;
   close: string;
   payDate: string;
   grossPay: string;
@@ -124,6 +126,7 @@ export const PAYSTUB_COPY: Record<Lang, {
     paidLabel: "Paid",
     openInPdfHint: "Opens as a real document in PDF Reader",
     backToBrowser: "Back to the Browser",
+    seeStubAgain: "Look at the pay stub again",
     close: "Close",
     payDate: "Pay date",
     grossPay: "Gross pay",
@@ -149,6 +152,7 @@ export const PAYSTUB_COPY: Record<Lang, {
     paidLabel: "Pagado",
     openInPdfHint: "Se abre como un documento real en el Lector de PDF",
     backToBrowser: "Volver al Navegador",
+    seeStubAgain: "Ver el recibo otra vez",
     close: "Cerrar",
     payDate: "Fecha de pago",
     grossPay: "Pago bruto",

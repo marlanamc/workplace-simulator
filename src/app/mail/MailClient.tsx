@@ -78,6 +78,8 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { useLesson } from "@/lib/lesson-context";
+import { useDocked } from "@/lib/use-docked";
+import { mailDraftFor, mailDraftKey, readMailDraft, type MailDraft } from "@/lib/mail-draft";
 import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_CORRECTIONS, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyVerdict, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { useJobCardOptional } from '@/lib/job-card-context';
 import { storage } from '@/lib/storage';
@@ -203,18 +205,29 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [openingSaving, setOpeningSaving] = useState(false);
   const openingInFlight = useRef(false);
   const [openingSaveError, setOpeningSaveError] = useState(false);
-  const [step, setStep] = useState(0);
+  // Where this job had got to before a reload or a trip to another bookmark
+  // (Wave 5 F-7, F-23). Read once, when Mail opens.
+  const readSavedDraft = (task: MailTask | "timeclock"): MailDraft | null =>
+    lessonRun || (task === "mail-reply" && !timeclockMailActive) || completedTaskKeys.includes(task)
+      ? null
+      : readMailDraft(storage.getString(mailDraftKey(learnerId, task)));
+  const [restored] = useState(() => readSavedDraft(timeclockMailActive ? "timeclock" : activeMailTask));
+  const [step, setStep] = useState(timeclockMailActive ? 0 : restored?.step ?? 0);
+  // Opened on a mail job that is already finished (Mail on Day 6 still holds
+  // Day 5's sick call), Mail opens at its inbox, as a real one would. The
+  // done screen is only for the moment the job is finished (Wave 5 F-22).
   const [view, setView] = useState<View>(
-    completedTaskKeys.includes(activeMailTask) ? "done" : opening && nextOpeningIndex(openingReplies) === 3 ? "opening-sent" : isComposeOnly(activeMailTask) ? "compose" : "empty",
+    !timeclockMailActive && restored ? restored.view : completedTaskKeys.includes(activeMailTask) ? "empty" : opening && nextOpeningIndex(openingReplies) === 3 ? "opening-sent" : isComposeOnly(activeMailTask) ? "compose" : "empty",
   );
   const [body, setBody] = useState(() => {
+    if (restored) return restored.body;
     const saved = openingReplies.find(r => r.messageId === openingMessage.id);
     if (opening && saved) return saved.response;
     const draft = storage.getJSON<OpeningReply | null>(draftKey, null);
     return opening && draft?.messageId === openingMessage.id ? draft.response : '';
   });
-  const [attached, setAttached] = useState(false);
-  const [confirmPick, setConfirmPick] = useState<string | null>(null);
+  const [attached, setAttached] = useState(!timeclockMailActive && (restored?.attached ?? false));
+  const [confirmPick, setConfirmPick] = useState<string | null>(timeclockMailActive ? null : restored?.confirmPick ?? null);
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
   // The file selected in the picker's preview, before it is attached.
@@ -222,7 +235,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
   const [openStory, setOpenStory] = useState<InboxRow | null>(null);
   const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
-  const [replyAudience, setReplyAudience] = useState<"dana" | "all" | null>(null);
+  const [replyAudience, setReplyAudience] = useState<"dana" | "all" | null>(timeclockMailActive ? null : restored?.replyAudience ?? null);
   // The text of the last send that was refused. While the box still holds
   // exactly that, the card keeps asking for the fix instead of saying "Click
   // Send" over a correction that disagrees; and a refused send is what lets
@@ -243,7 +256,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // Where keyboard focus goes after the step the learner just took. Set in the
   // click handler; the effect below moves focus once the new view is in the DOM.
   const mailRoot = useRef<HTMLDivElement>(null);
-  const pendingFocus = useRef<string | null>(null);
+  // A restored draft opens where the learner left off: the reply box they
+  // were typing in, or the button that comes next, scrolled into view.
+  const pendingFocus = useRef<string | null>(
+    restored?.view === "compose" ? "compose-body" : restored?.view === "read" ? "reply-button" : restored?.view === "confirm" ? "confirm-question" : null,
+  );
   const focusNext = (id: string) => {
     pendingFocus.current = id;
   };
@@ -266,18 +283,21 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   if (browserTabToken !== lastTabToken) {
     setLastTabToken(browserTabToken);
     if (timeclockMailActive) {
-      setBody("");
+      // Back from checking the Time Clock: the note they started is still here.
+      setBody(readSavedDraft("timeclock")?.body ?? "");
       setShowMeTarget(null);
     } else if (!(opening && !completedTaskKeys.includes("mail-reply"))) {
       const next = activeMailTaskFor(completedTaskKeys, courseRoute, currentLevelKey);
+      const draft = readSavedDraft(next);
       setActiveMailTask(next);
-      setView(completedTaskKeys.includes(next) ? "done" : next === 'mail-reply' && nextOpeningIndex(openingReplies) === 3 ? 'opening-sent' : isComposeOnly(next) ? "compose" : "empty");
-      setStep(0);
-      if (next !== activeMailTask) setBody('');
-      setAttached(false);
-      setConfirmPick(null);
+      setView(draft ? draft.view : completedTaskKeys.includes(next) ? "empty" : next === 'mail-reply' && nextOpeningIndex(openingReplies) === 3 ? 'opening-sent' : isComposeOnly(next) ? "compose" : "empty");
+      setStep(draft?.step ?? 0);
+      if (draft) setBody(draft.body);
+      else if (next !== activeMailTask) setBody('');
+      setAttached(draft?.attached ?? false);
+      setConfirmPick(draft?.confirmPick ?? null);
       setBridgeOutEligible(false);
-      setReplyAudience(null);
+      setReplyAudience(draft?.replyAudience ?? null);
       setRejectedBody(null);
       setSendMissed(false);
     }
@@ -594,12 +614,14 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     if (wrongCount === 0) recordClean();
     else recordMissed();
     markComplete("timeclock", "flag_hours_mismatch");
+    storage.remove(mailDraftKey(learnerId, "timeclock"));
     setStoryFlag(TIMECLOCK_MAIL_FLAG, "false");
     setBody("");
     openApp("browser", { tab: "portal", section: "timeclock" });
   };
 
   const discardTimeclockMail = () => {
+    storage.remove(mailDraftKey(learnerId, "timeclock"));
     setBody("");
     setStoryFlag(TIMECLOCK_MAIL_FLAG, "false");
     openApp("browser", { tab: "portal", section: "timeclock" });
@@ -628,7 +650,32 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       body: T("Today's mail is in Inbox.", "El correo de hoy está en Recibidos."),
     });
 
-  const lessonReading = Boolean(lessonRun && view !== "empty");
+  // One pane at a time (the list, or one message with a way back) when the
+  // window is narrow: in a lesson, or beside the docked Job Card. Three
+  // columns need about 800px, and a docked window at 150% text has 567.
+  const docked = useDocked();
+  const singlePane = Boolean(lessonRun) || docked;
+  // The clock-in message (Day 3) is written in the right pane whatever the
+  // view is, so it counts as an open message too.
+  const lessonReading = singlePane && (view !== "empty" || timeclockMailActive);
+
+  // Keep the job's place and words on this device as the learner works
+  // (an external store, so an effect). Dropped once the job is done.
+  useEffect(() => {
+    if (lessonRun) return;
+    if (timeclockMailActive) {
+      storage.setJSON(mailDraftKey(learnerId, "timeclock"), mailDraftFor({ view: "compose", step: 0, body, attached: false, confirmPick: null, replyAudience: null }));
+      return;
+    }
+    if (opening) return;
+    const key = mailDraftKey(learnerId, activeMailTask);
+    if (view === "done" || completedTaskKeys.includes(activeMailTask)) {
+      storage.remove(key);
+      return;
+    }
+    const draft = mailDraftFor({ view, step, body, attached, confirmPick, replyAudience });
+    if (draft) storage.setJSON(key, draft);
+  }, [lessonRun, timeclockMailActive, opening, learnerId, activeMailTask, completedTaskKeys, view, step, body, attached, confirmPick, replyAudience]);
 
   return (
     <div
@@ -654,7 +701,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       <div className="flex items-center gap-3 px-3 py-2">
         <div
           data-testid="mail-app-title"
-          className={`flex shrink-0 items-center gap-2 px-2 ${lessonRun ? "w-auto" : "w-[200px]"}`}
+          className={`flex shrink-0 items-center gap-2 px-2 ${singlePane ? "w-auto" : "w-[200px]"}`}
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#ea4335] text-[15px] font-bold text-white">M</span>
           <span className="text-[22px] font-normal text-[#5f6368]">Mail</span>
@@ -673,7 +720,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       </div>
 
       <div className="flex min-h-0 flex-1">
-        <div className={`${lessonRun ? "hidden" : "flex"} w-[200px] shrink-0 flex-col px-3 pt-1`}>
+        <div className={`${singlePane ? "hidden" : "flex"} w-[200px] shrink-0 flex-col px-3 pt-1`}>
           <button
             onClick={wrongCompose}
             className="mb-4 flex h-14 items-center gap-3 rounded-2xl bg-white px-4 text-[14px] font-medium text-[#001d35] shadow-[0_1px_3px_0_rgba(60,64,67,.3),0_4px_8px_3px_rgba(60,64,67,.15)] hover:shadow-[0_1px_3px_0_rgba(60,64,67,.3),0_4px_8px_3px_rgba(60,64,67,.2)] cursor-pointer"
@@ -704,10 +751,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
         </div>
 
         <div className="flex min-w-0 flex-1 overflow-hidden rounded-tl-2xl bg-white">
-          <div data-testid="mail-inbox-list" className={`${lessonReading ? "hidden" : "flex"} ${lessonRun ? "w-full" : "w-[300px] sm:w-[340px]"} shrink-0 flex-col border-r border-[#e0e3e8]`}>
+          <div data-testid="mail-inbox-list" className={`${lessonReading ? "hidden" : "flex"} ${singlePane ? "w-full" : "w-[300px] sm:w-[340px]"} shrink-0 flex-col border-r border-[#e0e3e8]`}>
             <div className="flex items-center justify-between px-4 py-3 text-[14px] font-medium text-[#1f1f1f]">
               <span>{c.inbox}</span>
-              {lessonRun && composeOnly ? (
+              {singlePane && composeOnly ? (
                 <button type="button" data-testid="mail-new-message" className="min-h-11 rounded-full bg-[#d3e3fd] px-4 font-medium text-[#001d35]" onClick={() => { setView("compose"); setHelp(false); }}>
                   {c.compose}
                 </button>
@@ -770,8 +817,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
             </div>
           </div>
 
-          <div className={`${lessonRun && !lessonReading ? "hidden" : "flex"} min-w-0 flex-1 flex-col overflow-y-auto`}>
-            {lessonReading && <button type="button" data-testid="mail-back-inbox" className="sticky top-0 z-10 min-h-11 shrink-0 border-b border-[#e0e3e8] bg-white px-5 py-2 text-left text-[15px] font-medium text-[#0b57d0]" onClick={() => { setView("empty"); setHelp(false); }}>
+          <div className={`${singlePane && !lessonReading ? "hidden" : "flex"} min-w-0 flex-1 flex-col overflow-y-auto`}>
+            {lessonReading && !timeclockMailActive && <button type="button" data-testid="mail-back-inbox" className="sticky top-0 z-10 min-h-11 shrink-0 border-b border-[#e0e3e8] bg-white px-5 py-2 text-left text-[15px] font-medium text-[#0b57d0]" onClick={() => { setView("empty"); setHelp(false); }}>
               {lang === "en" ? "Back to inbox" : "Volver a Recibidos"}
             </button>}
             {timeclockMailActive ? (
@@ -1268,7 +1315,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     onNotYet={dismissBridgeOut}
                   />
                 )}
-                <TaskDoneActions kicker={dc.kicker} onTryAgain={restart} />
+                <TaskDoneActions taskKey={activeMailTask} kicker={dc.kicker} onTryAgain={restart} />
               </div>
               );
             })()}

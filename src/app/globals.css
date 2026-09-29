@@ -373,6 +373,50 @@ textarea:focus-visible,
   }
 }
 
+/* Story mode below 1100px wide (a Chromebook at 150% text is 911x512): the
+   Job Card docks as a fixed strip on the left and the app window narrows
+   beside it, so nothing the learner needs is ever under the card. Above
+   that width it floats and moves itself off controls (JobCard.tsx).
+   Keep the breakpoint in step with DOCK_MAX_WIDTH (job-card-placement.ts).
+   The sizes match the lesson rail below. */
+@media (max-width: 1099px) {
+  .story-desktop { --app-left: 336px; }
+  .story-desktop [data-desktop-home] { padding-left: calc(var(--app-left) + 16px); }
+  .job-card-docked {
+    left: 12px;
+    top: var(--lesson-top, 8px);
+    width: 312px;
+    max-width: none !important;
+    max-height: calc(100dvh - var(--lesson-top, 8px) - 76px) !important;
+  }
+  .job-card-docked [data-card-line] { font-size: 22px; line-height: 1.3; }
+  .job-card-docked > div { padding-left: 16px; padding-right: 16px; }
+}
+@media (max-width: 1099px) and (max-height: 640px) {
+  .job-card-docked .job-card-primary { min-height: 48px; font-size: 17px; }
+  .job-card-docked .min-h-\[56px\] { min-height: 44px; }
+}
+@media (min-width: 600px) and (max-width: 799px) {
+  .story-desktop { --app-left: 260px; }
+  .job-card-docked { left: 8px; width: 244px; }
+  .job-card-docked > div { padding-left: 12px; padding-right: 12px; }
+}
+@media (max-width: 599px) {
+  .story-desktop {
+    --app-left: 8px;
+    --dock-card-height: min(300px, 42dvh);
+    --app-bottom: calc(64px + var(--dock-card-height) + 8px);
+  }
+  .story-desktop [data-desktop-home] { padding-left: 40px; }
+  .job-card-docked {
+    top: auto;
+    bottom: 64px;
+    left: 8px;
+    width: calc(100vw - 16px);
+    max-height: var(--dock-card-height) !important;
+  }
+}
+
 /* One compact lesson panel: instruction, optional explanation, reference facts.
    The app has its own area; neither surface can cover the other. */
 .lesson-desktop { --app-left: 336px; }

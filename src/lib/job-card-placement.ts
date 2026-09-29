@@ -134,3 +134,68 @@ export function nudgedCorner(corner: Corner, key: string): Corner | null {
 export function cornerNearest(center: { x: number; y: number }, viewport: Size): Corner {
   return `${center.y < viewport.height / 2 ? "t" : "b"}${center.x < viewport.width / 2 ? "l" : "r"}` as Corner;
 }
+
+/**
+ * Below this width the card stops floating. It docks as a fixed strip on the
+ * left and the app window narrows beside it (`.story-desktop` in
+ * globals.css), so nothing the learner needs is ever under it. A Chromebook
+ * at 150% text is 911 wide. Keep in step with the `max-width: 1099px` media
+ * queries in globals.css.
+ */
+export const DOCK_MAX_WIDTH = 1099;
+export const DOCK_QUERY = `(max-width: ${DOCK_MAX_WIDTH}px)`;
+
+export function isDockedWidth(viewportWidth: number): boolean {
+  return viewportWidth <= DOCK_MAX_WIDTH;
+}
+
+/**
+ * How much bottom padding a page-sized scroll area needs so its last control
+ * can scroll up clear of a card parked at the bottom.
+ *
+ * Everything is measured against `clip`, the app window that clips the area,
+ * never against the area's own height. The padding this returns makes the
+ * area taller; if the next measurement read that taller box, it would ask for
+ * more padding, and so on without end (Wave 5 F-2: over a million pixels at
+ * 911x512). The window does not grow with its content, so the answer is the
+ * same on every pass. It is also capped so the padding alone never needs more
+ * room than the area has on screen.
+ *
+ * Returns 0 when the area needs no gutter: the card is not over it, the area
+ * is too small to be a page (a list box inside a form), or nothing scrolls.
+ */
+export function scrollGutter({
+  area,
+  clip,
+  card,
+  edge,
+  paddingTop,
+  scrolls,
+  minHeight,
+}: {
+  /** The scroll area's box on screen. */
+  area: Box;
+  /** The box that clips it (the app window). */
+  clip: Box;
+  /** Where the card is parked, or null when it is not at the bottom. */
+  card: Box | null;
+  /** Air to leave between the last control and the card. */
+  edge: number;
+  /** The area's own top padding, which also has to fit. */
+  paddingTop: number;
+  /** Whether the area has more content than it shows. */
+  scrolls: boolean;
+  /** Smallest on-screen height that counts as a page. */
+  minHeight: number;
+}): number {
+  if (!card || !scrolls) return 0;
+  const top = Math.max(area.top, clip.top);
+  const bottom = Math.min(area.top + area.height, clip.top + clip.height);
+  const visible = bottom - top;
+  if (visible < minHeight) return 0;
+  const across = area.left < card.left + card.width && card.left < area.left + area.width;
+  if (!across || card.top >= bottom) return 0;
+  const wanted = Math.ceil(bottom - card.top + edge);
+  const room = Math.floor(visible - paddingTop - 1);
+  return Math.max(0, Math.min(wanted, room));
+}

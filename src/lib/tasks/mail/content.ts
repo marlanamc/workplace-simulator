@@ -697,10 +697,15 @@ export const REPLY_ALL_CORRECTIONS: Record<Exclude<ReplyAllVerdict, "ok" | "empt
  * storage room passes in either language.
  */
 export function mailEtiquetteAnswersDarnell(body: string): boolean {
-  const t = body.trim().toLowerCase().replace(/\s+/g, " ");
-  // A concise location answers the question; a supply order does not.
-  return /\b(?:storage|store ?room|back room|supply room|almac[eé]n|bodega)\b/.test(t);
+  // A concise location answers the question; a supply order does not. Read
+  // with the shared reader: accents off, and "they are not in the storage
+  // room" does not count as saying they are (Wave 5 step 4).
+  // A four-word window, for Spanish: "no están en el almacén".
+  return affirms(body, STORAGE_ROOM, 4);
 }
+
+const STORAGE_ROOM =
+  /\b(storage|storag|storge|strage|storeroom|store ?room|stor room|stockroom|stock room|back ?room|supply room|supplies room|almacen|almacenes|almasen|bodega|deposito|cuarto de (almacenamiento|suministros))\b/;
 
 /** Why a sick-call email is not sent yet, or "ok". */
 export type SickCallVerdict = "ok" | "empty" | "no-absence" | "no-day";
@@ -714,9 +719,13 @@ export type SickCallVerdict = "ok" | "empty" | "no-absence" | "no-day";
 export function sickCallVerdict(body: string): SickCallVerdict {
   if (!body.trim()) return "empty";
   if (!saysCannotAttend(body)) return "no-absence";
-  const aboutShift = /\b(today|tonight|this morning|shift|work|job|turno|hoy|trabajo|trabajar|esta manana)\b/.test(
-    normalizeReply(body),
-  );
+  const t = normalizeReply(body);
+  const today = /\b(today|tody|toady|todya|2day|tonight|this morning|hoy|oy|esta manana|esta noche)\b/.test(t);
+  // Tomorrow is the wrong shift: "I can't come to work tomorrow" named "work"
+  // and passed. "manana" alone is tomorrow; "esta manana" is this morning.
+  const tomorrow = /\b(tomorrow|tomorow|tommorow|tmrw|tmr)\b|(?<!\besta )(?<!\bla )\bmanana\b/.test(t);
+  if (tomorrow && !today) return "no-day";
+  const aboutShift = today || /\b(shift|work|job|turno|trabajo|trabajar)\b/.test(t);
   return aboutShift ? "ok" : "no-day";
 }
 

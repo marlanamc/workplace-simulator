@@ -209,7 +209,7 @@ export default function CourseworkTask() {
             {submitted && (
               <div className="mt-6 flex flex-col gap-5">
                 <TaskDoneCard kicker={c.sentKicker} />
-                <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+                <TaskDoneActions taskKey="coursework" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
               </div>
             )}
           </div>

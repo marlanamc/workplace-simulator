@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   REVIEW_COPY,
@@ -29,7 +30,8 @@ type View = "form" | "done";
 export default function ShiftReviewTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("shift-review") ? "done" : "form");
-  const [summary, setSummary] = useState("");
+  // The note survives a reload (Wave 5 F-7).
+  const [summary, setSummary] = useTaskDraft("shift-review", "summary", "");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
@@ -131,7 +133,7 @@ export default function ShiftReviewTask() {
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions
+          <TaskDoneActions taskKey="shift-review"
             kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}

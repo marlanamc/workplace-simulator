@@ -31,9 +31,30 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
   const [reply, setReply] = useTaskDraft("schedule", "text-reply", "");
   const [sentReply, setSentReply] = useState<string | null>(null);
   const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : filed ? "text" : "form");
-  const [shift, setShift] = useState(initialShift ?? "");
-  const [cover, setCover] = useState("");
-  const [reason, setReason] = useState("");
+  // The form's answers survive a reload too (Wave 5 F-7). The day they
+  // picked on the Schedule tab to get here wins until they change it.
+  const [savedShift, saveShift] = useTaskDraft("schedule", "swap-shift", "");
+  const [pickedHere, setPickedHere] = useState(false);
+  const shift = !pickedHere && initialShift ? initialShift : savedShift;
+  const setShift = (value: string) => {
+    setPickedHere(true);
+    saveShift(value);
+  };
+  const [cover, saveCover] = useTaskDraft("schedule", "swap-cover", "");
+  const [reason, saveReason] = useTaskDraft("schedule", "swap-reason", "");
+  // The day they came in with is saved with the first answer they give, so
+  // a reload brings back Thursday as well as what they wrote.
+  const keepShift = () => {
+    if (shift && shift !== savedShift) saveShift(shift);
+  };
+  const setCover = (value: string) => {
+    keepShift();
+    saveCover(value);
+  };
+  const setReason = (value: string) => {
+    keepShift();
+    saveReason(value);
+  };
   const [help, setHelp] = useState(false);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("schedule");
   const showMe = useShowMe();
@@ -240,7 +261,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          <TaskDoneActions taskKey="schedule" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 

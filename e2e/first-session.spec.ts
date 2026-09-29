@@ -188,12 +188,12 @@ test("language choice on the login page sticks after signing in and reloading", 
   await waitForInteractive(page);
   await expect(spanishIntro).toBeVisible({ timeout: 20_000 });
 
-  // Exercise the full translated tour and manual card recovery at Chromebook size.
+  // Exercise the full translated tour at Chromebook size. Below 1100px the
+  // card docks beside the window, so there is nothing to fold out of the way.
   await page.setViewportSize({ width: 1024, height: 768 });
   const card = jobCard(page);
-  await card.getByTestId("job-card-collapse").click();
-  await expect(card.getByTestId("job-card-collapse")).toHaveAttribute("aria-expanded", "false");
-  await card.getByTestId("job-card-collapse").click();
+  await expect(card).toHaveAttribute("data-corner", "dock");
+  await expect(card.getByTestId("job-card-collapse")).toHaveCount(0);
   await card.getByRole("button", { name: "Empezar a mirar", exact: true }).click();
   await expect(card.getByText("Estos son tus marcadores.", { exact: false })).toBeVisible();
   await card.getByRole("button", { name: "Siguiente", exact: true }).click();

@@ -1,5 +1,6 @@
 import type { EventIntroCopy, Lang, Lesson, Localized, SubmissionContent } from "@/lib/task-types";
 import { STORY_DAY_BY_LEVEL, shortDate } from "@/lib/story-dates";
+import { affirms, denies, normalizeReply } from "@/lib/grading/meaning";
 
 /**
  * What actually happened on the shift, shown on the form itself (see
@@ -152,11 +153,20 @@ export const LESSONS: Record<Lang, Lesson[]> = {
  * without mentioning 11 at all.
  */
 export function shiftSummaryIsComplete(text: string, lang: Lang): boolean {
-  const t = text.trim().toLowerCase();
+  const t = normalizeReply(text);
   if (t.split(/\s+/).filter(Boolean).length < 3) return false;
-  const eleven = lang === "es" ? /\b(11|11:00|once)\b/ : /\b(11|11:00|eleven)\b/;
-  return eleven.test(t);
+  // Any way of writing the hour: 11, 11am, 11AM, 11:00, 11h, 11.00. Wave 5
+  // found "busy at 11am" refused, because `\b11\b` never ends before "am".
+  // Not $11, 11 minutes or 11 people.
+  const digits = /(?<![\d:.$])11(?!\d)(?!\s*(?:%|dollars?|dolares?|minutes?|minutos?|mins?\b|people|personas?|customers?|clientes?))/;
+  const word = lang === "es" ? /\bonce\b/ : /\beleven\b/;
+  if (!digits.test(t) && !word.test(t)) return false;
+  // The facts say it got busy. "It was not busy at 11" says the opposite,
+  // unless the note also says it did get busy.
+  return !(denies(t, BUSY) && !affirms(t, BUSY));
 }
+
+const BUSY = /\b(busy|bussy|busi|rush|crowded|full|ocupad[oa]s?|lleno|llena|mucha gente|muchos clientes)\b/;
 
 export function describeSubmission(summary: string, lang: Lang): SubmissionContent {
   return {

@@ -52,6 +52,9 @@ import { dayLabel } from "@/lib/shift-spine";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import { speakText } from "@/lib/read-aloud";
 import { DEVICE_KEY, storage } from "@/lib/storage";
+import { useDocked } from "@/lib/use-docked";
+import { ownsFinish } from "@/lib/job-card-finish";
+import { jumpTabForTask } from "@/lib/curriculum-catalog";
 import {
   HOME_CORNER as HOME,
   chooseCorner,
@@ -59,6 +62,7 @@ import {
   cornerNearest,
   isCorner,
   nudgedCorner,
+  scrollGutter,
   type Box,
   type Corner,
 } from "@/lib/job-card-placement";
@@ -114,21 +118,28 @@ function visibleTargets(card: HTMLElement, selector: string): Box[] {
  * under it. Give that page a gutter as tall as the part of it the card
  * covers, so its last control can always be scrolled up clear of the card.
  * Only page-sized scroll areas get one: a small list box inside a form does
- * not need to grow by a card's height.
+ * not need to grow by a card's height. `scrollGutter` measures against the
+ * app window, not the area, so the gutter cannot feed its own measurement.
  */
 function updateScrollGutters(card: Box | null) {
   document
     .querySelectorAll<HTMLElement>("[data-app-window] .overflow-y-auto, [data-app-window] .overflow-auto")
     .forEach((el) => {
+      const clip = el.closest("[data-app-window]")?.getBoundingClientRect();
       const r = el.getBoundingClientRect();
-      const under =
-        card !== null &&
-        r.height >= window.innerHeight * 0.4 &&
-        el.scrollHeight > el.clientHeight + 1 &&
-        r.left < card.left + card.width &&
-        card.left < r.right &&
-        card.top < r.bottom;
-      const gutter = under ? `${Math.ceil(r.bottom - card.top + EDGE)}px` : "";
+      const px = clip
+        ? scrollGutter({
+            area: { left: r.left, top: r.top, width: r.width, height: r.height },
+            clip: { left: clip.left, top: clip.top, width: clip.width, height: clip.height },
+            card,
+            edge: EDGE,
+            paddingTop: parseFloat(getComputedStyle(el).paddingTop) || 0,
+            scrolls: el.scrollHeight > el.clientHeight + 1,
+            minHeight: window.innerHeight * 0.4,
+          })
+        : 0;
+      const under = px > 0;
+      const gutter = under ? `${px}px` : "";
       if (el.style.getPropertyValue("--job-card-gutter") !== gutter) {
         if (gutter) el.style.setProperty("--job-card-gutter", gutter);
         else el.style.removeProperty("--job-card-gutter");
@@ -177,12 +188,12 @@ interface Script {
 export default function JobCard() {
   const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag, bridgePath, courseRoute, chooseCourseRoute, routeSaving, saveError, saving, retrySave } =
     useProgress();
-  const { active, openApp, minimizeActive } = useWindowManager();
+  const { active, openApp, minimizeActive, revisitTab } = useWindowManager();
   const lesson = useLesson();
   const router = useRouter();
   const {
     step,
-    finish,
+    finish: reportedFinish,
     correction,
     clearCorrection,
     toggleShowMe,
@@ -236,6 +247,12 @@ export default function JobCard() {
   // can see they covered.
   const [heldAt, setHeldAt] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
+  // Below about 1100px the card is a fixed strip on the left and the app
+  // window narrows beside it (`.story-desktop` in globals.css): nothing is
+  // under it, so it has no corner to choose, nothing to drag and nothing to
+  // fold out of the way. A lesson already keeps its own rail at every size.
+  const docked = useDocked() && !lesson;
+  const folded = collapsed && !docked;
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -257,7 +274,8 @@ export default function JobCard() {
     setPractice({ stage: "inactive" });
     setCollapsed(false);
     startOrientation();
-    requestAnimationFrame(() => collapseRef.current?.focus());
+    // Docked, there is no fold button, so focus goes to the card's own button.
+    requestAnimationFrame(() => (collapseRef.current ?? cardRef.current?.querySelector<HTMLElement>(".job-card-primary"))?.focus());
   }
 
   const nextTaskKey = lesson ? lesson.taskKey : nextTaskInTrack(currentTrack, completedTaskKeys);
@@ -282,6 +300,24 @@ export default function JobCard() {
     setHeldStep(null);
     setCollapsed(false);
   }
+  // Back on the desktop, the job just finished is behind them. An app opened
+  // after this that shows an old done screen does not make the card say
+  // "Done" again (`ownsFinish`).
+  if (active === null && finishedTaskKey !== null && jobShown === nextTaskKey) {
+    setFinishedTaskKey(null);
+  }
+  // A finish counts only from the job just completed. Any other done screen
+  // is an app showing old work: the card keeps today's job instead.
+  const finish =
+    reportedFinish &&
+    ownsFinish({
+      reported: reportedFinish.taskKey,
+      justFinished: finishedTaskKey,
+      inLesson: Boolean(lesson),
+      revisiting: revisitTab !== null && revisitTab === (jumpTabForTask(reportedFinish.taskKey) ?? TASK_LOCATIONS[reportedFinish.taskKey]?.tab),
+    })
+      ? reportedFinish
+      : null;
 
   // Ignore reports from a different job (Mail already queued for tomorrow
   // while today is still shift notes). Keep the last matching line while the
@@ -318,7 +354,7 @@ export default function JobCard() {
     setHeardVoice(voice);
     setCollapsed(false);
   }
-  const headerCorrection = collapsed && !(visibleHelp && !finish) ? visibleCorrection : "";
+  const headerCorrection = folded && !(visibleHelp && !finish) ? visibleCorrection : "";
 
   // A new instruction starts at its first line, even if Help or Show me
   // scrolled the previous card to a lower control.
@@ -363,7 +399,7 @@ export default function JobCard() {
   // derived. It re-measures when any of those change, a frame at a time.
   const dragging = drag !== null;
   useEffect(() => {
-    if (dragging || celebrating || inLesson) return;
+    if (dragging || celebrating || inLesson || docked) return;
     const card = cardRef.current;
     if (!card) return;
     let frame = 0;
@@ -410,7 +446,7 @@ export default function JobCard() {
       window.removeEventListener("scroll", schedule, true);
       updateScrollGutters(null);
     };
-  }, [dragging, celebrating, inLesson, held, preferred]);
+  }, [dragging, celebrating, inLesson, docked, held, preferred]);
 
   // After a hand-off (a celebration or an act's first screen closing, a task
   // window closing on the finished job) the control that had focus is gone
@@ -732,6 +768,10 @@ export default function JobCard() {
       ? (JOB_CARD_LINE[nextTaskKey]?.[lang] ?? TASK_INFO[nextTaskKey].label[lang])
       : effectiveStep.line[lang]);
     const midLine = act === "act1" ? effectiveStep.line[lang] : goalLine;
+    // The line is held from a screen that is not showing (the learner opened
+    // Mail on pay-stub day): offer the way back to today's job, so "Open your
+    // pay stub from the list" never sits over a page with no list.
+    const way = !liveStep && nextTaskKey && !lesson ? TASK_LOCATIONS[nextTaskKey] : undefined;
 
     return {
       badge,
@@ -740,8 +780,12 @@ export default function JobCard() {
       tone: "blue",
       help: Boolean(helpOffered),
       // A step that advances from the card, not from a click in the app.
-      primaryLabel: liveStep?.primaryLabel,
-      onPrimary: liveStep?.primaryLabel ? pressPrimary : undefined,
+      primaryLabel: liveStep?.primaryLabel ?? (way && nextTaskKey ? HANDOFF_CTA[nextTaskKey]?.[lang] ?? way.ctaLabel : undefined),
+      onPrimary: liveStep?.primaryLabel
+        ? pressPrimary
+        : way
+          ? () => openApp(way.appKey, { tab: way.tab, section: way.section })
+          : undefined,
       // Four bars for a job of any length: the task's own step count is
       // mapped onto them so the shape never changes between jobs.
       // Floor, not round: step 2 of 3 lights bar 2, never bar 3.
@@ -750,10 +794,14 @@ export default function JobCard() {
   }
 
   const tone = TONE[script.tone];
+  // A lesson rail and the docked strip never move.
+  const fixedPlace = Boolean(lesson) || docked;
 
   if (celebrating) return null;
 
-  const position: React.CSSProperties = drag
+  const position: React.CSSProperties = docked
+    ? { boxShadow: "0 18px 48px rgba(0,0,0,0.34)" }
+    : drag
     ? {
         left: drag.x,
         top: drag.y,
@@ -771,28 +819,31 @@ export default function JobCard() {
     <div
       ref={cardRef}
       data-job-card
-      data-corner={corner}
+      data-corner={docked ? "dock" : corner}
       data-practice={practice.stage}
+      data-card-tone={script.tone}
       // In a lesson the card has its own column, so it can sit above a picker's
       // backdrop without covering the picker: a correction for a wrong file
       // stays readable instead of dimmed behind the overlay.
       // Lessons reserve a rail or bottom panel for this card at every size.
       // The route chooser only shows on the desktop (no task under it), so it
       // skips the short-screen size cap and keeps all five choices in view.
-      className={`${script.routeChoices && active === null ? "" : "job-card-compact "}${lesson ? "lesson-rail-card " : ""}animate-card-pop fixed ${lesson ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
-      style={{ width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
+      // Docked, the card has its own column too, and sits above a picker's
+      // backdrop for the same reason.
+      className={`${docked ? "job-card-docked " : script.routeChoices && active === null ? "" : "job-card-compact "}${lesson ? "lesson-rail-card " : ""}animate-card-pop fixed ${lesson || docked ? "z-[82]" : "z-[72]"} flex flex-col overflow-hidden rounded-[24px] bg-white`}
+      style={docked ? position : { width: CARD_W, maxWidth: "calc(100vw - 48px)", maxHeight: `calc(100dvh - ${BOTTOM + EDGE}px)`, ...position }}
     >
       <div
         ref={handleRef}
         data-testid="job-card-drag-handle"
-        onPointerDown={lesson ? undefined : startDrag}
-        onKeyDown={lesson ? undefined : nudgeCorner}
-        tabIndex={lesson ? undefined : 0}
-        role={lesson ? undefined : "button"}
-        aria-label={lesson ? undefined : c.dragHint}
-        title={lesson ? undefined : c.dragHint}
+        onPointerDown={fixedPlace ? undefined : startDrag}
+        onKeyDown={fixedPlace ? undefined : nudgeCorner}
+        tabIndex={fixedPlace ? undefined : 0}
+        role={fixedPlace ? undefined : "button"}
+        aria-label={fixedPlace ? undefined : c.dragHint}
+        title={fixedPlace ? undefined : c.dragHint}
         className="flex shrink-0 items-center gap-2.5 px-5 py-2 text-white"
-        style={{ background: tone, cursor: lesson ? "default" : drag ? "grabbing" : "grab", touchAction: "none" }}
+        style={{ background: tone, cursor: fixedPlace ? "default" : drag ? "grabbing" : "grab", touchAction: fixedPlace ? undefined : "none" }}
       >
         <span
           className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[14px] font-bold"
@@ -864,7 +915,7 @@ export default function JobCard() {
             ?
           </button>
         )}
-        {preferred !== HOME && (
+        {preferred !== HOME && !fixedPlace && (
           <button
             type="button"
             onPointerDown={(e) => e.stopPropagation()}
@@ -877,7 +928,7 @@ export default function JobCard() {
             <Shrink size={15} strokeWidth={2.25} aria-hidden />
           </button>
         )}
-        <button
+        {!docked && <button
           ref={collapseRef}
           type="button"
           data-testid="job-card-collapse"
@@ -894,8 +945,8 @@ export default function JobCard() {
           ) : (
             <ChevronDown size={16} strokeWidth={2.5} aria-hidden />
           )}
-        </button>
-        <span className={`${lesson ? "hidden" : "flex"} shrink-0 gap-[3px] opacity-75`} aria-hidden>
+        </button>}
+        <span className={`${fixedPlace ? "hidden" : "flex"} shrink-0 gap-[3px] opacity-75`} aria-hidden>
           {[0, 1].map((col) => (
             <span key={col} className="flex flex-col gap-[3px]">
               {[0, 1, 2].map((row) => (
@@ -906,7 +957,7 @@ export default function JobCard() {
         </span>
       </div>
 
-      {!collapsed && (
+      {!folded && (
       <div ref={bodyRef} className="min-h-0 overflow-y-auto p-5">
         {showPractice ? (
           <>

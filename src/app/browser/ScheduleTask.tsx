@@ -128,7 +128,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
             badgeWhere={c.badgeWhere}
           />
 
-          <TaskDoneActions
+          <TaskDoneActions taskKey="schedule"
             kicker={c.doneTitle}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}

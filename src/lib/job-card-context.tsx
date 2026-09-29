@@ -11,6 +11,8 @@ import {
   type ReactNode,
 } from "react";
 import { INTRO_BEATS } from "@/lib/job-card-content";
+import { useTaskDraft } from "@/lib/use-task-draft";
+import { TOUR_DRAFT, savedIntroBeat, savedPracticeStage } from "@/lib/tour-resume";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lesson, Localized } from "@/lib/task-types";
 
@@ -75,6 +77,9 @@ export interface JobCardHelp {
 /** What a finished task reports. The card supplies the button. */
 export interface JobCardFinish {
   id: string;
+  /** The job whose done screen reported this. The card ignores a finish from
+   *  any job but the one the learner just completed (Wave 5 F-9, F-22). */
+  taskKey: TaskKey;
   /** Short past-tense kicker, e.g. "Thank-you sent". The card falls back to
    *  its own localized word when a task doesn't supply one. */
   kicker?: string;
@@ -144,11 +149,20 @@ export function JobCardProvider({
   introSeen: boolean;
   onIntroDone: () => void;
 }) {
-  const [practice, setPractice] = useState<CardPractice>({ stage: "inactive" });
+  // The welcome beat and the practice stage are tour drafts on this device, so
+  // a reload mid-tour comes back to the same beat and the same practice stage
+  // (Wave 5 F-7). Lessons keep nothing: `introSeen` is always true there.
+  const [savedBeat, setSavedBeat] = useTaskDraft<number>("tour", TOUR_DRAFT.introBeat, 0);
+  const [savedStage, setSavedStage] = useTaskDraft<string>("tour", TOUR_DRAFT.practice, "inactive");
+  const introBeat = introSeen ? INTRO_BEATS.length : savedIntroBeat(savedBeat, INTRO_BEATS.length);
+  // The practice only exists on the welcome beat; a stage left over from an
+  // older session never comes back once the learner is past it.
+  const practiceStage = introBeat < INTRO_BEATS.length ? savedPracticeStage(savedStage) : "inactive";
+  const practice = useMemo<CardPractice>(() => ({ stage: practiceStage }), [practiceStage]);
+  const setPractice = useCallback((next: CardPractice) => setSavedStage(next.stage), [setSavedStage]);
   const [step, setStep] = useState<JobCardStep | null>(null);
   const [finish, setFinish] = useState<JobCardFinish | null>(null);
   const [raised, setRaised] = useState<{ message: string; onStep: string } | null>(null);
-  const [introBeat, setIntroBeat] = useState(introSeen ? INTRO_BEATS.length : 0);
   const [help, setHelp] = useState<JobCardHelp | null>(null);
   const showMeHandler = useRef<(() => void) | null>(null);
   const primaryHandler = useRef<(() => void) | null>(null);
@@ -253,9 +267,9 @@ export function JobCardProvider({
   // updater has to stay pure.
   const advanceIntro = useCallback(() => {
     const next = introBeat + 1;
-    setIntroBeat(next);
+    setSavedBeat(next);
     if (next >= INTRO_BEATS.length) onIntroDone();
-  }, [introBeat, onIntroDone]);
+  }, [introBeat, onIntroDone, setSavedBeat]);
 
   const value = useMemo(
     () => ({

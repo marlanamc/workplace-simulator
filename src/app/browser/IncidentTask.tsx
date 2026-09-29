@@ -139,7 +139,7 @@ export default function IncidentTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <TaskDoneActions
+            <TaskDoneActions taskKey="incident"
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}

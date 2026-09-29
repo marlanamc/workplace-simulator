@@ -315,7 +315,7 @@ function CafeFilesTask() {
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#0f9d58] text-[11px] font-medium text-white">JK</span>
             </div>
             <ScheduleLink lang={lang} />
-            <TaskDoneActions
+            <TaskDoneActions taskKey="files"
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}

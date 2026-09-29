@@ -4,7 +4,14 @@ import { createContext, useCallback, useContext, useState, type ReactNode } from
 import type { AppKey } from "@/lib/desktop-content";
 import type { PortalSection } from "@/lib/tracks-content";
 
-export type OpenAppOpts = { tab?: string; section?: PortalSection; docId?: string };
+export type OpenAppOpts = {
+  tab?: string;
+  section?: PortalSection;
+  docId?: string;
+  /** The learner chose to go back to a finished job on this tab (a
+   *  teacher's note). Its done screen may speak on the Job Card again. */
+  revisit?: boolean;
+};
 
 interface AppWindowState {
   minimized: boolean;
@@ -28,6 +35,12 @@ interface WindowManagerState {
   portalSectionToken: number;
   pdfDocId: string | null;
   pdfDocToken: number;
+  /**
+   * The tab the learner deliberately reopened a finished job on, or null.
+   * Only then may that job's done screen say "Done" and offer "Do it again"
+   * (`ownsFinish`). Cleared on the desktop and by any other open.
+   */
+  revisitTab: string | null;
 }
 
 interface WindowManagerValue extends WindowManagerState {
@@ -63,6 +76,8 @@ export function WindowManagerProvider({
     portalSectionToken: jumpTab === "portal" ? 1 : 0,
     pdfDocId: null,
     pdfDocToken: 0,
+    // A `?task=` link names the job to play, finished or not.
+    revisitTab: jumpTab ?? null,
   }));
 
   const openApp = useCallback((key: AppKey, opts?: OpenAppOpts) => {
@@ -98,6 +113,7 @@ export function WindowManagerProvider({
         portalSectionToken: portalTouched ? s.portalSectionToken + 1 : s.portalSectionToken,
         pdfDocId: key === "pdf" && opts?.docId ? opts.docId : s.pdfDocId,
         pdfDocToken: key === "pdf" && opts?.docId ? s.pdfDocToken + 1 : s.pdfDocToken,
+        revisitTab: key === "browser" && opts?.revisit && opts.tab ? opts.tab : null,
       };
     });
   }, []);
@@ -113,11 +129,11 @@ export function WindowManagerProvider({
       const isFreshBrowserReopen = key === "browser" && (!entry || entry.minimized);
       const browserTabToken = isFreshBrowserReopen ? s.browserTabToken + 1 : s.browserTabToken;
       const browserTabExplicit = isFreshBrowserReopen ? false : s.browserTabExplicit;
-      if (!entry) return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken, browserTabExplicit };
+      if (!entry) return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken, browserTabExplicit, revisitTab: null };
       if (s.active === key && !entry.minimized) {
-        return { ...s, apps: { ...s.apps, [key]: { minimized: true } }, active: null };
+        return { ...s, apps: { ...s.apps, [key]: { minimized: true } }, active: null, revisitTab: null };
       }
-      return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken, browserTabExplicit };
+      return { ...s, apps: { ...s.apps, [key]: { minimized: false } }, active: key, browserTabToken, browserTabExplicit, revisitTab: null };
     });
   }, []);
 
@@ -129,14 +145,14 @@ export function WindowManagerProvider({
     setState((s) => {
       const apps = { ...s.apps };
       delete apps[key];
-      return { ...s, apps, active: s.active === key ? null : s.active };
+      return { ...s, apps, active: s.active === key ? null : s.active, revisitTab: s.active === key ? null : s.revisitTab };
     });
   }, []);
 
   const minimizeActive = useCallback(() => {
     setState((s) => {
       if (!s.active) return s;
-      return { ...s, apps: { ...s.apps, [s.active]: { minimized: true } }, active: null };
+      return { ...s, apps: { ...s.apps, [s.active]: { minimized: true } }, active: null, revisitTab: null };
     });
   }, []);
 

@@ -132,7 +132,7 @@ export default function PortfolioReflectionTask() {
                 {c.downloadSummary}
               </button>
             </div>
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="portfolio-reflection" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
         <NudgeToast text={nudge} onDismiss={dismiss} />

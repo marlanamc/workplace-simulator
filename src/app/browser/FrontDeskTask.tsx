@@ -51,6 +51,7 @@ import NudgeToast from "@/components/task/NudgeToast";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import type { TaskKey } from "@/lib/desktop-content";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
@@ -68,12 +69,14 @@ function DeskChrome({ clinic, children }: { clinic: string; children: React.Reac
 }
 
 function DoneBlock({
+  taskKey,
   kicker,
   tryAgain,
   back,
   onRestart,
   children,
 }: {
+  taskKey: TaskKey;
   kicker: string;
   tryAgain: string;
   back: string;
@@ -86,7 +89,7 @@ function DoneBlock({
       <div className="mx-auto flex max-w-[640px] flex-col gap-5">
         <TaskDoneCard kicker={kicker} />
         {children}
-        <TaskDoneActions kicker={kicker} tryAgainLabel={tryAgain} backToDeskLabel={back} onTryAgain={onRestart} />
+        <TaskDoneActions taskKey={taskKey} kicker={kicker} tryAgainLabel={tryAgain} backToDeskLabel={back} onTryAgain={onRestart} />
       </div>
     </div>
   );
@@ -198,7 +201,7 @@ function ScheduleDesk() {
         />
       )}
       {done ? (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart}>
+        <DoneBlock taskKey="appointment-scheduling" kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart}>
           {/* What was done: the booked row and the text that went out. */}
           <section aria-label={c.doneHeading} className="@container rounded-xl border border-[#dadce0] bg-white p-4">
             <h2 className="m-0 text-[15px] font-medium">{c.doneHeading}</h2>
@@ -412,7 +415,7 @@ function IntakeDesk() {
         />
       )}
       {done ? (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
+        <DoneBlock taskKey="patient-intake" kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto flex max-w-[640px] flex-col gap-4">
@@ -519,7 +522,7 @@ function PhoneDesk() {
         />
       )}
       {done ? (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
+        <DoneBlock taskKey="confidentiality-call" kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={restart} />
       ) : (
         <div className="min-h-0 flex-1 overflow-y-auto p-5">
           <div className="mx-auto flex max-w-[520px] flex-col gap-4">

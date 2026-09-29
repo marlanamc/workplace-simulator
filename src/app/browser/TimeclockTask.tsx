@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   TIMECLOCK,
@@ -28,7 +29,9 @@ export default function TimeclockTask() {
   const { completedTaskKeys, lang, setStoryFlag } = useProgress();
   const { openApp } = useWindowManager();
   const done = completedTaskKeys.includes("timeclock");
-  const [phase, setPhase] = useState<Phase>("not_in");
+  // Clocked in stays clocked in across a reload (Wave 5 F-7).
+  const [savedPhase, setPhase] = useTaskDraft<string>("timeclock", "phase", "not_in");
+  const phase: Phase = savedPhase === "review" ? "review" : "not_in";
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
@@ -164,7 +167,7 @@ export default function TimeclockTask() {
             badgeWhere={c.badgeWhere}
           />
 
-          <TaskDoneActions
+          <TaskDoneActions taskKey="timeclock"
             kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}

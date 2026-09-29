@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
@@ -28,7 +29,15 @@ type View = "list" | "check1" | "check2" | "done";
 
 export default function PaystubTask() {
   const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
+  // Which question they were on survives a reload (Wave 5 F-7). "done" is
+  // never saved: a finished job opens finished because it is in progress.
+  const [savedStep, setSavedStep] = useTaskDraft<string>("paystub", "view", "list");
+  const [shown, setShown] = useState<View | null>(completedTaskKeys.includes("paystub") ? "done" : null);
+  const view: View = shown ?? (savedStep === "check1" || savedStep === "check2" ? savedStep : "list");
+  const setView = (next: View) => {
+    setShown(next);
+    if (next !== "done") setSavedStep(next);
+  };
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
@@ -50,6 +59,7 @@ export default function PaystubTask() {
 
   const backToBrowser = () => openApp("browser", { tab: "portal", section: "paystubs" });
 
+  const stub = PAY_STUBS.find((p) => p.id === TARGET_STUB_ID);
   const openStub = (p: (typeof PAY_STUBS)[number]) => {
     if (p.pdfDocId) {
       openApp("pdf", { docId: p.pdfDocId });
@@ -135,6 +145,15 @@ export default function PaystubTask() {
             {view === "check1" ? netCheck.question : hoursCheck.question}
           </div>
           {view === "check2" && <p className="mb-3 text-[14px]">{lang === "en" ? "Corrected time record · 6 shifts × 8 hours. Maria included the clock-in correction you requested." : "Registro de horas corregido · 6 turnos × 8 horas. Maria incluyó la corrección de entrada que pediste."}</p>}
+          {stub?.pdfDocId && (
+            <button
+              type="button"
+              onClick={() => openApp("pdf", { docId: stub.pdfDocId })}
+              className="mb-3 min-h-11 cursor-pointer text-[14px] font-medium text-accent underline underline-offset-4"
+            >
+              {c.seeStubAgain}
+            </button>
+          )}
           <div className="flex flex-wrap gap-2" data-showme="paystub-choices">
             {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
               <button
@@ -169,7 +188,7 @@ export default function PaystubTask() {
             badgeWhere={c.badgeWhere}
           />
 
-          <TaskDoneActions
+          <TaskDoneActions taskKey="paystub"
             kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}

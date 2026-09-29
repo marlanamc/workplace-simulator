@@ -265,7 +265,7 @@ export default function JobsTask() {
                   {REQUIREMENTS.map((r) => <li key={r.key} className="mt-1">{r.text[lang]}</li>)}
                 </ul>
               </section>
-              <TaskDoneActions
+              <TaskDoneActions taskKey={active}
                 kicker={isPosting ? pc.sentKicker : ac.sentKicker}
                 tryAgainLabel={isPosting ? pc.tryAgain : ac.tryAgain}
                 backToDeskLabel={isPosting ? pc.backToDesk : ac.backToDesk}

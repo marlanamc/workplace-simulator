@@ -42,11 +42,12 @@ export const CARD_PRACTICE = {
 };
 
 /**
- * Whether the first-run beats are behind the learner. Only finished work
- * counts: a learner who pressed "Start looking around" and then reloaded
- * before finishing the tour gets the welcome beat back, and with it the
- * optional click-and-scroll practice (Story Mode Audit finding #17). The
- * beat's one button opens the tour again, so nothing is repeated by hand.
+ * Whether the first-run beats are behind the learner for good: once the tour
+ * is finished. Before that, where they are (the welcome beat, the practice
+ * stage, the walkthrough step) is a tour draft on this device, so a reload
+ * keeps their place (Wave 5 F-7; see tour-resume.ts). A learner who reloads on
+ * the welcome beat still has its optional practice (finding #17); one who
+ * skipped it and moved on is not sent back.
  */
 export function introBeatsDone(completedTaskKeys: readonly string[]): boolean {
   return completedTaskKeys.length > 0;

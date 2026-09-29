@@ -138,7 +138,7 @@ export default function HandbookTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <TaskDoneActions
+            <TaskDoneActions taskKey="handbook"
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}

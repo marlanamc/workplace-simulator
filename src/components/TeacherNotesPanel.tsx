@@ -30,7 +30,8 @@ export default function TeacherNotesPanel({
     const tab = jumpTabForTask(taskKey);
     dismissFeedback(id);
     onClose();
-    if (tab) openApp("browser", { tab });
+    // Going back to revise finished work: the card offers "Do it again".
+    if (tab) openApp("browser", { tab, revisit: true });
   };
 
   return (
