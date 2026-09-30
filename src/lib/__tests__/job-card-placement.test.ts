@@ -137,6 +137,31 @@ describe("chooseCorner", () => {
     expect(pick([...labels, ...phone])).toBe("tl");
   });
 
+  it("hides as little of the reading as it can: two clipped labels, not the whole phone", () => {
+    // Spanish, after a wrong try: the card is tall. Top left clips the ends of
+    // the Mon and Tue labels; top right would sit on the whole phone calendar.
+    // Only Thursday's Request a swap is the step's target; the rest are
+    // ordinary buttons.
+    const tall = { width: 420, height: 390 };
+    const rows = [330, 380, 430, 480, 530, 580, 630];
+    const labels = rows.map((y) => box(40, y, 300, 30));
+    const thursdaySwap = [box(920, 480, 110, 30)];
+    const otherSwaps = rows.filter((y) => y !== 480).map((y) => box(920, y, 110, 30));
+    const phone = [box(1085, 150, 240, 330)];
+    expect(
+      chooseCorner({
+        preferred: "bl",
+        card: tall,
+        viewport: LAPTOP,
+        insets: INSETS,
+        targets: thursdaySwap,
+        read: [...labels, ...phone],
+        avoid: [box(1250, 10, 100, 36)],
+        lesser: otherSwaps,
+      }),
+    ).toBe("tl");
+  });
+
   it("still covers something to read before it covers the button to press", () => {
     const reading = [box(60, 600, 300, 30)];
     const targets = [box(1200, 600), box(60, 100), box(1200, 100)];

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import {
   SCHEDULE,
+  scheduleAfterSwap,
   SCHEDULE_COPY,
   LESSONS,
   WRONG_SWAP_HINT,
@@ -16,17 +17,18 @@ import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
 import PhoneCalendar from "@/components/task/PhoneCalendar";
-import TaskDoneCard from "@/components/task/TaskDoneCard";
-import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
 
-type View = "list" | "done";
-
 export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: string) => void }) {
   const { completedTaskKeys, lang } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : "list");
+  // Once the swap is filed this tab is just the learner's schedule: read-only,
+  // Thursday on the late shift. It used to open on Day 2's green "You noticed
+  // the conflict" on every later day (Phase 3 F-9). The job itself finishes,
+  // and says so, on the swap form.
+  const settled = completedTaskKeys.includes("schedule");
+  const days = settled ? scheduleAfterSwap() : SCHEDULE;
   const [wrongDays, setWrongDays] = useState(0);
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
@@ -50,12 +52,6 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
     onRequestSwap(d.key);
   };
 
-  const restart = () => {
-    setWrongDays(0);
-    dismiss();
-    setView("list");
-  };
-
   return (
     <div className="relative">
       <div className="mb-1 flex items-center justify-between gap-3">
@@ -63,7 +59,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
       </div>
       <p className="mb-4 text-[14px] text-text-secondary">{c.subhead}</p>
 
-      {view !== "done" && (
+      {!settled && (
         <RightNowBar
           icon={TASK_ICONS.schedule}
           stepIndex={0}
@@ -77,67 +73,59 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
         />
       )}
 
-      {view === "list" && (
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-          <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-white">
-            {SCHEDULE.map((d, i) => (
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+        <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-white">
+          {days.map((d, i) => (
+            <div
+              key={d.key}
+              data-shift-day={d.key}
+              className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-border" : ""}`}
+            >
+              {/* The day and time are what the step asks the learner to
+                    read: the floating card keeps off them (Phase 3 F-3). Only
+                while it is the job: afterwards the card has no reason to
+                leave its corner for them. */}
               <div
-                key={d.key}
-                className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-border" : ""}`}
+                data-card-read={settled ? undefined : ""}
+                className="flex min-w-0 flex-1 items-center gap-3"
               >
-                {/* The day and time are what the step asks the learner to
-                    read: the floating card keeps off them (Phase 3 F-3). */}
-                <div data-card-read className="flex min-w-0 flex-1 items-center gap-3">
-                  <span className="w-11 shrink-0 text-[14px] font-semibold text-text-primary">{d.day[lang]}</span>
-                  <span className="shrink-0 text-[13px] text-text-tertiary">{d.date[lang]}</span>
-                  <div
-                    className={
-                      d.shift
-                        ? "text-[14px] font-medium text-text-primary"
-                        : "text-[14px] text-text-tertiary"
-                    }
-                  >
-                    {d.shift ?? c.off}
-                  </div>
+                <span className="w-11 shrink-0 text-[14px] font-semibold text-text-primary">
+                  {d.day[lang]}
+                </span>
+                <span className="shrink-0 text-[13px] text-text-tertiary">
+                  {d.date[lang]}
+                </span>
+                <div
+                  className={
+                    d.shift
+                      ? "text-[14px] font-medium text-text-primary"
+                      : "text-[14px] text-text-tertiary"
+                  }
+                >
+                  {d.shift ?? c.off}
                 </div>
-                {d.shift && (
-                  <button
-                    data-showme={d.conflict ? "swap-button" : undefined}
-                    onClick={() => pickDay(d)}
-                    className="shrink-0 rounded-full border border-border px-3 py-1.5 text-[13px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
-                  >
-                    {c.pickConflict}
-                  </button>
-                )}
               </div>
-            ))}
-          </div>
-
-          <aside data-card-read className="w-full shrink-0 lg:w-[260px]">
-            <PhoneCalendar label={c.phoneLabel} heading={c.phoneHeading} lang={lang} />
-          </aside>
+              {d.shift && !settled && (
+                <button
+                  data-showme={d.conflict ? "swap-button" : undefined}
+                  onClick={() => pickDay(d)}
+                  className="shrink-0 rounded-full border border-border px-3 py-1.5 text-[13px] font-medium text-text-primary hover:bg-surface-muted cursor-pointer"
+                >
+                  {c.pickConflict}
+                </button>
+              )}
+            </div>
+          ))}
         </div>
-      )}
 
-      {view === "done" && (
-        <div className="flex flex-col gap-5">
-          <TaskDoneCard
-            kicker={c.doneTitle}
-            title={c.doneTitle}
-            body={c.doneBody}
-            badgeNumber="02"
-            badgeName={c.badgeName}
-            badgeWhere={c.badgeWhere}
+        <aside data-card-read={settled ? undefined : ""} className="w-full shrink-0 lg:w-[260px]">
+          <PhoneCalendar
+            label={c.phoneLabel}
+            heading={c.phoneHeading}
+            lang={lang}
           />
-
-          <TaskDoneActions taskKey="schedule"
-            kicker={c.doneTitle}
-            tryAgainLabel={c.tryAgain}
-            backToDeskLabel={c.backToDesk}
-            onTryAgain={restart}
-          />
-        </div>
-      )}
+        </aside>
+      </div>
 
       <HelpDrawer
         open={help}
@@ -149,7 +137,11 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />
-      <ShowMeHighlight targetId={showMe.targetId} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
+      <ShowMeHighlight
+        targetId={showMe.targetId}
+        label={SHOW_ME_POINTER[lang]}
+        onDismiss={showMe.clear}
+      />
     </div>
   );
 }

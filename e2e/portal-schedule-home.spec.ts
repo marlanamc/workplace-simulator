@@ -29,7 +29,17 @@ async function signUp(page: Page, lang: Lang) {
   await expect(card(page)).toBeVisible();
 }
 
+/** Today's job opens the Browser; its Portal bookmark is then a click away. */
+async function openTodaysJob(page: Page) {
+  for (let press = 0; press < 3 && !(await appWindow(page).isVisible()); press++) {
+    await card(page).locator(".job-card-primary").first().click();
+    await appWindow(page).waitFor({ state: "visible", timeout: 4_000 }).catch(() => {});
+  }
+  await expect(appWindow(page)).toBeVisible();
+}
+
 async function expectScheduleHome(page: Page, lang: Lang) {
+  await openTodaysJob(page);
   await page.getByTestId("bookmark-portal").click();
   await page.getByRole("button", { name: lang === "en" ? "Schedule" : "Horario", exact: true }).click();
   await expect(appWindow(page)).toContainText(lang === "en" ? "Your schedule. Next week" : "Tu horario. Próxima semana");
@@ -37,15 +47,24 @@ async function expectScheduleHome(page: Page, lang: Lang) {
   await expect(page.getByRole("button", { name: /^(Request a swap|Pedir un cambio)$/ })).toHaveCount(0);
   const thursday = page.locator('[data-shift-day="thu"]');
   await expect(thursday).toContainText("2:00 PM – 10:00 PM");
+  // Nothing here is today's job, so nothing asks the card to move: the
+  // Portal's tabs stay clear of it.
+  await expect(page.locator("[data-card-read]")).toHaveCount(0);
+  for (const tab of await page.locator("[data-app-window] .border-b.bg-white.px-4.pt-2 button").all()) {
+    await expect(tab).toBeVisible();
+    const hit = await tab.evaluate((b) => {
+      const r = b.getBoundingClientRect();
+      return Boolean(document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2)?.closest("[data-job-card]"));
+    });
+    expect(hit, `${await tab.innerText()} under the card`).toBe(false);
+  }
 }
 
 for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width: 1366, height: 768 }]] as const) {
   test.describe(`${lang} ${size.width}x${size.height}`, () => {
     test.use({ viewport: size });
 
-    // Work in progress (Phase 2.5): the fix is not written yet, and the first
-    // run timed out on the Schedule tab click, so the locator needs a look.
-    test.fixme(`Day 4: the Schedule tab is the learner's schedule, not Day 2's done screen (${lang})`, async ({ page }) => {
+    test(`Day 4: the Schedule tab is the learner's schedule, not Day 2's done screen (${lang})`, async ({ page }) => {
       test.slow();
       await signUp(page, lang);
       await page.goto("/studio");

@@ -37,18 +37,21 @@ async function openTodaysJob(page: Page) {
 }
 
 /** Whatever marked `data-card-read` is on screen with the card over it. */
-async function readUnderCard(page: Page) {
-  return page.evaluate(() => {
+async function readUnderCard(page: Page, only?: string) {
+  return page.evaluate((only) => {
     const c = document.querySelector("[data-job-card]")!.getBoundingClientRect();
-    return [...document.querySelectorAll<HTMLElement>("[data-card-read]")]
+    return [...document.querySelectorAll<HTMLElement>(only ?? "[data-card-read]")]
       .filter((el) => {
         const r = el.getBoundingClientRect();
         if (r.bottom <= 0 || r.top >= innerHeight) return false;
         return r.left < c.right && r.right > c.left && r.top < c.bottom && r.bottom > c.top;
       })
       .map((el) => el.innerText.replace(/\s+/g, " ").trim().slice(0, 40));
-  });
+  }, only);
 }
+
+/** Thursday's day and time, and the phone calendar: what the correction names. */
+const NAMED = '[data-shift-day="thu"] [data-card-read], aside[data-card-read]';
 
 for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width: 1366, height: 768 }], ["es", { width: 911, height: 512 }]] as const) {
   test.describe(`${lang} ${size.width}x${size.height}`, () => {
@@ -74,7 +77,9 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
       await swaps.nth(0).click();
       await swaps.nth(1).click();
       await expect(card(page)).toContainText(t("Look at Thursday, Aug 27.", "Mira el jueves 27 de agosto."));
-      await expect.poll(() => readUnderCard(page)).toEqual([]);
+      // The taller card cannot miss every label at 1366; it must miss the ones
+      // it names. In Spanish the tall card sits on Monday instead.
+      await expect.poll(() => readUnderCard(page, NAMED)).toEqual([]);
       // The button to press is still clear too.
       await expect
         .poll(() =>

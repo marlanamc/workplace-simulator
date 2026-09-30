@@ -49,6 +49,13 @@ export function cornerBox(corner: Corner, card: Size, viewport: Size, insets: In
   };
 }
 
+/** The area two boxes share, in square pixels (0 when they only touch). */
+export function overlapArea(a: Box, b: Box): number {
+  const w = Math.min(a.left + a.width, b.left + b.width) - Math.max(a.left, b.left);
+  const h = Math.min(a.top + a.height, b.top + b.height) - Math.max(a.top, b.top);
+  return w > 0 && h > 0 ? w * h : 0;
+}
+
 /** Strict: boxes that only touch along an edge do not overlap. */
 export function overlaps(a: Box, b: Box): boolean {
   return (
@@ -86,7 +93,9 @@ export function cornerOrder(preferred: Corner): Corner[] {
  * read, or an avoid control. Only then does the card move, to the nearest
  * corner that covers the fewest targets, then the fewest things to read, then
  * the fewest avoid controls, then the fewest other controls. A card that says
- * "Look at Thursday" must not sit on Thursday (Phase 3 F-3). A screen with controls in all four corners still gets the
+ * "Look at Thursday" must not sit on Thursday (Phase 3 F-3). Reading is
+ * weighed by how much of it is hidden, not how many pieces: clipping the ends
+ * of two day labels beats sitting on the whole phone calendar. A screen with controls in all four corners still gets the
  * least-bad spot, and the learner can still move it.
  */
 export function chooseCorner({
@@ -109,15 +118,18 @@ export function chooseCorner({
   lesser?: readonly Box[];
 }): Corner {
   const count = (box: Box, list: readonly Box[]) => Math.min(999, list.filter((t) => overlaps(box, t)).length);
+  // Square pixels of reading under the card, in thousands (a 30x300 label is
+  // 9), capped so it can never outweigh a single target.
+  const hidden = (box: Box) => Math.min(999, Math.ceil(read.reduce((sum, r) => sum + overlapArea(box, r), 0) / 1000));
   const home = cornerBox(preferred, card, viewport, insets);
-  if (count(home, targets) === 0 && count(home, read) === 0 && count(home, avoid) === 0) return preferred;
+  if (count(home, targets) === 0 && hidden(home) === 0 && count(home, avoid) === 0) return preferred;
 
   let best = preferred;
   let lowest = Infinity;
   for (const corner of cornerOrder(preferred)) {
     const box = cornerBox(corner, card, viewport, insets);
     const score =
-      count(box, targets) * 1_000_000_000 + count(box, read) * 1_000_000 + count(box, avoid) * 1_000 + count(box, lesser);
+      count(box, targets) * 1_000_000_000 + hidden(box) * 1_000_000 + count(box, avoid) * 1_000 + count(box, lesser);
     if (score < lowest) {
       best = corner;
       lowest = score;
