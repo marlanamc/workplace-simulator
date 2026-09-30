@@ -2,7 +2,10 @@
 
 import { useSyncExternalStore } from "react";
 import type { Lang } from "@/lib/desktop-content";
-import { addClockMinutes } from "@/lib/story-dates";
+import { storyEpochFor, storyTimeAt } from "@/lib/story-dates";
+import { useProgress } from "@/lib/progress-context";
+import { storyClockFor } from "@/lib/story-calendar";
+import { levelForTrack, nextTaskInTrack } from "@/lib/tracks-content";
 
 /** Shared ticker so the desktop widget and the shelf stay on the same minute. */
 const listeners = new Set<() => void>();
@@ -64,16 +67,25 @@ export function formatClock(now: Date, lang: Lang) {
  * When each story time was first shown, so the story clock ticks forward
  * from the scene's time ("Thursday, 3:40 PM") at real speed. A cache, not
  * state: the first render of a new story time starts it at zero minutes.
+ * Browser only (see storyClock).
  */
 const storyEpochs = new Map<string, number>();
 
 function storyClock(now: Date, startsAt: string): string {
+  // The server renders the scene's own time. Its cache would outlive every
+  // page it served, so it rendered minutes ahead ("9:42" for a 9:40 scene),
+  // and the clock keeps its server text until the next minute: the shelf
+  // then read ahead of a phone opened later (Wave 5 F-13).
+  if (typeof window === "undefined") return startsAt;
   let epoch = storyEpochs.get(startsAt);
   if (epoch === undefined) {
-    epoch = now.getTime();
+    // From the top of the real minute (see storyEpochFor). Counted from the
+    // moment of first render, a clock drawn later (a phone opened in a task)
+    // could read a minute behind the shelf.
+    epoch = storyEpochFor(now.getTime());
     storyEpochs.set(startsAt, epoch);
   }
-  return addClockMinutes(startsAt, Math.floor((now.getTime() - epoch) / 60_000));
+  return storyTimeAt(startsAt, epoch, now.getTime());
 }
 
 /**
@@ -105,11 +117,23 @@ export function ShelfClock({ lang, startsAt }: { lang: Lang; startsAt?: string }
   const clock = useLiveClock(lang, startsAt);
   return (
     <span className="flex flex-col items-end leading-none">
-      <span suppressHydrationWarning className="text-[13px] font-medium tabular-nums">
+      <span suppressHydrationWarning data-testid="shelf-clock" className="text-[13px] font-medium tabular-nums">
         {clock.time}
       </span>
     </span>
   );
+}
+
+/**
+ * A phone's status-bar clock ("9:41", no AM/PM), on the same story time as
+ * the shelf. The phones on Day 2 read 8:14 and 4:12 while the desktop read
+ * 9:57 (Wave 5 F-13).
+ */
+export function PhoneClock() {
+  const { lang, currentTrack, completedTaskKeys } = useProgress();
+  const startsAt = storyClockFor(levelForTrack(currentTrack.key), nextTaskInTrack(currentTrack, completedTaskKeys));
+  const clock = useLiveClock(lang, startsAt);
+  return <span suppressHydrationWarning data-testid="phone-clock">{clock.time.replace(/\s*(AM|PM|a\.\s?m\.|p\.\s?m\.)$/i, "")}</span>;
 }
 
 export function QuickSettingsClock({ lang, startsAt }: { lang: Lang; startsAt?: string }) {

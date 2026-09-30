@@ -94,6 +94,9 @@ export const DESKTOP_COPY: Record<Lang, {
   leftoverMany: string;
   /** The second way out of a finished level: stop here for today. */
   clockOut: string;
+  /** A stop card seen again after signing back in (Wave 5 F-6). */
+  welcomeBackKicker: string;
+  welcomeBackBody: string;
 }> = {
   en: {
     practiceBanner: "Practice space. Nothing here is real.",
@@ -132,6 +135,8 @@ export const DESKTOP_COPY: Record<Lang, {
     // Not "Clock out": this signs out of the computer, and Act I teaches
     // clocking out as a real timeclock skill.
     clockOut: "Stop for today (your work is saved)",
+    welcomeBackKicker: "Welcome back",
+    welcomeBackBody: "Your work is saved. Pick up where you left off.",
   },
   es: {
     practiceBanner: "Espacio de práctica. Nada aquí es real.",
@@ -168,6 +173,8 @@ export const DESKTOP_COPY: Record<Lang, {
     leftoverOne: "1 queda",
     leftoverMany: "{n} quedan",
     clockOut: "Terminar por hoy (tu trabajo está guardado)",
+    welcomeBackKicker: "Hola de nuevo",
+    welcomeBackBody: "Tu trabajo está guardado. Sigue donde lo dejaste.",
   },
 };
 

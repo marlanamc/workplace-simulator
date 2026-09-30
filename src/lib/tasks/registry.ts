@@ -408,7 +408,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Portal", "portal", "paystubs"),
     jobCardLine: {
       en: "Your first stub is here. Open it and check net pay and hours.",
-      es: "Ya está tu primer recibo. Ábrelo y revisa el pago neto y las horas.",
+      // The stub stays in English, as US stubs are, so the card names its words (F-21).
+      es: "Ya está tu primer recibo. Ábrelo y revisa el pago neto (Net pay) y las horas.",
     },
   },
 

@@ -438,6 +438,21 @@ export function clockMinutes(time: string): number {
 }
 
 /** "9:05 AM" plus some minutes. Wraps at midnight. */
+/**
+ * When a story clock starts counting: the top of the real minute it was
+ * first shown in. Clocks re-render when the real minute changes, so a story
+ * minute that turns at that same moment reads the same on every clock, the
+ * shelf, the desktop and a phone opened later (Wave 5 F-13).
+ */
+export function storyEpochFor(nowMs: number): number {
+  return nowMs - (nowMs % 60_000);
+}
+
+/** The story's time now, `startsAt` plus the whole minutes since `epochMs`. */
+export function storyTimeAt(startsAt: string, epochMs: number, nowMs: number): string {
+  return addClockMinutes(startsAt, Math.floor((nowMs - epochMs) / 60_000));
+}
+
 export function addClockMinutes(time: string, minutes: number): string {
   const total = (((clockMinutes(time) + minutes) % 1440) + 1440) % 1440;
   const h24 = Math.floor(total / 60);

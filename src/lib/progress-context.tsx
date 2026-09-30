@@ -81,6 +81,12 @@ export interface ProgressValue {
   certificateTrackKeys: string[];
   celebrateTrack: Track | null;
   celebrateLevel: Level | null;
+  /**
+   * The level card was saved from an earlier session and is showing again
+   * after a sign-in or reload, not raised just now. A stop card then welcomes
+   * the learner back instead of offering "Stop for today" again (Wave 5 F-6).
+   */
+  celebrateReturning: boolean;
   currentTrack: Track;
   bridgePath: BridgePath | null;
   progressEpoch: number;
@@ -196,6 +202,7 @@ export function ProgressProvider({
   const arrival = levelByArrivalKey(storedArrival ?? initialArriveLevelKey);
   const celebrateLevel = celebrateLevelOverride !== undefined
     ? celebrateLevelOverride : arrival ? (storedArrival ? levelUpCardFor(arrival) : arrivalLevelUp(arrival)) : null;
+  const celebrateReturning = celebrateLevelOverride === undefined && celebrateLevel !== null;
   const [storyFlagsOverride, setStoryFlags] = useState<StoryFlags | null>(null);
   const storedStoryFlags = withBridgePath(
     isClient ? loadStoryFlags(learnerId) : {},
@@ -427,6 +434,7 @@ export function ProgressProvider({
       certificateTrackKeys,
       celebrateTrack,
       celebrateLevel,
+      celebrateReturning,
       currentTrack: activeTrack(completedTaskKeys, routeBridgePath(courseRoute), courseRoute),
       bridgePath: routeBridgePath(courseRoute),
       progressEpoch,
@@ -457,6 +465,7 @@ export function ProgressProvider({
       certificateTrackKeys,
       celebrateTrack,
       celebrateLevel,
+      celebrateReturning,
       progressEpoch,
       storyFlags,
       setStoryFlag,

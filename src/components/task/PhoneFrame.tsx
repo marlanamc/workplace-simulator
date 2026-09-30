@@ -1,4 +1,7 @@
+"use client";
+
 import type { ReactNode } from "react";
+import { PhoneClock } from "@/components/LiveClock";
 
 const PHONE_TYPE =
   '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif';
@@ -10,11 +13,13 @@ const PHONE_TYPE =
  */
 export default function PhoneFrame({
   label,
-  time = "8:14",
+  time,
   children,
 }: {
   /** Caption under the phone. */
   label?: string;
+  /** A fixed time, for a phone outside the story day. Left out, the phone
+   *  shows the story clock, the same as the shelf. */
   time?: string;
   children: ReactNode;
 }) {
@@ -58,7 +63,7 @@ export default function PhoneFrame({
               aria-hidden
               className="flex h-[40px] items-end justify-between px-[16px] pb-[5px] text-[11px] font-semibold tracking-tight"
             >
-              <span suppressHydrationWarning>{time}</span>
+              <span suppressHydrationWarning>{time ?? <PhoneClock />}</span>
               <span className="flex items-center gap-[5px]">
                 <SignalIcon />
                 <WifiIcon />

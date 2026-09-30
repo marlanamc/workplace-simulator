@@ -511,8 +511,10 @@ export const LEVELS: Level[] = [
       kicker: { en: "Day 2: done", es: "Día 2: listo" },
       title: { en: "You checked your schedule and sent the report.", es: "Revisaste tu horario y enviaste el reporte." },
       body: {
-        en: "Today is payday for the crew. Clock in when you arrive, then check your hours.",
-        es: "Hoy es día de pago del equipo. Marca entrada al llegar, luego revisa tus horas.",
+        // Not "payday": the learner's own first payday is Day 6 (Aug 28), and
+        // "today is payday for the crew" contradicted it (Wave 5 F-19).
+        en: "Clock in when you arrive. Then check that your hours are right, so your first paycheck is right too.",
+        es: "Marca entrada al llegar. Después revisa que tus horas estén bien, para que tu primer pago también lo esté.",
       },
       cta: { en: "Clock in", es: "Marcar entrada" },
     },
@@ -564,8 +566,8 @@ export const LEVELS: Level[] = [
       kicker: { en: "Friday. Payday.", es: "Viernes. Día de pago." },
       title: { en: "Your first stub is here.", es: "Ya está tu primer recibo." },
       body: {
-        en: "Two weeks in. Open your pay stub and check the net pay and the hours.",
-        es: "Dos semanas. Abre tu recibo y revisa el pago neto y las horas.",
+        en: "Your first payday. Open your pay stub and check the net pay and the hours.",
+        es: "Tu primer día de pago. Abre tu recibo y revisa el pago neto (Net pay) y las horas.",
       },
       cta: { en: "Open my stub", es: "Abrir mi recibo" },
     },

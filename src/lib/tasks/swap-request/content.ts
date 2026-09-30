@@ -73,6 +73,22 @@ export const SWAP_COPY: Record<Lang, {
   },
 };
 
+/**
+ * The swap form's three moments, so the Job Card names the one the learner
+ * is on (Wave 5 F-4: it said "Pick a shift you can work instead" while Show
+ * me lit Submit). The cover line is `RIGHT_NOW_STEPS[0]`.
+ */
+export const FORM_STEPS: Record<"shift" | "submit", Localized> = {
+  shift: {
+    en: "Choose the shift you need to swap.",
+    es: "Elige el turno que necesitas cambiar.",
+  },
+  submit: {
+    en: "Click Submit request.",
+    es: "Haz clic en Enviar solicitud.",
+  },
+};
+
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [

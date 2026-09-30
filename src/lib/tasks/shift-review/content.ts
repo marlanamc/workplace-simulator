@@ -186,4 +186,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     en: "Write a short shift summary. Say what happened, and at what time.",
     es: "Escribe un resumen corto del turno. Di qué pasó y a qué hora.",
   },
+  // Once the note has words in it (Wave 5 F-5: the card never said Submit,
+  // and Submit sits below the fold).
+  {
+    en: "Click Submit.",
+    es: "Haz clic en Enviar.",
+  },
 ];

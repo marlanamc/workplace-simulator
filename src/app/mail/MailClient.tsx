@@ -315,7 +315,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // day is tomorrow"), so that evening is today: they stamp 6:02 PM, not
   // Yesterday.
   // The track, not only the level: the College door of Act V has its own dates.
-  const storyTodayDay = opening ? NIGHT_BEFORE : storyTodayForTrack(currentTrack.key);
+  // Only while that job is really running: on Day 2, before the schedule is
+  // done, Mail still holds the finished Night Before job, and dating the
+  // inbox from it made Wednesday's inbox read Monday evening (Wave 5 F-12).
+  const storyTodayDay = opening && !completedTaskKeys.includes("mail-reply") ? NIGHT_BEFORE : storyTodayForTrack(currentTrack.key);
   const stamp = (row: { time: string; sentOn?: number }) =>
     row.sentOn != null
       ? formatInboxTime({ sentOn: row.sentOn, clock: row.time, today: storyTodayDay, lang })
@@ -561,7 +564,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       return;
     }
     if (activeMailTask === "mail-etiquette" && !mailEtiquetteAnswersDarnell(body)) {
-      return recordWrong({
+      return refuseSend({
         title: T("Say where they are.", "Di dónde están."),
         body: T(
           "Darnell asked where the extra aprons are. Tell him: the storage room.",
@@ -572,7 +575,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     if (activeMailTask === "call-out-sick") {
       const verdict = sickCallVerdict(body);
       if (verdict !== "ok" && verdict !== "empty") {
-        return recordWrong({
+        return refuseSend({
           title: verdict === "no-day" ? T("Say which day.", "Di qué día.") : T("Say you can't come in.", "Di que no puedes venir."),
           body: SICK_CALL_CORRECTIONS[verdict][lang],
         });
@@ -606,7 +609,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const trySendTimeclock = () => {
     const verdict = clockNoteVerdict(body);
     if (verdict !== "ok") {
-      return recordWrong({
+      return refuseSend({
         title: T("Almost.", "Casi."),
         body: CLOCK_NOTE_CORRECTIONS[verdict][lang],
       });
@@ -829,11 +832,16 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   icon={TASK_ICONS.timeclock}
                   stepIndex={2}
                   stepCount={TIMECLOCK_STEPS.length}
-                  instruction={!body.trim() ? TIMECLOCK_STEPS[2] : MAIL_JOB_CARD_STEPS.send}
+                  // Until the note changes after a refusal, the card asks for
+                  // the fix, not "Click Send" over a correction (Wave 5 F-10).
+                  instruction={!readyToSend ? TIMECLOCK_STEPS[2] : MAIL_JOB_CARD_STEPS.send}
                   lang={lang}
                   rightNowLabel={TIMECLOCK_RIGHT_NOW_LABEL}
-                  onShowMe={() => setShowMeTarget(showMeTargetId === "send-button" ? null : "send-button")}
-                  showMeActive={showMeTargetId === "send-button"}
+                  onShowMe={() => {
+                    const id = readyToSend ? "send-button" : "compose-body";
+                    setShowMeTarget(showMeTargetId === id ? null : id);
+                  }}
+                  showMeActive={showMeTargetId === (readyToSend ? "send-button" : "compose-body")}
                   onHelp={() => { setExplicitOpeningHelp(true); setHelp(true); }}
                 />
                 )}
@@ -901,7 +909,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                     : MAIL_JOB_CARD_STEPS.attachPick
                 : activeMailTask === "reply-all" && (casualDraftUntouched(body, lang) || stillSoundsCasual(body))
                   ? MAIL_JOB_CARD_STEPS.replyAllEdit
-                  : !(needsAttach ? readyToSend : body.trim())
+                  : !readyToSend
                     ? activeMailTask === "mail-etiquette"
                       ? MAIL_JOB_CARD_STEPS.writeEtiquette
                       : MAIL_JOB_CARD_STEPS.writeForTask[activeMailTask] ?? MAIL_JOB_CARD_STEPS.write
@@ -938,7 +946,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                             : pickerPick
                               ? "attach-preview"
                               : "attach-list"
-                        : (opening || needsAttach ? readyToSend : body.trim())
+                        : readyToSend
                           ? "send-button"
                           : "compose-body";
               return (
