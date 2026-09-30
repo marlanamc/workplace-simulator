@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { actIntroFor } from "@/lib/act-intro-content";
 import type { Act } from "@/lib/tracks-content";
@@ -13,6 +14,12 @@ import { CafeMotif, SkillRow, WelcomeShell } from "@/components/welcome-shell";
 export default function ActIntro({ act, onContinue }: { act: Act; onContinue: () => void }) {
   const { lang, bridgePath } = useProgress();
   const intro = actIntroFor(act.key, bridgePath);
+  // The keyboard starts on the one button, scrolled into view: at 150% text
+  // it sits below the fold, and focus was left on the page (Wave 5 F-14, F-24).
+  const start = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    start.current?.focus();
+  }, [act.key]);
   // Guard: an act without copy (shouldn't happen — content-integrity covers it)
   // falls through so the learner is never stuck on a blank screen.
   if (!intro) {
@@ -53,6 +60,7 @@ export default function ActIntro({ act, onContinue }: { act: Act; onContinue: ()
           <p className="mt-1.5 text-base leading-relaxed text-[#3c4043]">{intro.bridge[lang]}</p>
           <button
             type="button"
+            ref={start}
             data-testid="act-intro-continue"
             onClick={onContinue}
             className="job-card-primary mt-5 inline-flex min-h-14 w-full items-center justify-center gap-2 bg-[#0b57d0] text-lg font-semibold text-white sm:w-auto sm:min-w-72"

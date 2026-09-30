@@ -31,7 +31,9 @@ import {
   restartLevelProgress,
   syncSkillRun,
   type Confidence,
+  saveMyLang,
 } from "@/app/actions";
+import { resolveLang } from "@/lib/learner-lang";
 import { routeBridgePath, type CourseRoute } from "@/lib/course-route";
 import type { SubmissionContent, TeacherFeedback } from "@/lib/task-types";
 import { BRIDGE_PATH_FLAG, type BridgePath } from "@/lib/bridge-path";
@@ -131,6 +133,7 @@ export function ProgressProvider({
   initialFeedback = [],
   initialRungs = {},
   initialArriveLevelKey = null,
+  initialLang = null,
   children,
 }: {
   learnerId: string;
@@ -149,6 +152,8 @@ export function ProgressProvider({
    * day begins. Ignored for Act II+ openers (ActIntro owns that arrival).
    */
   initialArriveLevelKey?: string | null;
+  /** The account's language (Wave 5 F-20), or null before one was saved. */
+  initialLang?: Lang | null;
   children: ReactNode;
 }) {
   const [courseRoute, setCourseRoute] = useState<CourseRoute | null>(initialCourseRoute);
@@ -245,7 +250,10 @@ export function ProgressProvider({
   }, [learnerId]);
 
   const [langOverride, setLangState] = useState<Lang | null>(null);
-  const lang = langOverride ?? (isClient ? loadStoredLang() : "en");
+  // The account's language wins over this device's, so a learner lands in
+  // their language on any Chromebook. The device's is only the fallback for
+  // a learner who never saved one (see learner-lang.ts).
+  const lang = resolveLang({ chosenNow: langOverride, account: initialLang, device: isClient ? loadStoredLang() : null });
   const [bigTextOverride, setBigTextState] = useState<boolean | null>(null);
   const bigText = bigTextOverride ?? (isClient ? loadStoredFlag(DEVICE_KEY.bigText) : false);
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
@@ -267,6 +275,10 @@ export function ProgressProvider({
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
     storage.setString(DEVICE_KEY.lang, next);
+    // Follows the learner to any Chromebook. Nothing waits on it: the switch
+    // is already on screen, and a failed save only means this device's
+    // choice stays the fallback.
+    void saveMyLang(next).catch(() => {});
   }, []);
 
   const setBigText = useCallback((on: boolean) => {
@@ -278,7 +290,10 @@ export function ProgressProvider({
   // for Spanish content (the server layout can only ever render lang="en").
   useEffect(() => {
     document.documentElement.lang = lang;
-  }, [lang]);
+    // The login page reads this device's language: after signing out, it
+    // should greet the learner in the language their account uses.
+    if (initialLang) storage.setString(DEVICE_KEY.lang, lang);
+  }, [lang, initialLang]);
 
   const setStoryFlag = useCallback((key: string, value: string) => {
     setStoryFlags((prev) => {

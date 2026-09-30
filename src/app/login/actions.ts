@@ -3,7 +3,8 @@
 import { safeReturn } from "@/lib/lessons/return";
 import { redirect } from "next/navigation";
 import { setSessionCookie, hashPin, verifyPin } from "@/lib/auth";
-import { createLearner, findLearner } from "@/lib/db/queries";
+import { createLearner, findLearner, setLearnerLang } from "@/lib/db/queries";
+import { asLang, langToSaveAtSignIn } from "@/lib/learner-lang";
 import { loginsPaused } from "@/lib/login-gate";
 
 /**
@@ -30,15 +31,21 @@ export async function loginOrSignup(_prev: LoginResult, formData: FormData): Pro
   if (!PIN_RE.test(pin)) return { error: "pin" };
   if (!classCode) return { error: "classCode" };
 
+  // The language picked on the login page (Wave 5 F-20, see learner-lang.ts).
+  const loginPage = asLang(formData.get("lang"));
+
   const existing = await findLearner(displayName, classCode);
 
   if (existing) {
     const ok = await verifyPin(pin, existing.pinHash);
     if (!ok) return { error: "wrongPin" };
+    const save = langToSaveAtSignIn({ isNew: false, account: asLang(existing.lang), loginPage });
+    if (save) await setLearnerLang(existing.id, save);
     await setSessionCookie(existing.id);
   } else {
     const pinHash = await hashPin(pin);
-    const learner = await createLearner(displayName, pinHash, classCode);
+    const lang = langToSaveAtSignIn({ isNew: true, account: null, loginPage }) ?? "en";
+    const learner = await createLearner(displayName, pinHash, classCode, lang);
     await setSessionCookie(learner.id);
   }
 

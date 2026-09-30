@@ -149,6 +149,8 @@ function updateScrollGutters(card: Box | null) {
 }
 
 const noSubscribe = () => () => {};
+/** Fields a learner types into: focus is never moved out of one. */
+const TYPING_FIELD = "input:not([type=button]):not([type=submit]):not([type=checkbox]):not([type=radio]), textarea, select, [contenteditable=true]";
 
 
 interface Script {
@@ -274,8 +276,9 @@ export default function JobCard() {
     setPractice({ stage: "inactive" });
     setCollapsed(false);
     startOrientation();
-    // Docked, there is no fold button, so focus goes to the card's own button.
-    requestAnimationFrame(() => (collapseRef.current ?? cardRef.current?.querySelector<HTMLElement>(".job-card-primary"))?.focus());
+    // Onto the card's next button, not the fold button, where Enter would hide
+    // the card (Wave 5 F-14).
+    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>(".job-card-primary")?.focus());
   }
 
   const nextTaskKey = lesson ? lesson.taskKey : nextTaskInTrack(currentTrack, completedTaskKeys);
@@ -462,6 +465,24 @@ export default function JobCard() {
     });
     return () => cancelAnimationFrame(frame);
   }, [celebrating, nextTaskKey, active]);
+
+  // A new line whose next step is this card's own button ("I understand",
+  // "Next", "Open Portal"): the keyboard goes there, not 18 Tabs away
+  // (Wave 5 F-14). Never out of a field they are typing in, and never off
+  // the button itself.
+  // Help's own close button counts too: it is the card's one button then.
+  const primaryLabel = visibleHelp && !finish ? visibleHelp.gotItLabel : script.primaryLabel;
+  useEffect(() => {
+    if (celebrating || !primaryLabel) return;
+    const frame = requestAnimationFrame(() => {
+      const button = cardRef.current?.querySelector<HTMLElement>(".job-card-primary");
+      const current = document.activeElement;
+      if (!button || current === button) return;
+      if (current instanceof HTMLElement && current.matches(TYPING_FIELD)) return;
+      button.focus({ preventScroll: true });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [celebrating, voice, primaryLabel]);
 
   // ─── dragging ────────────────────────────────────────────────────────────
   function startDrag(e: React.PointerEvent) {
@@ -1016,14 +1037,19 @@ export default function JobCard() {
               <span className="font-semibold text-[#202124]">{visibleHelp.tipLabel}: </span>
               {visibleHelp.lesson.tip}
             </p>
-            <button
-              type="button"
-              onClick={visibleHelp.onClose}
-              className="job-card-primary mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
-              style={{ background: tone }}
-            >
-              {visibleHelp.gotItLabel}
-            </button>
+            {/* Pinned to the bottom of the card while Help scrolls above it:
+                the keyboard lands here, so it must be on screen, and the
+                start of Help stays in view too (Wave 5 F-14, at 911). */}
+            <div data-help-close className="sticky -bottom-5 -mx-5 -mb-5 mt-1 bg-white px-5 pb-5 pt-3">
+              <button
+                type="button"
+                onClick={visibleHelp.onClose}
+                className="job-card-primary flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+                style={{ background: tone }}
+              >
+                {visibleHelp.gotItLabel}
+              </button>
+            </div>
           </>
         ) : (
           <>

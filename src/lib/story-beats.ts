@@ -169,10 +169,13 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Got your note about the hours. I'll look at the punch and fix it if it is wrong.",
         "Before you go, leave a short end-of-shift note in the portal.",
+        // Day 4's answer, in the world before Day 4 asks for it (Wave 5 F-18).
+        "Also, we found the extra aprons. They are in the storage room now.",
       ],
       es: [
         "Recibí tu nota sobre las horas. Voy a revisar el registro y lo corrijo si está mal.",
         "Antes de irte, deja una nota corta de fin de turno en el portal.",
+        "Otra cosa: encontramos los delantales de más. Ahora están en el almacén.",
       ],
     },
   },

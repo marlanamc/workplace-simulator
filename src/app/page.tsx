@@ -9,6 +9,7 @@ import { isJumpTab } from "@/lib/curriculum-catalog";
 import { bridgePathFromBadgeKeys } from "@/lib/bridge-path";
 import { normalizeCertificateTrackKeys } from "@/lib/tracks-content";
 import DesktopClient from "./DesktopClient";
+import { asLang } from "@/lib/learner-lang";
 
 const clampRung = (n: number): Rung => (Math.min(4, Math.max(1, Math.round(n))) as Rung);
 
@@ -101,6 +102,7 @@ export default async function DesktopPage({
       initialBridgePath={bridgePathFromBadgeKeys(badgeKeys)}
       initialFeedback={initialFeedback}
       initialRungs={initialRungs}
+      initialLang={asLang(learner.lang)}
       jumpTab={isJumpTab(taskParam) ? taskParam : undefined}
       fromStudio={fromParam === "studio"}
       arriveLevelKey={fromParam === "studio" ? arriveParam : undefined}

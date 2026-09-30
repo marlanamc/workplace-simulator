@@ -136,8 +136,8 @@ describe("payday starts in the morning", () => {
 
   it("shows only the two finished shifts from Days 1–2", () => {
     expect(TIMECLOCK.recent).toHaveLength(2);
-    expect(TIMECLOCK.weekHours).toBe("16h 05m this week");
-    expect(TIMECLOCK.recent[0]?.date).toBe("Tue, Aug 18");
-    expect(TIMECLOCK.recent[1]?.date).toBe("Wed, Aug 19");
+    expect(TIMECLOCK.weekHours.en).toBe("16h 05m this week");
+    expect(TIMECLOCK.recent[0]?.date.en).toBe("Tue, Aug 18");
+    expect(TIMECLOCK.recent[1]?.date.en).toBe("Wed, Aug 19");
   });
 });

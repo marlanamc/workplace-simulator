@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import type { PickableItem } from "@/lib/task-types";
+import { useProgress } from "@/lib/progress-context";
+import { fileDateLabel } from "@/lib/story-dates";
 
 /**
  * A file picker. With `preview`, it works like a real one: clicking a name
@@ -41,6 +43,8 @@ export default function PickerModal({
     showMeConfirm?: string;
   };
 }) {
+  // The date column is picker chrome, so it follows the learner's language.
+  const { lang } = useProgress();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
@@ -122,7 +126,7 @@ export default function PickerModal({
                     </span>
                     {item.columns?.map((col, i) => (
                       <span key={i} className="shrink-0 text-[13px] text-text-tertiary">
-                        {col}
+                        {fileDateLabel(col, lang)}
                       </span>
                     ))}
                   </button>

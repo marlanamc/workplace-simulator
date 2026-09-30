@@ -11,7 +11,7 @@ export const WELCOME_COPY = {
   },
   purposeLine2: {
     en: "Make mistakes, try again, and learn.",
-    es: "Comete errores, vuelve a intentarlo y aprende.",
+    es: "Puedes equivocarte, volver a intentarlo y aprender.",
   },
   skillsTitle: { en: "You will practice:", es: "Vas a practicar:" },
   jobTitle: { en: "Your first job: Harborside Cafe", es: "Tu primer trabajo: Harborside Cafe" },

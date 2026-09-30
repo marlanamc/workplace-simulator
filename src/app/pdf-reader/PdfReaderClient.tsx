@@ -4,8 +4,9 @@ import { useState } from "react";
 import { PDF_ARRIVES_WITH, PDF_DOCUMENTS as ALL_PDF_DOCUMENTS } from "@/lib/pdf-content";
 import { useLesson } from "@/lib/lesson-context";
 import { levelReached } from "@/lib/story-calendar";
+import { fileDateLabel } from "@/lib/story-dates";
 import { levelForTrack } from "@/lib/tracks-content";
-import { APP_COPY } from "@/lib/desktop-content";
+import { APP_COPY, PDF_READER_CHROME } from "@/lib/desktop-content";
 import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useNudge } from "@/lib/use-nudge";
@@ -49,6 +50,7 @@ export default function PdfReaderClient() {
     }
   }
 
+  const t = PDF_READER_CHROME[lang];
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
   const scale = zoom / 100;
   const notAvailable = () =>
@@ -71,7 +73,7 @@ export default function PdfReaderClient() {
 
       <div className="flex min-h-0 flex-1">
         <div className="flex w-[260px] shrink-0 flex-col border-r border-border bg-white">
-          <div className="px-4 py-3 text-[13px] font-medium text-text-secondary">Downloads</div>
+          <div className="px-4 py-3 text-[13px] font-medium text-text-secondary">{t.downloads}</div>
           <div className="flex-1 overflow-y-auto">
             {PDF_DOCUMENTS.map((d) => (
               <button
@@ -86,7 +88,7 @@ export default function PdfReaderClient() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-[14px] text-text-primary">{d.name}</div>
-                  <div className="text-[12px] text-text-tertiary">{d.size} · {d.date}</div>
+                  <div className="text-[12px] text-text-tertiary">{d.size} · {fileDateLabel(d.date, lang)}</div>
                 </div>
               </button>
             ))}
@@ -99,7 +101,7 @@ export default function PdfReaderClient() {
             <button
               onClick={() => setZoom((z) => Math.max(60, z - 10))}
               className="flex h-7 w-7 items-center justify-center rounded text-[15px] text-white/85 hover:bg-white/10 cursor-pointer"
-              aria-label="Zoom out"
+              aria-label={t.zoomOut}
             >
               −
             </button>
@@ -107,26 +109,26 @@ export default function PdfReaderClient() {
             <button
               onClick={() => setZoom((z) => Math.min(150, z + 10))}
               className="flex h-7 w-7 items-center justify-center rounded text-[15px] text-white/85 hover:bg-white/10 cursor-pointer"
-              aria-label="Zoom in"
+              aria-label={t.zoomIn}
             >
               +
             </button>
             <span className="mx-2 h-4 w-px bg-white/20" />
-            <span className="text-[12px] text-white/70">Page 1 / 1</span>
+            <span className="whitespace-nowrap text-[12px] text-white/70">{t.page} 1 / 1</span>
             <span className="mx-2 h-4 w-px bg-white/20" />
             <button
               onClick={notAvailable}
               className="flex h-7 w-7 items-center justify-center rounded text-[14px] text-white/85 hover:bg-white/10 cursor-pointer"
-              aria-label="Print"
-              title="Print"
+              aria-label={t.print}
+              title={t.print}
             >
               ⎙
             </button>
             <button
               onClick={notAvailable}
               className="flex h-7 w-7 items-center justify-center rounded text-[14px] text-white/85 hover:bg-white/10 cursor-pointer"
-              aria-label="Download"
-              title="Download"
+              aria-label={t.download}
+              title={t.download}
             >
               ⬇
             </button>

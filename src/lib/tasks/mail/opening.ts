@@ -9,8 +9,10 @@ const copy = (en: string, es: string): Localized => ({ en, es });
 const lines = (en: string[], es: string[]): Record<Lang, string[]> => ({ en, es });
 
 export const FIRST_REPLY_GUIDANCE = copy(
-  'Say hello, write your short reply, and finish with your name. Then click Send.',
-  'Saluda, escribe una respuesta corta y termina con tu nombre. Luego haz clic en Enviar.',
+  // Lenient on purpose: any first reply is saved, so the card asks for no
+  // more than that. A hello and a name are offered, not required (Wave 5 F-15).
+  'Write a short reply. A hello and your name are nice. Then click Send.',
+  'Escribe una respuesta corta. Es bueno saludar y poner tu nombre. Luego haz clic en Enviar.',
 );
 export const FIRST_REPLY_EXAMPLE = copy(
   'Example (Ana is an example name):\n\nHi Maria,\nThank you for the welcome. See you tomorrow!\nAna',

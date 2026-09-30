@@ -258,8 +258,12 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const mailRoot = useRef<HTMLDivElement>(null);
   // A restored draft opens where the learner left off: the reply box they
   // were typing in, or the button that comes next, scrolled into view.
+  // A message that opens ready to write (Day 3's note to Maria, Day 5's
+  // sick call) starts with the cursor in it (Wave 5 F-14).
   const pendingFocus = useRef<string | null>(
-    restored?.view === "compose" ? "compose-body" : restored?.view === "read" ? "reply-button" : restored?.view === "confirm" ? "confirm-question" : null,
+    restored?.view === "compose" || view === "compose" || timeclockMailActive
+      ? "compose-body"
+      : restored?.view === "read" ? "reply-button" : restored?.view === "confirm" ? "confirm-question" : null,
   );
   const focusNext = (id: string) => {
     pendingFocus.current = id;
@@ -707,7 +711,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
           className={`flex shrink-0 items-center gap-2 px-2 ${singlePane ? "w-auto" : "w-[200px]"}`}
         >
           <span className="flex h-8 w-8 items-center justify-center rounded-[6px] bg-[#ea4335] text-[15px] font-bold text-white">M</span>
-          <span className="text-[22px] font-normal text-[#5f6368]">Mail</span>
+          {/* The same name as the bookmark: "Correo" in Spanish (Wave 5 F-11). */}
+          <span className="text-[22px] font-normal text-[#5f6368]">{T("Mail", "Correo")}</span>
         </div>
         <div className="flex h-12 flex-1 items-center gap-3 rounded-full bg-[#e9eef6] px-4 text-[#444746]">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="shrink-0">

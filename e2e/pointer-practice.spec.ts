@@ -1,8 +1,10 @@
 import { test, expect, type Page } from '@playwright/test';
+import { clickIntoPage, waitForInteractive } from './interactive';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 async function signup(page: Page, lang: 'en' | 'es') {
   await page.goto('/login');
+  await waitForInteractive(page);
   if (lang === 'es') await page.getByRole('button', { name: 'Español' }).click();
   await page.getByRole('button', { name: /Add user|Agregar usuario/ }).click();
   await page.getByPlaceholder('Jordan').fill(`Pointer ${lang} ${Date.now()}`);
@@ -44,7 +46,9 @@ for (const lang of ['en', 'es'] as const) {
     await expect(card).toHaveAttribute('data-practice', 'complete');
     await card.getByRole('button', { name: startName }).click();
     await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
-    await expect(card.getByTestId('job-card-collapse')).toBeFocused();
+    // The keyboard lands on the card's next button, not the fold button
+    // (where Enter would hide the card) (Wave 5 F-14).
+    await expect(card.locator('.job-card-primary')).toBeFocused();
     // Practice is offered once, at the welcome; it never comes back mid-task.
     await expect(card.getByRole('button', { name: practiceName })).toHaveCount(0);
     const handle = card.getByTestId('job-card-drag-handle');
@@ -105,7 +109,11 @@ test('drag remains available and Studio fresh start restores the welcome choice'
   await expect(card.getByRole('button', { name: startName })).toBeVisible();
   await card.getByRole('button', { name: startName }).click();
   await page.goto('/studio');
-  await page.getByRole('button', { name: /Fresh account/ }).click();
+  await waitForInteractive(page);
+  // Fresh account loads a new document: wait for it to be live before the
+  // click, or the click lands on server HTML and does nothing (it flaked in
+  // full runs, when the server is busy).
+  await clickIntoPage(page, () => page.getByRole('button', { name: /Fresh account/ }).click());
   await page.getByTestId('welcome-continue').click();
   await expect(card.getByRole('button', { name: practiceName })).toBeVisible();
 });

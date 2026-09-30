@@ -83,7 +83,7 @@ export default function TimeclockTask() {
             <div className="mt-1 text-[14px] text-text-secondary">
               {c.scheduledLabel}: {TIMECLOCK.scheduledStart} – {TIMECLOCK.scheduledEnd}
             </div>
-            <div className="mt-1 text-[14px] text-text-secondary">{TIMECLOCK.weekHours}</div>
+            <div className="mt-1 text-[14px] text-text-secondary">{TIMECLOCK.weekHours[lang]}</div>
             <button
               data-showme="clockin-button"
               onClick={() => setPhase("review")}
@@ -98,10 +98,10 @@ export default function TimeclockTask() {
             <div className="overflow-hidden rounded-xl border border-border bg-white">
               {TIMECLOCK.recent.map((r, i) => (
                 <div
-                  key={r.date}
+                  key={r.date.en}
                   className={`grid grid-cols-4 gap-2 px-4 py-3 text-[13px] ${i !== 0 ? "border-t border-border" : ""}`}
                 >
-                  <span className="text-text-primary">{r.date}</span>
+                  <span className="text-text-primary">{r.date[lang]}</span>
                   <span className="text-text-secondary">{c.recentIn} {r.in}</span>
                   <span className="text-text-secondary">{c.recentOut} {r.out}</span>
                   <span className="text-right font-medium text-text-primary">{r.total}</span>

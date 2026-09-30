@@ -202,7 +202,7 @@ test("language choice on the login page sticks after signing in and reloading", 
   await expect(card.getByText("Toca el ? en esta tarjeta para probar Ayuda.")).toBeVisible();
   await card.getByTestId("job-card-help").click();
   await expect(card.getByText("Dónde mirar", { exact: true })).toBeVisible();
-  await card.getByRole("button", { name: "Entiendo. Volver a mi tarea", exact: true }).click();
+  await card.getByRole("button", { name: "Entendido. Volver a mi tarea", exact: true }).click();
   await card.getByRole("button", { name: "Empezar la tarea", exact: true }).click();
   await page.getByRole("button", { name: "Abrir mi primera tarea", exact: true }).click();
   await expect(card.getByText("Este botón naranja en la barra de abajo abre tu lista de tareas.")).toBeVisible();

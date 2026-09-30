@@ -67,7 +67,7 @@ export const CAST: Record<CastKey, CastMember> = {
     email: at("maria.delgado"),
     title: { en: "Cafe Manager", es: "Gerente del café" },
     org: CAFE_NAME,
-    phone: "(555) 0142",
+    phone: "(617) 555-0146",
   },
   hr: {
     name: "Harborside HR",
@@ -106,7 +106,7 @@ export const CAST: Record<CastKey, CastMember> = {
     email: at("renata.silva"),
     title: { en: "General Manager", es: "Gerente general" },
     org: CAFE_NAME,
-    phone: "(555) 0148",
+    phone: "(617) 555-0148",
   },
   // Act V, Path A — the community college advisor.
   marcus: {
@@ -116,7 +116,7 @@ export const CAST: Record<CastKey, CastMember> = {
     email: at("mbell", COLLEGE_DOMAIN),
     title: { en: "Academic Advisor", es: "Asesor académico" },
     org: COLLEGE_NAME,
-    phone: "(617) 555 0106",
+    phone: "(617) 555-0106",
   },
   // Act V, Path B — the front-desk supervisor at Harborside Health.
   thuy: {
@@ -126,7 +126,7 @@ export const CAST: Record<CastKey, CastMember> = {
     email: at("thuy.nguyen", HEALTH_DOMAIN),
     title: { en: "Front Desk Supervisor", es: "Supervisora de recepción" },
     org: HEALTH_NAME,
-    phone: "(555) 0170",
+    phone: "(617) 555-0170",
   },
   // Acts VI–VII — the operations director at Harborside HQ.
   anita: {
@@ -136,7 +136,7 @@ export const CAST: Record<CastKey, CastMember> = {
     email: at("anita.raman", HQ_DOMAIN),
     title: { en: "Operations Director", es: "Directora de operaciones" },
     org: HQ_NAME,
-    phone: "(555) 0191",
+    phone: "(617) 555-0191",
   },
   // Acts VI–VII — an HQ coworker. Sends quick notes, no signature block (no title).
   chris: {

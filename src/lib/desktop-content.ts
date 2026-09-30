@@ -57,6 +57,22 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
   },
 };
 
+/**
+ * The PDF Reader's own chrome follows the learner's language. The documents
+ * stay English, the way real US pay stubs and reports are.
+ */
+export const PDF_READER_CHROME: Record<Lang, {
+  downloads: string;
+  page: string;
+  zoomOut: string;
+  zoomIn: string;
+  print: string;
+  download: string;
+}> = {
+  en: { downloads: "Downloads", page: "Page", zoomOut: "Zoom out", zoomIn: "Zoom in", print: "Print", download: "Download" },
+  es: { downloads: "Descargas", page: "Página", zoomOut: "Alejar", zoomIn: "Acercar", print: "Imprimir", download: "Descargar" },
+};
+
 export const DESKTOP_COPY: Record<Lang, {
   practiceBanner: string;
   langBtn: string;

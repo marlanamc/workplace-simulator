@@ -26,6 +26,7 @@ import ListIntroSpotlight from "@/components/task/ListIntroSpotlight";
 import { LIST_INTRO_FLAG, introBeatsDone, shouldShowListIntro } from "@/lib/job-card-content";
 import { WindowManagerProvider } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
+import type { Lang } from "@/lib/task-types";
 import { JobCardProvider } from "@/lib/job-card-context";
 
 function DesignerJumpBanner() {
@@ -171,6 +172,8 @@ export default function DesktopClient(props: {
   initialBridgePath?: BridgePath | null;
   initialFeedback?: TeacherFeedback[];
   initialRungs?: RungMap;
+  /** The account's language, or null for a learner who never saved one. */
+  initialLang?: Lang | null;
   jumpTab?: string;
   fromStudio?: boolean;
   /** Studio day jump: seed the arrival level-up card for this level key. */
@@ -194,6 +197,7 @@ export default function DesktopClient(props: {
         initialBridgePath={props.initialBridgePath}
         initialFeedback={props.initialFeedback}
         initialRungs={props.initialRungs}
+        initialLang={props.initialLang ?? null}
         initialArriveLevelKey={props.arriveLevelKey ?? null}
       >
         <JobCardHost>
