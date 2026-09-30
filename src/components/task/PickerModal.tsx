@@ -5,6 +5,25 @@ import type { PickableItem } from "@/lib/task-types";
 import { useProgress } from "@/lib/progress-context";
 import { fileDateLabel } from "@/lib/story-dates";
 
+/**
+ * A file name that wraps at its own joins ("food-handler-" / "certificate-2022.pdf")
+ * instead of being cut to "food-handle…". Look-alike files differ only at the
+ * end of the name, so the end is the part that must show (Phase 3 N-3).
+ */
+function FileName({ name }: { name: string }) {
+  const parts = name.split(/(?<=[-_.])/);
+  return (
+    <span data-file-name className="min-w-0 text-[14px] leading-snug [overflow-wrap:anywhere]">
+      {parts.map((part, i) => (
+        <span key={i}>
+          {part}
+          {i < parts.length - 1 && <wbr />}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 /** Space kept between the floating Job Card and the picker beside it. */
 const BESIDE_GAP = 24;
 /** Narrower than this, the picker stays centered and the card moves. */
@@ -164,7 +183,7 @@ export default function PickerModal({
                           {item.tagText}
                         </span>
                       )}
-                      <span className="truncate text-[14px]">{item.label}</span>
+                      <FileName name={item.label} />
                     </span>
                     {item.columns?.map((col, i) => (
                       <span key={i} className="shrink-0 text-[13px] text-text-tertiary">

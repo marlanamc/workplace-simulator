@@ -26,10 +26,14 @@ export default function SimulatorWelcome({ onContinue }: { onContinue: () => voi
         </p>
       </div>
 
+      {/* Rows 2 and 3. On a short screen (911x512, a Chromebook at 150% text)
+          the first job and its button come first, so the way in is on screen
+          without scrolling (Phase 3 N-6); tall screens keep this order. */}
+      <div className="mt-6 flex flex-col gap-6">
       {/* Row 2 — what you'll practice */}
       <section
         aria-labelledby="welcome-skills-title"
-        className="mt-6 rounded-2xl bg-[#ece3d3] px-5 py-5 sm:px-7 sm:py-6"
+        className="rounded-2xl bg-[#ece3d3] px-5 py-5 sm:px-7 sm:py-6"
       >
         <h2 id="welcome-skills-title" className="text-base font-semibold">
           {c.skillsTitle[lang]}
@@ -38,7 +42,7 @@ export default function SimulatorWelcome({ onContinue }: { onContinue: () => voi
       </section>
 
       {/* Row 3 — your first job, and the way in */}
-      <section className="mt-6 flex items-center gap-5 rounded-2xl border border-[#dfd4c2] bg-white/60 px-5 py-5 sm:gap-7 sm:px-7 sm:py-6">
+      <section className="flex items-center gap-5 rounded-2xl border border-[#dfd4c2] bg-white/60 px-5 py-5 sm:gap-7 sm:px-7 sm:py-6 [@media(max-height:640px)]:order-first">
         <div className="min-w-0 flex-1">
           <h2 className="text-lg font-semibold">{c.jobTitle[lang]}</h2>
           <p className="mt-1.5 text-base leading-relaxed text-[#3c4043]">
@@ -61,6 +65,7 @@ export default function SimulatorWelcome({ onContinue }: { onContinue: () => voi
           <CafeMotif />
         </div>
       </section>
+      </div>
     </WelcomeShell>
   );
 }

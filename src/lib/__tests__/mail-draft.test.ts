@@ -6,7 +6,23 @@ const raw = (v: unknown) => JSON.stringify(v);
 
 describe("Mail drafts (Wave 5 F-7, F-23: a reload keeps the reply)", () => {
   it("reads back what was saved", () => {
-    expect(readMailDraft(raw(good))).toEqual(good);
+    expect(readMailDraft(raw({ ...good, rejectedBody: null }))).toEqual({ ...good, rejectedBody: null });
+  });
+
+  // Phase 3 N-5: after a refused send, a trip to another app came back to
+  // "Click Send." over the same refused words. The refused text is kept too.
+  it("keeps the text of a refused send, so the card still asks for the fix", () => {
+    const refused = { ...good, body: "hi maria i am sick", rejectedBody: "hi maria i am sick" };
+    expect(readMailDraft(raw(refused))?.rejectedBody).toBe("hi maria i am sick");
+    expect(mailDraftFor(refused)?.rejectedBody).toBe("hi maria i am sick");
+  });
+
+  it("reads a draft saved before refusals were kept as having none", () => {
+    expect(readMailDraft(raw(good))?.rejectedBody).toBeNull();
+  });
+
+  it("drops a refusal of the wrong shape but keeps the draft", () => {
+    expect(readMailDraft(raw({ ...good, rejectedBody: 42 }))).toEqual({ ...good, rejectedBody: null });
   });
 
   it("keeps accents, line breaks and Spanish text exactly", () => {

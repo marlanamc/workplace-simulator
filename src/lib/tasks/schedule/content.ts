@@ -52,6 +52,18 @@ export const SCHEDULE: ShiftDay[] = [
   { key: "sun", dayNum: "30", day: { en: "Sun", es: "Dom" }, date: { en: "Aug 30", es: "30 ago" }, shift: null },
 ];
 
+/**
+ * The week once the swap is filed: Maria moved Thursday to the late shift
+ * (her text says so, and Day 6's time record shows it), and nothing clashes.
+ * The Portal's Schedule tab shows this after Day 2, instead of Day 2's
+ * finished screen (Phase 3 F-9). The late shift's hours come from the one
+ * swap option that works, so the two can never disagree.
+ */
+export function scheduleAfterSwap(): ShiftDay[] {
+  const late = SWAP_OPTIONS.find((o) => o.works)!.label.en.split(" · ")[1];
+  return SCHEDULE.map((d) => (d.conflict ? { ...d, shift: late, conflict: false } : d));
+}
+
 /** "Thu Aug 27" / "Jue 27 ago" — the row label, in one place. */
 export function shiftDayLabel(d: ShiftDay | PersonalEvent, lang: Lang): string {
   return `${d.day[lang]} ${d.date[lang]}`;

@@ -43,6 +43,12 @@ export default function HelpDrawer({
     return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
+  // Callers may build the lesson fresh on every render (Mail does). Reporting
+  // on each new object re-rendered the card, which re-rendered the caller,
+  // which built a new object: a render loop (Phase 3 N-4). Report when the
+  // words change, not the object.
+  const lessonKey = JSON.stringify(lesson);
+
   useEffect(() => {
     if (!reportHelp) return;
     if (!open) {
@@ -51,13 +57,13 @@ export default function HelpDrawer({
     }
     reportHelp({
       kicker,
-      lesson,
+      lesson: JSON.parse(lessonKey) as Lesson,
       tipLabel,
       gotItLabel,
       onClose: () => onCloseRef.current(),
     });
     return () => reportHelp(null);
-  }, [reportHelp, open, kicker, lesson, tipLabel, gotItLabel]);
+  }, [reportHelp, open, kicker, lessonKey, tipLabel, gotItLabel]);
 
   if (card || !open) return null;
 

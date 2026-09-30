@@ -344,6 +344,34 @@ export default function BrowserClient() {
     setBrowserTab(activeTab);
   }, [activeTab, setBrowserTab]);
 
+  // Keyboard focus that falls to the page (a window opened, or the button just
+  // pressed went away, like Clock In) lands at the top of the page content,
+  // so the next Tab is the page's first control, not the 17th thing on the
+  // screen (Phase 3 F-14). Only when this window is in front, no dialog owns
+  // focus, and nothing else has it: a task that places focus itself (the
+  // cursor in a message box) goes first and wins.
+  const pageRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    let frame = 0;
+    const rescue = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const page = pageRef.current;
+        if (!page?.closest('[data-app-window="active"]')) return;
+        const focused = document.activeElement;
+        if (focused && focused !== document.body) return;
+        if (document.querySelector('[aria-modal="true"]')) return;
+        page.focus({ preventScroll: true });
+      });
+    };
+    rescue();
+    document.addEventListener("focusout", rescue);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener("focusout", rescue);
+    };
+  }, [activeTab, browserTabToken]);
+
   const active = [...openTabs].find((t) => t.key === activeTab)
     ?? openTabs[0];
 
@@ -600,7 +628,7 @@ export default function BrowserClient() {
       </div>
 
       {/* ── Page content ─────────────────────────────────────────── */}
-      <div className="relative min-h-0 flex-1 overflow-hidden bg-white">
+      <div ref={pageRef} tabIndex={-1} data-page-content className="relative min-h-0 flex-1 overflow-hidden bg-white outline-none">
         {lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
           // Every page but Forms, whose done screen is still up from Day 7's first job.
           <OfflinePage />

@@ -427,6 +427,7 @@ export default function JobCard() {
             viewport,
             insets,
             targets: visibleTargets(card, "[data-showme]"),
+            read: visibleTargets(card, "[data-card-read]"),
             avoid: visibleTargets(card, "[data-card-avoid]"),
             lesser: visibleTargets(card, LESSER_CONTROLS),
           });
