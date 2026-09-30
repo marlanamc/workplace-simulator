@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { MoveUp } from "lucide-react";
+import { useJobCardOptional } from "@/lib/job-card-context";
 
 /**
  * Points at a real on-screen element by id. Mark the target with
@@ -13,6 +14,11 @@ import { MoveUp } from "lucide-react";
  * answers a question, the 10:00 row), also carries
  * `data-showme-look={SHOW_ME_LOOK[lang]}`, and the bubble says that
  * ("Look here.") instead of "Click it."
+ *
+ * The ring belongs to the step it was asked for. When the Job Card moves to
+ * a new step (the choice was made, the stub was closed) it goes, even when
+ * the step was done from the keyboard and no pointer press dismissed it; and
+ * a target that leaves the page takes the ring with it (Phase 3 N-1).
  */
 export default function ShowMeHighlight({
   targetId,
@@ -26,6 +32,12 @@ export default function ShowMeHighlight({
   const [rect, setRect] = useState<DOMRect | null>(null);
   const [oval, setOval] = useState(false);
   const [look, setLook] = useState<string | null>(null);
+  // The card step the ring was lit on. A new step means the pointer is stale.
+  const step = useJobCardOptional()?.step ?? null;
+  const stepKey = step ? `${step.id}|${step.stepIndex}|${step.line.en}` : null;
+  const [litOn, setLitOn] = useState<{ targetId: string | null; stepKey: string | null }>({ targetId, stepKey });
+  if (litOn.targetId !== targetId) setLitOn({ targetId, stepKey });
+  const stale = targetId !== null && litOn.targetId === targetId && litOn.stepKey !== stepKey;
   // Portal needs document.body — same client gate as LoginForm / ProgressProvider.
   const isClient = useSyncExternalStore(
     () => () => {},
@@ -64,12 +76,33 @@ export default function ShowMeHighlight({
     const raf = requestAnimationFrame(measure);
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, true);
+    // The target can move or vanish without a scroll or resize (a window
+    // closes, a pane re-renders). Re-measure after DOM changes, once a frame.
+    let pending = 0;
+    const observer = targetId
+      ? new MutationObserver(() => {
+          if (pending) return;
+          pending = requestAnimationFrame(() => {
+            pending = 0;
+            measure();
+          });
+        })
+      : null;
+    observer?.observe(document.body, { childList: true, subtree: true });
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(pending);
+      observer?.disconnect();
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
   }, [targetId]);
+
+  // Tell the task its pointer is put away, so its card button reads Show me
+  // again and a return to the old step does not bring the ring back.
+  useEffect(() => {
+    if (stale) onDismiss?.();
+  }, [stale, onDismiss]);
 
   useEffect(() => {
     if (!targetId || !onDismiss) return;
@@ -87,7 +120,7 @@ export default function ShowMeHighlight({
     };
   }, [targetId, onDismiss]);
 
-  if (!isClient || !targetId || !rect) return null;
+  if (!isClient || !targetId || !rect || stale) return null;
 
   const padX = oval ? 10 : 6;
   const padY = oval ? 8 : 6;

@@ -85,7 +85,9 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
                 key={d.key}
                 className={`flex items-center justify-between gap-3 px-4 py-3.5 ${i !== 0 ? "border-t border-border" : ""}`}
               >
-                <div className="flex min-w-0 flex-1 items-center gap-3">
+                {/* The day and time are what the step asks the learner to
+                    read: the floating card keeps off them (Phase 3 F-3). */}
+                <div data-card-read className="flex min-w-0 flex-1 items-center gap-3">
                   <span className="w-11 shrink-0 text-[14px] font-semibold text-text-primary">{d.day[lang]}</span>
                   <span className="shrink-0 text-[13px] text-text-tertiary">{d.date[lang]}</span>
                   <div
@@ -111,7 +113,7 @@ export default function ScheduleTask({ onRequestSwap }: { onRequestSwap: (day: s
             ))}
           </div>
 
-          <aside className="w-full shrink-0 lg:w-[260px]">
+          <aside data-card-read className="w-full shrink-0 lg:w-[260px]">
             <PhoneCalendar label={c.phoneLabel} heading={c.phoneHeading} lang={lang} />
           </aside>
         </div>

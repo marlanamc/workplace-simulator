@@ -240,7 +240,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // exactly that, the card keeps asking for the fix instead of saying "Click
   // Send" over a correction that disagrees; and a refused send is what lets
   // "On my own" offer the sentence starters.
-  const [rejectedBody, setRejectedBody] = useState<string | null>(null);
+  const [rejectedBody, setRejectedBody] = useState<string | null>(timeclockMailActive ? null : restored?.rejectedBody ?? null);
   const [sendMissed, setSendMissed] = useState(false);
   // The card's line changes with the refusal (off "Click Send"), and a
   // correction belongs to the line it was raised on. So it is raised on the
@@ -302,7 +302,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       setConfirmPick(draft?.confirmPick ?? null);
       setBridgeOutEligible(false);
       setReplyAudience(draft?.replyAudience ?? null);
-      setRejectedBody(null);
+      // Back from another app with the refused words still in the box: the
+      // card keeps asking for the fix (Phase 3 N-5).
+      setRejectedBody(draft?.rejectedBody ?? null);
       setSendMissed(false);
     }
   }
@@ -680,9 +682,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       storage.remove(key);
       return;
     }
-    const draft = mailDraftFor({ view, step, body, attached, confirmPick, replyAudience });
+    const draft = mailDraftFor({ view, step, body, attached, confirmPick, replyAudience, rejectedBody });
     if (draft) storage.setJSON(key, draft);
-  }, [lessonRun, timeclockMailActive, opening, learnerId, activeMailTask, completedTaskKeys, view, step, body, attached, confirmPick, replyAudience]);
+  }, [lessonRun, timeclockMailActive, opening, learnerId, activeMailTask, completedTaskKeys, view, step, body, attached, confirmPick, replyAudience, rejectedBody]);
 
   return (
     <div

@@ -17,6 +17,9 @@ export interface MailDraft {
   attached: boolean;
   confirmPick: string | null;
   replyAudience: "dana" | "all" | null;
+  /** The words of the last refused send. While the box still holds them the
+   *  card keeps asking for the fix, not "Click Send." (Phase 3 N-5). */
+  rejectedBody: string | null;
 }
 
 /** The screens worth coming back to. The inbox, a story email and the done
@@ -47,6 +50,8 @@ export function readMailDraft(raw: string | null): MailDraft | null {
       attached: d.attached,
       confirmPick: d.confirmPick,
       replyAudience: d.replyAudience,
+      // Older drafts have no refusal; a malformed one is dropped, not the draft.
+      rejectedBody: typeof d.rejectedBody === "string" ? d.rejectedBody : null,
     };
   } catch {
     return null;
@@ -64,6 +69,7 @@ export function mailDraftFor(state: {
   attached: boolean;
   confirmPick: string | null;
   replyAudience: "dana" | "all" | null;
+  rejectedBody?: string | null;
 }): MailDraft | null {
   if (!VIEWS.includes(state.view)) return null;
   return {
@@ -73,5 +79,6 @@ export function mailDraftFor(state: {
     attached: state.attached,
     confirmPick: state.confirmPick,
     replyAudience: state.replyAudience,
+    rejectedBody: state.rejectedBody ?? null,
   };
 }
