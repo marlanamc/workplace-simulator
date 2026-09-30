@@ -136,10 +136,10 @@ describe("mail-attach: the comprehension question", () => {
   it("keeps the subject line from settling the question", () => {
     for (const lang of ["en", "es"] as const) {
       const subject = SUBJECT_BY_TASK["mail-attach"][lang].subject.toLowerCase();
-      expect(subject).not.toMatch(/july|julio|june|junio|today|hoy|draft|borrador/);
-      expect(MAIL_JOB_CARD_STEPS.openMail["mail-attach"][lang].toLowerCase()).not.toMatch(/july|julio|today|hoy/);
-      // Every option is a safety report, so the subject rules none of them out.
-      for (const o of CONFIRM_COPY[lang].options) expect(o.label.toLowerCase()).toMatch(/report|reporte|draft|borrador/);
+      expect(subject).not.toMatch(/certificate|certificado|practice|práctica|today|hoy|week|semana/);
+      expect(MAIL_JOB_CARD_STEPS.openMail["mail-attach"][lang].toLowerCase()).not.toMatch(/certificate|certificado|practice|práctica|today|hoy/);
+      // Every option is from the food handler training, so the subject rules none of them out.
+      for (const o of CONFIRM_COPY[lang].options) expect(o.label.toLowerCase()).toMatch(/food handler|manipulador de alimentos/);
     }
   });
 });
@@ -151,8 +151,8 @@ describe("mail-attach: sending", () => {
     expect(attachSendProblem("Hi Maria, here it is.", false)).toBe("not-attached");
     expect(attachSendProblem("", false)).toBe("not-attached");
     expect(attachSendProblem("", true)).toBe("empty");
-    expect(attachSendProblem("Hi Maria, here is the ___ safety report.", true)).toBe("blank");
-    expect(attachSendProblem("Hi Maria, here is the July safety report.", true)).toBeNull();
+    expect(attachSendProblem("Hi Maria, here is my ___ certificate.", true)).toBe("blank");
+    expect(attachSendProblem("Hi Maria, here is my food handler certificate.", true)).toBeNull();
     for (const c of Object.values(ATTACH_CORRECTIONS)) expect(c.en && c.es).toBeTruthy();
   });
 

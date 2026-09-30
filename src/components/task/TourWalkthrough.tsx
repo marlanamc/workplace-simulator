@@ -89,6 +89,31 @@ export default function TourWalkthrough({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [browserTab, stepIndex]);
 
+  // A step that asks for a click ("Click Mail", "Tap the ?") puts the
+  // keyboard on that target once the previous button has gone and focus has
+  // fallen to the page (Wave 5 F-14: it was 13 Tabs away). The target can
+  // render a moment after the step, so it looks for a short while.
+  useEffect(() => {
+    if (!step || step.continueLabel) return;
+    const selector = targetSelector(step);
+    if (!selector) return;
+    let frame = 0;
+    let tries = 0;
+    // The card's previous button goes away a frame or two after this step
+    // starts (the card catches up with the new line), so keep looking until
+    // focus has actually fallen to the page.
+    const place = () => {
+      const current = document.activeElement;
+      const lost = !current || current === document.body;
+      const target = document.querySelector<HTMLElement>(selector);
+      if (target && lost) target.focus({ preventScroll: true });
+      else if (tries++ < 30) frame = requestAnimationFrame(place);
+    };
+    frame = requestAnimationFrame(place);
+    return () => cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepIndex]);
+
   // Listened for on the document, not on the element: after a reload the
   // walkthrough can resume on a step whose target (the card's ?) only renders
   // once this step has been reported, so it is not there yet on mount.

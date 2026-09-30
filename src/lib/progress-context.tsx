@@ -31,7 +31,9 @@ import {
   restartLevelProgress,
   syncSkillRun,
   type Confidence,
+  saveMyLang,
 } from "@/app/actions";
+import { asLang, resolveLang } from "@/lib/learner-lang";
 import { routeBridgePath, type CourseRoute } from "@/lib/course-route";
 import type { SubmissionContent, TeacherFeedback } from "@/lib/task-types";
 import { BRIDGE_PATH_FLAG, type BridgePath } from "@/lib/bridge-path";
@@ -49,6 +51,8 @@ const saveStoryFlags = (learnerId: string, flags: StoryFlags) =>
 const withBridgePath = (flags: StoryFlags, bridgePath?: BridgePath | null): StoryFlags =>
   bridgePath ? { ...flags, [BRIDGE_PATH_FLAG]: bridgePath } : flags;
 
+/** How long a language switch settles before it is saved to the account. */
+const LANG_SAVE_SETTLE_MS = 800;
 const loadStoredLang = (): Lang => (storage.getString(DEVICE_KEY.lang) === "es" ? "es" : "en");
 
 const loadStoredFlag = (key: string): boolean => storage.getString(key) === "true";
@@ -131,6 +135,7 @@ export function ProgressProvider({
   initialFeedback = [],
   initialRungs = {},
   initialArriveLevelKey = null,
+  initialLang = null,
   children,
 }: {
   learnerId: string;
@@ -149,6 +154,8 @@ export function ProgressProvider({
    * day begins. Ignored for Act II+ openers (ActIntro owns that arrival).
    */
   initialArriveLevelKey?: string | null;
+  /** The account's language (Wave 5 F-20), or null before one was saved. */
+  initialLang?: Lang | null;
   children: ReactNode;
 }) {
   const [courseRoute, setCourseRoute] = useState<CourseRoute | null>(initialCourseRoute);
@@ -245,7 +252,20 @@ export function ProgressProvider({
   }, [learnerId]);
 
   const [langOverride, setLangState] = useState<Lang | null>(null);
-  const lang = langOverride ?? (isClient ? loadStoredLang() : "en");
+  // The account's language wins over this device's, so a learner lands in
+  // their language on any Chromebook. The device's is only the fallback for
+  // a learner who never saved one (see learner-lang.ts).
+  const pendingLangKey = learnerKey.pendingLang(learnerId);
+  // The account's language as of the last save this page confirmed; the
+  // server's value is from page load and goes stale once the learner switches.
+  const [confirmedLang, setConfirmedLang] = useState<Lang | null>(null);
+  const accountLang = confirmedLang ?? initialLang;
+  const lang = resolveLang({
+    chosenNow: langOverride,
+    pending: isClient ? asLang(storage.getString(pendingLangKey)) : null,
+    account: accountLang,
+    device: isClient ? loadStoredLang() : null,
+  });
   const [bigTextOverride, setBigTextState] = useState<boolean | null>(null);
   const bigText = bigTextOverride ?? (isClient ? loadStoredFlag(DEVICE_KEY.bigText) : false);
   const [mariaNoteTaskKey, setMariaNoteTaskKey] = useState<TaskKey | null>(null);
@@ -264,10 +284,43 @@ export function ProgressProvider({
     markMyFeedbackSeen(id);
   }, []);
 
+  // Saving the language to the account (it follows the learner to any
+  // Chromebook). Nothing waits on it: the switch is already on screen. Until
+  // the account confirms it, the choice is kept here as pending, so a reload
+  // before the save lands does not undo it, and a save that failed is sent
+  // again on the next load. Saves go one at a time, so the last choice is the
+  // one the account keeps. A quick back-and-forth sends only where the
+  // learner settled, so an older choice cannot land after a newer one.
+  const langSaves = useRef<Promise<unknown>>(Promise.resolve());
+  const langSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveLang = useCallback((next: Lang) => {
+    langSaves.current = langSaves.current
+      .then(() => saveMyLang(next))
+      .then((result) => {
+        if (!result.ok || storage.getString(pendingLangKey) !== next) return;
+        storage.remove(pendingLangKey);
+        setConfirmedLang(next);
+      })
+      .catch(() => {});
+  }, [pendingLangKey, setConfirmedLang]);
+
   const setLang = useCallback((next: Lang) => {
     setLangState(next);
     storage.setString(DEVICE_KEY.lang, next);
-  }, []);
+    storage.setString(pendingLangKey, next);
+    if (langSaveTimer.current) clearTimeout(langSaveTimer.current);
+    langSaveTimer.current = setTimeout(() => saveLang(next), LANG_SAVE_SETTLE_MS);
+  }, [pendingLangKey, saveLang]);
+
+  // A choice from an earlier visit that never reached the account.
+  useEffect(() => {
+    const pending = asLang(storage.getString(pendingLangKey));
+    if (pending && pending === initialLang) storage.remove(pendingLangKey);
+    else if (pending) saveLang(pending);
+    return () => {
+      if (langSaveTimer.current) clearTimeout(langSaveTimer.current);
+    };
+  }, [pendingLangKey, initialLang, saveLang]);
 
   const setBigText = useCallback((on: boolean) => {
     setBigTextState(on);
@@ -278,7 +331,10 @@ export function ProgressProvider({
   // for Spanish content (the server layout can only ever render lang="en").
   useEffect(() => {
     document.documentElement.lang = lang;
-  }, [lang]);
+    // The login page reads this device's language: after signing out, it
+    // should greet the learner in the language their account uses.
+    if (accountLang) storage.setString(DEVICE_KEY.lang, lang);
+  }, [lang, accountLang]);
 
   const setStoryFlag = useCallback((key: string, value: string) => {
     setStoryFlags((prev) => {

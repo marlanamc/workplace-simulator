@@ -113,14 +113,14 @@ export const THIS_SCHEDULE_DOC: PdfDocument = {
 } as PdfDocument;
 
 const PAYSTUB = PDF_DOCUMENTS.find((d) => d.id === "paystub-first")!;
-const SAFETY = PDF_DOCUMENTS.find((d) => d.id === "safety-report-july")!;
+const CERTIFICATE = PDF_DOCUMENTS.find((d) => d.id === "food-handler-certificate")!;
 
 /** The page behind each picker row, so the learner can tell them apart by reading. */
 export const PICKER_PAGES: Record<string, PdfDocument> = {
   [PICKER_TARGET_KEY]: NEXT_SCHEDULE_DOC,
   [THIS_WEEK_KEY]: THIS_SCHEDULE_DOC,
   [PAYSTUB.id]: PAYSTUB,
-  [SAFETY.id]: SAFETY,
+  [CERTIFICATE.id]: CERTIFICATE,
 };
 
 export function downloadsFor(downloaded: boolean): PickableItem[] {
@@ -152,13 +152,13 @@ export function downloadsFor(downloaded: boolean): PickableItem[] {
       },
     },
     {
-      key: SAFETY.id,
-      label: SAFETY.name,
-      columns: ["Aug 1"],
+      key: CERTIFICATE.id,
+      label: CERTIFICATE.name,
+      columns: ["Aug 12"],
       isTarget: false,
       wrongHint: {
-        en: "That is a safety report, not a schedule. Choose next week's schedule.",
-        es: "Ese es un informe de seguridad, no un horario. Elige el horario de la próxima semana.",
+        en: "That is your food handler certificate, not a schedule. Choose next week's schedule.",
+        es: "Ese es tu certificado de manipulador de alimentos, no un horario. Elige el horario de la próxima semana.",
       },
     },
   ];

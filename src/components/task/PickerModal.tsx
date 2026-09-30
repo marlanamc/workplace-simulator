@@ -2,6 +2,13 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import type { PickableItem } from "@/lib/task-types";
+import { useProgress } from "@/lib/progress-context";
+import { fileDateLabel } from "@/lib/story-dates";
+
+/** Space kept between the floating Job Card and the picker beside it. */
+const BESIDE_GAP = 24;
+/** Narrower than this, the picker stays centered and the card moves. */
+const BESIDE_MIN_WIDTH = 760;
 
 /**
  * A file picker. With `preview`, it works like a real one: clicking a name
@@ -41,6 +48,8 @@ export default function PickerModal({
     showMeConfirm?: string;
   };
 }) {
+  // The date column is picker chrome, so it follows the learner's language.
+  const { lang } = useProgress();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
@@ -55,10 +64,47 @@ export default function PickerModal({
     list.current?.querySelector<HTMLElement>("button")?.focus();
   }, []);
 
+  // The floating Job Card stays on screen while the picker is open, so the
+  // picker sits in the room beside it instead of under it (the card covered
+  // the last file, or the page the learner must read). This is the floating
+  // card's version of the dock: a docked card or a lesson rail already makes
+  // room through --app-left. With too little room, the card moves instead.
+  const overlay = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = overlay.current;
+    const card = document.querySelector<HTMLElement>("[data-job-card]");
+    if (!el || !card) return;
+    const place = () => {
+      el.style.paddingLeft = "";
+      el.style.paddingRight = "";
+      if (card.classList.contains("job-card-docked") || card.classList.contains("lesson-rail-card")) return;
+      const box = card.getBoundingClientRect();
+      const room = el.getBoundingClientRect();
+      if (box.width === 0) return;
+      const onLeft = box.left + box.width / 2 < room.left + room.width / 2;
+      const free = onLeft ? room.right - box.right - BESIDE_GAP * 2 : box.left - room.left - BESIDE_GAP * 2;
+      if (free < BESIDE_MIN_WIDTH) return;
+      if (onLeft) el.style.paddingLeft = `${box.right - room.left + BESIDE_GAP}px`;
+      else el.style.paddingRight = `${room.right - box.left + BESIDE_GAP}px`;
+    };
+    place();
+    const moves = new MutationObserver(place);
+    moves.observe(card, { attributes: true, attributeFilter: ["data-corner", "class", "style"] });
+    const size = new ResizeObserver(place);
+    size.observe(card);
+    window.addEventListener("resize", place);
+    return () => {
+      moves.disconnect();
+      size.disconnect();
+      window.removeEventListener("resize", place);
+    };
+  }, []);
+
   const selected = preview ? items.find((i) => i.key === preview.selectedKey) ?? null : null;
 
   return (
     <div
+      ref={overlay}
       className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-6"
       // Centered over the app window, not the whole screen: a lesson keeps a
       // left column for its cards, and the picker should not slide under them.
@@ -122,7 +168,7 @@ export default function PickerModal({
                     </span>
                     {item.columns?.map((col, i) => (
                       <span key={i} className="shrink-0 text-[13px] text-text-tertiary">
-                        {col}
+                        {fileDateLabel(col, lang)}
                       </span>
                     ))}
                   </button>

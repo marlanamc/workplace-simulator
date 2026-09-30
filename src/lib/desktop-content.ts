@@ -37,7 +37,7 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
     pdf: {
       name: "PDF Reader",
       kicker: "Your files",
-      brief: "Opens files you download, like reports and pay stubs, so you can read them.",
+      brief: "Opens files you download, like certificates and pay stubs, so you can read them.",
       points: ["Find the file in Downloads", "Open it to read", "Print or attach it to an email when asked"],
     },
   },
@@ -51,10 +51,26 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
     pdf: {
       name: "Lector de PDF",
       kicker: "Referencia",
-      brief: "Abre archivos descargados como reportes y recibos de pago para leerlos o imprimirlos.",
+      brief: "Abre archivos descargados como certificados y recibos de pago para leerlos o imprimirlos.",
       points: ["Busca el archivo en Descargas", "Ábrelo para leerlo", "Imprímelo o adjúntalo a un correo cuando lo pidan"],
     },
   },
+};
+
+/**
+ * The PDF Reader's own chrome follows the learner's language. The documents
+ * stay English, the way real US pay stubs and reports are.
+ */
+export const PDF_READER_CHROME: Record<Lang, {
+  downloads: string;
+  page: string;
+  zoomOut: string;
+  zoomIn: string;
+  print: string;
+  download: string;
+}> = {
+  en: { downloads: "Downloads", page: "Page", zoomOut: "Zoom out", zoomIn: "Zoom in", print: "Print", download: "Download" },
+  es: { downloads: "Descargas", page: "Página", zoomOut: "Alejar", zoomIn: "Acercar", print: "Imprimir", download: "Descargar" },
 };
 
 export const DESKTOP_COPY: Record<Lang, {

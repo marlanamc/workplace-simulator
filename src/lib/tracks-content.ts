@@ -492,7 +492,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "🎉",
       kicker: { en: "Ready for tomorrow", es: "Todo listo para mañana" },
-      title: { en: "Maria noticed you.", es: "Maria se fijó en ti." },
+      title: { en: "Your new manager got your replies.", es: "Tu nueva jefa recibió tus respuestas." },
       body: {
         en: "You sent three replies. You are ready for tomorrow. Your progress is saved. Next time you sign in, your schedule will be waiting.",
         es: "Enviaste tres respuestas. Ya tienes todo para mañana. Tu progreso está guardado. La próxima vez que entres, tu horario estará aquí.",
@@ -509,7 +509,7 @@ export const LEVELS: Level[] = [
     levelUp: {
       emoji: "✅",
       kicker: { en: "Day 2: done", es: "Día 2: listo" },
-      title: { en: "You checked your schedule and sent the report.", es: "Revisaste tu horario y enviaste el reporte." },
+      title: { en: "You checked your schedule and sent your certificate.", es: "Revisaste tu horario y enviaste tu certificado." },
       body: {
         // Not "payday": the learner's own first payday is Day 6 (Aug 28), and
         // "today is payday for the crew" contradicted it (Wave 5 F-19).

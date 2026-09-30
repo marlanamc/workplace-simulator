@@ -140,7 +140,7 @@ for (const lang of ["en", "es"] as const) {
         await reopenTour(page);
         await expect(c).toContainText(tryHelp);
         await page.getByTestId("job-card-help").click();
-        await c.getByRole("button", { name: t("I understand. Back to my task", "Entiendo. Volver a mi tarea"), exact: true }).click();
+        await c.getByRole("button", { name: t("I understand. Back to my task", "Entendido. Volver a mi tarea"), exact: true }).click();
 
         // The Help beat: a reload stays here, it does not restart the walkthrough.
         await expect(c).toContainText(helpLead);

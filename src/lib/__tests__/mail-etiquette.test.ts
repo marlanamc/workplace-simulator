@@ -60,7 +60,7 @@ describe("signature blocks", () => {
       "Maria Delgado",
       "Cafe Manager, Harborside Cafe",
       "maria.delgado@harborsidecafe.com",
-      "(555) 0142",
+      "(617) 555-0146",
     ]);
     expect(signatureLines(signatureFor("Harborside HR")!, "es")).toEqual([
       "Harborside HR",

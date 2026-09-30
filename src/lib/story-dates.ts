@@ -300,6 +300,21 @@ export function weekRange(monday: number): string {
   return `${head} – ${tail}, ${end.getFullYear()}`;
 }
 
+/**
+ * A file list's date column in the learner's language: "Aug 1" → "1 ago",
+ * "Aug 1, 2026" → "1 ago 2026". File lists (the Downloads picker, the PDF
+ * reader) are app chrome, so they follow the learner; the documents
+ * themselves stay English, the way real US paperwork is. Anything that is
+ * not an English short date is returned as written.
+ */
+export function fileDateLabel(label: string, lang: Lang): string {
+  if (lang === "en") return label;
+  const m = /^([A-Z][a-z]{2}) (\d{1,2})(?:, (\d{4}))?$/.exec(label.trim());
+  const month = m ? MONTH_SHORT.en.indexOf(m[1]) : -1;
+  if (!m || month === -1) return label;
+  return `${Number(m[2])} ${MONTH_SHORT[lang][month]}${m[3] ? ` ${m[3]}` : ""}`;
+}
+
 /** "9/14/2026". */
 export function numericDate(day: number): string {
   const d = storyDate(day);

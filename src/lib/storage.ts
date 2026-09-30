@@ -89,4 +89,6 @@ export const DEVICE_KEY = {
 export const learnerKey = {
   storyFlags: (learnerId: string) => `ws-story-flags:${learnerId}`,
   rungs: (learnerId: string) => `ws-rungs:${learnerId}`,
+  /** A language this learner chose here that the account has not confirmed yet. */
+  pendingLang: (learnerId: string) => `ws-lang-pending:${learnerId}`,
 } as const;

@@ -18,7 +18,7 @@ export interface IntroBeat {
 }
 
 export const INTRO_BEATS: IntroBeat[] = [{
-  kicker: { en: "Your first day", es: "Tu primer día" },
+  kicker: { en: "Before your first shift", es: "Antes de tu primer turno" },
   line: { en: "Welcome, {name}. This card tells you what to do.", es: "Te damos la bienvenida, {name}. Esta tarjeta te dice qué hacer." },
   cta: { en: "Start looking around", es: "Empezar a mirar" },
 }];

@@ -5,7 +5,8 @@ import { affirms, mentionsTime, reassured, saysCannotAttend, yesNoAnswer } from 
 /**
  * Wave 4, communication beyond email (Day 2). After the swap request is
  * filed, Maria answers by text: she moved the learner to the late Thursday
- * shift they asked for, and asks them to confirm. The learner replies in the
+ * shift they asked for, and says exactly what to text back (owner, 30 Sep:
+ * "reply so I know you saw it" left beginners unsure what to write). The learner replies in the
  * phone's Messages thread. Nothing about the schedule changes: the text
  * confirms what the learner asked for.
  *
@@ -14,8 +15,8 @@ import { affirms, mentionsTime, reassured, saysCannotAttend, yesNoAnswer } from 
  * beginner English and Spanish pass.
  */
 export const MARIA_TEXT: Localized = {
-  en: "Hi, it's Maria. I got your swap request. I moved you to Thursday, 2 PM to 10 PM. Can you reply so I know you saw it?",
-  es: "Hola, soy Maria. Recibí tu pedido de cambio. Te pasé al jueves, de 2 PM a 10 PM. ¿Me respondes para saber que lo viste?",
+  en: "Hi, it's Maria. I got your swap request. I moved you to Thursday, 2 PM to 10 PM. Please text back: Yes, Thursday works.",
+  es: "Hola, soy Maria. Recibí tu pedido de cambio. Te pasé al jueves, de 2 PM a 10 PM. Por favor respóndeme: Sí, el jueves está bien.",
 };
 
 export const MARIA_TEXT_FROM = CAST.maria.name;
@@ -54,8 +55,8 @@ export function textReplyVerdict(reply: string): TextReplyVerdict {
 
 export const TEXT_CORRECTIONS: Record<Exclude<TextReplyVerdict, "ok">, Localized> = {
   empty: {
-    en: "Write a short reply to Maria. For example: Yes, Thursday 2 to 10 works.",
-    es: "Escribe una respuesta corta para Maria. Por ejemplo: Sí, el jueves de 2 a 10 está bien.",
+    en: "Write a short reply to Maria: Yes, Thursday works.",
+    es: "Escribe una respuesta corta para Maria: Sí, el jueves está bien.",
   },
   declines: {
     en: "Maria moved you to the late shift you asked for. It starts after your doctor visit. Tell her it works.",
@@ -77,13 +78,15 @@ export const TEXT_CORRECTIONS: Record<Exclude<TextReplyVerdict, "ok">, Localized
 
 /** The Job Card lines for the text step (Act I spells out the clicks). */
 export const TEXT_STEPS: Record<"read" | "reply", Localized> = {
+  // Both lines give the reply Maria asks for, so the learner knows what to
+  // write before they start typing (owner, 30 Sep).
   read: {
-    en: "Maria sent you a text. Read it on your phone.",
-    es: "Maria te mandó un mensaje de texto. Léelo en tu teléfono.",
+    en: "Maria sent you a text. Reply on your phone: Yes, Thursday works.",
+    es: "Maria te mandó un mensaje de texto. Respóndele en tu teléfono: Sí, el jueves está bien.",
   },
   reply: {
-    en: "Reply to Maria. Say yes, and say the day or the time. Then click Send.",
-    es: "Respóndele a Maria. Di que sí, y di el día o la hora. Después haz clic en Enviar.",
+    en: "Reply to Maria. Write: Yes, Thursday works. Then click Send.",
+    es: "Respóndele a Maria. Escribe: Sí, el jueves está bien. Después haz clic en Enviar.",
   },
 };
 

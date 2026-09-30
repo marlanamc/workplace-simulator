@@ -290,7 +290,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       <HelpDrawer
         open={help}
         onClose={() => setHelp(false)}
-        kicker={lang === "en" ? "2-minute lesson" : "Lección de 2 minutos"}
+        kicker={c.lessonKicker}
         lesson={{
           t: lang === "en" ? "Asking for a shift swap" : "Pedir un cambio de turno",
           s: lang === "en"
@@ -298,8 +298,8 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             : ["Mira el calendario personal de tu teléfono.", "Elige un turno que empiece después de tu cita.", "Un motivo ayuda, pero no es obligatorio."],
           tip: lang === "en" ? "Submitting the form is enough - you don't have to also email anyone." : "Con enviar el formulario basta, no hace falta enviar un correo también.",
         }}
-        tipLabel={lang === "en" ? "Tip" : "Consejo"}
-        gotItLabel={lang === "en" ? "I understand. Back to my task" : "Entendido. Volver a mi tarea"}
+        tipLabel={c.tipLabel}
+        gotItLabel={c.gotIt}
       />
 
       <NudgeToast text={nudge} onDismiss={dismiss} />

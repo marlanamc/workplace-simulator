@@ -1,3 +1,4 @@
+import type { Lang } from "@/lib/task-types";
 import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { getDb } from "./client";
 import { openingReplies, badges, learners, practiceAttempts, skillRungs, submissions, taskCompletions, type SubmissionContent } from "./schema";
@@ -40,13 +41,18 @@ export async function getLearnerById(id: string) {
   return rows[0] ?? null;
 }
 
-export async function createLearner(displayName: string, pinHash: string, classCode: string) {
+export async function createLearner(displayName: string, pinHash: string, classCode: string, lang?: Lang) {
   const db = getDb();
   const rows = await db
     .insert(learners)
-    .values({ displayName, pinHash, classCode })
+    .values({ displayName, pinHash, classCode, lang })
     .returning();
   return rows[0];
+}
+
+export async function setLearnerLang(id: string, lang: Lang) {
+  const db = getDb();
+  await db.update(learners).set({ lang }).where(eq(learners.id, id));
 }
 
 export async function recordCompletion(

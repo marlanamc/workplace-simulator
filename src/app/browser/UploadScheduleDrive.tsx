@@ -43,7 +43,7 @@ const FOLDERS = Object.keys(FOLDER_LABEL);
  * tells next week from this week by reading.
  */
 export default function UploadScheduleDrive() {
-  const { markComplete, completedTaskKeys, lang, storyFlags } = useProgress();
+  const { markComplete, completedTaskKeys, lang, storyFlags, displayName } = useProgress();
   const downloaded = storyFlags[SCHEDULE_DOWNLOADED_FLAG] === "true";
   const [done, setDone] = useState(completedTaskKeys.includes("upload-schedule"));
   const [folder, setFolder] = useState<string | null>(null);
@@ -261,7 +261,7 @@ export default function UploadScheduleDrive() {
             },
             render: (item) => (
               <div className="self-start">
-                <PdfSheet doc={PICKER_PAGES[item.key]} scale={0.5} />
+                <PdfSheet doc={PICKER_PAGES[item.key]} scale={0.5} employeeName={displayName} />
               </div>
             ),
             empty: c.pickerEmpty,

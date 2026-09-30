@@ -120,12 +120,12 @@ for (const lang of ['en','es'] as const) {
     await page.locator('[data-showme="reply-button"]').click();
     await expect(page.getByRole('textbox',{name:/Your reply|Tu respuesta/})).toHaveValue(answer);
     await page.locator('[data-showme="send-button"]').click();
-    await expect(page.getByText(lang === 'en' ? 'Maria noticed you.' : 'Maria se fijó en ti.', {exact:true})).toBeVisible();
+    await expect(page.getByText(lang === 'en' ? 'Your new manager got your replies.' : 'Tu nueva jefa recibió tus respuestas.', {exact:true})).toBeVisible();
     await expect.poll(saved).toEqual(['cups','start-time','welcome']);
     await expect.poll(completions).toEqual(['mail-reply','tour']);
     // Reopening finished progress cannot fabricate another completion or redo replies.
     await page.goto('/');
-    await expect(page.getByRole('dialog')).toContainText(lang === 'en' ? 'Maria noticed you.' : 'Maria se fijó en ti.');
+    await expect(page.getByRole('dialog')).toContainText(lang === 'en' ? 'Your new manager got your replies.' : 'Tu nueva jefa recibió tus respuestas.');
     await continuePastStudioArrivalIfPresent(page);
     await expect(card).toContainText(lang === 'en' ? 'Find the shift' : 'Busca el turno');
     await expect.poll(completions).toEqual(['mail-reply','tour']);
@@ -177,12 +177,12 @@ test('reopening Mail before the schedule does not introduce attachments early', 
   await continuePastStudioArrivalIfPresent(page);
   await page.getByTestId('bookmark-mail').click();
   await expect(page.locator('[data-showme="reply-button"]')).toHaveCount(0);
-  await expect(page.getByRole('button',{name:/Maria Delgado.*Safety report for the district/})).toHaveCount(0);
+  await expect(page.getByRole('button',{name:/Maria Delgado.*Food handler training/})).toHaveCount(0);
   // Set up the next boundary: earned schedule, attachment still incomplete.
   await sql`INSERT INTO task_completions (learner_id,task_key) VALUES (${id},'schedule')`;
   await page.goto('/');
-  await page.locator('[data-job-card]').getByRole('button',{name:/Next: Send the report/}).click();
-  await expect(page.locator('[data-showme="maria-row"]')).toContainText('July');
+  await page.locator('[data-job-card]').getByRole('button',{name:/Next: Send your certificate/}).click();
+  await expect(page.locator('[data-showme="maria-row"]')).toContainText('Food handler training');
 });
 
 

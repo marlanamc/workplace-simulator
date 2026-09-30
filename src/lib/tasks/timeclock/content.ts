@@ -1,10 +1,14 @@
 import { mentionsTime } from "@/lib/grading/meaning";
 import type { EventIntroCopy, Lang, Lesson, Localized } from "@/lib/task-types";
-import { HIRE_DAY, SHIFT_TIMES, STORY_DAY_BY_LEVEL, WEEKDAY_SHORT, shiftBlockFor, shortDate } from "@/lib/story-dates";
+import { HIRE_DAY, SHIFT_TIMES, STORY_DAY_BY_LEVEL, WEEKDAY_SHORT, shiftBlockFor, shortDate, storyWeekday } from "@/lib/story-dates";
 
 /** Friday's shift (Day 3), straight from the schedule. */
 const TODAY_SHIFT = shiftBlockFor(SHIFT_TIMES[STORY_DAY_BY_LEVEL.level3])!;
-const punchDate = (day: number) => `${WEEKDAY_SHORT.en[new Date(2026, 7, day).getDay()]}, ${shortDate(day, "en")}`;
+/** "Tue, Aug 18" / "Mar, 18 ago": the punch list is chrome, so it follows the learner's language. */
+const punchDate = (day: number): Localized => ({
+  en: `${WEEKDAY_SHORT.en[storyWeekday(day)]}, ${shortDate(day, "en")}`,
+  es: `${WEEKDAY_SHORT.es[storyWeekday(day)]}, ${shortDate(day, "es")}`,
+});
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -30,7 +34,7 @@ export const TIMECLOCK = {
   now: "8:15 AM",
   clockedInAt: "8:15 AM",
   // Day 3 morning: only Day 1 + Day 2 are finished punches.
-  weekHours: "16h 05m this week",
+  weekHours: { en: "16h 05m this week", es: "16h 05m esta semana" } satisfies Localized,
   recent: [
     // Day One started at 10, the time Maria gave in her email the night before.
     { date: punchDate(HIRE_DAY), in: "9:58 AM", out: "6:04 PM", total: "8h 06m" },
@@ -106,13 +110,13 @@ export const TIMECLOCK_COPY: Record<Lang, {
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
-    lessonKicker: "2-minute lesson",
+    lessonKicker: "Quick help",
     tipLabel: "Tip",
     gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
   },
   es: {
-    heading: "Reloj de tiempo",
+    heading: "Reloj marcador",
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     notClockedInStatus: "Sin marcar entrada",
@@ -142,7 +146,7 @@ export const TIMECLOCK_COPY: Record<Lang, {
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
-    lessonKicker: "Lección de 2 minutos",
+    lessonKicker: "Ayuda rápida",
     tipLabel: "Consejo",
     gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Mejor preguntar a una persona",

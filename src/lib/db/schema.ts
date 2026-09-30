@@ -7,6 +7,8 @@ export const learners = pgTable("learners", {
   classCode: text("class_code").notNull(),
   /** "learner" (default) or "teacher". A teacher sees the review dashboard for their class_code. */
   role: text("role").notNull().default("learner"),
+  /** "en" or "es": the language the simulator opens in, on any device. Null before it was saved. */
+  lang: text("lang"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

@@ -21,7 +21,9 @@ import {
   replaceSettingBadge,
   setSubmissionNote,
   upsertSkillRung,
+  setLearnerLang,
 } from "@/lib/db/queries";
+import { asLang } from "@/lib/learner-lang";
 import { COURSE_ROUTES, COURSE_ROUTE_PREFIX, courseRouteFromBadges, isCourseRoute, routeForLevel, routeBridgePath, type CourseRoute } from "@/lib/course-route";
 import type { SubmissionContent } from "@/lib/db/schema";
 import { courseLevels, LEVELS, TRACKS, taskKeysForLevel } from "@/lib/tracks-content";
@@ -41,6 +43,15 @@ function parsePresetKey(presetKey: string): { levelKey: string; path?: BridgePat
   const suffix = presetKey.slice(colon + 1);
   if (suffix === "a" || suffix === "b") return { levelKey, path: suffix };
   return { levelKey };
+}
+
+/** The learner switched language in the simulator: it follows their account (Wave 5 F-20). */
+export async function saveMyLang(lang: string) {
+  const learnerId = await getSessionLearnerId();
+  const valid = asLang(lang);
+  if (!learnerId || !valid) return { ok: false as const };
+  await setLearnerLang(learnerId, valid);
+  return { ok: true as const };
 }
 
 export async function logout() {

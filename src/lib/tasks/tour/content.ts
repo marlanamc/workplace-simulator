@@ -25,7 +25,7 @@ export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy 
   if (lang === "es") {
     return {
       emoji: "☕",
-      kicker: "Tu primer día",
+      kicker: "Antes de tu primer turno",
       headline: `¡Te damos la bienvenida, ${name}!`,
       subheadline: `Eres personal nuevo en ${CAFE_NAME}. Esta semana tienes 5 turnos. ${managerLine("es")}`,
       body: "Tómate tu tiempo para aprender cómo funciona. No puedes romper nada.",
@@ -34,7 +34,7 @@ export function tourEventIntro(lang: Lang, displayName: string): EventIntroCopy 
   }
   return {
     emoji: "☕",
-    kicker: "Your first day",
+    kicker: "Before your first shift",
     headline: `Welcome ${name}!`,
     subheadline: `You're a new hire at ${CAFE_NAME}. This week you have 5 shifts. ${managerLine("en")}`,
     body: "Take your time learning how things work. You cannot break anything.",
@@ -79,7 +79,7 @@ export const TOUR_COPY: Record<Lang, {
     badgeWhere: "Counts toward: getting started",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
-    lessonKicker: "2-minute lesson",
+    lessonKicker: "Quick help",
     tipLabel: "Tip",
     gotIt: "I understand. Back to my task",
     askPerson: "Ask a person instead",
@@ -97,9 +97,9 @@ export const TOUR_COPY: Record<Lang, {
     badgeWhere: "Cuenta para: empezar",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
-    lessonKicker: "Lección de 2 minutos",
+    lessonKicker: "Ayuda rápida",
     tipLabel: "Consejo",
-    gotIt: "Entiendo. Volver a mi tarea",
+    gotIt: "Entendido. Volver a mi tarea",
     askPerson: "Preguntarle a una persona",
   },
 };

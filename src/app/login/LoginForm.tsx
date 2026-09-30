@@ -461,6 +461,7 @@ export default function LoginForm({ next, paused = false }: { next: string; paus
               className="flex flex-col items-center animate-fade-up"
             >
               <input type="hidden" name="next" value={next} />
+              <input type="hidden" name="lang" value={lang} />
               <input type="hidden" name="displayName" value={displayNameValue} />
               <input type="hidden" name="classCode" value={classCodeValue} />
               <Avatar name={selected.displayName} size={88} />
@@ -494,6 +495,7 @@ export default function LoginForm({ next, paused = false }: { next: string; paus
               className="w-full max-w-[360px] rounded-[28px] bg-[#202124]/88 p-7 shadow-[0_24px_60px_rgba(0,0,0,0.4)] backdrop-blur-md animate-fade-up"
             >
               <input type="hidden" name="next" value={next} />
+              <input type="hidden" name="lang" value={lang} />
               <h1 className="text-[22px] font-medium leading-tight">{c.addTitle}</h1>
               <p className="mt-2 text-[14px] leading-relaxed text-white/80">{c.addIntro}</p>
 

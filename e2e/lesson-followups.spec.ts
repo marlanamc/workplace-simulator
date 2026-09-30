@@ -99,11 +99,11 @@ for (const lang of ["en", "es"]) {
     await start(page, "mail-attach", lang);
     await page.locator('[data-showme="maria-row"]').click();
     await page.locator('[data-showme="reply-button"]').click();
-    await page.getByRole("button", { name: lang === "en" ? "The final July report, today by 3 PM" : "El reporte final de julio, hoy antes de las 3 PM", exact: true }).click();
+    await page.getByRole("button", { name: lang === "en" ? "Your food handler certificate, today by 3 PM" : "Tu certificado de manipulador de alimentos, hoy antes de las 3 PM", exact: true }).click();
     await page.locator('[data-showme="attach-button"]').click();
-    await page.getByRole("button", { name: /safety-report-july.pdf/ }).click();
+    await page.getByRole("button", { name: /food-handler-certificate.pdf/ }).click();
     await page.locator('[data-showme="attach-confirm"]').click();
-    await page.locator('[data-showme="compose-body"]').fill(lang === "en" ? "Here is the July report." : "Aquí está el reporte de julio.");
+    await page.locator('[data-showme="compose-body"]').fill(lang === "en" ? "Here is my food handler certificate." : "Aquí está mi certificado de manipulador de alimentos.");
     await page.locator('[data-showme="send-button"]').click();
     await expect(page.getByTestId("lesson-followup")).toHaveAttribute("data-round", "attachment-replace");
     await choose(page, "message", "replaced");

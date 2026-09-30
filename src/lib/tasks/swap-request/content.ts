@@ -34,6 +34,9 @@ export const SWAP_COPY: Record<Lang, {
   badgeWhere: string;
   tryAgain: string;
   backToDesk: string;
+  lessonKicker: string;
+  tipLabel: string;
+  gotIt: string;
 }> = {
   en: {
     heading: "Shift Swap Request",
@@ -52,6 +55,9 @@ export const SWAP_COPY: Record<Lang, {
     badgeWhere: "Counts toward: Office Ready · Food Service Ready",
     tryAgain: "Do it again",
     backToDesk: "Back to desktop",
+    lessonKicker: "Quick help",
+    tipLabel: "Tip",
+    gotIt: "I understand. Back to my task",
   },
   es: {
     heading: "Solicitud de cambio de turno",
@@ -70,6 +76,9 @@ export const SWAP_COPY: Record<Lang, {
     badgeWhere: "Cuenta para: Oficina · Servicio de alimentos",
     tryAgain: "Hacerlo otra vez",
     backToDesk: "Volver al escritorio",
+    lessonKicker: "Ayuda rápida",
+    tipLabel: "Consejo",
+    gotIt: "Entendido. Volver a mi tarea",
   },
 };
 

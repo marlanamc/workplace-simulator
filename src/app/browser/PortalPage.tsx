@@ -11,6 +11,7 @@ import SwapRequestTask from "./SwapRequestTask";
 import ShiftReviewTask from "./ShiftReviewTask";
 import { TAB_ICONS, CircleGlyph } from "@/lib/icons";
 import { useWindowManager } from "@/lib/window-manager";
+import { TIMECLOCK_COPY } from "@/lib/tasks/timeclock/content";
 import type { PortalSection } from "@/lib/tracks-content";
 
 type Section = PortalSection;
@@ -22,7 +23,8 @@ const PORTAL_TITLE: Localized<string> = { en: "Employee Portal", es: "Portal del
 const SECTIONS: { key: Section; label: Localized<string> }[] = [
   { key: "schedule", label: { en: "Schedule", es: "Horario" } },
   { key: "swap-request", label: { en: "Shift Swap", es: "Cambio de turno" } },
-  { key: "timeclock", label: { en: "Time Clock", es: "Reloj checador" } },
+  // The tab and the page heading are one name (Wave 5 F-11).
+  { key: "timeclock", label: { en: TIMECLOCK_COPY.en.heading, es: TIMECLOCK_COPY.es.heading } },
   { key: "paystubs", label: { en: "Pay Stubs", es: "Recibos de pago" } },
   { key: "shift-review", label: { en: "Shift notes", es: "Notas del turno" } },
 ];

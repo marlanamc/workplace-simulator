@@ -84,16 +84,16 @@ for (const lang of ["en", "es"] as const) {
       await page.locator('[data-showme="maria-row"]').click();
     }
     await page.locator('[data-showme="reply-button"]').click();
-    await page.getByRole("button", { name: t("The final July report, today by 3 PM", "El reporte final de julio, hoy antes de las 3 PM") }).click();
+    await page.getByRole("button", { name: t("Your food handler certificate, today by 3 PM", "Tu certificado de manipulador de alimentos, hoy antes de las 3 PM") }).click();
     await page.locator('[data-showme="attach-button"]').click();
-    await page.getByRole("button", { name: /safety-report-july.pdf/ }).click();
+    await page.getByRole("button", { name: /food-handler-certificate.pdf/ }).click();
     await page.locator('[data-showme="attach-confirm"]').click();
-    const note = t("here is report", "aquí está el reporte");
+    const note = t("here is my certificate", "aquí está mi certificado");
     await page.locator('[data-showme="compose-body"]').last().fill(note);
     await reload(page);
     if (!(await page.locator('[data-showme="compose-body"]').last().isVisible())) await page.getByTestId("bookmark-mail").click();
     await expect(page.locator('[data-showme="compose-body"]').last()).toHaveValue(note);
-    await expect(appWindow(page)).toContainText("safety-report-july.pdf");
+    await expect(appWindow(page)).toContainText("food-handler-certificate.pdf");
     await page.locator('[data-showme="send-button"]').last().click();
     await expect(page.locator("[data-celebration-continue]").or(card(page).locator('[data-card-tone="green"]')).first()).toBeVisible({ timeout: 20_000 });
 
