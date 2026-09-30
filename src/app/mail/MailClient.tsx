@@ -268,6 +268,13 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   const focusNext = (id: string) => {
     pendingFocus.current = id;
   };
+  // Mail already open when the next job starts in it ("Write to Maria" right
+  // after Day 4's reply), or coming back to a message from another app: the
+  // cursor goes back in the box. Only a fresh Mail did this before
+  // (Phase 3 F-14). Runs before the effect below, which moves the focus.
+  useEffect(() => {
+    if (view === "compose") pendingFocus.current = "compose-body";
+  }, [browserTabToken, view]);
   useEffect(() => {
     const id = pendingFocus.current;
     if (!id) return;
