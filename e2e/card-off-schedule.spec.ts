@@ -80,11 +80,16 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
       // The taller card cannot miss every label at 1366; it must miss the ones
       // it names. In Spanish the tall card sits on Monday instead.
       await expect.poll(() => readUnderCard(page, NAMED)).toEqual([]);
-      // The button to press is still clear too.
+      // The button to press is still clear too, once it is scrolled into
+      // view (at 911 Thursday starts below the window, as a learner finds it).
+      // Checked at its middle only when on screen: off screen, the point is
+      // the shelf, not the card.
+      await page.locator('[data-showme="swap-button"]').scrollIntoViewIfNeeded();
       await expect
         .poll(() =>
           page.locator('[data-showme="swap-button"]').evaluate((b) => {
             const r = b.getBoundingClientRect();
+            if (r.bottom > innerHeight || r.top < 0) return "off screen";
             const hit = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
             return Boolean(hit && !hit.closest("[data-job-card]"));
           }),
