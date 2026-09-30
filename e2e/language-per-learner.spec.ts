@@ -17,6 +17,13 @@ async function freshChromebook(browser: Browser) {
   return { context, page: await context.newPage() };
 }
 
+/** The account has the choice: nothing is left pending on this device. */
+async function accountConfirmed(page: Page) {
+  await expect
+    .poll(() => page.evaluate(() => Object.keys(localStorage).some((k) => k.startsWith("ws-lang-pending:"))), { timeout: 15_000 })
+    .toBe(false);
+}
+
 async function signUp(page: Page, name: string, spanish: boolean) {
   await page.goto("/login");
   await waitForInteractive(page);
@@ -70,10 +77,53 @@ test("a Spanish learner is in Spanish on another Chromebook, and a switch follow
   // They switch to English here; a third Chromebook opens in English.
   await second.page.getByTitle(/Switch to English|Cambiar a inglés/).first().click();
   await expect(second.page.locator("html")).toHaveAttribute("lang", "en");
-  await second.page.waitForTimeout(1_500); // the save to the account is fire-and-forget
+  await accountConfirmed(second.page);
   const third = await freshChromebook(browser);
   await signInElsewhere(third.page, name);
   await expect(third.page.locator("html")).toHaveAttribute("lang", "en");
 
   for (const c of [first, second, third]) await c.context.close();
+});
+
+test("a switch and a reload right away keep the switch, here and on another Chromebook", async ({ browser }) => {
+  test.slow();
+  const name = `E2e Lang Fast ${Date.now() % 1_000_000}`;
+  const first = await freshChromebook(browser);
+  const page = first.page;
+  const html = page.locator("html");
+  const toSpanish = () => page.getByTitle("Cambiar a español").first().click();
+  const toEnglish = () => page.getByTitle("Switch to English").first().click();
+  await signUp(page, name, false);
+
+  // Settled on Spanish (the account has it), then English and a reload
+  // before that save lands. English holds, and still holds once the account
+  // confirms it: the page must not fall back to the Spanish it loaded with.
+  await toSpanish();
+  await expect(html).toHaveAttribute("lang", "es");
+  await accountConfirmed(page);
+  await toEnglish();
+  await expect(html).toHaveAttribute("lang", "en");
+  await page.reload();
+  await waitForInteractive(page);
+  await expect(html).toHaveAttribute("lang", "en");
+  await accountConfirmed(page);
+  await page.waitForTimeout(500);
+  await expect(html).toHaveAttribute("lang", "en");
+  await expect(card(page)).not.toContainText(/Bienvenida|Empezar/);
+
+  // A quick back-and-forth, then a reload: the last choice.
+  await toSpanish();
+  await expect(html).toHaveAttribute("lang", "es");
+  await toEnglish();
+  await expect(html).toHaveAttribute("lang", "en");
+  await page.reload();
+  await waitForInteractive(page);
+  await expect(html).toHaveAttribute("lang", "en");
+  await accountConfirmed(page);
+
+  // The account ends on the last choice, so another Chromebook agrees.
+  const second = await freshChromebook(browser);
+  await signInElsewhere(second.page, name);
+  await expect(second.page.locator("html")).toHaveAttribute("lang", "en");
+  for (const c of [first, second]) await c.context.close();
 });

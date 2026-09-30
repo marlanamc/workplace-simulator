@@ -13,20 +13,24 @@ export function asLang(value: unknown): Lang | null {
 }
 
 /**
- * What the simulator shows on load: a choice made just now, then the
- * account's language, then this device's (a learner from before the account
- * kept it), then English.
+ * What the simulator shows on load: a choice made just now; then this
+ * learner's choice on this device that the account has not confirmed yet
+ * (a reload right after switching, before the save lands, must not undo the
+ * switch); then the account's language; then this device's (a learner from
+ * before the account kept it); then English.
  */
 export function resolveLang({
   chosenNow,
+  pending = null,
   account,
   device,
 }: {
   chosenNow: Lang | null;
+  pending?: Lang | null;
   account: Lang | null;
   device: Lang | null;
 }): Lang {
-  return chosenNow ?? account ?? device ?? "en";
+  return chosenNow ?? pending ?? account ?? device ?? "en";
 }
 
 /**

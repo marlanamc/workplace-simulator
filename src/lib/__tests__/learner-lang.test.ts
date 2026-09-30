@@ -19,6 +19,15 @@ describe("the learner's language follows the account (Wave 5 F-20)", () => {
     expect(resolveLang({ chosenNow: null, account: null, device: null })).toBe("en");
   });
 
+  it("keeps a switch the account has not confirmed yet over the account's older language", () => {
+    // Switched to English, reloaded before the save landed: still English.
+    expect(resolveLang({ chosenNow: null, pending: "en", account: "es", device: "en" })).toBe("en");
+    // A pending choice loses only to a switch made just now.
+    expect(resolveLang({ chosenNow: "es", pending: "en", account: "en", device: "en" })).toBe("es");
+    // Nothing pending: the account, as before.
+    expect(resolveLang({ chosenNow: null, pending: null, account: "es", device: "en" })).toBe("es");
+  });
+
   it("saves the login page's choice on a new account", () => {
     expect(langToSaveAtSignIn({ isNew: true, account: null, loginPage: "es" })).toBe("es");
     expect(langToSaveAtSignIn({ isNew: true, account: null, loginPage: null })).toBe("en");
