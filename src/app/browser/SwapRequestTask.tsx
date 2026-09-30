@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
-import { SCHEDULE, SCHEDULE_COPY, SWAP_OPTIONS, shiftDayLabel } from "@/lib/tasks/schedule/content";
+import { PERSONAL_CALENDAR, SCHEDULE, SCHEDULE_COPY, SWAP_OPTIONS, shiftDayLabel } from "@/lib/tasks/schedule/content";
+import type { LessonFact } from "@/lib/lessons/types";
 import { FORM_STEPS, SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -71,6 +72,36 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
 
   const c = SWAP_COPY[lang];
   const sc = SCHEDULE_COPY[lang];
+
+  // Brief shift facts on the Job Card, not a finished example answer: which
+  // day clashes, and with what. Stays up throughout the form and the text
+  // reply, so the learner never has to scroll back to the week list to
+  // remember it.
+  const clashingDay = SCHEDULE.find((d) => d.conflict);
+  const conflictEvent = clashingDay ? PERSONAL_CALENDAR.find((e) => e.dayKey === clashingDay.key) : undefined;
+  const scheduleFacts: LessonFact[] = clashingDay
+    ? [
+        {
+          label: { en: "Shift that clashes", es: "Turno que choca" },
+          value: {
+            en: `${shiftDayLabel(clashingDay, "en")} · ${clashingDay.shift}`,
+            es: `${shiftDayLabel(clashingDay, "es")} · ${clashingDay.shift}`,
+          },
+          emphasize: true,
+        },
+        ...(conflictEvent
+          ? [
+              {
+                label: { en: "Already on your phone", es: "Ya en tu teléfono" },
+                value: {
+                  en: `${conflictEvent.title.en}, ${conflictEvent.time}`,
+                  es: `${conflictEvent.title.es}, ${conflictEvent.time}`,
+                },
+              },
+            ]
+          : []),
+      ]
+    : [];
 
   // The card's line moves back to the refused choice, and a correction
   // belongs to the line it was raised on, so it is raised a moment later,
@@ -178,6 +209,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
           onShowMe={() => showMe.toggleFor(showMeId)}
           showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
+          facts={scheduleFacts}
         />
       )}
 

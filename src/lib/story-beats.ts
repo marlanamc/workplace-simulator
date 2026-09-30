@@ -11,6 +11,7 @@ import { LEVELS, taskKeysForLevel } from "@/lib/tracks-content";
 import { TASK_LIST } from "@/lib/tasks/registry";
 import { OFFLINE_FLAG } from "@/lib/tasks/handbook/offline";
 import { CLOSE_FLAG } from "@/lib/tasks/triage/close-window";
+import { readPauseFlagKey } from "@/lib/read-pause";
 
 export const HUDDLE_TIME_FLAG = "huddleTime";
 /** Set when the learner flags a hours mismatch and Mail should open to compose. */
@@ -1051,6 +1052,7 @@ export function storyFlagKeysForTasks(taskKeys: Iterable<TaskKey>): string[] {
     if (task === "upload-schedule") keys.push(SCHEDULE_DOWNLOADED_FLAG);
     if (task === "handbook") keys.push(OFFLINE_FLAG);
     if (task === "triage") keys.push(CLOSE_FLAG);
+    if (TASK_LIST.find((t) => t.key === task)?.readPause) keys.push(readPauseFlagKey(task));
   }
   return keys;
 }

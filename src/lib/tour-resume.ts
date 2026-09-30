@@ -23,6 +23,14 @@ export function savedPracticeStage(value: unknown): PracticeStage {
   return PRACTICE_STAGES.find((stage) => stage === value) ?? "inactive";
 }
 
+/** The sibling "practice moving and hiding this card" flow's stages. */
+export const MOVE_PRACTICE_STAGES = ["inactive", "move", "collapse", "complete"] as const;
+export type MovePracticeStage = (typeof MOVE_PRACTICE_STAGES)[number];
+
+export function savedMovePracticeStage(value: unknown): MovePracticeStage {
+  return MOVE_PRACTICE_STAGES.find((stage) => stage === value) ?? "inactive";
+}
+
 /** A stored intro beat, clamped to `0..beatCount` (beatCount = through them). */
 export function savedIntroBeat(value: unknown, beatCount: number): number {
   if (typeof value !== "number" || !Number.isInteger(value) || value < 0) return 0;

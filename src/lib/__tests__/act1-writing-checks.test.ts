@@ -22,6 +22,11 @@ describe("The Night Before: Maria's 10 AM question", () => {
     "Claro que sí. Nos vemos mañana.",
     "No problem, I can come.",
     "ok see you tomorow",
+    // A bare confirmed time is itself an answer to "will you be here at
+    // 10 AM" — it does not also need a "yes" (Act 0-1 spec).
+    "10 AM",
+    "Tomorrow at 10",
+    "10 a.m.",
   ])("accepts: %s", (reply) => expect(startTimeVerdict(reply)).toBe("ok"));
 
   it.each([
@@ -34,6 +39,9 @@ describe("The Night Before: Maria's 10 AM question", () => {
     ["Sí, a las 9.", "other-time"],
     ["maybe", "unclear"],
     ["No estoy segura.", "unclear"],
+    // The right hour, the wrong half of the day.
+    ["10 PM", "other-time"],
+    ["10 p.m.", "other-time"],
   ])("does not accept: %s", (reply, verdict) => expect(startTimeVerdict(reply)).toBe(verdict));
 });
 

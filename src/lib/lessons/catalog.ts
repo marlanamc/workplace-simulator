@@ -15,9 +15,9 @@ import { BRIDGE_PATH_FLAG } from "@/lib/bridge-path";
 import { jumpTabForTask } from "@/lib/curriculum-catalog";
 import { hiringMailForTask } from "@/lib/hiring-mail";
 import { WELCOME_FLAG } from "@/lib/welcome-content";
+import { NEW_HIRE_FLAG } from "@/lib/new-hire-content";
 import { actIntroFlag } from "@/lib/act-intro-content";
 import { ACTS } from "@/lib/tracks-content";
-import { LIST_INTRO_FLAG } from "@/lib/job-card-content";
 import { CALENDAR_REMINDER_FLAG } from "@/lib/tasks/tour/content";
 import type { StoryFlags } from "@/lib/story-beats";
 import type { PortalSection } from "@/lib/tasks/registry";
@@ -130,7 +130,7 @@ export function seedForLesson(taskKey: TaskKey): LessonSeed | null {
   const storyFlags: StoryFlags = {
     [WELCOME_FLAG]: "true",
     "job-card-intro-seen": "true",
-    [LIST_INTRO_FLAG]: "true",
+    [NEW_HIRE_FLAG]: "true",
     [CALENDAR_REMINDER_FLAG]: "true",
     ...Object.fromEntries(ACTS.map((a) => [actIntroFlag(a.key), "true"])),
     ...(bridgePath ? { [BRIDGE_PATH_FLAG]: bridgePath } : {}),

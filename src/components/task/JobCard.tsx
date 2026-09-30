@@ -9,18 +9,20 @@ import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
 import { useLesson } from "@/lib/lesson-context";
 import LessonInfoCard from "@/components/lesson/LessonInfoCard";
+import { FactList, factsSpokenText } from "@/components/task/FactList";
 import { LESSON_WHY } from "@/lib/lessons/why";
 import { LESSON_COPY } from "@/lib/lessons/copy";
 import {
   INTRO_BEATS,
   CARD_PRACTICE,
-  LIST_INTRO,
-  LIST_INTRO_FLAG,
+  MOVE_PRACTICE,
   JOB_CARD_COPY,
   JOB_CARD_DONE_LINE,
   JOB_CARD_LINE,
-  shouldShowListIntro,
+  READ_PAUSE_COPY,
 } from "@/lib/job-card-content";
+import { TASKS, READ_PAUSE_TASK_KEYS } from "@/lib/tasks/registry";
+import { readPauseFlagKey, readPauseStage, hasOpenReadPause } from "@/lib/read-pause";
 import {
   coreComplete,
   courseComplete,
@@ -177,6 +179,9 @@ interface Script {
   help?: boolean;
   secondaryLabel?: string;
   onSecondary?: () => void;
+  /** A second, quieter offer under the welcome beat: practice moving the card. */
+  tertiaryLabel?: string;
+  onTertiary?: () => void;
   /** Two peer doors — both buttons use the same weight. */
   equalPair?: boolean;
   primaryTestId?: string;
@@ -213,16 +218,20 @@ export default function JobCard() {
     advanceIntro,
     practice,
     setPractice,
+    movePractice,
+    setMovePractice,
   } = useJobCard();
 
   const c = JOB_CARD_COPY[lang];
   const pc = CARD_PRACTICE;
+  const mp = MOVE_PRACTICE;
   const taskSave = active !== null && step?.priority === "save";
   const busy = Boolean(saving || routeSaving || saveError || taskSave);
   const practicing = practice.stage !== "inactive";
+  const movePracticing = movePractice.stage !== "inactive";
   const showPractice = practicing && !busy;
-  const visibleHelp = !practicing && !busy ? help : null;
-  const visibleCorrection = practicing || busy ? "" : correction;
+  const visibleHelp = !practicing && !movePracticing && !busy ? help : null;
+  const visibleCorrection = practicing || movePracticing || busy ? "" : correction;
   const level = levelForTrack(currentTrack.key);
   // A lesson picks its own support: Guided talks like Act I (every click,
   // plus Show me), On my own like Act III (the goal, then out of the way).
@@ -235,6 +244,11 @@ export default function JobCard() {
   // Mid-direction, "Change direction" waits inside this Help panel on the
   // desktop card instead of sitting above the day's main button.
   const [routeHelpOpen, setRouteHelpOpen] = useState(false);
+  // Moving the card is a settings-style control now, not a header button: it
+  // lives in the Help disclosure. A step with no task Help of its own still
+  // needs a way to reach it, so the ? button opens this instead when there is
+  // no lesson to show.
+  const [repositionOpen, setRepositionOpen] = useState(false);
   const routeFinished = courseComplete(completedTaskKeys, courseRoute);
   const chooserMode = routeChooserMode(courseRoute, routeFinished);
   const directionPlacement = changeDirectionPlacement(courseRoute, routeFinished);
@@ -261,6 +275,9 @@ export default function JobCard() {
   // under it, so it has no corner to choose, nothing to drag and nothing to
   // fold out of the way. A lesson already keeps its own rail at every size.
   const docked = useDocked() && !lesson;
+  // Nothing to move where the card is already fixed — the practice offer
+  // never appears there, and any leftover stage from a wider session is moot.
+  const showMovePractice = movePracticing && !busy && !docked;
   const folded = collapsed && !docked;
   const [heardVoice, setHeardVoice] = useState("");
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
@@ -285,6 +302,17 @@ export default function JobCard() {
     startOrientation();
     // Onto the card's next button, not the fold button, where Enter would hide
     // the card (Wave 5 F-14).
+    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>(".job-card-primary")?.focus());
+  }
+  function startMovePractice() {
+    if (movePracticing || busy || docked) return;
+    setCollapsed(false);
+    setMovePractice({ stage: "move" });
+  }
+  function exitMovePractice() {
+    setMovePractice({ stage: "inactive" });
+    setCollapsed(false);
+    startOrientation();
     requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>(".job-card-primary")?.focus());
   }
 
@@ -350,10 +378,15 @@ export default function JobCard() {
     liveStep ?? (active !== null && heldStep ? heldStep : null);
 
   const script = buildScript();
-  // What the speaker button reads: the instruction, plus the hint and the
-  // correction when they are up, because those are the words a learner who
-  // needs the audio is most likely stuck on.
-  const spokenLine = [script.line, script.hint, visibleCorrection].filter(Boolean).join(". ");
+  // Reference facts for the live step (a shift day, where a bag goes, a
+  // number to copy) — shown and read aloud alongside the instruction, never
+  // in a second panel. Held steps (another tab of the same window) keep
+  // showing their last facts, same as the line itself.
+  const facts = effectiveStep?.facts ?? [];
+  // What the speaker button reads: the instruction, plus the hint, any facts,
+  // and the correction when they are up, because those are the words a
+  // learner who needs the audio is most likely stuck on.
+  const spokenLine = [script.line, script.hint, factsSpokenText(facts, lang), visibleCorrection].filter(Boolean).join(". ");
   // A new sentence is the card talking again — open it so the learner cannot
   // miss the line they just hid. A correction does not: it is usually raised
   // by a click next to the button they need, and a card that springs open
@@ -372,10 +405,14 @@ export default function JobCard() {
     if (bodyRef.current) bodyRef.current.scrollTop = 0;
   }, [voice]);
 
+  // An open reading pause (below) holds a celebration back the same way it
+  // holds the next-job handoff back: one voice at a time, and right now it's
+  // "read what they said back" that's talking, not the level screen.
+  const celebrationHeld = !lesson && hasOpenReadPause(storyFlags, READ_PAUSE_TASK_KEYS);
   // A celebration owns the whole screen for a moment. The card stepping back
   // is the same rule as everywhere else: one voice at a time, and right now
   // the level screen is the one talking.
-  const celebrating = Boolean((celebrateLevel?.levelUp || celebrateTrack) && !saving && !saveError);
+  const celebrating = Boolean((celebrateLevel?.levelUp || celebrateTrack) && !saving && !saveError && !celebrationHeld);
 
   // ─── the corner ──────────────────────────────────────────────────────────
   // One step of one job, in one window. A hand move holds for this long.
@@ -559,6 +596,41 @@ export default function JobCard() {
       line: pc[practice.stage === "inactive" ? "click" : practice.stage][lang],
       tone: "blue", step: -1,
     };
+    if (showMovePractice) return {
+      badge: "✉", kicker: mp.label[lang],
+      line: mp[movePractice.stage === "inactive" ? "move" : movePractice.stage][lang],
+      tone: "blue", step: -1,
+    };
+    // A reading pause takes over the card the moment its task completes and
+    // holds it — reload included, since it's driven by a story flag, not by
+    // that task's window being open — until the learner opens the reply and
+    // presses Continue. Lessons never set this flag, so this never fires there.
+    if (!lesson) {
+      const pendingPauseKey = READ_PAUSE_TASK_KEYS.find((k) => readPauseStage(storyFlags, k) !== "acknowledged");
+      if (pendingPauseKey) {
+        const target = TASKS[pendingPauseKey].readPause!;
+        const stage = readPauseStage(storyFlags, pendingPauseKey);
+        const rp = READ_PAUSE_COPY[lang];
+        return {
+          badge: "✓",
+          kicker: c.doneKicker,
+          tone: "green",
+          step: 4,
+          line: rp.line,
+          primaryLabel: stage === "unread" ? rp.readReply : rp.continueLabel,
+          primaryTestId: stage === "unread" ? "read-pause-read" : "read-pause-continue",
+          onPrimary: stage === "unread"
+            ? () => {
+                setStoryFlag(readPauseFlagKey(pendingPauseKey), "reading");
+                openApp(target.appKey, { tab: target.tab, section: target.section });
+              }
+            : () => {
+                setStoryFlag(readPauseFlagKey(pendingPauseKey), "acknowledged");
+                minimizeActive();
+              },
+        };
+      }
+    }
     if (introBeat < INTRO_BEATS.length) {
       const beat = INTRO_BEATS[introBeat];
       const name = displayName.trim() || (lang === "en" ? "friend" : "amiga");
@@ -568,27 +640,8 @@ export default function JobCard() {
         tone: "blue", step: -1,
         primaryLabel: beat.cta?.[lang], onPrimary: startOrientation,
         secondaryLabel: pc.title[lang],
-      };
-    }
-
-    // Day One, once: point at the orange shelf pin. The walkthrough kept it
-    // locked; this is the first sitting where the list of jobs is real.
-    if (
-      shouldShowListIntro({
-        storyFlags,
-        completedTaskKeys,
-        levelKey: level.key,
-        celebrating: false,
-      })
-    ) {
-      return {
-        badge: "1",
-        kicker: LIST_INTRO.kicker[lang],
-        line: LIST_INTRO.line[lang],
-        tone: "blue",
-        step: -1,
-        primaryLabel: LIST_INTRO.cta[lang],
-        onPrimary: () => setStoryFlag(LIST_INTRO_FLAG, "true"),
+        tertiaryLabel: docked ? undefined : mp.title[lang],
+        onTertiary: startMovePractice,
       };
     }
 
@@ -944,17 +997,22 @@ export default function JobCard() {
             ?
           </button>
         )}
-        {preferred !== HOME && !fixedPlace && (
+        {!fixedPlace && !visibleHelp && !(liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length) && preferred !== HOME && !practicing && !busy && (
           <button
             type="button"
+            data-testid="job-card-reposition"
+            aria-label={repositionOpen ? c.hideHelp : c.snapBack}
+            aria-pressed={repositionOpen}
+            title={repositionOpen ? c.hideHelp : c.snapBack}
             onPointerDown={(e) => e.stopPropagation()}
-            onClick={snapHome}
-            aria-label={c.snapBack}
-            title={c.snapBack}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-white"
-            style={{ background: "rgba(255,255,255,0.18)" }}
+            onClick={() => setRepositionOpen((v) => !v)}
+            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold"
+            style={{
+              background: repositionOpen ? "#fff" : "rgba(255,255,255,0.18)",
+              color: repositionOpen ? tone : "#fff",
+            }}
           >
-            <Shrink size={15} strokeWidth={2.25} aria-hidden />
+            {repositionOpen ? <Shrink size={15} strokeWidth={2.25} aria-hidden /> : "?"}
           </button>
         )}
         {!docked && <button
@@ -1017,6 +1075,43 @@ export default function JobCard() {
             <button type="button" data-testid="job-card-read-aloud" className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border text-[#3c4043]"
               onClick={() => speakText(script.line, lang)}><Volume2 aria-hidden size={22} />{c.readAloud}</button>
           </>
+        ) : showMovePractice ? (
+          <>
+            <p role="status" className="m-0 text-[22px] font-medium leading-tight text-[#202124]">{script.line}</p>
+            {movePractice.stage === "move" && (
+              <div className="mt-3">
+                <button type="button" data-testid="job-card-move-practice-next" className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 font-medium text-white"
+                  onClick={() => setMovePractice({ stage: "collapse" })}>{mp.moveNext[lang]}</button>
+              </div>
+            )}
+            {movePractice.stage === "collapse" && (
+              <div className="mt-3">
+                <button type="button" data-testid="job-card-move-practice-next" className="min-h-12 w-full rounded-xl bg-[#0b57d0] px-3 font-medium text-white"
+                  onClick={() => setMovePractice({ stage: "complete" })}>{mp.collapseNext[lang]}</button>
+              </div>
+            )}
+            {movePractice.stage === "complete" && (
+              <p className="mt-2 mb-0 text-[15px] leading-[1.35] text-[#5f6368]">{mp.restoreLine[lang]}</p>
+            )}
+            <button type="button" data-testid="job-card-read-aloud" className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border text-[#3c4043]"
+              onClick={() => speakText(script.line, lang)}><Volume2 aria-hidden size={22} />{c.readAloud}</button>
+          </>
+        ) : repositionOpen ? (
+          <>
+            <p role="status" className="m-0 text-[22px] font-medium leading-tight text-[#202124]">{c.dragHint}</p>
+            <div className="mt-3.5 flex justify-center">
+              <button
+                type="button"
+                data-testid="job-card-snap-back"
+                onClick={() => { snapHome(); setRepositionOpen(false); }}
+                className="job-card-primary flex min-h-[56px] items-center justify-center gap-2.5 rounded-[16px] px-5 text-[17px] font-medium text-white"
+                style={{ background: tone }}
+              >
+                <Shrink size={18} strokeWidth={2.25} aria-hidden />
+                {c.snapBack}
+              </button>
+            </div>
+          </>
         ) : visibleHelp && !finish ? (
 
           <>
@@ -1045,6 +1140,27 @@ export default function JobCard() {
               <span className="font-semibold text-[#202124]">{visibleHelp.tipLabel}: </span>
               {visibleHelp.lesson.tip}
             </p>
+            {/* Moving the card lives here, not in the header: it's a setting
+                for the rare learner who needs it, not something to fit next
+                to Done/Help/Collapse on every card. Drag-by-hand and the
+                keyboard nudge keys still work on the header bar itself either
+                way; this is just the discoverable "put it back" affordance. */}
+            {!fixedPlace && (
+              <div className="mt-3.5 flex items-center justify-between gap-2 rounded-[14px] border border-[var(--border)] px-3.5 py-3">
+                <p className="m-0 text-[14px] leading-[1.35] text-[#5f6368]">{c.dragHint}</p>
+                {preferred !== HOME && (
+                  <button
+                    type="button"
+                    onClick={snapHome}
+                    aria-label={c.snapBack}
+                    title={c.snapBack}
+                    className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[var(--border)] text-[#3c4043]"
+                  >
+                    <Shrink size={16} strokeWidth={2.25} aria-hidden />
+                  </button>
+                )}
+              </div>
+            )}
             {/* Pinned to the bottom of the card while Help scrolls above it:
                 the keyboard lands here, so it must be on screen, and the
                 start of Help stays in view too (Wave 5 F-14, at 911). */}
@@ -1094,6 +1210,12 @@ export default function JobCard() {
             <p className="m-0 text-[17px] font-medium leading-[1.3]" style={{ color: "#8a5000" }}>
               {visibleCorrection}
             </p>
+          </div>
+        )}
+
+        {script.tone !== "green" && facts.length > 0 && (
+          <div className="mt-3.5 rounded-[14px] bg-[#f1f3f4] px-3.5 py-3">
+            <FactList facts={facts} lang={lang} />
           </div>
         )}
 
@@ -1247,6 +1369,18 @@ export default function JobCard() {
           </button>
         )}
 
+        {script.tertiaryLabel && (
+          <button
+            type="button"
+            data-testid="job-card-move-practice-start"
+            onClick={script.onTertiary}
+            className="mt-2 flex min-h-[40px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[14px] font-medium"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            {script.tertiaryLabel}
+          </button>
+        )}
+
         {lesson && script.tone !== "green" && <LessonInfoCard />}
 
         {/* A lesson's one setting: how much the card spells out. It lives on
@@ -1318,6 +1452,13 @@ export default function JobCard() {
         <div className="shrink-0 border-t border-[#dadce0] bg-white p-2">
           <button type="button" data-practice-exit className={`min-h-12 w-full rounded-xl px-3 font-medium ${practice.stage === "complete" ? "bg-[#0b57d0] text-white" : "text-[#5f6368] underline hover:bg-[#f1f3f4]"}`} onClick={exitPractice}>
             {practice.stage === "complete" ? INTRO_BEATS[0].cta?.[lang] : pc.skip[lang]}
+          </button>
+        </div>
+      )}
+      {showMovePractice && (
+        <div className="shrink-0 border-t border-[#dadce0] bg-white p-2">
+          <button type="button" data-testid="job-card-move-practice-exit" className={`min-h-12 w-full rounded-xl px-3 font-medium ${movePractice.stage === "complete" ? "bg-[#0b57d0] text-white" : "text-[#5f6368] underline hover:bg-[#f1f3f4]"}`} onClick={exitMovePractice}>
+            {movePractice.stage === "complete" ? INTRO_BEATS[0].cta?.[lang] : mp.skip[lang]}
           </button>
         </div>
       )}

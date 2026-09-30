@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTaskDraft } from "@/lib/use-task-draft";
-import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
   PAY_STUBS,
@@ -17,6 +16,9 @@ import {
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
 } from "@/lib/tasks/paystub/content";
+import { PDF_DOCUMENTS } from "@/lib/pdf-content";
+import { PdfSheet } from "@/components/task/PdfSheet";
+import { fitZoom, stepZoom } from "@/lib/pdf-zoom";
 import { useNudge } from "@/lib/use-nudge";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
@@ -44,31 +46,41 @@ export default function PaystubTask() {
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
-  const { openApp, active } = useWindowManager();
-  const lookingAtStub = view !== "list" && view !== "done" && active !== "browser";
+  // The stub reads inline now (no app switch, no "Back to the Browser"): the
+  // Show me id is just which figure this step is asking about.
   const showMeId =
-    view === "list"
-      ? "target-stub"
-      : lookingAtStub
-        ? view === "check2"
-          ? "stub-hours"
-          : "stub-net-pay"
-        : "paystub-choices";
-  const stepIndex =
-    view === "list" ? 0 : view === "check1" ? (lookingAtStub ? 1 : 2) : lookingAtStub ? 3 : 4;
+    view === "list" ? "target-stub" : view === "check2" ? "stub-hours" : view === "check1" ? "stub-net-pay" : "paystub-choices";
+  const stepIndex = view === "list" ? 0 : view === "check1" ? 1 : view === "check2" ? 2 : 3;
 
   const c = PAYSTUB_COPY[lang];
   const myName = displayName.trim() || (lang === "en" ? "You" : "Tú");
 
-  const backToBrowser = () => openApp("browser", { tab: "portal", section: "paystubs" });
-
   const stub = PAY_STUBS.find((p) => p.id === TARGET_STUB_ID);
+  const stubDoc = stub?.pdfDocId ? PDF_DOCUMENTS.find((d) => d.id === stub.pdfDocId) : undefined;
   const openStub = (p: (typeof PAY_STUBS)[number]) => {
-    if (p.pdfDocId) {
-      openApp("pdf", { docId: p.pdfDocId });
-      setView("check1");
-    }
+    if (p.pdfDocId) setView("check1");
   };
+
+  // The document's own zoom, independent of the PDF Reader app: the pane
+  // opens at whatever width fits beside the questions (or above them, when
+  // stacked), same fit-to-width rule the standalone Reader uses.
+  const [zoom, setZoom] = useState<number | null>(null);
+  const [fit, setFit] = useState(100);
+  const paneRef = useRef<HTMLDivElement>(null);
+  const sheetRoomRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = paneRef.current;
+    const room = sheetRoomRef.current;
+    if (!el || !room) return;
+    const measure = () => {
+      const pad = parseFloat(getComputedStyle(room).paddingLeft) + parseFloat(getComputedStyle(room).paddingRight);
+      if (el.clientWidth > 0) setFit(fitZoom(el.clientWidth, pad));
+    };
+    const size = new ResizeObserver(measure);
+    size.observe(el);
+    return () => size.disconnect();
+  }, []);
+  const shownZoom = zoom ?? fit;
 
   const answer = (opt: CheckOption, onCorrect: () => void) => {
     if (opt.isTarget) return onCorrect();
@@ -88,8 +100,10 @@ export default function PaystubTask() {
         <h2 className="text-[19px] font-medium">{c.heading}</h2>
       </div>
 
-      {/* Fallbacks so a Show me raised while the stub is hidden still resolves;
-          the PDF Reader marks the real figures `data-showme-primary` (no circles until Show me). */}
+      {/* The real figures live inside `PdfSheet` (a shared component, marked
+          there with the same ids) — these are a fallback so a Show me press
+          always resolves to something inside this task even before that
+          import is followed. */}
       <span data-showme="stub-net-pay" className="sr-only" />
       <span data-showme="stub-hours" className="sr-only" />
       {view !== "done" && (
@@ -100,18 +114,11 @@ export default function PaystubTask() {
           instruction={RIGHT_NOW_STEPS[stepIndex]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          // While the stub is in front, Show me rings the number this step is
-          // asking for; getting back to the questions is the button's job, not
-          // Show me's. (The old `openApp` here was guarded by `!lookingAtStub`,
-          // so it only ever fired when the Browser was already in front.)
+          // The stub reads inline now, beside or above the questions — Show
+          // me rings the figure this step is asking about right where it
+          // already is; there is no other app to switch back from any more.
           onShowMe={() => showMe.toggleFor(showMeId)}
           showMeActive={showMe.targetId === showMeId}
-          // The only step in Act I that names a destination the card cannot
-          // open for them: the PDF Reader is full-screen over the answers, and
-          // finding the Browser pin on the shelf is the hardest thing the act
-          // asks for. Give them the button.
-          primaryLabel={lookingAtStub ? c.backToBrowser : undefined}
-          onPrimary={lookingAtStub ? backToBrowser : undefined}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -145,48 +152,81 @@ export default function PaystubTask() {
       )}
 
       {(view === "check1" || view === "check2") && (
-        <div className="rounded-xl border border-border bg-white p-5">
-          <div className="mb-2.5 text-[15px] font-medium">
-            {view === "check1" ? netCheck.question : hoursCheck.question}
-          </div>
-          {/* On the hours question the record sits beside the choices, so at
-              911x512 (a ~170px tall Portal) the rows and the answers are on
-              screen together. */}
-          <div className={view === "check2" ? "flex flex-wrap items-start gap-x-6 gap-y-3" : undefined}>
-            {view === "check2" && <TimeRecord lang={lang} />}
-            <div
-              className={`flex gap-2 ${view === "check2" ? "flex-col items-start" : "flex-wrap"}`}
-              data-showme="paystub-choices"
-            >
-              {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
-                <button
-                  key={opt.label}
-                  onClick={() =>
-                    answer(opt, () => {
-                      if (view === "check1") {
-                        setView("check2");
-                      } else {
-                        setView("done");
-                        markComplete("paystub", "find_net_pay");
-                      }
-                    })
-                  }
-                  className="min-h-[44px] rounded-full border border-border bg-surface-muted px-4 text-[14px] font-medium text-text-primary hover:bg-white cursor-pointer"
+        // @container so the 900px split is measured against this task's own
+        // pane, not the viewport — it can be narrower (docked Job Card,
+        // Chromebook) or wider than the window.
+        <div className="@container">
+          <div className="flex flex-col gap-5 @[900px]:flex-row @[900px]:items-start">
+            {stubDoc && (
+              <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-[#525659] @[900px]:max-w-[58%]">
+                <div className="flex items-center justify-end gap-1 border-b border-[#3a3d40] bg-[#323639] px-2 py-1">
+                  <button
+                    type="button"
+                    onClick={() => setZoom(stepZoom(shownZoom, -1))}
+                    className="flex h-7 w-7 cursor-pointer items-center justify-center rounded text-[15px] text-white/85 hover:bg-white/10"
+                    aria-label={c.zoomOut}
+                  >
+                    −
+                  </button>
+                  <span className="w-11 text-center text-[12px] text-white/85">{shownZoom}%</span>
+                  <button
+                    type="button"
+                    onClick={() => setZoom(stepZoom(shownZoom, 1))}
+                    className="flex h-7 w-7 cursor-pointer items-center justify-center rounded text-[15px] text-white/85 hover:bg-white/10"
+                    aria-label={c.zoomIn}
+                  >
+                    +
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setZoom(null)}
+                    className="ml-1 min-h-7 cursor-pointer rounded px-2 text-[12px] font-medium text-white/85 hover:bg-white/10"
+                  >
+                    {c.fitToWidth}
+                  </button>
+                </div>
+                <div ref={paneRef} className="max-h-[70vh] overflow-auto">
+                  <div ref={sheetRoomRef} className="flex justify-center p-4">
+                    <PdfSheet doc={stubDoc} scale={shownZoom / 100} employeeName={displayName} />
+                  </div>
+                </div>
+              </div>
+            )}
+            <div className="min-w-0 flex-1 rounded-xl border border-border bg-white p-5">
+              <div className="mb-2.5 text-[15px] font-medium">
+                {view === "check1" ? netCheck.question : hoursCheck.question}
+              </div>
+              {/* On the hours question the record sits beside the choices, so at
+                  911x512 (a ~170px tall Portal) the rows and the answers are on
+                  screen together. */}
+              <div className={view === "check2" ? "flex flex-wrap items-start gap-x-6 gap-y-3" : undefined}>
+                {view === "check2" && <TimeRecord lang={lang} />}
+                <div
+                  className={`flex gap-2 ${view === "check2" ? "flex-col items-start" : "flex-wrap"}`}
+                  data-showme="paystub-choices"
                 >
-                  {opt.label}
-                </button>
-              ))}
+                  {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
+                    <button
+                      key={opt.label}
+                      onClick={() =>
+                        answer(opt, () => {
+                          if (view === "check1") {
+                            setView("check2");
+                          } else {
+                            setView("done");
+                            markComplete("paystub", "find_net_pay");
+                          }
+                        })
+                      }
+                      className="min-h-[44px] rounded-full border border-border bg-surface-muted px-4 text-[14px] font-medium text-text-primary hover:bg-white cursor-pointer"
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-          {stub?.pdfDocId && (
-            <button
-              type="button"
-              onClick={() => openApp("pdf", { docId: stub.pdfDocId })}
-              className="mt-2 min-h-11 cursor-pointer text-[14px] font-medium text-accent underline underline-offset-4"
-            >
-              {c.seeStubAgain}
-            </button>
-          )}
         </div>
       )}
 

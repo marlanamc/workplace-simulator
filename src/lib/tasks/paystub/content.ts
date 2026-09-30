@@ -193,11 +193,9 @@ export const PAYSTUB_COPY: Record<Lang, {
   helpBtn: string;
   langBtn: string;
   paidLabel: string;
-  openInPdfHint: string;
-  /** Card button on the step where the PDF Reader covers the questions. */
-  backToBrowser: string;
-  /** On the questions, reopens the stub (after a reload closed the reader). */
-  seeStubAgain: string;
+  zoomOut: string;
+  zoomIn: string;
+  fitToWidth: string;
   close: string;
   payDate: string;
   grossPay: string;
@@ -220,9 +218,9 @@ export const PAYSTUB_COPY: Record<Lang, {
     helpBtn: "Help me with this step",
     langBtn: "Español",
     paidLabel: "Paid",
-    openInPdfHint: "Opens as a real document in PDF Reader",
-    backToBrowser: "Back to the Browser",
-    seeStubAgain: "Look at the pay stub again",
+    zoomOut: "Zoom out",
+    zoomIn: "Zoom in",
+    fitToWidth: "Fit to width",
     close: "Close",
     payDate: "Pay date",
     grossPay: "Gross pay",
@@ -245,9 +243,9 @@ export const PAYSTUB_COPY: Record<Lang, {
     helpBtn: "Ayúdame con este paso",
     langBtn: "English",
     paidLabel: "Pagado",
-    openInPdfHint: "Se abre como un documento real en el Lector de PDF",
-    backToBrowser: "Volver al Navegador",
-    seeStubAgain: "Ver el recibo otra vez",
+    zoomOut: "Alejar",
+    zoomIn: "Acercar",
+    fitToWidth: "Ajustar al ancho",
     close: "Cerrar",
     payDate: "Fecha de pago",
     grossPay: "Pago bruto",
@@ -341,16 +339,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     es: "Abre tu recibo de la lista.",
   },
   {
-    en: "Find the net pay on this stub.",
-    es: "Encuentra el pago neto (Net pay) en este recibo.",
-  },
-  {
-    en: "Pick the net pay.",
-    es: "Elige el pago neto (Net pay).",
-  },
-  {
-    en: "Find Regular hours on this stub.",
-    es: "Encuentra las horas regulares (Regular hours) en este recibo.",
+    en: "Find the net pay on this stub, then pick it below.",
+    es: "Encuentra el pago neto (Net pay) en este recibo, luego elígelo abajo.",
   },
   {
     en: "Count the shifts on your time record. Then pick the paid hours that match the stub.",

@@ -42,7 +42,7 @@ export const OPENING_MESSAGES = [
     ),
     objective: copy('Confirm to Maria that you will be here tomorrow at 10 AM.', 'Confirma a Maria que estarás aquí mañana a las 10 a. m.'),
     starter: copy('Yes, I will be there.', 'Sí, allí estaré.'),
-    frame: copy('Hi Maria, I ___ be there at 10 AM.', 'Hola Maria, ___ allí a las 10 a. m.'),
+    frame: copy('Hi Maria, I will be there at ___ AM.', 'Hola Maria, voy a estar ahí a las ___ a. m.'),
   },
   {
     id: 'cups', sender: CAST.darnell, time: '6:15 PM',

@@ -12,9 +12,10 @@ import {
 } from "react";
 import { INTRO_BEATS } from "@/lib/job-card-content";
 import { useTaskDraft } from "@/lib/use-task-draft";
-import { TOUR_DRAFT, savedIntroBeat, savedPracticeStage } from "@/lib/tour-resume";
+import { TOUR_DRAFT, savedIntroBeat, savedPracticeStage, savedMovePracticeStage, type MovePracticeStage } from "@/lib/tour-resume";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lesson, Localized } from "@/lib/task-types";
+import type { LessonFact } from "@/lib/lessons/types";
 
 /**
  * The Job Card's state source.
@@ -49,6 +50,13 @@ export interface JobCardStep {
   line: Localized<string>;
   /** Scenario goal when independent lesson practice changes the task facts. */
   goal?: Localized<string>;
+  /**
+   * Reference facts the learner needs while working this step (a shift day,
+   * where to put a bag, a number to copy) — short, not a finished answer.
+   * Same shape Lesson mode's info card already uses (`LessonFact`), so Story
+   * and Lesson read one fact representation instead of building two panels.
+   */
+  facts?: LessonFact[];
   /** Whether the task's Show-me spotlight is currently lit. */
   showMeActive: boolean;
   /** Whether the task offers a Show me at all on this step. */
@@ -89,9 +97,14 @@ export interface JobCardFinish {
 
 export type CardPractice = { stage: "inactive" | "click" | "scroll" | "complete" };
 
+export type MovePractice = { stage: MovePracticeStage };
+
 interface JobCardValue {
   practice: CardPractice;
   setPractice: (practice: CardPractice) => void;
+  /** The optional, ungraded "practice moving and hiding this card" flow. */
+  movePractice: MovePractice;
+  setMovePractice: (practice: MovePractice) => void;
   /** The most recently reported step, or null when no task is talking. */
   step: JobCardStep | null;
   reportStep: (step: JobCardStep | null, id?: string) => void;
@@ -160,6 +173,12 @@ export function JobCardProvider({
   const practiceStage = introBeat < INTRO_BEATS.length ? savedPracticeStage(savedStage) : "inactive";
   const practice = useMemo<CardPractice>(() => ({ stage: practiceStage }), [practiceStage]);
   const setPractice = useCallback((next: CardPractice) => setSavedStage(next.stage), [setSavedStage]);
+  // Same pattern, its own draft field: a reload keeps the learner's place in
+  // this practice too, and it only exists on the welcome beat, same as above.
+  const [savedMoveStage, setSavedMoveStage] = useTaskDraft<string>("tour", "move-practice", "inactive");
+  const moveStage = introBeat < INTRO_BEATS.length ? savedMovePracticeStage(savedMoveStage) : "inactive";
+  const movePractice = useMemo<MovePractice>(() => ({ stage: moveStage }), [moveStage]);
+  const setMovePractice = useCallback((next: MovePractice) => setSavedMoveStage(next.stage), [setSavedMoveStage]);
   const [step, setStep] = useState<JobCardStep | null>(null);
   const [finish, setFinish] = useState<JobCardFinish | null>(null);
   const [raised, setRaised] = useState<{ message: string; onStep: string } | null>(null);
@@ -292,6 +311,8 @@ export function JobCardProvider({
       advanceIntro,
       practice,
       setPractice,
+      movePractice,
+      setMovePractice,
     }),
     [
       step,
@@ -313,6 +334,8 @@ export function JobCardProvider({
       advanceIntro,
       practice,
       setPractice,
+      movePractice,
+      setMovePractice,
     ],
   );
 

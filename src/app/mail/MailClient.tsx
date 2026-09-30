@@ -32,6 +32,7 @@ import {
   saysAttached,
   sendsLinkNotFile,
   mailEtiquetteAnswersDarnell,
+  APRON_LOCATION_FACT,
   sickCallVerdict,
   SICK_CALL_CORRECTIONS,
   attachSendProblem,
@@ -983,6 +984,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
                   onShowMe={() => { setExplicitOpeningHelp(true); setShowMeTarget(showMeTargetId === showMeId ? null : showMeId); }}
                   showMeActive={showMeTargetId === showMeId}
                   onHelp={() => { setExplicitOpeningHelp(true); setHelp(true); }}
+                  // Where the extra aprons are stays on the card through the
+                  // whole task, including after a wrong reply — not only in
+                  // Darnell's email, which the learner may have already closed.
+                  facts={activeMailTask === "mail-etiquette" ? APRON_LOCATION_FACT : undefined}
                 />
                 ) : null
               );

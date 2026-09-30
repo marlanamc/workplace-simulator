@@ -3,6 +3,7 @@ import { mailGreeting } from "@/lib/mail-greeting";
 import { HIRE_DAY, NIGHT_BEFORE, SHIFT_TIMES, STORY_DAY_BY_LEVEL, hourOnly } from "@/lib/story-dates";
 import { OPENING_MESSAGES, openingLines } from "@/lib/tasks/mail/opening";
 import type { EventIntroCopy, Lang, Lesson, Localized, PickableItem } from "@/lib/task-types";
+import type { LessonFact } from "@/lib/lessons/types";
 import { affirms, looksLikeRealText, normalizeReply, saysCannotAttend, wordCount, yesNoAnswer } from "@/lib/grading/meaning";
 
 /** Placeholder line swapped for "Hi Ana," when the body is read for a learner. */
@@ -703,6 +704,17 @@ export function mailEtiquetteAnswersDarnell(body: string): boolean {
   // A four-word window, for Spanish: "no están en el almacén".
   return affirms(body, STORAGE_ROOM, 4);
 }
+
+/**
+ * The one fact this task is about, for the Job Card's reference facts —
+ * shown throughout the task, including after a wrong reply, so the learner
+ * always has the answer's source on screen rather than in a separate email
+ * they've already closed. `STORAGE_ROOM` above is the same fact as a grading
+ * pattern; this is its bilingual display form.
+ */
+export const APRON_LOCATION_FACT: LessonFact[] = [
+  { label: { en: "Extra aprons", es: "Delantales extra" }, value: { en: "Storage room", es: "Cuarto de almacenamiento" } },
+];
 
 const STORAGE_ROOM =
   /\b(storage|storag|storge|strage|storeroom|store ?room|stor room|stockroom|stock room|back ?room|supply room|supplies room|almacen|almacenes|almasen|bodega|deposito|cuarto de (almacenamiento|suministros))\b/;

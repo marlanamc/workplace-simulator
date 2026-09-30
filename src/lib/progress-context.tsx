@@ -40,6 +40,8 @@ import { BRIDGE_PATH_FLAG, type BridgePath } from "@/lib/bridge-path";
 import { storyFlagKeysForTasks, storyMailAfter, type StoryFlags } from "@/lib/story-beats";
 import { applyGapDecay, recordCleanRun, recordMissedRun, rungFor, type Rung, type RungMap } from "@/lib/release-ladder";
 import { DEVICE_KEY, learnerKey, storage } from "@/lib/storage";
+import { TASKS } from "@/lib/tasks/registry";
+import { readPauseFlagKey } from "@/lib/read-pause";
 
 const loadStoryFlags = (learnerId: string): StoryFlags =>
   storage.getJSON<StoryFlags>(learnerKey.storyFlags(learnerId), {});
@@ -171,6 +173,10 @@ export function ProgressProvider({
   const inFlight = useRef(new Set<TaskKey>());
   const [completedTaskKeys, setCompletedTaskKeys] = useState<TaskKey[]>(initialCompletedTaskKeys);
   const completedRef = useRef(initialCompletedTaskKeys);
+  // `markComplete` is a stable callback (storyFlags is not in its deps, so its
+  // identity doesn't change on every flag write); it reads the latest flags
+  // through this ref rather than closing over a stale `storyFlags`.
+  const storyFlagsRef = useRef<StoryFlags>({});
   const [certificateTrackKeys, setCertificateTrackKeys] = useState<string[]>(initialCertificateTrackKeys);
   const [justEarnedPoints, setJustEarnedPoints] = useState<number | null>(null);
   const [celebrateTrack, setCelebrateTrack] = useState<Track | null>(null);
@@ -216,6 +222,9 @@ export function ProgressProvider({
     initialBridgePath,
   );
   const storyFlags = storyFlagsOverride ?? storedStoryFlags;
+  useEffect(() => {
+    storyFlagsRef.current = storyFlags;
+  }, [storyFlags]);
   const [rungMap, setRungMap] = useState<RungMap>(() => {
     // Server rungs win over the local cache per skill; skills only present locally
     // (an offline run not yet synced) are kept.
@@ -392,6 +401,14 @@ export function ProgressProvider({
     completedRef.current = next;
     setCompletedTaskKeys(next);
 
+    // A configured reading pause opens the first (and only the first) time
+    // this task completes — never set again, so a learner who finished it
+    // before this shipped is never retroactively gated (Act I onboarding plan,
+    // Phase 4). The Job Card reads this flag directly; see read-pause.ts.
+    if (TASKS[taskKey]?.readPause && storyFlagsRef.current[readPauseFlagKey(taskKey)] === undefined) {
+      setStoryFlag(readPauseFlagKey(taskKey), "unread");
+    }
+
     const track = findTrackForTask(taskKey);
     if (track && isTrackComplete(track, next)) {
       setCertificateTrackKeys((c) => (c.includes(track.key) ? c : [...c, track.key]));
@@ -413,7 +430,10 @@ export function ProgressProvider({
       else if (!upcoming?.levelUp) setCelebrateTrack(track);
     }
 
-    if (storyMailAfter(taskKey)) setMariaNoteTaskKey(taskKey);
+    // A task with its own reading pause already sends the learner to this
+    // same reply through the Job Card; the quiet corner toast would be a
+    // second voice pointing at the same thing.
+    if (storyMailAfter(taskKey) && !TASKS[taskKey]?.readPause) setMariaNoteTaskKey(taskKey);
 
     setJustEarnedPoints(POINTS_PER_TASK);
     if (pointsTimer.current) clearTimeout(pointsTimer.current);
@@ -427,7 +447,7 @@ export function ProgressProvider({
     // Adjacent opening practice is not evidence of independent mastery.
     if (taskKey !== 'mail-reply' && !reportedSkillsRef.current.has(taskKey)) applySkillRun(taskKey, true);
     return true;
-  }, [courseRoute, applySkillRun, queueKey, setCelebrateLevel]);
+  }, [courseRoute, applySkillRun, queueKey, setCelebrateLevel, setStoryFlag]);
 
   const restartLevel = useCallback(async (level: Level) => {
     const result = await restartLevelProgress(level.key);

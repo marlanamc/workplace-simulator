@@ -28,6 +28,23 @@ function namesOtherTime(t: string): boolean {
   return times.some(([, h, m]) => Number(h) !== 10 || (m !== undefined && Number(m) !== 0));
 }
 
+/** "10 pm", "10:00 p.m.": the right hour, the wrong half of the day. */
+const EXPLICIT_PM = /\b\d{1,2}(?:[:.h]\d{2})?\s*p\.? ?m\.?(?![a-z])/i;
+
+/**
+ * 10 AM, named without a "yes" word ("10 AM", "Tomorrow at 10"): itself an
+ * answer to "what time will you be here", not a sentence that needs a yes on
+ * top of it. Only the AM form counts here — a bare "10 pm" is caught by
+ * `EXPLICIT_PM` first.
+ */
+function namesTenAM(t: string): boolean {
+  const times = [
+    ...t.matchAll(/\b(?:at|by|around|a las|para las)\s*(\d{1,2})(?:[:.h](\d{2}))?\b/gi),
+    ...t.matchAll(/\b(\d{1,2})(?:[:.h](\d{2}))?\s*(?:am|a\.? ?m\.?)(?![a-z])/gi),
+  ];
+  return times.some(([, h, m]) => Number(h) === 10 && (m === undefined || Number(m) === 0));
+}
+
 /**
  * Maria: "Your shift tomorrow starts at 10 AM. Can you confirm you will be
  * here?" A yes in any honest form passes; a no, a late arrival, or a
@@ -43,7 +60,9 @@ export function startTimeVerdict(response: string): StartTimeVerdict {
   if (/^(no|nope|nah)\b/.test(t) || DECLINES.test(t) || NEGATED_ATTEND.test(t)) return "declines";
   if (LATE.test(t)) return "late";
   if (namesOtherTime(t)) return "other-time";
+  if (EXPLICIT_PM.test(t)) return "other-time";
   if (UNCLEAR.test(t)) return "unclear";
+  if (namesTenAM(t)) return "ok";
   return YES.test(t) ? "ok" : "unclear";
 }
 

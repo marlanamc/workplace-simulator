@@ -8,7 +8,7 @@ import { BILLING_ROWS } from "@/lib/tasks/billing-sheet/content";
 import { PRACTICE_PROFILE } from "@/lib/tasks/onboarding-paperwork/content";
 import { SHIFT_MOMENT } from "@/lib/story-beats";
 import { dayNumber, dayTitle, dayLabel, dayInAct, workdaysInAct } from "@/lib/shift-spine";
-import { JOB_CARD_COPY, JOB_CARD_LINE, shouldShowListIntro } from "@/lib/job-card-content";
+import { JOB_CARD_COPY, JOB_CARD_LINE } from "@/lib/job-card-content";
 import { tourEventIntro } from "@/lib/tasks/tour/content";
 import { bodyForTask } from "@/lib/tasks/mail/content";
 
@@ -127,26 +127,6 @@ describe("the task counter", () => {
     for (const lang of ["en", "es"] as const) {
       expect(JOB_CARD_COPY[lang].jobOf(1, 1)).toBe("");
     }
-  });
-});
-
-describe("the Day One list intro", () => {
-  const base = {
-    storyFlags: {},
-    completedTaskKeys: ["tour"],
-    levelKey: "level1",
-    celebrating: false,
-  };
-
-  it("waits until the walkthrough is done and Day One has started", () => {
-    expect(shouldShowListIntro(base)).toBe(true);
-    expect(shouldShowListIntro({ ...base, completedTaskKeys: [] })).toBe(false);
-    expect(shouldShowListIntro({ ...base, levelKey: "level0" })).toBe(false);
-  });
-
-  it("does not talk over the level-up card, and does not repeat", () => {
-    expect(shouldShowListIntro({ ...base, celebrating: true })).toBe(false);
-    expect(shouldShowListIntro({ ...base, storyFlags: { "list-intro-seen": "true" } })).toBe(false);
   });
 });
 

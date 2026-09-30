@@ -23,6 +23,24 @@ export const INTRO_BEATS: IntroBeat[] = [{
   cta: { en: "Start looking around", es: "Empezar a mirar" },
 }];
 
+/**
+ * A deliberate reading pause after certain Act I tasks (see
+ * `src/lib/read-pause.ts`): the reply saved, but the next job and any
+ * celebration wait for the learner to open the response and press Continue.
+ */
+export const READ_PAUSE_COPY = {
+  en: {
+    line: "Read what they said back before you move on.",
+    readReply: "Read reply",
+    continueLabel: "Continue",
+  },
+  es: {
+    line: "Lee lo que te contestaron antes de seguir.",
+    readReply: "Leer respuesta",
+    continueLabel: "Continuar",
+  },
+};
+
 export const CARD_PRACTICE = {
   title: { en: "Practice clicking and scrolling", es: "Practicar clics y desplazamiento" },
   label: { en: "Practice only", es: "Solo práctica" },
@@ -42,6 +60,33 @@ export const CARD_PRACTICE = {
 };
 
 /**
+ * Optional, ungraded practice for moving, collapsing, and restoring the Job
+ * Card itself — offered next to `CARD_PRACTICE` on the welcome beat. Skipped
+ * entirely wherever the card is docked (below ~1100px): there's nothing to
+ * move there.
+ */
+export const MOVE_PRACTICE = {
+  title: { en: "Practice moving and hiding this card", es: "Practicar mover y ocultar esta tarjeta" },
+  label: { en: "Practice only", es: "Solo práctica" },
+  move: {
+    en: "Drag this card to a corner, or use the arrow keys.",
+    es: "Arrastra esta tarjeta a una esquina, o usa las flechas.",
+  },
+  moveNext: { en: "I moved it", es: "Ya la moví" },
+  collapse: {
+    en: "Now hide the card with the fold button, top right.",
+    es: "Ahora oculta la tarjeta con el botón de flecha, arriba a la derecha.",
+  },
+  collapseNext: { en: "I hid it", es: "Ya la oculté" },
+  restoreLine: {
+    en: "A hidden card always has a way back: the same button shows it again.",
+    es: "Una tarjeta oculta siempre tiene forma de volver: el mismo botón la muestra de nuevo.",
+  },
+  complete: { en: "Practice complete. You're ready to continue.", es: "Práctica terminada. Puedes continuar." },
+  skip: { en: "Skip practice", es: "Omitir práctica" },
+};
+
+/**
  * Whether the first-run beats are behind the learner for good: once the tour
  * is finished. Before that, where they are (the welcome beat, the practice
  * stage, the walkthrough step) is a tour draft on this device, so a reload
@@ -51,38 +96,6 @@ export const CARD_PRACTICE = {
  */
 export function introBeatsDone(completedTaskKeys: readonly string[]): boolean {
   return completedTaskKeys.length > 0;
-}
-
-/**
- * Day One, once: the Job Card points at the orange shelf pin so nobody has
- * to know the word "briefcase". Locked during the walkthrough; this is the
- * first sitting where the list is real.
- */
-export const LIST_INTRO_FLAG = "list-intro-seen";
-export const LIST_INTRO: {
-  kicker: Localized;
-  line: Localized;
-  cta: Localized;
-} = {
-  kicker: { en: "Your list", es: "Tu lista" },
-  line: {
-    en: "This orange button on the bottom bar opens your task list.",
-    es: "Este botón naranja en la barra de abajo abre tu lista de tareas.",
-  },
-  cta: { en: "I understand", es: "Entiendo" },
-};
-
-export function shouldShowListIntro(opts: {
-  storyFlags: Record<string, string>;
-  completedTaskKeys: readonly string[];
-  levelKey: string;
-  celebrating: boolean;
-}): boolean {
-  if (opts.storyFlags[LIST_INTRO_FLAG] === "true") return false;
-  if (!opts.completedTaskKeys.includes("tour")) return false;
-  if (opts.levelKey !== "level1") return false;
-  if (opts.celebrating) return false;
-  return true;
 }
 
 /**

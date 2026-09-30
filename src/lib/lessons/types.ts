@@ -40,7 +40,12 @@ export type LessonScene = {
 };
 
 /** One fact the learner has to copy or check while working (a password, a date). */
-export type LessonFact = { label: Localized; value: string | Localized };
+export type LessonFact = {
+  label: Localized;
+  value: string | Localized;
+  /** Bold the value — a start time, a net pay, an hours-worked figure. */
+  emphasize?: boolean;
+};
 
 /**
  * What makes a game task a classroom lesson. A task becomes a lesson just by

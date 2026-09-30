@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { TOUR_STEPS } from "@/lib/tasks/tour/content";
 import { INTRO_BEATS } from "@/lib/job-card-content";
 import { readDraft } from "@/lib/task-draft";
-import { savedIntroBeat, savedPracticeStage, savedTourStep, tourResumeTab } from "@/lib/tour-resume";
+import { savedIntroBeat, savedMovePracticeStage, savedPracticeStage, savedTourStep, tourResumeTab } from "@/lib/tour-resume";
 
 /** Wave 5 F-7: a reload mid-tour keeps the learner's place. */
 
@@ -25,6 +25,16 @@ describe("savedPracticeStage", () => {
 
   it("falls back to inactive for an unknown stage", () => {
     for (const bad of ["Click", "done", "", null, 2, undefined]) expect(savedPracticeStage(bad)).toBe("inactive");
+  });
+});
+
+describe("savedMovePracticeStage", () => {
+  it("keeps each real stage of the sibling move/hide practice", () => {
+    for (const stage of ["inactive", "move", "collapse", "complete"]) expect(savedMovePracticeStage(stage)).toBe(stage);
+  });
+
+  it("falls back to inactive for an unknown stage", () => {
+    for (const bad of ["Move", "click", "", null, 2, undefined]) expect(savedMovePracticeStage(bad)).toBe("inactive");
   });
 });
 

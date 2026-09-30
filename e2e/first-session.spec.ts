@@ -87,21 +87,10 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   await expect(page.getByText("You found your way around.")).toBeVisible();
   await page.getByRole("button", { name: "Open my first task" }).click();
 
-  // Day One: the list on the shelf is now real. Point at the orange pin so
-  // nobody has to know the word "briefcase".
-  await expect(jobCard(page).getByText("orange button on the bottom bar", { exact: false })).toBeVisible();
-  const spotlight = page.getByTestId("task-list-spotlight");
-  await expect(spotlight).toHaveCount(1);
-  const outline = await spotlight.boundingBox();
-  const viewport = page.viewportSize();
-  if (!outline || !viewport) throw new Error("Missing spotlight geometry");
-  expect(outline.x).toBeGreaterThanOrEqual(4);
-  expect(outline.y).toBeGreaterThanOrEqual(4);
-  expect(outline.x + outline.width).toBeLessThanOrEqual(viewport.width - 4);
-  expect(outline.y + outline.height).toBeLessThanOrEqual(viewport.height - 4);
-  await expect(page.getByTestId("shelf-my-job")).not.toHaveClass(/animate-showme-pulse/);
-  await page.screenshot({ path: test.info().outputPath("task-list-introduction.png"), animations: "disabled" });
-  await jobCard(page).getByRole("button", { name: "I understand" }).click();
+  // Day One: the New Hire screen introduces Maria and Darnell, once, before
+  // the first real job.
+  await expect(page.getByTestId("new-hire-intro")).toBeVisible();
+  await page.getByTestId("new-hire-continue").click();
 
   // Mail is open: Maria's email is findable in the inbox. Scope to the inbox —
   // "Maria Delgado" also appears in the desktop briefing behind the window.

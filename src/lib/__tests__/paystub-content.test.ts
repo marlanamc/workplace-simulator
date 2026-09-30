@@ -134,8 +134,7 @@ describe("Day 6 in Spanish: the English stub words are named (F-21)", () => {
   it("the hours steps name the stub's English label for hours", () => {
     const label = stub.earnings[0].label;
     expect(label).toBe("Regular hours");
-    expect(RIGHT_NOW_STEPS[3].es).toContain(`(${label})`);
-    expect(RIGHT_NOW_STEPS[4].es).toContain(`(${label})`);
+    expect(RIGHT_NOW_STEPS[2].es).toContain(`(${label})`);
     expect(LESSONS.es[2].s.join(" ")).toContain(`(${label})`);
   });
 

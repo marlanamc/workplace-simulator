@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  APRON_LOCATION_FACT,
   emailsForTask,
   isComposeOnly,
   mailEtiquetteAnswersDarnell,
@@ -7,6 +8,14 @@ import {
 } from '../tasks/mail/content';
 import { CAST } from '../cast';
 import { inboxSortKey } from '../story-calendar';
+
+describe("the apron location the Job Card shows matches the one grading accepts", () => {
+  it('has both languages, and an English answer the grader accepts', () => {
+    const fact = APRON_LOCATION_FACT[0];
+    expect(fact.value).toEqual({ en: 'Storage room', es: 'Cuarto de almacenamiento' });
+    expect(mailEtiquetteAnswersDarnell(`Hi Darnell, they're in the ${(fact.value as { en: string }).en.toLowerCase()}.`)).toBe(true);
+  });
+});
 
 describe("coworker reply: Darnell's question is in the inbox", () => {
   it('is a reply, not a fresh compose', () => {

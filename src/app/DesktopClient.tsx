@@ -20,14 +20,17 @@ import TeacherNotesToast from "@/components/TeacherNotesToast";
 import TeacherNotesPanel from "@/components/TeacherNotesPanel";
 import SimulatorWelcome from "@/components/SimulatorWelcome";
 import ActIntro from "@/components/ActIntro";
+import NewHireIntro from "@/components/NewHireIntro";
 import { WELCOME_FLAG } from "@/lib/welcome-content";
+import { NEW_HIRE_FLAG, shouldShowNewHire } from "@/lib/new-hire-content";
 import { actIntroFlag } from "@/lib/act-intro-content";
-import ListIntroSpotlight from "@/components/task/ListIntroSpotlight";
-import { LIST_INTRO_FLAG, introBeatsDone, shouldShowListIntro } from "@/lib/job-card-content";
+import { introBeatsDone } from "@/lib/job-card-content";
 import { WindowManagerProvider } from "@/lib/window-manager";
 import { ProgressProvider, useProgress } from "@/lib/progress-context";
 import type { Lang } from "@/lib/task-types";
 import { JobCardProvider } from "@/lib/job-card-context";
+import { READ_PAUSE_TASK_KEYS } from "@/lib/tasks/registry";
+import { hasOpenReadPause } from "@/lib/read-pause";
 
 function DesignerJumpBanner() {
   return (
@@ -54,6 +57,26 @@ function JobCardHost({ children }: { children: ReactNode }) {
     return <SimulatorWelcome onContinue={() => setStoryFlag(WELCOME_FLAG, "true")} />;
   }
 
+  const currentLevel = levelForTrack(currentTrack.key);
+
+  // Act I's own one-time orientation: who Maria (manager) and Darnell
+  // (coworker) are. Shown once, after the in-card computer tour finishes and
+  // before Day 1 starts. Acts II–VII get their orientation from `ActIntro`
+  // below instead — Act I never reaches that branch (`act.key !== "act1"`).
+  // Waits out Level 0's own "You found your way around" celebration first
+  // (`celebrateLevel?.levelUp`), the same ordering `ActIntro` uses below: a
+  // celebration still owns the screen until its own button dismisses it.
+  if (
+    shouldShowNewHire({
+      storyFlags,
+      completedTaskKeys,
+      levelKey: currentLevel.key,
+      celebratingLevel: Boolean(celebrateLevel?.levelUp),
+    })
+  ) {
+    return <NewHireIntro onContinue={() => setStoryFlag(NEW_HIRE_FLAG, "true")} />;
+  }
+
   // Before each later act: the orientation screen (new role, new manager, new
   // skills). Fires the moment `currentTrack` crosses into an act's first level
   // — once per act, and never again on replay. `act.key !== "act1"` keeps a
@@ -66,7 +89,6 @@ function JobCardHost({ children }: { children: ReactNode }) {
   // an act-opening level precisely so it can defer to this screen. Waiting on a
   // card that renders nothing would strand the learner on a finished desktop
   // with neither the celebration nor the intro.
-  const currentLevel = levelForTrack(currentTrack.key);
   const act = actForLevel(currentLevel);
   if (
     act &&
@@ -98,18 +120,13 @@ function DesktopShell({
   displayName: string;
   fromStudio: boolean;
 }) {
-  const { currentTrack, dismissCelebration, completedTaskKeys, storyFlags, setStoryFlag, celebrateLevel, celebrateTrack } = useProgress();
+  const { dismissCelebration, storyFlags } = useProgress();
   const [myJobOpen, setMyJobOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const [teacherNotesOpen, setTeacherNotesOpen] = useState(false);
-
-  const currentLevel = levelForTrack(currentTrack.key);
-  const showListIntro = shouldShowListIntro({
-    storyFlags,
-    completedTaskKeys,
-    levelKey: currentLevel.key,
-    celebrating: Boolean(celebrateLevel?.levelUp || celebrateTrack),
-  });
+  // An open reading pause holds a celebration back until it's acknowledged —
+  // the Job Card is already showing the one thing to do (read-pause.ts).
+  const celebrationHeld = hasOpenReadPause(storyFlags, READ_PAUSE_TASK_KEYS);
 
   return (
     <Desktop
@@ -120,7 +137,6 @@ function DesktopShell({
         onOpenChange: (open) => {
           setMyJobOpen(open);
           if (open) setAwardsOpen(false);
-          if (open && showListIntro) setStoryFlag(LIST_INTRO_FLAG, "true");
         },
       }}
       beforeShelf={
@@ -137,19 +153,20 @@ function DesktopShell({
             open={awardsOpen}
             onOpenChange={setAwardsOpen}
           />
-          <TrackCelebration
-            onSeeAward={() => {
-              dismissCelebration();
-              setMyJobOpen(false);
-              setAwardsOpen(true);
-            }}
-          />
-          <LevelUpCelebration />
+          {!celebrationHeld && (
+            <TrackCelebration
+              onSeeAward={() => {
+                dismissCelebration();
+                setMyJobOpen(false);
+                setAwardsOpen(true);
+              }}
+            />
+          )}
+          {!celebrationHeld && <LevelUpCelebration />}
         </>
       }
       afterCard={
         <>
-          {showListIntro ? <ListIntroSpotlight /> : null}
           <MariaNoteToast />
           <TeacherNotesToast onOpen={() => setTeacherNotesOpen(true)} />
           <TeacherNotesPanel open={teacherNotesOpen} onClose={() => setTeacherNotesOpen(false)} />

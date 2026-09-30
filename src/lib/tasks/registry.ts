@@ -98,6 +98,13 @@ export interface TaskDescriptor {
   jobCardDoneLine?: Localized;
   /** Makes this task a standalone classroom lesson at `/lessons/<key>`. */
   lesson?: LessonMeta;
+  /**
+   * A deliberate reading pause after this task: once it completes, the Job
+   * Card offers "Read reply" (opens here), then "Continue" — and holds the
+   * next-job handoff and any celebration until Continue is pressed. See
+   * `src/lib/read-pause.ts`. Story only; lessons skip this entirely.
+   */
+  readPause?: { appKey: AppKey; tab?: string; section?: PortalSection };
 }
 
 /**
@@ -137,6 +144,10 @@ const browser = (ctaLabel: string, tab?: string, section?: PortalSection): TaskL
   ...(section ? { section } : {}),
   ctaLabel,
 });
+
+/** Where a reading pause's "Read reply" button sends the learner — Mail,
+ *  where every one of these tasks' replies actually lands. */
+const readMail = (): TaskDescriptor["readPause"] => ({ appKey: "browser", tab: "mail" });
 
 export const TASKS: Record<TaskKey, TaskDescriptor> = {
   tour: {
@@ -208,7 +219,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Mail", "mail"),
     // The inbox shows one new email at a time, so the card never promises three at once.
     jobCardLine: { en: "Answer Maria's new email. More will come, one at a time.", es: "Contesta el correo nuevo de Maria. Van a llegar más, uno a la vez." },
-    jobCardDoneLine: { en: "Three replies sent. You're ready for tomorrow.", es: "Tres respuestas enviadas. Ya tienes todo listo para mañana." },
+    jobCardDoneLine: { en: "You replied to your new manager and coworker.", es: "Le respondiste a tu nueva gerente y a tu compañero." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
       summary: {
@@ -282,6 +293,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     shiftMoment: { en: "Wednesday, 10:10 AM. She needs a file.", es: "Miércoles, 10:10 AM. Necesita un archivo." },
     location: browser("Open Mail", "mail"),
     jobCardLine: { en: "Maria needs a file. Read her email, then send it.", es: "Maria necesita un archivo. Lee su correo y envíaselo." },
+    readPause: readMail(),
     lesson: {
       title: { en: "Attach a file to an email", es: "Adjuntar un archivo a un correo" },
       summary: {
@@ -352,6 +364,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles por la mañana. Ya está la próxima semana.",
     },
     location: browser("Open Portal", "portal", "schedule"),
+    readPause: readMail(),
   },
 
   // Retired: folded into `schedule` — finding the clash and asking for the
@@ -388,6 +401,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     handoffCta: { en: "Next: Clock in", es: "Siguiente: Marcar entrada" },
     shiftMoment: { en: "Friday, 8:15 AM.", es: "Viernes, 8:15 AM." },
     location: browser("Open Portal", "portal", "timeclock"),
+    readPause: readMail(),
   },
 
   paystub: {
@@ -411,6 +425,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       // The stub stays in English, as US stubs are, so the card names its words (F-21).
       es: "Ya está tu primer recibo. Ábrelo y revisa el pago neto (Net pay) y las horas.",
     },
+    readPause: readMail(),
   },
 
   "shift-review": {
@@ -463,6 +478,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     handoffCta: { en: "Next: Tell Maria", es: "Siguiente: Avísale a Maria" },
     shiftMoment: { en: "Monday, 6:12 AM. You feel sick.", es: "Lunes, 6:12 AM. Te sientes mal." },
     location: browser("Open Mail", "mail"),
+    readPause: readMail(),
     lesson: {
       title: { en: "Report an absence and follow up", es: "Avisar de una ausencia y dar seguimiento" },
       summary: { en: "Write an absence email, use a different workplace's contact rule, and follow up when nobody answers.", es: "Escribe un correo de ausencia, usa la regla de contacto de otro trabajo y da seguimiento cuando nadie contesta." },
@@ -1959,6 +1975,9 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
 
 /** All task descriptors in registry order. */
 export const TASK_LIST: TaskDescriptor[] = Object.values(TASKS);
+
+/** Tasks configured with a reading pause (see `src/lib/read-pause.ts`). */
+export const READ_PAUSE_TASK_KEYS: TaskKey[] = TASK_LIST.filter((t) => t.readPause).map((t) => t.key);
 
 export function taskDescriptor(key: TaskKey): TaskDescriptor {
   return TASKS[key];
