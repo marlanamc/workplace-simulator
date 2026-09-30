@@ -103,8 +103,15 @@ const LESSER_CONTROLS = [
  *  outside the card: Show me targets, or the window controls. */
 function visibleTargets(card: HTMLElement, selector: string): Box[] {
   const boxes: Box[] = [];
+  // With a modal open (the file picker), only what is inside it can be
+  // pressed. Controls behind its overlay tied every corner, so the card
+  // stayed on the picker's last file.
+  const modal = Array.from(document.querySelectorAll<HTMLElement>('[aria-modal="true"]'))
+    .filter((m) => !card.contains(m) && m.getClientRects().length > 0)
+    .pop();
   document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
     if (card.contains(el)) return;
+    if (modal && !modal.contains(el)) return;
     const r = el.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) return;
     if (typeof el.checkVisibility === "function" && !el.checkVisibility({ visibilityProperty: true })) return;

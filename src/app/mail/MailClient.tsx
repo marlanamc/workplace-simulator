@@ -126,8 +126,8 @@ const ATTACH_TARGET_SIZE = (() => {
   return p?.kind === "pdf" ? p.doc.size : "";
 })();
 
-/** A file's first page in the attach picker, big enough to read the month. */
-function FilePreviewPane({ preview }: { preview?: FilePreview }) {
+/** A file's first page in the attach picker, big enough to read its title and dates. */
+function FilePreviewPane({ preview, name }: { preview?: FilePreview; name?: string }) {
   if (!preview) return null;
   if (preview.kind === "photo") {
     return (
@@ -141,7 +141,7 @@ function FilePreviewPane({ preview }: { preview?: FilePreview }) {
       </figure>
     );
   }
-  return <PdfSheet doc={preview.doc} scale={0.6} stamp={preview.stamp} />;
+  return <PdfSheet doc={preview.doc} scale={0.6} stamp={preview.stamp} employeeName={name} />;
 }
 
 /** A sent message as the finish screen shows it back. */
@@ -1372,7 +1372,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
             },
             render: (item) => (
               <div data-showme="attach-preview" data-showme-look={SHOW_ME_LOOK[lang]} className="self-start">
-                <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} />
+                <FilePreviewPane preview={DOWNLOAD_PREVIEWS[item.key]} name={displayName} />
               </div>
             ),
             empty: c.pickerEmpty,

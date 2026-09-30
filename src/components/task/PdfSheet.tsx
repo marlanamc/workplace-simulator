@@ -69,6 +69,44 @@ function ReportPage({ doc }: { doc: Extract<PdfDocument, { kind: "report" }> }) 
   );
 }
 
+function CertificatePage({ doc }: { doc: Extract<PdfDocument, { kind: "certificate" }> }) {
+  return (
+    <>
+      <div className="mb-[24pt] border-b-[1.5pt] border-[#1a1a1a] pb-[8pt] text-center">
+        <div className="text-[14pt] font-bold tracking-[0.1em]">{doc.issuer.toUpperCase()}</div>
+      </div>
+      <h1 className="mb-[20pt] text-center text-[22pt] font-bold tracking-wide">{doc.title}</h1>
+      <p className="mb-[4pt] text-center text-[12pt]">This is to certify that</p>
+      <p className="mb-[4pt] text-center text-[20pt] italic">{doc.holder}</p>
+      <p className="mb-[24pt] text-center text-[12pt]">{doc.statement}</p>
+      <table className="mb-[20pt] w-full border-collapse text-[12pt]">
+        <tbody>
+          <tr>
+            {doc.fields.map((f) => (
+              <td key={f.label} className="border border-[#1a1a1a] px-[8pt] py-[6pt] align-top">
+                <div className="text-[9pt] font-bold">{f.label}</div>
+                <div className="mt-[0.1em]">{f.value}</div>
+              </td>
+            ))}
+          </tr>
+        </tbody>
+      </table>
+      {doc.items && (
+        <ol className="m-0 flex list-decimal flex-col gap-[8pt] pl-[18pt] text-[12pt] leading-[1.35]">
+          {doc.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ol>
+      )}
+      <p className="mt-[28pt] text-[12pt] leading-relaxed">
+        Signed
+        <br />
+        <span className="italic">{doc.signedBy}</span>
+      </p>
+    </>
+  );
+}
+
 function AwardLetterPage({ doc }: { doc: Extract<PdfDocument, { kind: "award-letter" }> }) {
   return (
     <>
@@ -303,13 +341,15 @@ export function PdfSheet({
           boxShadow: "0 1px 3px rgba(0,0,0,0.28), 0 8px 24px rgba(0,0,0,0.22)",
         }}
       >
-        <PdfPage footer={doc.kind === "award-letter" ? `${doc.school} · Financial Aid` : undefined}>
+        <PdfPage footer={doc.kind === "award-letter" ? `${doc.school} · Financial Aid` : doc.kind === "certificate" ? doc.issuer : undefined}>
           {doc.kind === "report" ? (
             <ReportPage doc={doc} />
           ) : doc.kind === "award-letter" ? (
             <AwardLetterPage doc={employeeName ? { ...doc, student: employeeName } : doc} />
           ) : doc.kind === "schedule" ? (
             <SchedulePage doc={doc} />
+          ) : doc.kind === "certificate" ? (
+            <CertificatePage doc={employeeName?.trim() && doc.holder === "You" ? { ...doc, holder: employeeName.trim() } : doc} />
           ) : (
             <PayStubPage doc={doc} employeeName={employeeName} />
           )}
@@ -317,7 +357,9 @@ export function PdfSheet({
         {stamp && (
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-[38%] -translate-x-1/2 -rotate-[18deg] rounded-[10pt] border-[5pt] border-[#c5221f]/70 px-[18pt] py-[4pt] text-[64pt] font-bold tracking-[0.18em] text-[#c5221f]/70"
+            className="pointer-events-none absolute left-1/2 top-[38%] -translate-x-1/2 -rotate-[18deg] rounded-[10pt] border-[5pt] border-[#c5221f]/70 px-[18pt] py-[4pt] font-bold tracking-[0.18em] text-[#c5221f]/70"
+            // A longer word (PRACTICE) gets smaller type so it stays on the page.
+            style={{ fontSize: stamp.length > 5 ? "44pt" : "64pt" }}
           >
             {stamp}
           </div>

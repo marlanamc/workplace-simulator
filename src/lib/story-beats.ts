@@ -123,14 +123,14 @@ const STORY_MAILS: InboxRow[] = [
     preview: { en: "Thanks for sending this so fast.", es: "Gracias por enviarlo tan rápido." },
     body: {
       en: [
-        "Got it. Thank you for sending the July report so fast.",
+        "Got it. Thank you for sending your certificate so fast.",
         "See you on the floor.",
-        "Your schedule is settled and the report is here. Thank you.",
+        "Your schedule is settled and your certificate is in our files. Thank you.",
       ],
       es: [
-        "Lo tengo. Gracias por enviar el reporte de julio tan rápido.",
+        "Lo tengo. Gracias por enviar tu certificado tan rápido.",
         "Nos vemos en el café.",
-        "Tu horario está resuelto y ya tengo el reporte. Gracias.",
+        "Tu horario está resuelto y tu certificado ya está en nuestros archivos. Gracias.",
       ],
     },
   },
@@ -147,12 +147,12 @@ const STORY_MAILS: InboxRow[] = [
       en: [
         "Approved. You're on 2 to 10 Thursday, so go to your appointment.",
         "Thanks for catching it when the schedule went up instead of that morning.",
-        "I will send you a request for the July safety report next.",
+        "Next, I will ask you for your food handler certificate.",
       ],
       es: [
         "Aprobado. El jueves entras de 2 a 10, así que ve a tu cita.",
         "Gracias por verlo cuando salió el horario y no esa misma mañana.",
-        "Ahora te enviaré una solicitud del reporte de seguridad de julio.",
+        "Ahora te voy a pedir tu certificado de manipulador de alimentos.",
       ],
     },
   },

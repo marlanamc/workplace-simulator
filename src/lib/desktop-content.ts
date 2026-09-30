@@ -37,7 +37,7 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
     pdf: {
       name: "PDF Reader",
       kicker: "Your files",
-      brief: "Opens files you download, like reports and pay stubs, so you can read them.",
+      brief: "Opens files you download, like certificates and pay stubs, so you can read them.",
       points: ["Find the file in Downloads", "Open it to read", "Print or attach it to an email when asked"],
     },
   },
@@ -51,7 +51,7 @@ export const APP_COPY: Record<Lang, Record<AppKey, AppCopy>> = {
     pdf: {
       name: "Lector de PDF",
       kicker: "Referencia",
-      brief: "Abre archivos descargados como reportes y recibos de pago para leerlos o imprimirlos.",
+      brief: "Abre archivos descargados como certificados y recibos de pago para leerlos o imprimirlos.",
       points: ["Busca el archivo en Descargas", "Ábrelo para leerlo", "Imprímelo o adjúntalo a un correo cuando lo pidan"],
     },
   },

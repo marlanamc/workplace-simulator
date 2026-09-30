@@ -69,8 +69,8 @@ export const MAIL_JOB_CARD_STEPS: {
   openMail: {
     "mail-reply": { en: "Open Maria's email.", es: "Abre el correo de Maria." },
     "mail-attach": {
-      en: "Open Maria's email: Safety report for the district.",
-      es: "Abre el correo de Maria: Reporte de seguridad para el distrito.",
+      en: "Open Maria's email: Food handler training.",
+      es: "Abre el correo de Maria: Capacitación de manipulador de alimentos.",
     },
     // Compose-only jobs have no email to open, so their openMail lines are unused.
     "mail-send-link": { en: "Write to Jordan.", es: "Escríbele a Jordan." },
@@ -81,14 +81,14 @@ export const MAIL_JOB_CARD_STEPS: {
   confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
   attach: { en: "Click Attach file.", es: "Haz clic en Adjuntar archivo." },
   // The picker shows each file's first page, so the learner checks the
-  // month and the DRAFT stamp the way they would before sending a real file.
+  // title and the Expires date the way they would before sending a real file.
   attachPick: {
-    en: "Click a file name to see its first page. Find the July report.",
-    es: "Haz clic en el nombre de un archivo para ver su primera página. Busca el reporte de julio.",
+    en: "Click a file name to see its first page. Find your food handler certificate.",
+    es: "Haz clic en el nombre de un archivo para ver su primera página. Busca tu certificado de manipulador de alimentos.",
   },
   attachCheck: {
-    en: "Check the page: July 2026, and no DRAFT. Then click Attach.",
-    es: "Revisa la página: July 2026 (julio de 2026) y sin DRAFT (borrador). Luego haz clic en Adjuntar.",
+    en: "Check the page: it says Food Handler Certificate, and it expires after today. Then click Attach.",
+    es: "Revisa la página: dice Food Handler Certificate (certificado) y Expires (vence) es después de hoy. Luego haz clic en Adjuntar.",
   },
   write: { en: "Write one short line.", es: "Escribe una línea corta." },
   // The question, not the answer. Where the aprons are is a fact of the
@@ -184,14 +184,14 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
       emoji: "📎",
       kicker: "Wednesday, 10:10 AM",
       headline: "Maria needs a file.",
-      body: "She asked for the July safety report today. First make sure you know what she needs. Then reply and attach the file.",
+      body: "She asked for your food handler certificate today. First make sure you know what she needs. Then reply and attach the file.",
       cta: "Open my inbox",
     },
     es: {
       emoji: "📎",
       kicker: "Miércoles, 10:10 AM",
       headline: "Maria necesita un archivo.",
-      body: "Pidió el reporte de seguridad de julio para hoy. Primero confirma qué necesita. Luego responde y adjunta el archivo.",
+      body: "Pidió tu certificado de manipulador de alimentos para hoy. Primero confirma qué necesita. Luego responde y adjunta el archivo.",
       cta: "Abrir mi bandeja",
     },
   },
@@ -215,11 +215,11 @@ export const EVENT_INTRO_BY_TASK: Record<PlayableMailTask, Record<Lang, EventInt
 
 /**
  * Comprehension check before the attach reply: "what does she need?" Every
- * option is a safety report due soon, so the subject line settles none of
- * them. Telling them apart takes the email: the month (first line), final vs.
- * draft (second paragraph), and when. The right one is not listed first.
- * Each wrong option carries a hint that sends the learner back to the line
- * that rules it out.
+ * option is from the food handler training, so the subject line ("Food
+ * handler training") settles none of them. Telling them apart takes the email: the certificate, not the practice test
+ * (second paragraph), and when (first line). The right one is not listed
+ * first. Each wrong option carries a hint that sends the learner back to the
+ * line that rules it out. The Expires check comes in the file picker.
  */
 export const CONFIRM_COPY: Record<Lang, {
   question: string;
@@ -230,21 +230,21 @@ export const CONFIRM_COPY: Record<Lang, {
   en: {
     question: "What does Maria need?",
     options: [
-      { label: "The July draft report, by next week", correct: false, hint: "Read the second part again. Does she want the draft? And when does she need it?" },
-      { label: "The final July report, today by 3 PM", correct: true },
-      { label: "The June report, today by 3 PM", correct: false, hint: "Read her first line again. Which month does she ask for?" },
+      { label: "Your food handler practice test, today by 3 PM", correct: false, hint: "Read the second part again. Does she want the practice test?" },
+      { label: "Your food handler certificate, today by 3 PM", correct: true },
+      { label: "Your food handler certificate, next week", correct: false, hint: "Read her first line again. When does she need it?" },
     ],
-    correctReply: "That's it. She needs the final July report, today by 3 PM.",
+    correctReply: "That's it. She needs your food handler certificate, today by 3 PM.",
     wrongReply: "Read it again. Look for what she's asking for and when.",
   },
   es: {
     question: "¿Qué necesita Maria?",
     options: [
-      { label: "El borrador del reporte de julio, para la próxima semana", correct: false, hint: "Lee otra vez la segunda parte. ¿Quiere el borrador? ¿Y para cuándo lo necesita?" },
-      { label: "El reporte final de julio, hoy antes de las 3 PM", correct: true },
-      { label: "El reporte de junio, hoy antes de las 3 PM", correct: false, hint: "Lee otra vez su primera línea. ¿Qué mes pide?" },
+      { label: "Tu examen de práctica de manipulador de alimentos, hoy antes de las 3 PM", correct: false, hint: "Lee otra vez la segunda parte. ¿Quiere el examen de práctica?" },
+      { label: "Tu certificado de manipulador de alimentos, hoy antes de las 3 PM", correct: true },
+      { label: "Tu certificado de manipulador de alimentos, la próxima semana", correct: false, hint: "Lee otra vez su primera línea. ¿Para cuándo lo necesita?" },
     ],
-    correctReply: "Así es. Necesita el reporte final de julio, hoy antes de las 3 PM.",
+    correctReply: "Así es. Necesita tu certificado de manipulador de alimentos, hoy antes de las 3 PM.",
     wrongReply: "Léelo otra vez. Busca qué pide y cuándo lo necesita.",
   },
 };
@@ -414,14 +414,14 @@ export const SUBJECT_BY_TASK: Record<PlayableMailTask, Record<Lang, { subject: s
   },
   "mail-attach": {
     en: {
-      subject: "Safety report for the district",
-      reSubject: "Re: Safety report for the district",
-      preview: "Can you send me the July safety report today?",
+      subject: "Food handler training",
+      reSubject: "Re: Food handler training",
+      preview: "Can you send me a copy of your food handler certificate today?",
     },
     es: {
-      subject: "Reporte de seguridad para el distrito",
-      reSubject: "Re: Reporte de seguridad para el distrito",
-      preview: "¿Me puedes enviar hoy el reporte de seguridad de julio?",
+      subject: "Capacitación de manipulador de alimentos",
+      reSubject: "Re: Capacitación de manipulador de alimentos",
+      preview: "¿Me puedes enviar hoy una copia de tu certificado de manipulador de alimentos?",
     },
   },
   "reply-all": {
@@ -816,20 +816,21 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
       ],
     },
   },
-  // Job 2: safety report — confirm what she needs, then attach.
+  // Job 2: the new hire's food handler certificate for the cafe's files —
+  // confirm what she needs, then attach.
   "mail-attach": {
     en: {
       plain: [
         GREETING,
-        "Can you send me the July safety report today? The district office needs it by 3 PM, and I don't have a copy with me.",
-        "It is in the Downloads folder on the cafe computer. Please send the final report, not the draft. The draft is missing two checks.",
+        "Can you send me a copy of your food handler certificate today? I need it for our files by 3 PM. The health inspector comes tomorrow.",
+        "It is in your Downloads folder, from your training last week. Please send the certificate, not the practice test. And check the date: an expired certificate does not count.",
         "Just attach the PDF to your reply.",
         "Thanks,",
       ],
       full: [
         GREETING,
-        "Can you send me the July safety report today? The district office needs it by 3 PM, and I don't have a copy with me.",
-        "It is in the Downloads folder on the cafe computer. Please send the final report, not the draft. The draft is missing two checks.",
+        "Can you send me a copy of your food handler certificate today? I need it for our files by 3 PM. The health inspector comes tomorrow.",
+        "It is in your Downloads folder, from your training last week. Please send the certificate, not the practice test. And check the date: an expired certificate does not count.",
         "Just attach the PDF to your reply.",
         "Thanks,",
       ],
@@ -837,15 +838,15 @@ const BODY_TEMPLATE: Record<ReadableMailTask, Record<Lang, { plain: string[]; fu
     es: {
       plain: [
         GREETING,
-        "¿Me puedes enviar hoy el reporte de seguridad de julio? La oficina del distrito lo necesita antes de las 3 PM y no tengo una copia aquí.",
-        "Está en la carpeta Descargas de la computadora del café. Por favor manda el reporte final, no el borrador. Al borrador le faltan dos revisiones.",
+        "¿Me puedes enviar hoy una copia de tu certificado de manipulador de alimentos? Lo necesito para nuestros archivos antes de las 3 PM. El inspector de salud viene mañana.",
+        "Está en tu carpeta Descargas, de tu capacitación de la semana pasada. Por favor manda el certificado, no el examen de práctica. Y revisa la fecha: un certificado vencido no sirve.",
         "Solo adjunta el PDF a tu respuesta.",
         "Gracias,",
       ],
       full: [
         GREETING,
-        "¿Me puedes enviar hoy el reporte de seguridad de julio? La oficina del distrito lo necesita antes de las 3 PM y no tengo una copia aquí.",
-        "Está en la carpeta Descargas de la computadora del café. Por favor manda el reporte final, no el borrador. Al borrador le faltan dos revisiones.",
+        "¿Me puedes enviar hoy una copia de tu certificado de manipulador de alimentos? Lo necesito para nuestros archivos antes de las 3 PM. El inspector de salud viene mañana.",
+        "Está en tu carpeta Descargas, de tu capacitación de la semana pasada. Por favor manda el certificado, no el examen de práctica. Y revisa la fecha: un certificado vencido no sirve.",
         "Solo adjunta el PDF a tu respuesta.",
         "Gracias,",
       ],
@@ -959,15 +960,15 @@ export const STARTERS: Record<PlayableMailTask, Record<Lang, string[]>> = {
     ],
   },
   "mail-attach": {
-    // Frames, not answers: the learner names the report. "I attached the
+    // Frames, not answers: the learner names the certificate. "I attached the
     // file" is only offered once a file is attached (see attachStarters).
     en: [
-      "Hi Maria, here is the ___ safety report.",
+      "Hi Maria, here is my ___ certificate.",
       "I attached the file to this email.",
       "Let me know if you need anything else.",
     ],
     es: [
-      "Hola Maria, aquí está el reporte de seguridad de ___.",
+      "Hola Maria, aquí está mi certificado de ___.",
       "Adjunté el archivo a este correo.",
       "Avísame si necesitas algo más.",
     ],
@@ -997,14 +998,14 @@ export const LESSONS: Record<Lang, Lesson[]> = {
     { t: "Which email is mine?", s: ["A real inbox has lots of mail. Look at the name on the left of each row. That is who sent it.", "Bold rows are emails you haven't opened yet. There may be more than one.", "Click the row from Maria Delgado. She is your manager."], tip: "Clicking an email never sends anything. It's safe to open and look." },
     { t: "Reading a work email", s: ["Look for what the person is asking you to do.", "Look for when they need it.", "Sometimes they just want a reply. Sometimes they want a file attached."], tip: "You can read it twice. Nobody sees how long you take." },
     { t: "Reply vs. Forward", s: ["Reply sends your message back to the person who wrote to you.", "Forward sends their email to somebody else.", "Maria wrote to you, so click Reply."], tip: "If you're answering the person who emailed you, it's always Reply." },
-    { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens with your Downloads. Click a file name, and its first page shows on the right.", "Look for July 2026 at the top and no DRAFT stamp. Then click Attach."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
+    { t: "Attaching a file", s: ["Click Attach file under your message.", "A window opens with your Downloads. Click a file name, and its first page shows on the right.", "Look for Food Handler Certificate at the top, and an Expires date after today. Then click Attach."], tip: "Once it attaches, you'll see the file name in a green box. That means it worked." },
     { t: "Before you press Send", s: ["Is there a message in the box?", "Is the file attached? Do you see the green box?", "Then click Send. You can't break anything here."], tip: "In real email you can't unsend after a minute, so a quick check is a good habit." },
   ],
   es: [
     { t: "¿Cuál correo es el mío?", s: ["Una bandeja real tiene mucho correo. Mira el nombre a la izquierda de cada fila. Esa persona lo envió.", "Las filas en negrita son correos que no has abierto. Puede haber más de uno.", "Haz clic en el de Maria Delgado. Ella es tu gerente."], tip: "Abrir un correo no envía nada. Es seguro mirarlo." },
     { t: "Leer un correo del trabajo", s: ["Busca qué te pide hacer la persona.", "Busca cuándo lo necesita.", "A veces solo quiere una respuesta. A veces quiere un archivo adjunto."], tip: "Puedes leerlo dos veces. Nadie ve cuánto tiempo tomas." },
     { t: "Responder o Reenviar", s: ["Responder envía tu mensaje a la persona que te escribió.", "Reenviar manda su correo a otra persona.", "Maria te escribió a ti, así que haz clic en Responder."], tip: "Si contestas a quien te escribió, siempre es Responder." },
-    { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus Descargas. Haz clic en el nombre de un archivo y su primera página aparece a la derecha.", "Busca July 2026 (julio de 2026) arriba y que no tenga el sello DRAFT (borrador). Luego haz clic en Adjuntar."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
+    { t: "Adjuntar un archivo", s: ["Haz clic en Adjuntar archivo debajo de tu mensaje.", "Se abre una ventana con tus Descargas. Haz clic en el nombre de un archivo y su primera página aparece a la derecha.", "Busca Food Handler Certificate (certificado) arriba, y una fecha de Expires (vence) después de hoy. Luego haz clic en Adjuntar."], tip: "Cuando se adjunta, verás el nombre en una caja verde. Eso significa que funcionó." },
     { t: "Antes de enviar", s: ["¿Hay un mensaje en la caja?", "¿Está el archivo adjunto? ¿Ves la caja verde?", "Entonces haz clic en Enviar. Aquí no puedes romper nada."], tip: "En el correo real no se puede cancelar después de un minuto; revisar es buena costumbre." },
   ],
 };
@@ -1037,14 +1038,14 @@ interface DecoyEmail {
 
 export const FILES: PickableItem[] = [
   { key: "photo-jobsite-0714.jpg", label: "photo-jobsite-0714.jpg", tagText: "JPG", tagColor: "#5f6368", columns: ["Jul 14"], isTarget: false,
-    wrongHint: wrongHint("That's a photo, not the report. Maria needs the July safety report PDF.", "Esa es una foto, no el reporte. Maria necesita el PDF del reporte de seguridad de julio.") },
-  { key: "safety-report-july-DRAFT.pdf", label: "safety-report-july-DRAFT.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 29"], isTarget: false,
-    wrongHint: wrongHint("That page says DRAFT. Maria asked for the final report. Choose the July report without DRAFT.", "Esa página dice DRAFT (borrador). Maria pidió el reporte final. Elige el reporte de julio sin DRAFT.") },
-  { key: "safety-report-july.pdf", label: "safety-report-july.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Aug 1"], isTarget: true, wrongHint: null },
+    wrongHint: wrongHint("That's a photo, not your certificate. Maria needs the certificate PDF.", "Esa es una foto, no tu certificado. Maria necesita el PDF del certificado.") },
+  { key: "food-handler-practice-test.pdf", label: "food-handler-practice-test.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Aug 11"], isTarget: false,
+    wrongHint: wrongHint("That page is the practice test. Maria asked for the certificate.", "Esa página es el examen de práctica (Practice Test). Maria pidió el certificado.") },
+  { key: "food-handler-certificate.pdf", label: "food-handler-certificate.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Aug 12"], isTarget: true, wrongHint: null },
   { key: "shift-swap-form.pdf", label: "shift-swap-form.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jul 22"], isTarget: false,
-    wrongHint: wrongHint("That page is the shift swap form. You need the safety report.", "Esa página es el formulario de cambio de turno. Necesitas el reporte de seguridad.") },
-  { key: "safety-report-june.pdf", label: "safety-report-june.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jun 30"], isTarget: false,
-    wrongHint: wrongHint("That page says June 2026. Maria asked for July.", "Esa página dice June 2026 (junio de 2026). Maria pidió el de julio.") },
+    wrongHint: wrongHint("That page is the shift swap form. You need your food handler certificate.", "Esa página es el formulario de cambio de turno. Necesitas tu certificado de manipulador de alimentos.") },
+  { key: "food-handler-certificate-2022.pdf", label: "food-handler-certificate-2022.pdf", tagText: "PDF", tagColor: "#1e8e3e", columns: ["Jun 3, 2022"], isTarget: false,
+    wrongHint: wrongHint("That certificate expired on Jun 3, 2025. Choose the one that has not expired.", "Ese certificado venció (Expires) el 3 de junio de 2025. Elige el que no está vencido.") },
 ];
 
 /**

@@ -15,7 +15,7 @@ test.use({ viewport: { width: 911, height: 512 } });
 const card = (page: Page) => page.locator("[data-job-card]");
 const appWindow = (page: Page) => page.locator("[data-app-window]");
 const SHOTS = process.env.ACT1_ES_SHOTS;
-/** English month or weekday next to a day number: "Aug 1", "Jul 14", "Tue, ". */
+/** English month or weekday next to a day number: "Aug 12", "Jul 14", "Tue, ". */
 const ENGLISH_DATE = /\b(Jan|Feb|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d|\b(Mon|Tue|Wed|Thu|Fri|Sat|Sun),/;
 
 async function shot(page: Page, name: string) {
@@ -85,11 +85,12 @@ test("Spanish Day 2: the file picker dates are Spanish", async ({ page }) => {
     await page.locator('[data-showme="maria-row"]').click();
   }
   await page.locator('[data-showme="reply-button"]').click();
-  await page.getByRole("button", { name: "El reporte final de julio, hoy antes de las 3 PM" }).click();
+  await page.getByRole("button", { name: "Tu certificado de manipulador de alimentos, hoy antes de las 3 PM" }).click();
   await page.locator('[data-showme="attach-button"]').click();
   const picker = page.getByRole("dialog");
   await expect(picker).toBeVisible();
-  await expect(picker).toContainText("1 ago");
+  await expect(picker).toContainText("12 ago");
+  await expect(picker).toContainText("3 jun 2022");
   await expect(picker).toContainText("14 jul");
   expect((await picker.textContent()) ?? "").not.toMatch(ENGLISH_DATE);
   await shot(page, "03-day2-picker-es");
@@ -145,7 +146,7 @@ test("Spanish Day 6: the PDF Reader's chrome is Spanish; the stub stays English"
   const win = appWindow(page).filter({ hasText: "Descargas" });
   await expect(win).toBeVisible();
   await expect(win).toContainText("Página 1 / 1");
-  await expect(win).toContainText("1 ago 2026");
+  await expect(win).toContainText("12 ago 2026");
   await expect(win.getByRole("button", { name: "Acercar" })).toBeVisible();
   await expect(win.getByRole("button", { name: "Imprimir" })).toBeVisible();
   expect((await win.textContent()) ?? "").not.toMatch(/Downloads|Page 1 \//);

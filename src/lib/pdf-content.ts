@@ -51,7 +51,24 @@ export interface ScheduleDoc extends PdfBase {
   postedBy: string;
 }
 
-export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc | ScheduleDoc;
+/**
+ * A training certificate or its practice test: the issuer at the top, then
+ * whose it is and its dates. `holder` "You" is replaced by the learner's
+ * name, as on the pay stub.
+ */
+export interface CertificateDoc extends PdfBase {
+  kind: "certificate";
+  issuer: string;
+  title: string;
+  holder: string;
+  statement: string;
+  fields: { label: string; value: string }[];
+  /** A practice test lists its questions; a certificate has none. */
+  items?: string[];
+  signedBy: string;
+}
+
+export type PdfDocument = ReportDoc | PayStubDoc | AwardLetterDoc | ScheduleDoc | CertificateDoc;
 
 /**
  * Dated the day before the College door's Paperwork sitting (level17, Wed
@@ -73,25 +90,24 @@ export const PDF_ARRIVES_WITH: Record<string, string> = {
 };
 
 export const PDF_DOCUMENTS: PdfDocument[] = [
+  // Day 2: Maria asks the new hire for a copy for the cafe's files. The
+  // training was the week before the Night Before (Mon Aug 17).
   {
-    kind: "report",
-    id: "safety-report-july",
-    name: "safety-report-july.pdf",
-    size: "248 KB",
-    date: "Aug 1, 2026",
-    title: "Monthly Safety Report",
-    meta: [
-      { label: "Month", value: "July 2026" },
-      { label: "Location", value: "Main Street" },
+    kind: "certificate",
+    id: "food-handler-certificate",
+    name: "food-handler-certificate.pdf",
+    size: "184 KB",
+    date: "Aug 12, 2026",
+    issuer: "Harborside Food Safety Training",
+    title: "Food Handler Certificate",
+    holder: "You",
+    statement: "completed the Food Handler Training Course and passed the exam.",
+    fields: [
+      { label: "Issued", value: "Aug 12, 2026" },
+      { label: "Expires", value: "Aug 12, 2029" },
+      { label: "Certificate no.", value: "FH-26-40817" },
     ],
-    sectionHeading: "Summary",
-    items: [
-      "Incidents reported: 1 (minor slip, no injury. Cleaned within 5 minutes)",
-      "Fire extinguisher check: Passed, Jul 3",
-      "First aid kit restocked: Jul 10",
-      "Floor mats inspected: Jul 10. Replaced one worn mat near the ice machine",
-    ],
-    signedBy: "Maria Delgado, Cafe Manager",
+    signedBy: "Program Director, Harborside Food Safety Training",
   },
   {
     kind: "paystub",
@@ -142,50 +158,52 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
  * Other files in the Downloads folder that Mail's file picker previews. They
  * stay out of `PDF_DOCUMENTS` so the PDF app keeps its short list. Each one
  * is a real page, so the learner tells them apart by reading, the way they
- * would at work: the month at the top, the DRAFT stamp, the form's title.
+ * would at work: the title at the top, the Expires date, the form's name.
  */
 export type FilePreview =
   | { kind: "pdf"; doc: PdfDocument; stamp?: string }
   | { kind: "photo"; caption: string };
 
-const JULY_REPORT = PDF_DOCUMENTS.find((d) => d.id === "safety-report-july") as ReportDoc;
+const CERTIFICATE = PDF_DOCUMENTS.find((d) => d.id === "food-handler-certificate") as CertificateDoc;
 
 export const DOWNLOAD_PREVIEWS: Record<string, FilePreview> = {
-  "safety-report-july.pdf": { kind: "pdf", doc: JULY_REPORT },
-  "safety-report-july-DRAFT.pdf": {
+  "food-handler-certificate.pdf": { kind: "pdf", doc: CERTIFICATE },
+  // Not the certificate: the practice test from the same training.
+  "food-handler-practice-test.pdf": {
     kind: "pdf",
-    stamp: "DRAFT",
+    stamp: "PRACTICE",
     doc: {
-      ...JULY_REPORT,
-      id: "safety-report-july-draft",
-      name: "safety-report-july-DRAFT.pdf",
-      size: "231 KB",
-      date: "Jul 29, 2026",
+      ...CERTIFICATE,
+      id: "food-handler-practice-test",
+      name: "food-handler-practice-test.pdf",
+      size: "92 KB",
+      date: "Aug 11, 2026",
+      title: "Food Handler Practice Test",
+      statement: "took the practice test. This is not a certificate.",
+      fields: [
+        { label: "Date", value: "Aug 11, 2026" },
+        { label: "Score", value: "17 / 20" },
+      ],
       items: [
-        "Incidents reported: 1 (minor slip, no injury. Cleaned within 5 minutes)",
-        "Fire extinguisher check: ________",
-        "First aid kit restocked: ________",
-        "Floor mats inspected: Jul 10. Replaced one worn mat near the ice machine",
+        "Cold food must stay at or below: 41°F",
+        "Wash your hands for at least: 20 seconds",
+        "Cooked chicken must reach: 165°F",
       ],
     },
   },
-  "safety-report-june.pdf": {
+  // A certificate from an earlier job. It has expired.
+  "food-handler-certificate-2022.pdf": {
     kind: "pdf",
     doc: {
-      ...JULY_REPORT,
-      id: "safety-report-june",
-      name: "safety-report-june.pdf",
-      size: "240 KB",
-      date: "Jul 1, 2026",
-      meta: [
-        { label: "Month", value: "June 2026" },
-        { label: "Location", value: "Main Street" },
-      ],
-      items: [
-        "Incidents reported: 0",
-        "Fire extinguisher check: Passed, Jun 4",
-        "First aid kit restocked: Jun 12",
-        "Walk-in cooler temperature log: complete for all 30 days",
+      ...CERTIFICATE,
+      id: "food-handler-certificate-2022",
+      name: "food-handler-certificate-2022.pdf",
+      size: "176 KB",
+      date: "Jun 3, 2022",
+      fields: [
+        { label: "Issued", value: "Jun 3, 2022" },
+        { label: "Expires", value: "Jun 3, 2025" },
+        { label: "Certificate no.", value: "FH-22-11935" },
       ],
     },
   },
