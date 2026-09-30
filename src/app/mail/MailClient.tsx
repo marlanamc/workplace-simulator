@@ -240,7 +240,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // exactly that, the card keeps asking for the fix instead of saying "Click
   // Send" over a correction that disagrees; and a refused send is what lets
   // "On my own" offer the sentence starters.
-  const [rejectedBody, setRejectedBody] = useState<string | null>(timeclockMailActive ? null : restored?.rejectedBody ?? null);
+  // Day 3's clock note keeps its refusal too (Phase 3 N-7), as every other
+  // mail job does since N-5.
+  const [rejectedBody, setRejectedBody] = useState<string | null>(restored?.rejectedBody ?? null);
   const [sendMissed, setSendMissed] = useState(false);
   // The card's line changes with the refusal (off "Click Send"), and a
   // correction belongs to the line it was raised on. So it is raised on the
@@ -295,7 +297,9 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     setLastTabToken(browserTabToken);
     if (timeclockMailActive) {
       // Back from checking the Time Clock: the note they started is still here.
-      setBody(readSavedDraft("timeclock")?.body ?? "");
+      const draft = readSavedDraft("timeclock");
+      setBody(draft?.body ?? "");
+      setRejectedBody(draft?.rejectedBody ?? null);
       setShowMeTarget(null);
     } else if (!(opening && !completedTaskKeys.includes("mail-reply"))) {
       const next = activeMailTaskFor(completedTaskKeys, courseRoute, currentLevelKey);
@@ -680,7 +684,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   useEffect(() => {
     if (lessonRun) return;
     if (timeclockMailActive) {
-      storage.setJSON(mailDraftKey(learnerId, "timeclock"), mailDraftFor({ view: "compose", step: 0, body, attached: false, confirmPick: null, replyAudience: null }));
+      storage.setJSON(mailDraftKey(learnerId, "timeclock"), mailDraftFor({ view: "compose", step: 0, body, attached: false, confirmPick: null, replyAudience: null, rejectedBody }));
       return;
     }
     if (opening) return;

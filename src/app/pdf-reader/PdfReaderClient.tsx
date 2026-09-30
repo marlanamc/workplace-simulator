@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PDF_ARRIVES_WITH, PDF_DOCUMENTS as ALL_PDF_DOCUMENTS } from "@/lib/pdf-content";
 import { useLesson } from "@/lib/lesson-context";
 import { levelReached } from "@/lib/story-calendar";
@@ -15,6 +15,7 @@ import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import { PdfIcon } from "@/lib/icons";
 import { PdfSheet } from "@/components/task/PdfSheet";
+import { fitZoom, stepZoom } from "@/lib/pdf-zoom";
 import { SCHEDULE_DOWNLOADED_FLAG, NEXT_SCHEDULE_DOC, THIS_SCHEDULE_DOC } from "@/lib/tasks/upload-schedule/content";
 
 export default function PdfReaderClient() {
@@ -36,7 +37,26 @@ export default function PdfReaderClient() {
   const [activeId, setActiveId] = useState(
     pdfDocId && PDF_DOCUMENTS.some((d) => d.id === pdfDocId) ? pdfDocId : PDF_DOCUMENTS[0].id
   );
-  const [zoom, setZoom] = useState(100);
+  // The learner's own zoom, once they press + or −. Until then the page opens
+  // at the width the pane has (100% when it fits), so a narrow Reader beside
+  // the docked Job Card does not cut the page off at the side (Phase 3 N-9).
+  const [zoom, setZoom] = useState<number | null>(null);
+  const [fit, setFit] = useState(100);
+  const pane = useRef<HTMLDivElement>(null);
+  const sheetRoom = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = pane.current;
+    const room = sheetRoom.current;
+    if (!el || !room) return;
+    const measure = () => {
+      const pad = parseFloat(getComputedStyle(room).paddingLeft) + parseFloat(getComputedStyle(room).paddingRight);
+      if (el.clientWidth > 0) setFit(fitZoom(el.clientWidth, pad));
+    };
+    const size = new ResizeObserver(measure);
+    size.observe(el);
+    return () => size.disconnect();
+  }, []);
+  const shownZoom = zoom ?? fit;
   const { nudge, say, dismiss } = useNudge();
 
   // A deep link (e.g. "open this pay stub" from the Portal) requests a doc -
@@ -52,7 +72,7 @@ export default function PdfReaderClient() {
 
   const t = PDF_READER_CHROME[lang];
   const active = PDF_DOCUMENTS.find((d) => d.id === activeId)!;
-  const scale = zoom / 100;
+  const scale = shownZoom / 100;
   const notAvailable = () =>
     say(
       lang === "en"
@@ -71,15 +91,18 @@ export default function PdfReaderClient() {
         <WindowControls appKey="pdf" />
       </div>
 
-      <div className="flex min-h-0 flex-1">
-        <div className="flex w-[260px] shrink-0 flex-col border-r border-border bg-white">
-          <div className="px-4 py-3 text-[13px] font-medium text-text-secondary">{t.downloads}</div>
-          <div className="flex-1 overflow-y-auto">
+      {/* A narrow Reader (beside the docked Job Card at 150%) puts Downloads in
+          a strip above the page, so the page gets the whole width. */}
+      <div className="@container flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col @[720px]:flex-row">
+        <div data-pdf-downloads className="flex shrink-0 flex-col border-b border-border bg-white @[720px]:w-[260px] @[720px]:border-r @[720px]:border-b-0">
+          <div className="px-4 pt-2 text-[13px] font-medium text-text-secondary @[720px]:py-3">{t.downloads}</div>
+          <div className="flex overflow-x-auto @[720px]:block @[720px]:flex-1 @[720px]:overflow-y-auto">
             {PDF_DOCUMENTS.map((d) => (
               <button
                 key={d.id}
                 onClick={() => setActiveId(d.id)}
-                className={`flex w-full items-center gap-3 border-b border-surface-muted px-4 py-3 text-left cursor-pointer ${
+                className={`flex w-auto shrink-0 items-center gap-3 border-surface-muted px-4 py-2 text-left cursor-pointer @[720px]:w-full @[720px]:border-b @[720px]:py-3 ${
                   d.id === activeId ? "bg-accent-tint" : "hover:bg-surface-muted"
                 }`}
               >
@@ -99,15 +122,15 @@ export default function PdfReaderClient() {
           <div className="flex items-center justify-center gap-1 border-b border-[#3a3d40] bg-[#323639] px-3 py-1.5">
             <span className="mr-3 truncate text-[13px] text-white/80">{active.name}</span>
             <button
-              onClick={() => setZoom((z) => Math.max(60, z - 10))}
+              onClick={() => setZoom(stepZoom(shownZoom, -1))}
               className="flex h-7 w-7 items-center justify-center rounded text-[15px] text-white/85 hover:bg-white/10 cursor-pointer"
               aria-label={t.zoomOut}
             >
               −
             </button>
-            <span className="w-11 text-center text-[12px] text-white/85">{zoom}%</span>
+            <span data-pdf-zoom className="w-11 text-center text-[12px] text-white/85">{shownZoom}%</span>
             <button
-              onClick={() => setZoom((z) => Math.min(150, z + 10))}
+              onClick={() => setZoom(stepZoom(shownZoom, 1))}
               className="flex h-7 w-7 items-center justify-center rounded text-[15px] text-white/85 hover:bg-white/10 cursor-pointer"
               aria-label={t.zoomIn}
             >
@@ -135,10 +158,11 @@ export default function PdfReaderClient() {
           </div>
 
           <div className="relative min-h-0 flex-1 bg-[#525659]">
-            <div className="absolute inset-0 overflow-auto">
+            <div ref={pane} data-pdf-pane className="absolute inset-0 overflow-auto">
               <div
-                className="flex justify-center"
-                style={{ padding: 28, minWidth: "min-content" }}
+                ref={sheetRoom}
+                className="flex justify-center p-4 @[720px]:p-7"
+                style={{ minWidth: "min-content" }}
               >
                 <PdfSheet
                   doc={active}
@@ -148,6 +172,7 @@ export default function PdfReaderClient() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
 
