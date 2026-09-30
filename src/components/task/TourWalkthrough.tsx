@@ -89,13 +89,18 @@ export default function TourWalkthrough({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [browserTab, stepIndex]);
 
+  // Listened for on the document, not on the element: after a reload the
+  // walkthrough can resume on a step whose target (the card's ?) only renders
+  // once this step has been reported, so it is not there yet on mount.
+  // Capture phase, so the advance still lands before the target's own handler.
   useEffect(() => {
     if (!step?.targetTestId || step.continueLabel) return;
-    const el = document.querySelector(`[data-testid="${step.targetTestId}"]`);
-    if (!el) return;
-    const onClick = () => onAdvance();
-    el.addEventListener("click", onClick);
-    return () => el.removeEventListener("click", onClick);
+    const selector = `[data-testid="${step.targetTestId}"]`;
+    const onClick = (e: MouseEvent) => {
+      if (e.target instanceof Element && e.target.closest(selector)) onAdvance();
+    };
+    document.addEventListener("click", onClick, true);
+    return () => document.removeEventListener("click", onClick, true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stepIndex, step?.targetTestId]);
 

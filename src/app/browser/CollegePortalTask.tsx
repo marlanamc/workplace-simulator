@@ -36,6 +36,7 @@ import NudgeToast from "@/components/task/NudgeToast";
 import NeedAStart from "@/components/task/NeedAStart";
 import { TASK_ICONS } from "@/lib/icons";
 import TaskDoneCard from "@/components/task/TaskDoneCard";
+import type { TaskKey } from "@/lib/desktop-content";
 import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 
@@ -186,7 +187,7 @@ function EnrollmentPortal() {
         </div>
       )}
       {view === "done" && (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => { setView("form"); setDeadlineFound(false); setDocReady(false); setStatement(""); }} />
+        <DoneBlock taskKey="enrollment" kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => { setView("form"); setDeadlineFound(false); setDocReady(false); setStatement(""); }} />
       )}
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={ENROLL_LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
@@ -281,7 +282,7 @@ function FinancialAidPortal() {
         </div>
       )}
       {view === "done" && (
-        <DoneBlock kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => { setView("home"); setOpened(false); }} />
+        <DoneBlock taskKey="financial-aid" kicker={c.sentKicker} tryAgain={c.tryAgain} back={c.backToDesk} onRestart={() => { setView("home"); setOpened(false); }} />
       )}
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={c.lessonKicker} lesson={AID_LESSONS[lang][0]} tipLabel={c.tipLabel} gotItLabel={c.gotIt} />
       <NudgeToast text={nudge} onDismiss={dismiss} />
@@ -290,11 +291,13 @@ function FinancialAidPortal() {
 }
 
 function DoneBlock({
+  taskKey,
   kicker,
   tryAgain,
   back,
   onRestart,
 }: {
+  taskKey: TaskKey;
   kicker: string;
   tryAgain: string;
   back: string;
@@ -304,7 +307,7 @@ function DoneBlock({
     <div className="min-h-0 flex-1 overflow-y-auto p-6">
       <div className="mx-auto flex max-w-[640px] flex-col gap-5">
         <TaskDoneCard kicker={kicker} />
-        <TaskDoneActions kicker={kicker} tryAgainLabel={tryAgain} backToDeskLabel={back} onTryAgain={onRestart} />
+        <TaskDoneActions taskKey={taskKey} kicker={kicker} tryAgainLabel={tryAgain} backToDeskLabel={back} onTryAgain={onRestart} />
       </div>
     </div>
   );

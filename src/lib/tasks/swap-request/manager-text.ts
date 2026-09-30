@@ -1,5 +1,6 @@
 import type { Localized } from "@/lib/task-types";
 import { CAST } from "@/lib/cast";
+import { affirms, mentionsTime, reassured, saysCannotAttend, yesNoAnswer } from "@/lib/grading/meaning";
 
 /**
  * Wave 4, communication beyond email (Day 2). After the swap request is
@@ -19,18 +20,35 @@ export const MARIA_TEXT: Localized = {
 
 export const MARIA_TEXT_FROM = CAST.maria.name;
 
-export type TextReplyVerdict = "ok" | "empty" | "declines" | "no-yes" | "no-detail";
+export type TextReplyVerdict = "ok" | "empty" | "declines" | "no-yes" | "no-detail" | "wrong-day";
 
-const DECLINE = /\b(no puedo|can ?not|can't|cant|cannot|won't|wont|not able|no me funciona|no funciona|doesn'?t work)\b/;
-const YES = /\b(yes|yeah|yep|ok|okay|sure|works|good|fine|great|perfect|thanks|thank you|see you|i will|i'll|i can|s[ií]|claro|vale|bien|perfecto|gracias|funciona|puedo|ah[ií] estar[eé]|nos vemos)\b/;
-const DETAIL = /\b(thu|thur|thurs|thursday|jueves|2|2pm|2:00|14|10|10pm|10:00|two|dos|late|tarde)\b/;
+/**
+ * Read with the shared reader (`meaning.ts`): accents off, so "Sí" and
+ * "ahí estaré" count (Wave 5 F-1: JavaScript's `\b` does not see "í" as a
+ * letter, and every accented yes was refused with "Start with Sí").
+ */
+const THURSDAY = /\b(thu|thur|thurs|thursday|thurday|thursay|thrusday|thursdy|thusday|thurdsay|jueves|juves|jeuves)\b/;
+const OTHER_DAY =
+  /\b(mon|monday|tue|tues|tuesday|wed|wednesday|fri|friday|sat|saturday|sun|sunday|lunes|martes|miercoles|viernes|sabado|domingo)\b/;
+/** Beginner no's the shared reader does not catch: "i no can", "not ok". */
+const REFUSES =
+  /\b(no|not|don'?t|dont) can\b|\bnot (ok|okay|good|fine)\b|\bno (me )?(funciona|sirve)\b|\bno (esta|es) bien\b|\b(doesn'?t|does not|not) work\b/;
+/** Yes words beyond the shared YES: "Thursday works", "gracias". */
+const MORE_YES = /\b(good|works|thanks|thank you|thx|gracias|bien|funciona|me sirve|perfect|nice)\b/;
 
+/**
+ * Yes, and Thursday or 2 PM. A different day is the wrong shift ("yes,
+ * Friday 10 AM" passed before, because any "10" counted); the end time alone
+ * does not show she read the start.
+ */
 export function textReplyVerdict(reply: string): TextReplyVerdict {
-  const t = reply.toLowerCase().normalize("NFC").trim();
+  const t = reassured(reply);
   if (!t) return "empty";
-  if (DECLINE.test(t)) return "declines";
-  if (!YES.test(t)) return "no-yes";
-  if (!DETAIL.test(t)) return "no-detail";
+  if (yesNoAnswer(reply) === "no" || saysCannotAttend(reply) || REFUSES.test(t)) return "declines";
+  if (yesNoAnswer(reply) !== "yes" && !affirms(t, MORE_YES)) return "no-yes";
+  const thursday = THURSDAY.test(t);
+  if (!thursday && OTHER_DAY.test(t)) return "wrong-day";
+  if (!thursday && !mentionsTime(t, 2) && !/\b14(:00)?\b/.test(t)) return "no-detail";
   return "ok";
 }
 
@@ -46,6 +64,10 @@ export const TEXT_CORRECTIONS: Record<Exclude<TextReplyVerdict, "ok">, Localized
   "no-yes": {
     en: "Tell Maria if the new time works for you. Start with Yes or OK.",
     es: "Dile a Maria si el nuevo horario te funciona. Empieza con Sí o OK.",
+  },
+  "wrong-day": {
+    en: "Maria moved you to Thursday, not another day. Say Thursday or 2 PM.",
+    es: "Maria te pasó al jueves, no a otro día. Di jueves o 2 PM.",
   },
   "no-detail": {
     en: "Say the day or the time too, so Maria knows you read it: Thursday, 2 PM.",

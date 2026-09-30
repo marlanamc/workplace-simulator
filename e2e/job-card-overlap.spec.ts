@@ -7,7 +7,9 @@ import { clickIntoPage, waitForInteractive } from "./interactive";
 /**
  * Story Mode Audit finding #2: the Job Card sat on top of the button the
  * learner had to press in 20+ tasks, at 100% zoom on a Chromebook-sized
- * window. Show me then pointed underneath the card.
+ * window. Show me then pointed underneath the card. At 150% text (911 wide)
+ * the card now docks beside the window, so there it must not touch the
+ * window at all.
  *
  * For every day, this opens the day's first task and checks that no visible
  * Show me target (`[data-showme]`) is under the card. The card moves to a
@@ -106,6 +108,15 @@ for (const viewport of VIEWPORTS) {
           .toEqual([])
           .catch(() => {});
         if (covered.length) failures.push(`${day}: ${covered.join(", ")}`);
+        // Below 1100px wide the card docks beside the window (Wave 5 F-3):
+        // it must not touch the window at all, not just its Show me targets.
+        if (viewport.width < 1100) {
+          const card = page.locator("[data-job-card]");
+          if ((await card.getAttribute("data-corner")) !== "dock") failures.push(`${day}: card not docked`);
+          const cardBox = await card.boundingBox();
+          const windowBox = await page.locator("[data-app-window]").boundingBox();
+          if (cardBox && windowBox && intersects(cardBox, windowBox)) failures.push(`${day}: card overlaps the window`);
+        }
       }
       expect(failures, "Show me targets under the Job Card").toEqual([]);
     });

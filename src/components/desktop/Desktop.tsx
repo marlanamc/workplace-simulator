@@ -137,7 +137,9 @@ export default function Desktop({
 
   return (
     <div
-      className={`relative min-h-screen overflow-hidden text-[15px] ${lesson ? LESSON_RAIL_CLASS : ""}`}
+      // Story mode docks the Job Card beside the window on narrow screens
+      // (`.story-desktop` in globals.css); a lesson has its own rail.
+      className={`relative min-h-screen overflow-hidden text-[15px] ${lesson ? LESSON_RAIL_CLASS : "story-desktop"}`}
       style={{ color: "var(--text-primary)", "--lesson-top": `${windowTop}px` } as CSSProperties}
     >
       {/* wallpaper - the room of the current act, so New Hire is the cafe floor */}
@@ -162,7 +164,7 @@ export default function Desktop({
       >
         {/* Lock-screen clock plus a quiet identity plaque. The Job Card still
             says what to do; this only orients who they are in the story. */}
-        <div className={`flex flex-1 items-start px-10 pt-10 ${lesson ? "xl:pl-[480px]" : ""}`}>
+        <div data-desktop-home className={`flex flex-1 items-start px-10 pt-10 ${lesson ? "xl:pl-[480px]" : ""}`}>
           <div className="flex w-full max-w-[400px] flex-col">
             <DesktopClock lang={lang} startsAt={storyClock} />
             {/* A lesson has no Story job title ("Shift lead"), so no name note. */}

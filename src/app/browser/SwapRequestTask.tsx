@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useSkillGuidance } from "@/lib/use-skill-guidance";
 import { SCHEDULE, SCHEDULE_COPY, SWAP_OPTIONS, shiftDayLabel } from "@/lib/tasks/schedule/content";
-import { SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
+import { FORM_STEPS, SWAP_COPY, RIGHT_NOW_STEPS, RIGHT_NOW_LABEL } from "@/lib/tasks/swap-request/content";
 import { TASK_ICONS } from "@/lib/icons";
 import HelpDrawer from "@/components/task/HelpDrawer";
 import NudgeToast from "@/components/task/NudgeToast";
@@ -31,21 +31,58 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
   const [reply, setReply] = useTaskDraft("schedule", "text-reply", "");
   const [sentReply, setSentReply] = useState<string | null>(null);
   const [view, setView] = useState<View>(completedTaskKeys.includes("schedule") ? "done" : filed ? "text" : "form");
-  const [shift, setShift] = useState(initialShift ?? "");
-  const [cover, setCover] = useState("");
-  const [reason, setReason] = useState("");
+  // The form's answers survive a reload too (Wave 5 F-7). The day they
+  // picked on the Schedule tab to get here wins until they change it.
+  const [savedShift, saveShift] = useTaskDraft("schedule", "swap-shift", "");
+  const [pickedHere, setPickedHere] = useState(false);
+  const shift = !pickedHere && initialShift ? initialShift : savedShift;
+  const setShift = (value: string) => {
+    setPickedHere(true);
+    saveShift(value);
+  };
+  const [cover, saveCover] = useTaskDraft("schedule", "swap-cover", "");
+  const [reason, saveReason] = useTaskDraft("schedule", "swap-reason", "");
+  // The day they came in with is saved with the first answer they give, so
+  // a reload brings back Thursday as well as what they wrote.
+  const keepShift = () => {
+    if (shift && shift !== savedShift) saveShift(shift);
+  };
+  const setCover = (value: string) => {
+    keepShift();
+    saveCover(value);
+  };
+  const setReason = (value: string) => {
+    keepShift();
+    saveReason(value);
+  };
   const [help, setHelp] = useState(false);
   const { nudge, dismiss, recordWrong, recordClean, recordMissed, wrongCount } = useSkillGuidance("schedule");
   const showMe = useShowMe();
   // One step, one control: the button that files the form.
-  const showMeId = view === "text" ? "text-reply" : "submit-button";
+  // The form's moment: the first empty choice, then Submit. A refused choice
+  // that has not changed sends the card back to that choice, so it never
+  // says "Click Submit" over a correction (Wave 5 F-4).
+  const [refused, setRefused] = useState<{ shift: string; cover: string } | null>(null);
+  const shiftRefused = refused !== null && refused.shift === shift && shift !== SCHEDULE.find((d) => d.conflict)?.key;
+  const coverRefused = refused !== null && refused.cover === cover && refused.shift === shift;
+  const formStage: "shift" | "cover" | "submit" = !shift || shiftRefused ? "shift" : !cover || coverRefused ? "cover" : "submit";
+  const showMeId =
+    view === "text" ? "text-reply" : formStage === "shift" ? "swap-shift" : formStage === "cover" ? "swap-cover" : "submit-button";
 
   const c = SWAP_COPY[lang];
   const sc = SCHEDULE_COPY[lang];
 
+  // The card's line moves back to the refused choice, and a correction
+  // belongs to the line it was raised on, so it is raised a moment later,
+  // once the new line is showing (the same as Mail's refuseSend).
+  const refuse = (message: { title: string; body: string }) => {
+    setRefused({ shift, cover });
+    setTimeout(() => recordWrong(message), 60);
+  };
+
   const submit = () => {
     if (!shift) {
-      recordWrong({
+      refuse({
         title: lang === "en" ? "Not yet." : "Todavía no.",
         body: lang === "en" ? "Choose which shift you need to swap." : "Elige qué turno necesitas cambiar.",
       });
@@ -55,7 +92,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
     // to move a shift that was never a problem leaves Thursday untouched.
     const clashing = SCHEDULE.find((d) => d.conflict);
     if (shift !== clashing?.key) {
-      recordWrong({
+      refuse({
         title: lang === "en" ? "That shift is fine." : "Ese turno está bien.",
         body:
           lang === "en"
@@ -65,7 +102,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
       return;
     }
     if (!cover) {
-      recordWrong({
+      refuse({
         title: lang === "en" ? "Almost." : "Casi.",
         body:
           lang === "en"
@@ -78,7 +115,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
     // earlier one or a different day does not, and each says why.
     const picked = SWAP_OPTIONS.find((o) => o.key === cover);
     if (!picked?.works) {
-      recordWrong({
+      refuse({
         title: lang === "en" ? "Not that one." : "Ese no.",
         body: picked?.wrongHint?.[lang] ?? "",
       });
@@ -131,7 +168,11 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
           icon={TASK_ICONS["swap-request"]}
           stepIndex={view === "text" ? 1 : 0}
           stepCount={2}
-          instruction={view === "text" ? (reply.trim() ? TEXT_STEPS.reply : TEXT_STEPS.read) : RIGHT_NOW_STEPS[0]}
+          instruction={
+            view === "text"
+              ? reply.trim() ? TEXT_STEPS.reply : TEXT_STEPS.read
+              : formStage === "cover" ? RIGHT_NOW_STEPS[0] : FORM_STEPS[formStage]
+          }
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(showMeId)}
@@ -160,6 +201,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
           <label className="mb-3 block text-[14px] font-medium text-text-primary">
             {c.shiftLabel}
             <select
+              data-showme="swap-shift"
               value={shift}
               onChange={(e) => setShift(e.target.value)}
               disabled={Boolean(initialShift)}
@@ -180,6 +222,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
           <label className="mb-3 block text-[14px] font-medium text-text-primary">
             {c.coverLabel}
             <select
+              data-showme="swap-cover"
               value={cover}
               onChange={(e) => setCover(e.target.value)}
               className="mt-1.5 block w-full rounded-lg border border-border px-3 py-2.5 text-[14px] outline-none focus:border-accent"
@@ -240,7 +283,7 @@ export default function SwapRequestTask({ initialShift }: { initialShift?: strin
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          <TaskDoneActions taskKey="schedule" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 
@@ -284,7 +327,7 @@ function TextThread({
 }) {
   const t = TEXT_COPY[lang];
   return (
-    <PhoneFrame label={t.label} time="4:12">
+    <PhoneFrame label={t.label}>
       <h3 className="px-[16px] pt-[4px] pb-[8px] text-center text-[15px] font-semibold">{MARIA_TEXT_FROM}</h3>
       <div data-testid="text-thread" className="flex min-h-[220px] flex-col gap-2 bg-white px-[10px] py-[12px]">
         {/* data-card-avoid: this is what the learner has to read, so the Job Card parks elsewhere. */}

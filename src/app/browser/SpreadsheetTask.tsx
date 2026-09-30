@@ -525,7 +525,7 @@ export default function SpreadsheetTask() {
               />
             ) : null}
 
-            <TaskDoneActions
+            <TaskDoneActions taskKey="spreadsheet"
               kicker={c.sentKicker}
               tryAgainLabel={c.tryAgain}
               backToDeskLabel={c.backToDesk}

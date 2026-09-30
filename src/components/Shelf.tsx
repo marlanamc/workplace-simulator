@@ -533,8 +533,17 @@ export default function Shelf({
       {launcherOpen && !tourLocked && (
           <div
             ref={launcherPanelRef}
-            className="fixed z-40 flex w-[560px] max-w-[calc(100vw-24px)] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
-            style={{ bottom: SHELF_HEIGHT + 12, left: "50%", transform: "translateX(-50%)" }}
+            data-testid="launcher-panel"
+            className="fixed z-40 flex w-[560px] max-h-[calc(100vh-90px)] flex-col overflow-hidden rounded-2xl bg-white shadow-[0_24px_60px_rgba(10,15,40,0.35)] animate-fade-up"
+            // Centered over the window area, not the whole screen, so a docked
+            // Job Card or a lesson rail never sits on top of it. Worked out
+            // as a left edge, not translateX(-50%): the fade-up animation ends
+            // on `transform: none`, which undid that centering.
+            style={{
+              bottom: SHELF_HEIGHT + 12,
+              left: "calc(var(--app-left, 0px) + max(12px, (100vw - var(--app-left, 0px) - 560px) / 2))",
+              maxWidth: "calc(100vw - var(--app-left, 0px) - 24px)",
+            }}
           >
             {/* search bar */}
             <div className="flex items-center gap-3 border-b border-border px-4 py-3.5">

@@ -468,7 +468,7 @@ export default function BudgetSheetTask() {
                 }}
               />
             ) : null}
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="budget-sheet" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       )}

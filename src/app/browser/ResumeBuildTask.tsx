@@ -224,7 +224,7 @@ export default function ResumeBuildTask() {
                 bullets={bullets}
                 skills={skillLabels}
               />
-              <TaskDoneActions
+              <TaskDoneActions taskKey="resume-build"
                 kicker={c.sentKicker}
                 tryAgainLabel={c.tryAgain}
                 backToDeskLabel={c.backToDesk}

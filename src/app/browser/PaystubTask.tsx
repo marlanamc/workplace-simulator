@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
 import {
@@ -9,6 +10,8 @@ import {
   NET_PAY_CHECK,
   HOURS_CHECK,
   LESSONS,
+  TIME_RECORD,
+  TIME_RECORD_COPY,
   TARGET_STUB_ID,
   type CheckOption,
   RIGHT_NOW_STEPS,
@@ -23,12 +26,21 @@ import TaskDoneActions from "@/components/task/TaskDoneActions";
 import RightNowBar from "@/components/task/RightNowBar";
 import ShowMeHighlight from "@/components/task/ShowMeHighlight";
 import { useShowMe, SHOW_ME_POINTER } from "@/lib/use-show-me";
+import type { Lang } from "@/lib/task-types";
 
 type View = "list" | "check1" | "check2" | "done";
 
 export default function PaystubTask() {
   const { markComplete, completedTaskKeys, lang, displayName } = useProgress();
-  const [view, setView] = useState<View>(completedTaskKeys.includes("paystub") ? "done" : "list");
+  // Which question they were on survives a reload (Wave 5 F-7). "done" is
+  // never saved: a finished job opens finished because it is in progress.
+  const [savedStep, setSavedStep] = useTaskDraft<string>("paystub", "view", "list");
+  const [shown, setShown] = useState<View | null>(completedTaskKeys.includes("paystub") ? "done" : null);
+  const view: View = shown ?? (savedStep === "check1" || savedStep === "check2" ? savedStep : "list");
+  const setView = (next: View) => {
+    setShown(next);
+    if (next !== "done") setSavedStep(next);
+  };
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
@@ -50,6 +62,7 @@ export default function PaystubTask() {
 
   const backToBrowser = () => openApp("browser", { tab: "portal", section: "paystubs" });
 
+  const stub = PAY_STUBS.find((p) => p.id === TARGET_STUB_ID);
   const openStub = (p: (typeof PAY_STUBS)[number]) => {
     if (p.pdfDocId) {
       openApp("pdf", { docId: p.pdfDocId });
@@ -116,12 +129,14 @@ export default function PaystubTask() {
                 <div>
                   <div className="text-[14px] font-medium text-text-primary">{myName}</div>
                   <div className="text-[13px] text-text-tertiary">
-                    {p.role} · {p.period}
+                    {p.role} · {p.period[lang]}
                   </div>
                 </div>
+                {/* The pay date, not the net pay: the net pay is the first
+                    question's answer (Wave 5 F-8). */}
                 <div className="text-right">
-                  <div className="text-[14px] font-medium text-text-primary">{p.net}</div>
-                  <div className="text-[13px] text-text-tertiary">{c.netLabel}</div>
+                  <div className="text-[13px] text-text-tertiary">{c.paidLabel}</div>
+                  <div className="text-[14px] font-medium text-text-primary">{p.payDate[lang]}</div>
                 </div>
               </button>
             ))}
@@ -134,27 +149,44 @@ export default function PaystubTask() {
           <div className="mb-2.5 text-[15px] font-medium">
             {view === "check1" ? netCheck.question : hoursCheck.question}
           </div>
-          {view === "check2" && <p className="mb-3 text-[14px]">{lang === "en" ? "Corrected time record · 6 shifts × 8 hours. Maria included the clock-in correction you requested." : "Registro de horas corregido · 6 turnos × 8 horas. Maria incluyó la corrección de entrada que pediste."}</p>}
-          <div className="flex flex-wrap gap-2" data-showme="paystub-choices">
-            {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
-              <button
-                key={opt.label}
-                onClick={() =>
-                  answer(opt, () => {
-                    if (view === "check1") {
-                      setView("check2");
-                    } else {
-                      setView("done");
-                      markComplete("paystub", "find_net_pay");
-                    }
-                  })
-                }
-                className="min-h-[44px] rounded-full border border-border bg-surface-muted px-4 text-[14px] font-medium text-text-primary hover:bg-white cursor-pointer"
-              >
-                {opt.label}
-              </button>
-            ))}
+          {/* On the hours question the record sits beside the choices, so at
+              911x512 (a ~170px tall Portal) the rows and the answers are on
+              screen together. */}
+          <div className={view === "check2" ? "flex flex-wrap items-start gap-x-6 gap-y-3" : undefined}>
+            {view === "check2" && <TimeRecord lang={lang} />}
+            <div
+              className={`flex gap-2 ${view === "check2" ? "flex-col items-start" : "flex-wrap"}`}
+              data-showme="paystub-choices"
+            >
+              {(view === "check1" ? netCheck.options : hoursCheck.options).map((opt) => (
+                <button
+                  key={opt.label}
+                  onClick={() =>
+                    answer(opt, () => {
+                      if (view === "check1") {
+                        setView("check2");
+                      } else {
+                        setView("done");
+                        markComplete("paystub", "find_net_pay");
+                      }
+                    })
+                  }
+                  className="min-h-[44px] rounded-full border border-border bg-surface-muted px-4 text-[14px] font-medium text-text-primary hover:bg-white cursor-pointer"
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
+          {stub?.pdfDocId && (
+            <button
+              type="button"
+              onClick={() => openApp("pdf", { docId: stub.pdfDocId })}
+              className="mt-2 min-h-11 cursor-pointer text-[14px] font-medium text-accent underline underline-offset-4"
+            >
+              {c.seeStubAgain}
+            </button>
+          )}
         </div>
       )}
 
@@ -169,7 +201,7 @@ export default function PaystubTask() {
             badgeWhere={c.badgeWhere}
           />
 
-          <TaskDoneActions
+          <TaskDoneActions taskKey="paystub"
             kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}
@@ -182,7 +214,7 @@ export default function PaystubTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][view === "list" ? 0 : 1]}
+        lesson={LESSONS[lang][view === "list" ? 0 : view === "check2" ? 2 : 1]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />
@@ -207,6 +239,37 @@ export default function PaystubTask() {
         }
         onDismiss={showMe.clear}
       />
+    </div>
+  );
+}
+
+/**
+ * The learner's corrected time record, one row per shift, right under the
+ * hours question. They count the shifts here; no total is shown, because the
+ * total is the answer (Wave 5 F-8).
+ */
+function TimeRecord({ lang }: { lang: Lang }) {
+  const t = TIME_RECORD_COPY[lang];
+  return (
+    // `data-showme` so the Job Card treats the record like the step's own
+    // controls and never parks on top of it (it moves only for those).
+    <div className="min-w-0 max-w-[440px] flex-1 basis-[270px]" data-testid="time-record" data-showme="time-record">
+      <table className="w-full border-collapse text-[13px] leading-[1.35]">
+        <caption className="pb-1 text-left text-[14px] font-medium">{t.heading}</caption>
+        <tbody>
+          {TIME_RECORD.map((r) => (
+            <tr key={r.day} className="border-t border-border" data-testid="time-record-row">
+              <th scope="row" className="py-[3px] pr-3 text-left font-normal whitespace-nowrap">{r.date[lang]}</th>
+              <td className="py-[3px] pr-3 tabular-nums">
+                {r.block.start} – {r.block.end}
+                {r.note && <span className="ml-1.5 text-text-tertiary">({r.note[lang]})</span>}
+              </td>
+              <td className="py-[3px] text-right whitespace-nowrap tabular-nums">{t.hours(r.hours)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <p className="mt-1 text-[13px] text-text-tertiary">{t.note}</p>
     </div>
   );
 }

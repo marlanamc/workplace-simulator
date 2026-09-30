@@ -292,7 +292,7 @@ export default function AccountRecoveryTask() {
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+          <TaskDoneActions taskKey="account-recovery" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
         </div>
       )}
 

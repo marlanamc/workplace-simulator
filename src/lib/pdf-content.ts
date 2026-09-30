@@ -96,12 +96,14 @@ export const PDF_DOCUMENTS: PdfDocument[] = [
   {
     kind: "paystub",
     id: "paystub-first",
-    name: "paystub-aug-18-28.pdf",
+    name: "paystub-aug-18-27.pdf",
     size: "96 KB",
     date: "Aug 28, 2026",
     /** UI substitutes the learner's display name. */
     employee: "You",
-    payPeriod: "Aug 18 – Aug 28, 2026",
+    // Through the day before payday: the 48 hours are the six shifts from
+    // Aug 18 to Aug 27. Payday's own shift goes on the next stub.
+    payPeriod: "Aug 18 – Aug 27, 2026",
     payDate: "Aug 28, 2026",
     earnings: [
       { label: "Regular hours", detail: "48 @ $15.00/hr", amount: "$720.00" },

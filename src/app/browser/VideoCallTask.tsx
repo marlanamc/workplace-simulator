@@ -77,7 +77,7 @@ export default function VideoCallTask() {
         <div className="min-h-0 flex-1 overflow-y-auto p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard kicker={c.sentKicker} />
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="video-call" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       </div>

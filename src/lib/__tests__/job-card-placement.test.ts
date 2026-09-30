@@ -4,9 +4,12 @@ import {
   cornerBox,
   cornerNearest,
   cornerOrder,
+  DOCK_MAX_WIDTH,
   isCorner,
+  isDockedWidth,
   nudgedCorner,
   overlaps,
+  scrollGutter,
   type Box,
   type Corner,
 } from "@/lib/job-card-placement";
@@ -136,5 +139,76 @@ describe("learner moves", () => {
     expect(isCorner("tr")).toBe(true);
     expect(isCorner("middle")).toBe(false);
     expect(isCorner(null)).toBe(false);
+  });
+});
+
+describe("isDockedWidth (Wave 5 F-3, F-16, F-17)", () => {
+  it("docks at Chromebook 150% text and floats at 100%", () => {
+    expect(isDockedWidth(ZOOMED.width)).toBe(true);
+    expect(isDockedWidth(LAPTOP.width)).toBe(false);
+  });
+  it("switches exactly at the breakpoint the CSS uses", () => {
+    expect(isDockedWidth(DOCK_MAX_WIDTH)).toBe(true);
+    expect(isDockedWidth(DOCK_MAX_WIDTH + 1)).toBe(false);
+    expect(isDockedWidth(1100)).toBe(false);
+  });
+});
+
+describe("scrollGutter (Wave 5 F-2, F-25: the runaway gutter)", () => {
+  // A Portal page on a short, wide screen: the window's clip, and the page's
+  // scroll area under the tabs, filling the rest of the window.
+  const VIEW = { width: 1280, height: 512 };
+  const clip = { left: 8, top: 8, width: 1264, height: 448 };
+  const AREA_TOP = 180;
+  const ALLOTTED = clip.top + clip.height - AREA_TOP; // 276
+  const card = cornerBox("bl", SMALL_CARD, VIEW, INSETS); // top 190
+  const base = { clip, card, edge: 24, paddingTop: 24, scrolls: true, minHeight: VIEW.height * 0.4 };
+  const areaOf = (height: number): Box => ({ left: 8, top: AREA_TOP, width: 1264, height });
+
+  it("leaves room to scroll the last control clear of the card", () => {
+    const px = scrollGutter({ ...base, area: areaOf(ALLOTTED) });
+    expect(px).toBeGreaterThan(0);
+    expect(px).toBeLessThanOrEqual(ALLOTTED - 24);
+  });
+
+  it("settles on one value when its own padding makes the area taller", () => {
+    // What the browser does: the padding is applied, a flex child cannot be
+    // shorter than its padding, so the area grows; then it is measured again.
+    let height = ALLOTTED;
+    const seen: number[] = [];
+    for (let pass = 0; pass < 50; pass++) {
+      const px = scrollGutter({ ...base, area: areaOf(height) });
+      seen.push(px);
+      height = Math.max(ALLOTTED, base.paddingTop + px);
+    }
+    expect(new Set(seen).size).toBe(1);
+    expect(height).toBe(ALLOTTED);
+  });
+
+  it("stays bounded even when it starts from an area that already ran away", () => {
+    for (const height of [ALLOTTED * 2, 131_874, 1_024_861]) {
+      const px = scrollGutter({ ...base, area: areaOf(height) });
+      expect(px).toBeLessThanOrEqual(ALLOTTED - base.paddingTop);
+      expect(scrollGutter({ ...base, area: areaOf(ALLOTTED) })).toBe(px);
+    }
+  });
+
+  it("never asks for more padding than the area has room for, even with a tall card", () => {
+    const tall = cornerBox("bl", { width: 340, height: 420 }, VIEW, INSETS); // top above the area
+    const px = scrollGutter({ ...base, card: tall, area: areaOf(ALLOTTED) });
+    expect(base.paddingTop + px).toBeLessThan(ALLOTTED);
+  });
+
+  it("gives no gutter when the card is not over the area", () => {
+    expect(scrollGutter({ ...base, card: null, area: areaOf(ALLOTTED) })).toBe(0);
+    const beside = { ...card, left: 2000 };
+    expect(scrollGutter({ ...base, card: beside, area: areaOf(ALLOTTED) })).toBe(0);
+    const below = { ...card, top: clip.top + clip.height + 1 };
+    expect(scrollGutter({ ...base, card: below, area: areaOf(ALLOTTED) })).toBe(0);
+  });
+
+  it("gives no gutter to a small list box or a page that does not scroll", () => {
+    expect(scrollGutter({ ...base, area: { ...areaOf(120), top: 300 } })).toBe(0);
+    expect(scrollGutter({ ...base, scrolls: false, area: areaOf(ALLOTTED) })).toBe(0);
   });
 });

@@ -39,8 +39,14 @@ export default function PortalPage() {
   // Day 2: once the swap is filed, Maria's text is waiting on Shift Swap, so
   // coming back to the schedule opens there instead of the finished step.
   const [swapFiled] = useTaskDraft("schedule", "swap-filed", false);
+  // A swap form they had started filling in counts too: a reload brings
+  // them back to it, not to the schedule (Wave 5 F-7).
+  const [swapShift] = useTaskDraft("schedule", "swap-shift", "");
+  const [swapCover] = useTaskDraft("schedule", "swap-cover", "");
+  const [swapReason] = useTaskDraft("schedule", "swap-reason", "");
+  const swapStarted = swapFiled || Boolean(swapShift || swapCover || swapReason.trim());
   const landOn = (wanted: Section): Section =>
-    wanted === "schedule" && swapFiled && !completedTaskKeys.includes("schedule") ? "swap-request" : wanted;
+    wanted === "schedule" && swapStarted && !completedTaskKeys.includes("schedule") ? "swap-request" : wanted;
   const [section, setSection] = useState<Section>(() =>
     landOn(isPortalSection(portalSection) ? portalSection : "schedule"),
   );

@@ -537,7 +537,7 @@ export default function FormulaCheckTask() {
                 fact={{ label: SENT_LABELS[lang].formula, value: `${sumFormula} = ${sumValue ?? ""}` }}
               />
             ) : null}
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="formula-check" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       )}

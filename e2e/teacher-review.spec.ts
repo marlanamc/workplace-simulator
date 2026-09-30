@@ -108,7 +108,13 @@ test("a teacher note on a review reaches the learner on next login", async ({ pa
   await expect(page.getByText(TEACHER_NOTE)).toBeVisible();
   await expect(page.getByText(STRENGTH)).toBeVisible();
 
-  await page.getByRole("button", { name: /^(Got it|Entendido)$/ }).click();
+  // Going back to revise: the finished review opens, and the card offers
+  // "Do it again" (a deliberate revisit may speak on the card; an app that
+  // merely still shows old work may not, Wave 5 F-9).
+  await page.getByRole("button", { name: "Open this task again" }).click();
+  await expect(jobCard(page).getByRole("button", { name: "Do it again" })).toBeVisible({ timeout: 20_000 });
+  await jobCard(page).getByRole("button", { name: "Do it again" }).click();
+  await expect(page.getByTestId("review-evidence")).toBeVisible();
 
   // Opening it marked it read; it does not come back on reload.
   await expect.poll(async () => {

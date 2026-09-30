@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useProgress } from "@/lib/progress-context";
 import {
   REVIEW_COPY,
@@ -29,7 +30,8 @@ type View = "form" | "done";
 export default function ShiftReviewTask() {
   const { markComplete, completedTaskKeys, lang } = useProgress();
   const [view, setView] = useState<View>(completedTaskKeys.includes("shift-review") ? "done" : "form");
-  const [summary, setSummary] = useState("");
+  // The note survives a reload (Wave 5 F-7).
+  const [summary, setSummary] = useTaskDraft("shift-review", "summary", "");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const showMe = useShowMe();
@@ -37,12 +39,26 @@ export default function ShiftReviewTask() {
   const c = REVIEW_COPY[lang];
   const facts = SHIFT_FACTS[lang];
 
+  // Written and not just refused: the card says Submit and Show me points at
+  // it. A refused note sends the card back to the writing line until it
+  // changes, so "Click Submit" never sits over a correction.
+  const [refusedNote, setRefusedNote] = useState<string | null>(null);
+  const ready = Boolean(summary.trim()) && summary !== refusedNote;
+  const step = ready ? 1 : 0;
+  const showMeId = ready ? "shift-note-submit" : "shift-note-box";
+  // Raised a moment later, once the card shows the writing line again: a
+  // correction belongs to the line it was raised on.
+  const refuse = (message: string) => {
+    setRefusedNote(summary);
+    setTimeout(() => say(message), 60);
+  };
+
   const trySubmit = () => {
     if (summary.trim().split(/\s+/).filter(Boolean).length < 3) {
-      return say(c.shortNudge);
+      return refuse(c.shortNudge);
     }
     if (!shiftSummaryIsComplete(summary, lang)) {
-      return say(c.factsNudge);
+      return refuse(c.factsNudge);
     }
     setView("done");
     markComplete("shift-review", "write_shift_summary", describeSubmission(summary, lang));
@@ -63,13 +79,13 @@ export default function ShiftReviewTask() {
         <RightNowBar
           taskKey="shift-review"
           icon={TASK_ICONS["shift-review"]}
-          stepIndex={0}
+          stepIndex={step}
           stepCount={RIGHT_NOW_STEPS.length}
-          instruction={RIGHT_NOW_STEPS[0]}
+          instruction={RIGHT_NOW_STEPS[step]}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
-          onShowMe={() => showMe.toggleFor("shift-note-box")}
-          showMeActive={showMe.targetId === "shift-note-box"}
+          onShowMe={() => showMe.toggleFor(showMeId)}
+          showMeActive={showMe.targetId === showMeId}
           onHelp={() => setHelp(true)}
         />
       )}
@@ -112,6 +128,7 @@ export default function ShiftReviewTask() {
             </div>
             <button
               type="button"
+              data-showme="shift-note-submit"
               onClick={trySubmit}
               className="mt-4 inline-flex min-h-[46px] items-center rounded-full bg-accent px-6 text-[15px] font-medium text-white hover:bg-accent-hover cursor-pointer"
             >
@@ -131,7 +148,7 @@ export default function ShiftReviewTask() {
             badgeName={c.badgeName}
             badgeWhere={c.badgeWhere}
           />
-          <TaskDoneActions
+          <TaskDoneActions taskKey="shift-review"
             kicker={c.sentKicker}
             tryAgainLabel={c.tryAgain}
             backToDeskLabel={c.backToDesk}

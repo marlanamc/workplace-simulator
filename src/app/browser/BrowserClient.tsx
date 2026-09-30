@@ -22,6 +22,8 @@ import NudgeToast from "@/components/task/NudgeToast";
 import { TAB_ICONS } from "@/lib/icons";
 import TourWalkthrough from "@/components/task/TourWalkthrough";
 import { TOUR_STEPS, CALENDAR_REMINDER_STEPS, CALENDAR_REMINDER_FLAG } from "@/lib/tasks/tour/content";
+import { useTaskDraft } from "@/lib/use-task-draft";
+import { TOUR_DRAFT, savedTourStep, tourResumeTab } from "@/lib/tour-resume";
 
 const LessonFollowups = dynamic(() => import("@/components/lesson/LessonFollowups"));
 
@@ -165,9 +167,31 @@ export default function BrowserClient() {
   const lessonTabs = lesson
     ? lesson.tabs.flatMap((k) => BASE_TABS.filter((t) => t.key === k))
     : null;
-  const [tourWalkthroughStep, setTourWalkthroughStep] = useState<number | null>(null);
-  const [tourWalkthroughDone, setTourWalkthroughDone] = useState(false);
+  // Until the tour is finished, where the learner is in its walkthrough is a
+  // tour draft on this device, so a reload comes back to the same step
+  // (Wave 5 F-7). A walkthrough replayed from the finished tour's "Try again"
+  // is only for this sitting: after a reload the finished packet shows.
+  const tourFinished = completedTaskKeys.includes("tour");
+  const [savedTourWalkthroughStep, setSavedTourWalkthroughStep] = useTaskDraft<number | null>("tour", TOUR_DRAFT.walkthroughStep, null);
+  const [savedTourWalkthroughDone, setSavedTourWalkthroughDone] = useTaskDraft("tour", TOUR_DRAFT.walkthroughDone, false);
+  const [replayTourStep, setReplayTourStep] = useState<number | null>(null);
+  const [replayTourDone, setReplayTourDone] = useState(false);
+  // The walkthrough starts when the Welcome tab opens (see below). Its first
+  // step is derived from this rather than written to the draft during render.
+  const [walkthroughOffered, setWalkthroughOffered] = useState(false);
+  const tourWalkthroughStep = tourFinished
+    ? replayTourStep
+    : savedTourStep(savedTourWalkthroughStep, TOUR_STEPS[lang].length)
+      ?? (walkthroughOffered && !savedTourWalkthroughDone ? 0 : null);
+  const tourWalkthroughDone = tourFinished ? replayTourDone : savedTourWalkthroughDone;
+  const setTourWalkthroughStep = tourFinished ? setReplayTourStep : setSavedTourWalkthroughStep;
+  const setTourWalkthroughDone = tourFinished ? setReplayTourDone : setSavedTourWalkthroughDone;
   const [tourHelpOpen, setTourHelpOpen] = useState(false);
+  const [tourHelpOpened, setTourHelpOpened] = useTaskDraft("tour", TOUR_DRAFT.helpOpened, false);
+  const openTourHelp = () => {
+    setTourHelpOpen(true);
+    setTourHelpOpened(true);
+  };
   const [calendarReminderStep, setCalendarReminderStep] = useState<number | null>(null);
   const [calendarReminderOffered, setCalendarReminderOffered] = useState(false);
 
@@ -326,15 +350,28 @@ export default function BrowserClient() {
   // The walkthrough starts when the Welcome tab opens, not when a modal's
   // button is pressed - the Job Card already sent the learner here, and a
   // second "start" button on arrival is a second voice.
-  const [walkthroughOffered, setWalkthroughOffered] = useState(false);
+  // A reload at the Help beat (walkthrough done, tour not yet finished) stays
+  // there: it is not a new arrival.
   if (
     active?.key === "tour" &&
-    !completedTaskKeys.includes("tour") &&
+    !tourFinished &&
     !walkthroughOffered &&
-    tourWalkthroughStep === null
+    tourWalkthroughStep === null &&
+    !tourWalkthroughDone
   ) {
     setWalkthroughOffered(true);
-    setTourWalkthroughStep(0);
+  }
+  // A reload part-way through the walkthrough reopens the Browser on Welcome.
+  // A step that follows "Click Mail" needs Mail on screen, so bring it back,
+  // once, the first time this window sees the step.
+  const [tourResumeChecked, setTourResumeChecked] = useState(false);
+  if (!tourResumeChecked && tourWalkthroughStep !== null) {
+    setTourResumeChecked(true);
+    const resumeTab = BASE_TABS.find((t) => t.key === tourResumeTab(TOUR_STEPS[lang], tourWalkthroughStep));
+    if (resumeTab && active?.key === "tour") {
+      setOpenTabs((prev) => prev.map((ot) => (ot.key === "tour" ? resumeTab : ot)));
+      setActiveTab(resumeTab.key);
+    }
   }
 
   // A 1-step callback to the Calendar bookmark shown once at the start of
@@ -573,12 +610,14 @@ export default function BrowserClient() {
             startAtHelp={tourWalkthroughDone}
             walkthroughRunning={tourWalkthroughStep !== null}
             helpOpen={tourHelpOpen}
-            onOpenHelp={() => setTourHelpOpen(true)}
+            helpOpened={tourHelpOpened}
+            onOpenHelp={openTourHelp}
             onCloseHelp={() => setTourHelpOpen(false)}
             onStartWalkthrough={() => {
               setTourWalkthroughDone(false);
               setTourWalkthroughStep(0);
               setTourHelpOpen(false);
+              setTourHelpOpened(false);
             }}
           />
         )}
@@ -597,7 +636,7 @@ export default function BrowserClient() {
           steps={TOUR_STEPS[lang]}
           stepIndex={tourWalkthroughStep}
           tabColors={TAB_COLORS}
-          onHelp={() => setTourHelpOpen(true)}
+          onHelp={openTourHelp}
           onAdvance={() => {
             const steps = TOUR_STEPS[lang];
             const next = tourWalkthroughStep + 1;

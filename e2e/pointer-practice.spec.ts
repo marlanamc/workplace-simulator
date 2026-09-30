@@ -26,10 +26,9 @@ for (const lang of ['en', 'es'] as const) {
     // A click in the neutral area does not reset or advance the activity.
     await card.getByRole('status').click();
     await expect(card).toHaveAttribute('data-practice', 'click');
+    // A reload keeps the learner's place: still practising, same stage (F-7).
     await page.reload();
-    await expect(card.getByRole('button', { name: startName })).toBeVisible();
-    await expect(card).toHaveAttribute('data-practice', 'inactive');
-    await card.getByRole('button', { name: practiceName }).click();
+    await expect(card).toHaveAttribute('data-practice', 'click');
     await card.getByRole('button', { name: /Open practice notice|Abrir aviso de práctica/ }).focus();
     await page.keyboard.press('Enter');
     const notice = card.locator('[data-practice-notice]');
@@ -62,11 +61,13 @@ for (const lang of ['en', 'es'] as const) {
     await card.getByRole('button', { name: skipName }).click();
     await expect(card).toHaveAttribute('data-practice', 'inactive');
     await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
-    // Until the tour is finished, a reload brings the welcome beat back, and
-    // the practice with it: skipping once is not skipping for good.
+    // A reload keeps the learner's place (Wave 5 F-7): they are in the tour
+    // now, so the welcome beat and its practice offer do not come back.
+    // Skipping is final; a Studio fresh account brings the welcome back.
     await page.reload();
-    await expect(card.getByRole('button', { name: practiceName })).toBeVisible();
-    await expect(card.getByRole('button', { name: startName })).toBeVisible();
+    await expect(card).toContainText(lang === 'en' ? 'Look around this computer.' : 'Conoce esta computadora.');
+    await expect(card).not.toContainText(lang === 'en' ? 'This card tells you what to do.' : 'Esta tarjeta te dice qué hacer.');
+    await expect(card.getByRole('button', { name: practiceName })).toHaveCount(0);
   });
 }
 

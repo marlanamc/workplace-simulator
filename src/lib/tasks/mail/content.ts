@@ -697,10 +697,15 @@ export const REPLY_ALL_CORRECTIONS: Record<Exclude<ReplyAllVerdict, "ok" | "empt
  * storage room passes in either language.
  */
 export function mailEtiquetteAnswersDarnell(body: string): boolean {
-  const t = body.trim().toLowerCase().replace(/\s+/g, " ");
-  // A concise location answers the question; a supply order does not.
-  return /\b(?:storage|store ?room|back room|supply room|almac[eé]n|bodega)\b/.test(t);
+  // A concise location answers the question; a supply order does not. Read
+  // with the shared reader: accents off, and "they are not in the storage
+  // room" does not count as saying they are (Wave 5 step 4).
+  // A four-word window, for Spanish: "no están en el almacén".
+  return affirms(body, STORAGE_ROOM, 4);
 }
+
+const STORAGE_ROOM =
+  /\b(storage|storag|storge|strage|storeroom|store ?room|stor room|stockroom|stock room|back ?room|supply room|supplies room|almacen|almacenes|almasen|bodega|deposito|cuarto de (almacenamiento|suministros))\b/;
 
 /** Why a sick-call email is not sent yet, or "ok". */
 export type SickCallVerdict = "ok" | "empty" | "no-absence" | "no-day";
@@ -714,9 +719,13 @@ export type SickCallVerdict = "ok" | "empty" | "no-absence" | "no-day";
 export function sickCallVerdict(body: string): SickCallVerdict {
   if (!body.trim()) return "empty";
   if (!saysCannotAttend(body)) return "no-absence";
-  const aboutShift = /\b(today|tonight|this morning|shift|work|job|turno|hoy|trabajo|trabajar|esta manana)\b/.test(
-    normalizeReply(body),
-  );
+  const t = normalizeReply(body);
+  const today = /\b(today|tody|toady|todya|2day|tonight|this morning|hoy|oy|esta manana|esta noche)\b/.test(t);
+  // Tomorrow is the wrong shift: "I can't come to work tomorrow" named "work"
+  // and passed. "manana" alone is tomorrow; "esta manana" is this morning.
+  const tomorrow = /\b(tomorrow|tomorow|tommorow|tmrw|tmr)\b|(?<!\besta )(?<!\bla )\bmanana\b/.test(t);
+  if (tomorrow && !today) return "no-day";
+  const aboutShift = today || /\b(shift|work|job|turno|trabajo|trabajar)\b/.test(t);
   return aboutShift ? "ok" : "no-day";
 }
 
@@ -1043,8 +1052,10 @@ export const FILES: PickableItem[] = [
  * mail job — not just Day One — has a few things in it that are not the job.
  *
  * Two rules keep the clutter honest:
- *  - Timestamps sit on the task's own day. A `mail-etiquette` decoy is dated to
- *    that Friday afternoon, not to Day One's "7:41 AM".
+ *  - Every Act I decoy carries its story day (`sentOn`), and Mail labels it
+ *    from there in the learner's language: "7:41 AM" on its own day, then
+ *    "Ayer", "Lun", "12 ago". A fixed label made the same email "Yesterday"
+ *    on Wednesday and on Friday (Wave 5 F-12), and English in Spanish (F-11).
  *  - The wrong-click hint names what the job actually is, so the clutter never
  *    fights the task's framing (a compose-only job says "there's nothing to
  *    open here — click Compose"; a reply job names the sender to open).
@@ -1052,7 +1063,7 @@ export const FILES: PickableItem[] = [
  * `storyMailsUpTo`) shows alongside these regardless.
  */
 const DAY_ONE_DECOYS: DecoyEmail[] = [
-  { key: "dairy", from: "Harbor Dairy", initials: "HD", color: "#1a73e8", time: "7:41 AM", isTarget: false, unread: true,
+  { key: "dairy", from: "Harbor Dairy", initials: "HD", color: "#1a73e8", time: "7:41 AM", sentOn: NIGHT_BEFORE, isTarget: false, unread: true,
     subject: { en: "Milk delivery confirmation", es: "Confirmación de entrega de leche" },
     preview: { en: "Tomorrow's order is on the truck. No action needed.", es: "El pedido de mañana ya va en el camión. No hay que hacer nada." },
     body: {
@@ -1060,7 +1071,7 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
       es: ["Hola, Harborside Cafe:", "Su pedido de mañana ya va en el camión: 12 galones de leche entera, 6 galones de leche de avena y 4 cuartos de crema.", "Hora de entrega: de 6:30 a 7:00 AM, por la puerta de atrás.", "¿Preguntas? Llame a despacho al (617) 555-0190.", "Despacho de Harbor Dairy"],
     },
     wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
-  { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", isTarget: false, unread: true,
+  { key: "sched", from: "Harborside Schedule", initials: "HS", color: "#5f6368", time: "6:15 AM", sentOn: STORY_DAY_BY_LEVEL.level2, isTarget: false, unread: true,
     subject: { en: "Your schedule for Aug 24–30", es: "Tu horario del 24–30 de ago" },
     preview: { en: "Next week's shifts have been posted.", es: "Ya se publicaron los turnos de la próxima semana." },
     body: {
@@ -1068,15 +1079,15 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
       es: ["Tu horario del 24 al 30 de agosto ya está publicado. Abre la app de Harborside para ver tus turnos.", "¿Necesitas cambiar un turno? Pídeselo a tu gerente por lo menos 48 horas antes.", "Este es un mensaje automático. Por favor, no respondas."],
     },
     wrongHint: wrongHint("That's an automatic message about the schedule. Maria's email has her name on the left.", "Ese es un mensaje automático del horario. El correo de Maria tiene su nombre a la izquierda.") },
-  { key: "hr", ...inboxSender(CAST.hr), time: "Yesterday", isTarget: false,
+  { key: "hr", ...inboxSender(CAST.hr), time: "4:30 PM", sentOn: NIGHT_BEFORE - 3, isTarget: false,
     subject: { en: "Your first payday", es: "Tu primer día de pago" },
     preview: { en: "Your first pay date is Friday, Aug 28.", es: "Tu primer día de pago es el viernes 28 de agosto." },
     body: {
-      en: ["Welcome to Harborside!", "We pay every two weeks. Your first pay date is Friday, Aug 28. It pays your hours from Aug 18 to 28.", "On that day, sign in to the employee portal and click Pay to see your pay stub.", "Questions about your pay? Reply to this email or call (617) 555-0114."],
-      es: ["¡Te damos la bienvenida a Harborside!", "Pagamos cada dos semanas. Tu primer día de pago es el viernes 28 de agosto. Paga tus horas del 18 al 28 de agosto.", "Ese día, entra al portal de empleados y haz clic en Pago para ver tu recibo.", "¿Preguntas sobre tu pago? Responde a este correo o llama al (617) 555-0114."],
+      en: ["Welcome to Harborside!", "We pay every two weeks. Your first pay date is Friday, Aug 28. It pays your hours from Aug 18 to 27.", "On that day, sign in to the employee portal and click Pay to see your pay stub.", "Questions about your pay? Reply to this email or call (617) 555-0114."],
+      es: ["¡Te damos la bienvenida a Harborside!", "Pagamos cada dos semanas. Tu primer día de pago es el viernes 28 de agosto. Paga tus horas del 18 al 27 de agosto.", "Ese día, entra al portal de empleados y haz clic en Pago para ver tu recibo.", "¿Preguntas sobre tu pago? Responde a este correo o llama al (617) 555-0114."],
     },
     wrongHint: wrongHint("That's from HR about pay. Today's task is the email from Maria Delgado.", "Eso es de RR.HH. sobre el pago. La tarea de hoy es el correo de Maria Delgado.") },
-  { key: "it", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Yesterday", isTarget: false,
+  { key: "it", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "9:00 AM", sentOn: NIGHT_BEFORE - 1, isTarget: false,
     subject: { en: "Reminder: update your password", es: "Recordatorio: cambia tu contraseña" },
     preview: { en: "Your password expires in 12 days.", es: "Tu contraseña vence en 12 días." },
     body: {
@@ -1084,7 +1095,7 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
       es: ["Tu contraseña de Harborside vence en 12 días.", "Para cambiarla, ve a la página de inicio de sesión y haz clic en ¿Olvidaste tu contraseña?", "Sistemas nunca te va a pedir tu contraseña por correo ni por mensaje de texto. Si alguien te la pide, no contestes. Avísale a tu gerente.", "Sistemas · ext. 204"],
     },
     wrongHint: wrongHint("That's from IT. You can skip it for now. Find Maria Delgado.", "Eso es de sistemas. Puedes ignorarlo por ahora. Busca a Maria Delgado.") },
-  { key: "team", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Mon", isTarget: false,
+  { key: "team", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "8:05 AM", sentOn: NIGHT_BEFORE, isTarget: false,
     subject: { en: "Break room fridge cleaning", es: "Limpieza del refrigerador" },
     preview: { en: "Please remove your food by Friday.", es: "Saca tu comida antes del viernes." },
     body: {
@@ -1092,7 +1103,7 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
       es: ["Hola a todos:", "El refrigerador del cuarto de descanso se limpia el viernes a las 3 PM.", "La comida sin nombre y sin fecha se va a tirar.", "¡Gracias! El equipo del café"],
     },
     wrongHint: wrongHint("That's a team note about the fridge, not from your manager.", "Eso es una nota del equipo sobre el refrigerador, no de tu gerente.") },
-  { key: "vendor", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "Aug 18", isTarget: false,
+  { key: "vendor", from: "Bean & Leaf Roasters", initials: "BL", color: "#7b4f2a", time: "10:20 AM", sentOn: HIRE_DAY, isTarget: false,
     subject: { en: "Friday delivery window changed", es: "Cambió la entrega del viernes" },
     preview: { en: "Trucks will arrive after 10 AM.", es: "Los camiones llegarán después de las 10 AM." },
     body: {
@@ -1100,7 +1111,7 @@ const DAY_ONE_DECOYS: DecoyEmail[] = [
       es: ["Hola:", "A partir de este viernes, nuestros camiones van a llegar entre las 10 AM y las 12 PM, no de 8 a 10 AM.", "Su pedido semanal sigue igual.", "Bean & Leaf Roasters, ventas al por mayor"],
     },
     wrongHint: wrongHint("That is a vendor, not your manager. Look for Maria Delgado.", "Eso es un proveedor, no tu gerente. Busca a Maria Delgado.") },
-  { key: "promo", from: "Uniform Outlet", initials: "UO", color: "#c5221f", time: "Aug 12", isTarget: false,
+  { key: "promo", from: "Uniform Outlet", initials: "UO", color: "#c5221f", time: "7:00 AM", sentOn: NIGHT_BEFORE - 5, isTarget: false,
     subject: { en: "15% off fall uniforms", es: "15% de descuento en uniformes" },
     preview: { en: "Sale ends Sunday. Use code FALL15.", es: "La oferta termina el domingo. Usa el código FALL15." },
     body: {
@@ -1159,15 +1170,15 @@ const SEND_LINK_DECOYS: DecoyEmail[] = [
 const OPEN_DARNELL_EN = "That one is not the job. Open Darnell's email about extra aprons.";
 const OPEN_DARNELL_ES = "Ese no es el trabajo. Abre el correo de Darnell sobre los delantales.";
 const ETIQUETTE_DECOYS: DecoyEmail[] = [
-  { key: "fridge", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "9:12 AM", isTarget: false,
+  { key: "fridge", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "9:12 AM", sentOn: STORY_DAY_BY_LEVEL.level3a, isTarget: false,
     subject: { en: "Fridge gets cleaned out Monday", es: "El refrigerador se vacía el lunes" },
     preview: { en: "Take your food home this weekend.", es: "Llévate tu comida este fin de semana." },
     wrongHint: wrongHint(OPEN_DARNELL_EN, OPEN_DARNELL_ES) },
-  { key: "payroll-note", ...inboxSender(CAST.hr), time: "8:40 AM", isTarget: false,
+  { key: "payroll-note", ...inboxSender(CAST.hr), time: "8:40 AM", sentOn: STORY_DAY_BY_LEVEL.level3a, isTarget: false,
     subject: { en: "Direct deposit posts Friday", es: "El depósito directo entra el viernes" },
     preview: { en: "Nothing to do. Just a heads up.", es: "No hay que hacer nada. Solo un aviso." },
     wrongHint: wrongHint(OPEN_DARNELL_EN, OPEN_DARNELL_ES) },
-  { key: "it-survey", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "Fri", isTarget: false,
+  { key: "it-survey", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "2:15 PM", sentOn: STORY_DAY_BY_LEVEL.level3, isTarget: false,
     subject: { en: "2-minute survey: the new tablets", es: "Encuesta de 2 minutos: las tabletas nuevas" },
     preview: { en: "Optional. Closes next week.", es: "Opcional. Cierra la próxima semana." },
     wrongHint: wrongHint(OPEN_DARNELL_EN, OPEN_DARNELL_ES) },
@@ -1175,15 +1186,15 @@ const ETIQUETTE_DECOYS: DecoyEmail[] = [
 
 /** Monday morning of week two, before your shift — you're writing Maria that you're sick. */
 const SICK_CALL_DECOYS: DecoyEmail[] = [
-  { key: "benefits", ...inboxSender(CAST.hr), time: "Fri", isTarget: false,
+  { key: "benefits", ...inboxSender(CAST.hr), time: "3:00 PM", sentOn: STORY_DAY_BY_LEVEL.level3, isTarget: false,
     subject: { en: "Open enrollment starts next week", es: "La inscripción abierta empieza la próxima semana" },
     preview: { en: "You'll get the forms by email.", es: "Recibirás los formularios por correo." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
-  { key: "it-maint", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "6:05 AM", isTarget: false,
+  { key: "it-maint", from: "IT Helpdesk", initials: "IT", color: "#3c4043", time: "6:05 AM", sentOn: STORY_DAY_BY_LEVEL.level3a2, isTarget: false,
     subject: { en: "Login system maintenance tonight", es: "Mantenimiento del sistema de acceso esta noche" },
     preview: { en: "11 PM to 1 AM. No action needed.", es: "De 11 PM a 1 AM. No hay que hacer nada." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },
-  { key: "potluck", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "Sat", isTarget: false,
+  { key: "potluck", from: "Cafe Team", initials: "CT", color: "#1e8e3e", time: "11:30 AM", sentOn: STORY_DAY_BY_LEVEL.level3a, isTarget: false,
     subject: { en: "Potluck sign-up for next Friday", es: "Lista para el potluck del próximo viernes" },
     preview: { en: "Add what you'll bring.", es: "Anota qué vas a traer." },
     wrongHint: wrongHint(NOT_A_JOB_EN, NOT_A_JOB_ES) },

@@ -145,7 +145,7 @@ export default function UploadScheduleDrive() {
                 <span className="block text-[12px] text-[#5f6368]">{fc.sharedFolderName} › {FOLDER_LABEL[UPLOAD_FOLDER][lang]}</span>
               </span>
             </div>
-            <TaskDoneActions kicker={c.doneKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="upload-schedule" kicker={c.doneKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       ) : (

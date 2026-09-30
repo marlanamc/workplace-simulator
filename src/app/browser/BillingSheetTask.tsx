@@ -259,7 +259,7 @@ export default function BillingSheetTask() {
         <div className="absolute inset-0 overflow-y-auto bg-surface-muted p-6">
           <div className="mx-auto flex max-w-[640px] flex-col gap-5">
             <TaskDoneCard kicker={c.sentKicker} />
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="billing-sheet" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       )}

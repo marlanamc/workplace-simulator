@@ -271,7 +271,7 @@ export default function PriorityCallTask() {
               badgeName={c.badgeName}
               badgeWhere={c.badgeWhere}
             />
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
+            <TaskDoneActions taskKey="priority-call" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} backToDeskLabel={c.backToDesk} onTryAgain={restart} />
           </div>
         </div>
       )}

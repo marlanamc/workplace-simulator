@@ -246,7 +246,7 @@ export default function OnboardingFormsTask() {
                   <dt className="font-semibold">{s.dateLabel}</dt><dd>{date || PRACTICE_PROFILE.date}</dd>
                 </dl>
               )}
-              <TaskDoneActions
+              <TaskDoneActions taskKey={active}
                 kicker={s.sentKicker}
                 tryAgainLabel={s.tryAgain}
                 backToDeskLabel={s.backToDesk}

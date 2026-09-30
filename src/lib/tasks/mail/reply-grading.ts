@@ -37,6 +37,9 @@ export function startTimeVerdict(response: string): StartTimeVerdict {
   if (!response.trim()) return "empty";
   if (hasBlank(response)) return "blank";
   const t = reassured(response);
+  // "No estoy segura" starts with "no" but is not a no: it gets the "answer
+  // yes or no" correction, not "your reply says you can't come".
+  if (UNCLEAR.test(t) && !DECLINES.test(t)) return "unclear";
   if (/^(no|nope|nah)\b/.test(t) || DECLINES.test(t) || NEGATED_ATTEND.test(t)) return "declines";
   if (LATE.test(t)) return "late";
   if (namesOtherTime(t)) return "other-time";
@@ -48,8 +51,9 @@ const UNDER_COUNTER_EN = /\b(under|undr|below|beneath|underneath)\b.{0,35}\b(cou
 const UNDER_COUNTER_ES = /\b(debajo|bajo)\b.{0,35}\b(mostrador|meson|barra|encimera)\b/;
 const SHELF = /\b(shelf|shelves|shelve|estante|repisa)\b/;
 /** "won't put it under", "no están debajo": a negation in the same clause, just before the place. */
+// Up to four words between: Spanish puts more there ("no la voy a dejar debajo").
 const NEGATED_PLACE =
-  /\b(not|no|never|won'?t|can'?t|cannot|don'?t|nunca|jamas)\b(?: [\w']+){0,3} (under|undr|below|beneath|underneath|on|debajo|bajo|en|shelf|estante|repisa)\b/;
+  /\b(not|no|never|won'?t|can'?t|cannot|don'?t|nunca|jamas)\b(?: [\w']+){0,4} (under|undr|below|beneath|underneath|on|debajo|bajo|en|shelf|estante|repisa)\b/;
 
 /**
  * Darnell: "you can leave your bag on the shelf under the counter. Reply and

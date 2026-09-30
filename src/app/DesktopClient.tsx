@@ -80,8 +80,8 @@ function JobCardHost({ children }: { children: ReactNode }) {
 
   return (
     <JobCardProvider
-      // Until the first task is done, a reload returns to the welcome beat, so
-      // the optional pointer practice it offers is still there (finding #17).
+      // Until the first task is done, the beat the learner is on is a tour
+      // draft, so a reload keeps their place (Wave 5 F-7).
       introSeen={introBeatsDone(completedTaskKeys)}
       onIntroDone={() => setStoryFlag(INTRO_FLAG, "true")}
     >

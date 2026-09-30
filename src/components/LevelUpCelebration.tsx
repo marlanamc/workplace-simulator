@@ -7,6 +7,7 @@ import { CORE_FINALE, LEVELS, levelUpCardFor, levelUpCopyFor, levelUpShowsConfet
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { HANDOFF_CTA } from "@/lib/story-beats";
 import Confetti from "@/components/task/Confetti";
+import { levelCardMode } from "@/lib/level-card";
 import { logout } from "@/app/actions";
 
 /**
@@ -27,7 +28,7 @@ import { logout } from "@/app/actions";
 const FIRST_FREE_TABBING_KEY = LEVELS.find((l) => l.freeTabbing)?.key;
 
 export default function LevelUpCelebration() {
-  const { celebrateLevel, dismissLevelCelebration, completedTaskKeys, lang, setLang, bridgePath, courseRoute, saving, saveError } = useProgress();
+  const { celebrateLevel, celebrateReturning, dismissLevelCelebration, completedTaskKeys, lang, setLang, bridgePath, courseRoute, saving, saveError } = useProgress();
   const { openApp, minimizeActive } = useWindowManager();
   const dialogRef = useRef<HTMLDivElement>(null);
   // Act II+ openers normally defer to ActIntro and never get recorded here
@@ -69,9 +70,13 @@ export default function LevelUpCelebration() {
 
   if (!open || !celebrateLevel?.levelUp) return null;
   const levelUp = levelUpCopyFor(celebrateLevel, bridgePath)!;
-  const kicker = levelUp.kicker[lang];
+  const mode = levelCardMode(levelUp.stoppingPoint, celebrateReturning);
+  const welcomeBack = mode === "welcome-back";
+  // Back after a sign-in: the title still says where they left off, and the
+  // body says their work is waiting, not "next time you sign in".
+  const kicker = welcomeBack ? DESKTOP_COPY[lang].welcomeBackKicker : levelUp.kicker[lang];
   const title = levelUp.title[lang];
-  const body = levelUp.body[lang];
+  const body = welcomeBack ? DESKTOP_COPY[lang].welcomeBackBody : levelUp.body[lang];
   const handoff = nextHandoff(completedTaskKeys, bridgePath, courseRoute);
   const cta =
     celebrateLevel.freeTabbing && handoff
@@ -102,7 +107,7 @@ export default function LevelUpCelebration() {
         className="relative w-full max-w-[460px] overflow-hidden rounded-2xl bg-white p-8 text-center shadow-2xl animate-fade-up"
         onClick={(e) => e.stopPropagation()}
       >
-        {levelUpShowsConfetti(levelUp) && <Confetti count={22} />}
+        {levelUpShowsConfetti(levelUp) && !welcomeBack && <Confetti count={22} />}
         <div className="relative z-10">
         <button type="button" onClick={() => setLang(lang === "en" ? "es" : "en")} className="mb-2 min-h-10 rounded-full px-3 text-[14px] text-text-secondary hover:bg-surface-muted">{lang === "en" ? "Español" : "English"}</button>
         <div className="mx-auto animate-pop-in text-[48px] leading-none" aria-hidden>
@@ -118,7 +123,16 @@ export default function LevelUpCelebration() {
             {DESKTOP_COPY[lang].bookmarkOnramp}
           </p>
         ) : null}
-        {levelUp.stoppingPoint ? (
+        {welcomeBack ? (
+          <button
+            data-celebration-continue
+            data-welcome-back
+            onClick={keepGoing}
+            className="mt-7 inline-flex min-h-[50px] w-full items-center justify-center rounded-full bg-accent px-6 text-[16px] font-medium text-white hover:bg-accent-hover cursor-pointer"
+          >
+            {cta}
+          </button>
+        ) : mode === "stop" ? (
           <>
             <form action={logout}>
               <button

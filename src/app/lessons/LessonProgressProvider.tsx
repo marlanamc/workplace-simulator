@@ -118,6 +118,7 @@ export default function LessonProgressProvider({
       certificateTrackKeys: TRACKS.filter((t) => isTrackComplete(t, completedTaskKeys)).map((t) => t.key),
       celebrateTrack: null,
       celebrateLevel: null,
+      celebrateReturning: false,
       // Pinned to the lesson's track, so finishing never moves the desktop on.
       currentTrack: seed.track,
       bridgePath: seed.bridgePath,

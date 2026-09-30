@@ -17,6 +17,7 @@ export default function TourTask({
   startAtHelp,
   walkthroughRunning,
   helpOpen,
+  helpOpened,
   onOpenHelp,
   onCloseHelp,
   onStartWalkthrough,
@@ -31,6 +32,8 @@ export default function TourTask({
   walkthroughRunning: boolean;
   /** Help is lifted so the walkthrough can open it via the card's ?. */
   helpOpen: boolean;
+  /** Help has been opened on this run of the tour; kept across a reload. */
+  helpOpened: boolean;
   onOpenHelp: () => void;
   onCloseHelp: () => void;
   /** Tell BrowserClient to begin the one-instruction-at-a-time walkthrough overlay. */
@@ -43,8 +46,7 @@ export default function TourTask({
   // Only the just-finished path reports a finish to the Job Card. Reopening
   // Welcome later must not steal the current task's instruction.
   const [justFinishedTour, setJustFinishedTour] = useState(false);
-  const [openedHelp, setOpenedHelp] = useState(false);
-  if (helpOpen && !openedHelp) setOpenedHelp(true);
+  const openedHelp = helpOpen || helpOpened;
 
   // The walkthrough returns here for the Help beat after Mail.
   // Derived rather than synced in an effect; "restart" clears startAtHelp via
@@ -60,10 +62,7 @@ export default function TourTask({
       ? { kicker: home.packetKicker[lang], title: home.packetTitle[lang] }
       : { kicker: c.packetKicker, title: c.packetTitle };
 
-  const openHelp = () => {
-    setOpenedHelp(true);
-    onOpenHelp();
-  };
+  const openHelp = () => onOpenHelp();
 
   const finish = () => {
     setJustFinishedTour(true);
@@ -72,7 +71,6 @@ export default function TourTask({
   };
 
   const restart = () => {
-    setOpenedHelp(false);
     setJustFinishedTour(false);
     setView("intro");
     onStartWalkthrough();
@@ -184,7 +182,7 @@ export default function TourTask({
           </div>
 
           {justFinishedTour && (
-            <TaskDoneActions kicker={c.sentKicker} tryAgainLabel={c.tryAgain} onTryAgain={restart} />
+            <TaskDoneActions taskKey="tour" kicker={c.sentKicker} tryAgainLabel={c.tryAgain} onTryAgain={restart} />
           )}
         </div>
       )}

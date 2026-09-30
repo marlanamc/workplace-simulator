@@ -101,4 +101,19 @@ describe("job card wiring", () => {
     // and the learner is told "Done" instead of what they just did.
     expect(call, "finishes without telling the card what was finished").toMatch(/kicker=/);
   });
+
+  // Wave 5 F-9/F-22: the card says "Done" only for the job just completed,
+  // matched by this key. A wrong key would silently hide a real finish, so a
+  // literal key must be a job this same file checks or completes.
+  it.each(tasks)("$name labels its finish with a job it owns", ({ src }) => {
+    if (!src.includes("<TaskDoneActions") && !src.includes("<DoneBlock")) return;
+    const keys = [...src.matchAll(/<(?:TaskDoneActions|DoneBlock)\s+taskKey="([a-z0-9-]+)"/g)].map((m) => m[1]);
+    for (const key of keys) {
+      expect(src, `finish labelled "${key}" but this file never checks or completes it`).toMatch(
+        new RegExp(`(includes|markComplete)\\(\\s*["']${key}["']`),
+      );
+    }
+    const calls = src.match(/<TaskDoneActions[\s\S]*?\/>/g) ?? [];
+    for (const call of calls) expect(call, "finish without a taskKey").toMatch(/taskKey=/);
+  });
 });
