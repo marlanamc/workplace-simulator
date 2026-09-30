@@ -4,6 +4,7 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { MoveUp } from "lucide-react";
 import { useJobCardOptional } from "@/lib/job-card-context";
+import { visibleBox, type Box } from "@/lib/show-me-rect";
 
 /**
  * Points at a real on-screen element by id. Mark the target with
@@ -19,6 +20,11 @@ import { useJobCardOptional } from "@/lib/job-card-context";
  * a new step (the choice was made, the stub was closed) it goes, even when
  * the step was done from the keyboard and no pointer press dismissed it; and
  * a target that leaves the page takes the ring with it (Phase 3 N-1).
+ *
+ * The ring is drawn around the part of the target that can be seen. A target
+ * bigger than the pane it scrolls in (a page in the picker's preview) is cut
+ * to that pane and to the screen, so the ring never runs over the controls
+ * beside it or off the screen (Phase 3 N-8).
  */
 export default function ShowMeHighlight({
   targetId,
@@ -29,7 +35,7 @@ export default function ShowMeHighlight({
   label: string;
   onDismiss?: () => void;
 }) {
-  const [rect, setRect] = useState<DOMRect | null>(null);
+  const [rect, setRect] = useState<Box | null>(null);
   const [oval, setOval] = useState(false);
   const [look, setLook] = useState<string | null>(null);
   // The card step the ring was lit on. A new step means the pointer is stale.
@@ -56,7 +62,7 @@ export default function ShowMeHighlight({
       const el =
         document.querySelector(`[data-showme="${targetId}"][data-showme-primary]`) ??
         document.querySelector(`[data-showme="${targetId}"]`);
-      setRect(el ? el.getBoundingClientRect() : null);
+      setRect(el ? seenPart(el) : null);
       setOval(Boolean(el?.hasAttribute("data-showme-oval")));
       setLook(el?.getAttribute("data-showme-look") || null);
     };
@@ -122,6 +128,8 @@ export default function ShowMeHighlight({
 
   if (!isClient || !targetId || !rect || stale) return null;
 
+  const width = rect.right - rect.left;
+  const height = rect.bottom - rect.top;
   const padX = oval ? 10 : 6;
   const padY = oval ? 8 : 6;
   // Keep the ring symmetric around the target. Clamping one edge (e.g. against
@@ -129,8 +137,8 @@ export default function ShowMeHighlight({
   const hole = {
     left: rect.left - padX,
     top: rect.top - padY,
-    width: rect.width + padX * 2,
-    height: rect.height + padY * 2,
+    width: width + padX * 2,
+    height: height + padY * 2,
   };
   const radius = oval ? "rounded-full" : "rounded-xl";
   // Near the shelf, keep the bubble snug so it reads as attached to the pin.
@@ -138,7 +146,7 @@ export default function ShowMeHighlight({
   const bubbleAbove = rect.top > 120;
   const bubbleGap = nearShelf ? 8 : 16;
   const bubbleTop = bubbleAbove ? rect.top - bubbleGap : rect.bottom + bubbleGap;
-  const bubbleCenterX = rect.left + rect.width / 2;
+  const bubbleCenterX = rect.left + width / 2;
 
   return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[70]" aria-hidden>
@@ -166,4 +174,14 @@ export default function ShowMeHighlight({
     </div>,
     document.body,
   );
+}
+
+/** The target's rectangle, cut by every ancestor that scrolls or clips it and by the screen. */
+function seenPart(el: Element): Box | null {
+  const clips: Box[] = [{ left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight }];
+  for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) {
+    const style = getComputedStyle(a);
+    if (style.overflowX !== "visible" || style.overflowY !== "visible") clips.push(a.getBoundingClientRect());
+  }
+  return visibleBox(el.getBoundingClientRect(), clips);
 }
