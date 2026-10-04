@@ -126,3 +126,12 @@ export const LIBRARY_COPY = {
 
 export const fill = (text: string, values: Record<string, string | number>) =>
   text.replace(/\{(\w+)\}/g, (m, k: string) => (k in values ? String(values[k]) : m));
+
+/** Library audience controls. Student view is the normal public library. */
+export const LIBRARY_VIEW_COPY = {
+  teacher: { en: "Teacher view", es: "Vista del docente" },
+  explanation: { en: "Plan lessons, choose practice examples, and prepare materials. Student view keeps just the lesson choices.", es: "Planifica lecciones, elige ejemplos y prepara materiales. La vista del estudiante muestra solo las opciones de lecciones." },
+  previewStudent: { en: "Preview student view", es: "Ver como estudiante" },
+  collectionNote: { en: "Teaching sequence, classroom and home examples, and printable observation sheets for eight lessons already in this library.", es: "Secuencia docente, ejemplos para clase y casa, y hojas de observación para ocho lecciones de esta biblioteca." },
+  sequence: { en: "Teaching sequence and home practice", es: "Secuencia docente y práctica en casa" },
+};

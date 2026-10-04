@@ -1,3 +1,4 @@
+import { pathwayByKey } from "./pathways";
 import type { Lang, Localized } from "@/lib/task-types";
 import { LESSONS, type LessonEntry } from "./catalog";
 import { isSkillTag, SKILL_LABELS, type SkillTag } from "./skills";
@@ -128,12 +129,13 @@ export function searchLessons(skill: SkillTag | null, query: string): LessonEntr
 }
 
 /** `teacher` shows the teacher preview links; students never see them by default. */
-export function libraryHref(lang: Lang, skill: SkillTag | null = null, query = "", teacher = false) {
+export function libraryHref(lang: Lang, skill: SkillTag | null = null, query = "", teacher = false, pathway?: string) {
   const params = new URLSearchParams();
   if (lang === "es") params.set("lang", lang);
   if (skill) params.set("skill", skill);
   if (cleanSearch(query)) params.set("q", cleanSearch(query));
   if (teacher) params.set("teacher", "1");
+  if (!skill && !cleanSearch(query) && pathwayByKey(pathway)) params.set("pathway", pathway!);
   return `/lessons${params.size ? `?${params}` : ""}`;
 }
 
@@ -149,6 +151,7 @@ export function libraryReturn(raw?: string | null, lang?: Lang) {
       isSkillTag(skill) ? skill : null,
       url.searchParams.get("q") ?? "",
       url.searchParams.get("teacher") === "1",
+      url.searchParams.get("pathway") ?? undefined,
     );
   } catch {
     return libraryHref(lang ?? "en");

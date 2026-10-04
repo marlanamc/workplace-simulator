@@ -193,6 +193,10 @@ computer lesson; they do not change simulator answers or award credit. See
 
 ### Everyday digital confidence pilot collection
 
-`/lessons/confidence` groups eight existing skills for adult ESOL and beginner computer learners. Teacher mode (`?teacher=1`) adds a short classroom sequence, optional Google practice, printable learner sheets, and a separate observation form. Each task has directly linkable classroom, changed-facts (`?scenario=try`), and home (`?scenario=home`) practice. The Job Card keeps all simulator guidance and offers optional pointer practice. Original classroom activities and Story answers remain available.
+`/lessons/confidence?teacher=1` groups eight existing skills for adult ESOL and beginner computer learners. Teacher mode (`?teacher=1`) adds a short classroom sequence, optional Google practice, printable learner sheets, and a separate observation form. Each task has directly linkable classroom, changed-facts (`?scenario=try`), and home (`?scenario=home`) practice. The Job Card keeps all simulator guidance and offers optional pointer practice. Original classroom activities and Story answers remain available.
 
 Fresh examples reuse the simulated file picker, phone, spreadsheet, and email result controls. Completion records remain practice counts, not mastery. Home readiness requires learner observation; see [the collection pilot guide](curriculum/everyday-digital-confidence.md).
+
+The default `/lessons` is the student view: short goal pathways above topics, search, and one Start/Do again link per lesson. `/lessons?teacher=1` adds a clearly labeled teacher view, a **Preview student view** link that keeps language/search/topic/pathway, and per-lesson teaching-sequence links. The confidence collection appears only in teacher view; its old unqualified collection URL returns to the student library. Individual printable learner handouts and direct scenario links remain shareable. These are presentation modes, not an authentication boundary.
+
+Goal pathways in `src/lib/lessons/pathways.ts` group existing lessons for online classwork, workplace communication, and job applications. `/lessons?pathway=classwork` opens a suggested order with no locked steps. Language changes and lesson return links keep the selected pathway; progress reuses existing practice completion records.

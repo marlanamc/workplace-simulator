@@ -4,7 +4,9 @@ Status: implementation available for review; **learner observations and independ
 
 ## Entry points
 
-- `/lessons/confidence`: ordered, unlocked collection of eight existing tasks.
+- `/lessons`: clean student library with the same lessons under their topics.
+- `/lessons?teacher=1`: teacher library with a student-preview button and per-lesson teaching links.
+- `/lessons/confidence?teacher=1`: ordered teacher collection of eight existing tasks.
 - `/lessons/confidence?teacher=1`: teaching sequences and observation sheet.
 - `/lessons/confidence?teacher=1&lesson=mail-attach`: individual printable learner sheet; teacher notes are omitted when printed.
 - `/lessons/confidence?sheet=observation&teacher=1`: printable teacher observation form, separate from learner sheets.

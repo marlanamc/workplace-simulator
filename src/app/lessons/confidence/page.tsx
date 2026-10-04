@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { lessonByKey } from "@/lib/lessons/catalog";
 import { CONFIDENCE_KEYS, CONFIDENCE_SEQUENCES, CONFIDENCE_TITLE, SCENARIOS, SCENARIO_LABELS, isConfidenceKey, scenarioHref } from "@/lib/lessons/confidence";
 import { CONFIDENCE_SCENARIOS } from "@/lib/tasks/confidence/content";
@@ -13,6 +13,9 @@ export default async function ConfidencePage({ searchParams }: { searchParams: P
   const teacher = first(q.teacher) === "1";
   const observation = first(q.sheet) === "observation";
   const rawKey = first(q.lesson);
+  // Older collection links lead students to the single, clean lesson library.
+  // Individual printable handouts remain shareable without teacher chrome.
+  if (!teacher && !rawKey && !observation) redirect(`/lessons${lang === "es" ? "?lang=es" : ""}`);
   if (rawKey && !isConfidenceKey(rawKey)) notFound();
   const keys = rawKey && isConfidenceKey(rawKey) ? [rawKey] : CONFIDENCE_KEYS;
   const t = (en: string, es: string) => lang === "es" ? es : en;

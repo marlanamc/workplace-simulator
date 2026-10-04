@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { Check, Clock } from "lucide-react";
 import type { Lang } from "@/lib/task-types";
-import { fill, LIBRARY_COPY, TEACHER_COPY } from "@/lib/lessons/copy";
+import { fill, LIBRARY_COPY, TEACHER_COPY, LIBRARY_VIEW_COPY } from "@/lib/lessons/copy";
 import { useLibraryDone } from "./LibraryDone";
 
 export type LibraryRow = {
@@ -17,6 +17,7 @@ export type LibraryRow = {
   href: string;
   previewHref?: string;
   materialsHref?: string;
+  sequenceHref?: string;
   /** Search results: the lesson's icon on its topic color. Topic lists show a numbered life ring instead. */
   icon?: ReactNode;
   solid?: string;
@@ -101,6 +102,11 @@ function Row({ lang, row, number, done }: { lang: Lang; row: LibraryRow; number:
         >
           {label}
         </Link>
+        {row.sequenceHref && (
+          <Link href={row.sequenceHref} data-testid="lesson-teaching-sequence" className="flex min-h-11 items-center justify-center text-center text-[15px] font-bold text-[#1d4f91] underline">
+            {LIBRARY_VIEW_COPY.sequence[lang]}
+          </Link>
+        )}
         {row.materialsHref && (
           <Link href={row.materialsHref} className="flex min-h-11 items-center justify-center text-[15px] font-bold text-[#1d4f91] underline">
             {MATERIAL_COPY.open[lang]}

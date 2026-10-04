@@ -1,3 +1,4 @@
+import { LESSON_PATHWAYS, PATHWAY_COPY, pathwayByKey } from "@/lib/lessons/pathways";
 import { CONFIDENCE_TITLE } from "@/lib/lessons/confidence";
 import { materialsHref } from "@/lib/lessons/materials-links";
 import Link from "next/link";
@@ -6,7 +7,7 @@ import { Anchor, Search, Volume2 } from "lucide-react";
 import { LESSONS, type LessonEntry } from "@/lib/lessons/catalog";
 import { TASK_ICONS } from "@/lib/icons";
 import { QUICK_SEARCHES, searchLessons, libraryHref, cleanSearch } from "@/lib/lessons/library";
-import { fill, LESSON_COPY, LIBRARY_COPY } from "@/lib/lessons/copy";
+import { fill, LESSON_COPY, LIBRARY_COPY, LIBRARY_VIEW_COPY } from "@/lib/lessons/copy";
 import { SKILL_LABELS, SKILL_LOOK, SKILL_TAGS, isSkillTag, type SkillTag } from "@/lib/lessons/skills";
 import { LibraryDoneProvider, ListenButton, TopicProgress } from "./LibraryDone";
 import { LibraryLessonList, type LibraryRow } from "./LibraryLessonList";
@@ -35,7 +36,7 @@ const inSkill = (skill: SkillTag) => LESSONS.filter((l) => l.skills.includes(ski
 export default async function LessonsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lang?: string | string[]; skill?: string | string[]; q?: string | string[]; teacher?: string | string[] }>;
+  searchParams: Promise<{ lang?: string | string[]; skill?: string | string[]; q?: string | string[]; teacher?: string | string[]; pathway?: string | string[] }>;
 }) {
   const query = await searchParams;
   const lang = first(query.lang) === "es" ? "es" : "en";
@@ -43,11 +44,12 @@ export default async function LessonsPage({
   const skill: SkillTag | null = isSkillTag(rawSkill) ? rawSkill : null;
   const queryText = cleanSearch(first(query.q) ?? "");
   const teacher = first(query.teacher) === "1";
-  const view = queryText ? "search" : skill ? "topic" : "home";
+  const pathway = !queryText && !skill ? pathwayByKey(first(query.pathway)) : undefined;
+  const view = queryText ? "search" : skill ? "topic" : pathway ? "pathway" : "home";
   // Only offer topics that have a lesson behind them.
   const tags = SKILL_TAGS.filter((t) => inSkill(t).length > 0);
 
-  const here = libraryHref(lang, skill, queryText, teacher);
+  const here = libraryHref(lang, skill, queryText, teacher, pathway?.key);
   const lessonHref = (key: string, preview = false) => {
     const params = new URLSearchParams();
     if (lang === "es") params.set("lang", lang);
@@ -67,6 +69,7 @@ export default async function LessonsPage({
       href: lessonHref(l.taskKey),
       materialsHref: teacher ? materialsHref(l.taskKey, lang) : undefined,
       previewHref: teacher ? lessonHref(l.taskKey, true) : undefined,
+      sequenceHref: teacher && l.sequence ? `/lessons/confidence?teacher=1&lesson=${l.taskKey}&lang=${lang}` : undefined,
       ...(withIcon && look && topic
         ? {
             icon: <Icon size={30} />,
@@ -79,16 +82,19 @@ export default async function LessonsPage({
 
   const results = view === "search" ? searchLessons(skill, queryText) : [];
   const topicLessons = skill ? inSkill(skill) : [];
+  const pathwayLessons = pathway?.taskKeys.map(key => LESSONS.find(l => l.taskKey === key)!) ?? [];
   const resultsLine = fill(
     LIBRARY_COPY[skill ? (results.length === 1 ? "oneResultIn" : "resultsIn") : results.length === 1 ? "oneResult" : "results"][lang],
     { n: results.length, q: queryText, topic: skill ? SKILL_LABELS[skill][lang] : "" },
   );
   const spoken =
-    view === "search"
+    pathway
+      ? [pathway.title[lang], pathway.summary[lang], PATHWAY_COPY.order[lang], ...pathwayLessons.map(l => l.title[lang])].join(". ")
+      : view === "search"
       ? [resultsLine, ...results.map((l) => l.title[lang])].join(". ")
       : view === "topic" && skill
         ? [SKILL_LABELS[skill][lang], ...topicLessons.map((l) => l.title[lang])].join(". ")
-        : `${LIBRARY_COPY.ask[lang]} ${LIBRARY_COPY.chooseTopic[lang]}: ${tags.map((t) => SKILL_LABELS[t][lang]).join(", ")}`;
+        : `${LIBRARY_COPY.ask[lang]} ${PATHWAY_COPY.heading[lang]}: ${LESSON_PATHWAYS.map(p => p.title[lang]).join(", ")}. ${LIBRARY_COPY.chooseTopic[lang]}: ${tags.map((t) => SKILL_LABELS[t][lang]).join(", ")}`;
 
   const Ask = view === "home" ? "h1" : "p";
 
@@ -100,6 +106,17 @@ export default async function LessonsPage({
           style={{ backgroundImage: WAVE_LINES }}
         >
           <div className="mx-auto flex max-w-[1040px] flex-col gap-4">
+            {teacher && (
+              <section data-testid="teacher-view-bar" aria-label={LIBRARY_VIEW_COPY.teacher[lang]} className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-white/30 bg-white/10 px-5 py-4">
+                <div className="max-w-2xl">
+                  <p className="m-0 text-lg font-extrabold">{LIBRARY_VIEW_COPY.teacher[lang]}</p>
+                  <p className="mt-1 text-base leading-relaxed text-white/90">{LIBRARY_VIEW_COPY.explanation[lang]}</p>
+                </div>
+                <Link data-testid="preview-student-view" href={libraryHref(lang, skill, queryText, false, pathway?.key)} className="inline-flex min-h-12 shrink-0 items-center rounded-full bg-white px-5 py-2 font-bold text-harbor-navy">
+                  {LIBRARY_VIEW_COPY.previewStudent[lang]}
+                </Link>
+              </section>
+            )}
             <div className="flex flex-wrap items-center justify-between gap-3">
               {view === "home" ? (
                 <div className="flex items-center gap-3">
@@ -125,7 +142,7 @@ export default async function LessonsPage({
                   {LIBRARY_COPY.listen[lang]}
                 </ListenButton>
                 <Link
-                  href={libraryHref(lang === "es" ? "en" : "es", skill, queryText, teacher)}
+                  href={libraryHref(lang === "es" ? "en" : "es", skill, queryText, teacher, pathway?.key)}
                   lang={lang === "es" ? "en" : "es"}
                   className="flex min-h-13 items-center rounded-full border-2 border-white/50 px-5 text-[17px] font-bold text-white hover:bg-white/12"
                 >
@@ -185,7 +202,47 @@ export default async function LessonsPage({
         </header>
 
         <main className="mx-auto flex w-full max-w-[1080px] flex-1 flex-col gap-9 px-5 pt-4 pb-14">
-          {view === "home" && <section className="border-b border-harbor-muted-3/25 pb-5"><Link data-testid="confidence-collection" className="inline-flex min-h-12 items-center text-2xl font-bold underline" href={`/lessons/confidence?lang=${lang}${teacher ? "&teacher=1" : ""}`}>{CONFIDENCE_TITLE[lang]} →</Link><p className="mt-2 text-lg">{lang === "es" ? "Ocho lecciones para practicar en clase y en casa." : "Eight lessons to practice in class and at home."}</p></section>}
+          {teacher && view === "home" && (
+            <section className="border-b border-harbor-muted-3/25 pb-5">
+              <Link data-testid="confidence-collection" className="inline-flex min-h-12 items-center text-2xl font-bold underline" href={`/lessons/confidence?lang=${lang}&teacher=1`}>
+                {CONFIDENCE_TITLE[lang]} →
+              </Link>
+              <p className="mt-2 text-lg">{LIBRARY_VIEW_COPY.collectionNote[lang]}</p>
+            </section>
+          )}
+          {view === "home" && (
+            <section aria-labelledby="pathways-heading" data-testid="lesson-pathways" className="space-y-4">
+              <div>
+                <h2 id="pathways-heading" className="m-0 text-[30px] font-extrabold tracking-[-0.01em]">{PATHWAY_COPY.heading[lang]}</h2>
+                <p className="mt-2 text-lg">{PATHWAY_COPY.intro[lang]}</p>
+              </div>
+              <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-3">
+                {LESSON_PATHWAYS.map(p => (
+                  <li key={p.key} className="flex">
+                    <Link data-testid={`pathway-${p.key}`} href={libraryHref(lang, null, "", teacher, p.key)} className="flex min-w-0 flex-1 flex-col gap-4 rounded-3xl border-2 border-harbor-navy/20 bg-white p-6 text-harbor-ink hover:border-harbor-navy focus-visible:outline-2 focus-visible:outline-offset-4">
+                      <h3 className="m-0 text-[23px] font-extrabold leading-tight">{p.title[lang]}</h3>
+                      <p className="m-0 text-[17px] leading-relaxed">{p.summary[lang]}</p>
+                      <TopicProgress lang={lang} lessonKeys={p.taskKeys} solid="#1f5fae" deep="#14294d" size="tile" />
+                      <span className="font-bold text-[#1d4f91]">{PATHWAY_COPY.open[lang]} <span aria-hidden>→</span></span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {pathway && (
+            <section data-testid="pathway-lessons" className="space-y-6">
+              <header className="space-y-3 border-b-2 border-harbor-sand-strong pb-6">
+                <h1 className="m-0 text-[clamp(30px,4.5vw,44px)] font-extrabold leading-tight">{pathway.title[lang]}</h1>
+                <p className="text-xl">{pathway.summary[lang]}</p>
+                <p className="text-lg">{PATHWAY_COPY.order[lang]}</p>
+                <TopicProgress lang={lang} lessonKeys={pathway.taskKeys} solid="#1f5fae" size="hero" />
+              </header>
+              <LibraryLessonList lang={lang} rows={pathwayLessons.map(l => row(l, false))} numbered />
+            </section>
+          )}
+
           {view === "home" && (
             <section aria-labelledby="topics-heading" className="flex flex-col gap-[18px]">
               <h2 id="topics-heading" className="m-0 text-[30px] font-extrabold tracking-[-0.01em]">
@@ -284,7 +341,7 @@ export default async function LessonsPage({
             <Anchor size={22} className="shrink-0 text-[#8a7b5c]" aria-hidden />
             <span className="flex-[1_1_260px]">{LIBRARY_COPY.footer[lang]}</span>
             <Link
-              href={libraryHref(lang, skill, queryText, !teacher)}
+              href={libraryHref(lang, skill, queryText, !teacher, pathway?.key)}
               className="flex min-h-11 items-center font-bold text-[#1d4f91] hover:text-harbor-ink"
             >
               {teacher ? LIBRARY_COPY.hideTeacher[lang] : LIBRARY_COPY.forTeachers[lang]}

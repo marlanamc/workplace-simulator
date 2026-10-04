@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { LESSONS } from "@/lib/lessons/catalog";
+import { LESSON_PATHWAYS } from "@/lib/lessons/pathways";
 import { libraryHref, libraryReturn, QUICK_SEARCHES, searchLessons } from "@/lib/lessons/library";
 import { SKILL_LOOK, SKILL_TAGS } from "@/lib/lessons/skills";
 import { safeReturn } from "@/lib/lessons/return";
@@ -46,6 +47,29 @@ describe("lesson discovery", () => {
 });
 
 describe("library return navigation", () => {
+  it("keeps validated pathways and gives search and topics precedence", () => {
+    const href = libraryHref("es", null, "", true, "classwork");
+    expect(href).toBe("/lessons?lang=es&teacher=1&pathway=classwork");
+    expect(libraryReturn(href, "en")).toBe("/lessons?teacher=1&pathway=classwork");
+    expect(libraryReturn("/lessons?pathway=invalid")).toBe("/lessons");
+    expect(libraryHref("en", "email", "", false, "classwork")).toBe("/lessons?skill=email");
+    expect(libraryHref("en", null, "email", false, "classwork")).toBe("/lessons?q=email");
+    const returned = new URL(safeReturn("/lessons/mail-reply?returnTo=" + encodeURIComponent(href)), "https://test.invalid");
+    expect(returned.searchParams.get("returnTo")).toContain("pathway=classwork");
+  });
+  it("offers short pathways of unique published lessons with bilingual goals", () => {
+    expect(new Set(LESSON_PATHWAYS.map(p => p.key)).size).toBe(LESSON_PATHWAYS.length);
+    for (const pathway of LESSON_PATHWAYS) {
+      expect(pathway.taskKeys.length).toBeGreaterThanOrEqual(3);
+      expect(pathway.taskKeys.length).toBeLessThanOrEqual(4);
+      expect(new Set(pathway.taskKeys).size).toBe(pathway.taskKeys.length);
+      for (const key of pathway.taskKeys) expect(LESSONS.some(l => l.taskKey === key)).toBe(true);
+      for (const lang of ["en", "es"] as const) {
+        expect(pathway.title[lang].length).toBeGreaterThan(0);
+        expect(pathway.summary[lang].length).toBeGreaterThan(0);
+      }
+    }
+  });
   it("preserves filters while using the current language", () => {
     expect(libraryReturn("/lessons?skill=forms&q=W-4&lang=en", "es")).toBe("/lessons?lang=es&skill=forms&q=W-4");
     expect(libraryReturn(null, "es")).toBe("/lessons?lang=es");

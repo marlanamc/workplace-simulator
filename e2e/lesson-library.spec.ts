@@ -118,3 +118,29 @@ test("the sign-in screen links to lessons in the chosen language", async ({ page
   await expect(page).toHaveURL(/\/lessons\?lang=es$/);
   await expect(page.getByRole("heading", { name: "O elige un tema", exact: true })).toBeVisible();
 });
+
+for (const lang of ["en", "es"]) {
+  test(`${lang}: student library is clean and teacher preview preserves context`, async ({ page }) => {
+    await page.goto(`/lessons?lang=${lang}`);
+    await expect(page.getByTestId("confidence-collection")).toHaveCount(0);
+    await expect(page.getByTestId("teacher-view-bar")).toHaveCount(0);
+    await page.getByTestId("skill-filter-email").click();
+    const studentRow = page.getByTestId("lesson-card-mail-attach");
+    await expect(studentRow.getByRole("link")).toHaveCount(1);
+    await page.getByRole("link", { name: lang === "es" ? "Para docentes" : "For teachers", exact: true }).click();
+    await expect(page.getByTestId("teacher-view-bar")).toBeVisible();
+    await expect(page.getByTestId("lesson-card-mail-attach").getByTestId("lesson-teaching-sequence")).toBeVisible();
+    await page.getByTestId("preview-student-view").click();
+    await expect(page).not.toHaveURL(/teacher=1/);
+    await expect(page).toHaveURL(/skill=email/);
+    if (lang === "es") await expect(page).toHaveURL(/lang=es/);
+    await expect(page.getByTestId("lesson-card-mail-attach").getByRole("link")).toHaveCount(1);
+    await expect(page.getByTestId("teacher-view-bar")).toHaveCount(0);
+    await page.goto(`/lessons?teacher=1&lang=${lang}`);
+    await expect(page.getByTestId("confidence-collection")).toBeVisible();
+    await page.getByTestId("confidence-collection").click();
+    await expect(page).toHaveURL(/confidence.*teacher=1/);
+    await page.goto(`/lessons/confidence?lang=${lang}`);
+    await expect(page).toHaveURL(lang === "es" ? /\/lessons\?lang=es$/ : /\/lessons$/);
+  });
+}
