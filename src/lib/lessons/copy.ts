@@ -92,7 +92,7 @@ export const LIBRARY_COPY = {
   searchHint: { en: "Type a word, like email", es: "Escribe una palabra, como correo" },
   searchButton: { en: "Search", es: "Buscar" },
   try: { en: "Try:", es: "Prueba:" },
-  chooseTopic: { en: "Or choose a topic", es: "O elige un tema" },
+  chooseTopic: { en: "Or pick a topic", es: "O elige un tema" },
   back: { en: "All topics", es: "Todos los temas" },
   listen: { en: "Listen", es: "Escuchar" },
   otherLang: { en: "Español", es: "English" },

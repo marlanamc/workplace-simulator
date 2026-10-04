@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { LESSONS } from "@/lib/lessons/catalog";
-import { LESSON_PATHWAYS } from "@/lib/lessons/pathways";
+import { LESSON_PATHWAYS, PIECE_LABELS } from "@/lib/lessons/pathways";
 import { libraryHref, libraryReturn, QUICK_SEARCHES, searchLessons } from "@/lib/lessons/library";
 import { SKILL_LOOK, SKILL_TAGS } from "@/lib/lessons/skills";
 import { safeReturn } from "@/lib/lessons/return";
@@ -67,6 +67,11 @@ describe("library return navigation", () => {
       for (const lang of ["en", "es"] as const) {
         expect(pathway.title[lang].length).toBeGreaterThan(0);
         expect(pathway.summary[lang].length).toBeGreaterThan(0);
+        // Each lesson is one short puzzle piece in the goal's tower.
+        for (const key of pathway.taskKeys) {
+          expect(PIECE_LABELS[key]?.[lang]).toBeTruthy();
+          expect(PIECE_LABELS[key]![lang].length).toBeLessThanOrEqual(12);
+        }
       }
     }
   });
