@@ -129,6 +129,11 @@ export const JOB_CARD_COPY: Record<
     help: string;
     hideHelp: string;
     readAloud: string;
+    keyInfo: string;
+    yourTask: string;
+    needHelp: string;
+    readAloudShort: string;
+    optional: string;
     dragHint: string;
     snapBack: string;
     collapse: string;
@@ -167,6 +172,11 @@ export const JOB_CARD_COPY: Record<
     help: "Help with this job",
     hideHelp: "Hide help",
     readAloud: "Read this out loud",
+    keyInfo: "Key information",
+    yourTask: "Your task",
+    needHelp: "I need help",
+    readAloudShort: "Read aloud",
+    optional: "Optional",
     dragHint: "Move this card to another corner. Drag it, or use the arrow keys.",
     snapBack: "Put the card back in the corner",
     collapse: "Hide the rest of this card",
@@ -199,6 +209,11 @@ export const JOB_CARD_COPY: Record<
     help: "Ayuda con este trabajo",
     hideHelp: "Ocultar ayuda",
     readAloud: "Léelo en voz alta",
+    keyInfo: "Información clave",
+    yourTask: "Tu tarea",
+    needHelp: "Necesito ayuda",
+    readAloudShort: "Leer en voz alta",
+    optional: "Opcional",
     dragHint: "Mueve esta tarjeta a otra esquina. Arrástrala o usa las flechas.",
     snapBack: "Regresa la tarjeta a la esquina",
     collapse: "Ocultar el resto de esta tarjeta",

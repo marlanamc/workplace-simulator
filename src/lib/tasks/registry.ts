@@ -489,6 +489,10 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         people: [{ name: "Maria", role: { en: "Your supervisor", es: "Tu supervisora" } }],
         need: { en: "It is Monday at 6:12 AM. You cannot work your 10:00 AM shift today. Maria needs to know. After this email, two hotel situations use a different contact rule.", es: "Es lunes a las 6:12 a. m. No puedes trabajar tu turno de las 10:00 a. m. de hoy. Maria necesita saberlo. Después de este correo, dos situaciones en un hotel usan otra regla de contacto." },
       },
+      reference: [
+        { label: { en: "Now", es: "Ahora" }, value: { en: "Monday, 6:12 AM", es: "Lunes, 6:12 a. m." } },
+        { label: { en: "Your shift", es: "Tu turno" }, value: { en: "Today, 10:00 AM", es: "Hoy, 10:00 a. m." } },
+      ],
       takeaway: { en: "Name the shift you will miss, use your workplace's contact rule, and follow up when nobody answers.", es: "Indica a qué turno faltarás, usa la regla de contacto de tu trabajo y da seguimiento cuando nadie contesta." },
       guide: {
         skills: [

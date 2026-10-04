@@ -106,7 +106,9 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
       await note.fill(lang === "en" ? "hi maria. clock is wrong. i come 7" : "hola maria. el reloj está mal. llegué a las 7");
       await expect(line(page)).toHaveText(MAIL_JOB_CARD_STEPS.send[lang]);
       await page.locator('[data-showme="send-button"]').first().click();
-      await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+      // Day 3 ends on a reading pause: read Maria's reply, then move on.
+      await card(page).getByTestId("read-pause-read").click();
+      await card(page).getByTestId("read-pause-continue").click();
 
       // The shift note, opened from the card the way a learner would.
       for (let i = 0; i < 3 && !(await page.locator('[data-showme="shift-note-box"]').isVisible()); i++) {

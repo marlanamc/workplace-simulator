@@ -73,7 +73,7 @@ test("first session: sign up, finish the walkthrough, see the next job", async (
   await page.getByRole("button", { name: "I understand" }).click();
 
   // Spotlight the real Help control — the ? on the Job Card.
-  await expect(card.getByText("Tap the ? on this card to try Help.")).toBeVisible();
+  await expect(card.getByText("Tap I need help on this card to try it.")).toBeVisible();
   await page.getByTestId("job-card-help").click();
   await expect(card.getByText("Where to look", { exact: true })).toBeVisible();
 
@@ -128,7 +128,7 @@ test("the job card follows the learner into the app and drives the job", async (
   // point of it: the surface that sets up the job does not vanish.
   const card = jobCard(page);
   await expect(card).toBeVisible({ timeout: 20_000 });
-  await expect(card.getByText("Task ", { exact: false })).toBeVisible();
+  await expect(card.getByText(/Task \d+ of \d+/)).toBeVisible();
 });
 
 test("studio time machine teleports one account to a later level", async ({ page }) => {
@@ -188,14 +188,14 @@ test("language choice on the login page sticks after signing in and reloading", 
   await card.getByRole("button", { name: "Siguiente", exact: true }).click();
   await page.getByTestId("bookmark-mail").click();
   await card.getByRole("button", { name: "Entiendo", exact: true }).click();
-  await expect(card.getByText("Toca el ? en esta tarjeta para probar Ayuda.")).toBeVisible();
+  await expect(card.getByText("Toca Necesito ayuda en esta tarjeta para probarlo.")).toBeVisible();
   await card.getByTestId("job-card-help").click();
   await expect(card.getByText("Dónde mirar", { exact: true })).toBeVisible();
   await card.getByRole("button", { name: "Entendido. Volver a mi tarea", exact: true }).click();
   await card.getByRole("button", { name: "Empezar la tarea", exact: true }).click();
   await page.getByRole("button", { name: "Abrir mi primera tarea", exact: true }).click();
-  await expect(card.getByText("Este botón naranja en la barra de abajo abre tu lista de tareas.")).toBeVisible();
-  await card.getByRole("button", { name: "Entiendo", exact: true }).click();
+  await expect(page.getByTestId("new-hire-intro")).toBeVisible();
+  await page.getByTestId("new-hire-continue").click();
   await expect(page.getByText("Maria Delgado", { exact: true }).first()).toBeVisible();
 });
 

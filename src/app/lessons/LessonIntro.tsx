@@ -42,7 +42,7 @@ export default function LessonIntro({
   // Only the job names: the examples are for the teacher, and every extra
   // sentence here is reading before the learner has started.
   const workLine = atWork.length ? `${LESSON_COPY.introAtWork[lang]} ${atWork.map((w) => w.setting[lang]).join(", ")}.` : "";
-  const speak = [title[lang], scene.you[lang], ...people, scene.need[lang], workLine, LESSON_COPY.introCard[lang]]
+  const speak = [title[lang], scene.you[lang], ...people, scene.need[lang], workLine, (reference.length ? LESSON_COPY.introCardFacts : LESSON_COPY.introCard)[lang]]
     .filter(Boolean)
     .join(" ");
 
@@ -72,7 +72,7 @@ export default function LessonIntro({
             ? fill(LESSON_COPY.introCardTitlePersona[lang], { name: persona.split(" ")[0] })
             : LESSON_COPY.introCardTitle[lang]}
         </h2>
-        <p className="mt-1 text-base leading-relaxed text-[#3c4043]">{LESSON_COPY.introCard[lang]}</p>
+        <p className="mt-1 text-base leading-relaxed text-[#3c4043]">{(reference.length ? LESSON_COPY.introCardFacts : LESSON_COPY.introCard)[lang]}</p>
         <div className="mt-3 max-w-[420px] overflow-hidden rounded-[8px]" style={INFO_PAPER}>
           <InfoCardBody scene={scene} reference={reference} lang={lang} />
         </div>
