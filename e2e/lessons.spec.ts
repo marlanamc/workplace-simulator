@@ -75,7 +75,7 @@ test("the sign-in lesson makes the code a real safety choice", async ({ page }) 
   await page.keyboard.press("Enter");
 
   // Wait for the new step to own the card before submitting from its focused input.
-  await expect(card).toContainText("Look at your phone.");
+  await expect(card).toContainText("Check the sender of each text.");
   // An empty code box is reported as empty, not as the wrong code.
   const code = page.getByPlaceholder("000000");
   await expect(code).toBeFocused();
@@ -110,7 +110,7 @@ test("independent mode states the goal instead of each click", async ({ page }) 
   await startLesson(page);
   const card = jobCard(page);
   await expect(card).toContainText("Sign in with a text code");
-  await expect(card).toContainText("Sign back in. Use the code from your phone.");
+  await expect(card).toContainText("Sign in. Find the verification text from Google on your phone.");
   await expect(card).not.toContainText("Type the password from your info card.");
   await expect(card.getByRole("button", { name: "Show me", exact: true })).toHaveCount(0);
 });
@@ -168,9 +168,9 @@ test("changing support mid-task keeps the student's place", async ({ page }) => 
   await expect(page.getByTestId("phone-texts")).toBeVisible();
   await jobCard(page).getByTestId("lesson-mode-independent").click();
   await expect(page.getByTestId("phone-texts")).toBeVisible();
-  await expect(jobCard(page)).not.toContainText("Look at your phone.");
+  await expect(jobCard(page)).not.toContainText("Check the sender of each text.");
   await jobCard(page).getByTestId("lesson-mode-guided").click();
-  await expect(jobCard(page)).toContainText("Look at your phone.");
+  await expect(jobCard(page)).toContainText("Check the sender of each text.");
 });
 
 test("the library and a lesson fit a phone screen", async ({ page }) => {

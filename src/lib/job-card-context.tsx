@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { INTRO_BEATS } from "@/lib/job-card-content";
+import { useLesson } from "@/lib/lesson-context";
 import { useTaskDraft } from "@/lib/use-task-draft";
 import { TOUR_DRAFT, savedIntroBeat, savedPracticeStage, savedMovePracticeStage, type MovePracticeStage } from "@/lib/tour-resume";
 import type { TaskKey } from "@/lib/desktop-content";
@@ -162,15 +163,16 @@ export function JobCardProvider({
   introSeen: boolean;
   onIntroDone: () => void;
 }) {
+  const lesson = useLesson();
   // The welcome beat and the practice stage are tour drafts on this device, so
   // a reload mid-tour comes back to the same beat and the same practice stage
-  // (Wave 5 F-7). Lessons keep nothing: `introSeen` is always true there.
+  // (Wave 5 F-7). Lesson drafts stay in memory, including optional practice.
   const [savedBeat, setSavedBeat] = useTaskDraft<number>("tour", TOUR_DRAFT.introBeat, 0);
   const [savedStage, setSavedStage] = useTaskDraft<string>("tour", TOUR_DRAFT.practice, "inactive");
   const introBeat = introSeen ? INTRO_BEATS.length : savedIntroBeat(savedBeat, INTRO_BEATS.length);
-  // The practice only exists on the welcome beat; a stage left over from an
-  // older session never comes back once the learner is past it.
-  const practiceStage = introBeat < INTRO_BEATS.length ? savedPracticeStage(savedStage) : "inactive";
+  // Story practice only exists on the welcome beat, so old stages stay hidden.
+  // Lessons may open it explicitly at any time, using their in-memory draft.
+  const practiceStage = lesson || introBeat < INTRO_BEATS.length ? savedPracticeStage(savedStage) : "inactive";
   const practice = useMemo<CardPractice>(() => ({ stage: practiceStage }), [practiceStage]);
   const setPractice = useCallback((next: CardPractice) => setSavedStage(next.stage), [setSavedStage]);
   // Same pattern, its own draft field: a reload keeps the learner's place in

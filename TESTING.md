@@ -294,3 +294,11 @@ one Job Card panel, optional explanation disclosure, a full-width email reader,
 return to the inbox without losing a draft, and one W-4 reference source. Layout
 checks cover desktop, zoom-equivalent Chromebook, and phone viewports and save
 screenshots. These checks do not replace real browser zoom or learner testing.
+
+## Everyday digital confidence collection
+
+`confidence.test.ts` checks launch wiring, bilingual teaching metadata, validated scenario links, sign-in return preservation, and bounded decision rules (including old codes/deadlines, wrong versions, permissions, swapped sheet rows, and incomplete meeting openings).
+
+`e2e/confidence.spec.ts` runs the 16 new examples in both languages: wrong-attempt recovery, native shared picker/grid/phone interactions, review, result checking, completion, and restart. It also checks the collection, print exclusion of teacher notes, observation sheet, scenario switching, shared links, and invalid scenarios. These use teacher preview and do not create database accounts.
+
+Run `npm run check`, then `npx playwright test e2e/confidence.spec.ts` and the existing lesson/materials/workspace regression suites. The full login/teacher suite still requires a dedicated test database, as above. Actual Chromebook zoom, read-aloud usability, printed-page review, and learner observations remain separate requirements; see `curriculum/everyday-digital-confidence.md`.

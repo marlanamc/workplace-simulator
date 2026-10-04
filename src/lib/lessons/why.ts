@@ -3,6 +3,7 @@ import type { Localized } from "@/lib/task-types";
 
 /** Optional explanations in the Job Card, separate from the next action. */
 export const LESSON_WHY: Partial<Record<TaskKey, Localized>> = {
+  schedule: { en: "A posted schedule can overlap your own plans. Compare the whole time range before asking for a change.", es: "Un horario publicado puede coincidir con tus planes. Compara todo el intervalo antes de pedir un cambio." },
   "account-recovery": {
     en: "Google can check your password and your phone. Your password is something you know; your phone is something you have. This is two-factor authentication, or 2-Step Verification. It helps protect your account if someone steals your password. Keep your code private.",
     es: "Google puede comprobar tu contraseña y tu teléfono. Tu contraseña es algo que sabes; tu teléfono es algo que tienes. Esto se llama autenticación de dos factores, o verificación en dos pasos. Ayuda a proteger tu cuenta si alguien roba tu contraseña. No compartas tu código.",

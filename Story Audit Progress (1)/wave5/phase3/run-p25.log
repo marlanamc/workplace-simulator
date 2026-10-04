@@ -1,0 +1,56 @@
+(node:94506) ExperimentalWarning: CommonJS module /Users/marlanacreed/.nvm/versions/node/v23.3.0/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /Users/marlanacreed/.nvm/versions/node/v23.3.0/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 4 tests using 1 worker
+
+  ✓  1 Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay en-1366 (1.8m)
+  ✘  2 Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay en-911 (1.5m)
+  ✓  3 Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay es-1366 (1.9m)
+  ✓  4 Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay es-911 (1.9m)
+
+
+  1) Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay en-911 ───────────────
+
+    Error: expect(locator).toHaveAttribute(expected) failed
+
+    Locator:  locator('html')
+    Expected: "true"
+    Received: ""
+    Timeout:  30000ms
+
+    Call log:
+      - Expect "toHaveAttribute" with timeout 30000ms
+      - waiting for locator('html')
+        63 × locator resolved to <html id="__next_error__">…</html>
+           - unexpected value "null"
+
+
+      53 |
+      54 |     async function hydrated() {
+    > 55 |       await expect(page.locator("html")).toHaveAttribute("data-hydrated", "true", { timeout: 30_000 });
+         |                                          ^
+      56 |     }
+      57 |
+      58 |     async function shot(label: string) {
+        at hydrated (/Users/marlanacreed/Downloads/Projects/Workplace-simulator/Story Audit Progress (1)/wave5/phase3/replay.spec.ts:55:42)
+        at reload (/Users/marlanacreed/Downloads/Projects/Workplace-simulator/Story Audit Progress (1)/wave5/phase3/replay.spec.ts:195:13)
+        at /Users/marlanacreed/Downloads/Projects/Workplace-simulator/Story Audit Progress (1)/wave5/phase3/replay.spec.ts:477:5)
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/replay-Act-I-replay-en-911/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/replay-Act-I-replay-en-911/error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/replay-Act-I-replay-en-911/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/replay-Act-I-replay-en-911/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay en-911 ────────────────
+  3 passed (7.1m)

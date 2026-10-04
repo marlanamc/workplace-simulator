@@ -1,0 +1,9 @@
+{
+ "level9 · team-schedule": {"seg":"C","ui":"blocks","learn":"fair","note":"At 911 the \"Email the person you added\" button is under the card at every scroll position. The Wave 4 voicemail works; the card line \"First pass on Casey's voicemail\" reads oddly."},
+ "level10 · formula-check": {"seg":"C","ui":"friction","learn":"fair","note":"The card covers the row numbers that Help says to read. Opening Mail shows a false \"Message sent. Done.\", and pressing Next task threw away the formula fix."},
+ "level11 · team-meeting": {"seg":"C","ui":"blocks","learn":"fair","note":"At 1366 the Docs Save button is fully under the card. At 911 the crew names, time choices and Guardar are covered. A truly free time now exists (fixed)."},
+ "level12 · priority-call": {"seg":"C","ui":"blocks","learn":"fair","note":"At 911 the prompt text is under the card. The A2 wording no longer gives the answer (fixed). This Thursday's crew contradicts Day 16's."},
+ "level13 · college-offer": {"seg":"C","ui":"blocks","learn":"fair","note":"No longer broken on entry; the three-section redesign works. At 911 the card jumps over the Days/Time columns once they scroll into view."},
+ "level14 · budget-sheet": {"seg":"C","ui":"friction","learn":"fair, slight giveaway","note":"Down from blocks: Email is now clear of the card. The card covers the Labor row at 1366, and the Status column says \"over\"."},
+ "level15 · reply-all": {"seg":"C","ui":"friction","learn":"unfair (one case)","note":"Help shows \"Attaching a file\". Dana asks for a yes or no, but \"yes ok\" is rejected. The draft is lost on reload."}
+}

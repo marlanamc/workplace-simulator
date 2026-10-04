@@ -16,6 +16,9 @@ import type { LessonSave } from "@/app/lessons/useLessonSave";
  */
 export interface LessonValue {
   taskKey: TaskKey;
+  scenario?: import("./lessons/confidence").LessonScenario;
+  sequence?: import("./lessons/confidence").LessonSequence;
+  changeScenario?: (scenario: import("./lessons/confidence").LessonScenario, lang: Lang) => void;
   /** Follow-up index after the original task; completion waits for the last round. */
   practiceRound?: number | null;
   completePracticeRound?: (roundIndex: number) => void;

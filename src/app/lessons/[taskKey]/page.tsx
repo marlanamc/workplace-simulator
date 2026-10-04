@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { TaskKey } from "@/lib/desktop-content";
 import { draftLessonFor, lessonByKey } from "@/lib/lessons/catalog";
+import { parseScenario, isConfidenceKey } from "@/lib/lessons/confidence";
 import LessonRunner from "../LessonRunner";
 
 const first = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -16,7 +17,7 @@ export default async function LessonPage({
   searchParams,
 }: {
   params: Promise<{ taskKey: string }>;
-  searchParams: Promise<{ mode?: string | string[]; lang?: string | string[]; smoke?: string | string[]; preview?: string | string[]; returnTo?: string | string[]; transfer?: string | string[] }>;
+  searchParams: Promise<{ scenario?: string | string[]; mode?: string | string[]; lang?: string | string[]; smoke?: string | string[]; preview?: string | string[]; returnTo?: string | string[]; transfer?: string | string[] }>;
 }) {
   const { taskKey } = await params;
   const query = await searchParams;
@@ -25,9 +26,12 @@ export default async function LessonPage({
   const smokeAllowed = process.env.NODE_ENV !== "production" || process.env.LESSON_SMOKE === "1";
   const draft = smokeAllowed && first(query.smoke) === "1";
   if (!lessonByKey(taskKey) && !(draft && draftLessonFor(taskKey))) notFound();
+  const scenario = parseScenario(first(query.scenario));
+  if (!scenario || (scenario !== "classroom" && !isConfidenceKey(taskKey))) notFound();
   return (
     <LessonRunner
-      key={taskKey}
+      key={`${taskKey}:${scenario}`}
+      scenario={scenario}
       taskKey={taskKey as TaskKey}
       returnTo={first(query.returnTo)}
       draft={draft}

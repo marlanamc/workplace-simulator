@@ -60,7 +60,7 @@ export default function LessonProgressProvider({
     async (taskKey: TaskKey, _badgeKey?: string, submission?: SubmissionContent) => {
       if (submission) setWriting((prev) => ({ ...prev, [taskKey]: submission }));
       if (completedRef.current.includes(taskKey)) return true;
-      if (taskKey === lesson.taskKey && FOLLOWUP_ROUNDS[taskKey]?.length) {
+      if (taskKey === lesson.taskKey && (!lesson.scenario || lesson.scenario === "classroom") && FOLLOWUP_ROUNDS[taskKey]?.length) {
         if (practiceRoundRef.current === null) {
           practiceRoundRef.current = 0;
           setPracticeRound(0);
@@ -72,7 +72,7 @@ export default function LessonProgressProvider({
       onLessonComplete?.(taskKey);
       return true;
     },
-    [onLessonComplete, lesson.taskKey],
+    [onLessonComplete, lesson.taskKey, lesson.scenario],
   );
 
   // Practice again: back to exactly where the lesson started. Bumping the

@@ -1,0 +1,9 @@
+(node:47773) ExperimentalWarning: CommonJS module /Users/marlanacreed/.nvm/versions/node/v23.3.0/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /Users/marlanacreed/.nvm/versions/node/v23.3.0/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Running 1 test using 1 worker
+
+  ✓  1 Story Audit Progress (1)/wave5/phase3/replay.spec.ts:30:7 › Act I replay en-1366-b (2.1m)
+
+  1 passed (2.1m)

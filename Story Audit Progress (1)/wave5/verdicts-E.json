@@ -1,0 +1,6 @@
+{
+ "level16 · appointment-scheduling": {"seg":"E","ui":"blocks","learn":"fair","note":"At 100% \"Offer the open time\" sits below the window with no scroll cue. The text to Maya is graded well in both languages, but the learner never sees what they sent."},
+ "level17 · patient-intake": {"seg":"E","ui":"broken","learn":"given away","note":"Privacy is only partly fixed: \"I can't show you. She has a cold.\" passes (confirmed in code). At 911 \"File intake\" shows only in a 15–30 px band. The names are now distinct (fixed)."},
+ "level18 · billing-sheet": {"seg":"E","ui":"broken","learn":"given away","note":"\"row 4 85 dollars\" is rejected: the number reader reads \"4 85\" as 485. At 100% the card covers the charge grid; at 911 it covers the File menu."},
+ "level19 · confidentiality-call": {"seg":"E","ui":"broken","learn":"given away","note":"\"Her visit is today. I cannot share more.\" passes and earns the award (confirmed in code), and so do times like \"at noon\". The call panel no longer scripts the reply (fixed)."}
+}

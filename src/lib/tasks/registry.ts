@@ -349,6 +349,24 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   schedule: {
+    lesson: {
+      title: { en: "Read a schedule and find a conflict", es: "Leer un horario y encontrar un conflicto" },
+      summary: { en: "Compare a schedule with a personal appointment and request a workable change.", es: "Comparar un horario con una cita y solicitar un cambio posible." },
+      skills: ["scheduling", "workplace-systems"], minutes: 15,
+      scene: {
+        you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
+        people: [{ name: "Maria", role: { en: "your manager", es: "tu gerente" } }],
+        need: { en: "Your posted shift overlaps a personal appointment. You need a shift you can attend.", es: "Tu turno coincide con una cita personal. Necesitas un turno al que puedas asistir." },
+      },
+      takeaway: { en: "You practiced comparing the day and time before asking for a change.", es: "Practicaste comparar el día y la hora antes de pedir un cambio." },
+      guide: {
+        skills: [{ en: "Compare dates and time ranges in two sources.", es: "Comparar fechas y horas en dos fuentes." }],
+        prepare: [{ en: "Use the optional pointer practice if needed. Choose support by computer experience, not English level.", es: "Use la práctica opcional del puntero si hace falta. Elija apoyo según la experiencia digital, no el nivel de inglés." }],
+        stickingPoints: [{ en: "An overlapping shift can begin before an appointment. Compare the whole time range.", es: "Un turno que coincide puede empezar antes de la cita. Compare todo el intervalo." }],
+        followUp: [{ en: "Try a different schedule and ask which source supports the change.", es: "Pruebe otro horario y pregunte qué fuente respalda el cambio." }],
+        peerHelp: { en: "Ask your partner what they checked; let them control their own computer.", es: "Pregunte qué revisó su compañero; deje que controle su computadora." },
+      },
+    },
     jobCardLine: { en: "Compare your work schedule with your phone calendar. Select the shift at the same time as a personal appointment. Request a shift you can work instead.", es: "Compara tu horario de trabajo con el calendario de tu teléfono. Selecciona el turno a la misma hora que una cita personal. Solicita otro turno que puedas trabajar." },
     key: "schedule",
     built: true,

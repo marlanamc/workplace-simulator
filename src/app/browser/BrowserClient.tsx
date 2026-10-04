@@ -25,6 +25,7 @@ import { TOUR_STEPS, CALENDAR_REMINDER_STEPS, CALENDAR_REMINDER_FLAG } from "@/l
 import { useTaskDraft } from "@/lib/use-task-draft";
 import { TOUR_DRAFT, savedTourStep, tourResumeTab } from "@/lib/tour-resume";
 
+const ConfidencePractice = dynamic(() => import("@/components/lesson/ConfidencePractice"));
 const LessonFollowups = dynamic(() => import("@/components/lesson/LessonFollowups"));
 
 type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
@@ -629,7 +630,7 @@ export default function BrowserClient() {
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div ref={pageRef} tabIndex={-1} data-page-content className="relative min-h-0 flex-1 overflow-hidden bg-white outline-none">
-        {lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
+        {lesson?.scenario && lesson.scenario !== "classroom" ? <ConfidencePractice /> : lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
           // Every page but Forms, whose done screen is still up from Day 7's first job.
           <OfflinePage />
         ) : <>

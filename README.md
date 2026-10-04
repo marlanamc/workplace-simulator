@@ -190,3 +190,9 @@ discussion prompts, evidence notes, and a changed situation. **Print learner
 handout** omits teacher notes. These are teacher-led extensions after the
 computer lesson; they do not change simulator answers or award credit. See
 [curriculum/lesson-materials.md](curriculum/lesson-materials.md).
+
+### Everyday digital confidence pilot collection
+
+`/lessons/confidence` groups eight existing skills for adult ESOL and beginner computer learners. Teacher mode (`?teacher=1`) adds a short classroom sequence, optional Google practice, printable learner sheets, and a separate observation form. Each task has directly linkable classroom, changed-facts (`?scenario=try`), and home (`?scenario=home`) practice. The Job Card keeps all simulator guidance and offers optional pointer practice. Original classroom activities and Story answers remain available.
+
+Fresh examples reuse the simulated file picker, phone, spreadsheet, and email result controls. Completion records remain practice counts, not mastery. Home readiness requires learner observation; see [the collection pilot guide](curriculum/everyday-digital-confidence.md).

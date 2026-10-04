@@ -1,0 +1,247 @@
+{
+ "acts": [
+  {
+   "key": "act1",
+   "title": "Act I · New hire",
+   "days": "How this works → Day 6",
+   "seg": "A",
+   "status": "progress",
+   "statusLabel": "In progress · N-7 to N-9 fixed 30 Sep on fix/act-1-phase3 (not committed); owner review, then Phase 3 sign-off",
+   "rows": [
+    "level0 · tour + pointer practice",
+    "level1 · mail-reply",
+    "level2 · schedule, mail-attach",
+    "level3 · timeclock, shift-review",
+    "level3a · mail-etiquette",
+    "level3a2 · call-out-sick",
+    "level3a3 · paystub"
+   ],
+   "findings": [
+    "Phase 3 second run (30 Sep, main 02223b3): all 25 Segment A findings fixed; found N-7 to N-9.",
+    "Fixed 30 Sep on fix/act-1-phase3, each with a test that failed first: N-7 Day 3 clock note keeps its refusal; N-8 Show me ring cut to what can be seen; N-9 narrow PDF Reader puts Downloads above and fits the page across.",
+    "check green (2,802), full e2e 265/265 first run; ES 911 and EN 1366 replays with the fixes clean.",
+    "Open, for the owner: the Job Card is far down the Tab order (its ? 10–11 Tabs from the page; its button 21–23 from the PDF Reader). Not fixed."
+   ],
+   "plan": [
+    [
+     "Phase 1 · Fix the runaway card gutter",
+     true
+    ],
+    [
+     "Phase 1 · Dock the Job Card at small widths (owner decision)",
+     true
+    ],
+    [
+     "Phase 1 · Only the owning task can say \"Done\"",
+     true
+    ],
+    [
+     "Phase 1 · Reload keeps step and typed text",
+     true
+    ],
+    [
+     "Phase 1 · Writing checks on meaning.ts + tests that try to break them",
+     true
+    ],
+    [
+     "Phase 2 · Card lines, Show me targets, welcome-back card",
+     true
+    ],
+    [
+     "Phase 2 · Day 6 not given away; dates and clocks agree",
+     true
+    ],
+    [
+     "Phase 2 · Spanish (language per learner, pay-stub gloss) and keyboard focus",
+     true
+    ],
+    [
+     "Phase 3 · Full Act I replay (EN/ES, 1366/911, keyboard, wrong try, Help, reload, other apps) · second run found N-7 to N-9, fixed on fix/act-1-phase3; owner to confirm",
+     false
+    ],
+    [
+     "Phase 2.5 · fix the Phase 3 findings, then replay again · done 30 Sep",
+     true
+    ],
+    [
+     "Owner sign-off",
+     false
+    ]
+   ],
+   "planNote": "<code>curriculum/act-1-fixup-plan.md</code>"
+  },
+  {
+   "key": "act2",
+   "title": "Act II · Shift lead",
+   "days": "Days 7–13 + route choice",
+   "seg": "B",
+   "status": "waiting",
+   "statusLabel": "Waiting for Act I sign-off · plan drafted 30 Sep",
+   "rows": [
+    "level3b · incident, handbook",
+    "level3c · account-recovery",
+    "level4 · calendar",
+    "level5 · files, mail-send-link",
+    "level6 · spreadsheet",
+    "level7 · make-a-copy, status-report",
+    "level8 · triage",
+    "after Act II and after each route"
+   ],
+   "findings": [
+    "Day 11: the card covers the tip slip at 100%; Day 10: the link email is under the card at 911.",
+    "Day 13's only accepted time is the learner's day off, against Day 9's rule (unfair).",
+    "Renata always confirms \"Thursday at 10 AM\", whatever was proposed.",
+    "Day 12 Undo accepts deleting the wrong cell (Wave 4 bug).",
+    "False \"Done\" from Mail on Days 9 and 11 and at the route choice; drafts lost on reload."
+   ],
+   "planNote": "<code>curriculum/act-2-fixup-plan.md</code> (draft, not started; Segment B predates the Act I fixes, so Phase 0 re-checks every finding first)",
+   "plan": [
+    [
+     "Owner decisions: three decided 30 Sep, three open (listed below)",
+     false
+    ],
+    [
+     "Phase 0 · Re-baseline replay: Act I then Act II from a fresh sign-up (EN/ES, 1366/911, two by keyboard); mark B-1 to B-24 fixed, partly fixed or still there; report before fixing",
+     false
+    ],
+    [
+     "Phase 1 · Reload keeps work on Days 7, 9 and 11 (B-1); Day 13 per decision (B-21)",
+     false
+    ],
+    [
+     "Phase 1 · Card keeps off what the step asks to read at 1366: Day 11 tip slip, Day 7 scenario, Day 10 preview; Rename and Share buttons as targets (B-12, B-2, B-10, B-22)",
+     false
+    ],
+    [
+     "Phase 1 · Only the owning task says Done: Mail finish guarded, including at the route choice (B-4)",
+     false
+    ],
+    [
+     "Phase 1 · Checks with tests that try to break them: \"no le pasó nada\", \"thursday 11\", Day 12 Delete on Friday only (B-3, B-7, B-14)",
+     false
+    ],
+    [
+     "Phase 2 · Renata confirms the time the learner proposed (B-5); Day 9 not given away (B-6); Day 13 fair (B-15, B-24)",
+     false
+    ],
+    [
+     "Phase 2 · Card lines: \"Type in your copy\" (B-13), Help teaches pasting (B-9), handbook line names Renata (B-19); one Jordan (B-11)",
+     false
+    ],
+    [
+     "Phase 2 · Spanish and small items: \"en el salón\", Day 12 menus and header, posted date, wrong-password line, focus on route preview (B-16 to B-18, B-20, B-23)",
+     false
+    ],
+    [
+     "Phase 3 · Full Act II replay after the fixes, every screenshot checked, review page and this checklist updated",
+     false
+    ],
+    [
+     "Owner sign-off",
+     false
+    ]
+   ],
+   "decisions": [
+    "Decided 30 Sep: Day 13 huddle (B-15, B-24): Thursday 4 PM clashes with Renata, so the right time is on a working day.",
+    "Decided 30 Sep: half-done Day 13 work (B-21) is saved on the account, so it follows the learner to another Chromebook.",
+    "Decided 30 Sep: Day 9's red \"not scheduled\" line (B-6) shows only after a wrong try.",
+    "Open: Jordan's role (B-11): \"the new shift lead\" or \"the new team member\".",
+    "Open: handbook body (B-17): English with a Spanish gloss, like the pay stub, or translated.",
+    "Open: carried from Act I: the Job Card's place in the Tab order, if it should change."
+   ]
+  },
+  {
+   "key": "act34",
+   "title": "Acts III–IV · Stay and lead",
+   "days": "Days 14–20 + ending",
+   "seg": "C",
+   "status": "waiting",
+   "statusLabel": "Waiting",
+   "rows": [
+    "level9 · team-schedule",
+    "level10 · formula-check",
+    "level11 · team-meeting",
+    "level12 · priority-call",
+    "level13 · college-offer",
+    "level14 · budget-sheet",
+    "level15 · reply-all"
+   ],
+   "findings": [
+    "The card covers Day 16's Save even at 100%; Days 14, 17 and 18 block at 911.",
+    "Changing route after an ending moves the story dates backward.",
+    "False \"Done\" from Mail or Calendar; on Day 15 it threw away the formula fix.",
+    "Day 20: Help shows the wrong lesson, and \"yes ok\" is rejected when Dana asks for yes or no.",
+    "Days 16 and 17 disagree about who works that Thursday."
+   ]
+  },
+  {
+   "key": "college",
+   "title": "Act V · College",
+   "days": "Days 21–24 + ending",
+   "seg": "D",
+   "status": "waiting",
+   "statusLabel": "Waiting",
+   "rows": [
+    "level16 · enrollment",
+    "level17 · financial-aid",
+    "level18 · coursework",
+    "level19 · research"
+   ],
+   "findings": [
+    "At 911 the card covers the College page controls on Days 21, 22 and 24, with no scroll escape.",
+    "After the ending, opening Mail hides \"See my summary\".",
+    "Realism: the real BHCC name and bhcc.edu addresses with no practice marker; Pell still shows an accept-by date.",
+    "Reload loses in-task work on all four days."
+   ]
+  },
+  {
+   "key": "frontdesk",
+   "title": "Act V · Front desk",
+   "days": "Days 21–24 + ending",
+   "seg": "E",
+   "status": "waiting",
+   "statusLabel": "Waiting · most serious grading issue",
+   "rows": [
+    "level16 · appointment-scheduling",
+    "level17 · patient-intake",
+    "level18 · billing-sheet",
+    "level19 · confidentiality-call"
+   ],
+   "findings": [
+    "Privacy grading is only partly fixed: \"She has a cold.\" and \"Her visit is today.\" pass (confirmed in code); Day 24 even awards it.",
+    "Day 23: \"row 4 85 dollars\" is read as 485 and rejected.",
+    "The card covers Day 23's charge grid even at 100%.",
+    "The same shared bugs: false \"Done\", runaway gutter, reload loses work."
+   ]
+  },
+  {
+   "key": "act67",
+   "title": "Acts VI–VII · Office → Team Lead",
+   "days": "Days 25–37 + ending",
+   "seg": "F",
+   "status": "waiting",
+   "statusLabel": "Waiting",
+   "rows": [
+    "level19h1 · job-posting, job-application",
+    "level19h2 · resume-build",
+    "level19h3 · interview-practice",
+    "level19h4 · job-offer",
+    "level19h5 · w4, i9, direct deposit",
+    "level20 · office-drive",
+    "level21 · scheduling, video call",
+    "level22 · expense-report",
+    "level23 · slide-deck",
+    "level24 · meeting-minutes",
+    "level25 · performance-review",
+    "level26 · ops-report-packet",
+    "level27 · portfolio-reflection"
+   ],
+   "findings": [
+    "Day 36: \"Done here\" and the weekly total are fully under the card at 1366 and 911.",
+    "Day 29: I-9 and direct-deposit mistakes get only \"Compare the form with Robin's facts\"; Submit I-9 is covered at 911.",
+    "False \"Done\" from Mail or Calendar; route change after the ending sends the story back to Sep 2026.",
+    "The application correction calls the Story learner \"Sam\"; Day 31 says \"a few minutes late\" at 10:01 AM for a 2 PM meeting."
+   ]
+  }
+ ]
+}

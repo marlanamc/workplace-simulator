@@ -6,6 +6,7 @@ const ORIGIN = "https://return.invalid";
 /** Query params a lesson link may carry back through sign-in, and their allowed values. */
 const LESSON_PARAMS: Record<string, string[]> = {
   mode: ["guided", "independent"],
+  scenario: ["classroom", "try", "home"],
   lang: ["en", "es"],
   transfer: ["1"],
   skill: [],

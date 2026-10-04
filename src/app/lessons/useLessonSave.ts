@@ -45,7 +45,7 @@ function writeJSON(store: "local" | "session", key: string, value: LessonAttempt
 
 export function useLessonSave(
   taskKey: TaskKey,
-  { preview, transfer, mode, returnTo }: { preview: boolean; transfer: boolean; mode: LessonMode; returnTo?: string },
+  { preview, transfer, mode, returnTo, scenario }: { preview: boolean; transfer: boolean; mode: LessonMode; returnTo?: string; scenario?: import("@/lib/lessons/confidence").LessonScenario },
 ): LessonSave {
   const router = useRouter();
   const api = `/api/lessons?lesson=${taskKey}`;
@@ -138,11 +138,12 @@ export function useLessonSave(
   const signIn = useCallback((lang: Lang) => {
     writeJSON("session", transferKey, current.current);
     const q = new URLSearchParams({ mode, transfer: "1" });
+    if (scenario) q.set("scenario", scenario);
     if (returnTo) q.set("returnTo", libraryReturn(returnTo, lang));
     if (lang === "es") q.set("lang", "es");
     router.push(`/login?next=${encodeURIComponent(`/lessons/${taskKey}?${q}`)}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, router, taskKey, returnTo]);
+  }, [mode, router, taskKey, returnTo, scenario]);
 
   return { status, recordFinish: finish, retry, signIn };
 }

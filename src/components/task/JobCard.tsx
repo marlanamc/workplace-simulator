@@ -7,6 +7,7 @@ import { AlertCircle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronRight, C
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
+import { SCENARIOS, SCENARIO_LABELS } from "@/lib/lessons/confidence";
 import { useLesson } from "@/lib/lesson-context";
 import LessonInfoCard from "@/components/lesson/LessonInfoCard";
 import { FactList, factsSpokenText } from "@/components/task/FactList";
@@ -310,10 +311,10 @@ export default function JobCard() {
   function exitPractice() {
     setPractice({ stage: "inactive" });
     setCollapsed(false);
-    startOrientation();
+    if (!lesson) startOrientation();
     // Onto the card's next button, not the fold button, where Enter would hide
     // the card (Wave 5 F-14).
-    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>(".job-card-primary")?.focus());
+    requestAnimationFrame(() => cardRef.current?.querySelector<HTMLElement>(".job-card-primary, [data-testid=job-card-read-aloud]")?.focus());
   }
   function startMovePractice() {
     if (movePracticing || busy || docked) return;
@@ -675,6 +676,7 @@ export default function JobCard() {
         line: LESSON_COPY.doneLine[lang],
         hint: [
           lesson.takeaway?.[lang],
+          lesson.scenario === "classroom" ? lesson.sequence?.reflection[lang] : undefined,
           lesson.save.status === "guest"
             ? LESSON_COPY.savedHere[lang]
             : lesson.save.status === "saving"
@@ -1363,6 +1365,25 @@ export default function JobCard() {
           </button>
         </div>
 
+        {lesson?.sequence && !showPractice && !showMovePractice && !busy && (
+          <details className="mt-3" data-testid="confidence-options">
+            <summary className="min-h-11 cursor-pointer py-2 font-medium text-[#0b57d0]">
+              {lang === "es" ? "Más práctica" : "More practice"}
+            </summary>
+            <button type="button" className={OPTIONAL_ROW} onClick={startPractice}>
+              {lang === "es" ? "Práctica opcional de ratón y desplazamiento" : "Optional mouse and scrolling practice"}
+            </button>
+            <p className="my-2 text-sm">
+              {lang === "es" ? "Cambiar de situación empieza una práctica nueva." : "Changing situations starts a fresh practice."}
+            </p>
+            {SCENARIOS.filter(s => s !== lesson.scenario).map(s => (
+              <button key={s} type="button" className={OPTIONAL_ROW} onClick={() => lesson.changeScenario?.(s, lang)}>
+                {SCENARIO_LABELS[s][lang]}
+              </button>
+            ))}
+          </details>
+        )}
+
         {/* The welcome card's practice offers: optional, under the one real
             next step, labeled so they never read as required. */}
         {introBeat < INTRO_BEATS.length && script.secondaryLabel && (
@@ -1492,7 +1513,7 @@ export default function JobCard() {
       {showPractice && (
         <div className="shrink-0 border-t border-[#dadce0] bg-white p-2">
           <button type="button" data-practice-exit className={`min-h-12 w-full rounded-xl px-3 font-medium ${practice.stage === "complete" ? "bg-[#0b57d0] text-white" : "text-[#5f6368] underline hover:bg-[#f1f3f4]"}`} onClick={exitPractice}>
-            {practice.stage === "complete" ? INTRO_BEATS[0].cta?.[lang] : pc.skip[lang]}
+            {practice.stage === "complete" ? (lesson ? (lang === "es" ? "Volver a mi tarea" : "Back to my task") : INTRO_BEATS[0].cta?.[lang]) : pc.skip[lang]}
           </button>
         </div>
       )}

@@ -56,6 +56,7 @@ export type LessonFact = {
 export type LessonMeta = {
   /** Plain classroom name, e.g. "Get back into a locked account". */
   title: Localized;
+  sequence?: import("./confidence").LessonSequence;
   summary: Localized;
   skills: SkillTag[];
   minutes: number;

@@ -29,6 +29,7 @@ export default function TeacherPreviewBar({ guide }: { guide: TeacherGuide }) {
   async function copyLink() {
     const url = new URL(`/lessons/${lesson.taskKey}`, window.location.origin);
     url.searchParams.set("mode", lesson.mode);
+    if (lesson.scenario) url.searchParams.set("scenario", lesson.scenario);
     if (lang === "es") url.searchParams.set("lang", "es");
     setShare(url.href);
     try {
@@ -87,6 +88,7 @@ export default function TeacherPreviewBar({ guide }: { guide: TeacherGuide }) {
                 {LESSON_COPY.supportLabel[lang]}: {LESSON_COPY[lesson.mode][lang]}
               </p>
               {packHref && <Link href={packHref} target="_blank" rel="noopener" className="mb-4 inline-flex min-h-11 items-center font-semibold text-[#0b57d0] underline">{MATERIAL_COPY.open[lang]}</Link>}
+              {lesson.sequence && <div className="mb-4 space-y-2"><p>{lesson.sequence.timing[lang]}</p><p>{lesson.sequence.evidence[lang]}</p><Link className="inline-flex min-h-11 items-center text-[#0b57d0] underline" href={`/lessons/confidence?teacher=1&lesson=${lesson.taskKey}&lang=${lang}&mode=${lesson.mode}`} target="_blank" rel="noopener">{lang === "es" ? "Secuencia, actividades de Google y hojas para imprimir" : "Teaching sequence, Google activities, and print sheets"}</Link></div>}
               <LessonGuide guide={guide} lang={lang} />
             </>
           )}

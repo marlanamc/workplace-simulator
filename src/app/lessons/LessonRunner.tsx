@@ -18,6 +18,9 @@ import TeacherPreviewBar, { PREVIEW_BAR_H } from "./TeacherPreviewBar";
 import LessonIntro from "./LessonIntro";
 import type { TeacherGuide } from "@/lib/lessons/types";
 
+import { scenarioHref, isConfidenceKey, type LessonScenario } from "@/lib/lessons/confidence";
+import { CONFIDENCE_SCENARIOS } from "@/lib/tasks/confidence/content";
+
 const noop = () => {};
 
 function LessonDesktop({ preview, guide }: { preview: boolean; guide: TeacherGuide }) {
@@ -39,6 +42,7 @@ function LessonDesktop({ preview, guide }: { preview: boolean; guide: TeacherGui
 export default function LessonRunner({
   taskKey,
   initialMode,
+  scenario = "classroom",
   initialLang,
   preview = false,
   transfer = false,
@@ -46,6 +50,7 @@ export default function LessonRunner({
   returnTo,
 }: {
   taskKey: TaskKey;
+  scenario?: LessonScenario;
   returnTo?: string;
   /** A task with no lesson block yet, opened by the smoke sweep. */
   draft?: boolean;
@@ -57,6 +62,9 @@ export default function LessonRunner({
 }) {
   const router = useRouter();
   const entry = (lessonByKey(taskKey) ?? (draft ? draftLessonFor(taskKey) : undefined))!;
+  const scenarioData = isConfidenceKey(taskKey) && scenario !== "classroom" ? CONFIDENCE_SCENARIOS[taskKey][scenario] : null;
+  const scene = scenarioData ? { you: { en: "You are practicing with fictional information.", es: "Estás practicando con datos ficticios." }, people: [], need: scenarioData.request } : entry.scene;
+  const reference = scenarioData ? (scenarioData.expected.password ? [{ label: { en: "Practice password", es: "Contraseña de práctica" }, value: scenarioData.expected.password }] : []) : entry.reference ?? [];
   const seed = useMemo(() => seedForLesson(taskKey)!, [taskKey]);
   const [mode, setModeState] = useState(initialMode);
   // The scene comes first. A smoke-sweep draft has no scene worth reading,
@@ -65,7 +73,7 @@ export default function LessonRunner({
   const [infoOpen, setInfoOpen] = useState(false);
   const modeRef = useRef(mode);
   // A smoke-sweep draft is not a real lesson, so it has nowhere to save.
-  const save = useLessonSave(taskKey, { preview: preview || draft, transfer, mode, returnTo });
+  const save = useLessonSave(taskKey, { preview: preview || draft, transfer, mode, returnTo, scenario });
   const { recordFinish } = save;
   const onLessonComplete = useCallback(() => recordFinish(modeRef.current), [recordFinish]);
   // Support changes in place: the URL follows, so a copied link keeps it,
@@ -78,14 +86,16 @@ export default function LessonRunner({
     window.history.replaceState(null, "", url);
   }, []);
 
-  const lesson = useMemo(
-    () => ({
+  const lesson = {
       taskKey,
       title: entry.title,
-      scene: entry.scene,
-      reference: entry.reference ?? [],
+      scene,
+      reference,
+      scenario,
+      sequence: entry.sequence,
+      changeScenario: (next: LessonScenario, lang: Lang) => router.push(scenarioHref(taskKey, next, lang, mode, preview)),
       persona: entry.persona,
-      takeaway: entry.takeaway,
+      takeaway: scenarioData ? entry.sequence?.reflection : entry.takeaway,
       mode,
       setMode,
       infoOpen,
@@ -94,9 +104,7 @@ export default function LessonRunner({
       save: { status: save.status, retry: save.retry, signIn: save.signIn },
       tabs: entry.tabs,
       onFinish: (lang = initialLang) => router.push(libraryReturn(returnTo, lang)),
-    }),
-    [taskKey, entry, mode, setMode, infoOpen, preview, save.status, save.retry, save.signIn, router, initialLang, returnTo],
-  );
+    };
 
   return (
     <WindowManagerProvider jumpTab={entry.tabs[0]} jumpSection={entry.section}>
@@ -109,8 +117,8 @@ export default function LessonRunner({
         ) : (
           <LessonIntro
             title={entry.title}
-            scene={entry.scene}
-            reference={entry.reference ?? []}
+            scene={scene}
+            reference={reference}
             atWork={entry.guide.atWork}
             onStart={() => setStarted(true)}
             onBack={(lang) => router.push(libraryReturn(returnTo, lang))}

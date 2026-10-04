@@ -1,3 +1,4 @@
+import { CONFIDENCE_TITLE } from "@/lib/lessons/confidence";
 import { materialsHref } from "@/lib/lessons/materials-links";
 import Link from "next/link";
 import { Atkinson_Hyperlegible_Next } from "next/font/google";
@@ -184,6 +185,7 @@ export default async function LessonsPage({
         </header>
 
         <main className="mx-auto flex w-full max-w-[1080px] flex-1 flex-col gap-9 px-5 pt-4 pb-14">
+          {view === "home" && <section className="border-b border-harbor-muted-3/25 pb-5"><Link data-testid="confidence-collection" className="inline-flex min-h-12 items-center text-2xl font-bold underline" href={`/lessons/confidence?lang=${lang}${teacher ? "&teacher=1" : ""}`}>{CONFIDENCE_TITLE[lang]} →</Link><p className="mt-2 text-lg">{lang === "es" ? "Ocho lecciones para practicar en clase y en casa." : "Eight lessons to practice in class and at home."}</p></section>}
           {view === "home" && (
             <section aria-labelledby="topics-heading" className="flex flex-col gap-[18px]">
               <h2 id="topics-heading" className="m-0 text-[30px] font-extrabold tracking-[-0.01em]">

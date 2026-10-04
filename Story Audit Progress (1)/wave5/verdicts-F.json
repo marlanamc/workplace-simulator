@@ -1,0 +1,15 @@
+{
+ "level19h1 · job-posting, job-application": {"seg":"F","ui":"friction","learn":"fair","note":"A false green \"Done\" from Mail or Portal. The application correction calls the Story learner \"Sam\". A reload drops the posting."},
+ "level19h2 · resume-build": {"seg":"F","ui":"friction","learn":"fair","note":"Down from blocks: Save is clear, drafts survive a reload, and \"Simulator\" is gone (fixed). Spanish title and month are inconsistent."},
+ "level19h3 · interview-practice": {"seg":"F","ui":"friction","learn":"fair","note":"The card never points at the button inside the email. At 911 the card covers the inbox senders."},
+ "level19h4 · job-offer": {"seg":"F","ui":"friction","learn":"fair","note":"\"Your offer letter is below\", but it's behind a button. A reload loses the reply."},
+ "level19h5 · w4, i9, direct deposit": {"seg":"F","ui":"blocks","learn":"unsupported","note":"At 911 the Submit I-9 label is never visible. I-9 and direct-deposit mistakes still get only \"Compare the form with Robin's facts\"."},
+ "level20 · office-drive": {"seg":"F","ui":"friction","learn":"fair","note":"A false \"Start tomorrow\" from Mail. The scroll gutter runs away at 911. The done screen shows the café file and Jordan."},
+ "level21 · scheduling, video call": {"seg":"F","ui":"friction","learn":"fair","note":"Down from blocks: the time slots are clear (fixed). The card sits over the Zoom controls, and the page says \"a few minutes late\" at 10:01 AM for a 2 PM meeting."},
+ "level22 · expense-report": {"seg":"F","ui":"friction","learn":"fair","note":"Redesigned; no block at 150% (fixed). At 911 the Flag column is under the card, and nothing says the receipts are in Drive."},
+ "level23 · slide-deck": {"seg":"F","ui":"friction","learn":"fair, thin","note":"Down from blocks. \"Answer Chris\" is still half under the card at 1366. Slides survive a reload (fixed)."},
+ "level24 · meeting-minutes": {"seg":"F","ui":"friction","learn":"fair","note":"The checks now bite, and notes survive a reload (fixed). A false \"Done\" from Calendar or Mail, and a stale correction over Send at 911."},
+ "level25 · performance-review": {"seg":"F","ui":"partial","learn":"fair, thin","note":"Only the 1366 pass and one wrong try; nothing wrong seen. Not a Clean Pass until the full conditions are checked."},
+ "level26 · ops-report-packet": {"seg":"F","ui":"blocks","learn":"fair","note":"The weekly-total box, \"Done here\" and Back are fully under the card at 1366 and 911, and the card never moves. The corrections are now specific (fixed)."},
+ "level27 · portfolio-reflection": {"seg":"F","ui":"friction","learn":"fair","note":"Short answers are accepted, and the summary works (fixed). Opening Mail hides \"See my summary\", and changing route afterwards sends the story back to Sep 2026."}
+}

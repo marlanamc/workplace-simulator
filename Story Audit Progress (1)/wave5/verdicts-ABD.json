@@ -1,0 +1,122 @@
+{
+ "level0 · tour + pointer practice": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "none",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): Practice visible at 911, reload keeps the tour's place, focus follows each step, and \"Start my first day\" is on screen at 911 (N-6)."
+ },
+ "level1 · mail-reply": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "fair",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): Drafts survive reload, welcome back after Stop for today, and Help no longer loops (N-4). Keyboard: Maria's row is a few Tabs from the page."
+ },
+ "level2 · schedule, mail-attach": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "fair",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): \"Sí, el jueves\" passes; no ring left after the choice (N-1); at 1366 Thursday and the phone stay clear (F-3, owner OK that Spanish may cover Monday); file names wrap at 911 (N-3); the note sits in the shelf (N-2); the Portal no longer shows Day 2's banner later (F-9)."
+ },
+ "level3 · timeclock, shift-review": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "fair",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): \"Click Submit\" and Show me on Submit; the note no longer covers Clock In or Submit (N-2); focus follows Clock In to Looks right (F-14). A reload closes the clock note but keeps its words."
+ },
+ "level3a · mail-etiquette": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "fair",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): The answer is in Maria's Day 3 note; a reload keeps the draft; the Portal shows the plain schedule (F-9)."
+ },
+ "level3a2 · call-out-sick": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "fair",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): The cursor is in the message, also straight after Day 4 (F-14); after another app or a reload the card still asks for the fix, not \"Click Send.\" (N-5)."
+ },
+ "level3a3 · paystub": {
+  "seg": "A",
+  "ui": "clean",
+  "learn": "fair",
+  "note": "Phase 2.5 replay (30 Sep, fix/act-1-phase2-5): Not given away; the Spanish card glosses Net pay; no ring left after Back to the Browser (N-1). Keyboard: the card's button is 21–23 Tabs from the PDF Reader."
+ },
+ "level3b · incident, handbook": {
+  "seg": "B",
+  "ui": "friction",
+  "learn": "fair",
+  "note": "The Wave 4 Wi-Fi recovery works. A reload loses the incident draft, and Spanish \"no le pasó nada\" is rejected."
+ },
+ "level3c · account-recovery": {
+  "seg": "B",
+  "ui": "friction",
+  "learn": "fair",
+  "note": "The password is no longer under the card (was blocks). Minor: no error on the page itself."
+ },
+ "level4 · calendar": {
+  "seg": "B",
+  "ui": "friction",
+  "learn": "given away",
+  "note": "Renata always confirms \"Thursday at 10 AM\", whatever was proposed. Opening Mail shows a false \"That's today done\"."
+ },
+ "level5 · files, mail-send-link": {
+  "seg": "B",
+  "ui": "blocks",
+  "learn": "unsupported (paste)",
+  "note": "The Wave 4 upload works. At 911 the link email to Jordan is fully under the card, and Help shows the Day 2 lesson."
+ },
+ "level6 · spreadsheet": {
+  "seg": "B",
+  "ui": "blocks",
+  "learn": "fair",
+  "note": "At 100% the card still covers the tip slip for Tuesday to Friday. The card avoids controls, not reading material."
+ },
+ "level7 · make-a-copy, status-report": {
+  "seg": "B",
+  "ui": "friction",
+  "learn": "partly given away",
+  "note": "Down from blocks. The Wave 4 comment works. The Undo practice accepts deleting the wrong cell, then says the numbers are right (Wave 4 bug)."
+ },
+ "level8 · triage": {
+  "seg": "B",
+  "ui": "friction",
+  "learn": "unfair",
+  "note": "The only accepted huddle time is the learner's day off, against Day 9's rule and Day 13's own Help. The Wave 4 close-the-browser step works."
+ },
+ "level16 · enrollment": {
+  "seg": "D",
+  "ui": "blocks",
+  "learn": "fair",
+  "note": "At 911 the card covers the deadline choices at every scroll position. \"One required document is missing\" stays after the document is Ready."
+ },
+ "level17 · financial-aid": {
+  "seg": "D",
+  "ui": "blocks",
+  "learn": "fair, hints unsupported",
+  "note": "At 911 the card covers \"Open award letter\", and the page cannot scroll. The accept-by date is fixed (Dec 4)."
+ },
+ "level18 · coursework": {
+  "seg": "D",
+  "ui": "friction",
+  "learn": "fair",
+  "note": "911 is fine here. Opening Mail shows a false \"That's today done\", and a reload loses work."
+ },
+ "level19 · research": {
+  "seg": "D",
+  "ui": "blocks",
+  "learn": "fair",
+  "note": "At 911 the results are readable only in a band about 15 px tall. Source metadata is fixed; \"No sources\" is gone."
+ },
+ "after Act II and after each route": {
+  "seg": "B, D",
+  "ui": "friction",
+  "learn": "none",
+  "note": "Previews, confirmation and the 911 layout work. Focus is lost after a preview, and opening Mail replaces the chooser with a stale finish."
+ },
+ "College, Front desk, Stay and lead": {
+  "seg": "C, D, E",
+  "ui": "broken",
+  "learn": "n/a",
+  "note": "Changing route after an ending moves the story dates back (Stay and lead Oct 16 → Front desk Sep 28), and earlier email disappears. College: \"See my summary\" disappears when Mail is opened. Front desk: the HQ line is gone and the summary works in EN/ES; after Thuy's note the card says \"You finished everything\" with no buttons."
+ }
+}

@@ -23,6 +23,7 @@ import type { StoryFlags } from "@/lib/story-beats";
 import type { PortalSection } from "@/lib/tasks/registry";
 import type { LessonMeta } from "./types";
 import type { SkillTag } from "./skills";
+import { isConfidenceKey, CONFIDENCE_SEQUENCES } from "./confidence";
 
 export type LessonEntry = LessonMeta & {
   taskKey: TaskKey;
@@ -45,7 +46,7 @@ export const LESSONS: LessonEntry[] = Object.values(TASKS).flatMap((t) => {
   if (!t.lesson || t.retired) return [];
   const home = lessonTabFor(t.key);
   const tabs = [...new Set([...(home ? [home] : []), ...(t.lesson.tabs ?? [])])];
-  return [{ ...t.lesson, taskKey: t.key, tabs, section: TASK_LOCATIONS[t.key]?.section }];
+  return [{ ...t.lesson, ...(isConfidenceKey(t.key) ? { sequence: CONFIDENCE_SEQUENCES[t.key] } : {}), taskKey: t.key, tabs, section: TASK_LOCATIONS[t.key]?.section }];
 });
 
 const BY_KEY = new Map(LESSONS.map((l) => [l.taskKey as string, l]));
