@@ -65,7 +65,7 @@ export const TAB_META: TabMeta[] = [
   { key: "portfolio-reflection", label: "Recap", url: "recap.harborsidehq.com", color: "#c9a227", levelKey: "level27" },
   { key: "zoom", label: "Zoom", url: "zoom.harborsidehq.com/join", color: "#2D8CFF", levelKey: "level21" },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", color: "#7248b9", levelKey: "level3b" },
-  { key: "account-recovery", label: "Sign In", url: "accounts.harborsidecafe.com", color: "#5f6368", levelKey: "level3c" },
+  { key: "account-recovery", label: "Sign In", url: "accounts.google.com", color: "#5f6368", levelKey: "level3c" },
   { key: "portal", label: "Portal", url: "portal.harborsidecafe.com", color: "#8430ce", levelKey: "level2" },
 ];
 

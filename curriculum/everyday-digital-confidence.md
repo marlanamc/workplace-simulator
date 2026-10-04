@@ -12,7 +12,7 @@ Status: implementation available for review; **learner observations and independ
 - `/lessons/confidence?sheet=observation&teacher=1`: printable teacher observation form, separate from learner sheets.
 - Lesson links accept `scenario=classroom|try|home`, `lang=en|es`, and `mode=guided|independent`. Teacher preview adds `preview=1` and saves nothing. Invalid or unsupported alternate scenarios return 404.
 
-Eight tasks: mail-reply, mail-attach, files, schedule, calendar, account-recovery, spreadsheet, coursework. Schedule now has public lesson metadata. Existing lesson URLs open classroom practice. The original classroom workflows (including existing follow-up rounds) are retained; the changed-facts and home examples are directly accessible without replaying them. Split longer classroom activities across sessions.
+Eight tasks: mail-reply, mail-attach, files, schedule, calendar, account-recovery, spreadsheet, coursework. Schedule now has public lesson metadata. Existing lesson URLs open classroom practice. All three scenarios use the same lesson app controls. Classroom email reply retains its three-message sequence. Legacy worksheet follow-up rounds no longer run inside these eight lessons; changed-facts and home examples are separate, directly accessible attempts. Story tasks retain their original grading. Split longer classroom activities across sessions.
 
 ## Lesson routine
 
@@ -30,9 +30,13 @@ The per-lesson sheet includes a concrete teacher-facilitated Google activity wit
 
 ## Technical behavior
 
-Scenario facts and bounded checks are in `src/lib/tasks/confidence/content.ts`. The fresh-scenario workspace reuses the shared PickerModal, PhoneTexts, SheetsFrame/ReadOnlyGrid, SentEmailRecap, HelpDrawer, and Job Card reporting controls. Students type replies, preview/attach/remove files, rename/share, propose times, edit cells, and submit. Sheet cells are selected in the shared grid and edited in its labeled cell editor. These are simplified simulated workflows, not full Google products.
+Scenario facts and pure checks are in `src/lib/tasks/confidence/content.ts`, with classroom adapters in `classroom.ts`. Seven lessons share the lesson app workspace; sign-in reuses `AccountRecoveryTask` for all three scenarios. Shared PickerModal, PhoneTexts, SheetsFrame, SentEmailRecap, HelpDrawer, and Job Card reporting remain in use. Students type replies, preview/attach/remove files, rename/share, propose date/time ranges, edit cells directly, and submit.
 
-Wrong attempts retain drafts and report through the Job Card. Review shows the student's result; final confirmation displays a sent/shared/submitted status. The student checks that result before recording one practice finish. Restart resets scenario state; switching scenarios remounts the runner and preserves current language/support. Shared preview links and sign-in return links retain the scenario. Task-based completion counts remain compatible with old records; they do not distinguish scenario success or demonstrate mastery. There is no database migration.
+Ordinary app actions happen before teaching assessment. Wrong attachments can appear in Sent or Turned in; the Job Card's **Check my work** provides explicitly labeled practice feedback. Students correct email via a follow-up, sharing via its dialog, or coursework via Unsubmit → replace attachment → Turn in. Sent messages stay as immutable snapshots. Invalid email syntax and missing required app fields still use native form validation. Calendar and schedule requests stay pending; no automatic organizer approval is implied.
+
+Sharing starts with a blank recipient and includes Viewer, Commenter, Editor, Restricted, and Anyone with the link. The home editing example is a Google document, not a PDF. Spreadsheet templates contain an existing SUM formula, shown when the total cell is selected; this lesson assesses data entry and the emailed total, not formula authorship. Coursework deadlines stay in source documents. Teachers observe whether students locate the deadline; automatic completion only checks the submitted file.
+
+Restart resets scenario state; switching scenarios remounts the runner and preserves language/support. Shared preview links and sign-in return links retain the scenario. Task-based completion counts remain compatible with old records; they do not distinguish scenario success or demonstrate mastery. There is no database migration. These are simplified simulated workflows, not complete Google products.
 
 Email checks recognize the requested fact, not general meaning, writing quality, tone, or grammar. Teacher observation remains necessary. No scores or confidence ratings are stored. Self-reported confidence is recorded separately on the printable observation sheet.
 

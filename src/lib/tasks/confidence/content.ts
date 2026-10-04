@@ -1,6 +1,8 @@
+import { OPENING_MESSAGES, OPENING_CORRECTIONS, openingReplyVerdict } from "@/lib/tasks/mail/opening";
+import { mentionsAmount } from "@/lib/text-facts";
 import { practiceEmailMatches } from "@/lib/tasks/account-recovery/content";
 import type { Localized } from "@/lib/task-types";
-import { l, type ConfidenceKey } from "@/lib/lessons/confidence";
+import { l, type ConfidenceKey, type LessonScenario } from "@/lib/lessons/confidence";
 
 export type PracticeFile = { key: string; name: string; detail: Localized };
 export type ConfidenceScenario = {
@@ -68,7 +70,7 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
     try: {
       title: l("Garden club · November list", "Club del huerto · lista de noviembre"),
       request: l("Find the November garden list. Rename it Garden-November.pdf and share it with Lee, who only needs to read it.", "Busca la lista del huerto de noviembre. Ponle Garden-November.pdf y compártela con Lee, que solo necesita leerla."),
-      guidance: l("Open a file and check its month. Rename the November file Garden-November.pdf. Open Share, choose Lee and an access level, then save.", "Abre un archivo y revisa su mes. Cambia el nombre del archivo de noviembre a Garden-November.pdf. Abre Compartir, elige a Lee y un nivel de acceso, y guarda."),
+      guidance: l("Open a file and check its month. Rename the November file Garden-November.pdf. Open Share, enter Lee’s email address and an access level, then save.", "Abre un archivo y revisa su mes. Cambia el nombre del archivo de noviembre a Garden-November.pdf. Abre Compartir, ingresa el correo de Lee y un nivel de acceso, y guarda."),
       help: l("File previews show the month. A useful file name identifies the contents. Viewer lets someone read without changing the document.", "Las vistas previas muestran el mes. Un nombre útil identifica el contenido. Lector permite leer sin cambiar el documento."),
       sources: [], recipient: "lee@example.test", expected: { file: "nov", name: "Garden-November.pdf", permission: "view" },
       files: [file("oct", "List-10.pdf", "Garden club · October list.", "Club del huerto · lista de octubre."), file("nov", "List-11.pdf", "Garden club · November list.", "Club del huerto · lista de noviembre.")],
@@ -76,11 +78,11 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
     },
     home: {
       title: l("Class project · reading notes", "Proyecto de clase · notas de lectura"),
-      request: l("Share the final reading notes with Ana. Rename them Class-reading-final.pdf. Ana will correct the notes and needs editing access.", "Comparte las notas finales de lectura con Ana. Ponles Class-reading-final.pdf. Ana las corregirá y necesita acceso de edición."),
-      guidance: l("Preview the notes and select the final version. Rename it Class-reading-final.pdf. Open Share and give Ana the access she needs to correct it.", "Revisa las notas y selecciona la versión final. Ponle Class-reading-final.pdf. Abre Compartir y dale a Ana el acceso para corregirla."),
+      request: l("Share the final reading notes with Ana. Rename them Class-reading-final. Ana will correct the notes and needs editing access.", "Comparte las notas finales de lectura con Ana. Ponles Class-reading-final. Ana las corregirá y necesita acceso de edición."),
+      guidance: l("Preview the notes and select the final version. Rename it Class-reading-final. Open Share and give Ana the access she needs to correct it.", "Revisa las notas y selecciona la versión final. Ponle Class-reading-final. Abre Compartir y dale a Ana el acceso para corregirla."),
       help: l("Here the recipient needs to change the file. Choose access based on the request, not the choice from the last practice.", "Aquí la destinataria necesita cambiar el archivo. Elige el acceso según la solicitud, no según la práctica anterior."),
-      sources: [], recipient: "ana@example.test", expected: { file: "final", name: "Class-reading-final.pdf", permission: "edit" },
-      files: [file("final", "Notes-v2.pdf", "Reading notes · FINAL · ready for Ana's corrections.", "Notas de lectura · FINAL · listas para las correcciones de Ana."), file("draft", "Notes-v1.pdf", "Reading notes · DRAFT · incomplete.", "Notas de lectura · DRAFT = borrador · incompletas.")],
+      sources: [], recipient: "ana@example.test", expected: { file: "final", name: "Class-reading-final", permission: "edit" },
+      files: [file("final", "Notes-v2", "Google Docs · Reading notes · FINAL · ready for Ana's corrections.", "Google Docs · Notas de lectura · FINAL · listas para las correcciones de Ana."), file("draft", "Notes-v1", "Reading notes · DRAFT · incomplete.", "Notas de lectura · DRAFT = borrador · incompletas.")],
       correction: l("Check the final version and requested name. Ana needs to change the notes, so reading-only access will not be enough.", "Revisa la versión final y el nombre solicitado. Ana necesita cambiar las notas; el acceso de solo lectura no basta."),
     },
   },
@@ -166,7 +168,7 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
     try: {
       title: l("Reading class · weekly log", "Clase de lectura · registro semanal"),
       request: l("Find the reading log deadline and submit the completed November log.", "Busca la fecha de entrega del registro de lectura y entrega el registro completo de noviembre."),
-      guidance: l("Read the assignment details. Record the deadline. Use Add file to preview and select the completed log, then turn it in and check the status.", "Lee los detalles. Anota la fecha de entrega. Usa Agregar archivo para revisar y seleccionar el registro completo. Entrégalo y revisa el estado."),
+      guidance: l("Read the assignment details. Find the deadline in the assignment. Use Add or create → Google Drive to preview and select the completed log, then turn it in and check the status.", "Lee los detalles. Busca la fecha de entrega en la tarea. Usa Agregar o crear → Google Drive para revisar y seleccionar el registro completo. Entrégalo y revisa el estado."),
       help: l("The assignment deadline is different from the next class date. Adding a file creates a draft; Turn in submits it.", "La fecha de entrega no es la fecha de la próxima clase. Agregar un archivo crea un borrador; Entregar lo envía."),
       sources: [source(l("Assignment details", "Detalles de la tarea"), l("November reading log. Due November 12, 2026. Next class: November 13. Submit the completed log.", "Registro de lectura de noviembre. Entrega: 12 de noviembre de 2026. Próxima clase: 13 de noviembre. Entrega el registro completo."))],
       expected: { deadline: "2026-11-12", file: "complete" }, files: [file("draft", "Reading-log-draft.pdf", "November log · 2 of 4 entries completed.", "Registro de noviembre · 2 de 4 entradas completas."), file("complete", "Reading-log-complete.pdf", "November log · all 4 entries completed.", "Registro de noviembre · las 4 entradas completas.")],
@@ -175,7 +177,7 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
     home: {
       title: l("Computer class · revised assignment", "Clase de computación · tarea revisada"),
       request: l("Use the updated deadline and submit the revised computer-class notes.", "Usa la fecha actualizada y entrega las notas revisadas de computación."),
-      guidance: l("Read the teacher's update and the original assignment. Record the current deadline. Add the revised file, turn it in, and check the status.", "Lee la actualización del docente y la tarea original. Anota la fecha actual. Agrega el archivo revisado, entrégalo y revisa el estado."),
+      guidance: l("Read the teacher's update and the original assignment. Find the current deadline. Add the revised file, turn it in, and check the status.", "Lee la actualización del docente y la tarea original. Busca la fecha actual. Agrega el archivo revisado, entrégalo y revisa el estado."),
       help: l("A dated teacher update can change a deadline. Check which document is newer and whether your file includes the revision.", "Una actualización del docente puede cambiar una fecha. Revisa cuál documento es más reciente y si el archivo incluye la revisión."),
       sources: [source(l("Original assignment · November 9", "Tarea original · 9 de noviembre"), l("Computer-class notes due November 16, 2026.", "Notas de computación para el 16 de noviembre de 2026.")), source(l("Teacher update · November 13", "Actualización del docente · 13 de noviembre"), l("New deadline: November 18, 2026. Add the section about saving a file and submit your revised notes.", "Nueva fecha: 18 de noviembre de 2026. Agrega la sección sobre guardar archivos y entrega las notas revisadas."))],
       expected: { deadline: "2026-11-18", file: "revised" }, files: [file("revised", "Computer-notes-v2.pdf", "Revised notes · includes Saving a file.", "Notas revisadas · incluyen Guardar un archivo."), file("old", "Computer-notes-v1.pdf", "Original notes · keyboard and mouse only.", "Notas originales · solo teclado y ratón.")],
@@ -198,4 +200,32 @@ export function confidenceProblem(s: ConfidenceScenario, values: Record<string, 
   if (s.recipient && values.recipient?.trim().toLowerCase() !== s.recipient) return l("Check the recipient against the request.", "Revisa el destinatario con la solicitud.");
   if (s.replyPattern && !s.replyPattern.test(values.body ?? "")) return s.correction;
   return null;
+}
+
+/** Checks a snapshot after an app action; never prevents the app action itself. */
+export function assessPractice(key:ConfidenceKey, scenario:LessonScenario, s:ConfidenceScenario, values:Record<string,string>, message=0) {
+  if (key==='mail-reply' && scenario==='classroom') {
+    if (values.recipient?.trim().toLowerCase()!==s.recipient) return l('Check the recipient against the received message.','Compara el destinatario con el mensaje recibido.');
+    const verdict = openingReplyVerdict(OPENING_MESSAGES[message].id, values.body ?? '');
+    return verdict === 'ok' ? null : OPENING_CORRECTIONS[verdict];
+  }
+  if (key==='files' && (values.scope!=='restricted' || values.recipients!==s.recipient)) return l('Check who has access. Keep General access Restricted, remove unintended people, and give the requested person the right role.','Revisa quién tiene acceso. Mantén el acceso general Restringido, quita a las personas incorrectas y asigna el permiso solicitado.');
+  if (key==='spreadsheet' && !mentionsAmount(values.body??'', Number(s.expected.total))) return l('Compare the total in the sent email with the sheet. Send a corrected follow-up if needed.','Compara el total del correo enviado con la hoja. Envía una corrección si hace falta.');
+  if (key==='calendar') {
+    const duration=scenario==='home'?60:30;
+    const minutes=(s:string)=>{const [h,m]=s.split(':').map(Number);return h*60+m;};
+    if (minutes(values.end??'')-minutes(values.time??'')!==duration) return l(`The meeting needs ${duration} minutes. Check both its start and end.`,`La reunión necesita ${duration} minutos. Revisa el inicio y el final.`);
+  }
+  const checked={...values};
+  // Deadlines are source facts, not student-editable submission fields.
+  if(key==='coursework') checked.deadline=s.expected.deadline;
+  if(key==='spreadsheet') checked.total=s.expected.total; // The actual email is checked above; rows are checked below.
+  const expected={...s.expected};
+  if(key==='calendar'&&scenario==='classroom'&&values.time==='14:00') expected.time='14:00';
+  return confidenceProblem({...s,expected},checked);
+}
+
+export function scenarioPasswordMatches(s: ConfidenceScenario, value: string) { return value.trim() === s.expected.password; }
+export function scenarioCodeResult(s: ConfidenceScenario, value: string): 'empty' | 'ok' | 'wrong' {
+  return !value.trim() ? 'empty' : value.trim() === s.expected.code ? 'ok' : 'wrong';
 }

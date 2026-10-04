@@ -9,6 +9,7 @@ import { SHELF_RESERVE } from "@/components/Shelf";
 import WindowControls from "@/components/WindowControls";
 import { useWindowManager } from "@/lib/window-manager";
 import { useProgress } from "@/lib/progress-context";
+import { isConfidenceKey } from "@/lib/lessons/confidence";
 import { useLesson } from "@/lib/lesson-context";
 import OfflinePage, { BROWSER_RELOAD_EVENT } from "./OfflinePage";
 import { OFFLINE_FLAG, offlineIncidentActive } from "@/lib/tasks/handbook/offline";
@@ -562,7 +563,9 @@ export default function BrowserClient() {
           <span className={`flex-1 truncate text-[14px] ${showingNewTab ? "text-[#5f6368]" : "text-[#202124]"}`}>
             {showingNewTab
               ? "Search Google or type a URL"
-              : active?.key === "files" && (currentTrack.key === "office-drive" || currentTrack.key === "expense-report")
+              : lesson && lesson.practiceRound == null && ["files", "spreadsheet", "calendar", "coursework"].includes(lesson.taskKey)
+                ? ({ files: "drive.google.com", spreadsheet: "docs.google.com/spreadsheets", calendar: "calendar.google.com", coursework: "classroom.google.com" } as Record<string, string>)[lesson.taskKey]
+                : active?.key === "files" && (currentTrack.key === "office-drive" || currentTrack.key === "expense-report")
                 ? "drive.harborsidehq.com"
                 : active?.key === "calendar" && currentTrack.key === "get-everyone-in-the-room"
                   ? "calendar.harborsidehq.com"
@@ -630,7 +633,7 @@ export default function BrowserClient() {
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div ref={pageRef} tabIndex={-1} data-page-content className="relative min-h-0 flex-1 overflow-hidden bg-white outline-none">
-        {lesson?.scenario && lesson.scenario !== "classroom" ? <ConfidencePractice /> : lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
+        {lesson && isConfidenceKey(lesson.taskKey) && lesson.taskKey !== "account-recovery" && lesson.practiceRound == null ? <ConfidencePractice /> : lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
           // Every page but Forms, whose done screen is still up from Day 7's first job.
           <OfflinePage />
         ) : <>

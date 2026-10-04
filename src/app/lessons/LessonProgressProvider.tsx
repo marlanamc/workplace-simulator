@@ -11,6 +11,7 @@ import { rungFor, type RungMap } from "@/lib/release-ladder";
 import type { StoryFlags } from "@/lib/story-beats";
 import type { LessonSeed } from "@/lib/lessons/catalog";
 
+import { isConfidenceKey } from "@/lib/lessons/confidence";
 import { FOLLOWUP_ROUNDS } from "@/lib/tasks/lesson-followups/content";
 
 const NO_RUNGS: RungMap = {};
@@ -60,7 +61,7 @@ export default function LessonProgressProvider({
     async (taskKey: TaskKey, _badgeKey?: string, submission?: SubmissionContent) => {
       if (submission) setWriting((prev) => ({ ...prev, [taskKey]: submission }));
       if (completedRef.current.includes(taskKey)) return true;
-      if (taskKey === lesson.taskKey && (!lesson.scenario || lesson.scenario === "classroom") && FOLLOWUP_ROUNDS[taskKey]?.length) {
+      if (taskKey === lesson.taskKey && !isConfidenceKey(taskKey) && (!lesson.scenario || lesson.scenario === "classroom") && FOLLOWUP_ROUNDS[taskKey]?.length) {
         if (practiceRoundRef.current === null) {
           practiceRoundRef.current = 0;
           setPracticeRound(0);

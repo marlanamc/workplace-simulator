@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useProgress } from "@/lib/progress-context";
+import { CONFIDENCE_SCENARIOS, scenarioPasswordMatches, scenarioCodeResult } from "@/lib/tasks/confidence/content";
 import { useLesson } from "@/lib/lesson-context";
 import { useJobCard } from "@/lib/job-card-context";
 import { useLiveClock } from "@/components/LiveClock";
@@ -63,6 +64,8 @@ export default function AccountRecoveryTask() {
   const lesson = useLesson();
   const [view, setView] = useState<View>(completedTaskKeys.includes("account-recovery") ? "done" : "signin");
   const isLesson = Boolean(lesson);
+  const scenario = lesson?.scenario && lesson.scenario !== "classroom" ? CONFIDENCE_SCENARIOS["account-recovery"][lesson.scenario] : null;
+  const texts = scenario ? scenario.sources.map((src, i) => ({ key: String(i), from: src.title[lang], body: src.text, when: { en: "", es: "" }, isTarget: String(i) === scenario.expected.text, wrongHint: null })) : TEXTS;
   const [email, setEmail] = useState("");
   const emailRef = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
@@ -89,11 +92,11 @@ export default function AccountRecoveryTask() {
   // The code text stays on the phone once it has arrived, so the learner can
   // read it again while typing. Choosing it is step 2; typing it is step 3.
   const stepIndex = view === "signin" ? 0 : chosenText ? 2 : 1;
-  const steps = lesson ? [LESSON_FIRST_STEP, ...RIGHT_NOW_STEPS.slice(1)] : RIGHT_NOW_STEPS;
+  const steps = scenario ? [LESSON_FIRST_STEP, scenario.guidance, RIGHT_NOW_STEPS[2]] : lesson ? [LESSON_FIRST_STEP, ...RIGHT_NOW_STEPS.slice(1)] : RIGHT_NOW_STEPS;
 
   const trySignIn = () => {
     showMe.clear();
-    if (lesson && !practiceEmailMatches(email)) {
+    if (lesson && !practiceEmailMatches(email, scenario?.expected.email)) {
       recordWrong({ title: lang === "en" ? "Check your email." : "Revisa el correo.", body: LESSON_EMAIL_CORRECTION[lang] });
       return;
     }
@@ -101,7 +104,7 @@ export default function AccountRecoveryTask() {
       recordWrong({ title: lang === "en" ? "Almost." : "Casi.", body: c.emptyPassword });
       return;
     }
-    if (!practicePasswordMatches(password)) {
+    if (!(scenario ? scenarioPasswordMatches(scenario, password) : practicePasswordMatches(password))) {
       recordWrong({ title: lang === "en" ? "Not quite." : "No es así.", body: lesson ? c.wrongPassword : STORY_WRONG_PASSWORD[lang] });
       return;
     }
@@ -110,7 +113,7 @@ export default function AccountRecoveryTask() {
 
   const tapText = (key: string) => {
     showMe.clear();
-    const text = TEXTS.find((t) => t.key === key);
+    const text = texts.find((t) => t.key === key);
     if (!text) return;
     if (lesson || text.isTarget) {
       setChosenText(key);
@@ -123,7 +126,7 @@ export default function AccountRecoveryTask() {
 
   const trySubmitCode = () => {
     showMe.clear();
-    const result = checkCode(codeInput);
+    const result = scenario ? scenarioCodeResult(scenario, codeInput) : checkCode(codeInput);
     if (result === "empty") {
       recordWrong({ title: lang === "en" ? "Almost." : "Casi.", body: c.emptyCode });
       return;
@@ -133,7 +136,7 @@ export default function AccountRecoveryTask() {
       return;
     }
     if (result === "wrong") {
-      recordWrong({ title: lang === "en" ? "Not quite." : "No es así.", body: c.wrongCode });
+      recordWrong({ title: lang === "en" ? "Not quite." : "No es así.", body: scenario ? scenario.correction[lang] : c.wrongCode });
       return;
     }
     if (wrongCount === 0) recordClean();
@@ -151,12 +154,12 @@ export default function AccountRecoveryTask() {
     setCodeInput("");
   };
 
-  const selectedText = TEXTS.find((text) => text.key === chosenText);
+  const selectedText = texts.find((text) => text.key === chosenText);
 
   const phoneTexts =
     view === "signin"
       ? []
-      : TEXTS.map((t) => ({ key: t.key, from: t.from, body: t.body[lang], when: t.when[lang] }));
+      : texts.map((t) => ({ key: t.key, from: t.from, body: t.body[lang], when: t.when[lang] }));
 
   return (
     <div className="relative h-full overflow-y-auto">
@@ -168,7 +171,7 @@ export default function AccountRecoveryTask() {
           icon={TASK_ICONS["account-recovery"]}
           stepIndex={stepIndex}
           steps={steps}
-          goal={stepIndex === 0 ? (lesson ? LESSON_SIGNIN_GOAL : STORY_SIGNIN_GOAL) : lesson ? LESSON_VERIFY_GOAL : undefined}
+          goal={scenario?.request ?? (stepIndex === 0 ? (lesson ? LESSON_SIGNIN_GOAL : STORY_SIGNIN_GOAL) : lesson ? LESSON_VERIFY_GOAL : undefined)}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(SHOW_ME_IDS[stepIndex])}
@@ -188,7 +191,7 @@ export default function AccountRecoveryTask() {
             {view === "signin" ? (
               <>
                 <h3 className="m-0 mt-3 text-[32px] font-normal leading-tight text-[#1f1f1f]">{c.signInTitle}</h3>
-                <p className="mt-2 mb-5 text-[16px] text-[#1f1f1f]">{c.continueTo}</p>
+                <p className="mt-2 mb-5 text-[16px] text-[#1f1f1f]">{scenario ? scenario.title[lang] : c.continueTo}</p>
                 {lesson ? <label className="mb-4 block text-[14px] font-medium text-[#444746]">
                   {lang === "en" ? "Email" : "Correo"}
                   <input ref={emailRef} data-testid="practice-email" inputMode="email" autoCapitalize="none" spellCheck={false} autoComplete="off"
@@ -319,7 +322,7 @@ export default function AccountRecoveryTask() {
         open={help}
         onClose={() => setHelp(false)}
         kicker={lang === "en" ? "2-minute lesson" : "Lección de 2 minutos"}
-        lesson={HELP_LESSON[lang]}
+        lesson={scenario ? { t: scenario.title[lang], s: [scenario.help[lang]], tip: scenario.help[lang] } : HELP_LESSON[lang]}
         tipLabel={lang === "en" ? "Tip" : "Consejo"}
         gotItLabel={lang === "en" ? "Got it. Back to my task" : "Entendido. Volver a mi tarea"}
       />

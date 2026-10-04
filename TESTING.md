@@ -308,3 +308,9 @@ Run `npm run check`, then `npx playwright test e2e/confidence.spec.ts` and the e
 `practice-email.test.ts` checks complete fictional email matching (case and outer whitespace are forgiven) and rejects another scenario's address. `lesson-independence.spec.ts` checks EN/ES blank email entry in all three account-code scenarios, retained passwords on rejection, delayed message-choice feedback, and classroom restart. `confidence.spec.ts` checks fresh-scenario restart and explicit spreadsheet cell selection. Run these with the guest-only lesson suite (`--grep-invert saving`) and lesson audit regressions; account-saving tests still require the dedicated database.
 
 See [the scaffolding review](curriculum/lesson-independence-review.md) for the scope, retained supports, and limits of the 16 published lessons.
+
+## Lesson realism regression checks
+
+`confidence-realism.test.ts` checks post-action snapshots, sharing scope and extra recipients, meeting duration, submission without invented deadline inputs, and sheet-row accuracy separately from the email total. `e2e/confidence.spec.ts` exercises all 24 scenarios in English and Spanish, wrong-action recovery, pending proposal status, immutable sent results, direct cell entry, and restart. The lesson workspace and calendar regression tests now use these app controls instead of the retired Review/Confirm worksheet. Legacy follow-ups remain available only for lessons outside this collection.
+
+Run the guest-only lesson, independence, library, materials, workspace, and confidence suites with `--grep-invert saving`. The full authenticated login/teacher suite still needs the dedicated test database; local guest checks do not replace it or the Chromebook/learner pilot.

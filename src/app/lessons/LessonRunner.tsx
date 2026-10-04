@@ -1,4 +1,5 @@
 "use client";
+import { practiceScenario } from "@/lib/tasks/confidence/classroom";
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -62,7 +63,7 @@ export default function LessonRunner({
 }) {
   const router = useRouter();
   const entry = (lessonByKey(taskKey) ?? (draft ? draftLessonFor(taskKey) : undefined))!;
-  const scenarioData = isConfidenceKey(taskKey) && scenario !== "classroom" ? CONFIDENCE_SCENARIOS[taskKey][scenario] : null;
+  const scenarioData = isConfidenceKey(taskKey) && taskKey !== "account-recovery" ? practiceScenario(taskKey, scenario) : taskKey === "account-recovery" && scenario !== "classroom" ? CONFIDENCE_SCENARIOS[taskKey][scenario] : null;
   const scene = scenarioData ? { you: { en: "You are practicing with fictional information.", es: "Estás practicando con datos ficticios." }, people: [], need: scenarioData.request } : entry.scene;
   const reference = scenarioData ? (scenarioData.expected.password ? [{ label: { en: "Email", es: "Correo" }, value: scenarioData.expected.email }, { label: { en: "Practice password", es: "Contraseña de práctica" }, value: scenarioData.expected.password }] : []) : entry.reference ?? [];
   const seed = useMemo(() => seedForLesson(taskKey)!, [taskKey]);

@@ -1,132 +1,152 @@
 "use client";
 
-import { practiceEmailMatches, LESSON_EMAIL_CORRECTION } from "@/lib/tasks/account-recovery/content";
+import { useRef, useState } from 'react';
+import { useLesson } from '@/lib/lesson-context';
+import { useProgress } from '@/lib/progress-context';
+import { useJobCard } from '@/lib/job-card-context';
+import { isConfidenceKey, l } from '@/lib/lessons/confidence';
+import { practiceScenario } from '@/lib/tasks/confidence/classroom';
+import { assessPractice } from '@/lib/tasks/confidence/content';
+import RightNowBar from '@/components/task/RightNowBar';
+import HelpDrawer from '@/components/task/HelpDrawer';
+import PickerModal from '@/components/task/PickerModal';
+import { SheetsFrame } from '@/components/task/SheetsFrame';
+import { SentEmailRecap } from '@/app/browser/sheet-lesson-parts';
 
-import { useRef, useState } from "react";
-import { useLesson } from "@/lib/lesson-context";
-import { useProgress } from "@/lib/progress-context";
-import { useJobCard } from "@/lib/job-card-context";
-import { isConfidenceKey, l } from "@/lib/lessons/confidence";
-import { CONFIDENCE_SCENARIOS, confidenceProblem } from "@/lib/tasks/confidence/content";
-import RightNowBar from "@/components/task/RightNowBar";
-import HelpDrawer from "@/components/task/HelpDrawer";
-import PickerModal from "@/components/task/PickerModal";
-import PhoneTexts from "@/components/task/PhoneTexts";
-import { ReadOnlyGrid, SheetsFrame } from "@/components/task/SheetsFrame";
-import { SentEmailRecap } from "@/app/browser/sheet-lesson-parts";
+const button='min-h-11 rounded-full border border-[#dadce0] bg-white px-5 py-2 font-medium text-[#0b57d0] hover:bg-[#e8f0fe] focus-visible:outline-2 focus-visible:outline-[#0b57d0]';
+const primary=`${button} border-[#0b57d0]`;
+const input='mt-1 block min-h-11 w-full rounded border border-[#747775] bg-white px-3 py-2 text-[#202124] focus:outline-2 focus:outline-[#0b57d0]';
 
-const button = "min-h-11 rounded-full border border-[#dadce0] px-5 py-2 text-[#0b57d0] font-medium hover:bg-[#e8f0fe]";
-const input = "mt-1 min-h-11 w-full rounded border border-[#747775] px-3 py-2 text-[#202124] focus:outline-2 focus:outline-[#0b57d0]";
-
-/** Fresh examples in the same Browser. Shared picker, phone, sheet and recap controls. */
-export default function ConfidencePractice() {
-  const lesson = useLesson()!;
-  if (!isConfidenceKey(lesson.taskKey) || !lesson.scenario || lesson.scenario === "classroom") return null;
+/** Every lesson scenario uses the same app controls; scenario changes supply facts only. */
+export default function ConfidencePractice(){
+  const lesson=useLesson()!;
+  if(!isConfidenceKey(lesson.taskKey)||lesson.taskKey==='account-recovery') return null;
   return <Practice key={`${lesson.taskKey}:${lesson.scenario}`} />;
 }
-function Practice() {
-  const lesson = useLesson()!;
-  const { lang, markComplete, completedTaskKeys } = useProgress();
-  const { correct, clearCorrection } = useJobCard();
-  const key = lesson.taskKey;
-  const s = CONFIDENCE_SCENARIOS[key as keyof typeof CONFIDENCE_SCENARIOS][lesson.scenario as "try" | "home"];
-  const t = (en: string, es: string) => lang === "es" ? es : en;
-  const [values, setValues] = useState<Record<string, string>>({ recipient: s.recipient ?? "" });
-  const [stage, setStage] = useState<"source" | "edit" | "review" | "sent">("source");
-  const [help, setHelp] = useState(false);
-  const [picker, setPicker] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [selected, setSelected] = useState({ row: 1, col: "A" });
-  const [signedIn, setSignedIn] = useState(false);
-  const [renaming, setRenaming] = useState(false);
-  const [sharing, setSharing] = useState(false);
-  const sourceRef = useRef<HTMLElement>(null);
-  const editor = useRef<HTMLInputElement>(null);
-  const opener = useRef<HTMLButtonElement>(null);
-  const done = completedTaskKeys.includes(key);
-  const mail = key === "mail-reply" || key === "mail-attach";
-  const calendar = key === "calendar" || key === "schedule";
-  const recovery = key === "account-recovery";
-  const sheet = key === "spreadsheet";
-  const files = key === "files";
-  const coursework = key === "coursework";
-  const chosenFile = s.files?.find(f => f.key === values.file);
-  const set = (name: string, value: string) => { clearCorrection(); setValues(v => ({ ...v, [name]: value })); };
-  const closePicker = () => { setPicker(false); requestAnimationFrame(() => opener.current?.focus()); };
-  const review = () => {
-    const problem = confidenceProblem(s, values);
-    if (problem) { correct(problem[lang]); return; }
-    clearCorrection(); setStage("review");
+function Practice(){
+  const lesson=useLesson()!;
+  const {lang,markComplete,completedTaskKeys}=useProgress();
+  const {correct,clearCorrection}=useJobCard();
+  const key=lesson.taskKey;
+  if(!isConfidenceKey(key)) throw new Error('Unsupported practice');
+  const scenario=lesson.scenario??'classroom';
+  const [message,setMessage]=useState(0);
+  const s=practiceScenario(key,scenario,message);
+  const t=(en:string,es:string)=>lang==='es'?es:en;
+  const mail=key==='mail-reply'||key==='mail-attach';
+  const sheet=key==='spreadsheet';
+  const files=key==='files';
+  const calendar=key==='calendar';
+  const schedule=key==='schedule';
+  const coursework=key==='coursework';
+  const [values,setValues]=useState<Record<string,string>>({recipient:mail?s.recipient??'':'',scope:'restricted'});
+  const [view,setView]=useState<'home'|'read'|'edit'|'sent'>('home');
+  const [receipt,setReceipt]=useState<Record<string,string>|null>(null);
+  const [sent,setSent]=useState<Record<string,string>[]>([]);
+  const [help,setHelp]=useState(false);
+  const [addMenu,setAddMenu]=useState(false);
+  const [picker,setPicker]=useState(false);
+  const [preview,setPreview]=useState<string|null>(null);
+  const [rename,setRename]=useState(false);
+  const [sharing,setSharing]=useState(false);
+  const [confirm,setConfirm]=useState(false);
+  const [names,setNames]=useState<Record<string,string>>({});
+  const [grants,setGrants]=useState<Record<string,Record<string,string>>>({});
+  const [scopes,setScopes]=useState<Record<string,string>>({});
+  const [selected,setSelected]=useState('B2');
+  const [formula,setFormula]=useState('');
+  const editor=useRef<HTMLDivElement>(null);
+  const root=useRef<HTMLDivElement>(null);
+  const opener=useRef<HTMLButtonElement>(null);
+  const done=completedTaskKeys.includes(key);
+  const chosen=s.files?.find(f=>f.key===values.file);
+  const fileName=chosen?(names[chosen.key]??chosen.name):'';
+  const fileGrants=grants[values.file]??{};
+  const set=(name:string,value:string)=>{clearCorrection();setValues(v=>({...v,[name]:value}));};
+  const begin=()=>{clearCorrection();setReceipt(null);setView('edit');};
+  const action=(data=values)=>{clearCorrection();setReceipt({...data});setView('sent');if(mail||sheet)setSent(old=>[...old,{...data,subject:s.title[lang]}]);};
+  const check=()=>{
+    if(!receipt)return;
+    const problem=assessPractice(key,scenario,s,receipt,message);
+    if(problem){correct(`${t('Practice feedback: ','Comentario de práctica: ')}${problem[lang]}`);return;}
+    clearCorrection();
+    if(key==='mail-reply'&&scenario==='classroom'&&message<2){
+      const next=practiceScenario(key,scenario,message+1);setMessage(message+1);setValues({recipient:next.recipient??''});setReceipt(null);setView('home');return;
+    }
+    markComplete(key);
   };
-  const status = coursework ? t("Turned in", "Entregado") : files ? t("Shared", "Compartido") : recovery ? t("Signed in", "Sesión iniciada") : t("Sent", "Enviado");
-  const action = coursework ? t("Turn in", "Entregar") : files ? t("Save access", "Guardar acceso") : recovery ? t("Verify", "Verificar") : t("Send", "Enviar");
-  const instruction = stage === "review" ? l("Compare this review with the request. Edit if needed, then confirm.", "Compara esta revisión con la solicitud. Edita si hace falta y confirma.") : stage === "sent" ? l("Check the result and its status. What did you check? What would you try if something went wrong? You can point, speak, or write.", "Revisa el resultado y su estado. ¿Qué revisaste? ¿Qué intentarías si algo saliera mal? Puedes señalar, hablar o escribir.") : s.guidance;
-  const timeLabel = (value: string) => {
-    const [hour, minute] = value.split(":");
-    const h = Number(hour);
-    return `${h % 12 || 12}:${minute} ${h < 12 ? t("AM", "a. m.") : t("PM", "p. m.")}`;
-  };
-  const resultFacts = Object.entries(values).filter(([field]) => field !== "password" && field !== "text");
-  const labels: Record<string, string> = { email: t("Email", "Correo"), recipient: t("To", "Para"), body: t("Message", "Mensaje"), file: t("File", "Archivo"), name: t("Name", "Nombre"), permission: t("Access", "Acceso"), date: t("Date", "Fecha"), time: t("Time", "Hora"), code: t("Code", "Código"), deadline: t("Due date", "Fecha de entrega"), total: t("Total", "Total") };
-  const display = (field: string, value: string) => field === "file" ? chosenFile?.name : field === "permission" ? (value === "view" ? t("Viewer", "Lector") : t("Editor", "Editor")) : field === "time" ? timeLabel(value) : field === "date" ? s.dates?.find(d => d.value === value)?.label[lang] ?? value : value;
-  const fileButton = <button ref={opener} type="button" className={button} onClick={() => { setPreview(null); setPicker(true); }}>{files ? t("Open file", "Abrir archivo") : coursework ? t("Add file", "Agregar archivo") : t("Attach", "Adjuntar")}</button>;
-  const fileChip = chosenFile && <div className="my-3 flex flex-wrap items-center gap-3 rounded border p-3"><span className="break-all">{values.name || chosenFile.name}</span><button type="button" className={button} onClick={() => { set("file", ""); setRenaming(false); setSharing(false); }}>{t("Remove", "Quitar")}</button></div>;
-  return <div data-testid="confidence-practice" className="h-full overflow-y-auto bg-white p-4 text-[#202124] sm:p-6">
-    {!done && <RightNowBar taskKey={key} stepIndex={stage === "sent" ? 3 : stage === "review" ? 2 : stage === "edit" ? 1 : 0} stepCount={4}
-      instruction={instruction} goal={stage === "review" || stage === "sent" ? instruction : s.request}
-      onHelp={() => setHelp(true)} onShowMe={() => sourceRef.current?.scrollIntoView({ block: "nearest" })}
-      {...(stage === "sent" ? { primaryLabel: t("I checked the result", "Revisé el resultado"), onPrimary: () => { markComplete(key); } } : {})} />}
-    <h1 className="mb-5 text-xl font-medium">{s.title[lang]}</h1>
-    <section ref={sourceRef} aria-label={t("Source material", "Documentos")} className="mb-5 space-y-3">
-      {/* The request is a realistic received message, not an extra instruction banner. */}
-      {!recovery && <article className="rounded-lg border border-[#dadce0] p-4"><h2 className="font-semibold">{mail || calendar ? t("Inbox", "Bandeja de entrada") : t("Request", "Solicitud")}{s.recipient ? ` · ${s.recipient}` : ""}</h2><p className="mt-2">{s.request[lang]}</p></article>}
-      {!recovery && s.sources.map((src, i) => <article key={i} className="rounded-lg border border-[#dadce0] p-4"><h2 className="font-semibold">{src.title[lang]}</h2><p className="mt-2 whitespace-pre-line">{src.text[lang]}</p></article>)}
-    </section>
-    {stage === "source" && <button type="button" className={button} onClick={() => setStage("edit")}>{mail ? t("Reply", "Responder") : calendar ? t("Open invitation / schedule", "Abrir invitación / horario") : recovery ? t("Sign in", "Iniciar sesión") : sheet ? t("Open sheet", "Abrir hoja") : coursework ? t("Open assignment", "Abrir tarea") : t("Open Drive", "Abrir Drive")}</button>}
-    {stage === "edit" && <form onSubmit={e => { e.preventDefault(); review(); }} className="@container max-w-3xl space-y-4">
-      {s.recipient && <label className="block">{t("To", "Para")}<input aria-label={t("To", "Para")} className={input} value={values.recipient ?? ""} onChange={e => set("recipient", e.target.value)} /></label>}
-      {mail && <label className="block">{t("Message", "Mensaje")}<textarea aria-label={t("Message", "Mensaje")} className={`${input} min-h-28`} value={values.body ?? ""} onChange={e => set("body", e.target.value)} /></label>}
-      {(mail && s.files || coursework || files) && <>{fileButton}{fileChip}</>}
-      {files && chosenFile && <>
-        <article className="rounded border p-4"><h2 className="font-medium">{chosenFile.name}</h2><p>{chosenFile.detail[lang]}</p></article>
-        <button type="button" className={button} onClick={() => { setRenaming(true); if (!values.name) set("name", chosenFile.name); }}>{t("Rename", "Cambiar nombre")}</button>
-        {renaming && <label className="block">{t("New file name", "Nombre nuevo")}<input aria-label={t("New file name", "Nombre nuevo")} className={input} value={values.name ?? ""} onChange={e => set("name", e.target.value)} /></label>}
-        <button type="button" className={button} onClick={() => setSharing(true)}>{t("Share", "Compartir")}</button>
-        {sharing && <label className="block">{t("Access", "Acceso")}<select aria-label={t("Access", "Acceso")} className={input} value={values.permission ?? ""} onChange={e => set("permission", e.target.value)}><option value="">{t("Choose access", "Elegir acceso")}</option><option value="view">{t("Viewer", "Lector")}</option><option value="edit">{t("Editor", "Editor")}</option></select></label>}
-      </>}
-      {calendar && <>
-        <p className="font-medium">{key === "calendar" ? t("Propose new time", "Proponer otra hora") : t("Request schedule change", "Solicitar cambio de horario")}</p>
-        <label className="block">{t("Date", "Fecha")}<select aria-label={t("Date", "Fecha")} className={input} value={values.date ?? ""} onChange={e => set("date", e.target.value)}><option value="">{t("Choose date", "Elegir fecha")}</option>{s.dates?.map(d => <option key={d.value} value={d.value}>{d.label[lang]}</option>)}</select></label>
-        <label className="block">{t("Start time", "Hora de inicio")}<select aria-label={t("Start time", "Hora de inicio")} className={input} value={values.time ?? ""} onChange={e => set("time", e.target.value)}><option value="">{t("Choose time", "Elegir hora")}</option>{s.times?.map(time => <option key={time} value={time}>{timeLabel(time)}</option>)}</select></label>
-      </>}
-      {recovery && <>
-        {!signedIn && <label className="block">{t("Email", "Correo")}<input aria-label={t("Email", "Correo")} inputMode="email" autoComplete="off" autoCapitalize="none" spellCheck={false} className={input} value={values.email ?? ""} onChange={e => set("email", e.target.value)} /></label>}
-        {!signedIn && <label className="block">{t("Practice password", "Contraseña de práctica")}<input aria-label={t("Practice password", "Contraseña de práctica")} autoComplete="off" className={input} value={values.password ?? ""} onChange={e => set("password", e.target.value)} /></label>}
-        {!signedIn ? <button type="button" className={button} onClick={() => { if (!practiceEmailMatches(values.email ?? "", s.expected.email)) return correct(LESSON_EMAIL_CORRECTION[lang]); if (values.password?.trim() !== s.expected.password) return correct(s.correction[lang]); clearCorrection(); setSignedIn(true); }}>{t("Next", "Siguiente")}</button> : <div className="grid grid-cols-1 items-start gap-4 @min-[520px]:grid-cols-[236px_minmax(0,1fr)]">
-          <PhoneTexts heading={t("Messages", "Mensajes")} emptyLabel={t("No messages", "Sin mensajes")} chosenKey={values.text} onTap={value => set("text", value)} texts={s.sources.map((src, i) => ({ key: String(i), from: src.title[lang], body: src.text[lang], when: "" }))} />
-          <label className="block">{values.text && <span className="mb-3 block rounded border bg-[#e8f0fe] p-3 text-sm @min-[520px]:hidden">{s.sources[Number(values.text)]?.text[lang]}</span>}{t("Verification code", "Código de verificación")}<input aria-label={t("Verification code", "Código de verificación")} className={input} autoComplete="off" inputMode="numeric" value={values.code ?? ""} onChange={e => set("code", e.target.value)} /></label>
-        </div>}
-      </>}
-      {sheet && <>
-        <SheetsFrame fileName={s.title[lang]}>
-          <ReadOnlyGrid columns={[{ key: "A", width: 160, header: t("Item", "Artículo") }, { key: "B", width: 100, header: t("Delivered", "Entregado") }]}
-            rows={[...(s.rows ?? []).map((row, i) => ({ row: i + 2, cells: { A: row.label[lang], B: values[`B${i + 2}`] ?? "" } })), { row: 4, cells: { A: t("Total", "Total"), B: String(Number(values.B2?.replace(",", ".") || 0) + Number(values.B3?.replace(",", ".") || 0)) }, total: true }]}
-            selected={selected} onSelect={cell => { setSelected(cell); if (cell.col === "B" && (cell.row === 2 || cell.row === 3)) requestAnimationFrame(() => editor.current?.focus()); }} formulaFor={(row, col) => row === 4 && col === "B" ? "=SUM(B2:B3)" : undefined} />
-          {selected.col === "B" && (selected.row === 2 || selected.row === 3) && <label className="block px-4 pb-4">{t("Edit cell", "Editar celda")} {`B${selected.row}`}<input aria-label={`${t("Edit cell", "Editar celda")} B${selected.row}`} ref={editor} className={input} inputMode="decimal" value={values[`B${selected.row}`] ?? ""} onChange={e => set(`B${selected.row}`, e.target.value)} /></label>}
-        </SheetsFrame>
-        <label className="block">{t("Total to send", "Total para enviar")}<input aria-label={t("Total to send", "Total para enviar")} className={input} inputMode="decimal" value={values.total ?? ""} onChange={e => set("total", e.target.value)} /></label>
-      </>}
-      {coursework && <label className="block">{t("Due date", "Fecha de entrega")}<input aria-label={t("Due date", "Fecha de entrega")} type="date" className={input} value={values.deadline ?? ""} onChange={e => set("deadline", e.target.value)} /></label>}
-      {(!recovery || signedIn) && <button type="submit" className={`${button} block`} data-testid="confidence-review">{t("Review", "Revisar")}</button>}
-    </form>}
-    {(stage === "review" || stage === "sent") && <section data-testid="confidence-result" className="max-w-3xl space-y-4 rounded-lg border p-4">
-      <h2 className="text-lg font-medium">{stage === "sent" ? status : t("Review", "Revisión")}</h2>
-      {mail ? <SentEmailRecap heading={stage === "sent" ? status : t("Draft", "Borrador")} toLabel={t("To", "Para")} to={values.recipient} subjectLabel={t("Subject", "Asunto")} subject={s.title[lang]} body={values.body ?? ""} fact={chosenFile ? { label: t("Attachment", "Adjunto"), value: chosenFile.name } : undefined} /> : <dl className="space-y-3">{resultFacts.map(([field, value]) => <div key={field}><dt className="font-medium">{labels[field] ?? field}</dt><dd className="break-words">{display(field, value)}</dd></div>)}</dl>}
-      {stage === "review" && <div className="flex flex-wrap gap-3"><button type="button" className={button} onClick={() => setStage("edit")}>{t("Edit", "Editar")}</button><button type="button" className={button} data-testid="confidence-confirm" onClick={() => setStage("sent")}>{action}</button></div>}
+  const rowCount=s.rows?.length??0;
+  const total=(s.rows??[]).reduce((n,_,i)=>n+Number((values[`B${i+2}`]??'0').replace(',','.')),0);
+  const status=coursework?t('Turned in','Entregado'):files?t('Sharing updated','Acceso actualizado'):calendar?t('Proposal sent · awaiting organizer','Propuesta enviada · pendiente de aceptación'):schedule?t('Request sent · awaiting approval','Solicitud enviada · pendiente de aprobación'):t('Sent','Enviado');
+  const instruction=receipt?l('Inspect the result in the app. Use Check my work for practice feedback. You can correct mistakes in the app.','Revisa el resultado en la aplicación. Usa Revisar mi trabajo para recibir comentarios de práctica. Puedes corregir errores en la aplicación.') : s.guidance;
+  const field=(name:string,label:string,type='text')=><label className="block">{label}<input aria-label={label} className={input} type={type} required={name!=='recipient'||!files} value={values[name]??''} onChange={e=>set(name,e.target.value)} /></label>;
+  const source=<section aria-label={t('Source material','Documentos')} className="space-y-3">{s.sources.map((src,i)=><article key={i} className="rounded-lg border border-[#dadce0] bg-[#f8fafd] p-4"><h3 className="font-semibold">{src.title[lang]}</h3><p className="mt-2 whitespace-pre-line">{src.text[lang]}</p></article>)}</section>;
+  const closePicker=()=>{setPicker(false);requestAnimationFrame(()=>opener.current?.focus());};
+  const attach=<button ref={opener} type="button" className={button} onClick={()=>{setPreview(null);if(coursework)setAddMenu(v=>!v);else setPicker(true);}}>{coursework?t('Add or create','Agregar o crear'):t('Attach files','Adjuntar archivos')}</button>;
+  const chip=chosen&&<div className="my-3 flex flex-wrap items-center gap-2 rounded border p-3"><button className="break-all text-left underline" onClick={()=>setPreview(chosen.key)} type="button">{chosen.name}</button><button type="button" className={button} onClick={()=>set('file','')}>{t('Remove','Quitar')}</button></div>;
+  const compose=<form className="space-y-4 rounded-xl border bg-white p-4" onSubmit={e=>{e.preventDefault();action();}}>
+    <h2 className="text-lg font-medium">{mail?t('Reply','Responder'):t('New message','Mensaje nuevo')}</h2>
+    {field('recipient',t('To','Para'),'email')}
+    <p>{t('Subject','Asunto')}: {s.title[lang]}</p>
+    <label className="block">{t('Message','Mensaje')}<textarea aria-label={t('Message','Mensaje')} className={`${input} min-h-32`} value={values.body??''} onChange={e=>set('body',e.target.value)} /></label>
+    {s.files&&<>{attach}{chip}</>}
+    <div className="flex flex-wrap gap-3"><button type="submit" className={primary}>{t('Send','Enviar')}</button><button type="button" className={button} onClick={()=>setView(sheet?'read':'home')}>{sheet?t('Back to sheet','Volver a la hoja'):t('Back to inbox','Volver a recibidos')}</button></div>
+  </form>;
+  return <div ref={root} data-testid="confidence-practice" data-practice-app={key} className="h-full overflow-y-auto bg-[#f6f8fc] text-[#202124]">
+    {!done&&<RightNowBar taskKey={key} stepIndex={receipt?2:view==='home'?0:1} stepCount={3} instruction={instruction} goal={receipt?instruction:s.request}
+      facts={(files||sheet)&&s.recipient?[{label:l('Recipient','Destinatario'),value:s.recipient}]:undefined}
+      onHelp={()=>setHelp(true)} onShowMe={()=>{const selector=receipt?'[data-testid="practice-result"],[data-testid="submission-status"]':view==='edit'?'textarea,input':sheet?'[data-cell="B2"]':files?'table':mail?'article':'section';root.current?.querySelector(selector)?.scrollIntoView({block:'center',behavior:'smooth'});}}
+      {...(receipt?{primaryLabel:t('Check my work','Revisar mi trabajo'),onPrimary:check}:{})} />}
+    <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b bg-white px-5 py-3">
+      <h1 className="text-xl font-medium">{mail?'WorkMail':sheet?'Sheets':files?'Drive':coursework?'Classroom':calendar?t('Calendar','Calendario'):t('Schedule portal','Portal de horarios')}</h1>
+      <span className="text-sm">{s.title[lang]}</span>
+    </header>
+    <div className="space-y-5 p-4 sm:p-6">
+    {/* Received requests and source documents belong to the app. Teaching stays in the Job Card. */}
+    {mail?<>
+      <nav className="flex gap-3" aria-label="WorkMail"><button className={button} onClick={()=>setView('home')}>{t('Inbox','Recibidos')}</button><button className={button} onClick={()=>setView('sent')}>{t('Sent','Enviados')} ({sent.length})</button></nav>
+      {view==='home'&&<button className="w-full rounded border bg-white p-4 text-left" onClick={()=>setView('read')}><strong>{s.recipient}</strong><span className="ml-4">{s.title[lang]}</span></button>}
+      {(view==='read'||view==='edit')&&<article className="space-y-4 rounded-xl bg-white p-5"><h2 className="text-xl">{s.title[lang]}</h2><p>{t('From','De')}: {s.recipient}</p><p>{s.request[lang]}</p>{source}{view==='read'&&<button className={button} onClick={begin}>{t('Reply','Responder')}</button>}</article>}
+      {view==='edit'&&compose}
+    </>:<article className="space-y-3 rounded-xl border bg-white p-4"><h2 className="font-semibold">{t('Request','Solicitud')}{s.recipient?` · ${s.recipient}`:''}</h2><p>{s.request[lang]}</p>{source}</article>}
+    {(mail||sheet)&&view==='sent'&&<section className="space-y-3" data-testid="practice-result"><h2 className="text-lg font-medium">{t('Sent','Enviados')}</h2>{sent.map((r,i)=><SentEmailRecap key={i} heading={t('Sent','Enviado')} toLabel={t('To','Para')} to={r.recipient} subjectLabel={t('Subject','Asunto')} subject={r.subject??s.title[lang]} body={r.body??''} fact={r.file?{label:t('Attachment','Adjunto'),value:s.files?.find(f=>f.key===r.file)?.name??r.file}:undefined}/>)}<button className={button} onClick={begin}>{t('Write a follow-up','Escribir otro correo')}</button>{sheet&&<button className={button} onClick={()=>setView('read')}>{t('Back to sheet','Volver a la hoja')}</button>}</section>}
+    {sheet&&view!=='edit'&&view!=='sent'&&<>
+      <SheetsFrame fileName={s.title[lang]}>
+        <div className="flex items-center gap-3 border-b p-2"><span className="w-12">{selected}</span><label className="flex flex-1 items-center gap-2">fx<input aria-label={t('Formula bar','Barra de fórmulas')} className="min-h-10 w-full border px-2" value={formula} readOnly={selected===`B${rowCount+2}`} onChange={e=>setFormula(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&selected!==`B${rowCount+2}`){set(selected,formula);editor.current?.querySelector<HTMLInputElement>(`[data-cell="${selected}"]`)?.focus();}}} /></label></div>
+        <div ref={editor} className="overflow-x-auto"><table className="w-full border-collapse text-left"><thead><tr><th className="border p-2"></th><th className="border p-2">A</th><th className="border p-2">B</th></tr><tr><th className="border p-2">1</th><th className="border p-2">{t('Item','Artículo')}</th><th className="border p-2">{t('Amount','Cantidad')}</th></tr></thead><tbody>{s.rows?.map((r,i)=>{const cell=`B${i+2}`;return <tr key={cell}><th className="border p-2">{i+2}</th><td className="border p-2">{r.label[lang]}</td><td className="border p-0"><input aria-label={cell} data-cell={cell} inputMode="decimal" className="min-h-11 w-full min-w-20 px-2 outline-[#0b57d0]" value={values[cell]??''} onFocus={()=>{setSelected(cell);setFormula(values[cell]??'');}} onChange={e=>{set(cell,e.target.value);setFormula(e.target.value);}} onKeyDown={e=>{if(['Enter','ArrowDown','ArrowUp'].includes(e.key)){const next=i+(e.key==='ArrowUp'?-1:1);if(next>=0&&next<rowCount){e.preventDefault();editor.current?.querySelector<HTMLInputElement>(`[data-cell="B${next+2}"]`)?.focus();}}}} /></td></tr>})}<tr><th className="border p-2">{rowCount+2}</th><td className="border p-2">{t('Total','Total')}</td><td className="border p-0"><button type="button" className="min-h-11 w-full p-2 text-left" aria-label={t('Total cell','Celda del total')} data-testid="sheet-total" onClick={()=>{setSelected(`B${rowCount+2}`);setFormula(`=SUM(B2:B${rowCount+1})`);}}>{Number.isFinite(total)?total.toFixed(2):'#VALUE!'}</button></td></tr></tbody></table></div>
+      </SheetsFrame><button className={button} onClick={begin}>{t('Write email','Escribir correo')}</button>
+    </>}{sheet&&view==='edit'&&compose}
+    {files&&<>
+      <h2 className="text-lg font-semibold">{t('My Drive','Mi unidad')}</h2>
+      <div className="overflow-x-auto rounded border bg-white"><table className="w-full text-left"><thead><tr><th className="p-3">{t('Name','Nombre')}</th><th className="p-3">{t('Actions','Acciones')}</th></tr></thead><tbody>{s.files?.map(f=><tr key={f.key} className="border-t"><td className="p-3"><button className="text-left underline" onClick={()=>{set('file',f.key);setPreview(f.key);}}>{names[f.key]??f.name}</button></td><td className="flex flex-wrap gap-2 p-2"><button className={button} onClick={()=>{setValues(v=>({...v,file:f.key,name:names[f.key]??f.name}));setRename(true);}}>{t('Rename','Cambiar nombre')}</button><button className={button} onClick={()=>{setValues(v=>({...v,file:f.key,recipient:'',permission:'view',scope:scopes[f.key]??'restricted'}));setSharing(true);}}>{t('Share','Compartir')}</button></td></tr>)}</tbody></table></div>
+      {receipt&&<p data-testid="practice-result" role="status">{status} · {receipt.name}</p>}
+    </>}
+    {coursework&&<section className="space-y-4 rounded-xl border bg-white p-5"><h2 className="flex justify-between gap-3 text-lg font-semibold">{t('Your work','Tu trabajo')}<span data-testid="submission-status">{receipt?status:t('Assigned','Asignado')}</span></h2>
+      {receipt?<><p>{s.files?.find(f=>f.key===receipt.file)?.name}</p><button className={button} onClick={()=>{setConfirm(true);}}>{t('Unsubmit','Anular entrega')}</button></>:<>{attach}{addMenu&&<div><button className={button} onClick={()=>{setAddMenu(false);setPicker(true);}}>Google Drive</button></div>}{chip}<button className={primary} onClick={()=>setConfirm(true)}>{t('Turn in','Entregar')}</button></>}
     </section>}
-    {picker && <PickerModal title={t("Files", "Archivos")} categoryLabel={t("Name", "Nombre")} columnLabels={[]} items={(s.files ?? []).map(f => ({ key: f.key, label: f.name, isTarget: f.key === s.expected.file }))}
-      onCancel={closePicker} cancelLabel={t("Cancel", "Cancelar")} onSelect={f => { set("file", f.key); if (files) { set("name", ""); setRenaming(false); setSharing(false); } closePicker(); }}
-      preview={{ selectedKey: preview, onFocus: f => setPreview(f.key), render: f => <article className="h-fit w-full rounded bg-white p-4"><h2 className="break-all font-medium">{f.label}</h2><p className="mt-3">{s.files?.find(item => item.key === f.key)?.detail[lang]}</p></article>, empty: t("File preview", "Vista previa"), confirmLabel: files ? t("Open", "Abrir") : t("Attach", "Adjuntar") }} />}
-    <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={t("Practice", "Práctica")} lesson={{ t: s.title[lang], s: [s.help[lang]], tip: t("Help stays available. Your draft is kept.", "La ayuda sigue disponible. Tu borrador se conserva.") }} tipLabel={t("Tip", "Consejo")} gotItLabel={t("Back to my task", "Volver a mi tarea")} />
+    {(calendar||schedule)&&<section className="space-y-4 rounded-xl border bg-white p-5">
+      <h2 className="text-lg font-semibold">{calendar?t('Event invitation','Invitación de evento'):t('Shift change','Cambio de turno')}</h2>
+      {receipt&&<div data-testid="practice-result" role="status"><strong>{status}</strong><p>{receipt.date} · {receipt.time}{calendar?` – ${receipt.end}`:''}</p><p>{receipt.body}</p></div>}
+      {view!=='edit'?<button className={button} onClick={begin}>{calendar?t('Propose a new time','Proponer otra hora'):t('Request change','Solicitar cambio')}</button>:<form className="space-y-4" onSubmit={e=>{e.preventDefault();if(calendar&&values.end<=values.time){correct(t('End time must be after start time.','La hora de fin debe ser posterior al inicio.'));return;}action({...values,recipient:s.recipient??''});}}>
+        {field('date',t('Date','Fecha'),'date')}{field('time',t('Start time','Hora de inicio'),'time')}{calendar&&field('end',t('End time','Hora de fin'),'time')}
+        <label className="block">{t('Note (optional)','Nota (opcional)')}<textarea className={input} aria-label={t('Note (optional)','Nota (opcional)')} value={values.body??''} onChange={e=>set('body',e.target.value)}/></label>
+        <button className={primary} type="submit">{calendar?t('Send proposal','Enviar propuesta'):t('Send request','Enviar solicitud')}</button>
+      </form>}
+    </section>}
+    </div>
+    {picker&&<PickerModal title={coursework?'Google Drive':t('Downloads','Descargas')} categoryLabel={t('Name','Nombre')} columnLabels={[]} items={(s.files??[]).map(f=>({key:f.key,label:f.name,isTarget:false}))} onCancel={closePicker} cancelLabel={t('Cancel','Cancelar')} onSelect={f=>{set('file',f.key);setPreview(null);closePicker();}} preview={{selectedKey:preview,onFocus:f=>setPreview(f.key),render:f=><article className="p-4"><h2>{f.label}</h2><p>{s.files?.find(x=>x.key===f.key)?.detail[lang]}</p></article>,empty:t('File preview','Vista previa'),confirmLabel:coursework?t('Add','Agregar'):t('Open','Abrir')}} />}
+    {preview&&!picker&&<Dialog title={s.files?.find(f=>f.key===preview)?.name??''} close={()=>setPreview(null)} closeLabel={t('Close','Cerrar')}><p>{s.files?.find(f=>f.key===preview)?.detail[lang]}</p></Dialog>}
+    {rename&&<Dialog title={t('Rename','Cambiar nombre')} close={()=>setRename(false)} closeLabel={t('Cancel','Cancelar')}><form onSubmit={e=>{e.preventDefault();setNames(n=>({...n,[values.file]:values.name}));setRename(false);setReceipt(null);clearCorrection();}}>{field('name',t('New file name','Nombre nuevo'))}<button className={`${primary} mt-4`} type="submit">{t('Save','Guardar')}</button></form></Dialog>}
+    {sharing&&<Dialog title={`${t('Share','Compartir')} · ${fileName}`} close={()=>setSharing(false)} closeLabel={t('Close','Cerrar')}><form className="space-y-4" onSubmit={e=>{e.preventDefault();const address=values.recipient?.trim().toLowerCase();const next={...fileGrants,...(address?{[address]:values.permission}: {})};setGrants(g=>({...g,[values.file]:next}));setScopes(g=>({...g,[values.file]:values.scope}));setSharing(false);action({...values,name:fileName,recipient:s.recipient??'',permission:next[s.recipient??'']??'',recipients:Object.keys(next).sort().join(','),scope:values.scope});}}>
+      {field('recipient',t('Add people','Agregar personas'),'email')}<label className="block">{t('Role','Permiso')}<select aria-label={t('Role','Permiso')} className={input} value={values.permission} onChange={e=>set('permission',e.target.value)}><option value="view">{t('Viewer','Lector')}</option><option value="comment">{t('Commenter','Comentador')}</option><option value="edit">{t('Editor','Editor')}</option></select></label>
+      <h3 className="font-semibold">{t('People with access','Personas con acceso')}</h3><p>{t('You (owner)','Tú (propietario)')}</p>{Object.entries(fileGrants).map(([address,role])=><div className="flex flex-wrap gap-2" key={address}><span>{address} · {role==='edit'?t('Editor','Editor'):role==='comment'?t('Commenter','Comentador'):t('Viewer','Lector')}</span><button type="button" className={button} onClick={()=>{setGrants(g=>{const updated={...g[values.file]};delete updated[address];return {...g,[values.file]:updated};});setReceipt(null);}}>{t('Remove access','Quitar acceso')}</button></div>)}
+      <label className="block">{t('General access','Acceso general')}<select aria-label={t('General access','Acceso general')} className={input} value={values.scope} onChange={e=>set('scope',e.target.value)}><option value="restricted">{t('Restricted','Restringido')}</option><option value="anyone">{t('Anyone with the link','Cualquier persona con el enlace')}</option></select></label><button type="submit" className={primary}>{t('Save','Guardar')}</button>
+    </form></Dialog>}
+    {confirm&&<Dialog title={receipt?t('Unsubmit work?','¿Anular entrega?'):t('Turn in work?','¿Entregar trabajo?')} close={()=>setConfirm(false)} closeLabel={t('Cancel','Cancelar')}><p>{chosen?.name??t('No attachment','Sin adjunto')}</p><button className={`${primary} mt-4`} onClick={()=>{setConfirm(false);if(receipt){setReceipt(null);clearCorrection();}else action();}}>{receipt?t('Unsubmit','Anular entrega'):t('Turn in','Entregar')}</button></Dialog>}
+    <HelpDrawer open={help} onClose={()=>setHelp(false)} kicker={t('Practice help','Ayuda de práctica')} lesson={{t:s.title[lang],s:[s.help[lang]],tip:t('This is practice feedback, not a check performed by the real app.','Son comentarios de práctica, no una revisión de la aplicación real.')}} tipLabel={t('Tip','Consejo')} gotItLabel={t('Back to my task','Volver a mi tarea')} />
   </div>;
+}
+function Dialog({title,close,closeLabel,children}:{title:string;close:()=>void;closeLabel:string;children:React.ReactNode}){
+  const ref=useRef<HTMLDialogElement>(null);
+  return <dialog ref={el=>{ref.current=el;if(el&&!el.open)el.showModal();}} onCancel={e=>{e.preventDefault();close();}} aria-label={title} className="m-auto max-h-[85vh] w-[min(92vw,540px)] overflow-y-auto rounded-2xl border p-6 text-[#202124] shadow-xl backdrop:bg-black/35"><h2 className="mb-4 text-xl font-semibold">{title}</h2>{children}<button className={`${button} mt-4`} onClick={close}>{closeLabel}</button></dialog>;
 }

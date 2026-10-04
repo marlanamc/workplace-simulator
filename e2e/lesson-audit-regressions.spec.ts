@@ -46,30 +46,25 @@ for (const lang of ["en", "es"] as const) {
     });
   }
   for (const mode of ["guided", "independent"]) {
-    test(`calendar requires a first attempt and retains the sent reply ${lang} ${mode}`, async ({ page }) => {
+    test(`calendar proposal stays pending and can be corrected ${lang} ${mode}`, async ({ page }) => {
       await page.goto(`/lessons/calendar?lang=${lang}&mode=${mode}&preview=1`);
       await waitForInteractive(page);
       await page.getByTestId("lesson-intro-start").click();
-      await page.locator('[data-showme="huddle-event"]').click();
-      await page.locator('[data-showme="propose-link"]').click();
-      const reply = page.locator('[data-showme="reply-box"]');
-      const chip = page.getByRole("button", { name: lang === "en" ? "Thu 10:00 AM" : "Jue 10:00 AM", exact: true });
-      await expect(chip).toHaveCount(0);
-      const send = page.getByRole("button", { name: lang === "en" ? "Send" : "Enviar", exact: true });
-      await reply.fill(lang === "en" ? "Yes, see you Wednesday" : "Sí, nos vemos el miércoles");
-      await send.click();
-      await expect(page.getByTestId("lesson-back")).toHaveCount(0);
-      await expect(chip).toBeVisible();
-      const text = lang === "en" ? "Thursday at 10 AM" : "el jueves a las 10 AM";
-      await reply.fill(text);
-      await send.click();
-      await expect(page.getByTestId("sent-recap")).toContainText(text);
-      await expect(page.getByTestId("lesson-back")).toBeVisible();
-      await page.getByTestId("lesson-practice-again").click();
-      await page.locator('[data-showme="huddle-event"]').click();
-      await page.locator('[data-showme="propose-link"]').click();
-      await expect(reply).toHaveValue("");
-      await expect(chip).toHaveCount(0);
+      const p=page.getByTestId('confidence-practice'); const es=lang==='es';
+      const propose=p.getByRole('button',{name:es?'Proponer otra hora':'Propose a new time',exact:true});
+      await propose.click();
+      const date=p.getByLabel(es?'Fecha':'Date',{exact:true});
+      const start=p.getByLabel(es?'Hora de inicio':'Start time');
+      const end=p.getByLabel(es?'Hora de fin':'End time');
+      const send=p.getByRole('button',{name:es?'Enviar propuesta':'Send proposal',exact:true});
+      await date.fill('2026-09-02');await start.fill('10:00');await end.fill('10:30');await send.click();
+      await expect(p.getByTestId('practice-result')).toContainText(es?'pendiente':'awaiting');
+      const check=page.locator('[data-job-card]').getByRole('button',{name:es?'Revisar mi trabajo':'Check my work',exact:true});
+      await check.click();await expect(page.getByTestId('lesson-back')).toHaveCount(0);
+      await propose.click();await expect(start).toHaveValue('10:00');await date.fill('2026-09-03');await send.click();await check.click();
+      await expect(page.getByTestId('lesson-back')).toBeVisible();
+      await page.getByTestId('lesson-practice-again').click();await propose.click();
+      await expect(date).toHaveValue('');await expect(start).toHaveValue('');await expect(end).toHaveValue('');
     });
   }
 }
