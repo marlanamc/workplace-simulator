@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { pressNextTask } from "./next-task";
 
 /**
  * Wave 5 F-11, F-18, F-19, F-24 in Spanish at 150% text (911x512): the Time
@@ -78,7 +79,7 @@ test("Spanish Day 2: the file picker dates are Spanish", async ({ page }) => {
   await page.locator('[data-showme="submit-button"]').click();
   await page.getByTestId("text-reply").fill("si, el jueves");
   await page.getByTestId("text-send").click();
-  await card(page).getByRole("button", { name: /Siguiente tarea/ }).click();
+  await pressNextTask(page);
   // Task 2: Maria's email, then Attach file.
   await openTodaysJob(page);
   if (!(await page.locator('[data-showme="reply-button"]').isVisible())) {

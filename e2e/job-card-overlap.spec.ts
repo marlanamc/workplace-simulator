@@ -44,7 +44,7 @@ async function signUp(page: Page, name: string) {
 
 /**
  * Jump to the start of a day, step past whatever opens it (an act's intro
- * screen, the arrival card), then press the card's hand-off button until the
+ * screen, the arrival card, the New Hire screen), then press the card's hand-off button until the
  * day's first task window is on screen.
  */
 async function openDay(page: Page, studioLabel: string) {
@@ -57,6 +57,10 @@ async function openDay(page: Page, studioLabel: string) {
   await expect(card.or(intro).or(arrival).first()).toBeVisible({ timeout: 20_000 });
   if (await intro.isVisible()) await page.getByTestId("act-intro-continue").click();
   await continuePastStudioArrivalIfPresent(page);
+  // Day One's New Hire screen covers the desktop, card included, until it is closed.
+  const newHire = page.getByTestId("new-hire-continue");
+  await expect(card.or(newHire).first()).toBeVisible({ timeout: 20_000 });
+  if (await newHire.isVisible()) await newHire.click();
   await expect(card).toBeVisible({ timeout: 20_000 });
   const appWindow = page.locator("[data-app-window]");
   // Day One's first sitting asks the learner to look at the list pin before

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { clickIntoPage, waitForInteractive } from "./interactive";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
+import { expectTaskFinished } from "./next-task";
 
 /**
  * Wave 5 F-2/F-25 (the runaway scroll gutter) and the owner's docked Job Card
@@ -169,7 +170,7 @@ test("docked, Mail shows one pane and its Send button is reachable (Day 3)", asy
   await expect(page.getByTestId("mail-inbox-list")).toBeHidden();
   await appWindow(page).locator("textarea").first().fill("hi maria i come 7. clock say 8:15. sorry");
   await send.click();
-  await expect(card(page).getByRole("button", { name: "Next task" })).toBeVisible();
+  await expectTaskFinished(page);
 });
 
 test("docked, the launcher opens beside the card, not under it", async ({ page }) => {

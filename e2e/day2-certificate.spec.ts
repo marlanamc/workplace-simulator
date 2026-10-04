@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { pressNextTask } from "./next-task";
 
 /**
  * Owner notes, 30 Sep: Maria's Day 2 text says exactly what to reply, and a
@@ -81,7 +82,7 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
       await expect(card(page)).toContainText(model);
       await page.getByTestId("text-reply").fill(model);
       await page.getByTestId("text-send").click();
-      await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+      await pressNextTask(page);
 
       // Task 2: Maria's email is about the training, not a district report.
       await openTodaysJob(page);
@@ -127,7 +128,7 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
       await expect(page.locator('[data-showme="compose-body"]').last()).toHaveValue(note);
       await expect(appWindow(page)).toContainText("food-handler-certificate.pdf");
       await page.locator('[data-showme="send-button"]').last().click();
-      await expect(page.locator("[data-celebration-continue]").or(card(page).locator('[data-card-tone="green"]')).first()).toBeVisible({ timeout: 20_000 });
+      await expect(page.locator("[data-celebration-continue]").or(page.locator('[data-job-card][data-card-tone="green"]')).first()).toBeVisible({ timeout: 20_000 });
     });
   });
 }

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { expectTaskFinished } from "./next-task";
 
 /**
  * Phase 3 N-7: on Day 3, after a refused note to Maria about the clock-in
@@ -85,7 +86,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       await box.fill(t("Hi Maria, I got here at 7, but the clock says 8:15. Sorry.", "Hola Maria, llegué a las 7 pero el reloj dice 8:15. Perdón."));
       await expect(card(page)).toContainText(clickSend);
       await page.locator('[data-showme="send-button"]').first().click();
-      await expect(card(page).getByRole("button", { name: /Next task|Siguiente tarea/ })).toBeVisible();
+      await expectTaskFinished(page);
     });
   });
 }

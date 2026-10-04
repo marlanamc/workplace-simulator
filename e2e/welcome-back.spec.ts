@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { DESKTOP_COPY } from "@/lib/desktop-content";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { pressNextTask } from "./next-task";
 
 /**
  * Wave 5 F-6: after "Stop for today", signing back in showed the same stop
@@ -39,7 +40,7 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
     await page.locator('[data-showme="something-off-button"]').click();
     await page.locator('[data-showme="compose-body"]').first().fill(t("hi maria i come 7. clock say 8:15", "hola maria llegué a las 7 y el reloj dice 8:15"));
     await page.locator('[data-showme="send-button"]').first().click();
-    await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+    await pressNextTask(page);
     for (let i = 0; i < 3 && !(await page.locator('[data-showme="shift-note-box"]').isVisible()); i++) {
       await card(page).locator(".job-card-primary").first().click();
       await page.locator('[data-showme="shift-note-box"]').waitFor({ timeout: 4_000 }).catch(() => {});
