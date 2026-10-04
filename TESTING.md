@@ -302,3 +302,9 @@ screenshots. These checks do not replace real browser zoom or learner testing.
 `e2e/confidence.spec.ts` runs the 16 new examples in both languages: wrong-attempt recovery, native shared picker/grid/phone interactions, review, result checking, completion, and restart. It also checks the collection, print exclusion of teacher notes, observation sheet, scenario switching, shared links, and invalid scenarios. These use teacher preview and do not create database accounts.
 
 Run `npm run check`, then `npx playwright test e2e/confidence.spec.ts` and the existing lesson/materials/workspace regression suites. The full login/teacher suite still requires a dedicated test database, as above. Actual Chromebook zoom, read-aloud usability, printed-page review, and learner observations remain separate requirements; see `curriculum/everyday-digital-confidence.md`.
+
+## Independent attempts in lessons
+
+`practice-email.test.ts` checks complete fictional email matching (case and outer whitespace are forgiven) and rejects another scenario's address. `lesson-independence.spec.ts` checks EN/ES blank email entry in all three account-code scenarios, retained passwords on rejection, delayed message-choice feedback, and classroom restart. `confidence.spec.ts` checks fresh-scenario restart and explicit spreadsheet cell selection. Run these with the guest-only lesson suite (`--grep-invert saving`) and lesson audit regressions; account-saving tests still require the dedicated database.
+
+See [the scaffolding review](curriculum/lesson-independence-review.md) for the scope, retained supports, and limits of the 16 published lessons.

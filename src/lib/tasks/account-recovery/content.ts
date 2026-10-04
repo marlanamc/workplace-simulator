@@ -84,6 +84,23 @@ export const FAKE_CODE = "915482";
 /**
  * Fictional password supplied on the lesson info card or Story Job Card.
  */
+export const LESSON_EMAIL = "you@harborsidecafe.com";
+export function practiceEmailMatches(typed: string, expected = LESSON_EMAIL): boolean {
+  return typed.trim().toLowerCase() === expected.toLowerCase();
+}
+export const LESSON_SIGNIN_GOAL: Localized = {
+  en: "Sign in to the practice account using the key information.",
+  es: "Entra en la cuenta de práctica usando la información clave.",
+};
+export const LESSON_VERIFY_GOAL: Localized = {
+  en: "Verify this sign-in using a text message. Keep the code private.",
+  es: "Verifica este inicio de sesión con un mensaje de texto. No compartas el código.",
+};
+export const LESSON_EMAIL_CORRECTION: Localized = {
+  en: "Check the email against the key information, including the part after @. Your password entry is kept.",
+  es: "Compara el correo con la información clave, incluida la parte después de @. Se conserva la contraseña que escribiste.",
+};
+
 export const LESSON_PASSWORD = "Harbor2026";
 
 /**
@@ -175,7 +192,7 @@ export const RECOVERY_COPY: Record<Lang, {
     showPassword: "Show password",
     signIn: "Sign in",
     emptyPassword: "Type your password first. Then click Sign in.",
-    wrongPassword: "That is not the password. Look at your info card. Type it the same way: a big H, then arbor2026.",
+    wrongPassword: "That is not the password. Compare it with the key information. Check capital letters and numbers.",
     codeSentTitle: "We sent you a code",
     codeSentBody: "We sent a text message with a 6-digit code to your phone.",
     codeLabel: "Enter the 6-digit code",
@@ -205,7 +222,7 @@ export const RECOVERY_COPY: Record<Lang, {
     showPassword: "Mostrar contraseña",
     signIn: "Iniciar sesión",
     emptyPassword: "Primero escribe tu contraseña. Después haz clic en Iniciar sesión.",
-    wrongPassword: "Esa no es la contraseña. Mira tu tarjeta de información. Escríbela igual: una H mayúscula, después arbor2026.",
+    wrongPassword: "Esa no es la contraseña. Compárala con la información clave. Revisa las mayúsculas y los números.",
     codeSentTitle: "Te enviamos un código",
     codeSentBody: "Te enviamos un mensaje de texto con un código de 6 números a tu teléfono.",
     codeLabel: "Escribe el código de 6 números",
@@ -242,8 +259,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
 
 /** Step 1 in a lesson, where the password is on the info card. */
 export const LESSON_FIRST_STEP: Localized = {
-  en: "Type the password from your info card. Then click Sign in.",
-  es: "Escribe la contraseña de tu tarjeta de información. Después haz clic en Iniciar sesión.",
+  en: "Enter the email and password from your key information. Then click Sign in.",
+  es: "Escribe el correo y la contraseña de la información clave. Después haz clic en Iniciar sesión.",
 };
 
 export const HELP_LESSON: Record<Lang, Lesson> = {

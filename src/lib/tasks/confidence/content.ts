@@ -1,3 +1,4 @@
+import { practiceEmailMatches } from "@/lib/tasks/account-recovery/content";
 import type { Localized } from "@/lib/task-types";
 import { l, type ConfidenceKey } from "@/lib/lessons/confidence";
 
@@ -127,18 +128,18 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
     try: {
       title: l("Class account · current code", "Cuenta de clase · código actual"),
       request: l("Sign in to the fictional class account with the newest code you requested.", "Entra en la cuenta ficticia de clase con el código más reciente que solicitaste."),
-      guidance: l("Enter the practice password Class!26. Read the two text messages, open the newest one, and enter its code.", "Ingresa la contraseña de práctica Class!26. Lee los dos mensajes, abre el más reciente e ingresa su código."),
+      guidance: l("Enter the practice email and password from the key information. Read the two text messages, open the newest one, and enter its code.", "Ingresa el correo y la contraseña de práctica de la información clave. Lee los dos mensajes, abre el más reciente e ingresa su código."),
       help: l("A new code replaces the older one. Compare the message times. These are fictional practice credentials.", "Un código nuevo reemplaza al anterior. Compara las horas. Son datos ficticios de práctica."),
-      sources: [source(l("Class sign-in · 10:02 AM", "Acceso a clase · 10:02 a. m."), l("Your code is 481926.", "Tu código es 481926.")), source(l("Class sign-in · 9:58 AM", "Acceso a clase · 9:58 a. m."), l("Your code is 193847. This older code has expired.", "Tu código es 193847. Este código anterior venció."))],
-      expected: { password: "Class!26", code: "481926", text: "0" }, correction: l("Check the practice password and the newest message. An older code will not work. You can edit your entry.", "Revisa la contraseña de práctica y el mensaje más reciente. Un código anterior no funciona. Puedes editar lo escrito."),
+      sources: [source(l("Class sign-in · 10:02 AM", "Acceso a clase · 10:02 a. m."), l("Your code is 481926.", "Tu código es 481926.")), source(l("Class sign-in · 9:58 AM", "Acceso a clase · 9:58 a. m."), l("Your code is 193847.", "Tu código es 193847."))],
+      expected: { email: "student@class.example.test", password: "Class!26", code: "481926", text: "0" }, correction: l("Check the practice password and the newest message. An older code will not work. You can edit your entry.", "Revisa la contraseña de práctica y el mensaje más reciente. Un código anterior no funciona. Puedes editar lo escrito."),
     },
     home: {
       title: l("Library account · replacement code", "Cuenta de biblioteca · código nuevo"),
       request: l("You requested a replacement code for the fictional library account. Sign in using that code.", "Solicitaste otro código para la cuenta ficticia de biblioteca. Entra usando ese código."),
-      guidance: l("Enter the practice password Books!26. Compare the message times, open the latest message, and enter its code.", "Ingresa la contraseña de práctica Books!26. Compara las horas, abre el mensaje más reciente e ingresa su código."),
+      guidance: l("Enter the practice email and password from the key information. Compare the message times, open the latest message, and enter its code.", "Ingresa el correo y la contraseña de práctica de la información clave. Compara las horas, abre el mensaje más reciente e ingresa su código."),
       help: l("The newest message is not always first in the list. Check the times before copying the six digits.", "El mensaje más reciente no siempre aparece primero. Revisa las horas antes de copiar los seis dígitos."),
-      sources: [source(l("Library sign-in · 4:10 PM", "Acceso a biblioteca · 4:10 p. m."), l("Your code is 562901. This older code has expired.", "Tu código es 562901. Este código anterior venció.")), source(l("Library sign-in · 4:12 PM", "Acceso a biblioteca · 4:12 p. m."), l("Your new code is 730184.", "Tu código nuevo es 730184."))],
-      expected: { password: "Books!26", code: "730184", text: "1" }, correction: l("Use the replacement code from the latest message, not the first message in the list. Keep your entry and correct it.", "Usa el código nuevo del mensaje más reciente, no del primero en la lista. Conserva lo escrito y corrígelo."),
+      sources: [source(l("Library sign-in · 4:10 PM", "Acceso a biblioteca · 4:10 p. m."), l("Your code is 562901.", "Tu código es 562901.")), source(l("Library sign-in · 4:12 PM", "Acceso a biblioteca · 4:12 p. m."), l("Your new code is 730184.", "Tu código nuevo es 730184."))],
+      expected: { email: "reader@library.example.test", password: "Books!26", code: "730184", text: "1" }, correction: l("Use the replacement code from the latest message, not the first message in the list. Keep your entry and correct it.", "Usa el código nuevo del mensaje más reciente, no del primero en la lista. Conserva lo escrito y corrígelo."),
     },
   },
   spreadsheet: {
@@ -186,7 +187,9 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
 export function confidenceProblem(s: ConfidenceScenario, values: Record<string, string>): Localized | null {
   for (const [key, expected] of Object.entries(s.expected)) {
     const value = (values[key] ?? "").trim();
-    if (key === "name") {
+    if (key === "email") {
+      if (!practiceEmailMatches(value, expected)) return s.correction;
+    } else if (key === "name") {
       if (value.toLowerCase().replace(/\.pdf$/i, "").replace(/[ _]+/g, "-") !== expected.toLowerCase().replace(/\.pdf$/i, "")) return s.correction;
     } else if (/^B\d$/.test(key) || key === "total") {
       if (!value || !/^\d+(?:[.,]\d+)?$/.test(value) || Number(value.replace(",", ".")) !== Number(expected)) return s.correction;

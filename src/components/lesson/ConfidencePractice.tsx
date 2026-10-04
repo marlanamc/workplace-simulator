@@ -1,5 +1,7 @@
 "use client";
 
+import { practiceEmailMatches, LESSON_EMAIL_CORRECTION } from "@/lib/tasks/account-recovery/content";
+
 import { useRef, useState } from "react";
 import { useLesson } from "@/lib/lesson-context";
 import { useProgress } from "@/lib/progress-context";
@@ -34,7 +36,7 @@ function Practice() {
   const [help, setHelp] = useState(false);
   const [picker, setPicker] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const [selected, setSelected] = useState({ row: 2, col: "B" });
+  const [selected, setSelected] = useState({ row: 1, col: "A" });
   const [signedIn, setSignedIn] = useState(false);
   const [renaming, setRenaming] = useState(false);
   const [sharing, setSharing] = useState(false);
@@ -65,7 +67,7 @@ function Practice() {
     return `${h % 12 || 12}:${minute} ${h < 12 ? t("AM", "a. m.") : t("PM", "p. m.")}`;
   };
   const resultFacts = Object.entries(values).filter(([field]) => field !== "password" && field !== "text");
-  const labels: Record<string, string> = { recipient: t("To", "Para"), body: t("Message", "Mensaje"), file: t("File", "Archivo"), name: t("Name", "Nombre"), permission: t("Access", "Acceso"), date: t("Date", "Fecha"), time: t("Time", "Hora"), code: t("Code", "Código"), deadline: t("Due date", "Fecha de entrega"), total: t("Total", "Total") };
+  const labels: Record<string, string> = { email: t("Email", "Correo"), recipient: t("To", "Para"), body: t("Message", "Mensaje"), file: t("File", "Archivo"), name: t("Name", "Nombre"), permission: t("Access", "Acceso"), date: t("Date", "Fecha"), time: t("Time", "Hora"), code: t("Code", "Código"), deadline: t("Due date", "Fecha de entrega"), total: t("Total", "Total") };
   const display = (field: string, value: string) => field === "file" ? chosenFile?.name : field === "permission" ? (value === "view" ? t("Viewer", "Lector") : t("Editor", "Editor")) : field === "time" ? timeLabel(value) : field === "date" ? s.dates?.find(d => d.value === value)?.label[lang] ?? value : value;
   const fileButton = <button ref={opener} type="button" className={button} onClick={() => { setPreview(null); setPicker(true); }}>{files ? t("Open file", "Abrir archivo") : coursework ? t("Add file", "Agregar archivo") : t("Attach", "Adjuntar")}</button>;
   const fileChip = chosenFile && <div className="my-3 flex flex-wrap items-center gap-3 rounded border p-3"><span className="break-all">{values.name || chosenFile.name}</span><button type="button" className={button} onClick={() => { set("file", ""); setRenaming(false); setSharing(false); }}>{t("Remove", "Quitar")}</button></div>;
@@ -98,8 +100,9 @@ function Practice() {
         <label className="block">{t("Start time", "Hora de inicio")}<select aria-label={t("Start time", "Hora de inicio")} className={input} value={values.time ?? ""} onChange={e => set("time", e.target.value)}><option value="">{t("Choose time", "Elegir hora")}</option>{s.times?.map(time => <option key={time} value={time}>{timeLabel(time)}</option>)}</select></label>
       </>}
       {recovery && <>
+        {!signedIn && <label className="block">{t("Email", "Correo")}<input aria-label={t("Email", "Correo")} inputMode="email" autoComplete="off" autoCapitalize="none" spellCheck={false} className={input} value={values.email ?? ""} onChange={e => set("email", e.target.value)} /></label>}
         {!signedIn && <label className="block">{t("Practice password", "Contraseña de práctica")}<input aria-label={t("Practice password", "Contraseña de práctica")} autoComplete="off" className={input} value={values.password ?? ""} onChange={e => set("password", e.target.value)} /></label>}
-        {!signedIn ? <button type="button" className={button} onClick={() => { if (values.password?.trim() !== s.expected.password) return correct(s.correction[lang]); clearCorrection(); setSignedIn(true); }}>{t("Next", "Siguiente")}</button> : <div className="grid grid-cols-1 items-start gap-4 @min-[520px]:grid-cols-[236px_minmax(0,1fr)]">
+        {!signedIn ? <button type="button" className={button} onClick={() => { if (!practiceEmailMatches(values.email ?? "", s.expected.email)) return correct(LESSON_EMAIL_CORRECTION[lang]); if (values.password?.trim() !== s.expected.password) return correct(s.correction[lang]); clearCorrection(); setSignedIn(true); }}>{t("Next", "Siguiente")}</button> : <div className="grid grid-cols-1 items-start gap-4 @min-[520px]:grid-cols-[236px_minmax(0,1fr)]">
           <PhoneTexts heading={t("Messages", "Mensajes")} emptyLabel={t("No messages", "Sin mensajes")} chosenKey={values.text} onTap={value => set("text", value)} texts={s.sources.map((src, i) => ({ key: String(i), from: src.title[lang], body: src.text[lang], when: "" }))} />
           <label className="block">{values.text && <span className="mb-3 block rounded border bg-[#e8f0fe] p-3 text-sm @min-[520px]:hidden">{s.sources[Number(values.text)]?.text[lang]}</span>}{t("Verification code", "Código de verificación")}<input aria-label={t("Verification code", "Código de verificación")} className={input} autoComplete="off" inputMode="numeric" value={values.code ?? ""} onChange={e => set("code", e.target.value)} /></label>
         </div>}

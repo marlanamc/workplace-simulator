@@ -1,7 +1,7 @@
 import type { AppKey, TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
 import type { LessonMeta } from "@/lib/lessons/types";
-import { LESSON_PASSWORD, RECOVERY_COPY } from "@/lib/tasks/account-recovery/content";
+import { LESSON_EMAIL, LESSON_PASSWORD, RECOVERY_COPY } from "@/lib/tasks/account-recovery/content";
 import { JOB_SEEKER } from "@/lib/tasks/job-application/content";
 import { FILES_WEEK, RENAME_TARGET } from "@/lib/tasks/files/content";
 import {
@@ -557,12 +557,12 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         you: { en: "You work at Harborside Cafe. Your work account signed you out.", es: "Trabajas en Harborside Cafe. Tu cuenta del trabajo cerró tu sesión." },
         people: [],
         need: {
-          en: "Sign in again with your password. Then the account sends a code to your phone in a text message. Type that code to finish.",
-          es: "Vuelve a entrar con tu contraseña. Después, la cuenta te envía un código al teléfono en un mensaje de texto. Escribe ese código para terminar.",
+          en: "Sign in again with the practice email and password. Then the account sends a code to your phone in a text message. Type that code to finish.",
+          es: "Vuelve a entrar con el correo y la contraseña de práctica. Después, la cuenta te envía un código al teléfono en un mensaje de texto. Escribe ese código para terminar.",
         },
       },
       reference: [
-        { label: { en: "Email", es: "Correo" }, value: "you@harborsidecafe.com" },
+        { label: { en: "Email", es: "Correo" }, value: LESSON_EMAIL },
         { label: { en: "Password", es: "Contraseña" }, value: LESSON_PASSWORD },
       ],
       guide: {
@@ -580,7 +580,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           { en: "Two texts have a code and both say Google. Some learners pick the text that asks them to send a code back, or type its code. Ask: did you start this sign-in? Does this text ask you to share your code? A sender name alone does not prove a message is safe.", es: "Dos mensajes tienen un código y los dos dicen Google. Algunos eligen el mensaje que pide responder con un código, o escriben su código. Pregunta: ¿tú empezaste este inicio de sesión? ¿El mensaje te pide compartir tu código? El nombre del remitente por sí solo no demuestra que un mensaje sea seguro." },
           { en: "Sam, a coworker, asks for the code. Some learners want to help. Talk about why nobody should get your code, even a friend.", es: "Sam, un compañero, pide el código. Algunos quieren ayudar. Hablen de por qué nadie debe recibir tu código, ni un amigo." },
           { en: "Some learners type the whole message. The box only takes the 6 numbers.", es: "Algunos escriben todo el mensaje. La casilla solo acepta los 6 números." },
-          { en: "The password is on the info card, and capital letters count. Point to the big H.", es: "La contraseña está en la tarjeta de información, y las mayúsculas cuentan. Señala la H mayúscula." },
+          { en: "Let the learner compare the email and password with the key information. If needed, prompt them to check the part after @ and capital letters.", es: "Deja que el estudiante compare el correo y la contraseña con la información clave. Si hace falta, pídele revisar la parte después de @ y las mayúsculas." },
         ],
         followUp: [
           { en: "Where do you get codes like this in real life? Your bank, your email, your school.", es: "¿Dónde recibes códigos así en la vida real? En el banco, el correo, la escuela." },

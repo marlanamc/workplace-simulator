@@ -16,6 +16,7 @@ async function startLesson(page: Page) {
 }
 
 async function finishAccountRecovery(page: Page) {
+  await page.getByTestId("practice-email").fill("you@harborsidecafe.com");
   await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   // Two texts mention Google; the real one is the one Google sent.
@@ -43,9 +44,10 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   const card = jobCard(page);
   await expect(card).toContainText("Sign in with a text code");
   // Guided spells out the step.
-  await expect(card).toContainText("Type the password from your info card.");
+  await expect(card).toContainText("Enter the email and password from your key information.");
 
   // A password that is not the one on the card is corrected, by name.
+  await page.getByTestId("practice-email").fill("you@harborsidecafe.com");
   await page.getByPlaceholder("Enter your password").fill("harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(card).toContainText("That is not the password.");
@@ -61,7 +63,7 @@ test("a guest runs the sign-in lesson in guided mode and can practice again", as
   // Practice again remounts the task on its first step.
   await again.click();
   await expect(page.getByPlaceholder("Enter your password")).toBeVisible();
-  await expect(card).toContainText("Type the password from your info card.");
+  await expect(card).toContainText("Enter the email and password from your key information.");
   expect(errors).toEqual([]);
 });
 
@@ -69,8 +71,10 @@ test("the sign-in lesson makes the code a real safety choice", async ({ page }) 
   await page.goto("/lessons/account-recovery");
   await startLesson(page);
   const card = jobCard(page);
-  // The password box has focus as soon as the page opens.
-  await expect(page.getByPlaceholder("Enter your password")).toBeFocused();
+  // Start with the email, then move to the password using Enter.
+  await expect(page.getByTestId("practice-email")).toBeFocused();
+  await page.keyboard.type("you@harborsidecafe.com");
+  await page.keyboard.press("Enter");
   await page.keyboard.type("Harbor2026");
   await page.keyboard.press("Enter");
 
@@ -82,9 +86,9 @@ test("the sign-in lesson makes the code a real safety choice", async ({ page }) 
   await code.press("Enter");
   await expect(card).toContainText("The box is empty.");
 
-  // The lookalike text is corrected, and the correction goes once the learner types.
+  // Opening a message does not reveal the answer; submitting its code is checked.
   await page.getByTestId("phone-texts").getByRole("button", { name: /Google Alert/ }).click();
-  await expect(card).toContainText("That text is fake.");
+  await expect(card).not.toContainText("That text is fake.");
   await code.focus();
   await expect(card).not.toContainText("That text is fake.");
 
@@ -100,6 +104,7 @@ test("the phone with the code stays on screen at 150% text", async ({ page }) =>
   await page.setViewportSize({ width: 911, height: 512 });
   await page.goto("/lessons/account-recovery");
   await startLesson(page);
+  await page.getByTestId("practice-email").fill("you@harborsidecafe.com");
   await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.getByTestId("phone-texts").getByRole("button", { name: /^Google/ })).toBeInViewport();
@@ -110,8 +115,8 @@ test("independent mode states the goal instead of each click", async ({ page }) 
   await startLesson(page);
   const card = jobCard(page);
   await expect(card).toContainText("Sign in with a text code");
-  await expect(card).toContainText("Sign in. Find the verification text from Google on your phone.");
-  await expect(card).not.toContainText("Type the password from your info card.");
+  await expect(card).toContainText("Sign in to the practice account using the key information.");
+  await expect(card).not.toContainText("Enter the email and password from your key information.");
   await expect(card.getByRole("button", { name: "Show me", exact: true })).toHaveCount(0);
 });
 
@@ -163,6 +168,7 @@ test("the copied student link keeps support and language", async ({ page, contex
 test("changing support mid-task keeps the student's place", async ({ page }) => {
   await page.goto("/lessons/account-recovery");
   await startLesson(page);
+  await page.getByTestId("practice-email").fill("you@harborsidecafe.com");
   await page.getByPlaceholder("Enter your password").fill("Harbor2026");
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await expect(page.getByTestId("phone-texts")).toBeVisible();

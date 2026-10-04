@@ -64,7 +64,7 @@ export default function LessonRunner({
   const entry = (lessonByKey(taskKey) ?? (draft ? draftLessonFor(taskKey) : undefined))!;
   const scenarioData = isConfidenceKey(taskKey) && scenario !== "classroom" ? CONFIDENCE_SCENARIOS[taskKey][scenario] : null;
   const scene = scenarioData ? { you: { en: "You are practicing with fictional information.", es: "Estás practicando con datos ficticios." }, people: [], need: scenarioData.request } : entry.scene;
-  const reference = scenarioData ? (scenarioData.expected.password ? [{ label: { en: "Practice password", es: "Contraseña de práctica" }, value: scenarioData.expected.password }] : []) : entry.reference ?? [];
+  const reference = scenarioData ? (scenarioData.expected.password ? [{ label: { en: "Email", es: "Correo" }, value: scenarioData.expected.email }, { label: { en: "Practice password", es: "Contraseña de práctica" }, value: scenarioData.expected.password }] : []) : entry.reference ?? [];
   const seed = useMemo(() => seedForLesson(taskKey)!, [taskKey]);
   const [mode, setModeState] = useState(initialMode);
   // The scene comes first. A smoke-sweep draft has no scene worth reading,

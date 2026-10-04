@@ -23,6 +23,7 @@ for (const lang of ["en", "es"] as const) {
       await card.getByRole("button", { name: lang === "en" ? "Show me" : "Muéstrame", exact: true }).click();
       await expect(page.locator('[data-showme="password-field"]')).toBeInViewport();
       expect(await overlap()).toBe(false);
+      await page.getByTestId("practice-email").fill("you@harborsidecafe.com");
       await page.locator('[data-showme="password-field"]').fill("Harbor2026");
       await page.locator('[data-showme="password-field"]').press("Enter");
       await expect(page.locator('[data-showme="code-field"]')).toBeVisible();

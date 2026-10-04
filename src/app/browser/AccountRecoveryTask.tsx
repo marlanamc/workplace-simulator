@@ -15,6 +15,10 @@ import {
   RIGHT_NOW_STEPS,
   RIGHT_NOW_LABEL,
   LESSON_FIRST_STEP,
+  LESSON_SIGNIN_GOAL,
+  LESSON_VERIFY_GOAL,
+  LESSON_EMAIL_CORRECTION,
+  practiceEmailMatches,
   practicePasswordMatches,
   STORY_SIGNIN_GOAL,
   STORY_WRONG_PASSWORD,
@@ -58,6 +62,9 @@ export default function AccountRecoveryTask() {
   // Both modes use a provided fictional password; never ask for a real one.
   const lesson = useLesson();
   const [view, setView] = useState<View>(completedTaskKeys.includes("account-recovery") ? "done" : "signin");
+  const isLesson = Boolean(lesson);
+  const [email, setEmail] = useState("");
+  const emailRef = useRef<HTMLInputElement>(null);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [chosenText, setChosenText] = useState<string | null>(null);
@@ -74,9 +81,9 @@ export default function AccountRecoveryTask() {
   // Keyboard users land in the box they need, not ten Tabs away behind the
   // window buttons. A DOM sync with the page that just opened.
   useEffect(() => {
-    if (view === "signin") passwordRef.current?.focus();
+    if (view === "signin") (isLesson ? emailRef : passwordRef).current?.focus();
     else if (view === "code") codeRef.current?.focus();
-  }, [view]);
+  }, [view, isLesson]);
 
   const c = RECOVERY_COPY[lang];
   // The code text stays on the phone once it has arrived, so the learner can
@@ -86,6 +93,10 @@ export default function AccountRecoveryTask() {
 
   const trySignIn = () => {
     showMe.clear();
+    if (lesson && !practiceEmailMatches(email)) {
+      recordWrong({ title: lang === "en" ? "Check your email." : "Revisa el correo.", body: LESSON_EMAIL_CORRECTION[lang] });
+      return;
+    }
     if (!password.trim()) {
       recordWrong({ title: lang === "en" ? "Almost." : "Casi.", body: c.emptyPassword });
       return;
@@ -101,7 +112,7 @@ export default function AccountRecoveryTask() {
     showMe.clear();
     const text = TEXTS.find((t) => t.key === key);
     if (!text) return;
-    if (text.isTarget) {
+    if (lesson || text.isTarget) {
       setChosenText(key);
       dismiss();
       requestAnimationFrame(() => codeRef.current?.focus());
@@ -133,6 +144,7 @@ export default function AccountRecoveryTask() {
 
   const restart = () => {
     setView("signin");
+    setEmail("");
     setPassword("");
     setShowPassword(false);
     setChosenText(null);
@@ -156,7 +168,7 @@ export default function AccountRecoveryTask() {
           icon={TASK_ICONS["account-recovery"]}
           stepIndex={stepIndex}
           steps={steps}
-          goal={!lesson && stepIndex === 0 ? STORY_SIGNIN_GOAL : undefined}
+          goal={stepIndex === 0 ? (lesson ? LESSON_SIGNIN_GOAL : STORY_SIGNIN_GOAL) : lesson ? LESSON_VERIFY_GOAL : undefined}
           lang={lang}
           rightNowLabel={RIGHT_NOW_LABEL}
           onShowMe={() => showMe.toggleFor(SHOW_ME_IDS[stepIndex])}
@@ -170,20 +182,26 @@ export default function AccountRecoveryTask() {
           beside the form, where the code stays in view while it is typed. */}
       {view !== "done" && (
         <div className="@container">
-        <div className="flex flex-col items-center gap-4 rounded-2xl bg-[#f0f4f9] px-3 py-4 @min-[520px]:flex-row @min-[520px]:items-start @min-[520px]:justify-center @min-[640px]:gap-6 @min-[640px]:px-4 @min-[900px]:py-8">
-          <div className="w-full min-w-0 max-w-[460px] rounded-[28px] bg-white px-6 pt-6 pb-6 @min-[520px]:flex-1 @min-[900px]:px-10 @min-[900px]:pt-9 @min-[900px]:pb-8">
+        <div className="flex flex-col items-center gap-4 rounded-2xl bg-[#f0f4f9] px-3 py-4 @min-[520px]:flex-row @min-[520px]:items-start @min-[520px]:justify-center @min-[640px]:gap-6 @min-[640px]:px-4 @min-[900px]:py-5">
+          <div className="w-full min-w-0 max-w-[460px] rounded-[28px] bg-white px-6 pt-6 pb-6 @min-[520px]:flex-1 @min-[900px]:px-10 @min-[900px]:pt-6 @min-[900px]:pb-6">
             <GoogleWord />
             {view === "signin" ? (
               <>
                 <h3 className="m-0 mt-3 text-[32px] font-normal leading-tight text-[#1f1f1f]">{c.signInTitle}</h3>
                 <p className="mt-2 mb-5 text-[16px] text-[#1f1f1f]">{c.continueTo}</p>
-                <div
+                {lesson ? <label className="mb-4 block text-[14px] font-medium text-[#444746]">
+                  {lang === "en" ? "Email" : "Correo"}
+                  <input ref={emailRef} data-testid="practice-email" inputMode="email" autoCapitalize="none" spellCheck={false} autoComplete="off"
+                    value={email} onChange={e => { setEmail(e.target.value); clearCorrection(); }}
+                    onKeyDown={e => { if (e.key === "Enter") passwordRef.current?.focus(); }}
+                    className="mt-1.5 block min-h-14 w-full rounded-[4px] border border-[#747775] px-3.5 text-[17px] text-[#1f1f1f] focus:outline-2 focus:outline-[#0b57d0]" />
+                </label> : <div
                   aria-label={c.usernameLabel}
                   className="mb-5 inline-flex max-w-full items-center gap-2 rounded-full border border-[#747775] py-0.5 pr-3 pl-0.5 text-[14px] font-medium text-[#1f1f1f]"
                 >
                   <span aria-hidden className="flex h-7 w-7 items-center justify-center rounded-full bg-[#1e8e3e] text-[13px] text-white">Y</span>
                   <span className="truncate">you@harborsidecafe.com</span>
-                </div>
+                </div>}
                 <label className="block text-[14px] font-medium text-[#444746]">
                   {c.passwordLabel}
                   <input
@@ -191,7 +209,7 @@ export default function AccountRecoveryTask() {
                     ref={passwordRef}
                     data-showme="password-field"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { setPassword(e.target.value); clearCorrection(); }}
                     onKeyDown={(e) => { if (e.key === "Enter") trySignIn(); }}
                     placeholder={c.passwordPlaceholder}
                     autoComplete="off"
@@ -209,6 +227,7 @@ export default function AccountRecoveryTask() {
                 </label>
                 <div className="mt-6 flex justify-end">
                   <button
+                    data-testid="practice-sign-in"
                     onClick={trySignIn}
                     className="inline-flex min-h-10 cursor-pointer items-center rounded-full bg-[#0b57d0] px-6 text-[14px] font-medium text-white hover:bg-[#0842a0]"
                   >

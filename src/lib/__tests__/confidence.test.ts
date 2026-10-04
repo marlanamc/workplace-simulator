@@ -51,8 +51,8 @@ describe("digital confidence launch", () => {
   });
   it("requires the current code, including when its message is second", () => {
     const s = CONFIDENCE_SCENARIOS["account-recovery"].home;
-    expect(confidenceProblem(s, { password: "Books!26", code: "730184", text: "1" })).toBeNull();
-    expect(confidenceProblem(s, { password: "Books!26", code: "562901", text: "0" })).not.toBeNull();
+    expect(confidenceProblem(s, { email: "reader@library.example.test", password: "Books!26", code: "730184", text: "1" })).toBeNull();
+    expect(confidenceProblem(s, { email: "reader@library.example.test", password: "Books!26", code: "562901", text: "0" })).not.toBeNull();
   });
   it("rejects the old deadline and a draft upload", () => {
     const s = CONFIDENCE_SCENARIOS.coursework.home;

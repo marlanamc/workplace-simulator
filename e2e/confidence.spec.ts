@@ -51,6 +51,7 @@ for (const lang of ["en", "es"]) for (const scenario of ["try", "home"]) for (co
       await p.getByLabel(es ? "Hora de inicio" : "Start time").selectOption(home ? (key === "calendar" ? "12:00" : "11:00") : key === "calendar" ? "16:00" : "14:00");
     }
     if (key === "account-recovery") {
+      await p.getByLabel(es ? "Correo" : "Email", { exact: true }).fill(home ? "reader@library.example.test" : "student@class.example.test");
       await p.getByLabel(es ? "Contraseña de práctica" : "Practice password").fill(home ? "Books!26" : "Class!26");
       await p.getByRole("button", { name: es ? "Siguiente" : "Next", exact: true }).click();
       await p.getByTestId("phone-texts").getByRole("button").nth(home ? 1 : 0).click();
@@ -59,6 +60,8 @@ for (const lang of ["en", "es"]) for (const scenario of ["try", "home"]) for (co
       await code.fill(home ? "730184" : "481926");
     }
     if (key === "spreadsheet") {
+      await expect(p.getByLabel(es ? "Editar celda B2" : "Edit cell B2")).toHaveCount(0);
+      await p.locator('[data-grid-cell="2:B"]').click();
       await p.getByLabel(es ? "Editar celda B2" : "Edit cell B2").fill(home ? "9" : "12");
       await p.locator('[data-grid-cell="3:B"]').click();
       await p.getByLabel(es ? "Editar celda B3" : "Edit cell B3").fill(home ? "7" : "8");
@@ -75,6 +78,11 @@ for (const lang of ["en", "es"]) for (const scenario of ["try", "home"]) for (co
     await expect(card.getByTestId("lesson-practice-again")).toBeVisible();
     await card.getByTestId("lesson-practice-again").click();
     await expect(p.getByTestId("confidence-result")).toHaveCount(0);
+    if (key === "account-recovery") {
+      await p.getByRole("button", { name: es ? "Iniciar sesión" : "Sign in", exact: true }).click();
+      await expect(p.getByLabel(es ? "Correo" : "Email", { exact: true })).toHaveValue("");
+      await expect(p.getByLabel(es ? "Contraseña de práctica" : "Practice password")).toHaveValue("");
+    }
     expect(errors).toEqual([]);
   });
 }
