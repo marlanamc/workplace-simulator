@@ -1,4 +1,4 @@
-import { LESSON_PATHWAYS, PATHWAY_COPY, pathwayByKey } from "@/lib/lessons/pathways";
+import { LESSON_PATHWAYS, PATHWAY_COPY, PIECE_LABELS, pathwayByKey } from "@/lib/lessons/pathways";
 import { CONFIDENCE_TITLE } from "@/lib/lessons/confidence";
 import { materialsHref } from "@/lib/lessons/materials-links";
 import Link from "next/link";
@@ -8,9 +8,12 @@ import { LESSONS, type LessonEntry } from "@/lib/lessons/catalog";
 import { TASK_ICONS } from "@/lib/icons";
 import { QUICK_SEARCHES, searchLessons, libraryHref, cleanSearch } from "@/lib/lessons/library";
 import { fill, LESSON_COPY, LIBRARY_COPY, LIBRARY_VIEW_COPY } from "@/lib/lessons/copy";
-import { SKILL_LABELS, SKILL_LOOK, SKILL_TAGS, isSkillTag, type SkillTag } from "@/lib/lessons/skills";
+import { SKILL_LABELS, SKILL_LOOK, SKILL_TAGS, TOPIC_COLORS, isSkillTag, type SkillTag } from "@/lib/lessons/skills";
+import type { TaskKey } from "@/lib/desktop-content";
+import type { Lang } from "@/lib/task-types";
 import { LibraryDoneProvider, ListenButton, TopicProgress } from "./LibraryDone";
 import { LibraryLessonList, type LibraryRow } from "./LibraryLessonList";
+import { GoalTower, type TowerPiece } from "./GoalTower";
 
 export const metadata = {
   title: "Lessons",
@@ -27,6 +30,17 @@ const WAVE_EDGE =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='44' viewBox='0 0 240 44' preserveAspectRatio='none'%3E%3Cpath d='M0 22 Q30 6 60 22 T120 22 T180 22 T240 22 V44 H0Z' fill='%232f6fb3' fill-opacity='.55'/%3E%3Cpath d='M0 30 Q30 16 60 30 T120 30 T180 30 T240 30 V44 H0Z' fill='%23f7f3ea'/%3E%3C/svg%3E\") repeat-x bottom/240px 30px";
 
 const inSkill = (skill: SkillTag) => LESSONS.filter((l) => l.skills.includes(skill));
+
+/** A goal's puzzle piece takes its color from the lesson's first topic. */
+const towerPiece = (taskKey: TaskKey, lang: Lang): TowerPiece => {
+  const lesson = LESSONS.find((l) => l.taskKey === taskKey);
+  const topic = lesson?.skills[0];
+  return {
+    taskKey,
+    label: PIECE_LABELS[taskKey]?.[lang] ?? lesson?.title[lang] ?? taskKey,
+    colors: topic ? SKILL_LOOK[topic].colors : TOPIC_COLORS.navy,
+  };
+};
 
 /**
  * The public lesson library. Three views from the URL, so it works without
@@ -212,18 +226,13 @@ export default async function LessonsPage({
           )}
           {view === "home" && (
             <section aria-labelledby="pathways-heading" data-testid="lesson-pathways" className="space-y-4">
-              <div>
-                <h2 id="pathways-heading" className="m-0 text-[30px] font-extrabold tracking-[-0.01em]">{PATHWAY_COPY.heading[lang]}</h2>
-                <p className="mt-2 text-lg">{PATHWAY_COPY.intro[lang]}</p>
-              </div>
-              <ul className="m-0 grid list-none gap-4 p-0 md:grid-cols-3">
+              <h2 id="pathways-heading" className="m-0 text-[30px] font-extrabold tracking-[-0.01em]">{PATHWAY_COPY.heading[lang]}</h2>
+              <ul className="m-0 grid list-none items-start gap-5 p-0 md:grid-cols-3">
                 {LESSON_PATHWAYS.map(p => (
                   <li key={p.key} className="flex">
-                    <Link data-testid={`pathway-${p.key}`} href={libraryHref(lang, null, "", teacher, p.key)} className="flex min-w-0 flex-1 flex-col gap-4 rounded-3xl border-2 border-harbor-navy/20 bg-white p-6 text-harbor-ink hover:border-harbor-navy focus-visible:outline-2 focus-visible:outline-offset-4">
-                      <h3 className="m-0 text-[23px] font-extrabold leading-tight">{p.title[lang]}</h3>
-                      <p className="m-0 text-[17px] leading-relaxed">{p.summary[lang]}</p>
-                      <TopicProgress lang={lang} lessonKeys={p.taskKeys} solid="#1f5fae" deep="#14294d" size="tile" />
-                      <span className="font-bold text-[#1d4f91]">{PATHWAY_COPY.open[lang]} <span aria-hidden>→</span></span>
+                    <Link data-testid={`pathway-${p.key}`} href={libraryHref(lang, null, "", teacher, p.key)} className="flex min-w-0 flex-1 flex-col gap-3 rounded-3xl border-2 border-transparent bg-[#e4ecf7] px-4 pt-4 pb-3 text-harbor-ink hover:border-[#1f5fae] focus-visible:outline-2 focus-visible:outline-offset-4">
+                      <h3 className="m-0 text-[23px] font-extrabold leading-tight text-balance">{p.title[lang]}</h3>
+                      <GoalTower lang={lang} pieces={p.taskKeys.map(key => towerPiece(key, lang))} />
                     </Link>
                   </li>
                 ))}

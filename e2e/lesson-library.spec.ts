@@ -6,7 +6,7 @@ for (const lang of ["en", "es"] as const) {
     await page.goto(`/lessons?teacher=1${lang === "es" ? "&lang=es" : ""}`);
     await waitForInteractive(page);
     // Home is topics, not lessons.
-    await expect(page.getByRole("heading", { name: lang === "es" ? "O elige un tema" : "Or choose a topic", exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: lang === "es" ? "O elige un tema" : "Or pick a topic", exact: true })).toBeVisible();
     await expect(page.locator('[data-testid^="lesson-card-"]')).toHaveCount(0);
     await page.getByTestId("skill-filter-forms").click();
     await expect(page.getByRole("heading", { level: 1, name: lang === "es" ? "Formularios" : "Forms" })).toBeVisible();
