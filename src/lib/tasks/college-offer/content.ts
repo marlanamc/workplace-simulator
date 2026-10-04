@@ -468,11 +468,11 @@ export const GAP_CORRECTIONS: Record<OfferGap, Localized> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 /** Neutral: each line names the job, never the answer. */
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Read HR's offer.", es: "Lee la oferta de RR.HH." },
-  { en: "Find a class section that can work.", es: "Encuentra una sección de la clase que pueda funcionar." },
-  { en: "Check your section against your shifts and the offer's rules.", es: "Compara tu sección con tus turnos y con las reglas de la oferta." },
-  { en: "Plan your calendar.", es: "Organiza tu calendario." },
-  { en: "Reply to HR.", es: "Responde a RR.HH." },
+  { en: "Read HR’s offer and its requirements.", es: "Lee la oferta de Recursos Humanos y sus requisitos." },
+  { en: "Choose a class section that can fit your work schedule and the offer’s requirements.", es: "Elige un grupo de clase compatible con tu horario de trabajo y los requisitos de la oferta." },
+  { en: "Request a shift change from Renata. Include when your class meets. Then click Send.", es: "Pide a Renata un cambio de turno. Incluye cuándo es tu clase. Después haz clic en Enviar." },
+  { en: "Add the class to your calendar. Include the first class date, day, start and end times, and weekly repeat. Save the event.", es: "Agrega la clase a tu calendario. Incluye la fecha de la primera clase, el día, las horas de inicio y fin, y la repetición semanal. Guarda el evento." },
+  { en: "Write HR a reply accepting the offer. Include your class section. Then click Send.", es: "Escribe a Recursos Humanos una respuesta para aceptar la oferta. Incluye tu grupo de clase. Después haz clic en Enviar." },
 ];
 
 // ── Copy ────────────────────────────────────────────────────────────────

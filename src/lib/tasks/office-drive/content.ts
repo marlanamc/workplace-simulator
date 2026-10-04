@@ -223,6 +223,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Find the current Q3 file.", es: "Encuentra el archivo actual del T3." },
-  { en: "Share it with Chris as view only.", es: "Compártelo con Chris en modo solo ver." },
+  { en: "Find the current Q3 notes.", es: "Busca las notas actuales del T3." },
+  { en: "Share the file with Chris. Give permission to view it without editing it.", es: "Comparte el archivo con Chris. Dale permiso para verlo sin editarlo." },
 ];

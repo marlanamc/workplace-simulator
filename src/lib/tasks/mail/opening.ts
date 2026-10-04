@@ -9,10 +9,8 @@ const copy = (en: string, es: string): Localized => ({ en, es });
 const lines = (en: string[], es: string[]): Record<Lang, string[]> => ({ en, es });
 
 export const FIRST_REPLY_GUIDANCE = copy(
-  // Lenient on purpose: any first reply is saved, so the card asks for no
-  // more than that. A hello and a name are offered, not required (Wave 5 F-15).
-  'Write a short reply. A hello and your name are nice. Then click Send.',
-  'Escribe una respuesta corta. Es bueno saludar y poner tu nombre. Luego haz clic en Enviar.',
+  'Write a short reply. Then click Send.',
+  'Escribe una respuesta corta. Después haz clic en Enviar.',
 );
 export const FIRST_REPLY_EXAMPLE = copy(
   'Example (Ana is an example name):\n\nHi Maria,\nThank you for the welcome. See you tomorrow!\nAna',
@@ -28,7 +26,7 @@ export const OPENING_MESSAGES = [
       ['The cafe is at 142 Main Street. Come in the side door and ask for me at the counter.', 'Please wear a black shirt, dark pants, and closed-toe shoes. We will give you an apron.'],
       ['El café está en 142 Main Street. Entra por la puerta del costado y pregunta por mí en el mostrador.', 'Por favor ponte una camisa negra, pantalón oscuro y zapatos cerrados. Nosotros te damos el delantal.'],
     ),
-    objective: copy('Reply to Maria with a short hello.', 'Responde a Maria con un saludo corto.'),
+    objective: { en: "Write Maria a short reply. Then click Send.", es: "Escribe una respuesta corta a Maria. Después haz clic en Enviar." },
     starter: copy('Hi Maria, thank you!', '¡Hola Maria, gracias!'),
     frame: copy('Hi Maria, thank you!', '¡Hola Maria, gracias!'),
   },
@@ -40,7 +38,7 @@ export const OPENING_MESSAGES = [
       ['Please bring a photo ID and your bank information. We will do your new-hire paperwork before your shift.'],
       ['Por favor trae una identificación con foto y los datos de tu banco. Vamos a llenar tus papeles de ingreso antes del turno.'],
     ),
-    objective: copy('Confirm to Maria that you will be here tomorrow at 10 AM.', 'Confirma a Maria que estarás aquí mañana a las 10 a. m.'),
+    objective: { en: "Reply to Maria to confirm you can arrive at the time in her email. Then click Send.", es: "Responde a Maria para confirmar que puedes llegar a la hora indicada en su correo. Después haz clic en Enviar." },
     starter: copy('Yes, I will be there.', 'Sí, allí estaré.'),
     frame: copy('Hi Maria, I will be there at ___ AM.', 'Hola Maria, voy a estar ahí a las ___ a. m.'),
   },
@@ -52,7 +50,7 @@ export const OPENING_MESSAGES = [
       ['One more thing: the code for the staff bathroom is on the board by the back door.'],
       ['Otra cosa: el código del baño del personal está en la pizarra junto a la puerta de atrás.'],
     ),
-    objective: copy('Tell Darnell you will put your bag on the shelf under the counter.', 'Dile a Darnell que dejarás tu bolsa en el estante debajo del mostrador.'),
+    objective: { en: "Read Darnell’s email. Reply with where you will put your bag. Then click Send.", es: "Lee el correo de Darnell. Responde con el lugar donde vas a dejar tu bolsa. Después haz clic en Enviar." },
     starter: copy('I will put it on the shelf under the counter.', 'La dejaré en el estante debajo del mostrador.'),
     frame: copy('Hi Darnell, I will put my bag ___.', 'Hola Darnell, voy a dejar mi bolsa ___.'),
   },

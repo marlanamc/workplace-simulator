@@ -169,6 +169,6 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   // reason step names the kind of fact the check accepts (who wrote it,
   // where it was published) without naming the source (option C,
   // completion-directions.test).
-  { en: "Pick the one you would cite.", es: "Elige la que citarías." },
-  { en: "Write why you can trust it, like who wrote it or where it was published.", es: "Escribe por qué puedes confiar en ella, como quién la escribió o dónde se publicó." },
+  { en: "Choose the source you would cite.", es: "Elige la fuente que citarías." },
+  { en: "Explain why you can trust the source. Include information about the author or publication. Then submit your choice and explanation.", es: "Explica por qué la fuente es confiable. Incluye información sobre el autor o la publicación. Después envía tu elección y tu explicación." },
 ];

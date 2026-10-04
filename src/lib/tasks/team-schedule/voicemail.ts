@@ -58,10 +58,7 @@ export const PHONE_MESSAGE_CORRECTIONS: Record<PhoneMessageProblem, Localized> =
 };
 
 /** Act III states the title only, so this new step is spelled out as the goal. */
-export const VOICEMAIL_STEP: Localized = {
-  en: "The cafe phone has a voicemail for Renata. Play it, then write her a phone message: who called, why, and the number.",
-  es: "El teléfono del café tiene un mensaje de voz para Renata. Escúchalo y escríbele un recado: quién llamó, por qué y el número.",
-};
+export const VOICEMAIL_STEP: Localized = { en: "Listen to the voicemail or read its transcript. Send Renata a phone message with the caller’s name, reason for calling, and callback number.", es: "Escucha el mensaje de voz o lee la transcripción. Envía a Renata un recado con el nombre de quien llamó, el motivo y el número para devolver la llamada." };
 
 /** The schedule email waits until Renata has her message. */
 export const MESSAGE_FIRST: Localized = {

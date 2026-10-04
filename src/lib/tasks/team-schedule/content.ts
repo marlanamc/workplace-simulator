@@ -209,12 +209,6 @@ export function describeSubmission(body: string, lang: Lang): SubmissionContent 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(TEAM_SCHEDULE_COPY, (c) => c.sheetName),
-  {
-    en: "Find Saturday's gap, then pick someone who has room.",
-    es: "Busca el hueco del sábado y elige a alguien con espacio.",
-  },
-  {
-    en: "Tell the person you put on that shift.",
-    es: "Avísale a la persona que pusiste en ese turno.",
-  },
+  { en: "Choose someone for Saturday’s closing shift. Check their availability and remaining hours.", es: "Elige a alguien para el turno de cierre del sábado. Revisa su disponibilidad y cuántas horas más puede trabajar." },
+  { en: "Send the person a message. Include the day and shift you assigned.", es: "Envía un mensaje a la persona. Incluye el día y el turno que le asignaste." },
 ];

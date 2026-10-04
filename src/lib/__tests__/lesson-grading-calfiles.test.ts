@@ -112,7 +112,7 @@ describe("calendar: the reply names a day you work and a time", () => {
 
   it("the Job Card asks the learner to look instead of stating the day off", () => {
     expect(CAL_STEPS[1].en).not.toMatch(/do not work|day off/i);
-    expect(CAL_STEPS[1].en).toMatch(/\?/);
+    expect(CAL_STEPS[1].en).toMatch(/Compare.*meeting.*work shifts/);
     expect(CAL_STEPS[1].es).not.toMatch(/no trabajas|día libre/i);
   });
 });

@@ -236,14 +236,8 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     en: "Type the practice password Harbor2026. Then click Sign in.",
     es: "Escribe la contraseña de práctica Harbor2026. Después haz clic en Iniciar sesión.",
   },
-  {
-    en: "Look at your phone. See who sent each text. Click the real text from Google.",
-    es: "Mira tu teléfono. Fíjate quién envió cada mensaje. Haz clic en el mensaje real de Google.",
-  },
-  {
-    en: "Type the 6 numbers from that text. Then click Verify.",
-    es: "Escribe los 6 números de ese mensaje. Después haz clic en Verificar.",
-  },
+  { en: "Check the sender of each text. Open the verification text from Google.", es: "Revisa quién envió cada mensaje. Abre el mensaje de verificación de Google." },
+  { en: "Enter the six-digit code from the text. Then click Verify.", es: "Escribe el código de seis dígitos del mensaje. Después haz clic en Verificar." },
 ];
 
 /** Step 1 in a lesson, where the password is on the info card. */

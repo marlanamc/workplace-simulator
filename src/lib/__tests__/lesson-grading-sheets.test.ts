@@ -22,6 +22,7 @@ import {
 } from "@/lib/tasks/formula-check/content";
 import {
   RIGHT_NOW_STEPS as BUDGET_STEPS,
+  LESSONS as BUDGET_HELP,
   STARTERS as BUDGET_STARTERS,
   emailFlagsOver,
   statusFormula,
@@ -140,9 +141,11 @@ describe("budget-sheet", () => {
     expect(BUDGET_STEPS[1].en).not.toMatch(/says over|Labor/);
     expect(BUDGET_STEPS[1].en).toMatch(/Budget and Actual/);
   });
-  it("explains the IF in plain words after the click", () => {
-    expect(BUDGET_STEPS[2].en).toMatch(/if Actual is bigger than Budget/i);
-    expect(BUDGET_STEPS[2].es).toMatch(/si Real es más grande que Presupuesto/i);
+  it("keeps the formula explanation in Help and the email goal on the card", () => {
+    expect(BUDGET_STEPS[2].en).toMatch(/Email Renata/);
+    expect(BUDGET_STEPS[2].es).toMatch(/Escribe a Renata/);
+    expect(BUDGET_HELP.en[0].s.join(" ")).toMatch(/if Actual.*bigger than Budget/i);
+    expect(BUDGET_HELP.es[0].s.join(" ")).toMatch(/si Real.*más grande que Presupuesto/i);
   });
   it("starters are frames that do not write the answer", () => {
     for (const lang of ["en", "es"] as const) {

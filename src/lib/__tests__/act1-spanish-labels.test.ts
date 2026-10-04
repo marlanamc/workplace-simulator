@@ -179,9 +179,9 @@ describe("Day 4's answer is in the story before Day 4 (Wave 5 F-18)", () => {
 });
 
 describe("The Night Before's first reply (Wave 5 F-15)", () => {
-  it.each(LANGS)("the card offers a hello and a name without demanding them (%s)", (lang) => {
+  it.each(LANGS)("the card asks only for the required reply and Send action (%s)", (lang) => {
     const line = FIRST_REPLY_GUIDANCE[lang];
-    expect(line).not.toMatch(/^Say hello|finish with your name|^Saluda|termina con tu nombre/);
-    expect(line).toMatch(lang === "en" ? /hello and your name are nice/ : /Es bueno saludar y poner tu nombre/);
+    expect(line).not.toMatch(/hello|greeting|your name|salud|tu nombre/i);
+    expect(line).toMatch(lang === "en" ? /Write a short reply.*click Send/ : /Escribe una respuesta corta.*clic en Enviar/);
   });
 });

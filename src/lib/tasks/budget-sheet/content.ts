@@ -267,17 +267,8 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(BUDGET_SHEET_COPY, (c) => c.sheetName),
   // A looking step: compare the two columns, then open the Status formula.
-  {
-    en: "Compare Budget and Actual on each line. Which line spent more than its budget? Click its Status cell and read the formula.",
-    es: "Compara Presupuesto y Real en cada línea. ¿Qué línea gastó más que su presupuesto? Haz clic en su celda de Estado y lee la fórmula.",
-  },
-  // Said in plain words where the learner is looking, right after the click.
-  {
-    en: "The formula means: if Actual is bigger than Budget, show over. If not, show within budget. Choose File → Email → Email collaborators.",
-    es: "La fórmula quiere decir: si Real es más grande que Presupuesto, muestra sobre. Si no, muestra dentro del presupuesto. Elige Archivo → Correo electrónico → Enviar correo a colaboradores.",
-  },
-  {
-    en: "Write Renata the category and how much it is over. Subtract: Actual minus Budget.",
-    es: "Escríbele a Renata la categoría y por cuánto se pasó. Resta: Real menos Presupuesto.",
-  },
+  { en: "Compare Budget and Actual for each category. Select the Status cell for the category that is over budget. Read its formula.", es: "Compara Presupuesto y Real en cada categoría. Selecciona la celda de Estado de la categoría que supera el presupuesto. Lee su fórmula." },
+  // The formula explanation stays in Help; this step names the next action.
+  { en: "Email Renata about the category that is over budget.", es: "Escribe a Renata sobre la categoría que supera el presupuesto." },
+  { en: "Write Renata the category that is over budget and the amount over budget. Then click Send.", es: "Escribe a Renata la categoría que supera el presupuesto y el monto que supera el presupuesto. Después haz clic en Enviar." },
 ];

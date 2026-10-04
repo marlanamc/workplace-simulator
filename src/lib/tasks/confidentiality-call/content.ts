@@ -164,5 +164,5 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 // callback) is the learner's call; CALL_COPY's corrections name it only after
 // a reply misses it, and the Help lesson has it on request.
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Answer the caller. You cannot check who they are.", es: "Responde a quien llama. No puedes comprobar quién es." },
+  { en: "Reply to the caller. You cannot verify who they are. Protect Maya’s private information. Then send your reply.", es: "Responde a quien llama. No puedes verificar quién es. Protege la información privada de Maya. Después envía tu respuesta." },
 ];

@@ -331,6 +331,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(EXPENSE_COPY, (c) => c.sheetName),
-  { en: "Check each row against its receipt. Flag what is missing.", es: "Compara cada fila con su recibo. Marca lo que falta." },
+  { en: "Compare each expense with its receipt. Correct any amount that does not match and mark missing receipts.", es: "Compara cada gasto con su recibo. Corrige los montos que no coincidan y marca los recibos que faltan." },
   { en: "Enter the total for expenses with receipts, then submit the report.", es: "Escribe el total de los gastos con recibos y envía el informe." },
 ];

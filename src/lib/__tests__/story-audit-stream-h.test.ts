@@ -35,8 +35,8 @@ describe("#18 tool mismatches", () => {
   });
 
   it("the video call card names the camera step the check requires", () => {
-    expect(JOB_CARD_LINE["video-call"]?.en).toMatch(/video/i);
-    expect(JOB_CARD_LINE["video-call"]?.es).toMatch(/video/i);
+    expect(JOB_CARD_LINE["video-call"]?.en).toMatch(/Turn on your camera/i);
+    expect(JOB_CARD_LINE["video-call"]?.es).toMatch(/Enciende la cámara/i);
   });
 
   it("the slide shows one dollar sign however the total was typed", () => {

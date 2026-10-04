@@ -128,37 +128,37 @@ export type TourStep = {
 export const TOUR_STEPS: Record<Lang, TourStep[]> = {
   en: [
     {
-      instruction: "These are your bookmarks. They are shortcuts to websites you use for work.",
+      instruction: "Look at the bookmarks for work websites. Then click Next.",
       targetTestId: "bookmarks-row",
       continueLabel: "Next",
       ringOnLook: true,
     },
     { instruction: "Click Mail.", targetTabKey: "mail" },
     {
-      instruction: "This is your work email. Messages from your manager, coworkers, and vendors show up here.",
+      instruction: "Look at your work inbox. Then click I understand.",
       targetTestId: "mail-app-title",
       continueLabel: "I understand",
     },
     {
-      instruction: "Tap I need help on this card to try it.",
+      instruction: "Click I need help on this card.",
       targetTestId: "job-card-help",
     },
   ],
   es: [
     {
-      instruction: "Estos son tus marcadores. Son accesos directos a sitios web que usas para el trabajo.",
+      instruction: "Mira los marcadores de los sitios del trabajo. Después haz clic en Siguiente.",
       targetTestId: "bookmarks-row",
       continueLabel: "Siguiente",
       ringOnLook: true,
     },
     { instruction: "Haz clic en Correo.", targetTabKey: "mail" },
     {
-      instruction: "Este es tu correo del trabajo. Aquí llegan mensajes de tu gerente, compañeros y proveedores.",
+      instruction: "Mira tu bandeja de correo del trabajo. Después haz clic en Entiendo.",
       targetTestId: "mail-app-title",
       continueLabel: "Entiendo",
     },
     {
-      instruction: "Toca Necesito ayuda en esta tarjeta para probarlo.",
+      instruction: "Haz clic en Necesito ayuda en esta tarjeta.",
       targetTestId: "job-card-help",
     },
   ],

@@ -166,19 +166,10 @@ export function normalizeRename(value: string) {
 /** The single in-window instruction voice (RightNowBar), one step at a time. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Click Cafe Shared Drive. The schedules are there.",
-    es: "Haz clic en Unidad compartida del café. Ahí están los horarios.",
-  },
-  {
-    en: `Click a schedule to open it. Find the week of ${WEEK.en}. Not a draft, not a copy.`,
-    es: `Haz clic en un horario para abrirlo. Busca la semana del ${WEEK.es}. Ni borrador ni copia.`,
-  },
+  { en: "Open Cafe Shared Drive.", es: "Abre Unidad compartida del café." },
+  { en: `Find the final schedule for the week of ${WEEK.en}. Open the file to check it.`, es: `Busca el horario final de la semana del ${WEEK.es}. Abre el archivo para revisarlo.` },
   // Advances when the right file is open, not when any file is.
-  {
-    en: `The top says Week of ${WEEK.en}. This is the one. Click Rename.`,
-    es: `Arriba dice Week of ${WEEK.en} (semana del ${WEEK.es}). Es este. Haz clic en Cambiar nombre.`,
-  },
+  { en: "Rename the schedule. Click Rename.", es: "Cambia el nombre del horario. Haz clic en Cambiar nombre." },
   {
     en: `Type the new name: ${RENAME_TARGET}. Then click Continue.`,
     es: `Escribe el nombre nuevo: ${RENAME_TARGET}. Después haz clic en Continuar.`,

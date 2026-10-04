@@ -192,14 +192,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Two things are waiting. Pick one to start. You can do them in any order.",
-    es: "Hay dos cosas esperando. Elige una para empezar; puedes hacerlas en el orden que quieras.",
-  },
-  {
-    en: "Handle the meeting sitting on your close shift.",
-    es: "Resuelve la reunión que cae en tu turno de cierre.",
-  },
+  { en: "Complete both requests. Choose either one to start.", es: "Completa las dos solicitudes. Empieza por la que prefieras." },
+  { en: "Compare the meeting time with your closing shift. Respond to the invitation.", es: "Compara la hora de la reunión con tu turno de cierre. Responde a la invitación." },
   {
     en: "Share the current allergen list with Sam for reference.",
     es: "Comparte la lista actual de alérgenos con Sam para que pueda consultarla.",

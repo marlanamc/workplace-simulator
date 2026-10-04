@@ -137,6 +137,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Open the award letter.", es: "Abre la carta de ayuda." },
-  { en: "Find the award amount.", es: "Encuentra el monto." },
-  { en: "Find the accept-by date.", es: "Encuentra la fecha para aceptar." },
+  { en: "Find the award amount in the letter. Select the matching amount.", es: "Busca el monto de la ayuda en la carta. Selecciona el monto correspondiente." },
+  { en: "Find the deadline to accept the award. Select the matching date.", es: "Busca la fecha límite para aceptar la ayuda. Selecciona la fecha correspondiente." },
 ];

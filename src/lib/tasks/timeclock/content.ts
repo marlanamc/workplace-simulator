@@ -249,16 +249,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "You got here at 7. Clock in for your shift.",
-    es: "Llegaste a las 7. Marca tu entrada para el turno.",
-  },
-  {
-    en: "Check the clock-in time against when you arrived.",
-    es: "Compara la hora de entrada con la hora en que llegaste.",
-  },
-  {
-    en: "Tell Maria you arrived at 7 and clocked in at 8:15.",
-    es: "Dile a Maria que llegaste a las 7 y marcaste a las 8:15.",
-  },
+  { en: "Clock in for your shift. You arrived at 7 AM.", es: "Marca tu entrada del turno. Llegaste a las 7 AM." },
+  { en: "Compare the recorded clock-in time with your arrival time.", es: "Compara la hora de entrada registrada con tu hora de llegada." },
+  { en: "Email Maria your arrival time and the recorded clock-in time. Then click Send.", es: "Escribe a Maria tu hora de llegada y la hora de entrada registrada. Después haz clic en Enviar." },
 ];

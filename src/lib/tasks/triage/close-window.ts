@@ -35,18 +35,9 @@ export function mustCloseFirst(stage: CloseStage): boolean {
 }
 
 export const CLOSE_LINES: Record<"ask" | "reopen" | "back", Localized> = {
-  ask: {
-    en: "Renata needs you on the floor for a minute. Close the browser with the X at the top right. Your work is saved.",
-    es: "Renata te necesita en el piso un minuto. Cierra el navegador con la X arriba a la derecha. Tu trabajo está guardado.",
-  },
-  reopen: {
-    en: "You are back. Open Today again and finish the other request. Your work is saved.",
-    es: "Ya volviste. Abre Today otra vez y termina la otra tarea. Tu trabajo está guardado.",
-  },
-  back: {
-    en: "Your work is still here. Finish the other request.",
-    es: "Tu trabajo sigue aquí. Termina la otra tarea.",
-  },
+  ask: { en: "Close the practice browser window. Your work is saved.", es: "Cierra la ventana del navegador de práctica. Tu trabajo está guardado." },
+  reopen: { en: "Open Today again. Finish the remaining request.", es: "Abre Today otra vez. Termina la solicitud que falta." },
+  back: { en: "Finish the remaining request.", es: "Termina la solicitud que falta." },
 };
 
 export const CLOSE_FIRST: Localized = {

@@ -275,11 +275,11 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "A total and a calendar commitment, combined in one packet.", es: "Un total y un compromiso del calendario, juntos en un paquete." },
-  { en: "Open Sheets. Check the week's total.", es: "Abre Sheets. Revisa el total de la semana." },
-  { en: "Open Calendar. Note what's coming up.", es: "Abre Calendar. Anota lo que viene." },
-  { en: "Open Docs. Include the weekly total, and the calendar item that needs attention: which day, which shift, and why.", es: "Abre Docs. Incluye el total semanal y el evento del calendario que necesita atención: qué día, qué turno y por qué." },
-  { en: "Open Mail. Send the summary as one packet.", es: "Abre Correo. Envía el resumen como un solo paquete." },
+  { en: "Check the weekly total and calendar event. Write and email one summary.", es: "Revisa el total semanal y el evento del calendario. Escribe y envía un resumen por correo." },
+  { en: "Open Sheets. Read and enter the weekly total.", es: "Abre Sheets. Lee y escribe el total semanal." },
+  { en: "Open Calendar. Read the event and mark it as noted.", es: "Abre Calendar. Lee el evento y márcalo como anotado." },
+  { en: "Write a summary in Docs. Include the weekly total, the calendar event’s day and shift, and why the event needs attention. Save the summary.", es: "Escribe un resumen en Docs. Incluye el total semanal, el día y el turno del evento, y por qué necesita atención. Guarda el resumen." },
+  { en: "Open Mail. Send the summary.", es: "Abre Correo. Envía el resumen." },
 ];
 
 /** Nobody there, in any beginner phrasing: "no person", "nobody", "is empty", "needs someone". */

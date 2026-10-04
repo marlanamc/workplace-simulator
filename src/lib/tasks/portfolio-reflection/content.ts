@@ -147,9 +147,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Look through every award you've earned.", es: "Repasa cada premio que ganaste." },
-  { en: "Answer the four questions.", es: "Responde las cuatro preguntas." },
-  { en: "Read your summary. It's yours to share.", es: "Lee tu resumen. Es tuyo para compartir." },
+  { en: "Review the awards you have earned.", es: "Revisa los reconocimientos que has obtenido." },
+  { en: "Answer all four reflection questions. Then click See my summary.", es: "Responde las cuatro preguntas de reflexión. Después haz clic en Ver mi resumen." },
+  { en: "Read your summary.", es: "Lee tu resumen." },
 ];
 
 /**

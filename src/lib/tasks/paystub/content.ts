@@ -334,16 +334,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Open your pay stub from the list.",
-    es: "Abre tu recibo de la lista.",
-  },
-  {
-    en: "Find the net pay on this stub, then pick it below.",
-    es: "Encuentra el pago neto (Net pay) en este recibo, luego elígelo abajo.",
-  },
-  {
-    en: "Count the shifts on your time record. Then pick the paid hours that match the stub.",
-    es: "Cuenta los turnos de tu registro de horas. Luego elige las horas regulares (Regular hours) del recibo que coinciden.",
-  },
+  { en: "Open your pay stub.", es: "Abre tu recibo de pago." },
+  { en: "Find the net pay on the pay stub. Select the matching amount.", es: "Busca el pago neto (Net pay) en el recibo. Selecciona el monto correspondiente." },
+  { en: "Compare the shifts on your time record with the pay stub. Select the matching paid hours.", es: "Compara los turnos del registro de horas con el recibo. Selecciona las horas pagadas (Regular hours) correspondientes." },
 ];

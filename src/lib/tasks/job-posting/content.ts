@@ -291,26 +291,14 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Read what the job asks for. Check each thing you have done.",
-    es: "Lee lo que pide el trabajo. Marca cada cosa que ya hiciste.",
-  },
-  {
-    en: "Write one sentence: why are you a good fit? Then click Apply for this job.",
-    es: "Escribe una oración: ¿por qué eres buena opción? Después haz clic en Postularme a este empleo.",
-  },
+  { en: "Read the job requirements. Check at least three things you have done.", es: "Lee los requisitos del empleo. Marca al menos tres cosas que has hecho." },
+  { en: "Write one sentence about work you have done that matches a job requirement. Then click Apply for this job.", es: "Escribe una oración sobre un trabajo que has hecho y que coincide con un requisito del empleo. Después haz clic en Postularme a este empleo." },
 ];
 
 /** A lesson learner is playing a character, so the card names who "you" are. */
 export const LESSON_RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: `Check each thing ${JOB_SEEKER.first} has done. Look at your info card.`,
-    es: `Marca cada cosa que ${JOB_SEEKER.first} ya hizo. Mira tu tarjeta de información.`,
-  },
-  {
-    en: `Write one sentence as ${JOB_SEEKER.first}: why are you a good fit? Then click Apply for this job.`,
-    es: `Escribe una oración como ${JOB_SEEKER.first}: ¿por qué eres buena opción? Después haz clic en Postularme a este empleo.`,
-  },
+  { en: `Read ${JOB_SEEKER.first}’s work history. Check at least three job requirements that match it.`, es: `Lee el historial de trabajo de ${JOB_SEEKER.first}. Marca al menos tres requisitos del empleo que coincidan.` },
+  { en: `Write one sentence as ${JOB_SEEKER.first} about work that matches a job requirement. Then click Apply for this job.`, es: `Escribe una oración como ${JOB_SEEKER.first} sobre un trabajo que coincida con un requisito del empleo. Después haz clic en Postularme a este empleo.` },
 ];
 
 /** What the teacher sees: which requirements the learner claimed, and their reason. */

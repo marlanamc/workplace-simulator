@@ -40,14 +40,8 @@ export function cellShows(key: RowKey, cleared: RowKey | null): string {
 }
 
 export const UNDO_STEPS: Record<"delete" | "undo", Localized> = {
-  delete: {
-    en: "Mistakes happen in sheets. Click Friday's number (B6) and press Delete.",
-    es: "En las hojas de cálculo pasan errores. Haz clic en el número del viernes (B6) y presiona Suprimir (Delete).",
-  },
-  undo: {
-    en: "Bring the number back with Undo: the arrow button above the sheet, or Ctrl+Z.",
-    es: "Recupera el número con Deshacer: el botón de flecha arriba de la hoja, o Ctrl+Z.",
-  },
+  delete: { en: "Select Friday’s number in B6. Press Delete.", es: "Selecciona el número del viernes en B6. Presiona Suprimir (Delete)." },
+  undo: { en: "Use Undo to restore the number you deleted.", es: "Usa Deshacer para recuperar el número que borraste." },
 };
 
 /** Before Undo, the total cannot be right, so the email waits. */

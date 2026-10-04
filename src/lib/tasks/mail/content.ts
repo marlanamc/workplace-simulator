@@ -79,39 +79,21 @@ export const MAIL_JOB_CARD_STEPS: {
     "call-out-sick": { en: "Write to Maria.", es: "Escríbele a Maria." },
     "reply-all": { en: "Open the HQ thread.", es: "Abre el hilo de HQ." },
   },
-  confirm: { en: "What does she need? Pick one.", es: "¿Qué necesita? Elige una." },
+  confirm: { en: "Read Maria’s request. Select what she needs.", es: "Lee la solicitud de Maria. Selecciona lo que necesita." },
   attach: { en: "Click Attach file.", es: "Haz clic en Adjuntar archivo." },
   // The picker shows each file's first page, so the learner checks the
   // title and the Expires date the way they would before sending a real file.
-  attachPick: {
-    en: "Click a file name to see its first page. Find your food handler certificate.",
-    es: "Haz clic en el nombre de un archivo para ver su primera página. Busca tu certificado de manipulador de alimentos.",
-  },
-  attachCheck: {
-    en: "Check the page: it says Food Handler Certificate, and it expires after today. Then click Attach.",
-    es: "Revisa la página: dice Food Handler Certificate (certificado) y Expires (vence) es después de hoy. Luego haz clic en Adjuntar.",
-  },
-  write: { en: "Write one short line.", es: "Escribe una línea corta." },
-  // The question, not the answer. Where the aprons are is a fact of the
+  attachPick: { en: "Find the certificate Maria requested. Open a file to check it.", es: "Busca el certificado que pidió Maria. Abre un archivo para revisarlo." },
+  attachCheck: { en: "Check the certificate title and expiration date. Attach the certificate that meets Maria’s request.", es: "Revisa el título del certificado y su fecha de vencimiento. Adjunta el certificado que cumple con lo que pide Maria." },
+  write: { en: "Write a short reply. Then click Send.", es: "Escribe una respuesta corta. Después haz clic en Enviar." },
+  // Name what the reply needs to say. Where the aprons are is a fact of the
   // scene (the arrival card and the starter chips); a wrong reply names it.
-  writeEtiquette: {
-    en: "Tell Darnell where the extra aprons are.",
-    es: "Dile a Darnell dónde están los delantales de más.",
-  },
+  writeEtiquette: { en: "Tell Darnell where the extra aprons are. Then click Send.", es: "Dile a Darnell dónde están los delantales adicionales. Después haz clic en Enviar." },
   writeForTask: {
-    "mail-send-link": {
-      en: "Tell Jordan this is the schedule and point to its link. Do not attach a copy.",
-      es: "Dile a Jordan que es el horario y señala su enlace. No adjuntes una copia.",
-    },
-    "call-out-sick": {
-      en: "Tell Maria you cannot work today's shift.",
-      es: "Dile a Maria que no puedes trabajar el turno de hoy.",
-    },
+    "mail-send-link": { en: "Tell Jordan the link opens the schedule. Send the link without attaching a copy. Then click Send.", es: "Dile a Jordan que el enlace abre el horario. Envía el enlace sin adjuntar una copia. Después haz clic en Enviar." },
+    "call-out-sick": { en: "Tell Maria you cannot work today’s shift. Then click Send.", es: "Dile a Maria que no puedes trabajar el turno de hoy. Después haz clic en Enviar." },
   },
-  replyAllEdit: {
-    en: "Make the draft professional. Say yes or no about Friday's 6 AM delivery.",
-    es: "Haz profesional el borrador. Di sí o no sobre la entrega del viernes a las 6 AM.",
-  },
+  replyAllEdit: { en: "Edit the draft to answer the delivery question politely. Then click Send.", es: "Edita el borrador para contestar la pregunta sobre la entrega con respeto. Después haz clic en Enviar." },
   send: { en: "Click Send.", es: "Haz clic en Enviar." },
 };
 

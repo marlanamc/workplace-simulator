@@ -294,10 +294,7 @@ export const LESSONS: Record<string, Record<Lang, Lesson>> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Fill in every required box, then sign and date it.",
-    es: "Llena cada casilla obligatoria, luego fírmalo y ponle la fecha.",
-  },
+  { en: "Complete the required fields using the practice profile. Then submit the form.", es: "Completa los campos obligatorios con el perfil de práctica. Después envía el formulario." },
 ];
 
 export const PRACTICE_PROFILE = {

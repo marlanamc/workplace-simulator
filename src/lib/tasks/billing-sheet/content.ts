@@ -200,6 +200,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(BILLING_COPY, (c) => c.sheetName),
-  { en: "Click the row that does not match the list.", es: "Haz clic en la fila que no cuadra con la lista." },
-  { en: "Choose File → Email → Email collaborators. Tell Pat the row and the correct charge.", es: "Elige Archivo → Correo electrónico → Enviar correo a colaboradores. Dile a Pat la fila y el cargo correcto." },
+  { en: "Compare the charges with the service list. Select the row that does not match.", es: "Compara los cargos con la lista de servicios. Selecciona la fila que no coincide." },
+  { en: "Email Pat the row that does not match and the correct charge. Then click Send.", es: "Escribe a Pat la fila que no coincide y el cargo correcto. Después haz clic en Enviar." },
 ];

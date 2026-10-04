@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { waitForInteractive } from "./interactive";
+import { FOLLOWUP_ROUNDS } from "@/lib/tasks/lesson-followups/content";
 
 async function start(page: Page, key: string, lang: string) {
   await page.goto(`/lessons/${key}?lang=${lang}`);
@@ -128,13 +129,13 @@ test("independent follow-up supports Help, keyboard choices and narrow screens",
   await page.locator('[data-showme="compose-body"]').fill("I cannot work today.");
   await page.locator('[data-showme="send-button"]').click();
   const card = page.locator("[data-job-card]");
-  await expect(card).toContainText("Report today's absence using the hotel's contact rule.");
-  await expect(card).not.toContainText("Compare the shift note");
+  await expect(card).toContainText(FOLLOWUP_ROUNDS["call-out-sick"]![0].goal.en);
+  await expect(card).not.toContainText("Workplaces have different contact rules.");
   expect(await page.evaluate(() => localStorage.getItem("lesson-attempt:call-out-sick:guest"))).toBeNull();
-  await card.getByRole("button", { name: "Help with this job", exact: true }).click();
+  await card.getByTestId("job-card-help").click();
   await expect(card).toContainText("Workplaces have different contact rules.");
   await card.getByRole("button", { name: "Back to my task", exact: true }).click();
-  await expect(card).toContainText("Report today's absence using the hotel's contact rule.");
+  await expect(card).toContainText(FOLLOWUP_ROUNDS["call-out-sick"]![0].goal.en);
   await page.screenshot({ path: "test-results/expanded-lesson-desktop.png" });
   await page.setViewportSize({ width: 390, height: 844 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);

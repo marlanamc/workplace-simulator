@@ -163,7 +163,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     handoffCta: { en: "Start looking around", es: "Empezar a mirar" },
     shiftMoment: { en: "Before the shift. Take a minute.", es: "Antes del turno. Tómate un minuto." },
     location: browser("Start looking around", "tour"),
-    jobCardLine: { en: "Look around this computer.", es: "Conoce esta computadora." },
+    jobCardLine: { en: "Open the practice computer. Follow the instructions on this card.", es: "Abre la computadora de práctica. Sigue las instrucciones de esta tarjeta." },
   },
 
   // Retired: the old bundled Day-One task (find + reply + attach in one job).
@@ -218,7 +218,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     },
     location: browser("Open Mail", "mail"),
     // The inbox shows one new email at a time, so the card never promises three at once.
-    jobCardLine: { en: "Answer Maria's new email. More will come, one at a time.", es: "Contesta el correo nuevo de Maria. Van a llegar más, uno a la vez." },
+    jobCardLine: { en: "Read the new email. Write a short reply. Then click Send.", es: "Lee el correo nuevo. Escribe una respuesta corta. Después haz clic en Enviar." },
     jobCardDoneLine: { en: "You replied to your new manager and coworker.", es: "Le respondiste a tu nueva gerente y a tu compañero." },
     lesson: {
       title: { en: "Reply to short work emails", es: "Responder correos cortos del trabajo" },
@@ -292,7 +292,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     handoffCta: { en: "Next: Send your certificate", es: "Siguiente: Envía tu certificado" },
     shiftMoment: { en: "Wednesday, 10:10 AM. She needs a file.", es: "Miércoles, 10:10 AM. Necesita un archivo." },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Maria needs a file. Read her email, then send it.", es: "Maria necesita un archivo. Lee su correo y envíaselo." },
+    jobCardLine: { en: "Read Maria’s email. Reply with the file she requests attached. Then click Send.", es: "Lee el correo de Maria. Responde con el archivo que pide como adjunto. Después haz clic en Enviar." },
     readPause: readMail(),
     lesson: {
       title: { en: "Attach a file to an email", es: "Adjuntar un archivo a un correo" },
@@ -349,6 +349,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   schedule: {
+    jobCardLine: { en: "Compare your work schedule with your phone calendar. Select the shift at the same time as a personal appointment. Request a shift you can work instead.", es: "Compara tu horario de trabajo con el calendario de tu teléfono. Selecciona el turno a la misma hora que una cita personal. Solicita otro turno que puedas trabajar." },
     key: "schedule",
     built: true,
     label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },
@@ -389,6 +390,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   timeclock: {
+    jobCardLine: { en: "Clock in. Compare the recorded time with your arrival time of 7 AM. Email Maria both times.", es: "Marca tu entrada. Compara la hora registrada con tu hora de llegada, las 7 AM. Envía a Maria un correo con ambas horas." },
     key: "timeclock",
     built: true,
     label: { en: "Clock in for the day", es: "Marca tu entrada del día" },
@@ -420,11 +422,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes, 5:40 PM. Tu primer día de pago.",
     },
     location: browser("Open Portal", "portal", "paystubs"),
-    jobCardLine: {
-      en: "Your first stub is here. Open it and check net pay and hours.",
-      // The stub stays in English, as US stubs are, so the card names its words (F-21).
-      es: "Ya está tu primer recibo. Ábrelo y revisa el pago neto (Net pay) y las horas.",
-    },
+    jobCardLine: { en: "Read your pay stub and time record. Select the net pay and paid hours that match.", es: "Lee tu recibo de pago y tu registro de horas. Selecciona el pago neto (Net pay) y las horas pagadas (Regular hours) que coinciden." },
     readPause: readMail(),
   },
 
@@ -441,13 +439,11 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     handoffCta: { en: "Next: Write a shift note", es: "Siguiente: Escribir nota del turno" },
     shiftMoment: { en: "Friday, 6 PM. End of shift.", es: "Viernes, 6 PM. Fin de turno." },
     location: browser("Open Portal", "portal", "shift-review"),
-    jobCardLine: {
-      en: "Maria has to leave early. Write a short note about the shift for her to read.",
-      es: "Maria tiene que irse temprano. Escríbele una nota corta del turno para que la lea.",
-    },
+    jobCardLine: { en: "Write Maria a short shift summary. Include what happened and when. Then click Submit.", es: "Escribe a Maria un resumen corto del turno. Incluye qué pasó y cuándo. Después haz clic en Enviar." },
   },
 
   "mail-etiquette": {
+    jobCardLine: { en: "Reply to your coworker, Darnell. Tell him where the extra aprons are. Then click Send.", es: "Responde a tu compañero Darnell. Dile dónde están los delantales adicionales. Después haz clic en Enviar." },
     key: "mail-etiquette",
     built: true,
     label: { en: "Write to a coworker", es: "Escríbele a un compañero" },
@@ -466,6 +462,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   "call-out-sick": {
+    jobCardLine: { en: "Write Maria an email. Tell her you cannot work today’s shift. Then click Send.", es: "Escribe un correo a Maria. Dile que no puedes trabajar el turno de hoy. Después haz clic en Enviar." },
     key: "call-out-sick",
     built: true,
     label: { en: "Tell Maria you can't come in", es: "Dile a Maria que no puedes ir" },
@@ -527,10 +524,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Wednesday morning. You're signed out.",
       es: "Miércoles por la mañana. Cerraste sesión.",
     },
-    jobCardLine: {
-      en: "Sign back in. Use the code from your phone.",
-      es: "Vuelve a entrar. Usa el código de tu teléfono.",
-    },
+    jobCardLine: { en: "Sign in. Find the verification text from Google on your phone. Enter its code and click Verify.", es: "Inicia sesión. Busca el mensaje de verificación de Google en tu teléfono. Escribe el código y haz clic en Verificar." },
     location: browser("Open Sign In", "account-recovery"),
     lesson: {
       title: { en: "Sign in with a text code", es: "Iniciar sesión con un código de texto" },
@@ -583,6 +577,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   incident: {
+    jobCardLine: { en: "Complete the incident report. Include what happened, when, where, whether anyone was hurt, and what you did. Then click Submit report.", es: "Completa el reporte del incidente. Incluye qué pasó, cuándo, dónde, si alguien se lastimó y qué hiciste. Después haz clic en Enviar reporte." },
     key: "incident",
     built: true,
     label: { en: "File an incident report", es: "Llena un reporte de incidente" },
@@ -598,6 +593,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   handbook: {
+    jobCardLine: { en: "Read the handbook. Find the rule for reporting an absence. Select the answer that matches the rule.", es: "Lee el manual. Busca la regla para avisar de una ausencia. Selecciona la respuesta que coincide con la regla." },
     key: "handbook",
     built: true,
     label: { en: "Look something up", es: "Busca una respuesta" },
@@ -620,10 +616,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Renata sent you a meeting invite. Check it against your work shifts.",
       es: "Renata te mandó una invitación a una reunión. Compárala con tus turnos.",
     },
-    jobCardLine: {
-      en: "Check the meeting day against your work shifts. Then answer Renata.",
-      es: "Compara el día de la reunión con tus turnos. Luego respóndele a Renata.",
-    },
+    jobCardLine: { en: "Compare the meeting date with your work shifts. Answer the invitation. Send Renata a day and time when you work.", es: "Compara la fecha de la reunión con tus turnos. Responde a la invitación. Envía a Renata un día y una hora en que trabajas." },
     skill: { en: "Handle a meeting invite the right way", es: "responder bien a una invitación de reunión" },
     bookmarkLabel: "Calendar",
     handoffCta: {
@@ -716,10 +709,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "A new coworker starts today. Rename this week's schedule, then share it with them.",
       es: "Hoy empieza un compañero nuevo. Cambia el nombre del horario de esta semana y compártelo con esa persona.",
     },
-    jobCardLine: {
-      en: "Rename this week's schedule. Then share it with the new coworker, view only.",
-      es: "Cambia el nombre del horario de esta semana. Después compártelo con el compañero nuevo, solo para ver.",
-    },
+    jobCardLine: { en: "Find this week’s schedule. Rename it and share it with the new coworker. Give permission to view the file without editing it.", es: "Busca el horario de esta semana. Cámbiale el nombre y compártelo con el compañero nuevo. Dale permiso para ver el archivo sin editarlo." },
     skill: { en: "Share a file with the right access", es: "compartir un archivo con el acceso correcto" },
     bookmarkLabel: "Drive",
     handoffCta: { en: "Open Drive from the bookmarks", es: "Abre Drive en los marcadores" },
@@ -808,10 +798,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
     location: browser("Open Mail", "mail"),
     // Jordan's first card. Names the role inline the way mail-etiquette does
     // for Darnell — no act intro introduces a peer, only managers.
-    jobCardLine: {
-      en: "Email the new lead, Jordan, the schedule link.",
-      es: "Envíale el enlace del horario a Jordan, el nuevo líder.",
-    },
+    jobCardLine: { en: "Email the new lead, Jordan, the schedule link. Say what the link is for. Send the link without attaching a copy of the file.", es: "Envía al nuevo encargado, Jordan, un correo con el enlace al horario. Di para qué sirve el enlace. Envía el enlace sin adjuntar una copia del archivo." },
   },
 
   spreadsheet: {
@@ -822,10 +809,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Type this week's tips. Then send Renata the total.",
       es: "Escribe las propinas de esta semana. Después envíale el total a Renata.",
     },
-    jobCardLine: {
-      en: "Type this week's tips. Then send Renata the total.",
-      es: "Escribe las propinas de esta semana. Después envíale el total a Renata.",
-    },
+    jobCardLine: { en: "Enter each day’s tips from the paper slip into the sheet. Email Renata the total. Then click Send.", es: "Escribe en la hoja las propinas de cada día que aparecen en el papel. Escribe a Renata el total. Después haz clic en Enviar." },
     skill: { en: "Read and trust a spreadsheet total", es: "leer y confiar en el total de una hoja de cálculo" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
@@ -884,6 +868,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   "make-a-copy": {
+    jobCardLine: { en: "Comment on the date in the template heading. Make and name your own copy. Enter text in the copy to check that you can edit it.", es: "Comenta sobre la fecha del encabezado de la plantilla. Crea tu propia copia y ponle nombre. Escribe en la copia para comprobar que puedes editarla." },
     key: "make-a-copy",
     built: true,
     label: { en: "Copy a view-only template", es: "Copia una plantilla de solo ver" },
@@ -899,6 +884,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   "status-report": {
+    jobCardLine: { en: "Calculate the ticket total with a formula. Email Renata the total and copy Jordan using Cc. Then click Send.", es: "Calcula el total de pedidos con una fórmula. Escribe a Renata el total y agrega a Jordan en Cc. Después haz clic en Enviar." },
     key: "status-report",
     built: true,
     label: { en: "Send a status report", es: "Envía un reporte de avance" },
@@ -914,6 +900,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   triage: {
+    jobCardLine: { en: "Complete both requests in Today: respond to the meeting invitation and share the current allergen list with Sam. Choose either request to start.", es: "Completa las dos solicitudes en Today: responde a la invitación a la reunión y comparte la lista actual de alérgenos con Sam. Empieza por la que prefieras." },
     key: "triage",
     built: true,
     label: { en: "Handle two things at once", es: "Maneja dos cosas a la vez" },
@@ -932,6 +919,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   "team-schedule": {
+    jobCardLine: { en: "Fill Saturday’s closing shift. Choose someone who is available and has hours left to work. Send that person a message about the shift.", es: "Asigna el turno de cierre del sábado. Elige a alguien disponible que pueda trabajar más horas. Envía a esa persona un mensaje sobre el turno." },
     key: "team-schedule",
     built: true,
     label: { en: "Fill Saturday close", es: "Cubre el cierre del sábado" },
@@ -957,10 +945,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       en: "Check that the hours formula counts everyone. Then send Renata the total.",
       es: "Revisa que la fórmula de horas cuente a todos. Luego envíale el total a Renata.",
     },
-    jobCardLine: {
-      en: "Fix the hours formula so it counts everyone. Then email Renata.",
-      es: "Arregla la fórmula de horas para que cuente a todos. Después escríbele a Renata.",
-    },
+    jobCardLine: { en: "Fix the formula to include everyone’s hours. Email Renata the new total and whose hours were missing. Then click Send.", es: "Corrige la fórmula para incluir las horas de todos. Escribe a Renata el nuevo total y de quién faltaban las horas. Después haz clic en Enviar." },
     skill: { en: "Fix a formula range", es: "corregir el rango de una fórmula" },
     bookmarkLabel: "Sheets",
     handoffCta: { en: "Open Sheets from the bookmarks", es: "Abre Sheets en los marcadores" },
@@ -1019,6 +1004,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   "team-meeting": {
+    jobCardLine: { en: "Create a 15-minute meeting for next week. Choose a time when no one is working. Include a title and at least two agenda items. Send the invitation.", es: "Crea una reunión de 15 minutos para la próxima semana. Elige una hora en que nadie esté trabajando. Incluye un título y al menos dos puntos para tratar. Envía la invitación." },
     key: "team-meeting",
     built: true,
     label: { en: "Lead your first huddle", es: "Dirige tu primera reunión de equipo" },
@@ -1037,6 +1023,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
   },
 
   "priority-call": {
+    jobCardLine: { en: "Read the three requests. Choose which to do first and a reason supported by the information. Then complete all three requests.", es: "Lee las tres solicitudes. Elige cuál hacer primero y una razón basada en la información. Después completa las tres solicitudes." },
     key: "priority-call",
     built: true,
     label: { en: "Three things at once", es: "Tres cosas a la vez" },
@@ -1070,7 +1057,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. La oferta está en tu bandeja.",
     },
     location: browser("Open Offer from the bookmarks"),
-    jobCardLine: { en: "Read the offer. Then make it fit.", es: "Lee la oferta. Luego haz que quepa." },
+    jobCardLine: { en: "Read the offer and choose a class section. Request a shift change from Renata and add the class to your calendar. Email HR to accept the offer and name your section.", es: "Lee la oferta y elige un grupo de clase. Pide a Renata un cambio de turno y agrega la clase a tu calendario. Envía un correo a Recursos Humanos para aceptar la oferta e indicar tu grupo." },
   },
 
   "budget-sheet": {
@@ -1089,7 +1076,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. Ya está el presupuesto de esta semana.",
     },
     location: browser("Open Sheets from the bookmarks"),
-    jobCardLine: { en: "Find what is over budget.", es: "Encuentra qué se pasó del presupuesto." },
+    jobCardLine: { en: "Find the category that is over budget. Email Renata the category and the amount over budget. Then click Send.", es: "Busca la categoría que supera el presupuesto. Escribe a Renata la categoría y el monto que supera el presupuesto. Después haz clic en Enviar." },
     lesson: {
       title: { en: "Find what went over budget", es: "Encontrar qué se pasó del presupuesto" },
       takeaway: {
@@ -1162,7 +1149,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. Un hilo largo de HQ.",
     },
     location: browser("Open Mail from the bookmarks"),
-    jobCardLine: { en: "Answer what you were asked.", es: "Responde lo que te pidieron." },
+    jobCardLine: { en: "Read the email conversation. Edit the draft to answer the delivery question politely. Then send your reply to everyone in the conversation.", es: "Lee la conversación por correo. Edita el borrador para contestar la pregunta sobre la entrega con respeto. Después envía tu respuesta a todos en la conversación." },
   },
 
   enrollment: {
@@ -1181,7 +1168,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. La solicitud está abierta.",
     },
     location: browser("Open College from the bookmarks"),
-    jobCardLine: { en: "Find the deadline. Then apply.", es: "Encuentra la fecha. Luego envía la solicitud." },
+    jobCardLine: { en: "Find the application deadline and select the missing document. Write why you want to study at BHCC or in the program. Then submit the application.", es: "Busca la fecha límite de la solicitud y selecciona el documento que falta. Escribe por qué quieres estudiar en BHCC o en el programa. Después envía la solicitud." },
   },
 
   "appointment-scheduling": {
@@ -1200,7 +1187,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. Ya está la lista de la mañana.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "Offer Maya a time that works.", es: "Ofrécele a Maya una hora que sirva." },
+    jobCardLine: { en: "Check why the requested appointment time is unavailable. Offer Maya an available time. Send her a confirmation with the new time.", es: "Revisa por qué la hora solicitada no está disponible. Ofrece a Maya una hora disponible. Envíale una confirmación con la nueva hora." },
     lesson: {
       title: { en: "Book an appointment at an open time", es: "Dar una cita en un horario libre" },
       summary: {
@@ -1272,7 +1259,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. Llegó la carta de ayuda.",
     },
     location: browser("Open College from the bookmarks"),
-    jobCardLine: { en: "Find the amount and the date.", es: "Encuentra el monto y la fecha." },
+    jobCardLine: { en: "Read the financial aid award letter. Select the award amount and the deadline to accept it.", es: "Lee la carta de ayuda financiera. Selecciona el monto de la ayuda y la fecha límite para aceptarla." },
   },
 
   "patient-intake": {
@@ -1291,7 +1278,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. Un paciente nuevo acaba de llegar.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "File the form. Choose who may see it, then reply to Tomás.", es: "Archiva el formulario. Elige quién puede verlo y responde a Tomás." },
+    jobCardLine: { en: "Complete and file the intake form. Check the requests and verified assignment to choose who may receive the chart. Reply to Tomás without sharing private visit information.", es: "Completa y archiva el formulario de ingreso. Revisa las solicitudes y la asignación verificada para elegir quién puede recibir el expediente. Responde a Tomás sin compartir información privada de la visita." },
   },
 
   coursework: {
@@ -1310,7 +1297,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Jueves. Algo se entrega mañana en la noche.",
     },
     location: browser("Open Coursework from the bookmarks"),
-    jobCardLine: { en: "Find the due date and the time you have. Tell Dana sorry and one thing you will do. Then submit.", es: "Busca la fecha de entrega y el tiempo que tienes. Dile a Dana que lo sientes y una cosa que vas a hacer. Después entrega." },
+    jobCardLine: { en: "Find the assignment deadline and the time remaining. Reply to Dana with an apology and one action you will take. Then click Submit assignment.", es: "Busca la fecha límite de la tarea y el tiempo que queda. Responde a Dana con una disculpa y una acción que vas a realizar. Después haz clic en Entregar tarea." },
     lesson: {
       title: { en: "Find a due date and submit an assignment", es: "Encontrar la fecha de entrega y entregar una tarea" },
       summary: {
@@ -1379,7 +1366,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Jueves. Ya está la hoja de facturación.",
     },
     location: browser("Open Sheets from the bookmarks"),
-    jobCardLine: { en: "Find the charge that does not match.", es: "Encuentra el cargo que no cuadra." },
+    jobCardLine: { en: "Compare the charges with the service list. Select the row that does not match. Email Pat the row and the correct charge.", es: "Compara los cargos con la lista de servicios. Selecciona la fila que no coincide. Envía a Pat un correo con la fila y el cargo correcto." },
   },
 
   research: {
@@ -1398,7 +1385,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. Necesitas una fuente.",
     },
     location: browser("Open Library from the bookmarks"),
-    jobCardLine: { en: "Pick the source you would cite.", es: "Elige la fuente que citarías." },
+    jobCardLine: { en: "Read the search results. Choose a source to cite. Explain why you can trust it using information about the author or publication. Submit your choice and explanation.", es: "Lee los resultados de búsqueda. Elige una fuente para citar. Explica por qué es confiable con información sobre el autor o la publicación. Envía tu elección y tu explicación." },
   },
 
   "confidentiality-call": {
@@ -1417,7 +1404,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. Está sonando el teléfono.",
     },
     location: browser("Open Front Desk from the bookmarks"),
-    jobCardLine: { en: "Answer the call about Maya.", es: "Atiende la llamada sobre Maya." },
+    jobCardLine: { en: "Read the request about Maya. Write a reply that protects her private information. Then send it.", es: "Lee la solicitud sobre Maya. Escribe una respuesta que proteja su información privada. Después envíala." },
   },
 
   // ---- Act VI: Getting the Office Job (the hiring arc) ----
@@ -1438,11 +1425,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. Llega una vacante a tu correo.",
     },
     location: browser("Open Jobs from the bookmarks"),
-    jobCardLine: {
-      en: "Read the posting. Check what you have done, then write why you fit.",
-      es: "Lee el anuncio. Marca lo que ya hiciste y escribe por qué encajas.",
-    },
-    jobCardDoneLine: { en: "You fit. Next: the application.", es: "Encajas. Sigue: la solicitud." },
+    jobCardLine: { en: "Read the job requirements. Select at least three that match the work history. Write one sentence explaining the match. Then click Apply for this job.", es: "Lee los requisitos del empleo. Selecciona al menos tres que coincidan con el historial de trabajo. Escribe una oración que explique la relación. Después haz clic en Postularme a este empleo." },
+    jobCardDoneLine: { en: "You completed the job requirements check.", es: "Completaste la revisión de los requisitos del empleo." },
     lesson: {
       title: { en: "Compare a job posting", es: "Comparar un anuncio de empleo" },
       summary: {
@@ -1512,7 +1496,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. La solicitud está abierta.",
     },
     location: browser("Open Jobs from the bookmarks"),
-    jobCardLine: { en: "Fill each section. Then submit.", es: "Llena cada sección. Luego envía." },
+    jobCardLine: { en: "Complete the application and choose an availability option. Write one or two sentences explaining why you want the job. Then click Submit application.", es: "Completa la solicitud y elige una opción de disponibilidad. Escribe una o dos oraciones que expliquen por qué quieres el empleo. Después haz clic en Enviar solicitud." },
     lesson: {
       title: { en: "Fill out a job application", es: "Llenar una solicitud de empleo" },
       summary: {
@@ -1582,10 +1566,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. La solicitud pidió un currículum.",
     },
     location: browser("Open Résumé from the bookmarks"),
-    jobCardLine: {
-      en: "Write a summary, one thing you did well at each job, and your skills.",
-      es: "Escribe un resumen, una cosa que hiciste bien en cada empleo y tus habilidades.",
-    },
+    jobCardLine: { en: "Write a short summary and one achievement for each job. Select at least three skills. Then click Save résumé.", es: "Escribe un resumen corto y un logro de cada empleo. Selecciona al menos tres habilidades. Después haz clic en Guardar currículum." },
     lesson: {
       title: { en: "Write a one-page résumé", es: "Escribir un currículum de una página" },
       summary: {
@@ -1655,7 +1636,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. La entrevista está agendada.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Answer each question. Then ask one.", es: "Responde cada pregunta. Luego haz una." },
+    jobCardLine: { en: "Answer every interview question in a few sentences. Choose or write one question to ask the interviewer. Then click Save my preparation.", es: "Responde cada pregunta de la entrevista en unas oraciones. Elige o escribe una pregunta para la entrevistadora. Después haz clic en Guardar mi preparación." },
   },
 
   "job-offer": {
@@ -1674,7 +1655,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. La oferta está en tu bandeja.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: { en: "Find the start date. Then accept.", es: "Encuentra la fecha de inicio. Luego acepta." },
+    jobCardLine: { en: "Read the offer letter and select the start date. Write a reply accepting the offer. Then send it.", es: "Lee la carta de oferta y selecciona la fecha de inicio. Escribe una respuesta para aceptar la oferta. Después envíala." },
   },
 
   "w4-form": {
@@ -1693,10 +1674,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. RR. HH. envió los formularios.",
     },
     location: browser("Open Mail", "mail"),
-    jobCardLine: {
-      en: "Fill out Robin's W-4 with Robin's facts. Then sign and date it.",
-      es: "Llena el W-4 de Robin con los datos de Robin. Después fírmalo y ponle la fecha.",
-    },
+    jobCardLine: { en: "Complete Robin’s W-4 using Robin’s facts. Choose the filing status and enter the total credits. Sign and date the form. Then click Submit W-4.", es: "Completa el W-4 de Robin con sus datos. Elige el estado civil tributario y escribe el total de créditos. Firma y fecha el formulario. Después haz clic en Enviar W-4." },
     lesson: {
       title: { en: "Fill out a W-4 tax form", es: "Llenar el formulario de impuestos W-4" },
       summary: {
@@ -1776,7 +1754,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. Faltan dos formularios.",
     },
     location: browser("Open Onboarding from the bookmarks"),
-    jobCardLine: { en: "I-9: name, birth date, status, sign.", es: "I-9: nombre, fecha de nacimiento, estado, firma." },
+    jobCardLine: { en: "Complete Section 1 of the I-9 using the practice profile. Include the birth date, address, and work authorization status. Sign and date the form, then submit it.", es: "Completa la Sección 1 del I-9 con el perfil de práctica. Incluye la fecha de nacimiento, la dirección y el estado de autorización de trabajo. Firma y fecha el formulario; después envíalo." },
   },
 
   "direct-deposit": {
@@ -1795,8 +1773,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Antes de HQ. Último formulario.",
     },
     location: browser("Open Onboarding from the bookmarks"),
-    jobCardLine: { en: "Routing number is 9 digits.", es: "El número de ruta tiene 9 dígitos." },
-    jobCardDoneLine: { en: "Direct deposit set up. You're ready for day one.", es: "Depósito directo listo. Ya tienes todo para el primer día." },
+    jobCardLine: { en: "Complete the direct deposit form using the practice bank details. Enter the bank name, routing number, account number, and account type. Then submit the form.", es: "Completa el formulario de depósito directo con los datos bancarios de práctica. Escribe el nombre del banco, el número de ruta, el número de cuenta y el tipo de cuenta. Después envía el formulario." },
+    jobCardDoneLine: { en: "You completed the direct deposit form.", es: "Completaste el formulario de depósito directo." },
   },
 
   "office-drive": {
@@ -1815,7 +1793,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes en HQ. Chris necesita las notas del T3.",
     },
     location: browser("Open Drive from the bookmarks"),
-    jobCardLine: { en: "Your coworker Chris asked for the Q3 notes. Share the current file.", es: "Tu colega Chris pidió las notas del T3. Comparte el archivo actual." },
+    jobCardLine: { en: "Find the current Q3 notes. Share the file with Chris with permission to view it without editing it.", es: "Busca las notas actuales del T3. Comparte el archivo con Chris con permiso para verlo sin editarlo." },
   },
 
   "multi-person-scheduling": {
@@ -1834,7 +1812,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. Junta a todos en una sala.",
     },
     location: browser("Open Calendar from the bookmarks"),
-    jobCardLine: { en: "Find the slot open for everyone.", es: "Encuentra el hueco libre para todos." },
+    jobCardLine: { en: "Compare everyone’s calendars. Select a time when everyone is available. Send the invitation to everyone.", es: "Compara los calendarios de todos. Selecciona una hora en que todos estén disponibles. Envía la invitación a todos." },
   },
 
   "video-call": {
@@ -1853,7 +1831,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Miércoles. La reunión está empezando.",
     },
     location: browser("Open Zoom from the bookmarks"),
-    jobCardLine: { en: "Join muted. Start video. Ask in chat.", es: "Entra con el micrófono apagado. Inicia el video. Pregunta en el chat." },
+    jobCardLine: { en: "Join the meeting with your microphone muted. Turn on your camera. Send a chat message asking who will share the meeting notes. Keep your microphone muted.", es: "Entra a la reunión con el micrófono apagado. Enciende la cámara. Envía un mensaje en el chat para preguntar quién compartirá las notas de la reunión. Mantén el micrófono apagado." },
   },
 
   "expense-report": {
@@ -1872,11 +1850,8 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Jueves. Hay que entregar el informe de gastos.",
     },
     location: browser("Open Sheets from the bookmarks"),
-    jobCardLine: { en: "Match the receipts. Flag what is missing.", es: "Empareja los recibos. Marca lo que falta." },
-    jobCardDoneLine: {
-      en: "Receipts matched, a wrong amount fixed, the dinner flagged. Next: the slides.",
-      es: "Recibos emparejados, un monto equivocado corregido y la cena marcada. Sigue: las diapositivas.",
-    },
+    jobCardLine: { en: "Compare each expense with its receipt. Correct any amount that does not match and mark missing receipts. Enter the total for expenses with receipts. Then submit the report.", es: "Compara cada gasto con su recibo. Corrige los montos que no coincidan y marca los recibos que faltan. Escribe el total de los gastos con recibo. Después envía el reporte." },
+    jobCardDoneLine: { en: "You submitted the expense report.", es: "Enviaste el reporte de gastos." },
   },
 
   "slide-deck": {
@@ -1895,7 +1870,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. El equipo está esperando.",
     },
     location: browser("Open Slides from the bookmarks"),
-    jobCardLine: { en: "Three slides. Then present.", es: "Tres diapositivas. Luego presenta." },
+    jobCardLine: { en: "Complete three slides: a title, the expense total, and a main point in a full sentence. Click Present. Then answer Chris’s question.", es: "Completa tres diapositivas: un título, el total de gastos y una idea principal en una oración completa. Haz clic en Presentar. Después contesta la pregunta de Chris." },
   },
 
   // ---- Act VII: Team Lead ----
@@ -1916,7 +1891,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Lunes. Ahora tú diriges la sala.",
     },
     location: browser("Open Meeting from the bookmarks"),
-    jobCardLine: { en: "Agenda, notes, follow-up.", es: "Agenda, notas, seguimiento." },
+    jobCardLine: { en: "Write an agenda with at least two items and take notes on the decisions. Select the final person responsible and day for each action. Send a follow-up with the actions, people, and dates.", es: "Escribe al menos dos puntos para tratar y toma notas de las decisiones. Selecciona el responsable y el día finales de cada acción. Envía un correo de seguimiento con las acciones, las personas y las fechas." },
   },
 
   "performance-review": {
@@ -1935,7 +1910,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Martes. Hay una evaluación que entregar.",
     },
     location: browser("Open Forms from the bookmarks"),
-    jobCardLine: { en: "Choose a profile fact. Write one strength and one area to grow.", es: "Elige un dato del perfil. Escribe una fortaleza y un área para mejorar." },
+    jobCardLine: { en: "Choose a fact from the profile and write a strength it supports. Write one area to improve and describe the improvement. Then click Submit the review.", es: "Elige un dato del perfil y escribe una fortaleza que ese dato demuestre. Escribe un área para mejorar y describe la mejora. Después haz clic en Enviar la evaluación." },
   },
 
   "ops-report-packet": {
@@ -1954,7 +1929,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Jueves. Hay que entregar el reporte semanal.",
     },
     location: browser("Open Report from the bookmarks"),
-    jobCardLine: { en: "Four apps. One packet.", es: "Cuatro apps. Un paquete." },
+    jobCardLine: { en: "Check the weekly total in Sheets and the event in Calendar. Write a summary in Docs with the total, day, shift, and reason the event needs attention. Send the summary from Mail.", es: "Revisa el total semanal en Sheets y el evento en Calendar. Escribe en Docs un resumen con el total, el día, el turno y la razón por la que el evento necesita atención. Envía el resumen desde Correo." },
   },
 
   "portfolio-reflection": {
@@ -1973,7 +1948,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       es: "Viernes. El último día del programa.",
     },
     location: browser("Open Recap from the bookmarks"),
-    jobCardLine: { en: "Look back. Then write it down.", es: "Mira atrás. Luego escríbelo." },
+    jobCardLine: { en: "Review your completed work. Answer all four reflection questions. Then click See my summary.", es: "Revisa el trabajo que completaste. Responde las cuatro preguntas de reflexión. Después haz clic en Ver mi resumen." },
   },
 };
 

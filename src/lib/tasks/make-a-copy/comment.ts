@@ -47,10 +47,7 @@ export const COMMENT_CORRECTIONS: Record<CommentProblem, Localized> = {
 
 /** The Job Card lines for this step; the goal is new, so it is said in full even in Act II. */
 export const COMMENT_STEPS: Record<"select" | "write", Localized> = {
-  select: {
-    en: `The heading says ${HEADING_BEFORE}, last week. You cannot edit Renata's template. Click C1, then Comment, and ask her.`,
-    es: `El encabezado dice ${HEADING_BEFORE}, la semana pasada. No puedes editar la plantilla de Renata. Haz clic en C1, después en Comentar, y pregúntale.`,
-  },
+  select: { en: "Check the date in the template heading. Select its cell and comment to Renata about the date.", es: "Revisa la fecha del encabezado de la plantilla. Selecciona esa celda y escribe un comentario a Renata sobre la fecha." },
   write: {
     en: "Write a short comment for Renata about the date. Then click Comment.",
     es: "Escribe un comentario corto para Renata sobre la fecha. Después haz clic en Comentar.",

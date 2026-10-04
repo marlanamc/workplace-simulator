@@ -283,10 +283,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     en: "Write a short summary: 1 or 2 sentences about you as a worker.",
     es: "Escribe un resumen corto: 1 o 2 oraciones sobre ti en el trabajo.",
   },
-  {
-    en: "For each job, write one thing you did well. Start with a word like trained, fixed, or served.",
-    es: "Para cada empleo, escribe una cosa que hiciste bien. Empieza con una palabra como entrené, arreglé o atendí.",
-  },
+  { en: "For each job, write one thing you did well. Start with the action you took.", es: "Para cada empleo, escribe una cosa que hiciste bien. Empieza con la acción que realizaste." },
   {
     en: "Choose at least three skills you have shown. Then click Save résumé.",
     es: "Elige al menos tres habilidades que has demostrado. Después haz clic en Guardar currículum.",
@@ -299,10 +296,7 @@ export const LESSON_RIGHT_NOW_STEPS: Localized[] = [
     en: `Write a short summary as ${JOB_SEEKER.first}: 1 or 2 sentences about you as a worker.`,
     es: `Escribe un resumen corto como ${JOB_SEEKER.first}: 1 o 2 oraciones sobre ti en el trabajo.`,
   },
-  {
-    en: "For each job, write one different thing you did well. Start with a word like trained, fixed, or served.",
-    es: "Para cada empleo, escribe una cosa distinta que hiciste bien. Empieza con una palabra como entrené, arreglé o atendí.",
-  },
+  { en: "For each job, write one different thing you did well. Start with the action you took.", es: "Para cada empleo, escribe una cosa diferente que hiciste bien. Empieza con la acción que realizaste." },
   RIGHT_NOW_STEPS[2],
 ];
 

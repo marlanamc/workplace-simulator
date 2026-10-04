@@ -182,10 +182,7 @@ export function describeSubmission(summary: string, lang: Lang): SubmissionConte
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Write a short shift summary. Say what happened, and at what time.",
-    es: "Escribe un resumen corto del turno. Di qué pasó y a qué hora.",
-  },
+  { en: "Write a short shift summary. Include what happened and when. Then click Submit.", es: "Escribe un resumen corto del turno. Incluye qué pasó y cuándo. Después haz clic en Enviar." },
   // Once the note has words in it (Wave 5 F-5: the card never said Submit,
   // and Submit sits below the fold).
   {

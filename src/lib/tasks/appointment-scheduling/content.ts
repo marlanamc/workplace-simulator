@@ -274,11 +274,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Look at 10:00 on the schedule. Then choose why Maya can't have it.",
-    es: "Mira las 10:00 en la agenda. Después elige por qué Maya no puede tenerla.",
-  },
-  { en: "Click the time that says Open.", es: "Haz clic en la hora que dice Libre." },
+  { en: "Check the schedule at Maya’s requested time. Select the reason it is unavailable.", es: "Revisa la agenda a la hora que pidió Maya. Selecciona la razón por la que no está disponible." },
+  { en: "Select an available appointment time.", es: "Selecciona una hora disponible para la cita." },
   { en: "Click Offer the open time.", es: "Haz clic en Ofrecer la hora libre." },
   {
     en: "Write Maya the new time. Then click Send confirmation.",

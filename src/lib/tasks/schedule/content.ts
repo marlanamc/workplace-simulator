@@ -235,10 +235,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   // words, four times the ceiling, on the first task that asks a learner to
   // read two things at once. The long explanation is in the Help lesson, and a
   // wrong pick already escalates through WRONG_SWAP_HINT then STUCK_SWAP_HINT.
-  {
-    en: "Find the shift at the same time as something on your phone.",
-    es: "Busca el turno que cae a la misma hora que algo de tu teléfono.",
-  },
+  { en: "Compare your work schedule with your phone calendar. Select the shift at the same time as a personal appointment.", es: "Compara tu horario de trabajo con el calendario de tu teléfono. Selecciona el turno a la misma hora que una cita personal." },
 ];
 
 /** After two wrong days, narrow the comparison without completing it for them. */

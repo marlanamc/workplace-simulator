@@ -5,9 +5,9 @@ import { TASK_LIST } from "@/lib/tasks/registry";
 /**
  * Copy for the Job Card — the one surface that tells a learner what to do.
  *
- * Hard rule from the design handoff: an instruction line is ONE short
- * sentence, ideally under six words. Anything longer belongs in the Help
- * drawer, not here.
+ * Use short, direct commands. State the task, required information, and
+ * finishing action. Keep hints and examples in Help; do not reveal answers
+ * the learner needs to find in the simulated workplace.
  */
 
 export interface IntroBeat {
@@ -30,12 +30,12 @@ export const INTRO_BEATS: IntroBeat[] = [{
  */
 export const READ_PAUSE_COPY = {
   en: {
-    line: "Read what they said back before you move on.",
+    line: "Read the reply. Then click Continue.",
     readReply: "Read reply",
     continueLabel: "Continue",
   },
   es: {
-    line: "Lee lo que te contestaron antes de seguir.",
+    line: "Lee la respuesta. Después haz clic en Continuar.",
     readReply: "Leer respuesta",
     continueLabel: "Continuar",
   },
@@ -45,7 +45,7 @@ export const CARD_PRACTICE = {
   title: { en: "Practice clicking and scrolling", es: "Practicar clics y desplazamiento" },
   label: { en: "Practice only", es: "Solo práctica" },
   click: { en: "Open the practice notice.", es: "Abre el aviso de práctica." },
-  scroll: { en: "Scroll down to find Ready.", es: "Desplázate hacia abajo hasta Listo." },
+  scroll: { en: "Scroll down. Click Ready.", es: "Desplázate hacia abajo. Haz clic en Listo." },
   complete: { en: "Practice complete. You're ready to continue.", es: "Práctica terminada. Puedes continuar." },
   envelope: { en: "Open practice notice", es: "Abrir aviso de práctica" },
   notice: { en: "A little break", es: "Una pequeña pausa" },
@@ -73,15 +73,9 @@ export const MOVE_PRACTICE = {
     es: "Arrastra esta tarjeta a una esquina, o usa las flechas.",
   },
   moveNext: { en: "I moved it", es: "Ya la moví" },
-  collapse: {
-    en: "Now hide the card with the fold button, top right.",
-    es: "Ahora oculta la tarjeta con el botón de flecha, arriba a la derecha.",
-  },
+  collapse: { en: "Hide this card with the fold button.", es: "Oculta esta tarjeta con el botón de flecha." },
   collapseNext: { en: "I hid it", es: "Ya la oculté" },
-  restoreLine: {
-    en: "A hidden card always has a way back: the same button shows it again.",
-    es: "Una tarjeta oculta siempre tiene forma de volver: el mismo botón la muestra de nuevo.",
-  },
+  restoreLine: { en: "Click the fold button again to show this card.", es: "Haz clic otra vez en el botón de flecha para mostrar esta tarjeta." },
   complete: { en: "Practice complete. You're ready to continue.", es: "Práctica terminada. Puedes continuar." },
   skip: { en: "Skip practice", es: "Omitir práctica" },
 };

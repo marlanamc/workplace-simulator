@@ -214,14 +214,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Read the letter. Pick your start date from it.",
-    es: "Lee la carta. Elige tu fecha de inicio de ella.",
-  },
-  {
-    en: "Write a short reply accepting the offer, then send.",
-    es: "Escribe una respuesta corta aceptando la oferta, luego envía.",
-  },
+  { en: "Read the offer letter. Select the start date from the letter.", es: "Lee la carta de oferta. Selecciona la fecha de inicio que aparece en la carta." },
+  { en: "Write a short reply accepting the offer. Then send it.", es: "Escribe una respuesta corta para aceptar la oferta. Después envíala." },
 ];
 
 /** What the teacher sees: the start date the learner picked and their acceptance reply. */

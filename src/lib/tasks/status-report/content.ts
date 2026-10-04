@@ -235,12 +235,6 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(STATUS_REPORT_COPY, (c) => c.sheetName),
   UNDO_STEPS.delete,
   UNDO_STEPS.undo,
-  {
-    en: "The total cell is empty. Add the tickets with a formula, then check the number.",
-    es: "La celda del total está vacía. Suma los pedidos con una fórmula y revisa el número.",
-  },
-  {
-    en: "Choose File → Email → Email collaborators. Tell Renata the total, and cc Jordan.",
-    es: "Elige Archivo → Correo electrónico → Enviar correo a colaboradores. Dile a Renata el total, con copia a Jordan.",
-  },
+  { en: "Enter a formula in the Total cell to add the tickets. Check the result.", es: "Escribe una fórmula en la celda del total para sumar los pedidos. Revisa el resultado." },
+  { en: "Email Renata the total. Add Jordan in Cc. Then click Send.", es: "Escribe a Renata el total. Agrega a Jordan en Cc. Después haz clic en Enviar." },
 ];

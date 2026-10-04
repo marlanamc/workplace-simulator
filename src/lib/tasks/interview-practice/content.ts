@@ -263,14 +263,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Answer each question in a few sentences.",
-    es: "Responde cada pregunta en unas oraciones.",
-  },
-  {
-    en: "Pick one question to ask her, then finish.",
-    es: "Elige una pregunta para hacerle, luego termina.",
-  },
+  { en: "Answer every interview question in a few sentences.", es: "Responde cada pregunta de la entrevista en unas oraciones." },
+  { en: "Choose or write one question to ask the interviewer. Then click Save my preparation.", es: "Elige o escribe una pregunta para la entrevistadora. Después haz clic en Guardar mi preparación." },
 ];
 
 /** What the teacher sees: every interview answer and the question the learner asked. */

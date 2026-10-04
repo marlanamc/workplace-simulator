@@ -4,7 +4,6 @@ import {
   cardDate,
   longDate,
   mondayOf,
-  monthDate,
   monthLabel,
   shiftBlockFor,
   shiftSpan,
@@ -14,8 +13,6 @@ import {
 
 /** "Wednesday, September 16" / "miércoles 16 de septiembre": the day the huddle lands on. */
 const HUDDLE_LONG = { en: longDate(HUDDLE_DAY, "en"), es: longDate(HUDDLE_DAY, "es") };
-/** "September 16" / "16 de septiembre". */
-const HUDDLE_DATE = { en: monthDate(HUDDLE_DAY, "en"), es: monthDate(HUDDLE_DAY, "es") };
 
 export const EVENT_INTRO: Record<Lang, EventIntroCopy> = {
   en: {
@@ -273,16 +270,10 @@ export const RIGHT_NOW_STEPS: Localized[] = [
     en: `Find the meeting on ${HUDDLE_LONG.en}. Click it.`,
     es: `Busca la reunión del ${HUDDLE_LONG.es}. Haz clic en ella.`,
   },
-  // A looking question, not the answer. The conclusion comes only as a
+  // Ask for a comparison. The conclusion comes only as a
   // correction after a wrong choice (WRONG_ACCEPT_HINT).
-  {
-    en: `Look at your green work shifts. Do you work on ${HUDDLE_DATE.en}? Answer the invite.`,
-    es: `Mira tus turnos verdes. ¿Trabajas el ${HUDDLE_DATE.es}? Responde a la invitación.`,
-  },
-  {
-    en: "Write Renata a day you work and a time. Then click Send.",
-    es: "Escríbele a Renata un día que trabajas y una hora. Después haz clic en Enviar.",
-  },
+  { en: "Compare the meeting date with your work shifts. Answer the invitation.", es: "Compara la fecha de la reunión con tus turnos. Responde a la invitación." },
+  { en: "Write Renata a day and time when you work. Then click Send.", es: "Escribe a Renata un día y una hora en que trabajas. Después haz clic en Enviar." },
 ];
 
 /** A shift's start and end, so a chip on the calendar says "Shift 10 AM–6 PM", like the info card. */

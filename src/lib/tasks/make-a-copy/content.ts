@@ -192,13 +192,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(MAKE_COPY_COPY, (c) => c.templateName),
-  {
-    en: "It is view only. Make your own copy.",
-    es: "Es solo para ver. Haz tu propia copia.",
-  },
-  {
-    en: `Name your copy ${COPY_NAME} so you can find it later.`,
-    es: `Ponle el nombre ${COPY_NAME} a tu copia para encontrarla después.`,
-  },
+  { en: "Make your own copy of the template.", es: "Crea tu propia copia de la plantilla." },
+  { en: `Name your copy ${COPY_NAME}.`, es: `Ponle a tu copia el nombre ${COPY_NAME}.` },
   { en: "Type in your copy to check that you can edit it.", es: "Escribe en tu copia para comprobar que puedes editarla." },
 ];

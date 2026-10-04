@@ -152,8 +152,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Title the first slide.", es: "Ponle título a la primera diapositiva." },
-  { en: "Find and enter the expense total.", es: "Busca y escribe el total de gastos." },
-  { en: "Write your main point as a full sentence. Present and answer Chris.", es: "Escribe tu idea principal como una oración completa. Presenta y responde a Chris." },
+  { en: "Find the total for expenses with receipts. Enter it on the second slide.", es: "Busca el total de los gastos con recibo. Escríbelo en la segunda diapositiva." },
+  { en: "Write your main point in a full sentence. Click Present. Then answer Chris’s question.", es: "Escribe tu idea principal en una oración completa. Haz clic en Presentar. Después contesta la pregunta de Chris." },
 ];
 
 export const COWORKER_QUESTION: Localized = { en: 'Chris: Why is the dinner expense excluded from this total?', es: 'Chris: ¿Por qué el gasto de la cena no está incluido en este total?' };

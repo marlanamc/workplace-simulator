@@ -23,8 +23,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
   "appointment-scheduling": [
     {
       id: "appointment-duration", title: l("Tuesday · Elena's appointment", "Martes · La cita de Elena"),
-      goal: l("Book Elena's whole visit within her available hours, then confirm it.", "Agenda la visita completa de Elena dentro de sus horas disponibles y confírmala."),
-      guidance: l("Compare Elena's message with the calendar. Choose a start and end time for her whole visit, then save the confirmation.", "Compara el mensaje de Elena con la agenda. Elige el inicio y el final de la visita completa y guarda la confirmación."),
+      goal: { en: "Read Elena’s message and the calendar. Select a start and end time for her whole visit. Click Review, check the details, then click Save and confirm.", es: "Lee el mensaje de Elena y la agenda. Selecciona la hora de inicio y fin de su visita completa. Haz clic en Revisar, comprueba los datos y después haz clic en Guardar y confirmar." },
+      guidance: { en: "Read Elena’s message and the calendar. Select a start and end time for her whole visit. Click Review, check the details, then click Save and confirm.", es: "Lee el mensaje de Elena y la agenda. Selecciona la hora de inicio y fin de su visita completa. Haz clic en Revisar, comprueba los datos y después haz clic en Guardar y confirmar." },
       sources: [
         { title: l("Phone message · Elena Ortiz", "Mensaje telefónico · Elena Ortiz"), lines: [l("Tuesday, September 8. I can arrive at 2:00 PM. I must leave by 3:00 PM. My visit takes 30 minutes.", "Martes 8 de septiembre. Puedo llegar a las 2:00 p. m. Debo salir antes de las 3:00 p. m. Mi visita dura 30 minutos.")] },
         { title: l("Tuesday calendar", "Agenda del martes"), lines: [l("2:00–2:15 PM · Open", "2:00–2:15 p. m. · Libre"), l("2:15–2:30 PM · Staff meeting", "2:15–2:30 p. m. · Reunión del personal"), l("2:30–3:00 PM · Open", "2:30–3:00 p. m. · Libre"), l("3:00–3:30 PM · Open", "3:00–3:30 p. m. · Libre")] },
@@ -36,8 +36,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
     },
     {
       id: "appointment-no-slot", title: l("Wednesday · Elena requests a change", "Miércoles · Elena pide un cambio"),
-      goal: l("Respond to Elena's new request without booking a time she cannot attend.", "Responde a la nueva solicitud de Elena sin reservar una hora a la que no puede ir."),
-      guidance: l("Read the new message and Wednesday's calendar. Choose what happens to Tuesday's appointment and what to send Elena.", "Lee el nuevo mensaje y la agenda del miércoles. Elige qué hacer con la cita del martes y qué enviarle a Elena."),
+      goal: { en: "Read Elena’s new message and Wednesday’s calendar. Choose what to do with Tuesday’s appointment and what to tell Elena. Click Review, check the details, then click Update and send.", es: "Lee el nuevo mensaje de Elena y la agenda del miércoles. Elige qué hacer con la cita del martes y qué decirle a Elena. Haz clic en Revisar, comprueba los datos y después haz clic en Actualizar y enviar." },
+      guidance: { en: "Read Elena’s new message and Wednesday’s calendar. Choose what to do with Tuesday’s appointment and what to tell Elena. Click Review, check the details, then click Update and send.", es: "Lee el nuevo mensaje de Elena y la agenda del miércoles. Elige qué hacer con la cita del martes y qué decirle a Elena. Haz clic en Revisar, comprueba los datos y después haz clic en Actualizar y enviar." },
       sources: [
         { title: l("New message · Elena Ortiz", "Nuevo mensaje · Elena Ortiz"), lines: [l("I cannot come Tuesday. Please cancel that visit. Can I come Wednesday between 9:00 and 10:00 AM? I still need 30 minutes.", "No puedo ir el martes. Cancelen esa cita, por favor. ¿Puedo ir el miércoles entre las 9:00 y las 10:00 a. m.? Todavía necesito 30 minutos.")] },
         { title: l("Wednesday calendar", "Agenda del miércoles"), lines: [l("9:00–9:45 AM · Booked", "9:00–9:45 a. m. · Reservado"), l("9:45–10:00 AM · Open", "9:45–10:00 a. m. · Libre"), l("10:00–10:30 AM · Open", "10:00–10:30 a. m. · Libre")] },
@@ -50,8 +50,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
   files: [
     {
       id: "files-current", title: l("Harbor Hotel · Room checklist", "Hotel Harbor · Lista de habitaciones"),
-      goal: l("Share the approved checklist with the access Luis needs.", "Comparte la lista aprobada con el acceso que Luis necesita."),
-      guidance: l("Compare the request with the file details. Choose the current approved file and Luis's access, then share it.", "Compara la solicitud con los detalles de los archivos. Elige el archivo aprobado vigente y el acceso de Luis; luego compártelo."),
+      goal: { en: "Read Luis’s request and the file details. Choose the file and access he needs. Click Review, check the details, then click Share.", es: "Lee la solicitud de Luis y los detalles de los archivos. Elige el archivo y el acceso que necesita. Haz clic en Revisar, comprueba los datos y después haz clic en Compartir." },
+      guidance: { en: "Read Luis’s request and the file details. Choose the file and access he needs. Click Review, check the details, then click Share.", es: "Lee la solicitud de Luis y los detalles de los archivos. Elige el archivo y el acceso que necesita. Haz clic en Revisar, comprueba los datos y después haz clic en Compartir." },
       sources: [
         { title: l("Message · Luis, housekeeping lead", "Mensaje · Luis, encargado de limpieza"), lines: [l("Please share the approved September room checklist. I only need to read it. The October draft is still being reviewed.", "Comparte la lista aprobada de habitaciones de septiembre. Solo necesito leerla. El borrador de octubre sigue en revisión.")] },
         { title: l("Shared folder · File details", "Carpeta compartida · Detalles"), lines: [l("Rooms-Aug.pdf · Approved · August", "Rooms-Aug.pdf · Aprobado · Agosto"), l("Rooms-Sep.pdf · Approved · September", "Rooms-Sep.pdf · Aprobado · Septiembre"), l("Rooms-Oct-draft.pdf · Draft · October", "Rooms-Oct-draft.pdf · Borrador · Octubre")] },
@@ -62,8 +62,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
     },
     {
       id: "files-access", title: l("Harbor Hotel · Access request", "Hotel Harbor · Solicitud de acceso"),
-      goal: l("Give Priya access to make the authorized correction without opening the file to everyone.", "Dale a Priya acceso para hacer la corrección autorizada sin abrir el archivo a todos."),
-      guidance: l("Read the manager's message and the access error. Choose the person and permission, then save the sharing settings.", "Lee el mensaje de la gerente y el error de acceso. Elige la persona y el permiso; luego guarda el acceso."),
+      goal: { en: "Read the manager’s message and access request. Choose the person and permission. Click Review, check the details, then click Save access.", es: "Lee el mensaje de la gerente y la solicitud de acceso. Elige la persona y el permiso. Haz clic en Revisar, comprueba los datos y después haz clic en Guardar acceso." },
+      guidance: { en: "Read the manager’s message and access request. Choose the person and permission. Click Review, check the details, then click Save access.", es: "Lee el mensaje de la gerente y la solicitud de acceso. Elige la persona y el permiso. Haz clic en Revisar, comprueba los datos y después haz clic en Guardar acceso." },
       sources: [
         { title: l("Message · Hotel manager", "Mensaje · Gerente del hotel"), lines: [l("Priya on our team needs to correct room numbers in Rooms-Sep.pdf. Her work account is priya@harbor.example. Keep this file restricted to named staff.", "Priya, de nuestro equipo, necesita corregir números de habitaciones en Rooms-Sep.pdf. Su cuenta de trabajo es priya@harbor.example. Mantén el archivo restringido al personal indicado.")] },
         { title: l("Access request · Rooms-Sep.pdf", "Solicitud de acceso · Rooms-Sep.pdf"), lines: [l("Priya: I opened the link with my work account. It says I need access.", "Priya: Abrí el enlace con mi cuenta de trabajo. Dice que necesito acceso."), l("Current access: Restricted · Luis: Viewer", "Acceso actual: Restringido · Luis: Lector")] },
@@ -76,8 +76,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
   "mail-attach": [
     {
       id: "attachment-replace", title: l("WorkMail · Revised stock count", "WorkMail · Conteo de existencias corregido"),
-      goal: l("Replace the old attachment with the approved stock count and send it to Nia.", "Reemplaza el adjunto viejo con el conteo aprobado y envíaselo a Nia."),
-      guidance: l("Read Nia's request and the file details. Remove the old attachment, attach the approved replacement, and send the reply.", "Lee la solicitud de Nia y los detalles de los archivos. Quita el adjunto viejo, adjunta el reemplazo aprobado y envía la respuesta."),
+      goal: { en: "Read Nia’s request and the file details. Replace the old attachment and choose a reply. Click Review, check the details, then click Send reply.", es: "Lee la solicitud de Nia y los detalles de los archivos. Reemplaza el adjunto viejo y elige una respuesta. Haz clic en Revisar, comprueba los datos y después haz clic en Enviar respuesta." },
+      guidance: { en: "Read Nia’s request and the file details. Replace the old attachment and choose a reply. Click Review, check the details, then click Send reply.", es: "Lee la solicitud de Nia y los detalles de los archivos. Reemplaza el adjunto viejo y elige una respuesta. Haz clic en Revisar, comprueba los datos y después haz clic en Enviar respuesta." },
       sources: [
         { title: l("From · Nia, stockroom lead", "De · Nia, encargada del almacén"), lines: [l("The August count in your draft is out of date. Please replace it with the approved September count. Send only one file.", "El conteo de agosto de tu borrador está desactualizado. Reemplázalo con el conteo aprobado de septiembre. Envía solo un archivo.")] },
         { title: l("Files · Stock counts", "Archivos · Conteos"), lines: [l("Stock-Aug.pdf · August · Approved", "Stock-Aug.pdf · Agosto · Aprobado"), l("Stock-Sep-draft.pdf · September · Not approved", "Stock-Sep-draft.pdf · Septiembre · Sin aprobar"), l("Stock-Sep.pdf · September · Approved", "Stock-Sep.pdf · Septiembre · Aprobado")] },
@@ -88,8 +88,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
     },
     {
       id: "attachment-missing", title: l("WorkMail · Missing approved file", "WorkMail · Falta el archivo aprobado"),
-      goal: l("Respond to a file request when the approved file is missing.", "Responde a una solicitud cuando falta el archivo aprobado."),
-      guidance: l("Compare Omar's request with the folder. Choose an attachment or leave it empty, then choose and send an accurate response.", "Compara la solicitud de Omar con la carpeta. Elige un adjunto o déjalo vacío; luego elige y envía una respuesta correcta."),
+      goal: { en: "Read Omar’s request and check the files. Choose whether to attach a file and what to tell Omar. Click Review, check the details, then click Send reply.", es: "Lee la solicitud de Omar y revisa los archivos. Elige si vas a adjuntar un archivo y qué decirle a Omar. Haz clic en Revisar, comprueba los datos y después haz clic en Enviar respuesta." },
+      guidance: { en: "Read Omar’s request and check the files. Choose whether to attach a file and what to tell Omar. Click Review, check the details, then click Send reply.", es: "Lee la solicitud de Omar y revisa los archivos. Elige si vas a adjuntar un archivo y qué decirle a Omar. Haz clic en Revisar, comprueba los datos y después haz clic en Enviar respuesta." },
       sources: [
         { title: l("From · Omar, supervisor", "De · Omar, supervisor"), lines: [l("Please send the approved October inspection report. Do not send a draft. If it is missing, ask me for the approved copy.", "Envía el informe aprobado de inspección de octubre. No envíes un borrador. Si falta, pídeme la copia aprobada.")] },
         { title: l("Folder · Inspection reports", "Carpeta · Informes de inspección"), lines: [l("Inspection-Sep.pdf · Approved · September", "Inspection-Sep.pdf · Aprobado · Septiembre"), l("Inspection-Oct-draft.pdf · Draft · October", "Inspection-Oct-draft.pdf · Borrador · Octubre")] },
@@ -102,8 +102,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
   "call-out-sick": [
     {
       id: "absence-policy", title: l("Harbor Hotel · Today's shift", "Hotel Harbor · Turno de hoy"),
-      goal: l("Report today's absence using the hotel's contact rule.", "Avisa de tu ausencia de hoy usando la regla de contacto del hotel."),
-      guidance: l("Compare the shift note with the contact rule. Choose whom to contact and what to say, then place the simulated call.", "Compara la nota del turno con la regla de contacto. Elige a quién contactar y qué decir; luego haz la llamada simulada."),
+      goal: { en: "Read the shift note and hotel contact rule. Choose whom to contact and what to say. Click Review, check the details, then click Place simulated call.", es: "Lee la nota del turno y la regla de contacto del hotel. Elige a quién contactar y qué decir. Haz clic en Revisar, comprueba los datos y después haz clic en Hacer llamada simulada." },
+      guidance: { en: "Read the shift note and hotel contact rule. Choose whom to contact and what to say. Click Review, check the details, then click Place simulated call.", es: "Lee la nota del turno y la regla de contacto del hotel. Elige a quién contactar y qué decir. Haz clic en Revisar, comprueba los datos y después haz clic en Hacer llamada simulada." },
       sources: [
         { title: l("Your shift note", "Tu nota del turno"), lines: [l("It is 8:10 AM on Friday. Your shift starts today at 9:00 AM. You are sick and cannot work today.", "Son las 8:10 a. m. del viernes. Tu turno comienza hoy a las 9:00 a. m. Te sientes mal y no puedes trabajar hoy.")] },
         { title: l("Hotel contact rule", "Regla de contacto del hotel"), lines: [l("If your shift starts in less than two hours, call the duty manager. Otherwise, email the duty manager. The team chat is not an absence report.", "Si faltan menos de dos horas para tu turno, llama a la gerente de guardia. Si falta más tiempo, envíale un correo. El chat del equipo no cuenta como aviso de ausencia."), l("Duty manager today: Rosa. State the shift you will miss. Medical details are not required.", "Gerente de guardia hoy: Rosa. Indica a qué turno faltarás. No se requieren detalles médicos.")] },
@@ -114,8 +114,8 @@ export const FOLLOWUP_ROUNDS: Partial<Record<TaskKey, PracticeRound[]>> = {
     },
     {
       id: "absence-no-answer", title: l("Harbor Hotel · No answer", "Hotel Harbor · Sin respuesta"),
-      goal: l("Follow up when the manager does not answer, without assuming your absence is confirmed.", "Da seguimiento cuando la gerente no contesta, sin suponer que tu ausencia está confirmada."),
-      guidance: l("Read the call log and follow-up rule. Choose the next contact and an accurate handoff message.", "Lee el registro de llamadas y la regla de seguimiento. Elige el próximo contacto y un mensaje correcto."),
+      goal: { en: "Read the call log and follow-up rule. Choose the next contact and message. Click Review, check the details, then click Place simulated call.", es: "Lee el registro de llamadas y la regla de seguimiento. Elige el próximo contacto y el mensaje. Haz clic en Revisar, comprueba los datos y después haz clic en Hacer llamada simulada." },
+      guidance: { en: "Read the call log and follow-up rule. Choose the next contact and message. Click Review, check the details, then click Place simulated call.", es: "Lee el registro de llamadas y la regla de seguimiento. Elige el próximo contacto y el mensaje. Haz clic en Revisar, comprueba los datos y después haz clic en Hacer llamada simulada." },
       sources: [
         { title: l("Call log · Friday, 8:12 AM", "Registro de llamadas · Viernes, 8:12 a. m."), lines: [l("Rosa · No answer. You left a voicemail: I cannot work my 9:00 AM shift today.", "Rosa · Sin respuesta. Dejaste un mensaje: No puedo trabajar mi turno de las 9:00 a. m. de hoy.")] },
         { title: l("Hotel follow-up rule", "Regla de seguimiento del hotel"), lines: [l("If the duty manager does not answer, leave a voicemail and call the front desk. Ask the front desk to notify the duty manager. A voicemail is not a confirmation.", "Si la gerente de guardia no contesta, deja un mensaje y llama a recepción. Pide que avisen a la gerente de guardia. Un mensaje de voz no es una confirmación.")] },

@@ -192,7 +192,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Fill in the intake form and file it.", es: "Llena el formulario de ingreso y archívalo." },
   { en: "Compare both requests with the verified assignment. Choose who may receive the chart.", es: "Compara ambos pedidos con la asignación verificada. Elige quién puede recibir el expediente." },
-  { en: "Tell Tomás no, without sharing the reason for the visit.", es: "Dile que no a Tomás, sin compartir el motivo de la visita." },
+  { en: "Reply to Tomás without sharing private information about the visit. Then send your reply.", es: "Responde a Tomás sin compartir información privada de la visita. Después envía tu respuesta." },
 ];
 
 

@@ -106,6 +106,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Find the slot open for everyone.", es: "Encuentra el hueco libre para todos." },
-  { en: "Invite everyone to that time.", es: "Invita a todos a esa hora." },
+  { en: "Compare everyone’s calendars. Select a time when everyone is available.", es: "Compara los calendarios de todos. Selecciona una hora en que todos estén disponibles." },
+  { en: "Send the invitation to everyone for the selected time.", es: "Envía la invitación a todos para la hora seleccionada." },
 ];

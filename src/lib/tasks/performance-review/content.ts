@@ -152,7 +152,7 @@ export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" }
 export const RIGHT_NOW_STEPS: Localized[] = [
   { en: "Read the team member's profile.", es: "Lee el perfil de la persona del equipo." },
   { en: "Choose a profile fact, then write the strength it supports.", es: "Elige un dato del perfil y escribe la fortaleza que respalda." },
-  { en: "Write one area to grow, and what better looks like. Then submit.", es: "Escribe un área para mejorar, y cómo se ve mejor. Luego envía." },
+  { en: "Write one area to improve. Describe what the person can do better. Then click Submit the review.", es: "Escribe un área para mejorar. Describe qué puede hacer mejor la persona. Después haz clic en Enviar la evaluación." },
 ];
 
 /** Name-calling, not feedback. The only tone the app can fairly catch. */

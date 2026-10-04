@@ -282,16 +282,7 @@ export function describeSubmission(
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Start the invite for next week's schedule huddle.",
-    es: "Empieza la invitación para la reunión del horario.",
-  },
-  {
-    en: "Pick a time when nobody is on shift.",
-    es: "Elige una hora en la que nadie esté de turno.",
-  },
-  {
-    en: "Write two or three bullets so the meeting has a point.",
-    es: "Escribe dos o tres puntos para que la reunión tenga un propósito.",
-  },
+  { en: "Create an invitation for a 15-minute meeting about next week’s schedule.", es: "Crea una invitación para una reunión de 15 minutos sobre el horario de la próxima semana." },
+  { en: "Choose a time when no one is working.", es: "Elige una hora en que nadie esté trabajando." },
+  { en: "Write a meeting title and at least two agenda items. Then send the invitation.", es: "Escribe un título para la reunión y al menos dos puntos para tratar. Después envía la invitación." },
 ];

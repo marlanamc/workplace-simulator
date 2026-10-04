@@ -340,26 +340,11 @@ export function describeSubmission(
 /** The persistent "what to do right now" line, one per step of this job. */
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Three things landed at once. Choose what goes first.",
-    es: "Cayeron tres cosas a la vez. Elige cuál va primero.",
-  },
-  {
-    en: "Now work through all three. Do not forget any of them.",
-    es: "Ahora resuelve las tres. No te olvides de ninguna.",
-  },
-  {
-    en: "Acknowledge the customer and say you will check on it. Do not promise a free item or refund.",
-    es: "Reconoce al cliente y di que lo revisarás. No prometas algo gratis ni un reembolso.",
-  },
-  {
-    en: "Find someone to cover tonight's close.",
-    es: "Busca a alguien que cubra el cierre de esta noche.",
-  },
-  {
-    en: "Deal with the meeting on your close shift.",
-    es: "Resuelve la reunión en tu turno de cierre.",
-  },
+  { en: "Read the three requests. Choose which to do first and a reason supported by the information.", es: "Lee las tres solicitudes. Elige cuál hacer primero y una razón basada en la información." },
+  { en: "Complete all three requests.", es: "Completa las tres solicitudes." },
+  { en: "Reply to the customer and say you will check the problem. Do not promise a free item or refund. Then send your reply.", es: "Responde al cliente y di que vas a revisar el problema. No prometas un producto gratis ni un reembolso. Después envía tu respuesta." },
+  { en: "Choose an available coworker to cover tonight’s closing shift.", es: "Elige a un compañero disponible para cubrir el turno de cierre de esta noche." },
+  { en: "Compare the meeting time with your closing shift. Respond to the invitation.", es: "Compara la hora de la reunión con tu turno de cierre. Responde a la invitación." },
 ];
 
 

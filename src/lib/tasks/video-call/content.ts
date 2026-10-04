@@ -142,12 +142,6 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Join the meeting. Your mic starts muted.",
-    es: "Únete a la reunión. El micrófono empieza apagado.",
-  },
-  {
-    en: "Choose Start video to turn on the camera. Ask in chat who will share the meeting notes.",
-    es: "Elige Iniciar video para encender la cámara. Pregunta en el chat quién compartirá las notas de la reunión.",
-  },
+  { en: "Join the meeting with your microphone muted.", es: "Entra a la reunión con el micrófono apagado." },
+  { en: "Turn on your camera. Send a chat message asking who will share the meeting notes. Keep your microphone muted.", es: "Enciende la cámara. Envía un mensaje en el chat para preguntar quién compartirá las notas de la reunión. Mantén el micrófono apagado." },
 ];

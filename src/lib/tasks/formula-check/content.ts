@@ -419,16 +419,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(FORMULA_CHECK_COPY, (c) => c.sheetName),
   // A looking question, not the answer: the exact edit only comes as a
   // correction after a wrong try (see sumCorrection).
-  {
-    en: "Look at the green cells in the Hours column. The total adds only those. Does every person have one? Click the formula bar and fix the formula.",
-    es: "Mira las celdas verdes en la columna Horas. El total suma solo esas. ¿Cada persona tiene una? Haz clic en la barra de fórmulas y corrige la fórmula.",
-  },
-  {
-    en: "The total changed. Choose File → Email → Email collaborators.",
-    es: "El total cambió. Elige Archivo → Correo electrónico → Enviar correo a colaboradores.",
-  },
-  {
-    en: "Tell Renata the new total and who was missing. Then click Send.",
-    es: "Dile a Renata el total nuevo y quién faltaba. Después haz clic en Enviar.",
-  },
+  { en: "Check whether the formula includes everyone’s hours. Edit the formula to include any missing hours.", es: "Revisa si la fórmula incluye las horas de todos. Edita la fórmula para incluir las horas que faltan." },
+  { en: "Email Renata about the corrected total.", es: "Escribe a Renata sobre el total corregido." },
+  { en: "Tell Renata the new total and whose hours were missing. Then click Send.", es: "Escribe a Renata el nuevo total y de quién faltaban las horas. Después haz clic en Enviar." },
 ];

@@ -295,14 +295,8 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
   openFileStep(SPREADSHEET_COPY, (c) => c.sheetName),
-  {
-    en: "Look at the paper slip. Type each day's tips in the Tips column.",
-    es: "Mira el papelito. Escribe las propinas de cada día en la columna Propinas.",
-  },
-  {
-    en: "The sheet added the total. Choose File → Email → Email collaborators.",
-    es: "La hoja sumó el total. Elige Archivo → Correo electrónico → Enviar correo a colaboradores.",
-  },
+  { en: "Read the paper slip. Enter each day’s tips in the Tips column.", es: "Lee el papel. Escribe las propinas de cada día en la columna Propinas." },
+  { en: "Email Renata the total from the sheet.", es: "Escribe a Renata el total de la hoja." },
   {
     en: "Write Renata the total from the sheet. Then click Send.",
     es: "Escríbele a Renata el total de la hoja. Después haz clic en Enviar.",

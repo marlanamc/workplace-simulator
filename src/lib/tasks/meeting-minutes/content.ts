@@ -232,10 +232,10 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Three parts: agenda, notes, follow-up.", es: "Tres partes: agenda, notas, seguimiento." },
-  { en: "Write a short agenda for the meeting.", es: "Escribe una agenda corta para la reunión." },
-  { en: "The meeting is starting. Note what gets decided.", es: "La reunión está empezando. Anota lo que se decide." },
-  { en: "Send a follow-up. Name who owns each action, and when.", es: "Envía un seguimiento. Di quién hace cada tarea, y cuándo." },
+  { en: "Write an agenda, take meeting notes, and send a follow-up.", es: "Escribe los puntos para tratar, toma notas de la reunión y envía un correo de seguimiento." },
+  { en: "Write at least two agenda items, one per line. Save the agenda.", es: "Escribe al menos dos puntos para tratar, uno por línea. Guarda la agenda." },
+  { en: "Read the meeting transcript. Write notes about the decisions. Save your notes.", es: "Lee la transcripción de la reunión. Escribe notas sobre las decisiones. Guarda tus notas." },
+  { en: "Select the final person responsible and day for each action. Write a follow-up with the actions, people, and dates. Then click Send.", es: "Selecciona el responsable y el día finales de cada acción. Escribe un correo de seguimiento con las acciones, las personas y las fechas. Después haz clic en Enviar." },
 ];
 
 /** Count of non-empty lines that read as agenda points. */

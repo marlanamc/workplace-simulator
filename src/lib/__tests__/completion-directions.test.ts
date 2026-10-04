@@ -77,30 +77,30 @@ function preTryText(key: TaskKey, steps: Direction[], intro?: Record<Lang, Event
 describe("option C, half 1: requirements are named before the check", () => {
   it("names each content requirement in both languages", () => {
     // The time is on the form's facts panel; the card asks for a time, not which.
-    expectDirection(SHIFT_STEPS[0], /what happened.*what time/i, /qué pasó.*a qué hora/i);
-    // A looking question, not the edit: "change H5 to H6" gave the answer away (lesson audit).
-    expectDirection(FORMULA_STEPS[1], /green.*every person.*formula bar/i, /verdes.*cada persona.*barra de fórmulas/i);
+    expectDirection(SHIFT_STEPS[0], /what happened.*when/i, /qué pasó.*cuándo/i);
+    // Ask for the check, not the edit: "change H5 to H6" gave the answer away (lesson audit).
+    expectDirection(FORMULA_STEPS[1], /formula.*everyone.*hours.*Edit/i, /fórmula.*horas de todos.*Edita/i);
     // "Who was missing" is a requirement (say who), not the name.
-    expectDirection(FORMULA_STEPS[3], /new total.*who was missing/i, /total nuevo.*quién faltaba/i);
-    expectDirection(STATUS_STEPS[4], /total.*cc Jordan/i, /total.*copia a Jordan/i);
-    expectDirection(COURSEWORK_STEPS[2], /sorry.*what you will do/i, /lo sientes.*qué vas a hacer/i);
+    expectDirection(FORMULA_STEPS[3], /new total.*whose hours were missing/i, /nuevo total.*de quién faltaban las horas/i);
+    expectDirection(STATUS_STEPS[4], /total.*Jordan.*Cc/i, /total.*Jordan.*Cc/i);
+    expectDirection(COURSEWORK_STEPS[2], /apology.*action you will take/i, /disculpa.*acción que vas a realizar/i);
     expectDirection(ENROLLMENT_STEPS[2], /BHCC.*program/i, /BHCC.*programa/i);
-    expectDirection(RESEARCH_STEPS[2], /who wrote it.*where it was published/i, /quién la escribió.*dónde se publicó/i);
+    expectDirection(RESEARCH_STEPS[2], /author.*publication/i, /autor.*publicación/i);
     expectDirection(INCIDENT_STEPS[0], /hurt.*what you did/i, /lastimó.*qué hiciste/i);
-    expectDirection(PRIORITY_STEPS[2], /acknowledge.*check.*Do not promise.*refund/i, /Reconoce.*revisarás.*No prometas.*reembolso/i);
+    expectDirection(PRIORITY_STEPS[2], /Reply to the customer.*check.*Do not promise.*refund/i, /Responde al cliente.*revisar.*No prometas.*reembolso/i);
     expectDirection(RESUME_STEPS[2], /at least three skills/i, /al menos tres habilidades/i);
     expectDirection(SLIDE_STEPS[2], /full sentence/i, /oración completa/i);
     // The grader wants the total plus the day, the shift, and that nobody is on it.
-    expectDirection(OPS_STEPS[3], /weekly total.*calendar.*which day.*which shift.*why/i, /total semanal.*calendario.*qué día.*qué turno.*por qué/i);
-    expectDirection(BUDGET_STEPS[3], /category.*how much/i, /categoría.*por cuánto/i);
+    expectDirection(OPS_STEPS[3], /weekly total.*calendar.*day.*shift.*why/i, /total semanal.*día.*turno.*evento.*por qué/i);
+    expectDirection(BUDGET_STEPS[3], /category.*amount over budget/i, /categoría.*monto.*presupuesto/i);
     expectDirection(BILLING_STEPS[2], /row.*correct charge/i, /fila.*cargo correcto/i);
     expectDirection(APPOINTMENT_STEPS[3], /new time/i, /hora nueva/i);
   });
 
   it("keeps Mail's checked writing requirements in its testable content", () => {
-    expectDirection(MAIL_JOB_CARD_STEPS.writeForTask["call-out-sick"]!, /cannot work today's shift/i, /no puedes trabajar el turno de hoy/i);
-    expectDirection(MAIL_JOB_CARD_STEPS.writeForTask["mail-send-link"]!, /schedule.*link.*Do not attach/i, /horario.*enlace.*No adjuntes/i);
-    expectDirection(MAIL_JOB_CARD_STEPS.replyAllEdit, /professional.*yes or no.*Friday's 6 AM delivery/i, /profesional.*sí o no.*viernes.*6 AM/i);
+    expectDirection(MAIL_JOB_CARD_STEPS.writeForTask["call-out-sick"]!, /cannot work today[’']s shift/i, /no puedes trabajar el turno de hoy/i);
+    expectDirection(MAIL_JOB_CARD_STEPS.writeForTask["mail-send-link"]!, /link.*schedule.*without attaching/i, /enlace.*horario.*sin adjuntar/i);
+    expectDirection(MAIL_JOB_CARD_STEPS.replyAllEdit, /delivery question politely/i, /pregunta sobre la entrega con respeto/i);
   });
 });
 

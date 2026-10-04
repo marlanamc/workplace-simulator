@@ -171,9 +171,9 @@ export const DEADLINE_COPY: Record<Lang, { question: string; wrong: string; need
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  { en: "Find the apply-by date.", es: "Encuentra la fecha límite para la solicitud." },
-  { en: "Mark the missing document.", es: "Marca el documento que falta." },
-  { en: "Write a short statement: why you want to study at BHCC or in the program. Then submit.", es: "Escribe una carta corta: por qué quieres estudiar en BHCC o en el programa. Luego envía." },
+  { en: "Find and select the application deadline.", es: "Busca y selecciona la fecha límite para la solicitud." },
+  { en: "Check which document is missing. Select the matching file.", es: "Revisa qué documento falta. Selecciona el archivo correspondiente." },
+  { en: "Write why you want to study at BHCC or in the program. Then submit the application.", es: "Escribe por qué quieres estudiar en BHCC o en el programa. Después envía la solicitud." },
 ];
 
 export const DOCUMENT_FILES = [

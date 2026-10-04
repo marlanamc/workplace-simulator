@@ -264,18 +264,9 @@ export const LESSONS: Record<Lang, Lesson[]> = {
 
 export const RIGHT_NOW_LABEL: Localized = { en: "Right now", es: "Ahora mismo" };
 export const RIGHT_NOW_STEPS: Localized[] = [
-  {
-    en: "Find the due date under the title. Choose it in When is it due?",
-    es: "Busca la fecha de entrega debajo del título. Elígela en ¿Cuándo se entrega?",
-  },
-  {
-    en: "Look at Today at the top. How much time do you have? Choose it.",
-    es: "Mira Hoy arriba. ¿Cuánto tiempo tienes? Elígelo.",
-  },
-  {
-    en: "Read Dana's email. Write a short reply: say sorry, and say what you will do. Then click Submit assignment.",
-    es: "Lee el correo de Dana. Escribe una respuesta corta: di que lo sientes, y di qué vas a hacer. Después haz clic en Entregar tarea.",
-  },
+  { en: "Find the assignment deadline in the syllabus. Select it in When is it due?", es: "Busca la fecha límite de la tarea en el programa del curso. Selecciónala en ¿Cuándo se entrega?" },
+  { en: "Compare today’s date with the deadline. Select how much time remains.", es: "Compara la fecha de hoy con la fecha límite. Selecciona cuánto tiempo queda." },
+  { en: "Read Dana’s email. Reply with an apology and one action you will take. Then click Submit assignment.", es: "Lee el correo de Dana. Responde con una disculpa y una acción que vas a realizar. Después haz clic en Entregar tarea." },
 ];
 
 /**
