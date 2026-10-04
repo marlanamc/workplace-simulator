@@ -62,3 +62,32 @@ for (const lang of ["en", "es"] as const) {
     });
   }
 }
+
+for (const lang of ["en", "es"] as const) {
+  test(`restored mail chrome supports search, folders and draft recovery (${lang})`, async ({ page }, testInfo) => {
+    const es = lang === "es";
+    await page.goto(`/lessons/mail-attach?lang=${lang}&preview=1`);
+    await waitForInteractive(page);
+    await page.getByTestId("lesson-intro-start").click();
+    const mail = page.getByTestId("lesson-mail");
+    await expect(mail.getByTestId("mail-app-title")).toContainText(es ? "Correo" : "Mail");
+    await expect(mail.getByTestId("mail-inbox-list").getByRole("button").filter({hasText: /IT Helpdesk/})).toBeVisible();
+    await page.screenshot({path:testInfo.outputPath(`restored-inbox-${lang}.png`)});
+    const search = mail.getByRole("textbox", {name:es?"Buscar correo":"Search mail"});
+    await search.fill("certificate");
+    if (!es) await expect(mail.getByTestId("mail-inbox-list").getByRole("button").filter({hasText: /IT Helpdesk/})).toHaveCount(0);
+    await search.fill("");
+    await mail.getByTestId("mail-inbox-list").getByRole("button").filter({hasText: /IT Helpdesk/}).click();
+    await expect(mail).toContainText(es?"Sistemas nunca":"IT will never");
+    await mail.getByTestId("mail-back-inbox").click();
+    await mail.getByRole("button", {name: es?"Redactar":"Compose",exact:true}).click();
+    await expect(mail.getByLabel(es?"Para":"To",{exact:true})).toHaveValue("");
+    const message=mail.getByLabel(es?"Mensaje":"Message",{exact:true});
+    await message.fill("My saved draft");
+    await mail.getByTestId("mail-back-inbox").click();
+    await mail.getByRole("button", {name:es?"Borradores (1)":"Drafts (1)",exact:true}).click();
+    await mail.getByTestId("mail-inbox-list").getByRole("button").click();
+    await expect(message).toHaveValue("My saved draft");
+    await expect(page.getByTestId("lesson-practice-again")).toHaveCount(0);
+  });
+}
