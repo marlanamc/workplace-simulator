@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { pressNextTask } from "./next-task";
 
 /**
  * Phase 3 N-2: after a finished task, "Maria left a note" showed for about
@@ -64,6 +65,11 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
     const t = (en: string, es: string) => (lang === "en" ? en : es);
 
     test(`Day 3: Maria's note covers no control and not the card (${lang})`, async ({ page }) => {
+      // Day 3's clock note now ends on a Job Card reading pause, and a task
+      // with a reading pause sends no corner toast (progress-context.tsx), so
+      // there is no note here to measure. Act I has no Maria toast left; the
+      // toast's placement needs a check on a later day's note instead.
+      test.skip(true, "Day 3 no longer shows Maria's toast (reading pause)");
       test.slow();
       await signUp(page, lang);
       await page.goto("/studio");
@@ -83,7 +89,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       expect(await coveredByToast(page)).toEqual([]);
 
       // Straight on to the shift note while it is still up: still nothing under it.
-      await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+      await pressNextTask(page);
       await openTodaysJob(page);
       await expect(page.locator('[data-showme="shift-note-box"]')).toBeVisible();
       await expect(toast(page)).toBeVisible();

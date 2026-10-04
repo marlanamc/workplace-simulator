@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { CLOSE_FLAG, CLOSE_LINES, closeStage } from "@/lib/tasks/triage/close-window";
 import { useRouter } from "next/navigation";
-import { AlertCircle, ArrowLeft, Check, ChevronDown, ChevronUp, IdCard, Mail, MapPin, Shrink, Volume2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, Check, ChevronDown, ChevronRight, ChevronUp, CircleHelp, FileText, IdCard, Mail, MapPin, Move, MousePointerClick, Shrink, Volume2 } from "lucide-react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
 import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
@@ -77,6 +77,17 @@ const BOTTOM = SHELF_RESERVE + EDGE;
 export const CARD_W = 420;
 
 const TONE = { blue: "#0b57d0", green: "#1e8e3e" } as const;
+/** The header orients but never outshouts the instruction: a pale tint of the
+ *  tone with dark text in it (both pairs pass 4.5:1 at the header's size). */
+const HEADER = {
+  blue: { bg: "#dbe6fb", fg: "#0b57d0" },
+  green: { bg: "#d3ebdb", fg: "#0d652d" },
+} as const;
+/** "I need help" and "Read aloud": matching text buttons, never louder than the one blue button. */
+const QUIET_BUTTON =
+  "flex min-h-12 min-w-0 max-w-full cursor-pointer items-center gap-2 rounded-[12px] px-3 py-1.5 text-left text-[16px] font-medium leading-tight text-[#0b57d0] hover:bg-[#eef3fd] [&>svg]:shrink-0";
+const OPTIONAL_ROW =
+  "flex min-h-[48px] w-full cursor-pointer items-center gap-3 rounded-[14px] bg-[#eef3fd] px-3.5 text-left text-[15px] font-medium text-[#0b57d0] hover:bg-[#dfe9fc]";
 type Tone = keyof typeof TONE;
 
 /** The corner this device's learner last moved the card to. */
@@ -382,7 +393,12 @@ export default function JobCard() {
   // number to copy) — shown and read aloud alongside the instruction, never
   // in a second panel. Held steps (another tab of the same window) keep
   // showing their last facts, same as the line itself.
-  const facts = effectiveStep?.facts ?? [];
+  // A lesson's reference facts (a meeting time, Sam's phone number) join the
+  // step's own in the one Key information box; a step's fact wins a shared label.
+  const facts = script.tone === "green" ? [] : [
+    ...(lesson?.reference ?? []).filter((r) => !effectiveStep?.facts?.some((f) => f.label.en === r.label.en)),
+    ...(effectiveStep?.facts ?? []),
+  ];
   // What the speaker button reads: the instruction, plus the hint, any facts,
   // and the correction when they are up, because those are the words a
   // learner who needs the audio is most likely stuck on.
@@ -875,7 +891,13 @@ export default function JobCard() {
     };
   }
 
+  // "I need help" opens the step-by-step explanation for the live step.
+  const canExplain = Boolean(!practicing && !busy && liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length);
   const tone = TONE[script.tone];
+  const header = HEADER[script.tone];
+  // "YOUR TASK" marks a learner's instruction, so it stays off the cards that
+  // are not one: saving, a finish, the direction chooser and its Help.
+  const showTaskLabel = script.tone === "blue" && !busy && script.badge !== "?";
   // A lesson rail and the docked strip never move.
   const fixedPlace = Boolean(lesson) || docked;
 
@@ -924,18 +946,19 @@ export default function JobCard() {
         role={fixedPlace ? undefined : "button"}
         aria-label={fixedPlace ? undefined : c.dragHint}
         title={fixedPlace ? undefined : c.dragHint}
-        className="flex shrink-0 items-center gap-2.5 px-5 py-2 text-white"
-        style={{ background: tone, cursor: fixedPlace ? "default" : drag ? "grabbing" : "grab", touchAction: fixedPlace ? undefined : "none" }}
+        className="flex shrink-0 items-center gap-2.5 py-0 pl-5 pr-3"
+        style={{ background: header.bg, color: header.fg, cursor: fixedPlace ? "default" : drag ? "grabbing" : "grab", touchAction: fixedPlace ? undefined : "none" }}
       >
         <span
-          className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-full text-[14px] font-bold"
-          style={{ background: "rgba(255,255,255,0.22)" }}
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[13px] font-bold"
           aria-hidden
         >
           {headerCorrection ? (
             <AlertCircle size={16} strokeWidth={2.5} />
           ) : script.badge === "✓" ? (
             <Check size={15} strokeWidth={3} />
+          ) : script.badge === "?" ? (
+            <CircleHelp size={16} strokeWidth={2.5} />
           ) : (
             script.badge
           )}
@@ -949,55 +972,16 @@ export default function JobCard() {
             role="status"
             aria-live="polite"
             data-card-header-correction
-            className="line-clamp-2 min-w-0 flex-1 text-[15px] leading-tight font-medium"
+            className="line-clamp-2 min-w-0 flex-1 text-[14px] leading-tight font-medium"
           >
             {headerCorrection}
           </span>
         ) : (
-          <span className="line-clamp-2 min-w-0 flex-1 text-[15px] leading-tight font-medium">
+          <span className="line-clamp-2 min-w-0 flex-1 text-[14px] leading-tight font-medium">
             {visibleHelp && !finish ? visibleHelp.kicker : script.kicker}
           </span>
         )}
-        {!practicing && !busy && liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length && (
-          <button
-            type="button"
-            data-testid="job-card-help"
-            aria-label={help ? c.hideHelp : c.help}
-            aria-pressed={Boolean(help)}
-            title={help ? c.hideHelp : c.help}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={pressHelp}
-            className={`flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold${
-              liveStep?.pulseHelp && !help ? " animate-showme-pulse-compact" : ""
-            }`}
-            style={{
-              background: help ? "#fff" : "rgba(255,255,255,0.18)",
-              color: help ? tone : "#fff",
-            }}
-          >
-            ?
-          </button>
-        )}
-        {!lesson && !practicing && !busy && active === null && !choosingRoute && directionPlacement === "help"
-          && coreComplete(completedTaskKeys) && introBeat >= INTRO_BEATS.length && (
-          <button
-            type="button"
-            data-testid="job-card-route-help"
-            aria-label={routeHelpOpen ? ROUTE_HELP_COPY.close[lang] : ROUTE_HELP_COPY.open[lang]}
-            aria-pressed={routeHelpOpen}
-            title={routeHelpOpen ? ROUTE_HELP_COPY.close[lang] : ROUTE_HELP_COPY.open[lang]}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={() => setRouteHelpOpen((v) => !v)}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold"
-            style={{
-              background: routeHelpOpen ? "#fff" : "rgba(255,255,255,0.18)",
-              color: routeHelpOpen ? tone : "#fff",
-            }}
-          >
-            ?
-          </button>
-        )}
-        {!fixedPlace && !visibleHelp && !(liveStep?.canHelp && active !== null && !finish && introBeat >= INTRO_BEATS.length) && preferred !== HOME && !practicing && !busy && (
+        {!fixedPlace && !visibleHelp && !canExplain && preferred !== HOME && !practicing && !busy && (
           <button
             type="button"
             data-testid="job-card-reposition"
@@ -1006,13 +990,10 @@ export default function JobCard() {
             title={repositionOpen ? c.hideHelp : c.snapBack}
             onPointerDown={(e) => e.stopPropagation()}
             onClick={() => setRepositionOpen((v) => !v)}
-            className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-[13px] font-bold"
-            style={{
-              background: repositionOpen ? "#fff" : "rgba(255,255,255,0.18)",
-              color: repositionOpen ? tone : "#fff",
-            }}
+            className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-black/5"
+            style={{ background: repositionOpen ? "#fff" : undefined }}
           >
-            {repositionOpen ? <Shrink size={15} strokeWidth={2.25} aria-hidden /> : "?"}
+            <Shrink size={18} strokeWidth={2.25} aria-hidden />
           </button>
         )}
         {!docked && <button
@@ -1024,20 +1005,21 @@ export default function JobCard() {
           title={collapsed ? c.expand : c.collapse}
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => setCollapsed(!collapsed)}
-          className="flex h-12 w-12 shrink-0 cursor-pointer items-center justify-center rounded-full text-white"
-          style={{ background: "rgba(255,255,255,0.18)" }}
+          // A plain arrow, no filled circle: it should not look like the
+          // card's main control. The 48px tap area stays.
+          className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-black/5"
         >
           {collapsed ? (
-            <ChevronUp size={16} strokeWidth={2.5} aria-hidden />
+            <ChevronUp size={22} strokeWidth={2.5} aria-hidden />
           ) : (
-            <ChevronDown size={16} strokeWidth={2.5} aria-hidden />
+            <ChevronDown size={22} strokeWidth={2.5} aria-hidden />
           )}
         </button>}
-        <span className={`${fixedPlace ? "hidden" : "flex"} shrink-0 gap-[3px] opacity-75`} aria-hidden>
+        <span className={`${fixedPlace ? "hidden" : "flex"} shrink-0 gap-[3px] opacity-60`} aria-hidden>
           {[0, 1].map((col) => (
             <span key={col} className="flex flex-col gap-[3px]">
               {[0, 1, 2].map((row) => (
-                <span key={row} className="h-[3px] w-[3px] rounded-full bg-white" />
+                <span key={row} className="h-[3px] w-[3px] rounded-full bg-current" />
               ))}
             </span>
           ))}
@@ -1168,7 +1150,7 @@ export default function JobCard() {
               <button
                 type="button"
                 onClick={visibleHelp.onClose}
-                className="job-card-primary flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+                className="job-card-primary flex min-h-[52px] w-full cursor-pointer items-center justify-center rounded-[14px] text-[18px] font-medium text-white"
                 style={{ background: tone }}
               >
                 {visibleHelp.gotItLabel}
@@ -1177,14 +1159,39 @@ export default function JobCard() {
           </>
         ) : (
           <>
+        {/* The same landmark on every task card: the eye learns where the
+            instruction starts. Plain text, no box: the line under it is the
+            one thing on the card that should stand out. */}
+        {showTaskLabel && (
+          <p data-card-task-label className="m-0 mb-1.5 text-[13px] font-semibold uppercase tracking-[0.07em] text-[#52627a]">
+            {c.yourTask}
+          </p>
+        )}
         <p
           role="status"
           aria-live="polite"
           data-card-line
-          className={`m-0 ${script.routeChoices ? "text-[20px]" : "text-[27px]"} font-medium leading-[1.2] tracking-[-0.01em] text-[#202124]`}
+          className={`m-0 ${script.routeChoices ? "text-[20px]" : "text-[27px]"} font-semibold leading-[1.2] tracking-[-0.01em] text-[#202124]`}
         >
           {script.line}
         </p>
+
+        {/* Right under the instruction: the facts the step needs, never a
+            paragraph retelling the situation (that lives in the email, the
+            form, the document). */}
+        {facts.length > 0 && (
+          <section
+            data-testid={lesson ? "lesson-info-card" : "job-card-facts"}
+            aria-label={c.keyInfo}
+            className="mt-3.5 rounded-[14px] bg-[#eef3fd] px-4 py-3"
+          >
+            <p className="m-0 mb-2 flex items-center gap-2 text-[15px] font-semibold text-[#0b57d0]">
+              <FileText size={17} aria-hidden />
+              {c.keyInfo}
+            </p>
+            <FactList facts={facts} lang={lang} />
+          </section>
+        )}
 
         {lesson && script.tone !== "green" && LESSON_WHY[lesson.taskKey] && (
           <details key={lesson.taskKey} className="mt-3 text-[16px] leading-relaxed" data-testid="lesson-why">
@@ -1210,12 +1217,6 @@ export default function JobCard() {
             <p className="m-0 text-[17px] font-medium leading-[1.3]" style={{ color: "#8a5000" }}>
               {visibleCorrection}
             </p>
-          </div>
-        )}
-
-        {script.tone !== "green" && facts.length > 0 && (
-          <div className="mt-3.5 rounded-[14px] bg-[#f1f3f4] px-3.5 py-3">
-            <FactList facts={facts} lang={lang} />
           </div>
         )}
 
@@ -1294,10 +1295,11 @@ export default function JobCard() {
               script.onPrimary?.();
             }}
             data-testid={script.equalPair ? "job-card-pick-a" : script.primaryTestId}
-            className="job-card-primary mt-[18px] flex min-h-[64px] w-full cursor-pointer items-center justify-center gap-3 whitespace-nowrap rounded-[16px] text-[20px] font-medium text-white"
+            className="job-card-primary mt-6 flex min-h-[52px] w-full cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap rounded-[14px] text-[18px] font-medium text-white"
             style={{ background: tone }}
           >
             {script.primaryLabel}
+            {!script.equalPair && <ArrowRight size={20} strokeWidth={2.25} aria-hidden />}
           </button>
         )}
         {/* After a direction ends (or at Stop here), another one is a quiet
@@ -1313,75 +1315,98 @@ export default function JobCard() {
             desktop briefing, every correction and every finish card, i.e. most
             of what a learner who can barely read has to get through. It reads
             whatever the card is currently saying, correction included. */}
-        <div className="mt-3.5 flex gap-2.5">
-          {script.help && (
+        {script.help && (
+          <button
+            type="button"
+            onClick={toggleShowMe}
+            className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap rounded-[14px] text-[17px] font-medium"
+            style={{
+              border: `2px solid ${TONE.blue}`,
+              background: liveStep?.showMeActive ? TONE.blue : "#fff",
+              color: liveStep?.showMeActive ? "#fff" : TONE.blue,
+            }}
+          >
+            <MapPin size={20} strokeWidth={2.25} aria-hidden />
+            {liveStep?.showMeActive ? c.hide : c.showMe}
+          </button>
+        )}
+
+        {/* A word, not a bare "?" in the header: learners did not find the
+            symbol, and it looked like the fold arrow beside it. It pulses
+            after a wrong click, when a stuck learner most needs to see it.
+            Read-aloud is the small speaker on the same row, so it never
+            narrows the instruction above. */}
+        {/* Help always on the left, Read aloud always on the right, so neither
+            moves from card to card. With no button above, the row keeps the
+            same air under the instruction that the button would have had. */}
+        <div className={`${script.primaryLabel || script.help ? "mt-3" : "mt-6"} -mx-3 grid grid-cols-2 gap-2`}>
+          {canExplain && (
             <button
               type="button"
-              onClick={toggleShowMe}
-              className="flex min-h-[56px] flex-1 cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap rounded-[16px] text-[17px] font-medium"
-              style={{
-                border: `2px solid ${TONE.blue}`,
-                background: liveStep?.showMeActive ? TONE.blue : "#fff",
-                color: liveStep?.showMeActive ? "#fff" : TONE.blue,
-              }}
+              data-testid="job-card-help"
+              aria-pressed={Boolean(help)}
+              onClick={pressHelp}
+              className={`${QUIET_BUTTON} justify-self-start${(liveStep?.pulseHelp || visibleCorrection) && !help ? " animate-showme-pulse-compact" : ""}`}
             >
-              <MapPin size={20} strokeWidth={2.25} aria-hidden />
-              {liveStep?.showMeActive ? c.hide : c.showMe}
+              <CircleHelp size={20} strokeWidth={2.25} aria-hidden />
+              {c.needHelp}
             </button>
           )}
           <button
             type="button"
             data-testid="job-card-read-aloud"
             onClick={() => speakText(spokenLine, lang)}
-            aria-label={c.readAloud}
-            title={c.readAloud}
-            className={`flex min-h-[56px] cursor-pointer items-center justify-center gap-2.5 rounded-[16px] bg-white text-[17px] font-medium text-[#3c4043] ${
-              script.help ? "w-14 shrink-0" : "flex-1"
-            }`}
-            style={{ border: "2px solid var(--border)" }}
+            className={`${QUIET_BUTTON} col-start-2 justify-self-end`}
           >
-            <Volume2 size={22} strokeWidth={2.25} aria-hidden />
-            {!script.help && c.readAloud}
+            <Volume2 size={20} strokeWidth={2.25} aria-hidden />
+            {c.readAloudShort}
           </button>
         </div>
 
-        {script.secondaryLabel && (
+        {/* The welcome card's practice offers: optional, under the one real
+            next step, labeled so they never read as required. */}
+        {introBeat < INTRO_BEATS.length && script.secondaryLabel && (
+          <div className="mt-4 flex flex-col gap-2" data-testid="job-card-optional">
+            <p className="m-0 text-[12px] font-semibold uppercase tracking-[0.06em] text-[#5f6368]">{c.optional}</p>
+            <button type="button" onClick={startPractice} className={OPTIONAL_ROW}>
+              <MousePointerClick size={19} className="shrink-0" aria-hidden />
+              <span className="flex-1">{script.secondaryLabel}</span>
+              <ChevronRight size={18} className="shrink-0" aria-hidden />
+            </button>
+            {script.tertiaryLabel && (
+              <button type="button" data-testid="job-card-move-practice-start" onClick={script.onTertiary} className={OPTIONAL_ROW}>
+                <Move size={19} className="shrink-0" aria-hidden />
+                <span className="flex-1">{script.tertiaryLabel}</span>
+                <ChevronRight size={18} className="shrink-0" aria-hidden />
+              </button>
+            )}
+          </div>
+        )}
+
+        {introBeat >= INTRO_BEATS.length && script.secondaryLabel && (
           <button
             type="button"
-            onClick={() => { if (introBeat < INTRO_BEATS.length) startPractice(); else script.onSecondary?.(); }}
+            onClick={script.onSecondary}
             data-testid={script.equalPair ? "job-card-pick-b" : script.secondaryTestId}
             className={
               script.equalPair
-                ? "job-card-primary mt-2.5 flex min-h-[64px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[20px] font-medium text-white"
+                ? "job-card-primary mt-2.5 flex min-h-[52px] w-full cursor-pointer items-center justify-center rounded-[14px] text-[18px] font-medium text-white"
                 : "mt-2.5 flex min-h-[48px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[15px] font-medium"
             }
             style={
               script.equalPair
                 ? { background: tone }
-                : introBeat < INTRO_BEATS.length
-                  // The practice offer is the one secondary that beginners
-                  // most need, so it gets an outline instead of grey text.
-                  ? { color: "var(--text-primary)", border: "2px solid var(--border)" }
-                  : { color: "var(--text-secondary)" }
+                : { color: "var(--text-secondary)" }
             }
           >
             {script.secondaryLabel}
           </button>
         )}
 
-        {script.tertiaryLabel && (
-          <button
-            type="button"
-            data-testid="job-card-move-practice-start"
-            onClick={script.onTertiary}
-            className="mt-2 flex min-h-[40px] w-full cursor-pointer items-center justify-center rounded-[16px] text-[14px] font-medium"
-            style={{ color: "var(--text-secondary)" }}
-          >
-            {script.tertiaryLabel}
-          </button>
-        )}
 
-        {lesson && script.tone !== "green" && <LessonInfoCard />}
+        {/* Reference facts are in Key information above; this is only the
+            "who you are" scene a context-only lesson reopens. */}
+        {lesson && script.tone !== "green" && lesson.reference.length === 0 && <LessonInfoCard />}
 
         {/* A lesson's one setting: how much the card spells out. It lives on
             the card because the card is what it changes, but as one quiet
@@ -1430,12 +1455,28 @@ export default function JobCard() {
           );
         })()}
 
+        {/* Help and options for the course direction: words in the card,
+            not a bare "?" in the header. */}
+        {!lesson && !practicing && !busy && active === null && !choosingRoute && directionPlacement === "help"
+          && coreComplete(completedTaskKeys) && introBeat >= INTRO_BEATS.length && (
+          <button
+            type="button"
+            data-testid="job-card-route-help"
+            aria-expanded={routeHelpOpen}
+            onClick={() => setRouteHelpOpen((v) => !v)}
+            className="mt-2 flex min-h-11 cursor-pointer items-center gap-2 text-[16px] font-medium text-[#0b57d0]"
+          >
+            <CircleHelp size={20} strokeWidth={2.25} aria-hidden />
+            {routeHelpOpen ? ROUTE_HELP_COPY.close[lang] : ROUTE_HELP_COPY.open[lang]}
+          </button>
+        )}
+
         {script.step >= 0 && (
-          <div className="mt-4 flex items-center gap-1.5" aria-hidden>
+          <div className="mt-5 flex items-center gap-1" aria-hidden>
             {[0, 1, 2, 3].map((i) => (
               <span
                 key={i}
-                className="h-2 flex-1 rounded-full"
+                className="h-1 flex-1 rounded-full"
                 style={{
                   background:
                     script.step > i ? TONE.green : script.step === i ? tone : "#e8eaed",

@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { pressNextTask } from "./next-task";
 
 /**
  * Phase 3 N-3: with the Job Card docked at 911, the Day 2 picker cut every
@@ -77,7 +78,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       await page.locator('[data-showme="submit-button"]').click();
       await page.getByTestId("text-reply").fill(t("Yes, Thursday works.", "Sí, el jueves está bien."));
       await page.getByTestId("text-send").click();
-      await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+      await pressNextTask(page);
       await openTodaysJob(page);
       const row = page.locator('[data-showme="maria-row"]');
       if (!(await page.locator('[data-showme="reply-button"]').isVisible())) await row.click();

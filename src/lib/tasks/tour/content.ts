@@ -140,7 +140,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
       continueLabel: "I understand",
     },
     {
-      instruction: "Tap the ? on this card to try Help.",
+      instruction: "Tap I need help on this card to try it.",
       targetTestId: "job-card-help",
     },
   ],
@@ -158,7 +158,7 @@ export const TOUR_STEPS: Record<Lang, TourStep[]> = {
       continueLabel: "Entiendo",
     },
     {
-      instruction: "Toca el ? en esta tarjeta para probar Ayuda.",
+      instruction: "Toca Necesito ayuda en esta tarjeta para probarlo.",
       targetTestId: "job-card-help",
     },
   ],
@@ -194,7 +194,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Where to look",
       s: [
         "This blue card in the corner tells you what to do next.",
-        "Lost? Tap the ? on this card.",
+        "Lost? Tap I need help on this card.",
         "Card in the way? Drag the blue top, or click the arrow to shrink it. Click the arrow again to open it.",
         "No mouse? Press Tab until the blue top is selected. Then press an arrow key to move the card to another corner.",
       ],
@@ -206,7 +206,7 @@ export const LESSONS: Record<Lang, Lesson[]> = {
       t: "Dónde mirar",
       s: [
         "Esta tarjeta azul de la esquina te dice qué hacer.",
-        "¿Te perdiste? Toca el ? en esta tarjeta.",
+        "¿Te perdiste? Toca Necesito ayuda en esta tarjeta.",
         "¿Te estorba? Arrastra la parte azul, o haz clic en la flecha para encogerla. Haz clic otra vez para abrirla.",
         "¿No usas el mouse? Presiona Tab hasta seleccionar la parte azul. Luego presiona una flecha del teclado para mover la tarjeta a otra esquina.",
       ],

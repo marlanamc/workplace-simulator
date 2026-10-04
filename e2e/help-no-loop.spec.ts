@@ -51,7 +51,13 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       await waitForInteractive(page);
       await clickIntoPage(page, () => page.getByRole("button", { name: /Start of The Night Before/ }).click());
       await continuePastStudioArrivalIfPresent(page);
-      await card(page).getByRole("button", { name: /^(I understand|Entiendo)$/ }).click();
+      // The New Hire screen comes before the Night Before's first card.
+      const newHire = page.getByTestId("new-hire-continue");
+      if (await newHire.waitFor({ timeout: 5_000 }).then(() => true, () => false)) await newHire.click();
+      // Since the New Hire screen, the card can open straight on Maria's
+      // email with no "I understand" beat; press it only if it is there.
+      const understand = card(page).getByRole("button", { name: /^(I understand|Entiendo)$/ });
+      if (await understand.waitFor({ timeout: 5_000 }).then(() => true, () => false)) await understand.click();
       await toReply(page);
 
       const draft = page.getByRole("textbox", { name: /Your reply|Tu respuesta/ });

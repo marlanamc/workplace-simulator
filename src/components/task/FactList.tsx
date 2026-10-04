@@ -24,13 +24,15 @@ export function factsSpokenText(facts: LessonFact[] | undefined, lang: Lang): st
 export function FactList({ facts, lang }: { facts: LessonFact[]; lang: Lang }) {
   if (facts.length === 0) return null;
   return (
-    <dl className="m-0 grid grid-cols-[auto_1fr] items-baseline gap-x-3 gap-y-1.5">
+    // Label above value: side by side, a long label squeezed the value into one
+    // word per line on the 420px card.
+    <dl className="m-0 flex flex-col gap-2.5">
       {facts.map((fact) => {
         const value = factValueText(fact, lang);
         const exact = !/\s/.test(value);
         return (
-          <div key={fact.label.en} className="contents">
-            <dt className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#6b5340]">{fact.label[lang]}</dt>
+          <div key={fact.label.en} className="flex flex-col gap-0.5">
+            <dt className="text-[12px] font-semibold uppercase tracking-[0.06em] text-[#5f6368]">{fact.label[lang]}</dt>
             <dd
               className={`m-0 leading-snug ${
                 exact

@@ -47,6 +47,11 @@ export const LESSON_COPY = {
     en: "These details are in the Job Card while you work. Look for Info card when you need them.",
     es: "Estos datos están en la tarjeta de trabajo mientras practicas. Busca Tarjeta de información cuando los necesites.",
   },
+  /** A lesson with reference facts: they sit on the Job Card under Key information. */
+  introCardFacts: {
+    en: "While you work, the Job Card shows the key details under Key information.",
+    es: "Mientras practicas, la tarjeta de trabajo muestra los datos importantes en Información clave.",
+  },
   introStart: { en: "I'm ready", es: "Empezar" },
   // "Your info" read as facts about the real learner ("No college degree").
   // The card holds the pretend person's facts, so it is named as a card.

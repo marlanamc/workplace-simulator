@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
+import { pressNextTask } from "./next-task";
 
 /**
  * Wave 5 F-7 and F-23: a reload mid-task lost the learner's place and words
@@ -76,7 +77,7 @@ for (const lang of ["en", "es"] as const) {
     await page.locator('[data-showme="submit-button"]').click();
     await page.getByTestId("text-reply").fill(t("yes thursday 2 ok", "si, el jueves"));
     await page.getByTestId("text-send").click();
-    await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+    await pressNextTask(page);
 
     // Day 2, task 2: Maria's email answered, the file attached, a few words typed.
     await openTodaysJob(page);
@@ -95,7 +96,7 @@ for (const lang of ["en", "es"] as const) {
     await expect(page.locator('[data-showme="compose-body"]').last()).toHaveValue(note);
     await expect(appWindow(page)).toContainText("food-handler-certificate.pdf");
     await page.locator('[data-showme="send-button"]').last().click();
-    await expect(page.locator("[data-celebration-continue]").or(card(page).locator('[data-card-tone="green"]')).first()).toBeVisible({ timeout: 20_000 });
+    await expect(page.locator("[data-celebration-continue]").or(page.locator('[data-job-card][data-card-tone="green"]')).first()).toBeVisible({ timeout: 20_000 });
 
     // Day 3, task 1: clocked in survives a reload; the note to Maria survives
     // a trip to another bookmark and a reload.
@@ -115,7 +116,7 @@ for (const lang of ["en", "es"] as const) {
     }
     await expect(appWindow(page).locator("textarea").first()).toHaveValue(clock);
     await page.locator('[data-showme="send-button"]').click();
-    await card(page).getByRole("button", { name: /Next task|Siguiente tarea/ }).click();
+    await pressNextTask(page);
 
     // Day 3, task 2: the shift note.
     await openTodaysJob(page);
@@ -151,15 +152,14 @@ for (const lang of ["en", "es"] as const) {
 
     // Day 6: the first question answered, then a reload before the second.
     await startOf(page, /Start of Day 6: /);
+    // The stub opens inline, beside its first question.
     await page.locator('[data-showme="target-stub"]').click();
-    await card(page).locator(".job-card-primary").first().click();
     await page.getByRole("button", { name: "$571.32", exact: true }).click();
     const hours = t("Which paid hours on the stub match it?", "¿Qué horas pagadas del recibo coinciden?");
     await expect(appWindow(page)).toContainText(hours);
     await reload(page);
     await expect(appWindow(page)).toContainText(hours);
-    // The reader closed with the reload; the stub is one click away.
-    await page.getByRole("button", { name: t("Look at the pay stub again", "Ver el recibo otra vez") }).click();
+    // The stub reads inline, so it is still beside the question after the reload.
     await expect(page.locator('[data-showme="stub-hours"][data-showme-primary]')).toBeAttached();
   });
 }

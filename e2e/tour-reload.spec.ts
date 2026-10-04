@@ -62,7 +62,7 @@ for (const lang of ["en", "es"] as const) {
   const bookmarks = t("These are your bookmarks.", "Estos son tus marcadores.");
   const clickMail = t("Click Mail.", "Haz clic en Correo.");
   const workEmail = t("This is your work email.", "Este es tu correo del trabajo.");
-  const tryHelp = t("Tap the ? on this card to try Help.", "Toca el ? en esta tarjeta para probar Ayuda.");
+  const tryHelp = t("Tap I need help on this card to try it.", "Toca Necesito ayuda en esta tarjeta para probarlo.");
   const helpLead = t("You tried Help. You are ready for your first task.", "Ya probaste Ayuda. Ya puedes empezar tu primera tarea.");
 
   for (const size of sizes) {
