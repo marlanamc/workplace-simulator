@@ -1,5 +1,6 @@
 "use client";
 
+import LessonMail from './LessonMail';
 import { useRef, useState } from 'react';
 import { useLesson } from '@/lib/lesson-context';
 import { useProgress } from '@/lib/progress-context';
@@ -44,6 +45,8 @@ function Practice(){
   const [receipt,setReceipt]=useState<Record<string,string>|null>(null);
   const [sent,setSent]=useState<Record<string,string>[]>([]);
   const [help,setHelp]=useState(false);
+  const [draftActive,setDraftActive]=useState(false);
+  const [newMessage,setNewMessage]=useState(false);
   const [addMenu,setAddMenu]=useState(false);
   const [picker,setPicker]=useState(false);
   const [preview,setPreview]=useState<string|null>(null);
@@ -63,15 +66,15 @@ function Practice(){
   const fileName=chosen?(names[chosen.key]??chosen.name):'';
   const fileGrants=grants[values.file]??{};
   const set=(name:string,value:string)=>{clearCorrection();setValues(v=>({...v,[name]:value}));};
-  const begin=()=>{clearCorrection();setReceipt(null);setView('edit');};
-  const action=(data=values)=>{clearCorrection();setReceipt({...data});setView('sent');if(mail||sheet)setSent(old=>[...old,{...data,subject:s.title[lang]}]);};
+  const begin=()=>{clearCorrection();setReceipt(null);setDraftActive(true);setView('edit');};
+  const action=(data=values)=>{clearCorrection();setReceipt({...data});setDraftActive(false);setView('sent');if(mail||sheet)setSent(old=>[...old,{...data,subject:data.subject??s.title[lang]}]);};
   const check=()=>{
     if(!receipt)return;
     const problem=assessPractice(key,scenario,s,receipt,message);
     if(problem){correct(`${t('Practice feedback: ','Comentario de práctica: ')}${problem[lang]}`);return;}
     clearCorrection();
     if(key==='mail-reply'&&scenario==='classroom'&&message<2){
-      const next=practiceScenario(key,scenario,message+1);setMessage(message+1);setValues({recipient:next.recipient??''});setReceipt(null);setView('home');return;
+      const next=practiceScenario(key,scenario,message+1);setMessage(message+1);setNewMessage(false);setValues({recipient:next.recipient??''});setReceipt(null);setView('home');return;
     }
     markComplete(key);
   };
@@ -85,31 +88,27 @@ function Practice(){
   const attach=<button ref={opener} type="button" className={button} onClick={()=>{setPreview(null);if(coursework)setAddMenu(v=>!v);else setPicker(true);}}>{coursework?t('Add or create','Agregar o crear'):t('Attach files','Adjuntar archivos')}</button>;
   const chip=chosen&&<div className="my-3 flex flex-wrap items-center gap-2 rounded border p-3"><button className="break-all text-left underline" onClick={()=>setPreview(chosen.key)} type="button">{chosen.name}</button><button type="button" className={button} onClick={()=>set('file','')}>{t('Remove','Quitar')}</button></div>;
   const compose=<form className="space-y-4 rounded-xl border bg-white p-4" onSubmit={e=>{e.preventDefault();action();}}>
-    <h2 className="text-lg font-medium">{mail?t('Reply','Responder'):t('New message','Mensaje nuevo')}</h2>
-    {field('recipient',t('To','Para'),'email')}
-    <p>{t('Subject','Asunto')}: {s.title[lang]}</p>
-    <label className="block">{t('Message','Mensaje')}<textarea aria-label={t('Message','Mensaje')} className={`${input} min-h-32`} value={values.body??''} onChange={e=>set('body',e.target.value)} /></label>
+    <h2 className="text-lg font-medium">{mail&&!newMessage?t('Reply','Responder'):t('New message','Mensaje nuevo')}</h2>
+    {mail?<label className="flex min-h-11 items-center gap-3 border-b border-[#dadce0] text-[#5f6368]"><span>{t('To','Para')}</span><input aria-label={t('To','Para')} type="email" required className="min-h-11 min-w-0 flex-1 bg-transparent text-[#202124] outline-[#0b57d0]" value={values.recipient??''} onChange={e=>set('recipient',e.target.value)} /></label>:field('recipient',t('To','Para'),'email')}
+    {mail&&newMessage?field('subject',t('Subject','Asunto')):<p>{t('Subject','Asunto')}: {mail?'Re: ':''}{s.title[lang]}</p>}
+    <label className="block"><span className={mail?"sr-only":undefined}>{t('Message','Mensaje')}</span><textarea aria-label={t('Message','Mensaje')} className={mail?"block min-h-40 w-full resize-y bg-white py-3 text-[15px] leading-relaxed outline-[#0b57d0]":`${input} min-h-32`} value={values.body??''} onChange={e=>set('body',e.target.value)} /></label>
     {s.files&&<>{attach}{chip}</>}
-    <div className="flex flex-wrap gap-3"><button type="submit" className={primary}>{t('Send','Enviar')}</button><button type="button" className={button} onClick={()=>setView(sheet?'read':'home')}>{sheet?t('Back to sheet','Volver a la hoja'):t('Back to inbox','Volver a recibidos')}</button></div>
+    <div className="flex flex-wrap gap-3"><button type="submit" className={mail?"min-h-11 rounded-full bg-[#0b57d0] px-7 py-2 font-medium text-white hover:bg-[#0842a0]":primary}>{t('Send','Enviar')}</button>{sheet&&<button type="button" className={button} onClick={()=>setView('read')}>{t('Back to sheet','Volver a la hoja')}</button>}</div>
   </form>;
+  const sentPane=<section className="space-y-3" data-testid="practice-result"><h2 className="text-lg font-medium">{t('Sent','Enviados')}</h2>{sent.map((r,i)=><SentEmailRecap key={i} heading={t('Sent','Enviado')} toLabel={t('To','Para')} to={r.recipient} subjectLabel={t('Subject','Asunto')} subject={r.subject??s.title[lang]} body={r.body??''} fact={r.file?{label:t('Attachment','Adjunto'),value:s.files?.find(f=>f.key===r.file)?.name??r.file}:undefined}/>)}<button className={button} onClick={begin}>{t('Write a follow-up','Escribir otro correo')}</button>{sheet&&<button className={button} onClick={()=>setView('read')}>{t('Back to sheet','Volver a la hoja')}</button>}</section>;
   return <div ref={root} data-testid="confidence-practice" data-practice-app={key} className="h-full overflow-y-auto bg-[#f6f8fc] text-[#202124]">
     {!done&&<RightNowBar taskKey={key} stepIndex={receipt?2:view==='home'?0:1} stepCount={3} instruction={instruction} goal={receipt?instruction:s.request}
       facts={(files||sheet)&&s.recipient?[{label:l('Recipient','Destinatario'),value:s.recipient}]:undefined}
       onHelp={()=>setHelp(true)} onShowMe={()=>{const selector=receipt?'[data-testid="practice-result"],[data-testid="submission-status"]':view==='edit'?'textarea,input':sheet?'[data-cell="B2"]':files?'table':mail?'article':'section';root.current?.querySelector(selector)?.scrollIntoView({block:'center',behavior:'smooth'});}}
       {...(receipt?{primaryLabel:t('Check my work','Revisar mi trabajo'),onPrimary:check}:{})} />}
+    {mail ? <LessonMail key={message} scenario={s} view={view} onView={setView} onReply={()=>{setNewMessage(false);begin();}} onResume={begin} newMessage={newMessage} onCompose={()=>{if(!draftActive){setNewMessage(true);setValues(v=>({...v,recipient:"",subject:"",body:"",file:""}));}begin();}} compose={compose} sources={source} sent={sentPane} sentCount={sent.length} hasDraft={draftActive&&Boolean(values.body||values.file)} /> : <>
     <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b bg-white px-5 py-3">
-      <h1 className="text-xl font-medium">{mail?'WorkMail':sheet?'Sheets':files?'Drive':coursework?'Classroom':calendar?t('Calendar','Calendario'):t('Schedule portal','Portal de horarios')}</h1>
+      <h1 className="text-xl font-medium">{sheet?'Sheets':files?'Drive':coursework?'Classroom':calendar?t('Calendar','Calendario'):t('Schedule portal','Portal de horarios')}</h1>
       <span className="text-sm">{s.title[lang]}</span>
     </header>
     <div className="space-y-5 p-4 sm:p-6">
-    {/* Received requests and source documents belong to the app. Teaching stays in the Job Card. */}
-    {mail?<>
-      <nav className="flex gap-3" aria-label="WorkMail"><button className={button} onClick={()=>setView('home')}>{t('Inbox','Recibidos')}</button><button className={button} onClick={()=>setView('sent')}>{t('Sent','Enviados')} ({sent.length})</button></nav>
-      {view==='home'&&<button className="w-full rounded border bg-white p-4 text-left" onClick={()=>setView('read')}><strong>{s.recipient}</strong><span className="ml-4">{s.title[lang]}</span></button>}
-      {(view==='read'||view==='edit')&&<article className="space-y-4 rounded-xl bg-white p-5"><h2 className="text-xl">{s.title[lang]}</h2><p>{t('From','De')}: {s.recipient}</p><p>{s.request[lang]}</p>{source}{view==='read'&&<button className={button} onClick={begin}>{t('Reply','Responder')}</button>}</article>}
-      {view==='edit'&&compose}
-    </>:<article className="space-y-3 rounded-xl border bg-white p-4"><h2 className="font-semibold">{t('Request','Solicitud')}{s.recipient?` · ${s.recipient}`:''}</h2><p>{s.request[lang]}</p>{source}</article>}
-    {(mail||sheet)&&view==='sent'&&<section className="space-y-3" data-testid="practice-result"><h2 className="text-lg font-medium">{t('Sent','Enviados')}</h2>{sent.map((r,i)=><SentEmailRecap key={i} heading={t('Sent','Enviado')} toLabel={t('To','Para')} to={r.recipient} subjectLabel={t('Subject','Asunto')} subject={r.subject??s.title[lang]} body={r.body??''} fact={r.file?{label:t('Attachment','Adjunto'),value:s.files?.find(f=>f.key===r.file)?.name??r.file}:undefined}/>)}<button className={button} onClick={begin}>{t('Write a follow-up','Escribir otro correo')}</button>{sheet&&<button className={button} onClick={()=>setView('read')}>{t('Back to sheet','Volver a la hoja')}</button>}</section>}
+      <article className="space-y-3 rounded-xl border bg-white p-4"><h2 className="font-semibold">{t('Request','Solicitud')}{s.recipient?` · ${s.recipient}`:''}</h2><p>{s.request[lang]}</p>{source}</article>
+    {sheet&&view==='sent'&&sentPane}
     {sheet&&view!=='edit'&&view!=='sent'&&<>
       <SheetsFrame fileName={s.title[lang]}>
         <div className="flex items-center gap-3 border-b p-2"><span className="w-12">{selected}</span><label className="flex flex-1 items-center gap-2">fx<input aria-label={t('Formula bar','Barra de fórmulas')} className="min-h-10 w-full border px-2" value={formula} readOnly={selected===`B${rowCount+2}`} onChange={e=>setFormula(e.target.value)} onKeyDown={e=>{if(e.key==='Enter'&&selected!==`B${rowCount+2}`){set(selected,formula);editor.current?.querySelector<HTMLInputElement>(`[data-cell="${selected}"]`)?.focus();}}} /></label></div>
@@ -133,7 +132,7 @@ function Practice(){
         <button className={primary} type="submit">{calendar?t('Send proposal','Enviar propuesta'):t('Send request','Enviar solicitud')}</button>
       </form>}
     </section>}
-    </div>
+    </div></>}
     {picker&&<PickerModal title={coursework?'Google Drive':t('Downloads','Descargas')} categoryLabel={t('Name','Nombre')} columnLabels={[]} items={(s.files??[]).map(f=>({key:f.key,label:f.name,isTarget:false}))} onCancel={closePicker} cancelLabel={t('Cancel','Cancelar')} onSelect={f=>{set('file',f.key);setPreview(null);closePicker();}} preview={{selectedKey:preview,onFocus:f=>setPreview(f.key),render:f=><article className="p-4"><h2>{f.label}</h2><p>{s.files?.find(x=>x.key===f.key)?.detail[lang]}</p></article>,empty:t('File preview','Vista previa'),confirmLabel:coursework?t('Add','Agregar'):t('Open','Abrir')}} />}
     {preview&&!picker&&<Dialog title={s.files?.find(f=>f.key===preview)?.name??''} close={()=>setPreview(null)} closeLabel={t('Close','Cerrar')}><p>{s.files?.find(f=>f.key===preview)?.detail[lang]}</p></Dialog>}
     {rename&&<Dialog title={t('Rename','Cambiar nombre')} close={()=>setRename(false)} closeLabel={t('Cancel','Cancelar')}><form onSubmit={e=>{e.preventDefault();setNames(n=>({...n,[values.file]:values.name}));setRename(false);setReceipt(null);clearCorrection();}}>{field('name',t('New file name','Nombre nuevo'))}<button className={`${primary} mt-4`} type="submit">{t('Save','Guardar')}</button></form></Dialog>}
