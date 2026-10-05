@@ -54,6 +54,7 @@ export const CLASSROOM_SCENARIOS: Partial<Record<ConfidenceKey, ConfidenceScenar
     ...base('schedule'), title:l('Work schedule', 'Horario de trabajo'),
     request:l('Your Thursday morning shift overlaps your appointment. Request the later Thursday shift.','Tu turno del jueves por la mañana coincide con tu cita. Solicita el turno del jueves por la tarde.'),
     sources:[source('Posted shifts','Turnos publicados','Thursday, August 27, 2026: 7 AM–3 PM. Alternative: 3–11 PM.','Jueves 27 de agosto de 2026: 7 a. m.–3 p. m. Alternativa: 3–11 p. m.'),source('Personal calendar','Calendario personal','Thursday, August 27, 2026: appointment at 11 AM.','Jueves 27 de agosto de 2026: cita a las 11 a. m.')],
+    scheduleDisplay: { date: l('Thursday, August 27, 2026', 'Jueves 27 de agosto de 2026'), slots: [{ label: l('Current shift', 'Turno actual'), time: l('7 AM–3 PM', '7 a. m.–3 p. m.') }, { label: l('Other shift', 'Otro turno'), time: l('3–11 PM', '3–11 p. m.') }] },
     expected:{date:'2026-08-27',time:'15:00'},
   },
 };
