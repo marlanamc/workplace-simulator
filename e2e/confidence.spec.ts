@@ -104,11 +104,11 @@ for (const lang of ["en", "es"] as const) for (const scenario of ["classroom", "
     } else if(key==='spreadsheet') {
       for(const [cell,value] of Object.entries(s.expected)) if(cell.startsWith('B')) await p.getByLabel(cell,{exact:true}).fill(value);
       await expect(p.getByTestId('sheet-total')).toHaveText(Number(s.expected.total).toFixed(2));
-      await button('Write email','Escribir correo').click();await p.getByLabel(es?'Para':'To',{exact:true}).fill(s.recipient!);
+      await button('File','Archivo').click();await button('Email','Correo electrónico').click();await button('Email collaborators','Enviar correo a colaboradores').click();await p.getByLabel(es?'Para':'To',{exact:true}).fill(s.recipient!);
       await p.getByLabel(es?'Mensaje':'Message',{exact:true}).fill('999');await button('Send','Enviar').click();await check(page,es);
       await expect(page.getByTestId('lesson-practice-again')).toHaveCount(0);
       await button('Back to sheet','Volver a la hoja').click();await expect(p.getByLabel('B2',{exact:true})).toHaveValue(s.expected.B2);
-      await button('Write email','Escribir correo').click();await p.getByLabel(es?'Mensaje':'Message',{exact:true}).fill(s.expected.total);await button('Send','Enviar').click();await check(page,es);
+      await button('File','Archivo').click();await button('Email','Correo electrónico').click();await button('Email collaborators','Enviar correo a colaboradores').click();await p.getByLabel(es?'Mensaje':'Message',{exact:true}).fill(s.expected.total);await button('Send','Enviar').click();await check(page,es);
     }
     await expect(page.getByTestId('lesson-practice-again')).toBeVisible();
     await page.getByTestId('lesson-practice-again').click();
@@ -200,3 +200,30 @@ test("a fresh scenario records one guest practice finish, not Story credit", asy
   await page.reload();
   expect((await attempts()).attempts).toBe(1);
 });
+
+for (const lang of ['en', 'es']) {
+  test(`restored workspaces preserve navigation and cell edits (${lang})`, async ({page}) => {
+    await page.setViewportSize({width:1366,height:900});
+    await start(page,'spreadsheet','classroom',lang);
+    const app = page.getByTestId('confidence-practice');
+    await app.getByLabel('B2',{exact:true}).fill('12');
+    await app.getByLabel('B2',{exact:true}).press('Enter');
+    await expect(app.getByLabel('B3',{exact:true})).toBeFocused();
+    await app.getByLabel(lang==='en'?'Formula bar':'Barra de fórmulas').fill('8');
+    await app.getByLabel(lang==='en'?'Formula bar':'Barra de fórmulas').press('Enter');
+    await expect(app.getByLabel('B3',{exact:true})).toHaveValue('8');
+    await expect(app.getByLabel(lang==='en'?'Formula bar':'Barra de fórmulas')).toHaveValue('8');
+    await page.screenshot({animations:"disabled",path:`output/playwright/restored-sheets-${lang}.png`});
+    await start(page,'schedule','try',lang);
+    await app.getByRole('button',{name:lang==='en'?'Request change':'Solicitar cambio',exact:true}).click();
+    await app.getByLabel(lang==='en'?'Date':'Fecha',{exact:true}).fill('2026-11-10');
+    await app.getByRole('button',{name:lang==='en'?'Schedule':'Horario',exact:true}).click();
+    await app.getByRole('button',{name:lang==='en'?'Shift Swap':'Cambio de turno',exact:true}).click();
+    await expect(app.getByLabel(lang==='en'?'Date':'Fecha',{exact:true})).toHaveValue('2026-11-10');
+    await app.getByRole('button',{name:lang==='en'?'Schedule':'Horario',exact:true}).click();
+    await page.screenshot({animations:"disabled",path:`output/playwright/restored-portal-${lang}.png`});
+    await start(page,'coursework','classroom',lang);
+    await expect(page.getByTestId('lesson-classroom-workspace')).toBeVisible();
+    await page.screenshot({animations:"disabled",path:`output/playwright/restored-classroom-${lang}.png`});
+  });
+}

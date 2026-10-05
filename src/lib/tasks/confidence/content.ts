@@ -19,6 +19,7 @@ export type ConfidenceScenario = {
   replyPattern?: RegExp;
   correction: Localized;
   rows?: { label: Localized; value: number }[];
+  scheduleDisplay?: { date: Localized; slots: { label: Localized; time: Localized }[] };
   dates?: { value: string; label: Localized }[];
   times?: string[];
   /**
@@ -100,6 +101,7 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
       guidance: l("Read both schedules. Select Tuesday and a class time that does not overlap the appointment. Review and send the change request.", "Lee ambos horarios. Selecciona el martes y una clase que no coincida con la cita. Revisa y envía la solicitud."),
       help: l("Both the start and end of class must fit. The appointment runs until noon.", "Deben caber el inicio y el final de la clase. La cita termina al mediodía."),
       sources: [source(l("Class schedule", "Horario de clases"), l("Tuesday, November 10: current class 10 AM–noon. Other class: 2–4 PM.", "Martes 10 de noviembre: clase actual de 10 a. m. a 12. Otra clase: de 2 a 4 p. m.")), source(l("Personal calendar", "Calendario personal"), l("Tuesday, November 10: appointment 11 AM–noon.", "Martes 10 de noviembre: cita de 11 a. m. a 12."))],
+      scheduleDisplay: { date: l("Tuesday, November 10, 2026", "Martes 10 de noviembre de 2026"), slots: [{ label: l("Current class", "Clase actual"), time: l("10 AM–noon", "10 a. m.–12 p. m.") }, { label: l("Other class", "Otra clase"), time: l("2–4 PM", "2–4 p. m.") }] },
       expected: { date: "2026-11-10", time: "14:00" }, dates: [{ value: "2026-11-10", label: l("Tuesday, November 10", "Martes 10 de noviembre") }, { value: "2026-11-11", label: l("Wednesday, November 11", "Miércoles 11 de noviembre") }], times: ["10:00", "14:00"],
       correction: l("Check the day and the appointment's end. The requested class must fit without overlap.", "Revisa el día y el final de la cita. La clase solicitada debe caber sin coincidir."),
     },
@@ -109,6 +111,7 @@ export const CONFIDENCE_SCENARIOS: Record<ConfidenceKey, Record<"try" | "home", 
       guidance: l("Compare the bus arrival and the posted shifts. Select Saturday and a shift that starts after you arrive. Review and send.", "Compara la llegada del autobús y los turnos. Selecciona el sábado y un turno que empiece después de llegar. Revisa y envía."),
       help: l("A shift that has already begun when you arrive is not a full shift you can attend.", "Un turno que ya empezó cuando llegas no es un turno al que puedas asistir completo."),
       sources: [source(l("Volunteer schedule", "Horario de voluntariado"), l("Saturday, November 14: current shift 9–11 AM. Other shift: 11 AM–1 PM.", "Sábado 14 de noviembre: turno actual de 9 a 11 a. m. Otro turno: de 11 a. m. a 1 p. m.")), source(l("Bus timetable", "Horario del autobús"), l("Arrival Saturday, November 14: 10 AM.", "Llegada el sábado 14 de noviembre: 10 a. m."))],
+      scheduleDisplay: { date: l("Saturday, November 14, 2026", "Sábado 14 de noviembre de 2026"), slots: [{ label: l("Current shift", "Turno actual"), time: l("9–11 AM", "9–11 a. m.") }, { label: l("Other shift", "Otro turno"), time: l("11 AM–1 PM", "11 a. m.–1 p. m.") }] },
       expected: { date: "2026-11-14", time: "11:00" }, dates: [{ value: "2026-11-13", label: l("Friday, November 13", "Viernes 13 de noviembre") }, { value: "2026-11-14", label: l("Saturday, November 14", "Sábado 14 de noviembre") }], times: ["09:00", "11:00"],
       correction: l("Compare the shift's start with the bus arrival and check Saturday's date.", "Compara el inicio del turno con la llegada del autobús y revisa la fecha del sábado."),
     },
