@@ -10,7 +10,7 @@ import { useJobCard, type JobCardStep } from "@/lib/job-card-context";
 import { SCENARIOS, SCENARIO_LABELS } from "@/lib/lessons/confidence";
 import { useLesson } from "@/lib/lesson-context";
 import LessonInfoCard from "@/components/lesson/LessonInfoCard";
-import { FactList, factsSpokenText } from "@/components/task/FactList";
+import { FactList, PeopleList, factsSpokenText, peopleSpokenText } from "@/components/task/FactList";
 import { LESSON_WHY } from "@/lib/lessons/why";
 import { LESSON_COPY } from "@/lib/lessons/copy";
 import {
@@ -400,10 +400,13 @@ export default function JobCard() {
     ...(lesson?.reference ?? []).filter((r) => !effectiveStep?.facts?.some((f) => f.label.en === r.label.en)),
     ...(effectiveStep?.facts ?? []),
   ];
+  // Who the lesson's task names ("Email Maria"), on screen for the whole
+  // lesson: a lesson learner never met them in Story mode.
+  const people = script.tone === "green" ? [] : lesson?.scene.people ?? [];
   // What the speaker button reads: the instruction, plus the hint, any facts,
   // and the correction when they are up, because those are the words a
   // learner who needs the audio is most likely stuck on.
-  const spokenLine = [script.line, script.hint, factsSpokenText(facts, lang), visibleCorrection].filter(Boolean).join(". ");
+  const spokenLine = [script.line, script.hint, peopleSpokenText(people, lang), factsSpokenText(facts, lang), visibleCorrection].filter(Boolean).join(". ");
   // A new sentence is the card talking again — open it so the learner cannot
   // miss the line they just hid. A correction does not: it is usually raised
   // by a click next to the button they need, and a card that springs open
@@ -1181,7 +1184,7 @@ export default function JobCard() {
         {/* Right under the instruction: the facts the step needs, never a
             paragraph retelling the situation (that lives in the email, the
             form, the document). */}
-        {facts.length > 0 && (
+        {(facts.length > 0 || people.length > 0) && (
           <section
             data-testid={lesson ? "lesson-info-card" : "job-card-facts"}
             aria-label={c.keyInfo}
@@ -1191,6 +1194,8 @@ export default function JobCard() {
               <FileText size={17} aria-hidden />
               {c.keyInfo}
             </p>
+            <PeopleList people={people} lang={lang} brief={facts.length > 0} />
+            {people.length > 0 && facts.length > 0 && <div className="my-2.5 border-t border-[#0b57d0]/15" />}
             <FactList facts={facts} lang={lang} />
           </section>
         )}
@@ -1425,8 +1430,9 @@ export default function JobCard() {
         )}
 
 
-        {/* Reference facts are in Key information above; this is only the
-            "who you are" scene a context-only lesson reopens. */}
+        {/* Reference facts and people are in Key information above; this is
+            only the "who you are, what is going on" a context-only lesson
+            reopens. */}
         {lesson && script.tone !== "green" && lesson.reference.length === 0 && <LessonInfoCard />}
 
         {/* A lesson's one setting: how much the card spells out. It lives on

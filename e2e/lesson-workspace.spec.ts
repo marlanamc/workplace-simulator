@@ -7,9 +7,17 @@ for (const lang of ["en", "es"] as const) {
     await waitForInteractive(page);
     await page.getByTestId("lesson-intro-start").click();
     const card = page.locator("[data-job-card]");
-    await expect(card.getByTestId("lesson-info-card")).toHaveCount(0);
+    // Who the emails come from stays in Key information the whole lesson.
+    const people = card.getByTestId("key-info-people");
+    await expect(people).toContainText("Maria Delgado");
+    await expect(people).toContainText(lang === "en" ? "She runs the cafe" : "Ella dirige el café");
+    await expect(people).toContainText("Darnell Washington");
+    // The Info card reopens the situation, not the people a second time.
+    const situation = card.getByTestId("lesson-situation");
+    await expect(situation).toHaveCount(0);
     await card.getByTestId("lesson-info-open").click();
-    await expect(card.getByTestId("lesson-info-card")).toBeVisible();
+    await expect(situation).toBeVisible();
+    await expect(situation).not.toContainText("Darnell Washington");
     await card.getByTestId("lesson-info-open").click();
     const why = card.getByTestId("lesson-why");
     await expect(why).not.toHaveAttribute("open", "");

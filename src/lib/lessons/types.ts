@@ -23,13 +23,18 @@ export type TeacherGuide = {
 /** One other job where this lesson's skill shows up. */
 export type WorkExample = { setting: Localized; example: Localized };
 
-/** Someone the task names, so "Email Renata" says who Renata is. */
-export type LessonPerson = { name: string; role: Localized };
+/**
+ * Someone the task names, so "Email Renata" says who Renata is. `role` is the
+ * short tag ("Your manager"); `who` is one plain sentence of what they are to
+ * you, because a lesson learner never met them in Story mode.
+ */
+export type LessonPerson = { name: string; role: Localized; who: Localized };
 
 /**
  * The scene a lesson opens on. Story mode builds this up over many tasks; a
- * lesson learner arrives cold, so the intro screen says it in three lines and
- * the info card keeps the people on screen afterwards.
+ * lesson learner arrives cold, so the intro screen sets it up in a few
+ * sentences and the Job Card's Key information keeps the people on screen
+ * afterwards.
  */
 export type LessonScene = {
   /** Who the learner is here, e.g. "You are a server at Harborside Cafe." */

@@ -17,8 +17,9 @@ export const LESSON_RAIL_CLASS = "lesson-desktop";
  *
  * Facts only, never a step. The Job Card is the one instruction voice.
  *
- * The Job Card contains these facts at every screen size. Context without
- * copyable reference facts is available through its Info card control.
+ * The Job Card contains these facts at every screen size, and the people in
+ * its Key information. Context without copyable reference facts (who you are,
+ * what is going on) is available through its Info card control.
  */
 /** The card's face, shared by the docked card and the preview on the intro screen. */
 export function InfoCardBody({
@@ -42,12 +43,18 @@ export function InfoCardBody({
       <div className="flex flex-col gap-2.5 px-5 pb-3.5 pt-3">
         {(!compact || reference.length === 0) && <>
         <p className="m-0 text-[16px] leading-snug">{scene.you[lang]}</p>
-        {scene.people.length > 0 && (
-          <ul className="m-0 flex list-none flex-col gap-1 p-0">
+        {/* Docked in the Job Card, the people are already in Key information;
+            the card reopens the situation instead. */}
+        {compact && <p className="m-0 text-[15px] leading-snug">{scene.need[lang]}</p>}
+        {!compact && scene.people.length > 0 && (
+          <ul className="m-0 flex list-none flex-col gap-2 p-0">
             {scene.people.map((p) => (
-              <li key={p.name} className="text-[15px] leading-snug">
-                <span className="font-semibold">{p.name}</span>
-                <span className="text-[#6b5340]"> · {p.role[lang]}</span>
+              <li key={p.name} className="leading-snug">
+                <p className="m-0 text-[15px]">
+                  <span className="font-semibold">{p.name}</span>
+                  <span className="text-[#6b5340]"> · {p.role[lang]}</span>
+                </p>
+                <p className="m-0 mt-0.5 text-[14px] text-[#4a3526]">{p.who[lang]}</p>
               </li>
             ))}
           </ul>
@@ -96,7 +103,7 @@ export default function LessonInfoCard() {
   const { lang } = useProgress();
   if (!lesson || (!lesson.reference.length && !lesson.infoOpen)) return null;
   return (
-    <section aria-label={LESSON_COPY.infoTitle[lang]} className="lesson-reference mt-4 border-t border-[#dadce0] pt-3">
+    <section data-testid="lesson-situation" aria-label={LESSON_COPY.infoTitle[lang]} className="lesson-reference mt-4 border-t border-[#dadce0] pt-3">
       <InfoCardBody scene={lesson.scene} reference={lesson.reference} lang={lang} compact />
     </section>
   );

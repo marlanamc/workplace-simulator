@@ -35,6 +35,9 @@ export const CLASSROOM_SCENARIOS: Partial<Record<ConfidenceKey, ConfidenceScenar
   },
   coursework: {
     ...base('coursework'), title: l('Work email assignment', 'Tarea de correo del trabajo'),
+    // The homework here is a finished document, so Dana from the Story's
+    // version of the assignment is not part of it.
+    people: [{ name: 'Ms. Rivera', role: l('Your teacher', 'Tu maestra'), who: l('She teaches your writing class. She posts the homework on the class website.', 'Ella enseña tu clase de escritura. Publica la tarea en la página de la clase.') }],
     request: l('Read the assignment deadline and turn in your completed work-email document.', 'Lee la fecha de entrega y entrega el documento completo de correo del trabajo.'),
     sources: [source('Assignment', 'Tarea', 'Due Friday, October 9, 2026 at 11:59 PM. Submit Work-email-complete.pdf. The draft is unfinished.', 'Entrega: viernes 9 de octubre de 2026 a las 11:59 p. m. Entrega Work-email-complete.pdf. El borrador está incompleto.')],
     expected: { deadline: '2026-10-09', file: 'complete' },
