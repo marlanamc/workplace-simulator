@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { waitForInteractive } from "./interactive";
+import { verifyShowMe } from "./show-me";
 import { CONFIDENCE_KEYS, type LessonScenario } from "../src/lib/lessons/confidence";
 import { practiceScenario } from "../src/lib/tasks/confidence/classroom";
 
@@ -9,12 +10,15 @@ async function start(page: Page, key: string, scenario: string, lang: string, pr
   await page.getByTestId("lesson-intro-start").click();
   if (key === "account-recovery") return;
   await expect(page.getByTestId("confidence-practice")).toBeVisible();
+  await verifyShowMe(page, lang === "es" ? "es" : "en");
   if (key.startsWith("mail-")) await openReply(page, lang === "es");
 }
 async function openReply(page: Page, es: boolean) {
   const p = page.getByTestId("confidence-practice");
   await p.locator('button').filter({ hasText: /@/ }).first().click();
+  await verifyShowMe(page, es ? "es" : "en", "lesson-mail-target");
   await p.getByRole("button", { name: es ? "Responder" : "Reply", exact: true }).click();
+  await verifyShowMe(page, es ? "es" : "en", "practice-compose");
 }
 async function pickFile(page: Page, name: string, es: boolean, coursework = false) {
   const p = page.getByTestId("confidence-practice");
@@ -25,6 +29,7 @@ async function pickFile(page: Page, name: string, es: boolean, coursework = fals
   await dialog.getByRole("button", { name: coursework ? (es ? "Agregar" : "Add") : (es ? "Abrir" : "Open"), exact: true }).click();
 }
 async function check(page:Page, es:boolean) {
+  await verifyShowMe(page, es ? 'es' : 'en');
   await page.locator('[data-job-card]').getByRole('button',{name:es?'Revisar mi trabajo':'Check my work',exact:true}).click();
 }
 for (const lang of ["en", "es"] as const) for (const scenario of ["classroom", "try", "home"] as LessonScenario[]) for (const key of CONFIDENCE_KEYS) {
@@ -225,5 +230,49 @@ for (const lang of ['en', 'es']) {
     await start(page,'coursework','classroom',lang);
     await expect(page.getByTestId('lesson-classroom-workspace')).toBeVisible();
     await page.screenshot({animations:"disabled",path:`output/playwright/restored-classroom-${lang}.png`});
+  });
+}
+
+for (const lang of ['en', 'es'] as const) {
+  test(`Show me follows mail navigation and hidden schedule panes (${lang})`, async ({ page }) => {
+    const es = lang === 'es';
+    await start(page, 'mail-reply', 'home', lang);
+    const app = page.getByTestId('confidence-practice');
+    await app.getByTestId('mail-back-inbox').click();
+    await app.getByRole('textbox', { name: es ? 'Buscar correo' : 'Search mail' }).fill('no matching messages');
+    await verifyShowMe(page, lang, 'lesson-mail-target');
+    await app.getByRole('textbox', { name: es ? 'Buscar correo' : 'Search mail' }).fill('');
+    await app.getByRole('button', { name: es ? 'Destacados (0)' : 'Starred (0)', exact: true }).click();
+    await verifyShowMe(page, lang, 'lesson-mail-target');
+    await start(page, 'schedule', 'classroom', lang);
+    await app.getByRole('button', { name: es ? 'Solicitar cambio' : 'Request change', exact: true }).click();
+    await verifyShowMe(page, lang, 'practice-schedule');
+    await app.getByRole('button', { name: es ? 'Horario' : 'Schedule', exact: true }).click();
+    await verifyShowMe(page, lang, 'practice-schedule');
+  });
+  test(`Show me follows spreadsheet cells, compose, and result (${lang})`, async ({ page }) => {
+    const es = lang === 'es';
+    await start(page, 'spreadsheet', 'classroom', lang);
+    const app = page.getByTestId('confidence-practice');
+    await verifyShowMe(page, lang, 'lesson-sheet-B2');
+    await app.getByLabel('B2', { exact: true }).fill('42.50');
+    await verifyShowMe(page, lang, 'lesson-sheet-B3');
+    await page.locator('[data-job-card]').getByRole('button', { name: es ? 'Muéstrame' : 'Show me', exact: true }).click();
+    await app.getByLabel('B3', { exact: true }).fill('10');
+    await expect(page.locator('.animate-showme-pulse')).toHaveCount(0);
+    await app.getByLabel('B3', { exact: true }).fill('');
+    await expect(page.locator('.animate-showme-pulse')).toHaveCount(0);
+    for (const cell of ['B3', 'B4', 'B5', 'B6']) await app.getByLabel(cell, { exact: true }).fill('10');
+    await verifyShowMe(page, lang, 'lesson-sheet-email');
+    await app.getByRole('button', { name: es ? 'Archivo' : 'File', exact: true }).click();
+    await app.getByRole('button', { name: es ? 'Correo electrónico' : 'Email', exact: true }).click();
+    await app.getByRole('button', { name: es ? 'Enviar correo a colaboradores' : 'Email collaborators', exact: true }).click();
+    await verifyShowMe(page, lang, 'practice-compose');
+    await app.getByLabel(es ? 'Para' : 'To', { exact: true }).fill('renata.silva@harborsidecafe.com');
+    await app.getByLabel(es ? 'Mensaje' : 'Message', { exact: true }).fill('82.50');
+    await app.getByRole('button', { name: es ? 'Enviar' : 'Send', exact: true }).click();
+    await verifyShowMe(page, lang, 'practice-result');
+    await app.getByRole('button', { name: es ? 'Volver a la hoja' : 'Back to sheet', exact: true }).click();
+    await verifyShowMe(page, lang, 'lesson-sheet-email');
   });
 }

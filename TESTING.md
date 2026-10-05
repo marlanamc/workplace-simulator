@@ -314,3 +314,17 @@ See [the scaffolding review](curriculum/lesson-independence-review.md) for the s
 `confidence-realism.test.ts` checks post-action snapshots, sharing scope and extra recipients, meeting duration, submission without invented deadline inputs, and sheet-row accuracy separately from the email total. `e2e/confidence.spec.ts` exercises all 24 scenarios in English and Spanish, wrong-action recovery, pending proposal status, immutable sent results, direct cell entry, and restart. The lesson workspace and calendar regression tests now use these app controls instead of the retired Review/Confirm worksheet. Legacy follow-ups remain available only for lessons outside this collection.
 
 Run the guest-only lesson, independence, library, materials, workspace, and confidence suites with `--grep-invert saving`. The full authenticated login/teacher suite still needs the dedicated test database; local guest checks do not replace it or the Chromebook/learner pilot.
+
+## Show me feedback
+
+The lesson smoke sweep opens all 51 tasks in English and Spanish and exercises
+any available Show me button, including pointer-click Hide and Escape dismissal.
+`confidence.spec.ts` checks visible highlights through the shared lesson scenarios,
+mail navigation, spreadsheet entry/email/results, and hidden schedule panes. The
+absence follow-up checks cover the source-material highlight. Small-screen checks
+remain in the confidence and lesson audit suites.
+
+`job-card-wiring.test.ts` discovers Show me reporters across `src`, including shared
+lesson components, and checks literal target IDs and step arrays. Dynamically
+constructed IDs and later Story states still need browser coverage; the lesson
+startup sweep is not a complete traversal of every Story branch.

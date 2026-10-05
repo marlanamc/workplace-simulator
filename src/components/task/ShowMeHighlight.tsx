@@ -52,6 +52,13 @@ export default function ShowMeHighlight({
   );
 
   useEffect(() => {
+    const findTarget = () => {
+      if (!targetId) return null;
+      // Inactive tabs can keep duplicate targets mounted but hidden.
+      const matches = [...document.querySelectorAll(`[data-showme="${targetId}"]`)]
+        .filter((element) => element.getClientRects().length > 0);
+      return matches.find((element) => element.hasAttribute("data-showme-primary")) ?? matches[0] ?? null;
+    };
     const measure = () => {
       if (!targetId) {
         setRect(null);
@@ -59,9 +66,7 @@ export default function ShowMeHighlight({
         setLook(null);
         return;
       }
-      const el =
-        document.querySelector(`[data-showme="${targetId}"][data-showme-primary]`) ??
-        document.querySelector(`[data-showme="${targetId}"]`);
+      const el = findTarget();
       setRect(el ? seenPart(el) : null);
       setOval(Boolean(el?.hasAttribute("data-showme-oval")));
       setLook(el?.getAttribute("data-showme-look") || null);
@@ -71,10 +76,7 @@ export default function ShowMeHighlight({
     // opened under the reading pane) would otherwise get a ring on the shelf.
     // Bring it to the middle of its scroll container first; the scroll
     // listener below re-measures as it moves.
-    const target = targetId
-      ? document.querySelector(`[data-showme="${targetId}"][data-showme-primary]`) ??
-        document.querySelector(`[data-showme="${targetId}"]`)
-      : null;
+    const target = findTarget();
     // Always scroll the nearest ancestors too: a target can be inside the
     // viewport while clipped by a shorter nested pane.
     target?.scrollIntoView({ block: "nearest", inline: "nearest" });
@@ -113,15 +115,21 @@ export default function ShowMeHighlight({
   useEffect(() => {
     if (!targetId || !onDismiss) return;
     const dismiss = () => onDismiss();
+    const onPointer = (event: PointerEvent) => {
+      // Let the card toggle once on click. Clearing on pointerdown first
+      // would make its Hide click immediately turn the highlight back on.
+      if (event.target instanceof Element && event.target.closest("[data-showme-toggle]")) return;
+      dismiss();
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") dismiss();
     };
     // Capture so we clear even if a child stops bubbling; the same click
     // still reaches the real target underneath (this layer is click-through).
-    window.addEventListener("pointerdown", dismiss, true);
+    window.addEventListener("pointerdown", onPointer, true);
     window.addEventListener("keydown", onKey);
     return () => {
-      window.removeEventListener("pointerdown", dismiss, true);
+      window.removeEventListener("pointerdown", onPointer, true);
       window.removeEventListener("keydown", onKey);
     };
   }, [targetId, onDismiss]);

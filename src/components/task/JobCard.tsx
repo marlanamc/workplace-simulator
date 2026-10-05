@@ -1326,6 +1326,7 @@ export default function JobCard() {
           <button
             type="button"
             onClick={toggleShowMe}
+            data-showme-toggle
             className="mt-3 flex min-h-12 w-full cursor-pointer items-center justify-center gap-2.5 whitespace-nowrap rounded-[14px] text-[17px] font-medium"
             style={{
               border: `2px solid ${TONE.blue}`,

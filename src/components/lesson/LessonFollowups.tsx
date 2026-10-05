@@ -7,6 +7,8 @@ import { useJobCard } from "@/lib/job-card-context";
 import { FOLLOWUP_ROUNDS, practiceProblem } from "@/lib/tasks/lesson-followups/content";
 import RightNowBar from "@/components/task/RightNowBar";
 import HelpDrawer from "@/components/task/HelpDrawer";
+import ShowMeHighlight from "@/components/task/ShowMeHighlight";
+import { SHOW_ME_LOOK, useShowMe } from "@/lib/use-show-me";
 
 /** Source-backed follow-ups, inside the same desktop and its single instruction voice. */
 export default function LessonFollowups() {
@@ -19,9 +21,8 @@ export default function LessonFollowups() {
   const [answers, setAnswers] = useState<Record<string, string>>(() => Object.fromEntries(round.fields.filter((f) => f.initial).map((f) => [f.id, f.initial!])));
   const [review, setReview] = useState(false);
   const [help, setHelp] = useState(false);
-  const [showSource, setShowSource] = useState(false);
+  const showMe = useShowMe();
   const heading = useRef<HTMLHeadingElement>(null);
-  const sources = useRef<HTMLElement>(null);
   const attachmentControl = useRef<HTMLButtonElement>(null);
   useEffect(() => { heading.current?.focus(); }, [review]);
   const es = lang === "es";
@@ -30,10 +31,6 @@ export default function LessonFollowups() {
     setAnswers((prev) => ({ ...prev, [id]: value }));
     if (id === "attachment") requestAnimationFrame(() => attachmentControl.current?.focus());
   };
-  const showMe = () => {
-    setShowSource((value) => !value);
-    sources.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  };
   const instruction = review
     ? { en: "Check the details against the source material. Edit if needed, then confirm.", es: "Revisa los detalles con los documentos. Corrige si hace falta y luego confirma." }
     : round.guidance;
@@ -41,7 +38,8 @@ export default function LessonFollowups() {
   return (
     <div className="h-full overflow-y-auto bg-[#f8fafc] text-[#202124]" data-testid="lesson-followup" data-round={round.id}>
       {!done && <RightNowBar taskKey={lesson.taskKey} stepIndex={roundIndex * 2 + (review ? 1 : 0)} stepCount={4}
-        instruction={instruction} goal={round.goal} onHelp={() => setHelp(true)} onShowMe={showMe} showMeActive={showSource} />}
+        instruction={instruction} goal={round.goal} onHelp={() => setHelp(true)} onShowMe={() => showMe.toggleFor("followup-sources")} showMeActive={showMe.targetId === "followup-sources"} />}
+      <ShowMeHighlight targetId={done ? null : showMe.targetId} label={SHOW_ME_LOOK[lang]} onDismiss={showMe.clear} />
       <HelpDrawer open={help} onClose={() => setHelp(false)} kicker={es ? "Práctica" : "Practice"}
         lesson={{ t: round.title[lang], s: [round.help[lang]], tip: es ? "Puedes volver a los documentos en cualquier momento." : "You can check the source material at any time." }}
         tipLabel={es ? "Consejo" : "Tip"} gotItLabel={es ? "Volver a mi tarea" : "Back to my task"} />
@@ -49,7 +47,7 @@ export default function LessonFollowups() {
         <p className="text-xs font-medium text-slate-500">{es ? `Situación ${roundIndex + 2} de 3` : `Situation ${roundIndex + 2} of 3`}</p>
         <h1 ref={heading} tabIndex={-1} className="mt-1 text-xl font-semibold outline-none">{round.title[lang]}</h1>
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <section ref={sources} aria-label={es ? "Documentos" : "Source material"} className={`space-y-4 rounded-lg ${showSource ? "ring-4 ring-blue-300 ring-offset-4" : ""}`}>
+          <section data-showme="followup-sources" aria-label={es ? "Documentos" : "Source material"} className="space-y-4 rounded-lg">
             {round.sources.map((source, i) => <article key={i} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
               <h2 className="border-b border-slate-100 pb-3 font-semibold">{source.title[lang]}</h2>
               <div className="mt-3 space-y-3 text-sm leading-relaxed">{source.lines.map((line, j) => <p key={j}>{line[lang]}</p>)}</div>
@@ -70,7 +68,7 @@ export default function LessonFollowups() {
               const problem = practiceProblem(round, answers);
               if (problem) return correct(problem[lang]);
               clearCorrection();
-              setShowSource(false);
+              showMe.clear();
               setReview(true);
             }}>
               <div className="space-y-6">

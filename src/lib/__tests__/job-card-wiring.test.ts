@@ -12,25 +12,30 @@ import { join } from "node:path";
  */
 
 const TASK_DIR = join(process.cwd(), "src/app/browser");
-const EXTRA = [join(process.cwd(), "src/app/mail/MailClient.tsx")];
-
-const taskFiles = [
+// Discover every Show me reporter, including shared lesson and non-Task views.
+const reporters = readdirSync(join(process.cwd(), "src"), { recursive: true, encoding: "utf8" })
+  .filter((path) => path.endsWith(".tsx"))
+  .map((path) => join(process.cwd(), "src", path))
+  .filter((path) => /onShowMe=/.test(readFileSync(path, "utf8")));
+const taskFiles = [...new Set([
   ...readdirSync(TASK_DIR)
     .filter((f) => f.endsWith("Task.tsx"))
     .map((f) => join(TASK_DIR, f)),
-  ...EXTRA,
-];
+  ...reporters,
+])];
 
 function read(path: string) {
   const src = readFileSync(path, "utf8");
   // A task that draws its document in a sibling file (OnboardingFormsTask ->
   // W4Document) marks its Show me targets there, so those count as its own.
   const dir = path.slice(0, path.lastIndexOf("/"));
-  const children = [...src.matchAll(/from "\.\/([A-Za-z0-9]+)"/g)]
+  const children = [...src.matchAll(/from ["']\.\/([A-Za-z0-9]+)["']/g)]
     .map((m) => join(dir, `${m[1]}.tsx`))
     .filter((child) => { try { readFileSync(child); return true; } catch { return false; } })
     .map((child) => readFileSync(child, "utf8"));
-  return { name: path.split("/").pop()!, src, targetsSrc: [src, ...children].join("\n") };
+  // Offline recovery intentionally points outside the app, at the shelf.
+  const shell = path.endsWith("OfflinePage.tsx") ? readFileSync(join(process.cwd(), "src/components/Shelf.tsx"), "utf8") : "";
+  return { name: path.split("/").pop()!, src, targetsSrc: [src, ...children, shell].join("\n") };
 }
 const tasks = taskFiles.map(read);
 
@@ -41,9 +46,9 @@ const tasks = taskFiles.map(read);
  */
 function showMeIds(src: string): string[] {
   const ids = new Set<string>();
-  for (const m of src.matchAll(/const showMeId\s*=([\s\S]*?);\n/g)) {
-    const chosen = m[1].replace(/[!=]==?\s*"[^"]*"/g, "");
-    for (const q of chosen.matchAll(/"([a-z0-9-]+)"/g)) ids.add(q[1]);
+  for (const m of src.matchAll(/const (?:showMeIds?|SHOW_ME_IDS|APPT_SHOW_ME)\s*=([\s\S]*?);\n/g)) {
+    const chosen = m[1].replace(/`[^`]*`/g, "").replace(/[!=]==?\s*["'][^"']*["']/g, "");
+    for (const q of chosen.matchAll(/["']([a-z0-9-]+)["']/g)) ids.add(q[1]);
   }
   for (const m of src.matchAll(/toggleFor\(\s*"([a-z0-9-]+)"\s*\)/g)) ids.add(m[1]);
   for (const m of src.matchAll(/setShowMeTarget\([^)]*?"([a-z0-9-]+)"/g)) ids.add(m[1]);
@@ -55,8 +60,9 @@ function showMeTargets(src: string): string[] {
   const ids = new Set<string>();
   for (const m of src.matchAll(/data-showme=(?:"([a-z0-9-]+)"|\{([^}]*)\})/g)) {
     if (m[1]) ids.add(m[1]);
-    else for (const q of m[2].matchAll(/"([a-z0-9-]+)"/g)) ids.add(q[1]);
+    else for (const q of m[2].matchAll(/["']([a-z0-9-]+)["']/g)) ids.add(q[1]);
   }
+  for (const m of src.matchAll(/showMeId=["']([a-z0-9-]+)["']/g)) ids.add(m[1]);
   // A shared component that renders the target itself (PickerModal's
   // `showMeList` / `showMeConfirm`) takes the id as a prop.
   for (const m of src.matchAll(/showMe(?:Row|List|Confirm):\s*"([a-z0-9-]+)"/g)) ids.add(m[1]);

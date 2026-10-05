@@ -10,6 +10,8 @@ import { practiceScenario } from '@/lib/tasks/confidence/classroom';
 import { assessPractice } from '@/lib/tasks/confidence/content';
 import RightNowBar from '@/components/task/RightNowBar';
 import HelpDrawer from '@/components/task/HelpDrawer';
+import ShowMeHighlight from '@/components/task/ShowMeHighlight';
+import { SHOW_ME_LOOK, SHOW_ME_POINTER, useShowMe } from '@/lib/use-show-me';
 import PickerModal from '@/components/task/PickerModal';
 import LessonSheet from './LessonSheet';
 import { LessonPortal, LessonClassroom } from './LessonPortal';
@@ -57,15 +59,23 @@ function Practice(){
   const [names,setNames]=useState<Record<string,string>>({});
   const [grants,setGrants]=useState<Record<string,Record<string,string>>>({});
   const [scopes,setScopes]=useState<Record<string,string>>({});
-  const root=useRef<HTMLDivElement>(null);
+  const showMe=useShowMe();
+  const nextCell=s.rows?.map((_,i)=>`B${i+2}`).find(cell=>!values[cell]?.trim());
+  const showMeId=sheet
+    ? view==='sent'?'practice-result':view==='edit'?'practice-compose':nextCell?`lesson-sheet-${nextCell}`:'lesson-sheet-email'
+    : mail ? view==='sent'?'practice-result':view==='edit'?'practice-compose':'lesson-mail-target'
+    : schedule ? 'practice-schedule'
+    : files ? receipt?'practice-result':'practice-files'
+    : coursework ? 'practice-coursework'
+    : view==='edit'?'practice-edit':receipt?'practice-result':'practice-request';
   const opener=useRef<HTMLButtonElement>(null);
   const done=completedTaskKeys.includes(key);
   const chosen=s.files?.find(f=>f.key===values.file);
   const fileName=chosen?(names[chosen.key]??chosen.name):'';
   const fileGrants=grants[values.file]??{};
-  const set=(name:string,value:string)=>{clearCorrection();setValues(v=>({...v,[name]:value}));};
-  const begin=()=>{clearCorrection();setReceipt(null);setDraftActive(true);setView('edit');};
-  const action=(data=values)=>{clearCorrection();setReceipt({...data});setDraftActive(false);setView('sent');if(mail||sheet)setSent(old=>[...old,{...data,subject:data.subject??s.title[lang]}]);};
+  const set=(name:string,value:string)=>{showMe.clear();clearCorrection();setValues(v=>({...v,[name]:value}));};
+  const begin=()=>{showMe.clear();clearCorrection();setReceipt(null);setDraftActive(true);setView('edit');};
+  const action=(data=values)=>{showMe.clear();clearCorrection();setReceipt({...data});setDraftActive(false);setView('sent');if(mail||sheet)setSent(old=>[...old,{...data,subject:data.subject??s.title[lang]}]);};
   const check=()=>{
     if(!receipt)return;
     const problem=assessPractice(key,scenario,s,receipt,message);
@@ -83,33 +93,34 @@ function Practice(){
   const closePicker=()=>{setPicker(false);requestAnimationFrame(()=>opener.current?.focus());};
   const attach=<button ref={opener} type="button" className={button} onClick={()=>{setPreview(null);if(coursework)setAddMenu(v=>!v);else setPicker(true);}}>{coursework?t('Add or create','Agregar o crear'):t('Attach files','Adjuntar archivos')}</button>;
   const chip=chosen&&<div className="my-3 flex flex-wrap items-center gap-2 rounded border p-3"><button className="break-all text-left underline" onClick={()=>setPreview(chosen.key)} type="button">{chosen.name}</button><button type="button" className={button} onClick={()=>set('file','')}>{t('Remove','Quitar')}</button></div>;
-  const compose=<form className="space-y-4 rounded-xl border bg-white p-4" onSubmit={e=>{e.preventDefault();action();}}>
+  const compose=<form data-showme="practice-compose" className="space-y-4 rounded-xl border bg-white p-4" onSubmit={e=>{e.preventDefault();action();}}>
     <h2 className="text-lg font-medium">{mail&&!newMessage?t('Reply','Responder'):t('New message','Mensaje nuevo')}</h2>
     {mail?<label className="flex min-h-11 items-center gap-3 border-b border-[#dadce0] text-[#5f6368]"><span>{t('To','Para')}</span><input aria-label={t('To','Para')} type="email" required className="min-h-11 min-w-0 flex-1 bg-transparent text-[#202124] outline-[#0b57d0]" value={values.recipient??''} onChange={e=>set('recipient',e.target.value)} /></label>:field('recipient',t('To','Para'),'email')}
     {mail&&newMessage?field('subject',t('Subject','Asunto')):<p>{t('Subject','Asunto')}: {mail?'Re: ':''}{s.title[lang]}</p>}
     <label className="block"><span className={mail?"sr-only":undefined}>{t('Message','Mensaje')}</span><textarea aria-label={t('Message','Mensaje')} className={mail?"block min-h-40 w-full resize-y bg-white py-3 text-[15px] leading-relaxed outline-[#0b57d0]":`${input} min-h-32`} value={values.body??''} onChange={e=>set('body',e.target.value)} /></label>
     {s.files&&<>{attach}{chip}</>}
-    <div className="flex flex-wrap gap-3"><button type="submit" className={mail?"min-h-11 rounded-full bg-[#0b57d0] px-7 py-2 font-medium text-white hover:bg-[#0842a0]":primary}>{t('Send','Enviar')}</button>{sheet&&<button type="button" className={button} onClick={()=>setView('read')}>{t('Back to sheet','Volver a la hoja')}</button>}</div>
+    <div className="flex flex-wrap gap-3"><button type="submit" className={mail?"min-h-11 rounded-full bg-[#0b57d0] px-7 py-2 font-medium text-white hover:bg-[#0842a0]":primary}>{t('Send','Enviar')}</button>{sheet&&<button type="button" className={button} onClick={()=>{showMe.clear();setView('read');}}>{t('Back to sheet','Volver a la hoja')}</button>}</div>
   </form>;
-  const sentPane=<section className="space-y-3" data-testid="practice-result"><h2 className="text-lg font-medium">{t('Sent','Enviados')}</h2>{sent.map((r,i)=><SentEmailRecap key={i} heading={t('Sent','Enviado')} toLabel={t('To','Para')} to={r.recipient} subjectLabel={t('Subject','Asunto')} subject={r.subject??s.title[lang]} body={r.body??''} fact={r.file?{label:t('Attachment','Adjunto'),value:s.files?.find(f=>f.key===r.file)?.name??r.file}:undefined}/>)}<button className={button} onClick={begin}>{t('Write a follow-up','Escribir otro correo')}</button>{sheet&&<button className={button} onClick={()=>setView('read')}>{t('Back to sheet','Volver a la hoja')}</button>}</section>;
-  const courseworkPane=<section className="space-y-4 rounded-xl border bg-white p-5"><h2 className="flex justify-between gap-3 text-lg font-semibold">{t('Your work','Tu trabajo')}<span data-testid="submission-status">{receipt?status:t('Assigned','Asignado')}</span></h2>
+  const sentPane=<section data-showme="practice-result" data-showme-look={SHOW_ME_LOOK[lang]} className="space-y-3" data-testid="practice-result"><h2 className="text-lg font-medium">{t('Sent','Enviados')}</h2>{sent.map((r,i)=><SentEmailRecap key={i} heading={t('Sent','Enviado')} toLabel={t('To','Para')} to={r.recipient} subjectLabel={t('Subject','Asunto')} subject={r.subject??s.title[lang]} body={r.body??''} fact={r.file?{label:t('Attachment','Adjunto'),value:s.files?.find(f=>f.key===r.file)?.name??r.file}:undefined}/>)}<button className={button} onClick={begin}>{t('Write a follow-up','Escribir otro correo')}</button>{sheet&&<button className={button} onClick={()=>{showMe.clear();setView('read');}}>{t('Back to sheet','Volver a la hoja')}</button>}</section>;
+  const courseworkPane=<section data-showme="practice-coursework" data-showme-look={SHOW_ME_LOOK[lang]} className="space-y-4 rounded-xl border bg-white p-5"><h2 className="flex justify-between gap-3 text-lg font-semibold">{t('Your work','Tu trabajo')}<span data-testid="submission-status">{receipt?status:t('Assigned','Asignado')}</span></h2>
       {receipt?<><p>{s.files?.find(f=>f.key===receipt.file)?.name}</p><button className={button} onClick={()=>{setConfirm(true);}}>{t('Unsubmit','Anular entrega')}</button></>:<>{attach}{addMenu&&<div><button className={button} onClick={()=>{setAddMenu(false);setPicker(true);}}>Google Drive</button></div>}{chip}<button className={primary} onClick={()=>setConfirm(true)}>{t('Turn in','Entregar')}</button></>}
     </section>;
-  const shiftPane=<section className="space-y-4 rounded-xl border bg-white p-5">
+  const shiftPane=<section data-showme={schedule?"practice-schedule":undefined} data-showme-look={schedule?SHOW_ME_LOOK[lang]:undefined} className="space-y-4 rounded-xl border bg-white p-5">
       <h2 className="text-lg font-semibold">{calendar?t('Event invitation','Invitación de evento'):t('Shift change','Cambio de turno')}</h2>
-      {receipt&&<div data-testid="practice-result" role="status"><strong>{status}</strong><p>{receipt.date} · {receipt.time}{calendar?` – ${receipt.end}`:''}</p><p>{receipt.body}</p></div>}
-      {view!=='edit'?<button className={button} onClick={begin}>{calendar?t('Propose a new time','Proponer otra hora'):t('Request change','Solicitar cambio')}</button>:<form className="space-y-4" onSubmit={e=>{e.preventDefault();if(calendar&&values.end<=values.time){correct(t('End time must be after start time.','La hora de fin debe ser posterior al inicio.'));return;}action({...values,recipient:s.recipient??''});}}>
+      {receipt&&<div data-showme="practice-result" data-showme-look={SHOW_ME_LOOK[lang]} data-testid="practice-result" role="status"><strong>{status}</strong><p>{receipt.date} · {receipt.time}{calendar?` – ${receipt.end}`:''}</p><p>{receipt.body}</p></div>}
+      {view!=='edit'?<button data-showme="practice-request" className={button} onClick={begin}>{calendar?t('Propose a new time','Proponer otra hora'):t('Request change','Solicitar cambio')}</button>:<form data-showme="practice-edit" className="space-y-4" onSubmit={e=>{e.preventDefault();if(calendar&&values.end<=values.time){correct(t('End time must be after start time.','La hora de fin debe ser posterior al inicio.'));return;}action({...values,recipient:s.recipient??''});}}>
         {field('date',t('Date','Fecha'),'date')}{field('time',t('Start time','Hora de inicio'),'time')}{calendar&&field('end',t('End time','Hora de fin'),'time')}
         <label className="block">{t('Note (optional)','Nota (opcional)')}<textarea className={input} aria-label={t('Note (optional)','Nota (opcional)')} value={values.body??''} onChange={e=>set('body',e.target.value)}/></label>
         <button className={primary} type="submit">{calendar?t('Send proposal','Enviar propuesta'):t('Send request','Enviar solicitud')}</button>
       </form>}
     </section>;
-  return <div ref={root} data-testid="confidence-practice" data-practice-app={key} className="h-full overflow-y-auto bg-[#f6f8fc] text-[#202124]">
+  return <div data-testid="confidence-practice" data-practice-app={key} className="h-full overflow-y-auto bg-[#f6f8fc] text-[#202124]">
     {!done&&<RightNowBar taskKey={key} stepIndex={receipt?2:view==='home'?0:1} stepCount={3} instruction={instruction} goal={receipt?instruction:s.request}
       facts={(files||sheet)&&s.recipient?[{label:l('Recipient','Destinatario'),value:s.recipient}]:undefined}
-      onHelp={()=>setHelp(true)} onShowMe={()=>{const selector=receipt?'[data-testid="practice-result"],[data-testid="submission-status"]':view==='edit'?'textarea,input':sheet?'[data-cell="B2"]':files?'table':mail?'article':'section';root.current?.querySelector(selector)?.scrollIntoView({block:'center',behavior:'smooth'});}}
+      showMeActive={showMe.targetId===showMeId}
+      onHelp={()=>setHelp(true)} onShowMe={()=>showMe.toggleFor(showMeId)}
       {...(receipt?{primaryLabel:t('Check my work','Revisar mi trabajo'),onPrimary:check}:{})} />}
-    {mail ? <LessonMail key={message} scenario={s} view={view} onView={setView} onReply={()=>{setNewMessage(false);begin();}} onResume={begin} newMessage={newMessage} onCompose={()=>{if(!draftActive){setNewMessage(true);setValues(v=>({...v,recipient:"",subject:"",body:"",file:""}));}begin();}} compose={compose} sources={source} sent={sentPane} sentCount={sent.length} hasDraft={draftActive&&Boolean(values.body||values.file)} /> : sheet ? <LessonSheet scenario={s} lang={lang} values={values} onChange={set} onEmail={begin} overlay={view==='edit'?compose:view==='sent'?sentPane:undefined}/> : schedule ? <LessonPortal scenario={s} lang={lang} onRequest={begin}>{shiftPane}</LessonPortal> : coursework ? <LessonClassroom scenario={s} lang={lang}>{courseworkPane}</LessonClassroom> : <>
+    {mail ? <LessonMail key={message} scenario={s} view={view} onView={next=>{showMe.clear();setView(next);}} onReply={()=>{setNewMessage(false);begin();}} onResume={begin} newMessage={newMessage} onCompose={()=>{if(!draftActive){setNewMessage(true);setValues(v=>({...v,recipient:"",subject:"",body:"",file:""}));}begin();}} compose={compose} sources={source} sent={sentPane} sentCount={sent.length} hasDraft={draftActive&&Boolean(values.body||values.file)} /> : sheet ? <LessonSheet scenario={s} lang={lang} values={values} onChange={set} onEmail={begin} overlay={view==='edit'?compose:view==='sent'?sentPane:undefined}/> : schedule ? <LessonPortal scenario={s} lang={lang} onRequest={begin}>{shiftPane}</LessonPortal> : coursework ? <LessonClassroom scenario={s} lang={lang}>{courseworkPane}</LessonClassroom> : <>
     <header className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b bg-white px-5 py-3">
       <h1 className="text-xl font-medium">{sheet?'Sheets':files?'Drive':coursework?'Classroom':calendar?t('Calendar','Calendario'):t('Schedule portal','Portal de horarios')}</h1>
       <span className="text-sm">{s.title[lang]}</span>
@@ -118,8 +129,8 @@ function Practice(){
       <article className="space-y-3 rounded-xl border bg-white p-4"><h2 className="font-semibold">{t('Request','Solicitud')}{s.recipient?` · ${s.recipient}`:''}</h2><p>{s.request[lang]}</p>{source}</article>
     {files&&<>
       <h2 className="text-lg font-semibold">{t('My Drive','Mi unidad')}</h2>
-      <div className="overflow-x-auto rounded border bg-white"><table className="w-full text-left"><thead><tr><th className="p-3">{t('Name','Nombre')}</th><th className="p-3">{t('Actions','Acciones')}</th></tr></thead><tbody>{s.files?.map(f=><tr key={f.key} className="border-t"><td className="p-3"><button className="text-left underline" onClick={()=>{set('file',f.key);setPreview(f.key);}}>{names[f.key]??f.name}</button></td><td className="flex flex-wrap gap-2 p-2"><button className={button} onClick={()=>{setValues(v=>({...v,file:f.key,name:names[f.key]??f.name}));setRename(true);}}>{t('Rename','Cambiar nombre')}</button><button className={button} onClick={()=>{setValues(v=>({...v,file:f.key,recipient:'',permission:'view',scope:scopes[f.key]??'restricted'}));setSharing(true);}}>{t('Share','Compartir')}</button></td></tr>)}</tbody></table></div>
-      {receipt&&<p data-testid="practice-result" role="status">{status} · {receipt.name}</p>}
+      <div className="overflow-x-auto rounded border bg-white"><table data-showme="practice-files" data-showme-look={SHOW_ME_LOOK[lang]} className="w-full text-left"><thead><tr><th className="p-3">{t('Name','Nombre')}</th><th className="p-3">{t('Actions','Acciones')}</th></tr></thead><tbody>{s.files?.map(f=><tr key={f.key} className="border-t"><td className="p-3"><button className="text-left underline" onClick={()=>{set('file',f.key);setPreview(f.key);}}>{names[f.key]??f.name}</button></td><td className="flex flex-wrap gap-2 p-2"><button className={button} onClick={()=>{setValues(v=>({...v,file:f.key,name:names[f.key]??f.name}));setRename(true);}}>{t('Rename','Cambiar nombre')}</button><button className={button} onClick={()=>{setValues(v=>({...v,file:f.key,recipient:'',permission:'view',scope:scopes[f.key]??'restricted'}));setSharing(true);}}>{t('Share','Compartir')}</button></td></tr>)}</tbody></table></div>
+      {receipt&&<p data-showme="practice-result" data-showme-look={SHOW_ME_LOOK[lang]} data-testid="practice-result" role="status">{status} · {receipt.name}</p>}
     </>}
     {calendar&&shiftPane}
     </div></>}
@@ -132,6 +143,7 @@ function Practice(){
       <label className="block">{t('General access','Acceso general')}<select aria-label={t('General access','Acceso general')} className={input} value={values.scope} onChange={e=>set('scope',e.target.value)}><option value="restricted">{t('Restricted','Restringido')}</option><option value="anyone">{t('Anyone with the link','Cualquier persona con el enlace')}</option></select></label><button type="submit" className={primary}>{t('Save','Guardar')}</button>
     </form></Dialog>}
     {confirm&&<Dialog title={receipt?t('Unsubmit work?','¿Anular entrega?'):t('Turn in work?','¿Entregar trabajo?')} close={()=>setConfirm(false)} closeLabel={t('Cancel','Cancelar')}><p>{chosen?.name??t('No attachment','Sin adjunto')}</p><button className={`${primary} mt-4`} onClick={()=>{setConfirm(false);if(receipt){setReceipt(null);clearCorrection();}else action();}}>{receipt?t('Unsubmit','Anular entrega'):t('Turn in','Entregar')}</button></Dialog>}
+    <ShowMeHighlight targetId={!done&&showMe.targetId===showMeId?showMe.targetId:null} label={SHOW_ME_POINTER[lang]} onDismiss={showMe.clear} />
     <HelpDrawer open={help} onClose={()=>setHelp(false)} kicker={t('Practice help','Ayuda de práctica')} lesson={{t:s.title[lang],s:[s.help[lang],...(sheet?[t('To send the total, open File → Email → Email collaborators.','Para enviar el total, abre Archivo → Correo electrónico → Enviar correo a colaboradores.')]:[])],tip:t('This is practice feedback, not a check performed by the real app.','Son comentarios de práctica, no una revisión de la aplicación real.')}} tipLabel={t('Tip','Consejo')} gotItLabel={t('Back to my task','Volver a mi tarea')} />
   </div>;
 }

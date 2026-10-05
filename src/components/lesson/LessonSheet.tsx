@@ -20,7 +20,7 @@ export default function LessonSheet({ scenario: s, lang, values, onChange, onEma
   const t = (en: string, es: string) => lang === "es" ? es : en;
   return <div className="relative min-h-full" data-testid="lesson-sheet-workspace">
     <SheetsFrame fileName={s.title[lang]}>
-      <SheetEmailMenu lang={lang} onEmail={onEmail} />
+      <SheetEmailMenu lang={lang} onEmail={onEmail} showMeId="lesson-sheet-email" />
       <div aria-hidden="true" className="flex flex-wrap items-center gap-5 border-b border-[#dadce0] bg-[#f9fbfd] px-5 py-2 text-sm text-[#5f6368]">
         <span>↶</span><span>↷</span><span>🖨</span><span>100%</span><span>|</span><span>Arial</span><span>10</span><b>B</b><i>I</i><u>U</u><span>⊞</span><span>≡</span>
       </div>
@@ -44,7 +44,7 @@ export default function LessonSheet({ scenario: s, lang, values, onChange, onEma
                 <th className="h-9 text-center">{row}</th>
                 <td className="px-2">{row === 1 ? t("Item", "Artículo") : row === totalRow ? t("Total", "Total") : entry?.label[lang]}</td>
                 <td className={selected === cell ? "outline-2 -outline-offset-2 outline-[#1a73e8]" : ""}>
-                  {row === 1 ? <span className="px-2">{t("Amount", "Cantidad")}</span> : row === totalRow ? <button type="button" aria-label={t("Total cell", "Celda del total")} data-testid="sheet-total" className="min-h-9 w-full px-2 text-right tabular-nums" onClick={() => {setSelected(cell); setFormula(`=SUM(B2:B${totalRow - 1})`);}}>{Number.isFinite(total) ? total.toFixed(2) : '#VALUE!'}</button> : entry ? <input aria-label={cell} data-cell={cell} inputMode="decimal" className="min-h-9 w-full bg-transparent px-2 text-right tabular-nums outline-[#1a73e8]" value={values[cell] ?? ''} onFocus={() => {setSelected(cell); setFormula(values[cell] ?? '');}} onChange={e => {onChange(cell, e.target.value); setFormula(e.target.value);}} onKeyDown={e => {
+                  {row === 1 ? <span className="px-2">{t("Amount", "Cantidad")}</span> : row === totalRow ? <button type="button" aria-label={t("Total cell", "Celda del total")} data-testid="sheet-total" className="min-h-9 w-full px-2 text-right tabular-nums" onClick={() => {setSelected(cell); setFormula(`=SUM(B2:B${totalRow - 1})`);}}>{Number.isFinite(total) ? total.toFixed(2) : '#VALUE!'}</button> : entry ? <input aria-label={cell} data-cell={cell} data-showme={`lesson-sheet-${cell}`} inputMode="decimal" className="min-h-9 w-full bg-transparent px-2 text-right tabular-nums outline-[#1a73e8]" value={values[cell] ?? ''} onFocus={() => {setSelected(cell); setFormula(values[cell] ?? '');}} onChange={e => {onChange(cell, e.target.value); setFormula(e.target.value);}} onKeyDown={e => {
                     if (['Enter','ArrowDown','ArrowUp'].includes(e.key)) {const next = row + (e.key === 'ArrowUp' ? -1 : 1); if (next >= 2 && next < totalRow) {e.preventDefault(); grid.current?.querySelector<HTMLInputElement>(`[data-cell="B${next}"]`)?.focus();}}
                   }}/> : null}
                 </td>{['C','D','E'].map(c => <td key={c}/>)}

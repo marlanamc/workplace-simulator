@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { waitForInteractive } from "./interactive";
+import { verifyShowMe } from "./show-me";
 import { FOLLOWUP_ROUNDS } from "@/lib/tasks/lesson-followups/content";
 
 async function start(page: Page, key: string, lang: string) {
@@ -25,6 +26,7 @@ for (const lang of ["en", "es"]) {
     await page.locator('textarea[data-showme="compose-body"]').fill(lang === "en" ? "I cannot work today." : "No puedo trabajar hoy.");
     await page.locator('[data-showme="send-button"]').click();
     await expect(page.getByTestId("lesson-followup")).toHaveAttribute("data-round", "absence-policy");
+    await verifyShowMe(page, lang === "en" ? "en" : "es", "followup-sources");
     await expect(page.getByTestId("lesson-practice-again")).toHaveCount(0);
     await choose(page, "contact", "email");
     await choose(page, "message", "shift");

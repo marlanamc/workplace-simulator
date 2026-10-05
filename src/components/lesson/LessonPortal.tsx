@@ -21,7 +21,7 @@ export function LessonPortal({ scenario: s, lang, children, onRequest }: {scenar
         <div className="min-w-0 flex-1 space-y-5">
           <section className="overflow-hidden rounded-xl border border-border bg-white"><h3 className="border-b border-border bg-[#f8f9fa] px-4 py-3 font-semibold">{s.sources[0]?.title[lang]}</h3><div className="px-4 py-4"><p className="mb-3 text-sm text-text-secondary">{s.scheduleDisplay?.date[lang]}</p>{s.scheduleDisplay ? s.scheduleDisplay.slots.map((slot,i) => <div key={i} className="flex flex-wrap items-center justify-between gap-3 border-t border-border py-4"><span className="font-medium">{slot.label[lang]}</span><span className="tabular-nums">{slot.time[lang]}</span></div>) : <p className="whitespace-pre-line leading-loose">{s.sources[0]?.text[lang]}</p>}</div></section>
           <div hidden={tab !== 'swap'}>{children}</div>
-          {tab === 'schedule' && <button className="min-h-11 rounded-lg border border-[#8430ce] bg-white px-5 py-2 font-medium text-[#8430ce]" onClick={() => {setTab('swap'); onRequest();}}>{t('Request change','Solicitar cambio')}</button>}
+          {tab === 'schedule' && <button data-showme="practice-schedule" className="min-h-11 rounded-lg border border-[#8430ce] bg-white px-5 py-2 font-medium text-[#8430ce]" onClick={() => {setTab('swap'); onRequest();}}>{t('Request change','Solicitar cambio')}</button>}
         </div>
         <aside className="w-full shrink-0 lg:w-[260px]">
           <PhoneFrame label={t('Your phone','Tu teléfono')}>
