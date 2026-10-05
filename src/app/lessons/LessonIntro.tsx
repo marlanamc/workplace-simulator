@@ -15,7 +15,7 @@ const subscribe = () => () => {};
  * The scene a lesson opens on: who you are, who the task names, and what is
  * needed today. Story mode builds this up over many tasks; a lesson learner
  * arrives cold. Orientation only, like `ActIntro` — the steps stay on the
- * Job Card, and the people stay on the info card afterwards.
+ * Job Card, and the people stay in its Key information afterwards.
  */
 export default function LessonIntro({
   title,
@@ -38,11 +38,12 @@ export default function LessonIntro({
 }) {
   const { lang } = useProgress();
   const interactive = useSyncExternalStore(subscribe, () => true, () => false);
-  const people = scene.people.map((p) => `${p.name}: ${p.role[lang]}.`);
+  const people = scene.people.map((p) => `${p.name}: ${p.role[lang]}. ${p.who[lang]}`);
   // Only the job names: the examples are for the teacher, and every extra
   // sentence here is reading before the learner has started.
   const workLine = atWork.length ? `${LESSON_COPY.introAtWork[lang]} ${atWork.map((w) => w.setting[lang]).join(", ")}.` : "";
-  const speak = [title[lang], scene.you[lang], ...people, scene.need[lang], workLine, (reference.length ? LESSON_COPY.introCardFacts : LESSON_COPY.introCard)[lang]]
+  const cardNote = (reference.length || scene.people.length ? LESSON_COPY.introCardFacts : LESSON_COPY.introCard)[lang];
+  const speak = [title[lang], scene.you[lang], ...people, cardNote, scene.need[lang], workLine]
     .filter(Boolean)
     .join(" ");
 
@@ -58,24 +59,25 @@ export default function LessonIntro({
         <h1 className="mt-1 text-[30px] leading-[1.1] font-semibold tracking-tight sm:text-[38px]">{title[lang]}</h1>
       </div>
 
-      <section aria-labelledby="lesson-intro-need" className="mt-6 rounded-2xl bg-[#ece3d3] px-5 py-5 sm:px-7 sm:py-6">
-        <h2 id="lesson-intro-need" className="text-base font-semibold">{LESSON_COPY.introNeed[lang]}</h2>
-        <p className="mt-2 text-lg leading-relaxed">{scene.need[lang]}</p>
-        {workLine && <p data-testid="lesson-intro-at-work" className="mt-3 mb-0 text-base text-[#5f4b3a]">{workLine}</p>}
-      </section>
-
-      {/* The real card: who you are, who the task names, and what to copy.
-          Seeing it here first means the learner knows what to look for. */}
+      {/* The real card first: who you are, who the task names and what they
+          are to you, and what to copy. Then what is needed today, so the
+          situation reads in story order. */}
       <section aria-labelledby="lesson-intro-card" className="mt-6">
         <h2 id="lesson-intro-card" className="text-lg font-semibold">
           {persona
             ? fill(LESSON_COPY.introCardTitlePersona[lang], { name: persona.split(" ")[0] })
             : LESSON_COPY.introCardTitle[lang]}
         </h2>
-        <p className="mt-1 text-base leading-relaxed text-[#3c4043]">{(reference.length ? LESSON_COPY.introCardFacts : LESSON_COPY.introCard)[lang]}</p>
+        <p className="mt-1 text-base leading-relaxed text-[#3c4043]">{cardNote}</p>
         <div className="mt-3 max-w-[420px] overflow-hidden rounded-[8px]" style={INFO_PAPER}>
           <InfoCardBody scene={scene} reference={reference} lang={lang} />
         </div>
+      </section>
+
+      <section aria-labelledby="lesson-intro-need" className="mt-6 rounded-2xl bg-[#ece3d3] px-5 py-5 sm:px-7 sm:py-6">
+        <h2 id="lesson-intro-need" className="text-base font-semibold">{LESSON_COPY.introNeed[lang]}</h2>
+        <p className="mt-2 text-lg leading-relaxed">{scene.need[lang]}</p>
+        {workLine && <p data-testid="lesson-intro-at-work" className="mt-3 mb-0 text-base text-[#5f4b3a]">{workLine}</p>}
       </section>
 
       <button

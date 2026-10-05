@@ -1,4 +1,4 @@
-import type { LessonFact } from "@/lib/lessons/types";
+import type { LessonFact, LessonPerson } from "@/lib/lessons/types";
 import type { Lang } from "@/lib/task-types";
 
 /** Plain text of a fact's value, for read-aloud (never markup). */
@@ -46,5 +46,38 @@ export function FactList({ facts, lang }: { facts: LessonFact[]; lang: Lang }) {
         );
       })}
     </dl>
+  );
+}
+
+/**
+ * Each person as "Maria Delgado: Your manager". Name and role only: the card
+ * is read at every step, and the intro screen already read who they are.
+ */
+export function peopleSpokenText(people: LessonPerson[] | undefined, lang: Lang): string {
+  if (!people || people.length === 0) return "";
+  return people.map((p) => `${p.name}: ${p.role[lang]}`).join(". ");
+}
+
+/**
+ * Who a lesson's task names, kept in Key information beside the facts: a
+ * lesson learner reads "Email Maria" without ever having met her in Story
+ * mode. Name and role on one line, then one plain sentence of who they are.
+ * `brief` drops the sentence when other facts share the box, so Show me stays
+ * on a Chromebook screen; the intro already gave it in full.
+ */
+export function PeopleList({ people, lang, brief = false }: { people: LessonPerson[]; lang: Lang; brief?: boolean }) {
+  if (people.length === 0) return null;
+  return (
+    <ul data-testid="key-info-people" className="m-0 flex list-none flex-col gap-2 p-0">
+      {people.map((p) => (
+        <li key={p.name} className="leading-snug">
+          <p className="m-0 text-[15px]">
+            <span className="font-semibold text-[#202124]">{p.name}</span>
+            <span className="text-[#5f6368]"> · {p.role[lang]}</span>
+          </p>
+          {!brief && <p className="m-0 mt-0.5 text-[14px] text-[#3c4043]">{p.who[lang]}</p>}
+        </li>
+      ))}
+    </ul>
   );
 }

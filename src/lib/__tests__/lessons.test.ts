@@ -103,7 +103,10 @@ describe("lesson scenes", () => {
   it.each(LESSONS.map((l) => [l.taskKey, l] as const))("%s has a scene in both languages", (_key, lesson) => {
     expect(both(lesson.scene.you)).toBe(true);
     expect(both(lesson.scene.need)).toBe(true);
-    for (const p of lesson.scene.people) expect(both(p.role), p.name).toBe(true);
+    for (const p of lesson.scene.people) {
+      expect(both(p.role), p.name).toBe(true);
+      expect(both(p.who), `${p.name} says who they are`).toBe(true);
+    }
     for (const fact of lesson.reference ?? []) {
       expect(both(fact.label)).toBe(true);
       if (typeof fact.value !== "string") expect(both(fact.value), fact.label.en).toBe(true);
@@ -121,6 +124,14 @@ describe("lesson scenes", () => {
       }
     },
   );
+
+  // "Maria" in one lesson and "Maria Delgado" in the next reads as two people.
+  it.each(LESSONS.map((l) => [l.taskKey, l] as const))("%s gives cast members their full name", (_key, lesson) => {
+    for (const p of lesson.scene.people) {
+      const member = Object.values(CAST).find((m) => m.name.split(" ")[0] === p.name.split(" ")[0]);
+      if (member) expect(p.name).toBe(member.name);
+    }
+  });
 
   it.each(LESSONS.map((l) => [l.taskKey, l] as const))("%s introduces everyone its Job Card names", (key, lesson) => {
     const task = TASKS[key];

@@ -64,7 +64,18 @@ export default function LessonRunner({
   const router = useRouter();
   const entry = (lessonByKey(taskKey) ?? (draft ? draftLessonFor(taskKey) : undefined))!;
   const scenarioData = isConfidenceKey(taskKey) && taskKey !== "account-recovery" ? practiceScenario(taskKey, scenario) : taskKey === "account-recovery" && scenario !== "classroom" ? CONFIDENCE_SCENARIOS[taskKey][scenario] : null;
-  const scene = scenarioData ? { you: { en: "You are practicing with fictional information.", es: "Estás practicando con datos ficticios." }, people: [], need: scenarioData.request } : entry.scene;
+  // Classroom practice uses the lesson's own workplace and people ("Email
+  // Maria" needs to say who Maria is); the try and home examples are made-up
+  // settings with their own. Today's need is always the scenario's request,
+  // except the first mail reply, whose request is Maria's email itself.
+  const classroom = scenario === "classroom";
+  const scene = scenarioData
+    ? {
+        you: scenarioData.you ?? (classroom ? entry.scene.you : { en: "You are practicing with fictional information.", es: "Estás practicando con datos ficticios." }),
+        people: scenarioData.people ?? (classroom ? entry.scene.people : []),
+        need: classroom && taskKey === "mail-reply" ? entry.scene.need : scenarioData.request,
+      }
+    : entry.scene;
   const reference = scenarioData ? (scenarioData.expected.password ? [{ label: { en: "Email", es: "Correo" }, value: scenarioData.expected.email }, { label: { en: "Practice password", es: "Contraseña de práctica" }, value: scenarioData.expected.password }] : []) : entry.reference ?? [];
   const seed = useMemo(() => seedForLesson(taskKey)!, [taskKey]);
   const [mode, setModeState] = useState(initialMode);

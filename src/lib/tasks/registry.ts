@@ -229,10 +229,18 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["email"],
       minutes: 15,
       scene: {
-        you: { en: "Tomorrow is your first day at Harborside Cafe.", es: "Mañana es tu primer día en Harborside Cafe." },
+        you: { en: "You got a new job at Harborside Cafe, a small cafe. Tomorrow is your first day.", es: "Conseguiste un trabajo nuevo en Harborside Cafe, un café pequeño. Mañana es tu primer día." },
         people: [
-          { name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } },
-          { name: "Darnell Washington", role: { en: "A coworker. He works mornings too.", es: "Un compañero. También trabaja en las mañanas." } },
+          {
+            name: "Maria Delgado",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She runs the cafe. She hired you, and she sends you work emails.", es: "Ella dirige el café. Te contrató y te manda correos del trabajo." },
+          },
+          {
+            name: "Darnell Washington",
+            role: { en: "Your coworker", es: "Tu compañero de trabajo" },
+            who: { en: "He works the morning shift with you.", es: "Trabaja contigo en el turno de la mañana." },
+          },
         ],
         need: {
           en: "3 short emails will come, one at a time: 2 from Maria and 1 from Darnell. Write a short answer to each one.",
@@ -303,8 +311,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["email", "files"],
       minutes: 20,
       scene: {
-        you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
-        people: [{ name: "Maria Delgado", role: { en: "Your manager", es: "Tu gerente" } }],
+        you: { en: "You are a new team member at Harborside Cafe. You started this week.", es: "Eres parte del equipo nuevo de Harborside Cafe. Empezaste esta semana." },
+        people: [
+          {
+            name: "Maria Delgado",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She runs the cafe and hired you. She sends you work emails.", es: "Ella dirige el café y te contrató. Te manda correos del trabajo." },
+          },
+        ],
         need: {
           en: "You just started at the cafe. Maria sent you an email. She needs your food handler certificate from your Downloads folder. There are several similar files there. Read her email to find out which one, then send it to her.",
           es: "Empezaste a trabajar en el café hace poco. Maria te envió un correo. Necesita tu certificado de manipulador de alimentos de tu carpeta Descargas. Ahí hay varios archivos parecidos. Lee su correo para saber cuál, y luego envíaselo.",
@@ -354,9 +368,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       summary: { en: "Compare a schedule with a personal appointment and request a workable change.", es: "Comparar un horario con una cita y solicitar un cambio posible." },
       skills: ["scheduling", "workplace-systems"], minutes: 15,
       scene: {
-        you: { en: "You work at Harborside Cafe.", es: "Trabajas en Harborside Cafe." },
-        people: [{ name: "Maria", role: { en: "your manager", es: "tu gerente" } }],
-        need: { en: "Your posted shift overlaps a personal appointment. You need a shift you can attend.", es: "Tu turno coincide con una cita personal. Necesitas un turno al que puedas asistir." },
+        you: { en: "You are a team member at Harborside Cafe. Your manager posts the work schedule each week.", es: "Eres parte del equipo de Harborside Cafe. Tu gerente publica el horario de trabajo cada semana." },
+        people: [
+          {
+            name: "Maria Delgado",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She runs the cafe and makes the schedule. You ask her when you need a different shift.", es: "Ella dirige el café y hace el horario. Le pides a ella cuando necesitas otro turno." },
+          },
+        ],
+        need: { en: "One of your shifts is at the same time as a personal appointment. You need a shift you can work.", es: "Uno de tus turnos es a la misma hora que una cita personal. Necesitas un turno que sí puedas trabajar." },
       },
       takeaway: { en: "You practiced comparing the day and time before asking for a change.", es: "Practicaste comparar el día y la hora antes de pedir un cambio." },
       guide: {
@@ -501,7 +521,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       minutes: 20,
       scene: {
         you: { en: "You work at Harborside Cafe. Today you are sick.", es: "Trabajas en Harborside Cafe. Hoy te sientes mal." },
-        people: [{ name: "Maria", role: { en: "Your supervisor", es: "Tu supervisora" } }],
+        people: [
+          {
+            name: "Maria Delgado",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She runs the cafe and plans who works each shift. If you cannot come, she needs to know early.", es: "Ella dirige el café y decide quién trabaja en cada turno. Si no puedes ir, necesita saberlo con tiempo." },
+          },
+        ],
         need: { en: "It is Monday at 6:12 AM. You cannot work your 10:00 AM shift today. Maria needs to know. After this email, two hotel situations use a different contact rule.", es: "Es lunes a las 6:12 a. m. No puedes trabajar tu turno de las 10:00 a. m. de hoy. Maria necesita saberlo. Después de este correo, dos situaciones en un hotel usan otra regla de contacto." },
       },
       reference: [
@@ -652,8 +678,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["scheduling"],
       minutes: 10,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
-        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        you: { en: "You are a shift lead at Harborside Cafe. A shift lead runs a shift and helps the manager.", es: "Eres Shift Lead en Harborside Cafe. Un Shift Lead dirige un turno y ayuda a la gerente." },
+        people: [
+          {
+            name: "Renata Silva",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She is the general manager of the cafe. She plans the team meetings.", es: "Es la gerente general del café. Ella organiza las reuniones del equipo." },
+          },
+        ],
         need: {
           en: `Renata invited you to a meeting on ${longDate(HUDDLE_DAY, "en")}. Your work shifts are on the same calendar. The meeting must be on a day you work.`,
           es: `Renata te invitó a una reunión el ${longDate(HUDDLE_DAY, "es")}. Tus turnos están en el mismo calendario. La reunión tiene que ser un día que trabajas.`,
@@ -745,10 +777,18 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["files"],
       minutes: 20,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
+        you: { en: "You are a shift lead at Harborside Cafe. A shift lead runs a shift and helps the manager.", es: "Eres Shift Lead en Harborside Cafe. Un Shift Lead dirige un turno y ayuda a la gerente." },
         people: [
-          { name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } },
-          { name: "Jordan Kim", role: { en: "New coworker. Starts today.", es: "Compañero nuevo. Empieza hoy." } },
+          {
+            name: "Renata Silva",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She is the general manager of the cafe. She keeps the cafe's files in a shared Drive.", es: "Es la gerente general del café. Guarda los archivos del café en un Drive compartido." },
+          },
+          {
+            name: "Jordan Kim",
+            role: { en: "New coworker", es: "Persona nueva en el equipo" },
+            who: { en: "Jordan starts at the cafe today and needs to see the schedule.", es: "Jordan empieza hoy en el café y necesita ver el horario." },
+          },
         ],
         need: {
           en: "Jordan needs this week's work schedule. It is a file in the cafe's shared Drive. Renata wants the file to have a clear name. Jordan can look at it but not change it.",
@@ -850,7 +890,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       minutes: 10,
       scene: {
         you: { en: "You are a server at Harborside Cafe.", es: "Atiendes mesas en Harborside Cafe." },
-        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        people: [
+          {
+            name: "Renata Silva",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She is the general manager of the cafe. She works out everyone's pay.", es: "Es la gerente general del café. Ella calcula el pago de todo el equipo." },
+          },
+        ],
         need: {
           en: "Every day, you write your tips on a small paper slip. Renata needs this week's tips in a spreadsheet, and the total in an email. She adds it to your pay.",
           es: "Cada día anotas tus propinas en un papelito. Renata necesita las propinas de esta semana en una hoja de cálculo, y el total en un correo. Ella lo suma a tu pago.",
@@ -985,9 +1031,15 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["spreadsheets"],
       minutes: 12,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
+        you: { en: "You are a shift lead at Harborside Cafe. A shift lead runs a shift and helps the manager.", es: "Eres Shift Lead en Harborside Cafe. Un Shift Lead dirige un turno y ayuda a la gerente." },
         // No crew names here: finding who is missing is the lesson.
-        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        people: [
+          {
+            name: "Renata Silva",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She is the general manager of the cafe. She works out everyone's pay.", es: "Es la gerente general del café. Ella calcula el pago de todo el equipo." },
+          },
+        ],
         need: {
           en: "A spreadsheet adds up the hours your crew worked this week. Renata uses the total for pay. One person is missing from the total.",
           es: "Una hoja de cálculo suma las horas que trabajó tu equipo esta semana. Renata usa el total para los pagos. Falta una persona en el total.",
@@ -1108,8 +1160,14 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["spreadsheets"],
       minutes: 10,
       scene: {
-        you: { en: "You are a shift lead at Harborside Cafe.", es: "Eres Shift Lead en Harborside Cafe." },
-        people: [{ name: "Renata Silva", role: { en: "Your manager", es: "Tu gerente" } }],
+        you: { en: "You are a shift lead at Harborside Cafe. A shift lead runs a shift and helps the manager.", es: "Eres Shift Lead en Harborside Cafe. Un Shift Lead dirige un turno y ayuda a la gerente." },
+        people: [
+          {
+            name: "Renata Silva",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She is the general manager of the cafe. She decides how much money the cafe spends.", es: "Es la gerente general del café. Ella decide cuánto dinero gasta el café." },
+          },
+        ],
         need: {
           en: "The cafe plans how much money to spend each week. That plan is the budget. This week's sheet has seven kinds of cost, with a note about each one. One went over the plan. Renata wants to know which one, and by how much.",
           es: "El café planea cuánto dinero gastar cada semana. Ese plan es el presupuesto. La hoja de esta semana tiene siete tipos de gasto, con una nota sobre cada uno. Uno se pasó del plan. Renata quiere saber cuál, y por cuánto.",
@@ -1217,7 +1275,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       minutes: 25,
       scene: {
         you: { en: "You work at the front desk of Harborside Health, a clinic.", es: "Trabajas en la recepción de Harborside Health, una clínica." },
-        people: [{ name: "Maya Ansari", role: { en: "A patient. She called the clinic.", es: "Una paciente. Llamó a la clínica." } }],
+        people: [
+          {
+            name: "Maya Ansari",
+            role: { en: "A patient", es: "Una paciente" },
+            who: { en: "She called the clinic to make an appointment. She wants a text back.", es: "Llamó a la clínica para hacer una cita. Quiere que le contesten con un mensaje de texto." },
+          },
+        ],
         need: {
           en: "Maya called while you were busy. A coworker wrote her phone message on a pink note. She wants an appointment today at 10:00. Check the schedule, find a time that is free, and text her back.",
           es: "Maya llamó mientras atendías otra cosa. Una compañera anotó su mensaje en una nota rosada. Quiere una cita hoy a las 10:00. Revisa la agenda, busca una hora libre y contéstale con un mensaje de texto.",
@@ -1331,8 +1395,16 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       scene: {
         you: { en: "You take a writing class at Bunker Hill Community College.", es: "Tomas una clase de escritura en Bunker Hill Community College." },
         people: [
-          { name: "Ms. Rivera", role: { en: "Your teacher", es: "Tu maestra" } },
-          { name: "Dana Price", role: { en: "The customer in the homework", es: "La clienta de la tarea" } },
+          {
+            name: "Ms. Rivera",
+            role: { en: "Your teacher", es: "Tu maestra" },
+            who: { en: "She teaches your writing class. She posts the homework on the class website.", es: "Ella enseña tu clase de escritura. Publica la tarea en la página de la clase." },
+          },
+          {
+            name: "Dana Price",
+            role: { en: "A customer in the homework", es: "Una clienta de la tarea" },
+            who: { en: "She is not a real person. The homework is a reply to her email.", es: "No es una persona real. La tarea es responder a su correo." },
+          },
         ],
         need: {
           en: "Today is Thursday. Your homework is on the class website. Find when it is due and how much time you have. Then do the homework and turn it in.",
@@ -1458,7 +1530,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "You are playing Sam Rivera, who worked at Harborside Cafe. These facts are Sam's.",
           es: "Haces el papel de Sam Rivera, que trabajó en Harborside Cafe. Estos datos son de Sam.",
         },
-        people: [{ name: "Anita Raman", role: { en: "Sent Sam the job post", es: "Le envió el anuncio a Sam" } }],
+        people: [
+          {
+            name: "Anita Raman",
+            role: { en: "Operations director", es: "Directora de operaciones" },
+            who: { en: "She works at Harborside HQ, the company office. She sent Sam this job post.", es: "Trabaja en Harborside HQ, la oficina de la empresa. Le envió este anuncio de trabajo a Sam." },
+          },
+        ],
         need: {
           en: "Read the job post. Compare what the job asks for with Sam's experience on your info card.",
           es: "Lee el anuncio. Compara lo que pide el trabajo con la experiencia de Sam en tu tarjeta de información.",
@@ -1707,7 +1785,13 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
           en: "You are practicing a new-hire tax form. You fill it out for a pretend person, not for you.",
           es: "Estás practicando un formulario de impuestos para empleados nuevos. Lo llenas para una persona inventada, no para ti.",
         },
-        people: [{ name: "Robin Avery", role: { en: "A pretend new worker", es: "Una persona recién contratada (inventada)" } }],
+        people: [
+          {
+            name: "Robin Avery",
+            role: { en: "A pretend new worker", es: "Una persona recién contratada (inventada)" },
+            who: { en: "Robin just got a job and needs to fill out a W-4 before the first paycheck.", es: "Robin acaba de conseguir trabajo y tiene que llenar un W-4 antes del primer pago." },
+          },
+        ],
         need: {
           en: "Fill out Robin's W-4. Read Robin's facts on your info card and choose what fits Robin. Then sign with Robin's name and write the date.",
           es: "Llena el W-4 de Robin. Lee los datos de Robin en tu tarjeta de información y elige lo que corresponde a Robin. Después firma con el nombre de Robin y escribe la fecha.",

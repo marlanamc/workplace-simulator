@@ -2,6 +2,7 @@ import { OPENING_MESSAGES, OPENING_CORRECTIONS, openingReplyVerdict } from "@/li
 import { mentionsAmount } from "@/lib/text-facts";
 import { practiceEmailMatches } from "@/lib/tasks/account-recovery/content";
 import type { Localized } from "@/lib/task-types";
+import type { LessonPerson } from "@/lib/lessons/types";
 import { l, type ConfidenceKey, type LessonScenario } from "@/lib/lessons/confidence";
 
 export type PracticeFile = { key: string; name: string; detail: Localized };
@@ -20,6 +21,12 @@ export type ConfidenceScenario = {
   rows?: { label: Localized; value: number }[];
   dates?: { value: string; label: Localized }[];
   times?: string[];
+  /**
+   * Who you are and who the scenario names, for the intro and Key
+   * information. Classroom practice falls back to the lesson's own scene.
+   */
+  you?: Localized;
+  people?: LessonPerson[];
 };
 const source = (title: Localized, text: Localized) => ({ title, text });
 const file = (key: string, name: string, en: string, es: string): PracticeFile => ({ key, name, detail: l(en, es) });
