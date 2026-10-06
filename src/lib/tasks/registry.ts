@@ -252,6 +252,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "Reply keeps your answer with the original email so the other person can follow the conversation. Say hello, answer the question, and sign your name.",
         es: "Responder mantiene tu respuesta junto al correo original para que la otra persona pueda seguir la conversación. Saluda, contesta la pregunta y firma con tu nombre.",
       },
+      check: [
+        {
+          question: {
+            en: "Why click Reply instead of writing a brand-new email?",
+            es: "¿Por qué hacer clic en Responder en vez de escribir un correo nuevo?",
+          },
+          choices: [
+            { text: { en: "Reply keeps your answer with the original email, so the other person can follow the conversation", es: "Responder mantiene tu respuesta junto al correo original, así la otra persona puede seguir la conversación" }, correct: true },
+            { text: { en: "Reply sends a copy to everyone in the company", es: "Responder envía una copia a todos en la empresa" }, correct: false },
+            { text: { en: "There is no difference", es: "No hay ninguna diferencia" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Maria's second email asked you to confirm you could come in at 10 AM. Which reply answers it?",
+            es: "El segundo correo de Maria te pedía confirmar que podías llegar a las 10 a. m. ¿Qué respuesta la contesta?",
+          },
+          choices: [
+            { text: { en: "Any honest yes, like \"I can come\" or \"Sounds good\"", es: "Cualquier sí honesto, como \"Puedo ir\" o \"Suena bien\"" }, correct: true },
+            { text: { en: "Naming a different time you'd rather start", es: "Nombrar otra hora en la que prefieres empezar" }, correct: false },
+            { text: { en: "Just forwarding her email back to her", es: "Solo reenviarle su propio correo" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Darnell's email asked a question about his bag. What did your reply need to say?",
+            es: "El correo de Darnell hacía una pregunta sobre su bolsa. ¿Qué tenía que decir tu respuesta?",
+          },
+          choices: [
+            { text: { en: "Where to put the bag: the shelf or under the counter", es: "Dónde dejar la bolsa: en el estante o debajo del mostrador" }, correct: true },
+            { text: { en: "Just \"Thanks for the email\"", es: "Solo \"Gracias por tu correo\"" }, correct: false },
+            { text: { en: "What time his shift starts", es: "A qué hora empieza su turno" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What does every good reply in this lesson have in common?",
+            es: "¿Qué tienen en común todas las buenas respuestas de esta lección?",
+          },
+          choices: [
+            { text: { en: "A greeting, an answer to the actual question, and your name", es: "Un saludo, una respuesta a la pregunta real y tu nombre" }, correct: true },
+            { text: { en: "At least five sentences", es: "Al menos cinco oraciones" }, correct: false },
+            { text: { en: "A subject line you wrote yourself", es: "Un asunto redactado por ti" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Open the right email in a full inbox", es: "Abrir el correo correcto en una bandeja llena" },
@@ -326,6 +372,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         },
       },
       takeaway: { en: "An attachment sends a file with your email; writing its name does not send it. Check the actual attachment before sending. If the required file is missing, ask for it.", es: "Un adjunto envía un archivo con tu correo; escribir su nombre no lo envía. Revisa el adjunto real antes de enviar. Si falta el archivo solicitado, pídelo." },
+      check: [
+        {
+          question: {
+            en: "What did Maria actually ask you to send?",
+            es: "¿Qué te pidió Maria exactamente que enviaras?",
+          },
+          choices: [
+            { text: { en: "Your food handler certificate, today by 3 PM", es: "Tu certificado de manipulador de alimentos, hoy antes de las 3 PM" }, correct: true },
+            { text: { en: "Your food handler practice test, today by 3 PM", es: "Tu examen de práctica de manipulador de alimentos, hoy antes de las 3 PM" }, correct: false },
+            { text: { en: "Your food handler certificate, next week", es: "Tu certificado de manipulador de alimentos, la próxima semana" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Your email says \"Here is my certificate,\" but you did not click Attach file. What happens when you click Send?",
+            es: "Tu correo dice \"Aquí está mi certificado,\" pero no hiciste clic en Adjuntar archivo. ¿Qué pasa si haces clic en Enviar?",
+          },
+          choices: [
+            { text: { en: "Nothing is actually attached. Writing the words does not send the file", es: "No se adjunta nada en realidad. Escribir las palabras no envía el archivo" }, correct: true },
+            { text: { en: "The sheet attaches the most recent file automatically", es: "La hoja adjunta el archivo más reciente automáticamente" }, correct: false },
+            { text: { en: "Maria can still open the certificate from the words in your message", es: "Maria igual puede abrir el certificado con las palabras de tu mensaje" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Downloads had more than one certificate-looking file. What did you need to check before attaching one?",
+            es: "En Descargas había más de un archivo que parecía certificado. ¿Qué tenías que revisar antes de adjuntar uno?",
+          },
+          choices: [
+            { text: { en: "The title and the Expires date", es: "El título y la fecha de vencimiento (Expires)" }, correct: true },
+            { text: { en: "Only the file size", es: "Solo el tamaño del archivo" }, correct: false },
+            { text: { en: "Nothing. Any file named \"certificate\" works", es: "Nada. Cualquier archivo que diga \"certificate\" sirve" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "How do you know a file really attached before you click Send?",
+            es: "¿Cómo sabes que un archivo de verdad quedó adjunto antes de hacer clic en Enviar?",
+          },
+          choices: [
+            { text: { en: "You see the file name in a green box", es: "Ves el nombre del archivo en una caja verde" }, correct: true },
+            { text: { en: "The Send button turns a different color", es: "El botón Enviar cambia de color" }, correct: false },
+            { text: { en: "You typed the file's name in the message", es: "Escribiste el nombre del archivo en el mensaje" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Read an email to find what someone needs and when", es: "Leer un correo para saber qué necesita alguien y para cuándo" },
@@ -380,6 +472,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         need: { en: "One of your shifts is at the same time as a personal appointment. You need a shift you can work.", es: "Uno de tus turnos es a la misma hora que una cita personal. Necesitas un turno que sí puedas trabajar." },
       },
       takeaway: { en: "You practiced comparing the day and time before asking for a change.", es: "Practicaste comparar el día y la hora antes de pedir un cambio." },
+      check: [
+        {
+          question: {
+            en: "Which day had the scheduling conflict?",
+            es: "¿Qué día tenía el conflicto de horario?",
+          },
+          choices: [
+            { text: { en: "Thursday, Aug 27", es: "Jueves 27 de agosto" }, correct: true },
+            { text: { en: "Wednesday, Aug 26", es: "Miércoles 26 de agosto" }, correct: false },
+            { text: { en: "Friday, Aug 28", es: "Viernes 28 de agosto" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What personal appointment caused the conflict?",
+            es: "¿Qué cita personal causó el conflicto?",
+          },
+          choices: [
+            { text: { en: "A doctor's appointment at 11:00 AM", es: "Una cita con el doctor a las 11:00 AM" }, correct: true },
+            { text: { en: "Calling the school", es: "Llamar a la escuela" }, correct: false },
+            { text: { en: "A soccer game", es: "Un partido de fútbol" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Which swap option actually fixed the conflict?",
+            es: "¿Qué cambio de turno sí resolvió el conflicto?",
+          },
+          choices: [
+            { text: { en: "Thu Aug 27, 2:00 PM – 10:00 PM (it starts after the appointment)", es: "Jue 27 ago, 2:00 PM – 10:00 PM (empieza después de la cita)" }, correct: true },
+            { text: { en: "Thu Aug 27, 6:00 AM – 2:00 PM (it still covers 11 AM)", es: "Jue 27 ago, 6:00 AM – 2:00 PM (todavía cubre las 11 AM)" }, correct: false },
+            { text: { en: "Wed Aug 26, 10:00 AM – 6:00 PM (that is already a day off)", es: "Mié 26 ago, 10:00 AM – 6:00 PM (ese día ya es libre)" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [{ en: "Compare dates and time ranges in two sources.", es: "Comparar fechas y horas en dos fuentes." }],
         prepare: [{ en: "Use the optional pointer practice if needed. Choose support by computer experience, not English level.", es: "Use la práctica opcional del puntero si hace falta. Elija apoyo según la experiencia digital, no el nivel de inglés." }],
@@ -536,6 +663,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         { label: { en: "Your shift", es: "Tu turno" }, value: { en: "Today, 10:00 AM", es: "Hoy, 10:00 a. m." } },
       ],
       takeaway: { en: "Name the shift you will miss, use your workplace's contact rule, and follow up when nobody answers.", es: "Indica a qué turno faltarás, usa la regla de contacto de tu trabajo y da seguimiento cuando nadie contesta." },
+      check: [
+        {
+          question: {
+            en: "Which message actually tells Maria what she needs to know?",
+            es: "¿Cuál mensaje de verdad le dice a Maria lo que necesita saber?",
+          },
+          choices: [
+            { text: { en: "\"I feel sick.\"", es: "\"Me siento mal.\"" }, correct: false },
+            { text: { en: "\"I can't work today's shift.\"", es: "\"No puedo trabajar mi turno de hoy.\"" }, correct: true },
+            { text: { en: "Nothing. She will notice when you don't show up", es: "Nada. Ella se dará cuenta cuando no llegues" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "One hotel situation needed a call within two hours of the shift instead of an email. Why?",
+            es: "Una situación del hotel requería una llamada dentro de las dos horas antes del turno, en vez de un correo. ¿Por qué?",
+          },
+          choices: [
+            { text: { en: "Because that workplace's contact rule required a call that close to the shift", es: "Porque la regla de contacto de ese trabajo exigía una llamada tan cerca del turno" }, correct: true },
+            { text: { en: "Because email is never an acceptable way to report an absence", es: "Porque el correo nunca es una forma aceptable de avisar una ausencia" }, correct: false },
+            { text: { en: "Because hotels do not have email", es: "Porque los hoteles no tienen correo electrónico" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "After leaving a voicemail with the front desk, what still needed to happen?",
+            es: "Después de dejar un mensaje de voz en recepción, ¿qué todavía hacía falta?",
+          },
+          choices: [
+            { text: { en: "Following up, since a voicemail does not confirm the absence was approved", es: "Dar seguimiento, ya que un mensaje de voz no confirma que la ausencia fue aprobada" }, correct: true },
+            { text: { en: "Nothing. A voicemail is the same as a confirmed day off", es: "Nada. Un mensaje de voz es igual a un día libre confirmado" }, correct: false },
+            { text: { en: "Sending the same message again by email", es: "Enviar el mismo mensaje otra vez por correo" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Why message Maria right at 6:12 AM instead of waiting until the shift starts?",
+            es: "¿Por qué escribirle a Maria justo a las 6:12 a. m. en vez de esperar a que empiece el turno?",
+          },
+          choices: [
+            { text: { en: "It gives her time to find coverage before the shift starts", es: "Le da tiempo de buscar quién cubra el turno antes de que empiece" }, correct: true },
+            { text: { en: "It does not matter when you tell her, as long as you tell her eventually", es: "No importa cuándo le avises, mientras le avises en algún momento" }, correct: false },
+            { text: { en: "Managers only read messages sent before 7 AM", es: "Las gerentes solo leen mensajes enviados antes de las 7 AM" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Write a clear message saying you cannot attend a shift", es: "Escribir un mensaje claro indicando que no puedes asistir a un turno" },
@@ -580,6 +753,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
       skills: ["accounts"],
       minutes: 5,
       takeaway: { en: RECOVERY_COPY.en.doneBody, es: RECOVERY_COPY.es.doneBody },
+      check: [
+        {
+          question: {
+            en: "Which password got you signed in?",
+            es: "¿Qué contraseña te dejó entrar?",
+          },
+          choices: [
+            { text: { en: "Harbor2026, exactly as written, with a capital H", es: "Harbor2026, tal cual, con H mayúscula" }, correct: true },
+            { text: { en: "harbor2026, all lowercase", es: "harbor2026, todo en minúsculas" }, correct: false },
+            { text: { en: "Any password, since the account resets it", es: "Cualquier contraseña, porque la cuenta la reinicia" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Two texts both said \"Google\" and both had a 6-digit number. How did you tell the real one apart?",
+            es: "Dos mensajes decían \"Google\" y los dos tenían un número de 6 dígitos. ¿Cómo distinguiste el verdadero?",
+          },
+          choices: [
+            { text: { en: "The real one never asks you to reply with the code; the fake one did and threatened to close your account", es: "El verdadero nunca pide que respondas con el código; el falso sí lo pedía y amenazaba con cerrar la cuenta" }, correct: true },
+            { text: { en: "The real one arrived first", es: "El verdadero llegó primero" }, correct: false },
+            { text: { en: "The fake one had no numbers in it", es: "El falso no tenía números" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Sam, a coworker, texted asking you to send over the code you just got. What should you do?",
+            es: "Sam, un compañero, te escribió pidiendo que le mandes el código que acabas de recibir. ¿Qué debes hacer?",
+          },
+          choices: [
+            { text: { en: "Never share the code, not even with a coworker", es: "Nunca compartir el código, ni con un compañero" }, correct: true },
+            { text: { en: "Send it, since Sam works there too", es: "Enviarlo, ya que Sam también trabaja ahí" }, correct: false },
+            { text: { en: "Send it, but ask Sam to delete the text after", es: "Enviarlo, pero pedirle a Sam que borre el mensaje después" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Why does the account text a code to your phone in addition to asking for your password?",
+            es: "¿Por qué la cuenta envía un código a tu teléfono además de pedir tu contraseña?",
+          },
+          choices: [
+            { text: { en: "It adds protection in case someone has stolen your password", es: "Añade protección en caso de que alguien haya robado tu contraseña" }, correct: true },
+            { text: { en: "The password alone never works", es: "La contraseña sola nunca funciona" }, correct: false },
+            { text: { en: "It is just a second way to enter the same password", es: "Es solo otra forma de escribir la misma contraseña" }, correct: false },
+          ],
+        },
+      ],
       scene: {
         you: { en: "You work at Harborside Cafe. Your work account signed you out.", es: "Trabajas en Harborside Cafe. Tu cuenta del trabajo cerró tu sesión." },
         people: [],
@@ -818,6 +1037,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "An invitation asks whether you can attend. Check your shifts before answering. Suggesting a new time starts a conversation; the new time still needs to be agreed on.",
         es: "Una invitación pregunta si puedes asistir. Revisa tus turnos antes de responder. Proponer otra hora inicia una conversación; todavía tienen que ponerse de acuerdo.",
       },
+      check: [
+        {
+          question: {
+            en: "Renata's meeting invite was for Wednesday, the day of the huddle. Did you work that day?",
+            es: "La invitación de Renata era para el miércoles, el día de la reunión. ¿Trabajabas ese día?",
+          },
+          choices: [
+            { text: { en: "No, Wednesday was a day off", es: "No, el miércoles era día libre" }, correct: true },
+            { text: { en: "Yes, it was in the middle of a shift", es: "Sí, era en medio de un turno" }, correct: false },
+            { text: { en: "The invite did not say which day", es: "La invitación no decía qué día era" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Since the meeting landed on a day off, what should you do instead of clicking Yes?",
+            es: "Como la reunión caía en un día libre, ¿qué debes hacer en vez de hacer clic en Sí?",
+          },
+          choices: [
+            { text: { en: "Propose a new time", es: "Proponer otro horario" }, correct: true },
+            { text: { en: "Click No and say nothing else", es: "Hacer clic en No y no decir nada más" }, correct: false },
+            { text: { en: "Ignore the invite", es: "Ignorar la invitación" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Which reply actually proposes a workable new time?",
+            es: "¿Cuál respuesta propone de verdad un horario que sí funciona?",
+          },
+          choices: [
+            { text: { en: "\"Could we do Thursday at 10 AM instead?\" (a day and time inside your shift)", es: "\"¿Podríamos el jueves a las 10 AM?\" (un día y hora dentro de tu turno)" }, correct: true },
+            { text: { en: "\"See you Wednesday\"", es: "\"Nos vemos el miércoles\"" }, correct: false },
+            { text: { en: "\"I come Tuesday\" with no time", es: "\"Voy el martes\" sin hora" }, correct: false },
+          ],
+        },
+      ],
       reference: [
         { label: { en: "Meeting", es: "Reunión" }, value: { en: `${cardDate(HUDDLE_DAY, "en")}, 9:00 AM`, es: `${cardDate(HUDDLE_DAY, "es")}, 9:00 AM` } },
         { label: { en: "Your Thursday shift", es: "Tu turno del jueves" }, value: { en: `${cardDate(HUDDLE_DAY + 1, "en")}, 10 AM to 6 PM`, es: `${cardDate(HUDDLE_DAY + 1, "es")}, 10 AM a 6 PM` } },
@@ -919,6 +1173,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         },
       },
       takeaway: { en: "Sharing gives someone access to your file: view means read; edit means change. Check the version and the person, and give only the access needed for the work.", es: "Compartir da acceso a tu archivo: ver permite leer; editar permite cambiar. Revisa la versión y la persona, y da solo el acceso necesario para el trabajo." },
+      check: [
+        {
+          question: {
+            en: "What access should Jordan get on the schedule file?",
+            es: "¿Qué acceso debe tener Jordan en el archivo del horario?",
+          },
+          choices: [
+            { text: { en: "Can view, since Jordan only needs to look at it", es: "Puede ver, ya que Jordan solo necesita mirarlo" }, correct: true },
+            { text: { en: "Can edit, so Jordan can fix mistakes", es: "Puede editar, para que Jordan corrija errores" }, correct: false },
+            { text: { en: "No access. Jordan should ask Renata directly every time", es: "Ningún acceso. Jordan debe preguntarle a Renata siempre" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "One file in Drive had the same week but the word \"draft\" in its name, with Friday left blank. Was that the right file to share?",
+            es: "Un archivo en Drive tenía la misma semana pero decía \"draft\" en el nombre, y el viernes estaba vacío. ¿Era el archivo correcto para compartir?",
+          },
+          choices: [
+            { text: { en: "No, a draft is not final and was missing Friday's shifts", es: "No, un borrador no es la versión final y le faltaban los turnos del viernes" }, correct: true },
+            { text: { en: "Yes, draft just means it was saved recently", es: "Sí, draft solo significa que se guardó hace poco" }, correct: false },
+            { text: { en: "It did not matter which one you shared", es: "No importaba cuál compartieras" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Why rename the file to something like \"schedule-week-of-sep-14\" instead of leaving its original name?",
+            es: "¿Por qué cambiarle el nombre a algo como \"schedule-week-of-sep-14\" en vez de dejar el nombre original?",
+          },
+          choices: [
+            { text: { en: "A clear name helps the next person find the file later", es: "Un nombre claro ayuda a la próxima persona a encontrar el archivo después" }, correct: true },
+            { text: { en: "Renaming a file changes what is inside it", es: "Cambiar el nombre de un archivo cambia lo que hay dentro" }, correct: false },
+            { text: { en: "It is required before you can share any file", es: "Es obligatorio antes de poder compartir cualquier archivo" }, correct: false },
+          ],
+        },
+      ],
       reference: [
         { label: { en: "This week", es: "Esta semana" }, value: { en: `Week of ${shortDate(FILES_WEEK, "en")}`, es: `Semana del ${monthDate(FILES_WEEK, "es")}` } },
         { label: { en: "New file name", es: "Nombre nuevo" }, value: RENAME_TARGET },
@@ -1005,6 +1294,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "Type each amount on its own day. The sheet adds them up, and you send the total it shows.",
         es: "Escribe cada cantidad en su día. La hoja las suma, y tú envías el total que muestra.",
       },
+      check: [
+        {
+          question: {
+            en: "What was this week's real tip total?",
+            es: "¿Cuál fue el total real de propinas de esta semana?",
+          },
+          choices: [
+            { text: { en: "$241.50", es: "$241.50" }, correct: true },
+            { text: { en: "$241.00", es: "$241.00" }, correct: false },
+            { text: { en: "$200.00", es: "$200.00" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Why did the email need to include the cents, not just \"241\"?",
+            es: "¿Por qué el correo tenía que incluir los centavos, y no solo \"241\"?",
+          },
+          choices: [
+            { text: { en: "Because the sheet's real total includes cents, and that number is not the full total", es: "Porque el total real de la hoja incluye centavos, y ese número no es el total completo" }, correct: true },
+            { text: { en: "Because Renata only reads whole numbers", es: "Porque Renata solo lee números enteros" }, correct: false },
+            { text: { en: "It did not matter, any close number was fine", es: "No importaba, cualquier número cercano estaba bien" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Who adds up the five days of tips into a total?",
+            es: "¿Quién suma las propinas de los cinco días para dar el total?",
+          },
+          choices: [
+            { text: { en: "The sheet, automatically, once every day's amount is entered", es: "La hoja, automáticamente, en cuanto se escribe la cantidad de cada día" }, correct: true },
+            { text: { en: "You, by doing the math yourself before emailing Renata", es: "Tú, haciendo la cuenta antes de escribirle a Renata" }, correct: false },
+            { text: { en: "Renata, after you email her the five separate numbers", es: "Renata, después de que le envíes los cinco números por separado" }, correct: false },
+          ],
+        },
+      ],
       summary: {
         en: "Type five days of tip amounts into a shared sheet, then email the manager the total.",
         es: "Escribe las propinas de cinco días en una hoja compartida y luego envía el total a la gerente por correo.",
@@ -1147,6 +1471,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "A formula tells the sheet which numbers to add. It can add correctly and still leave someone out. Click the total and check which rows the formula includes.",
         es: "Una fórmula le indica a la hoja qué números sumar. Puede sumar bien y aun así dejar a alguien fuera. Haz clic en el total y revisa qué filas incluye la fórmula.",
       },
+      check: [
+        {
+          question: {
+            en: "Who was missing from the hours total?",
+            es: "¿A quién le faltaban las horas en el total?",
+          },
+          choices: [
+            { text: { en: "Casey Brooks, in row 6", es: "Casey Brooks, en la fila 6" }, correct: true },
+            { text: { en: "Renata Silva", es: "Renata Silva" }, correct: false },
+            { text: { en: "Nobody, the total was always correct", es: "Nadie, el total siempre fue correcto" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What exactly was wrong with the original formula, =SUM(H2:H5)?",
+            es: "¿Qué tenía de malo exactamente la fórmula original, =SUM(H2:H5)?",
+          },
+          choices: [
+            { text: { en: "It stopped at row 5, so row 6's hours were never added", es: "Se detenía en la fila 5, así que las horas de la fila 6 nunca se sumaban" }, correct: true },
+            { text: { en: "It started at the wrong row", es: "Empezaba en la fila equivocada" }, correct: false },
+            { text: { en: "It used the wrong column letter", es: "Usaba la letra de columna equivocada" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Besides the corrected total, what else did the email to Renata need to say?",
+            es: "Además del total corregido, ¿qué más tenía que decir el correo a Renata?",
+          },
+          choices: [
+            { text: { en: "That someone's hours had been missing from the total", es: "Que a alguien le faltaban las horas en el total" }, correct: true },
+            { text: { en: "How many hours each crew member worked, one by one", es: "Cuántas horas trabajó cada persona del equipo, una por una" }, correct: false },
+            { text: { en: "Nothing else. The number alone was enough", es: "Nada más. El número solo era suficiente" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "A total can look right and still be wrong. What should you check, not just the final number?",
+            es: "Un total puede verse bien y aun así estar mal. ¿Qué debes revisar, no solo el número final?",
+          },
+          choices: [
+            { text: { en: "The formula itself, and which rows it actually includes", es: "La fórmula misma, y qué filas incluye de verdad" }, correct: true },
+            { text: { en: "The color of the cell", es: "El color de la celda" }, correct: false },
+            { text: { en: "The font size of the total", es: "El tamaño de letra del total" }, correct: false },
+          ],
+        },
+      ],
       summary: {
         en: "The hours total looks right, but the formula leaves out one person. Fix the formula and email the correct total.",
         es: "El total de horas parece correcto, pero la fórmula deja fuera a una persona. Corrige la fórmula y envía el total correcto por correo.",
@@ -1276,6 +1646,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "Over budget means Actual is bigger than Budget. To find how much, subtract: Actual minus Budget.",
         es: "Pasarse del presupuesto quiere decir que Real es más grande que Presupuesto. Para saber por cuánto, resta: Real menos Presupuesto.",
       },
+      check: [
+        {
+          question: {
+            en: "Which category went over budget this week?",
+            es: "¿Qué categoría se pasó del presupuesto esta semana?",
+          },
+          choices: [
+            { text: { en: "Labor", es: "Mano de obra" }, correct: true },
+            { text: { en: "Utilities", es: "Servicios" }, correct: false },
+            { text: { en: "Repairs", es: "Reparaciones" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Labor's budget was $2,400 and its actual spending was $2,850. By how much did it go over?",
+            es: "El presupuesto de Mano de obra era $2,400 y el gasto real fue $2,850. ¿Por cuánto se pasó?",
+          },
+          choices: [
+            { text: { en: "$450", es: "$450" }, correct: true },
+            { text: { en: "$2,850", es: "$2,850" }, correct: false },
+            { text: { en: "$2,400", es: "$2,400" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Repairs spent exactly $300 against a $300 budget. What does the IF formula call that?",
+            es: "Reparaciones gastó exactamente $300 de un presupuesto de $300. ¿Qué dice la fórmula SI en ese caso?",
+          },
+          choices: [
+            { text: { en: "Within budget", es: "Dentro del presupuesto" }, correct: true },
+            { text: { en: "Over", es: "Sobre" }, correct: false },
+            { text: { en: "The formula shows an error", es: "La fórmula muestra un error" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "The Total row was over budget too, but Renata only wanted one category named. Why not just answer \"the total\"?",
+            es: "La fila Total también se pasaba del presupuesto, pero Renata solo quería el nombre de una categoría. ¿Por qué no contestar simplemente \"el total\"?",
+          },
+          choices: [
+            { text: { en: "The Total row has no Status of its own; Renata asked which kind of cost went over", es: "La fila Total no tiene su propio Estado; Renata preguntó qué tipo de gasto se pasó" }, correct: true },
+            { text: { en: "Because the total was actually under budget", es: "Porque el total en realidad estaba bajo el presupuesto" }, correct: false },
+            { text: { en: "Because there is no Total row on this sheet", es: "Porque esta hoja no tiene fila de Total" }, correct: false },
+          ],
+        },
+      ],
       summary: {
         en: "Read an IF formula and a bar chart to find the category that went over budget, then tell the manager by how much.",
         es: "Lee una fórmula SI (IF en inglés) y un gráfico de barras para encontrar la categoría que se pasó del presupuesto, y dile a la gerente por cuánto.",
@@ -1394,6 +1810,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         es: "Agenda una visita, busca espacio para una cita completa en otra agenda y responde a un cambio cuando ninguna hora sirve.",
       },
       takeaway: { en: "Check the whole visit against the calendar and the person’s availability. Ask for another time when none fits.", es: "Compara la visita completa con la agenda y la disponibilidad de la persona. Pide otra hora cuando ninguna sirva." },
+      check: [
+        {
+          question: {
+            en: "Who already had the 10:00 slot that Maya wanted?",
+            es: "¿Quién ya tenía la hora de las 10:00 que Maya quería?",
+          },
+          choices: [
+            { text: { en: "Walter Nguyen", es: "Walter Nguyen" }, correct: true },
+            { text: { en: "Luis Moreno", es: "Luis Moreno" }, correct: false },
+            { text: { en: "Priya Shah", es: "Priya Shah" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "The 12:30 row had no patient name. Could Maya have that time?",
+            es: "La fila de las 12:30 no tenía nombre de paciente. ¿Podía Maya tener esa hora?",
+          },
+          choices: [
+            { text: { en: "No, it was blocked for a staff meeting", es: "No, estaba bloqueada por una reunión del personal" }, correct: true },
+            { text: { en: "Yes, an empty name means the slot is open", es: "Sí, un nombre vacío quiere decir que la hora está libre" }, correct: false },
+            { text: { en: "Only if she asked for it specifically", es: "Solo si ella la pedía específicamente" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Which time was actually open on the day sheet?",
+            es: "¿Qué hora estaba de verdad libre en la agenda del día?",
+          },
+          choices: [
+            { text: { en: "11:30", es: "11:30" }, correct: true },
+            { text: { en: "11:00", es: "11:00" }, correct: false },
+            { text: { en: "12:00", es: "12:00" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What did your text back to Maya need to include?",
+            es: "¿Qué tenía que incluir tu mensaje de texto para Maya?",
+          },
+          choices: [
+            { text: { en: "The actual new time, not just \"see you soon\"", es: "La hora nueva real, no solo \"nos vemos pronto\"" }, correct: true },
+            { text: { en: "An apology for the mix-up", es: "Una disculpa por la confusión" }, correct: false },
+            { text: { en: "The doctor's full name", es: "El nombre completo del doctor" }, correct: false },
+          ],
+        },
+      ],
       skills: ["scheduling", "workplace-systems"],
       minutes: 25,
       scene: {
@@ -1513,6 +1975,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "Check the due date, including the time. Typing your work does not turn it in: submitting sends it to your teacher. Look for a message confirming it was submitted.",
         es: "Revisa la fecha de entrega, incluida la hora. Escribir tu tarea no la entrega: al entregarla, se envía a tu maestra. Busca un mensaje que confirme la entrega.",
       },
+      check: [
+        {
+          question: {
+            en: "What was the exact due date and time for the assignment?",
+            es: "¿Cuáles eran la fecha y la hora exactas de entrega de la tarea?",
+          },
+          choices: [
+            { text: { en: "Friday, 11:59 PM", es: "Viernes, 11:59 PM" }, correct: true },
+            { text: { en: "Friday, 9:00 AM", es: "Viernes, 9:00 AM" }, correct: false },
+            { text: { en: "Thursday, 11:59 PM", es: "Jueves, 11:59 PM" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Today was Thursday. How much time did you actually have?",
+            es: "Hoy era jueves. ¿Cuánto tiempo tenías en realidad?",
+          },
+          choices: [
+            { text: { en: "Until tomorrow (Friday) night", es: "Hasta mañana (viernes) en la noche" }, correct: true },
+            { text: { en: "Until tonight", es: "Hasta esta noche" }, correct: false },
+            { text: { en: "One whole week", es: "Una semana entera" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What two things did your reply to Dana need to include?",
+            es: "¿Qué dos cosas tenía que incluir tu respuesta a Dana?",
+          },
+          choices: [
+            { text: { en: "An apology, and one thing you would do to fix it", es: "Una disculpa, y una cosa que ibas a hacer para arreglarlo" }, correct: true },
+            { text: { en: "A long explanation of what went wrong in the kitchen", es: "Una explicación larga de qué salió mal en la cocina" }, correct: false },
+            { text: { en: "A promise of a free drink for a whole month", es: "La promesa de una bebida gratis por un mes entero" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "You finished typing your reply in the box. Is the assignment turned in yet?",
+            es: "Terminaste de escribir tu respuesta en la casilla. ¿Ya está entregada la tarea?",
+          },
+          choices: [
+            { text: { en: "No, you still have to click Submit to send it to the teacher", es: "No, todavía tienes que hacer clic en Entregar para enviársela a la maestra" }, correct: true },
+            { text: { en: "Yes, typing it is the same as turning it in", es: "Sí, escribirla es lo mismo que entregarla" }, correct: false },
+            { text: { en: "Yes, as soon as you stop typing it saves and submits", es: "Sí, en cuanto dejas de escribir se guarda y se entrega" }, correct: false },
+          ],
+        },
+      ],
       skills: ["workplace-systems"],
       minutes: 8,
       scene: {
@@ -1671,6 +2179,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "Most people who get hired do not match every line. If you match most of the list, apply.",
         es: "La mayoría de las personas contratadas no cumplen cada línea. Si cumples casi toda la lista, postúlate.",
       },
+      check: [
+        {
+          question: {
+            en: "The posting lists \"College degree\" as preferred. Sam has none. Should Sam check that box?",
+            es: "El anuncio pone el título universitario como algo preferido. Sam no tiene uno. ¿Debe Sam marcar esa casilla?",
+          },
+          choices: [
+            { text: { en: "No, Sam has no degree and this job does not require one", es: "No, Sam no tiene título y este trabajo no lo necesita" }, correct: true },
+            { text: { en: "Yes, check every box so the application looks stronger", es: "Sí, marca todas las casillas para que la solicitud se vea mejor" }, correct: false },
+            { text: { en: "Yes, since Sam went to high school", es: "Sí, porque Sam terminó la secundaria" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "How many requirements did you need to check before applying?",
+            es: "¿Cuántos requisitos tenías que marcar antes de postularte?",
+          },
+          choices: [
+            { text: { en: "At least three", es: "Al menos tres" }, correct: true },
+            { text: { en: "Every single one on the list", es: "Todos los de la lista" }, correct: false },
+            { text: { en: "None. You can apply with nothing checked", es: "Ninguno. Puedes postularte sin marcar nada" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What did the one-line \"why are you a good fit\" answer need to name?",
+            es: "¿Qué tenía que nombrar la línea de \"por qué eres una buena opción\"?",
+          },
+          choices: [
+            { text: { en: "Something real Sam actually did at work, like fixing a schedule problem", es: "Algo real que Sam de verdad hizo en el trabajo, como arreglar un problema de horario" }, correct: true },
+            { text: { en: "A general compliment with no example", es: "Un cumplido general sin ningún ejemplo" }, correct: false },
+            { text: { en: "A list of every skill on the posting", es: "Una lista de todas las habilidades del anuncio" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Read the parts of a job posting: the role, the pay, the requirements", es: "Leer las partes de un anuncio de empleo: el puesto, el pago, los requisitos" },
@@ -1741,6 +2284,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "The employer uses your phone and email to contact you. One wrong letter or number could mean a missed message. Check your contact details before submitting.",
         es: "La empresa usa tu teléfono y correo para contactarte. Una letra o un número incorrecto podría impedir que te llegue un mensaje. Revisa tus datos de contacto antes de enviar la solicitud.",
       },
+      check: [
+        {
+          question: {
+            en: "The job is full time, 40 hours a week, and Sam wants 40 hours. Which availability should Sam choose?",
+            es: "El trabajo es de tiempo completo, 40 horas por semana, y Sam quiere 40 horas. ¿Qué disponibilidad debe elegir Sam?",
+          },
+          choices: [
+            { text: { en: "Full time", es: "Tiempo completo" }, correct: true },
+            { text: { en: "Part time", es: "Medio tiempo" }, correct: false },
+            { text: { en: "Either one works", es: "Cualquiera de las dos" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What is Sam's start date on the info card?",
+            es: "¿Cuál es la fecha de inicio de Sam en la tarjeta de información?",
+          },
+          choices: [
+            { text: { en: "11/16/2026", es: "11/16/2026" }, correct: true },
+            { text: { en: "16/11/2026", es: "16/11/2026" }, correct: false },
+            { text: { en: "Whatever date feels right", es: "Cualquier fecha que parezca correcta" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "What did the \"why do you want this job\" answer need?",
+            es: "¿Qué necesitaba la respuesta de \"por qué quieres este trabajo\"?",
+          },
+          choices: [
+            { text: { en: "One real sentence with an actual reason, not just \"I need a job\"", es: "Una oración real con una razón de verdad, no solo \"Necesito un trabajo\"" }, correct: true },
+            { text: { en: "A full page about Sam's life story", es: "Una página entera sobre la vida de Sam" }, correct: false },
+            { text: { en: "Nothing. That box could be left empty", es: "Nada. Esa casilla se podía dejar vacía" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Read each section of an application", es: "Leer cada sección de una solicitud" },
@@ -1811,6 +2389,41 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "A first résumé is one page: contact, a short summary, one strong line for each job, and your skills.",
         es: "Un primer currículum es una página: contacto, un resumen corto, una línea fuerte para cada empleo y tus habilidades.",
       },
+      check: [
+        {
+          question: {
+            en: "How many of Sam's jobs got their own accomplishment line?",
+            es: "¿Cuántos empleos de Sam tenían su propia línea de logro?",
+          },
+          choices: [
+            { text: { en: "Two, the most recent two roles", es: "Dos, los dos puestos más recientes" }, correct: true },
+            { text: { en: "Every job Sam ever had", es: "Todos los empleos que Sam ha tenido" }, correct: false },
+            { text: { en: "Only the very first job", es: "Solo el primer empleo" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Could the same accomplishment line be used for both of Sam's jobs?",
+            es: "¿Se podía usar la misma línea de logro para los dos empleos de Sam?",
+          },
+          choices: [
+            { text: { en: "No, each job needed its own, different line", es: "No, cada empleo necesitaba su propia línea, distinta a la otra" }, correct: true },
+            { text: { en: "Yes, one line copied to both jobs is fine", es: "Sí, una línea copiada en los dos empleos está bien" }, correct: false },
+            { text: { en: "Yes, as long as it was three words long", es: "Sí, mientras tuviera tres palabras" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "How many skills did the résumé need checked, at minimum?",
+            es: "¿Cuántas habilidades había que marcar en el currículum, como mínimo?",
+          },
+          choices: [
+            { text: { en: "At least three, only the ones you've really done", es: "Al menos tres, solo las que de verdad has hecho" }, correct: true },
+            { text: { en: "Every skill on the list, to look more qualified", es: "Todas las de la lista, para verte más calificado" }, correct: false },
+            { text: { en: "None. Skills are optional on a first résumé", es: "Ninguna. Las habilidades son opcionales en un primer currículum" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Know the parts of a simple résumé", es: "Conocer las partes de un currículum sencillo" },
@@ -1933,6 +2546,52 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "On your own W-4 at a real job, you choose what is true for you. You can change it later.",
         es: "En tu propio W-4 en un trabajo real, eliges lo que es verdad para ti. Lo puedes cambiar después.",
       },
+      check: [
+        {
+          question: {
+            en: "Robin is not married and has no children. Which filing status fits Robin?",
+            es: "Robin no está casado/a y no tiene hijos. ¿Qué estado civil le corresponde?",
+          },
+          choices: [
+            { text: { en: "Single, or married filing separately", es: "Soltero/a, o casado/a declarando por separado" }, correct: true },
+            { text: { en: "Head of household", es: "Cabeza de familia" }, correct: false },
+            { text: { en: "Married filing jointly", es: "Casado/a declarando en conjunto" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Robin has no dependents and no other credits. What goes in the Step 3 credit amount?",
+            es: "Robin no tiene dependientes ni otros créditos. ¿Qué va en el monto de créditos del Paso 3?",
+          },
+          choices: [
+            { text: { en: "$0", es: "$0" }, correct: true },
+            { text: { en: "1, for Robin alone", es: "1, por Robin mismo/a" }, correct: false },
+            { text: { en: "Leave it blank", es: "Dejarlo en blanco" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Whose name goes in the Signature box?",
+            es: "¿De quién va el nombre en la casilla Firma?",
+          },
+          choices: [
+            { text: { en: "Robin Avery's, the name on the form", es: "El de Robin Avery, el nombre del formulario" }, correct: true },
+            { text: { en: "Your own name", es: "Tu propio nombre" }, correct: false },
+            { text: { en: "Harborside HQ", es: "Harborside HQ" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Robin's form date is October 1, 2026. How is that written in the Date box?",
+            es: "La fecha del formulario de Robin es el 1 de octubre de 2026. ¿Cómo se escribe en la casilla Fecha?",
+          },
+          choices: [
+            { text: { en: "10/01/2026 (month first)", es: "10/01/2026 (mes primero)" }, correct: true },
+            { text: { en: "01/10/2026 (day first)", es: "01/10/2026 (día primero)" }, correct: false },
+            { text: { en: "2026/10/01", es: "2026/10/01" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Know what a W-4 is for", es: "Saber para qué sirve un W-4" },
