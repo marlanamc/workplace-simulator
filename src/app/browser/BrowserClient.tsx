@@ -29,7 +29,7 @@ import { TOUR_DRAFT, savedTourStep, tourResumeTab } from "@/lib/tour-resume";
 const ConfidencePractice = dynamic(() => import("@/components/lesson/ConfidencePractice"));
 const LessonFollowups = dynamic(() => import("@/components/lesson/LessonFollowups"));
 
-type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "newtab";
+type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "phishing-check" | "newtab";
 
 function isNewTabKey(key: string | undefined) {
   return key === "newtab" || Boolean(key?.startsWith("newtab-"));

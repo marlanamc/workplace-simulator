@@ -90,7 +90,7 @@ export const TRACKS: Track[] = [
     key: "account-security",
     title: { en: "Locked Out", es: "Sin acceso" },
     subtitle: { en: "Get back in, the right way", es: "Recupera el acceso, de la forma correcta" },
-    taskKeys: ["account-recovery"],
+    taskKeys: ["account-recovery", "phishing-check"],
     awardEmoji: "🔐",
   },
   {

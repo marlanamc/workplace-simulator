@@ -66,6 +66,7 @@ export const TAB_META: TabMeta[] = [
   { key: "zoom", label: "Zoom", url: "zoom.harborsidehq.com/join", color: "#2D8CFF", levelKey: "level21" },
   { key: "incident", label: "Forms", url: "forms.harborsidecafe.com", color: "#7248b9", levelKey: "level3b" },
   { key: "account-recovery", label: "Sign In", url: "accounts.google.com", color: "#5f6368", levelKey: "level3c" },
+  { key: "phishing-check", label: "Inbox", url: "mail.harborsidecafe.com", color: "#d93025", levelKey: "level3c" },
   { key: "portal", label: "Portal", url: "portal.harborsidecafe.com", color: "#8430ce", levelKey: "level2" },
 ];
 
@@ -82,6 +83,7 @@ const TAB_LABEL_ES: Record<string, string> = {
   "performance-review": "Evaluación",
   "portfolio-reflection": "Resumen",
   "account-recovery": "Iniciar sesión",
+  "phishing-check": "Bandeja de entrada",
   jobs: "Empleos",
   resume: "Currículum",
   interview: "Entrevista",

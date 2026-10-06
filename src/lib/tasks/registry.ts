@@ -2,6 +2,7 @@ import type { AppKey, TaskKey } from "@/lib/desktop-content";
 import type { Localized } from "@/lib/task-types";
 import type { LessonMeta } from "@/lib/lessons/types";
 import { LESSON_EMAIL, LESSON_PASSWORD, RECOVERY_COPY } from "@/lib/tasks/account-recovery/content";
+import { REAL_DOMAIN, RIGHT_NOW_STEPS as PHISHING_STEPS } from "@/lib/tasks/phishing-check/content";
 import { JOB_SEEKER } from "@/lib/tasks/job-application/content";
 import { FILES_WEEK, RENAME_TARGET } from "@/lib/tasks/files/content";
 import {
@@ -615,6 +616,81 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         peerHelp: {
           en: "A partner can point at the screen, but the learner clicks and types.",
           es: "Un compañero puede señalar la pantalla, pero el estudiante hace clic y escribe.",
+        },
+      },
+    },
+  },
+
+  "phishing-check": {
+    key: "phishing-check",
+    built: true,
+    label: { en: "Spot a phishing email", es: "Identifica un correo de phishing" },
+    dispatch: {
+      en: "An email came in about your account. Read it before you do anything.",
+      es: "Llegó un correo sobre tu cuenta. Léelo antes de hacer cualquier cosa.",
+    },
+    skill: { en: "Spot a phishing email", es: "identificar un correo de phishing" },
+    bookmarkLabel: "Inbox",
+    handoffCta: { en: "Next: Check your inbox", es: "Siguiente: Revisa tu bandeja de entrada" },
+    shiftMoment: {
+      en: "Wednesday, a little later. An email is waiting.",
+      es: "Miércoles, un poco más tarde. Hay un correo esperando.",
+    },
+    jobCardLine: PHISHING_STEPS[0],
+    location: browser("Open Inbox", "phishing-check"),
+    lesson: {
+      title: { en: "Spot a phishing email", es: "Identificar un correo de phishing" },
+      summary: {
+        en: "Open four emails, tell the fake one from the real ones, and report it.",
+        es: "Abre cuatro correos, distingue el falso de los reales y repórtalo.",
+      },
+      skills: ["email"],
+      minutes: 8,
+      scene: {
+        you: { en: "You are a shift lead at Harborside Cafe. A shift lead runs a shift and helps the manager.", es: "Eres Shift Lead en Harborside Cafe. Un Shift Lead dirige un turno y ayuda a la gerente." },
+        people: [
+          {
+            name: "Renata Silva",
+            role: { en: "Your manager", es: "Tu gerente" },
+            who: { en: "She is the general manager of the cafe.", es: "Es la gerente general del café." },
+          },
+        ],
+        need: {
+          en: "Four emails are in your inbox. One is not really from Harborside: it asks you to verify your account right now and reply with your password. Find it and report it.",
+          es: "Hay cuatro correos en tu bandeja de entrada. Uno no es realmente de Harborside: te pide verificar tu cuenta ahora mismo y responder con tu contraseña. Encuéntralo y repórtalo.",
+        },
+      },
+      reference: [
+        { label: { en: "Real company address", es: "Dirección real de la empresa" }, value: `@${REAL_DOMAIN}` },
+        { label: { en: "Renata's email", es: "Correo de Renata" }, value: `renata.silva@${REAL_DOMAIN}` },
+      ],
+      takeaway: {
+        en: "A phishing email asks you to act fast and copies a company's name, but its address is not the company's. Check the full address, and never reply with a password.",
+        es: "Un correo de phishing te pide actuar rápido y copia el nombre de una empresa, pero su dirección no es la de la empresa. Revisa la dirección completa y nunca respondas con una contraseña.",
+      },
+      guide: {
+        skills: [
+          { en: "Read an email's full sender address, not just the display name", es: "Leer la dirección completa de quien envía un correo, no solo el nombre mostrado" },
+          { en: "Notice urgent, fear-based language in an email", es: "Notar un lenguaje urgente que busca asustar en un correo" },
+          { en: "Tell a real company email apart from a lookalike one", es: "Distinguir un correo real de una empresa de uno que se le parece" },
+          { en: "Report a phishing email instead of replying to it", es: "Reportar un correo de phishing en vez de responderlo" },
+        ],
+        prepare: [
+          { en: "Ask who has gotten a suspicious email or text before, at any job.", es: "Pregunta quién ha recibido un correo o mensaje sospechoso antes, en cualquier trabajo." },
+          { en: "Explain that the company, the people, and the emails are all fictional.", es: "Explica que la empresa, las personas y los correos son ficticios." },
+        ],
+        stickingPoints: [
+          { en: "The fake and real addresses look similar at a glance. Point at the part right after the @ sign in each one.", es: "Las direcciones falsa y real se parecen a primera vista. Señala la parte justo después del signo @ en cada una." },
+          { en: "Some learners want to reply to ask a question. Clicking Reply on the fake email, or its Verify Now button, gets the same correction as typing in it: report it instead.", es: "Algunos quieren responder para hacer una pregunta. Hacer clic en Responder en el correo falso, o en su botón Verificar ahora, da la misma corrección que escribir en él: repórtalo en su lugar." },
+          { en: "The three real emails are easy to dismiss too quickly. Let the learner open all four before deciding.", es: "Los tres correos reales se pueden descartar demasiado rápido. Deja que la persona abra los cuatro antes de decidir." },
+        ],
+        followUp: [
+          { en: "What is different about the two addresses, Harborside's real one and the fake one?", es: "¿Qué es diferente entre las dos direcciones, la real de Harborside y la falsa?" },
+          { en: "Why is reporting safer than replying to ask if an email is real?", es: "¿Por qué reportar es más seguro que responder para preguntar si un correo es real?" },
+        ],
+        peerHelp: {
+          en: "A partner can read an address out loud letter by letter. The learner decides and clicks.",
+          es: "Un compañero puede leer una dirección en voz alta, letra por letra. El estudiante decide y hace clic.",
         },
       },
     },

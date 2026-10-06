@@ -248,6 +248,7 @@ export const TASK_KEYS = [
   // First real paycheck ~two weeks after hire (Act I Day 6).
   "paystub",
   "account-recovery",
+  "phishing-check",
   "incident",
   "handbook",
   "calendar",
