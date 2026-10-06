@@ -28,6 +28,7 @@ import { TOUR_DRAFT, savedTourStep, tourResumeTab } from "@/lib/tour-resume";
 
 const ConfidencePractice = dynamic(() => import("@/components/lesson/ConfidencePractice"));
 const LessonFollowups = dynamic(() => import("@/components/lesson/LessonFollowups"));
+const ComprehensionCheck = dynamic(() => import("@/components/lesson/ComprehensionCheck"));
 
 type TabKey = "tour" | "mail" | "portal" | "calendar" | "files" | "spreadsheet" | "make-a-copy" | "status-report" | "triage" | "team-schedule" | "formula-check" | "team-meeting" | "priority-call" | "college-offer" | "budget-sheet" | "college-portal" | "coursework" | "library" | "front-desk" | "billing-sheet" | "expense-report" | "slides" | "meeting-minutes" | "performance-review" | "ops-report-packet" | "portfolio-reflection" | "zoom" | "handbook" | "incident" | "account-recovery" | "phishing-check" | "newtab";
 
@@ -164,6 +165,10 @@ export default function BrowserClient() {
   // A task's own "Open Calendar" style link still works, because a hub task
   // (Triage, the huddle, the weekly report) is made of those hops.
   const lesson = useLesson();
+  // Shown once, right after the task completes; "Practice again" remounts
+  // this whole component (a fresh progressEpoch key further up the tree),
+  // so this resets for free and never needs its own restart wiring.
+  const [checkDismissed, setCheckDismissed] = useState(false);
   // Day 7's practice Wi-Fi drop (Wave 4, everyday recovery).
   const offline = offlineIncidentActive(nextTaskInTrack(currentTrack, completedTaskKeys), storyFlags[OFFLINE_FLAG], Boolean(lesson));
   const lessonTabs = lesson
@@ -633,7 +638,9 @@ export default function BrowserClient() {
 
       {/* ── Page content ─────────────────────────────────────────── */}
       <div ref={pageRef} tabIndex={-1} data-page-content className="relative min-h-0 flex-1 overflow-hidden bg-white outline-none">
-        {lesson && isConfidenceKey(lesson.taskKey) && lesson.taskKey !== "account-recovery" && lesson.practiceRound == null ? <ConfidencePractice /> : lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : offline && !showingNewTab && active?.key !== "incident" ? (
+        {lesson && isConfidenceKey(lesson.taskKey) && lesson.taskKey !== "account-recovery" && lesson.practiceRound == null ? <ConfidencePractice /> : lesson?.practiceRound != null ? <LessonFollowups key={lesson.practiceRound} /> : lesson?.check?.length && !checkDismissed && completedTaskKeys.includes(lesson.taskKey) ? (
+          <ComprehensionCheck questions={lesson.check} lang={lang} onDone={() => setCheckDismissed(true)} />
+        ) : offline && !showingNewTab && active?.key !== "incident" ? (
           // Every page but Forms, whose done screen is still up from Day 7's first job.
           <OfflinePage />
         ) : <>

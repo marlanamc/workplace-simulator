@@ -668,6 +668,53 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         en: "A phishing email asks you to act fast and copies a company's name, but its address is not the company's. Check the full address, and never reply with a password.",
         es: "Un correo de phishing te pide actuar rápido y copia el nombre de una empresa, pero su dirección no es la de la empresa. Revisa la dirección completa y nunca respondas con una contraseña.",
       },
+      check: [
+        {
+          question: {
+            en: "What was the biggest clue the \"Harborside IT Support\" email was fake?",
+            es: "¿Cuál fue la pista más grande de que el correo de \"Harborside IT Support\" era falso?",
+          },
+          choices: [
+            { text: { en: "Its address was not @harborsidecafe.com", es: "Su dirección no era @harborsidecafe.com" }, correct: true },
+            { text: { en: "It had bad grammar", es: "Tenía mala gramática" }, correct: false },
+            { text: { en: "It arrived in the morning", es: "Llegó en la mañana" }, correct: false },
+            { text: { en: "It had a company name in it", es: "Tenía el nombre de una empresa" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "An email asks you to reply with your password to \"verify\" your account. What should you do?",
+            es: "Un correo te pide responder con tu contraseña para \"verificar\" tu cuenta. ¿Qué debes hacer?",
+          },
+          choices: [
+            { text: { en: "Send it, then change the password later", es: "Enviarla y después cambiar la contraseña" }, correct: false },
+            { text: { en: "Never send a password by email. Report it instead", es: "Nunca enviar una contraseña por correo. Reportarlo en su lugar" }, correct: true },
+            { text: { en: "Reply and ask why they need it", es: "Responder y preguntar para qué la necesitan" }, correct: false },
+          ],
+        },
+        {
+          question: {
+            en: "Which detail should make you more careful about an email?",
+            es: "¿Qué detalle debería hacerte tener más cuidado con un correo?",
+          },
+          choices: [
+            { text: { en: "It uses your first name", es: "Usa tu nombre" }, correct: false },
+            { text: { en: "It has a company logo", es: "Tiene el logo de una empresa" }, correct: false },
+            { text: { en: "It says your account will be locked today unless you act now", es: "Dice que tu cuenta se bloqueará hoy a menos que actúes ahora" }, correct: true },
+          ],
+        },
+        {
+          question: {
+            en: "Harborside Payroll's email only told you something, with nothing to click and no urgent threat. That kind of email is usually...",
+            es: "El correo de Harborside Payroll solo te informaba algo, sin nada que hacer clic y sin amenaza urgente. Ese tipo de correo normalmente es...",
+          },
+          choices: [
+            { text: { en: "Safe. Most real work email is like this", es: "Seguro. La mayoría del correo real de trabajo es así" }, correct: true },
+            { text: { en: "Still something to report", es: "Algo que igual se debe reportar" }, correct: false },
+            { text: { en: "Suspicious because it came from a company address", es: "Sospechoso porque vino de una dirección de empresa" }, correct: false },
+          ],
+        },
+      ],
       guide: {
         skills: [
           { en: "Read an email's full sender address, not just the display name", es: "Leer la dirección completa de quien envía un correo, no solo el nombre mostrado" },

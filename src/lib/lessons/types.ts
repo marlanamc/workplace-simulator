@@ -52,6 +52,20 @@ export type LessonFact = {
   emphasize?: boolean;
 };
 
+/** One choice in a `LessonCheckQuestion`. Exactly one per question is `correct`. */
+export type LessonCheckChoice = { text: Localized; correct: boolean };
+
+/**
+ * One multiple-choice recall question for the comprehension check shown
+ * after a lesson finishes. Ungraded and skippable — it never gates "Back to
+ * lessons" or "Practice again" — so it stays a short, low-stakes reflection
+ * on what the task just taught, not a second test of the workplace skill.
+ */
+export type LessonCheckQuestion = {
+  question: Localized;
+  choices: LessonCheckChoice[];
+};
+
 /**
  * What makes a game task a classroom lesson. A task becomes a lesson just by
  * getting one of these on its `TaskDescriptor`, so lessons roll out one task
@@ -79,4 +93,6 @@ export type LessonMeta = {
    * your own facts."). Facts, not praise.
    */
   takeaway?: Localized;
+  /** 3-5 question comprehension check, shown once after the task completes. */
+  check?: LessonCheckQuestion[];
 };

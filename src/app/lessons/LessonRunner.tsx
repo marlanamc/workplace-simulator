@@ -108,6 +108,9 @@ export default function LessonRunner({
       changeScenario: (next: LessonScenario, lang: Lang) => router.push(scenarioHref(taskKey, next, lang, mode, preview)),
       persona: entry.persona,
       takeaway: scenarioData ? entry.sequence?.reflection : entry.takeaway,
+      // Scenario practice (try/home) reuses the classroom's check questions;
+      // a confidence follow-up round has nothing to check until it finishes.
+      check: entry.check,
       mode,
       setMode,
       infoOpen,

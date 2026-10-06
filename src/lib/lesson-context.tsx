@@ -3,7 +3,7 @@
 import { createContext, useContext, type ReactNode } from "react";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang, Localized } from "@/lib/task-types";
-import type { LessonFact, LessonMode, LessonScene } from "@/lib/lessons/types";
+import type { LessonCheckQuestion, LessonFact, LessonMode, LessonScene } from "@/lib/lessons/types";
 import type { LessonSave } from "@/app/lessons/useLessonSave";
 
 /**
@@ -30,6 +30,8 @@ export interface LessonValue {
   persona?: string;
   /** The finish card's one-line takeaway. */
   takeaway?: Localized;
+  /** 3-5 question comprehension check, shown once after the task completes. */
+  check?: LessonCheckQuestion[];
   mode: LessonMode;
   /** Change support mid-task. The task keeps its place. */
   setMode: (mode: LessonMode) => void;
