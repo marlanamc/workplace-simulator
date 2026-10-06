@@ -275,28 +275,17 @@ export function sumProblem(formula: string): FormulaProblem {
 }
 
 /**
- * The keys that turn what is in the formula bar into the right formula, for
- * a learner whose typing landed in the wrong place (clicking the bar puts the
- * caret at the end, so "H6" becomes =SUM(H2:H5)H6). Counts from the end:
- * how many Backspaces back to where the two agree, then what to type.
+ * What to tell a learner to retype, in the formula's own language when it
+ * names one, so the answer matches what is already on screen. Clicking into
+ * the formula box selects the whole thing (see FormulaCheckTask's onFocus),
+ * so the fix is always "select and retype," never a partial edit.
  */
-export function keysToFix(formula: string, lang: Lang): { backspaces: number; type: string } {
-  // Answer in the formula's own language when it names one, so the keys match what is on screen.
+function retypeSentence(formula: string, lang: Lang): string {
   const useLang: Lang = /suma/i.test(formula) ? "es" : /sum/i.test(formula) ? "en" : lang;
   const target = rightSumFormula(useLang);
-  let p = 0;
-  while (p < formula.length && p < target.length && formula[p].toUpperCase() === target[p].toUpperCase()) p++;
-  return { backspaces: formula.length - p, type: target.slice(p) };
-}
-
-function keysSentence(formula: string, lang: Lang): string {
-  const { backspaces, type } = keysToFix(formula, lang);
-  if (lang === "en") {
-    if (backspaces === 0) return `Click at the end of the formula and type ${type}`;
-    return `Click at the end of the formula. Press Backspace ${backspaces} ${backspaces === 1 ? "time" : "times"}, then type ${type}`;
-  }
-  if (backspaces === 0) return `Haz clic al final de la fórmula y escribe ${type}`;
-  return `Haz clic al final de la fórmula. Presiona la tecla de borrar (Backspace) ${backspaces} ${backspaces === 1 ? "vez" : "veces"} y luego escribe ${type}`;
+  return lang === "en"
+    ? `Click the box to select the formula, then type: ${target}.`
+    : `Haz clic en la casilla para seleccionar la fórmula, y escribe: ${target}.`;
 }
 
 /**
@@ -316,8 +305,8 @@ export function sumCorrection(formula: string, lang: Lang, tries: number): strin
       return en ? `A formula starts with =. Type it like this: ${right}` : `Una fórmula empieza con =. Escríbela así: ${right}`;
     case "unreadable":
       return en
-        ? `The sheet cannot read ${formula.trim() || "an empty box"}. ${keysSentence(formula, lang)}.`
-        : `La hoja no puede leer ${formula.trim() || "una casilla vacía"}. ${keysSentence(formula, lang)}.`;
+        ? `The sheet cannot read ${formula.trim() || "an empty box"}. ${retypeSentence(formula, lang)}`
+        : `La hoja no puede leer ${formula.trim() || "una casilla vacía"}. ${retypeSentence(formula, lang)}`;
     case "missing-last":
       if (tries <= 1) {
         return en
@@ -325,8 +314,8 @@ export function sumCorrection(formula: string, lang: Lang, tries: number): strin
           : "Todavía no. Las celdas verdes son las filas que suma el total. Mira cada nombre. ¿Cada persona tiene una celda verde?";
       }
       return en
-        ? `Row 6 is not green, so its hours are not in the total. The last row in the formula must be 6. ${keysSentence(formula, lang)}.`
-        : `La fila 6 no está en verde, así que sus horas no están en el total. La última fila de la fórmula debe ser 6. ${keysSentence(formula, lang)}.`;
+        ? `Row 6 is not green, so its hours are not in the total. The last row in the formula must be 6. ${retypeSentence(formula, lang)}`
+        : `La fila 6 no está en verde, así que sus horas no están en el total. La última fila de la fórmula debe ser 6. ${retypeSentence(formula, lang)}`;
     case "missing-first":
       return en
         ? `The total starts too late. Row 2 is not green. Start at H2: ${right}`
