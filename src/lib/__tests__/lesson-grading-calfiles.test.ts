@@ -23,6 +23,11 @@ import { SHIFT_TIMES, HUDDLE_DAY, clockMinutes } from "@/lib/story-calendar";
 
 describe("calendar: the reply names a day you work and a time", () => {
   const pass = [
+    "Wednesday at 7 AM does not work. Thursday at 11 AM works.",
+    "Thursday at 11 AM works. Wednesday at 7 AM does not work.",
+    "El miércoles a las 7 no puedo. El jueves a las 11 sí.",
+    "Wednesday at 7 AM does not work. Can we meet at 11 a.m. on Thursday?",
+    "Can we meet at 11 AM on Thursday?",
     "Could we do Thursday at 10 AM instead?",
     "Could we do Thursday at 2 PM instead?",
     "Sorry, I don't work Wednesday. Can we meet Thursday at 10?",
@@ -51,6 +56,10 @@ describe("calendar: the reply names a day you work and a time", () => {
   });
 
   const fail: [string, string][] = [
+    ["Wednesday at 11 AM does not work. Thursday at 8 AM works.", "outsideShift"],
+    ["El miércoles a las 11 no puedo. El jueves a las 8 sí.", "outsideShift"],
+    ["Wednesday at 11 AM does not work. Thursday works.", "noTime"],
+    ["Thursday works. Wednesday at 11 AM does not work.", "noTime"],
     ["", "empty"],
     ["   ", "empty"],
     ["Yes, see you Wednesday", "dayOff"],

@@ -340,7 +340,8 @@ const NEGATION_AFTER = /^[\s,]*(?:is|es|=)?\s*(?:my|mi)?\s*(?:day off|dia libre|
 const CLAUSE_BREAK = /[.,;!?¿¡]|\bbut\b|\bpero\b|\bhow about\b|\bwhat about\b|\binstead\b|\bmaybe\b|\bcan we\b|\bcould we\b|\bpodemos\b|\bpodriamos\b|\bpuede ser\b/g;
 
 function plain(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’`]/g, "'");
+  return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’`]/g, "'")
+    .replace(/\b([ap])\.\s*m\.?/g, "$1m");
 }
 
 type DayMention = { weekday: number; start: number; end: number; negated: boolean };
@@ -402,6 +403,23 @@ function timeMention(t: string): TimeMention | null {
 export type HuddleReplyProblem = "empty" | "blank" | "dayOff" | "noDay" | "noTime" | "outsideShift";
 export type HuddleReplyCheck = { ok: true; weekday: number } | { ok: false; problem: HuddleReplyProblem; weekday?: number };
 
+/** Keep an old invitation's time from being attached to the proposed day. */
+function timeForDay(text: string, day: DayMention, days: DayMention[]): TimeMention | null {
+  const index = days.indexOf(day);
+  const nextDay = days[index + 1];
+  const after = text.slice(day.end, nextDay?.start ?? text.length).split(/[.!?;\n]/)[0];
+  const following = timeMention(after);
+  if (following) return following;
+
+  // Also accept "at 11 AM on Thursday", but never borrow the previous
+  // day's time from the same sentence. Dotted AM/PM is normalized above.
+  const before = text.slice(0, day.start);
+  const boundary = Math.max(...[".", "!", "?", ";", "\n"].map(mark => before.lastIndexOf(mark))) + 1;
+  const previousDay = days[index - 1];
+  if (previousDay && previousDay.end > boundary) return null;
+  return timeMention(before.slice(boundary));
+}
+
 /**
  * Passes a reply that proposes a day the learner works and a time in that
  * shift. A day off (Wednesday, Sunday) only counts against the reply when it
@@ -411,13 +429,14 @@ export function checkHuddleReply(body: string): HuddleReplyCheck {
   const t = plain(body).trim();
   if (!t) return { ok: false, problem: "empty" };
   if (/_{2,}/.test(t)) return { ok: false, problem: "blank" };
-  const proposed = dayMentions(t).filter((d) => !d.negated);
+  const days = dayMentions(t);
+  const proposed = days.filter((d) => !d.negated);
   const workday = proposed.find((d) => HUDDLE_WEEK_SHIFTS[d.weekday]);
   if (!workday) {
     const off = proposed.find((d) => !HUDDLE_WEEK_SHIFTS[d.weekday]);
     return off ? { ok: false, problem: "dayOff", weekday: off.weekday } : { ok: false, problem: "noDay" };
   }
-  const time = timeMention(t);
+  const time = timeForDay(t, workday, days);
   if (!time) return { ok: false, problem: "noTime", weekday: workday.weekday };
   const shift = HUDDLE_WEEK_SHIFTS[workday.weekday]!;
   if (time.hour !== null && (time.hour < shift.start || time.hour >= shift.end)) {
