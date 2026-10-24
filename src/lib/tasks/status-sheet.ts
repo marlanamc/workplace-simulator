@@ -1,5 +1,6 @@
 /** Shared numbers for the Weekly Status Template and the student's copy. */
 import { STORY_DAY_BY_LEVEL, mondayOf, shortDate } from "@/lib/story-dates";
+import { fnPattern } from "./sheet-words";
 
 /** The week the status report covers: the week before Reporting In (level7). */
 export const STATUS_WEEK = mondayOf(STORY_DAY_BY_LEVEL.level7) - 7;
@@ -22,11 +23,12 @@ export function normalizeCopyName(value: string) {
 }
 
 export function isValidSumFormula(formula: string) {
-  const m = formula.trim().match(/^=\s*sum\s*\(\s*B\s*(\d+)\s*:\s*B\s*(\d+)\s*\)\s*$/i);
+  const m = formula.trim().match(new RegExp(`^=\\s*${fnPattern("SUM")}\\s*\\(\\s*\\$?B\\$?\\s*(\\d+)\\s*:\\s*\\$?B\\$?\\s*(\\d+)\\s*\\)\\s*$`, "i"));
   if (!m) return false;
   const start = Math.min(Number(m[1]), Number(m[2]));
   const end = Math.max(Number(m[1]), Number(m[2]));
-  return start <= 2 && end >= 6;
+  // Row 1 is a text heading (safe to include); row 7 is this total cell.
+  return start >= 1 && start <= 2 && end === STATUS_ROWS.length + 1;
 }
 
 /** A plain number, the way a sheet reads one ("61", " 61 ", "61.0"). */
