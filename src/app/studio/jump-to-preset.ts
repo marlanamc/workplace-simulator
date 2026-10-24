@@ -21,6 +21,7 @@ export async function jumpToPreset(
     tab?.close();
     return false;
   }
+  storage.remove(`workplace:pending-saves:${learnerId}`);
   storage.remove(learnerKey.storyFlags(learnerId));
   storage.remove(learnerKey.rungs(learnerId));
   storage.remove(`ws-opening-draft:${learnerId}`);

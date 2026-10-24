@@ -54,9 +54,11 @@ Pending writing saves now persist a stable attempt UUID before the first request
 
 ## Remaining findings, ranked
 
-### 11. Studio resets can resurrect old failed saves — confirmed, medium for development/demo use
+### 11. Studio resets can resurrect old failed saves — FIXED (batch 3, 1/5)
 
 `src/app/studio/jump-to-preset.ts` clears drafts, story flags and arrival state but leaves `workplace:pending-saves:<learnerId>`. The new desktop restores that queue; Retry can re-add a task outside the chosen preset. Missing test: seed a failed completion/writing payload, jump to Fresh account, and verify it cannot be replayed.
+
+The successful Studio jump now removes the current learner’s pending completion/writing queue before navigation. Behavioral tests verify successful cleanup, owner isolation and preservation when the server rejects the reset.
 
 ### 12. Studio/replay database changes are not atomic — confirmed failure mode, medium
 
