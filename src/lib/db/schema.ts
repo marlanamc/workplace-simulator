@@ -1,4 +1,4 @@
-import { index, integer, jsonb, pgTable, text, timestamp, unique, uuid } from "drizzle-orm/pg-core";
+import { index, integer, jsonb, pgTable, text, timestamp, unique, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 
 export const learners = pgTable("learners", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -58,6 +58,8 @@ export const submissions = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     learnerId: uuid("learner_id").notNull().references(() => learners.id, { onDelete: "cascade" }),
     taskKey: text("task_key").notNull(),
+    /** Stable across a pending save's retries; null for historical records. */
+    attemptId: uuid("attempt_id"),
     /** { lang: "en" | "es", fields: [{ label, value }] } */
     content: jsonb("content").notNull(),
     submittedAt: timestamp("submitted_at", { withTimezone: true }).notNull().defaultNow(),
@@ -70,6 +72,7 @@ export const submissions = pgTable(
   (t) => [
     index("submissions_learner_task_idx").on(t.learnerId, t.taskKey),
     index("submissions_task_idx").on(t.taskKey),
+    uniqueIndex("submissions_owner_task_attempt_uq").on(t.learnerId, t.taskKey, t.attemptId),
   ],
 );
 

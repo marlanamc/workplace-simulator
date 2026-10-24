@@ -1,6 +1,9 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { spawn } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { drizzle } from 'drizzle-orm/neon-http';
+import { submissionInsert } from '../db/submission-saves';
+import { preparePendingSave, type PendingSave } from '../pending-save';
 import { PgDialect } from 'drizzle-orm/pg-core';
 import { lessonSaveStatement } from '../db/lesson-saves';
 import { recordFinish } from '../lessons/attempts';
@@ -29,13 +32,21 @@ async function state(activity: string) {
   return JSON.parse(await query(`SELECT state FROM practice_attempts WHERE activity_id = '${activity}'`));
 }
 
-describe.skipIf(!port)('atomic lesson saves in PostgreSQL', () => {
+describe.skipIf(!port)('atomic lesson and writing saves in PostgreSQL', () => {
   beforeAll(async () => {
     await query(`CREATE TABLE IF NOT EXISTS learners (id uuid PRIMARY KEY); INSERT INTO learners VALUES ('${owner}') ON CONFLICT DO NOTHING;`);
     await query(readFileSync('src/lib/db/migrations/20260924-practice.sql', 'utf8'));
     const migration = readFileSync('src/lib/db/migrations/20261024-lesson-save-events.sql', 'utf8');
     await query(migration);
     await query(migration); // Deploys reapply additive migrations.
+    await query(`CREATE TABLE IF NOT EXISTS submissions (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(), learner_id uuid NOT NULL REFERENCES learners(id),
+      task_key text NOT NULL, content jsonb NOT NULL, submitted_at timestamptz NOT NULL DEFAULT now(),
+      teacher_note text, noted_at timestamptz, seen_at timestamptz
+    )`);
+    const writingMigration = readFileSync('src/lib/db/migrations/20261024-submission-attempts.sql', 'utf8');
+    await query(writingMigration);
+    await query(writingMigration);
   });
   it('keeps both concurrent finishes, and replaying either receipt is a no-op', async () => {
     const activity = `concurrent-${crypto.randomUUID()}`;
@@ -55,10 +66,32 @@ describe.skipIf(!port)('atomic lesson saves in PostgreSQL', () => {
   });
   it('counts a transferred aggregate once and caps history at twenty', async () => {
     const activity = `transfer-${crypto.randomUUID()}`;
-    const transfer = { ...event(1), attempt: { ...event(1).attempt, attempts: 30, modes: Array< 'guided'> (20).fill('guided') } };
+    const transfer = { ...event(1), attempt: { ...event(1).attempt, attempts: 30, modes: Array<'guided'>(20).fill('guided') } };
     await save(activity, [transfer]);
     await save(activity, [transfer, event(2, 'independent')]);
     expect(await state(activity)).toMatchObject({ attempts: 31, mode: 'independent' });
     expect((await state(activity)).modes).toHaveLength(20);
   });
+  it('a writing save followed by completion failure retries once, but a new revision remains distinct', async () => {
+    const request: PendingSave = { taskKey: 'portfolio-reflection', submission: { lang: 'en', fields: [{ label: 'Reflection', value: 'My work' }] } };
+    let pending = preparePendingSave([], request);
+    const attemptId = pending.submissionAttemptId!;
+    const write = async (item: PendingSave) => {
+      const compiled = submissionInsert(drizzle.mock(), owner, item.taskKey, item.submission!, item.submissionAttemptId!).toSQL();
+      await query(compiled.sql.replace(/\$(\d+)/g, (_, n) => `'${String(compiled.params[Number(n) - 1]).replaceAll("'", "''")}'`));
+    };
+    const complete = async () => { throw new Error('Completion unavailable'); };
+    await expect((async () => { await write(pending); await complete(); })()).rejects.toThrow('Completion unavailable');
+    // Simulate a reload, then both a lost-ack retry and a concurrent duplicate.
+    pending = preparePendingSave(JSON.parse(JSON.stringify([pending])), request);
+    await Promise.all([write(pending), write(pending)]);
+    expect(await query(`SELECT count(*) FROM submissions WHERE attempt_id = '${attemptId}'`)).toBe('1');
+    await query(`UPDATE submissions SET teacher_note = 'Keep this note', seen_at = now() WHERE attempt_id = '${attemptId}'`);
+    await write(pending);
+    expect(await query(`SELECT teacher_note FROM submissions WHERE attempt_id = '${attemptId}'`)).toBe('Keep this note');
+    const revision = preparePendingSave([], request); // prior save succeeded; queue is empty
+    await write(revision);
+    expect(await query(`SELECT count(*) FROM submissions WHERE attempt_id IN ('${attemptId}', '${revision.submissionAttemptId}')`)).toBe('2');
+  });
+
 });

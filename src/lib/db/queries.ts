@@ -1,3 +1,4 @@
+import { submissionInsert } from "./submission-saves";
 import type { Lang } from "@/lib/task-types";
 import { and, asc, desc, eq, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 import { getDb } from "./client";
@@ -140,12 +141,9 @@ export async function recordSubmission(
   learnerId: string,
   taskKey: string,
   content: SubmissionContent,
+  attemptId: string,
 ) {
-  const db = getDb();
-  const rows = await db
-    .insert(submissions)
-    .values({ learnerId, taskKey, content })
-    .returning();
+  const rows = await submissionInsert(getDb(), learnerId, taskKey, content, attemptId);
   return rows[0];
 }
 

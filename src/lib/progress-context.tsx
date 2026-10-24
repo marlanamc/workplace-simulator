@@ -1,5 +1,6 @@
 "use client";
 
+import { preparePendingSave, type PendingSave } from "@/lib/pending-save";
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 import type { OpeningReply } from "@/lib/tasks/mail/opening";
 import type { TaskKey } from "@/lib/desktop-content";
@@ -65,7 +66,6 @@ const loadRungMap = (learnerId: string): RungMap =>
 const saveRungMap = (learnerId: string, map: RungMap) =>
   storage.setJSON(learnerKey.rungs(learnerId), map);
 
-type PendingSave = { taskKey: TaskKey; badgeKey?: string; submission?: SubmissionContent; confidence?: Confidence };
 export interface ProgressValue {
   courseRoute: CourseRoute | null;
   chooseCourseRoute: (route: CourseRoute) => Promise<void>;
@@ -367,7 +367,7 @@ export function ProgressProvider({
     confidence?: Confidence,
   ) => {
     if (inFlight.current.has(taskKey)) return false;
-    const item = { taskKey, badgeKey, submission, confidence };
+    const item = preparePendingSave(pendingRef.current, { taskKey, badgeKey, submission, confidence });
     pendingRef.current = [...pendingRef.current.filter((p) => p.taskKey !== taskKey), item];
     setPending(pendingRef.current);
     storage.setJSON(queueKey, pendingRef.current);
@@ -375,7 +375,7 @@ export function ProgressProvider({
     setSavingCount((n) => n + 1);
     try {
       if (submission) {
-        const saved = await recordWritingSubmission(taskKey, submission);
+        const saved = await recordWritingSubmission(taskKey, submission, item.submissionAttemptId!);
         if (!saved.ok) throw new Error('Writing not saved');
         setWriting((prev) => ({ ...prev, [taskKey]: submission }));
       }

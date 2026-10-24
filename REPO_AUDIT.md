@@ -1,6 +1,6 @@
 # Repository audit — 24 October 2026
 
-Five fixes, five commits. Remaining findings are deliberately left open.
+Ten fixes across two batches of five commits. This follow-up fixes ranks 6–10 only; ranks 11–40 remain open.
 
 ## Scope and evidence
 
@@ -13,12 +13,12 @@ Ranking is by expected likelihood of causing trouble in normal teaching, develop
 | Rank | Finding and trigger | Fix and evidence | Commit |
 | --- | --- | --- | --- |
 | 1 | **Status-sheet grading rejects Spanish formulas and accepts circular totals.** `isValidSumFormula` accepted only `SUM`, and accepted any range starting before row 3 and ending after row 5, including `B2:B7` where B7 is the total. High likelihood when a learner uses Spanish syntax or selects one extra row. | Accept `SUM`/`SUMA`, case/spacing, reversed and absolute references. Permit the text header but exclude row 0, incomplete data and the total cell. Ten regression cases in `status-total.test.ts`. | `b8125f0` |
-| 2 | **Lesson retry saves can duplicate transferred finishes or erase newer recovery data.** A failed transfer was merged into the buffer, then added again on reload. Overlapping PUTs could finish out of order; an earlier success removed the newer local retry copy. | Serialize PUTs within a mounted lesson, acknowledge only the latest snapshot, retain transfer identity in the buffer, and clear transferred data on successful retry. Preserve old bare-buffer compatibility and library done badges. Deferred-promise unit tests plus a mocked-API browser test reproduce failure → reload → retry. Cross-tab conflicts remain open below. | `0333dbe` |
+| 2 | **Lesson retry saves can duplicate transferred finishes or erase newer recovery data.** A failed transfer was merged into the buffer, then added again on reload. Overlapping PUTs could finish out of order; an earlier success removed the newer local retry copy. | Serialize PUTs within a mounted lesson, acknowledge only the latest snapshot, retain transfer identity in the buffer, and clear transferred data on successful retry. Preserve old bare-buffer compatibility and library done badges. Deferred-promise unit tests plus a mocked-API browser test reproduce failure → reload → retry. Cross-tab conflicts were addressed in follow-up rank 9 below. | `0333dbe` |
 | 3 | **Edited teacher notes disappear from the learner's unread queue.** `setSubmissionNote` retained `seenAt` from the old note. The form also let rejected promises escape and Cancel restored the original prop rather than the latest saved edit. | Reset the read receipt when updating a note; catch failed saves and keep the draft; retain the confirmed note for Cancel and disable editing while saving. Query regressions cover renewed unread status and database failure. Authenticated browser delivery was not exercised here. | `4937108` |
 | 4 | **The migration runner skips a configured local database.** `npm run build` ran plain Node before Next loaded `.env.local`, so migrations silently skipped while the application subsequently connected to that database. The documented manual migration command had the same problem. | Load Next's production-build environment before resolving `DATABASE_URL`, using the same variable as the application. Tests run the real environment loader in isolated child processes with a fake SQL client: production-file precedence, shell override, filename ordering and failure termination. No real migrations were applied. | `b472704` |
 | 5 | **Calendar grading pairs a proposed day with the old invitation's time.** “Wednesday at 7 AM does not work. Thursday at 11 AM works.” failed; reversing those same sentences passed. The grader used the first time anywhere in the message. | Associate the time with the selected day, bounded by other day mentions and sentences. Also accept time-before-day phrasing and dotted AM/PM. Nine EN/ES regression cases preserve rejection of out-of-shift and missing proposed times. | Fifth commit: `fix: associate calendar reply times with their proposed day` |
 
-## Remaining findings, ranked
+## Follow-up fixes: ranks 6–10
 
 ### 6. Formula-check can freeze the learner's tab on a large range — FIXED (follow-up 1/5)
 
@@ -46,9 +46,13 @@ Finishes now wait in the unresolved buffer while identity is loading, then merge
 
 Finish events now carry durable IDs. One atomic PostgreSQL statement inserts unseen receipts and increments the aggregate, preserving existing counts. Per-event local buffers survive simultaneous tab writes; replayed IDs are no-ops. The additive `20261024-lesson-save-events.sql` migration is required before deployment. Unit, mocked-browser and isolated real-PostgreSQL regressions cover concurrent tabs, stale batches, lost acknowledgements and transfer replay.
 
-### 10. Repeated writing-save retries create duplicate teacher submissions — confirmed, medium
+### 10. Repeated writing-save retries create duplicate teacher submissions — FIXED (follow-up 5/5)
 
 `src/lib/progress-context.tsx`, `markComplete`, saves writing before completion/award. If the writing succeeds but completion or its acknowledgement fails, Retry inserts the writing again through `src/lib/db/queries.ts`, `recordSubmission`. Each row appears independently in the teacher review queue. A stable submission-attempt identifier is needed; content equality alone would collapse intentional revisions. Missing test: writing succeeds → completion fails → retry creates exactly one submission for that attempt.
+
+Pending writing saves now persist a stable attempt UUID before the first request. Retries reuse it, including after reload; a fresh submission after success receives a new ID even with identical text. A unique learner/task/attempt index makes repeated inserts no-ops without touching teacher notes or revision history. The additive `20261024-submission-attempts.sql` migration preserves existing rows. Unit and isolated PostgreSQL tests cover failed completion after writing, concurrent retries and deliberate revisions.
+
+## Remaining findings, ranked
 
 ### 11. Studio resets can resurrect old failed saves — confirmed, medium for development/demo use
 
@@ -186,13 +190,33 @@ Many integrity tests inspect source strings or structural wiring; they can pass 
 
 Specific stale statements: `TESTING.md` and the health-route comment say there are no migration artifacts despite the SQL directory; `storage.ts` says no caller is load-bearing despite saved-writing retries; Studio's demo copy describes only three directions while the route chooser includes College and Pause. The README's before-deploy manual opening migration guidance overlaps the automated migration section. Missing validation: documentation examples and provisioning instructions tested against current scripts. Manual Chromebook zoom, keyboard/screen-reader, printed-material and learner-transfer pilots remain explicitly open in the existing curriculum docs; smoke tests do not close them.
 
-## Verification and limits
+## Initial audit verification and limits
 
 - Baseline: `npm run check` passed — 87 files, 2,880 unit tests.
 - Each of the five fix commits was preceded by a passing `npm run check` (lint, TypeScript, unit tests).
 - Final code checks: 90 test files, **2,907 unit tests passed**.
 - Browser command: `E2E_PORT=3100 npx playwright test e2e/lessons.spec.ts e2e/lesson-library.spec.ts e2e/lessons-smoke.spec.ts e2e/lesson-save-retry.spec.ts --grep-invert saving --workers=2` — **134 passed**. The new mocked retry test also passed independently.
 - The browser run covers guest lesson/library behavior and all reachable task startups in English and Spanish. It ran before the final pure calendar-grader change; that change passed the full unit suite with nine additional regressions.
-- The configured local database was not identified as a dedicated test database. The account-creating/full authenticated browser suite was not run against it. No schema push, migration, reset or other database mutation was performed by this audit.
+- The configured local database was not identified as a dedicated test database. The account-creating/full authenticated browser suite was not run against it. No schema push, migration, reset or other database mutation was performed in that initial batch.
 - Migration tests use isolated fixture directories and an injected SQL client; they do not prove live Neon transaction or schema behavior. A production build/deploy and real learner pilot were not performed.
-- Exactly the five fixes above remain, one commit each; this report is included with the fifth.
+- The initial batch made exactly five fix commits; the follow-up below adds exactly five more.
+
+
+## Follow-up verification and limits
+
+This batch fixes only ranks 6–10, in order, one commit per issue:
+
+| Rank | Commit | Result |
+| --- | --- | --- |
+| 6 | `0cbbe33` | Bound formula ranges and reject duplicate references. |
+| 7 | `5e38799` | Recover lesson saves after session lookup failures. |
+| 8 | `6c3a50d` | Retain lesson finishes while identity is loading. |
+| 9 | `c1fe561` | Count concurrent lesson finish events atomically. |
+| 10 | Fifth follow-up commit, containing this report | Deduplicate retries of one writing submission while retaining intentional revisions. |
+
+- `npm run check` passed before each commit. Final run: `SAVE_TEST_PG_PORT=55439 npm run check` — lint and TypeScript passed; **94 test files, 2,924 tests passed**, including all four optional PostgreSQL cases (see `TESTING.md`).
+- Guest/mocked browser regressions: **139 passed**, including all lesson startups in both languages, session errors, delayed lookup, lost acknowledgements and two concurrent tabs. These ran after the lesson-persistence changes; the final writing fix is covered by unit/action tests and the real database regression.
+- Real PostgreSQL: **4 integration tests passed** against an isolated temporary local cluster and `workplace_save_test`, including both new migrations applied twice. Tests cover concurrent increments, duplicate/out-of-order events, transferred aggregates, writing saved before completion fails, concurrent submission retries, teacher-note preservation and intentional identical revisions.
+- Both additive migrations must run before deployment: `20261024-lesson-save-events.sql` and `20261024-submission-attempts.sql`. The existing build migration runner includes them. They were tested only in the isolated cluster; the configured learner database was not modified.
+- Full authenticated browser flows against Neon, a production deployment and learner pilots were not run. Old legacy lesson snapshots have no event IDs; migration conservatively sends only their excess over the current server count. Previously lost concurrent increments or already duplicated submissions cannot be reconstructed automatically.
+- Ranks 11–40 remain deliberately open. No sixth follow-up fix was made.

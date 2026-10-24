@@ -1,5 +1,6 @@
 "use server";
 
+import { isSubmissionAttemptId } from "@/lib/pending-save";
 import { redirect } from "next/navigation";
 import { clearSessionCookie, getSessionLearnerId } from "@/lib/auth";
 import { canUseStudio } from "@/lib/studio-access";
@@ -100,10 +101,11 @@ export async function syncSkillRun(
  * so the teacher can read it and suggest changes. Completion awaits persistence;
  * failed saves retain the writing for a learner-controlled retry.
  */
-export async function recordWritingSubmission(taskKey: string, content: SubmissionContent) {
+export async function recordWritingSubmission(taskKey: string, content: SubmissionContent, attemptId: string) {
   const learnerId = await getSessionLearnerId();
   if (!learnerId) return { ok: false as const };
-  await recordSubmission(learnerId, taskKey, content);
+  if (!isSubmissionAttemptId(attemptId)) return { ok: false as const };
+  await recordSubmission(learnerId, taskKey, content, attemptId);
   return { ok: true as const };
 }
 

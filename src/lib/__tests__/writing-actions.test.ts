@@ -20,7 +20,18 @@ describe('session-owned saved work', () => {
  });
  it('propagates persistence failures rather than reporting a successful save', async () => {
   mocks.save.mockRejectedValue(new Error('Offline'));
-  await expect(recordWritingSubmission('portfolio-reflection',{lang:'en',fields:[]})).rejects.toThrow('Offline');
+  await expect(recordWritingSubmission('portfolio-reflection',{lang:'en',fields:[]}, '00000000-0000-4000-8000-000000000001')).rejects.toThrow('Offline');
+ });
+ it('forwards a stable attempt ID only under the authenticated learner', async () => {
+  const content = { lang: 'en' as const, fields: [] };
+  const id = '00000000-0000-4000-8000-000000000002';
+  mocks.save.mockResolvedValue(undefined);
+  expect(await recordWritingSubmission('portfolio-reflection', content, id)).toEqual({ ok: true });
+  expect(mocks.save).toHaveBeenCalledWith('signed-in-learner', 'portfolio-reflection', content, id);
+  expect(await recordWritingSubmission('portfolio-reflection', content, 'invalid')).toEqual({ ok: false });
+  mocks.session.mockResolvedValue(null);
+  expect(await recordWritingSubmission('portfolio-reflection', content, id)).toEqual({ ok: false });
+  expect(mocks.save).toHaveBeenCalledTimes(1);
  });
  it('stores a route atomically in the session-owned record and rejects invalid values', async () => {
   expect(await persistCourseRoute('office')).toEqual({ok:true});
