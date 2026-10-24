@@ -1,5 +1,6 @@
 "use client";
 
+import { useTaskDraft } from "@/lib/use-task-draft";
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
 import { useWindowManager } from "@/lib/window-manager";
@@ -68,7 +69,7 @@ function EnrollmentPortal() {
   const [pickingDocument, setPickingDocument] = useState(false);
   const [deadlineFound, setDeadlineFound] = useState(false);
   const [docReady, setDocReady] = useState(false);
-  const [statement, setStatement] = useState("");
+  const [statement, setStatement] = useTaskDraft("enrollment", "statement", "");
   const [help, setHelp] = useState(false);
   const { nudge, say, dismiss } = useNudge();
   const c = ENROLLMENT_COPY[lang];

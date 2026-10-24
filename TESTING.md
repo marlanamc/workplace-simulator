@@ -346,3 +346,16 @@ skips these integration cases when the port is absent.
 
 `e2e/lesson-save-retry.spec.ts` mocks the lesson API, so its session-failure,
 delayed-lookup, lost-acknowledgement and two-tab tests need no learner database.
+
+## Enrollment draft persistence
+
+The enrollment statement uses the shared Story draft contract: save immediately
+on this device under the learner and task, restore after reload, and clear on
+explicit restart, level replay or Studio reset. Deadline/document choices and
+open panels remain transient. Lesson writing remains in memory and never reads
+or overwrites Story drafts.
+
+Run `npx playwright test --config playwright.component.config.ts` for the English
+and Spanish enrollment persistence checks. The browser renders the real task,
+draft hook and storage with a mocked account/lesson context; it requires neither
+an app server nor a database. This does not replace authenticated end-to-end tests.

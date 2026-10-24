@@ -72,9 +72,11 @@ The Studio client removes local rung state, but `replaceProgress` does not clear
 
 All Studio presets now clear server skill rungs inside the reset transaction, matching the existing device cleanup. Seeded completions do not imply mastery. Writing submissions and teacher feedback explicitly remain review history; this policy is documented in `TESTING.md`. PostgreSQL tests cover Fresh and later presets, rollback and owner isolation.
 
-### 14. Enrollment writing disappears on reload before submission — confirmed, medium
+### 14. Enrollment writing disappears on reload before submission — FIXED (batch 3, 4/5)
 
 `src/app/browser/CollegePortalTask.tsx` keeps the enrollment statement in plain `useState("")`, unlike tasks using `useTaskDraft`. Reloading an unfinished application discards the statement. Missing test: type enrollment text, reload, and restore it, scoped to the learner. Other transient task state needs a documented persistence contract; not every UI selection needs saving.
+
+Enrollment now uses `useTaskDraft` for its statement, preserving the existing restart behavior and in-memory lesson isolation. The persistence contract is documented in `TESTING.md`. Browser component regressions exercise the real task and storage in English and Spanish across reloads and account changes.
 
 ### 15. A missed skill run does not break a clean-run streak — confirmed, medium
 
