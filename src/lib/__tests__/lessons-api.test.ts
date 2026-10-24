@@ -1,5 +1,6 @@
 import { beforeEach, describe, it, expect, vi } from "vitest";
 const m = vi.hoisted(() => ({
+  execute: vi.fn(),
   session: vi.fn(),
   select: vi.fn(),
   from: vi.fn(),
@@ -9,7 +10,7 @@ const m = vi.hoisted(() => ({
   upsert: vi.fn(),
 }));
 vi.mock("@/lib/auth", () => ({ getSessionLearnerId: m.session }));
-vi.mock("@/lib/db/client", () => ({ getDb: () => ({ select: m.select, insert: m.insert }) }));
+vi.mock("@/lib/db/client", () => ({ getDb: () => ({ select: m.select, insert: m.insert, execute: m.execute }) }));
 import { GET, PUT } from "@/app/api/lessons/route";
 import { mergeAttempts, parseAttempt, recordFinish, type LessonAttempt } from "../lessons/attempts";
 import { safeReturn } from "../lessons/return";
@@ -30,7 +31,7 @@ const put = (body: unknown, { origin = "https://l.test", lesson = "account-recov
   new Request(`https://l.test/api/lessons?lesson=${lesson}`, {
     method: "PUT",
     headers: { origin, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: JSON.stringify({ events: [{ id: '00000000-0000-4000-8000-000000000001', attempt: body }] }),
   });
 
 describe("/api/lessons", () => {
@@ -62,10 +63,10 @@ describe("/api/lessons", () => {
   });
   it("saves the attempt under the task key for the session owner", async () => {
     expect((await PUT(put(done))).status).toBe(200);
-    expect(m.values).toHaveBeenCalledWith({ learnerId: "owner", activityId: "account-recovery", version: 1, state: done });
+    expect(m.execute).toHaveBeenCalledOnce();
   });
   it("reports a database failure as 503, not success", async () => {
-    m.upsert.mockRejectedValue(new Error("down"));
+    m.execute.mockRejectedValue(new Error("down"));
     expect((await PUT(put(done))).status).toBe(503);
   });
 });

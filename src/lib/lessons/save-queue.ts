@@ -1,14 +1,17 @@
+import { parseSaveEvents, type LessonSaveEvent } from './save-events';
 import { mergeAttempts, parseAttempt, type LessonAttempt } from './attempts';
 
 /** A retry snapshot also remembers which guest transfer it already includes. */
-export type PendingLessonSave = { attempt: LessonAttempt; transferToken?: string };
+export type PendingLessonSave = { attempt: LessonAttempt; transferToken?: string; events?: LessonSaveEvent[] };
 
 export function parsePendingLessonSave(value: unknown): PendingLessonSave | null {
   if (!value || typeof value !== 'object') return null;
   const v = value as Record<string, unknown>;
   const attempt = parseAttempt(v.attempt ?? value); // Existing device buffers were bare attempts.
   if (!attempt) return null;
-  return { attempt, ...(typeof v.transferToken === 'string' ? { transferToken: v.transferToken } : {}) };
+  const events = v.events === undefined ? undefined : parseSaveEvents(v.events);
+  if (events === null) return null;
+  return { attempt, ...(events ? { events } : {}), ...(typeof v.transferToken === 'string' ? { transferToken: v.transferToken } : {}) };
 }
 
 export function prepareLessonSave(server: LessonAttempt | null, buffered: PendingLessonSave | null, carried: LessonAttempt | null): PendingLessonSave | null {
@@ -21,7 +24,7 @@ export function prepareLessonSave(server: LessonAttempt | null, buffered: Pendin
 /** Serialize PUTs and never let an old acknowledgement erase a newer retry copy. */
 export function createLessonSaveQueue(io: {
   write: (owner: string, value: PendingLessonSave) => void;
-  send: (owner: string, value: LessonAttempt) => Promise<void>;
+  send: (owner: string, value: PendingLessonSave) => Promise<void>;
   clear: (owner: string, value: PendingLessonSave) => void;
   status: (status: 'saving' | 'saved' | 'error') => void;
 }) {
@@ -33,7 +36,7 @@ export function createLessonSaveQueue(io: {
     io.status('saving');
     const operation = tail.then(async () => {
       try {
-        await io.send(owner, value.attempt);
+        await io.send(owner, value);
         if (mine === revision) {
           io.clear(owner, value);
           io.status('saved');

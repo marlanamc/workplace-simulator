@@ -40,9 +40,11 @@ In `useLessonSave.ts`, `finish()` can record while `owner.current` is still null
 
 Finishes now wait in the unresolved buffer while identity is loading, then merge into the confirmed guest or account state. Browser regressions hold the GET until after completion and verify the merged count in both cases.
 
-### 9. Concurrent lesson tabs overwrite each other's counts — confirmed race, medium
+### 9. Concurrent lesson tabs overwrite each other's counts — FIXED (follow-up 4/5)
 
 `src/app/api/lessons/route.ts` replaces the entire attempt JSON on conflict. Two tabs reading count 2 and each finishing once can both PUT count 3; an old tab can also reduce a newer count. The new per-instance queue does not solve concurrency across tabs/devices. Use server-side attempt events or versioned writes with explicit conflict handling. Missing test: two clients start at the same revision and both finish.
+
+Finish events now carry durable IDs. One atomic PostgreSQL statement inserts unseen receipts and increments the aggregate, preserving existing counts. Per-event local buffers survive simultaneous tab writes; replayed IDs are no-ops. The additive `20261024-lesson-save-events.sql` migration is required before deployment. Unit, mocked-browser and isolated real-PostgreSQL regressions cover concurrent tabs, stale batches, lost acknowledgements and transfer replay.
 
 ### 10. Repeated writing-save retries create duplicate teacher submissions — confirmed, medium
 

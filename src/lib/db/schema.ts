@@ -97,3 +97,11 @@ export const practiceAttempts = pgTable('practice_attempts', {
  state: jsonb('state').notNull(),
  updatedAt: timestamp('updated_at',{withTimezone:true}).notNull().defaultNow(),
 }, t=>[unique('practice_attempts_owner_activity_version').on(t.learnerId,t.activityId,t.version)]);
+
+/** Durable idempotency receipts, separate from the lesson's aggregate state. */
+export const lessonSaveEvents = pgTable('lesson_save_events', {
+  learnerId: uuid('learner_id').notNull().references(() => learners.id, { onDelete: 'cascade' }),
+  activityId: text('activity_id').notNull(),
+  eventId: uuid('event_id').notNull(),
+  state: jsonb('state').notNull(),
+}, t => [unique('lesson_save_events_owner_activity_event').on(t.learnerId, t.activityId, t.eventId)]);

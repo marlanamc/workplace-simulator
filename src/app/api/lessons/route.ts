@@ -1,3 +1,5 @@
+import { parseSaveEvents } from "@/lib/lessons/save-events";
+import { lessonSaveStatement } from "@/lib/db/lesson-saves";
 import { and, eq } from "drizzle-orm";
 import { getSessionLearnerId } from "@/lib/auth";
 import { getDb } from "@/lib/db/client";
@@ -56,21 +58,15 @@ export async function PUT(request: Request) {
   if (!lesson) return new Response(null, { status: 400 });
   const id = await getSessionLearnerId();
   if (!id) return new Response(null, { status: 401 });
-  let state;
+  let events;
   try {
-    state = parseAttempt(await request.json());
+    events = parseSaveEvents((await request.json()).events);
   } catch {
     return new Response(null, { status: 400 });
   }
-  if (!state) return new Response(null, { status: 400 });
+  if (!events) return new Response(null, { status: 400 });
   try {
-    await getDb()
-      .insert(practiceAttempts)
-      .values({ learnerId: id, activityId: lesson.taskKey, version: LESSON_ATTEMPT_VERSION, state })
-      .onConflictDoUpdate({
-        target: [practiceAttempts.learnerId, practiceAttempts.activityId, practiceAttempts.version],
-        set: { state, updatedAt: new Date() },
-      });
+    await getDb().execute(lessonSaveStatement(id, lesson.taskKey, events));
     return Response.json({ saved: true });
   } catch {
     return new Response(null, { status: 503 });

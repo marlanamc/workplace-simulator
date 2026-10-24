@@ -328,3 +328,16 @@ remain in the confidence and lesson audit suites.
 lesson components, and checks literal target IDs and step arrays. Dynamically
 constructed IDs and later Story states still need browser coverage; the lesson
 startup sweep is not a complete traversal of every Story branch.
+
+## Save concurrency against local PostgreSQL
+
+`save-events-postgres.test.ts` is opt-in. Create a throwaway local PostgreSQL
+cluster and a database named `workplace_save_test`, then run
+`SAVE_TEST_PG_PORT=<local-port> npx vitest run src/lib/__tests__/save-events-postgres.test.ts`.
+It never reads `DATABASE_URL`; it uses `psql` against localhost and that fixed test
+database. It checks additive migrations twice, concurrent lesson increments,
+receipt replay, out-of-order saves and history bounds. The normal unit suite
+skips these integration cases when the port is absent.
+
+`e2e/lesson-save-retry.spec.ts` mocks the lesson API, so its session-failure,
+delayed-lookup, lost-acknowledgement and two-tab tests need no learner database.

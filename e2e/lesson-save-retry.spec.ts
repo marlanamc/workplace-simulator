@@ -10,10 +10,13 @@ test('a failed guest transfer is counted once after reload and acknowledgement',
       await route.fulfill({ json: { signedIn: true, owner: 'retry-owner', state: server } });
     } else {
       const body = route.request().postDataJSON();
-      writes.push(body.attempts);
-      if (writes.length === 1) await route.fulfill({ status: 503 });
+      writes.push(body.attempt.attempts);
+      if (writes.length === 1) {
+        server = body.attempt; // The write landed, but its acknowledgement was lost.
+        await route.fulfill({ status: 503 });
+      }
       else {
-        server = body;
+        server = body.attempt;
         await route.fulfill({ json: { saved: true } });
       }
     }
@@ -53,7 +56,7 @@ for (const failure of ['503', 'network'] as const) {
     const writes: number[] = [];
     await page.route('**/api/lessons?lesson=account-recovery', async route => {
       if (route.request().method() === 'PUT') {
-        writes.push(route.request().postDataJSON().attempts);
+        writes.push(route.request().postDataJSON().attempt.attempts);
         await route.fulfill({ json: { saved: true } });
       } else if (failing) {
         reads++;
@@ -86,7 +89,7 @@ for (const signedIn of [true, false]) {
         await held;
         await route.fulfill({ json: signedIn ? { signedIn: true, owner: 'slow-owner', state: initial } : { signedIn: false } });
       } else {
-        writes.push(route.request().postDataJSON().attempts);
+        writes.push(route.request().postDataJSON().attempt.attempts);
         await route.fulfill({ json: { saved: true } });
       }
     });
@@ -98,3 +101,27 @@ for (const signedIn of [true, false]) {
     else await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('lesson-attempt:account-recovery:guest') || '{}').attempts)).toBe(3);
   });
 }
+
+test('two lesson tabs send distinct finish events and retain both contributions', async ({ context }) => {
+  const receipts = new Set<string>();
+  let count = 2;
+  const batches: string[][] = [];
+  await context.route('**/api/lessons?lesson=account-recovery', async route => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({ json: { signedIn: true, owner: 'shared-owner', state: { version: 1, attempts: count, mode: 'guided', modes: ['guided', 'guided'] } } });
+    } else {
+      const events = route.request().postDataJSON().events;
+      batches.push(events.map((event: { id: string }) => event.id));
+      for (const event of events) {
+        if (!receipts.has(event.id)) { count += event.attempt.attempts; receipts.add(event.id); }
+      }
+      await route.fulfill({ json: { saved: true } });
+    }
+  });
+  const first = await context.newPage(), second = await context.newPage();
+  await Promise.all([first.goto('/lessons/account-recovery'), second.goto('/lessons/account-recovery')]);
+  await Promise.all([finishLesson(first), finishLesson(second)]);
+  await expect.poll(() => count).toBe(4);
+  expect(batches).toHaveLength(2);
+  expect(receipts.size).toBe(2);
+});
