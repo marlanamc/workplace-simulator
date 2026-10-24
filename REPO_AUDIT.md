@@ -66,9 +66,11 @@ The successful Studio jump now removes the current learner’s pending completio
 
 Studio replacement, completion deletion and level replay now each execute one transactional Neon batch. Replay includes its track-badge deletion in the same batch. Failure-injection regressions verify rollback after every mutation, with owner and level isolation.
 
-### 13. Studio does not reset server skill rungs — confirmed, medium for testing reliability
+### 13. Studio does not reset server skill rungs — FIXED (batch 3, 3/5)
 
 The Studio client removes local rung state, but `replaceProgress` does not clear `skill_rungs`. The next desktop load restores the old server values. “Fresh account” can therefore have mature guidance levels, concealing first-run problems. Missing test: a high-rung account reset to Fresh should have the intended fresh support state. Decide explicitly whether submissions also belong in a preset reset; currently they survive too.
+
+All Studio presets now clear server skill rungs inside the reset transaction, matching the existing device cleanup. Seeded completions do not imply mastery. Writing submissions and teacher feedback explicitly remain review history; this policy is documented in `TESTING.md`. PostgreSQL tests cover Fresh and later presets, rollback and owner isolation.
 
 ### 14. Enrollment writing disappears on reload before submission — confirmed, medium
 

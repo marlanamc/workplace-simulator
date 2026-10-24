@@ -127,11 +127,14 @@ export async function resetLevelProgress(learnerId: string, taskKeys: string[], 
 /**
  * Wipes a learner's progress and installs an exact new state — completions
  * and badges become precisely the given lists. Studio-only (progress
- * presets); learner-facing flows only ever add or clear one level.
+ * presets). Simulated task credit is not mastery: all skill rungs reset.
+ * Writing submissions and teacher feedback are retained as review history.
+ * Learner-facing flows only ever add or clear one level.
  */
 export async function replaceProgress(learnerId: string, taskKeys: string[], badgeKeys: string[]) {
   const db = getDb();
   await db.batch([
+    db.delete(skillRungs).where(eq(skillRungs.learnerId, learnerId)),
     db.delete(openingReplies).where(eq(openingReplies.learnerId, learnerId)),
     db.delete(taskCompletions).where(eq(taskCompletions.learnerId, learnerId)),
     db.delete(badges).where(eq(badges.learnerId, learnerId)),

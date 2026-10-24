@@ -32,6 +32,10 @@ beforeEach(() => {
       CREATE TABLE IF NOT EXISTS task_completions (id uuid DEFAULT gen_random_uuid(), learner_id uuid, task_key text, confidence text, completed_at timestamptz DEFAULT now());
       CREATE TABLE IF NOT EXISTS badges (id uuid DEFAULT gen_random_uuid(), learner_id uuid, badge_key text, awarded_at timestamptz DEFAULT now());
       CREATE TABLE IF NOT EXISTS opening_replies (learner_id uuid, message_id text, response text, lang text);
+      CREATE TABLE IF NOT EXISTS submissions (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), learner_id uuid, task_key text, content jsonb, submitted_at timestamptz DEFAULT now(), teacher_note text, noted_at timestamptz, seen_at timestamptz);
+      CREATE TABLE IF NOT EXISTS skill_rungs (id uuid DEFAULT gen_random_uuid(), learner_id uuid, skill_key text, rung integer, clean_run_streak integer, miss_streak integer, last_practiced_at timestamptz);
+      DELETE FROM skill_rungs WHERE learner_id IN ('${owner}', '${other}');
+      INSERT INTO skill_rungs (learner_id, skill_key, rung, clean_run_streak, miss_streak) VALUES ('${owner}', 'mail', 4, 2, 0), ('${other}', 'mail', 4, 2, 0);
       DELETE FROM task_completions WHERE learner_id IN ('${owner}', '${other}');
       DELETE FROM badges WHERE learner_id IN ('${owner}', '${other}');
       DELETE FROM opening_replies WHERE learner_id IN ('${owner}', '${other}');
@@ -42,7 +46,7 @@ beforeEach(() => {
   }
 });
 const operations = [
-  { name: 'Studio replacement', count: 5, run: () => replaceProgress(owner, ['tour'], ['track:new']) },
+  { name: 'Studio replacement', count: 6, run: () => replaceProgress(owner, ['tour'], ['track:new']) },
   { name: 'completion deletion', count: 2, run: () => deleteCompletions(owner, ['mail-reply']) },
   { name: 'level replay', count: 3, run: () => resetLevelProgress(owner, ['mail-reply'], ['track:opening']) },
 ];
@@ -68,11 +72,24 @@ function snapshot() {
   return query(`SELECT json_build_array(
     (SELECT json_agg(t ORDER BY learner_id, task_key) FROM task_completions t),
     (SELECT json_agg(b ORDER BY learner_id, badge_key) FROM badges b),
-    (SELECT json_agg(r ORDER BY learner_id, message_id) FROM opening_replies r))`);
+    (SELECT json_agg(r ORDER BY learner_id, message_id) FROM opening_replies r),
+    (SELECT json_agg(s ORDER BY learner_id, skill_key) FROM skill_rungs s))`);
 }
 it.skipIf(!port)('successful replay preserves later levels and the other learner', async () => {
   await resetLevelProgress(owner, ['mail-reply'], ['track:opening']);
   expect(query(`SELECT task_key FROM task_completions WHERE learner_id = '${owner}'`)).toBe('later');
   expect(query(`SELECT badge_key FROM badges WHERE learner_id = '${owner}'`)).toBe('track:later');
   expect(query(`SELECT count(*) FROM opening_replies WHERE learner_id = '${other}'`)).toBe('1');
+});
+
+it.skipIf(!port)('Fresh and later presets reset server mastery without touching another learner', async () => {
+  const submissionId = crypto.randomUUID();
+  query(`INSERT INTO submissions (id, learner_id, task_key, content, teacher_note) VALUES ('${submissionId}', '${owner}', 'enrollment', '{}', 'Keep this feedback')`);
+  await replaceProgress(owner, [], []);
+  expect(query(`SELECT count(*) FROM skill_rungs WHERE learner_id = '${owner}'`)).toBe('0');
+  expect(query(`SELECT rung FROM skill_rungs WHERE learner_id = '${other}'`)).toBe('4');
+  query(`INSERT INTO skill_rungs (learner_id, skill_key, rung) VALUES ('${owner}', 'mail', 4)`);
+  await replaceProgress(owner, ['tour'], ['track:new']);
+  expect(query(`SELECT count(*) FROM skill_rungs WHERE learner_id = '${owner}'`)).toBe('0');
+  expect(query(`SELECT teacher_note FROM submissions WHERE id = '${submissionId}'`)).toBe('Keep this feedback');
 });

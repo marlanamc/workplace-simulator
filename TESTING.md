@@ -11,6 +11,10 @@ with: **Replay a level** (rewind one level, keeping the rest), an
 story flags reset), and throwaway sign-ups under class code `TEST` when you
 truly need two learners at once.
 
+Every Studio preset clears server and device skill-rung state: simulated task
+credit is not evidence of mastery. Saved writing and teacher feedback are retained
+as review history. A preset is a progress reset, not an account-data deletion.
+
 **Who can open it.** The time machine wipes the account's progress, so `/studio`
 turns away learners in real classes and sends them to the desktop. It opens
 for teacher accounts, and for class codes listed in `STUDIO_CLASS_CODES`
