@@ -20,11 +20,13 @@ Ranking is by expected likelihood of causing trouble in normal teaching, develop
 
 ## Remaining findings, ranked
 
-### 6. Formula-check can freeze the learner's tab on a large range — confirmed, medium-high
+### 6. Formula-check can freeze the learner's tab on a large range — FIXED (follow-up 1/5)
 
 `src/lib/tasks/formula-check/content.ts`, `rowsOf`, builds an array by looping over every row between the typed endpoints. A pasted or mistyped `=SUM(H2:H999999999)` allocates/loops before deciding the range is wrong. Bound the supported row interval before expansion. Missing test: very large endpoints must return promptly without allocation proportional to the input number.
 
 The same function deduplicates explicit additions with `new Set`. `=H2+H3+H4+H5+H6+H6` is accepted as the correct sum even though it counts H6 twice in a real sheet. Missing test: repeated cell terms must not be treated as one term.
+
+**Follow-up fix:** Validate safe, worksheet-bounded endpoints before expansion and reject repeated terms instead of deduplicating them. `formula-range-bounds.test.ts` covers huge/reversed ranges, unsafe integers, repeated additions and existing adjacent-row diagnostics.
 
 ### 7. A failed lesson-session read is reported as a guest session — confirmed, medium-high on unreliable connections
 

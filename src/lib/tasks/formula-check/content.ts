@@ -227,12 +227,17 @@ function rowsOf(formula: string, fn: "sum" | "average"): number[] | null {
   if (range) {
     const a = Number(range[1]);
     const b = Number(range[2]);
+    // Only the crew, header, total and average rows exist in this exercise.
+    // Reject enormous/unsafe endpoints before allocating or iterating.
+    if (!Number.isSafeInteger(a) || !Number.isSafeInteger(b) || Math.min(a, b) < 1 || Math.max(a, b) > LAST_CREW_ROW + 2) return null;
     const rows: number[] = [];
     for (let r = Math.min(a, b); r <= Math.max(a, b); r++) rows.push(r);
     return rows;
   }
   if (fn === "sum" && /^=\s*H\s*\d+(\s*\+\s*H\s*\d+)*\s*$/i.test(t)) {
-    return [...new Set((t.match(/\d+/g) ?? []).map(Number))].sort((x, y) => x - y);
+    const rows = (t.match(/\d+/g) ?? []).map(Number);
+    if (new Set(rows).size !== rows.length || rows.some(row => !Number.isSafeInteger(row) || row < 1 || row > LAST_CREW_ROW + 2)) return null;
+    return rows.sort((x, y) => x - y);
   }
   return null;
 }
