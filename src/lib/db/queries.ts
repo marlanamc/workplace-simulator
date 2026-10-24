@@ -102,13 +102,26 @@ export async function getBadges(learnerId: string) {
     .orderBy(desc(badges.awardedAt));
 }
 
+function completionDeletes(db: ReturnType<typeof getDb>, learnerId: string, taskKeys: string[]) {
+  return [
+    db.delete(taskCompletions).where(and(eq(taskCompletions.learnerId, learnerId), inArray(taskCompletions.taskKey, taskKeys))),
+    ...(taskKeys.includes('mail-reply') ? [db.delete(openingReplies).where(eq(openingReplies.learnerId, learnerId))] : []),
+  ] as const;
+}
+
 export async function deleteCompletions(learnerId: string, taskKeys: string[]) {
-  if (taskKeys.length === 0) return;
+  if (!taskKeys.length) return;
   const db = getDb();
-  if (taskKeys.includes('mail-reply')) await clearOpeningReplies(learnerId);
-  await db
-    .delete(taskCompletions)
-    .where(and(eq(taskCompletions.learnerId, learnerId), inArray(taskCompletions.taskKey, taskKeys)));
+  await db.batch(completionDeletes(db, learnerId, taskKeys));
+}
+
+/** Replay clears task credit, dependent opening replies and track awards together. */
+export async function resetLevelProgress(learnerId: string, taskKeys: string[], badgeKeys: string[]) {
+  const db = getDb();
+  await db.batch([
+    ...completionDeletes(db, learnerId, taskKeys),
+    db.delete(badges).where(and(eq(badges.learnerId, learnerId), inArray(badges.badgeKey, badgeKeys))),
+  ]);
 }
 
 /**
@@ -118,15 +131,13 @@ export async function deleteCompletions(learnerId: string, taskKeys: string[]) {
  */
 export async function replaceProgress(learnerId: string, taskKeys: string[], badgeKeys: string[]) {
   const db = getDb();
-  await clearOpeningReplies(learnerId);
-  await db.delete(taskCompletions).where(eq(taskCompletions.learnerId, learnerId));
-  await db.delete(badges).where(eq(badges.learnerId, learnerId));
-  if (taskKeys.length) {
-    await db.insert(taskCompletions).values(taskKeys.map((taskKey) => ({ learnerId, taskKey, confidence: null })));
-  }
-  if (badgeKeys.length) {
-    await db.insert(badges).values(badgeKeys.map((badgeKey) => ({ learnerId, badgeKey })));
-  }
+  await db.batch([
+    db.delete(openingReplies).where(eq(openingReplies.learnerId, learnerId)),
+    db.delete(taskCompletions).where(eq(taskCompletions.learnerId, learnerId)),
+    db.delete(badges).where(eq(badges.learnerId, learnerId)),
+    ...(taskKeys.length ? [db.insert(taskCompletions).values(taskKeys.map(taskKey => ({ learnerId, taskKey, confidence: null })))] : []),
+    ...(badgeKeys.length ? [db.insert(badges).values(badgeKeys.map(badgeKey => ({ learnerId, badgeKey })))] : []),
+  ]);
 }
 
 export async function deleteBadges(learnerId: string, badgeKeys: string[]) {

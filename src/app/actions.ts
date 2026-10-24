@@ -10,7 +10,7 @@ import {
   getCompletions,
   awardBadge,
   recordCompletion,
-  deleteCompletions,
+  resetLevelProgress,
   deleteBadges,
   getBadges,
   getLearnerSubmissions,
@@ -193,10 +193,10 @@ export async function restartLevelProgress(levelKey: string) {
   const badgeKeys = badges.map((b) => b.badgeKey);
   const route = courseRouteFromBadges(badgeKeys);
   const path = route ? routeBridgePath(route) : bridgePathFromBadgeKeys(badgeKeys);
-  await deleteCompletions(learnerId, taskKeysForLevel(level, path));
   const tracks = path && level.pathTracks ? [level.pathTracks[path]] : level.trackKeys;
-  await deleteBadges(
+  await resetLevelProgress(
     learnerId,
+    taskKeysForLevel(level, path),
     tracks.map((k) => `track:${k}`),
   );
   return { ok: true as const };

@@ -60,9 +60,11 @@ Pending writing saves now persist a stable attempt UUID before the first request
 
 The successful Studio jump now removes the current learner’s pending completion/writing queue before navigation. Behavioral tests verify successful cleanup, owner isolation and preservation when the server rejects the reset.
 
-### 12. Studio/replay database changes are not atomic — confirmed failure mode, medium
+### 12. Studio/replay database changes are not atomic — FIXED (batch 3, 2/5)
 
 `src/lib/db/queries.ts`, `replaceProgress`, clears opening replies, completions and badges in separate requests, then inserts replacements. A failed later request leaves a partially reset account. `deleteCompletions` clears opening replies separately, and `restartLevelProgress` deletes completion and badge state separately. Missing tests: inject failure after each mutation and assert the old complete state survives. Use one transaction/batch for each logical reset.
+
+Studio replacement, completion deletion and level replay now each execute one transactional Neon batch. Replay includes its track-badge deletion in the same batch. Failure-injection regressions verify rollback after every mutation, with owner and level isolation.
 
 ### 13. Studio does not reset server skill rungs — confirmed, medium for testing reliability
 
