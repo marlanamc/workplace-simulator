@@ -59,6 +59,7 @@ export function useLessonSave(
   const [status, setStatus] = useState<LessonSaveStatus>(preview ? "preview" : "loading");
   const [lookup, setLookup] = useState(0);
   const sessionFailed = useRef(false);
+  const sessionReady = useRef(false);
   const owner = useRef<string | null>(null);
   const current = useRef<LessonAttempt | null>(null);
 
@@ -103,6 +104,7 @@ export function useLessonSave(
       }
       if (!live) return;
       sessionFailed.current = false;
+      sessionReady.current = true;
       const unresolved = readJSON("session", unresolvedKey);
       owner.current = who;
       if (!who) {
@@ -138,10 +140,10 @@ export function useLessonSave(
   const finish = useCallback(
     (m: LessonMode) => {
       if (preview) return;
-      if (sessionFailed.current) {
+      if (!sessionReady.current) {
         const pending = recordFinish(readJSON("session", unresolvedKey), m, new Date().toISOString());
         writeJSON("session", unresolvedKey, pending);
-        setStatus("error");
+        if (sessionFailed.current) setStatus("error");
         return;
       }
       const next = recordFinish(current.current, m, new Date().toISOString());

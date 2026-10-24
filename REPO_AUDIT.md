@@ -34,9 +34,11 @@ The same function deduplicates explicit additions with `new Set`. `=H2+H3+H4+H5+
 
 Session failures now surface as errors. Retry rechecks identity, and finishes made during the outage stay in a per-tab pending buffer until a confirmed session can receive them. Regression coverage mocks failed lookup and retry without database writes.
 
-### 8. Finishing a lesson before the initial GET resolves loses the finish from current account state — confirmed race, medium
+### 8. Finishing a lesson before the initial GET resolves loses the finish from current account state — FIXED (follow-up 3/5)
 
 In `useLessonSave.ts`, `finish()` can record while `owner.current` is still null. When the GET resolves, initialization replaces `current.current` with the server/buffer snapshot. The in-flight guest finish is not included in that snapshot. Missing test: hold the initial GET, finish a short lesson, then release the GET and verify one account finish.
+
+Finishes now wait in the unresolved buffer while identity is loading, then merge into the confirmed guest or account state. Browser regressions hold the GET until after completion and verify the merged count in both cases.
 
 ### 9. Concurrent lesson tabs overwrite each other's counts — confirmed race, medium
 

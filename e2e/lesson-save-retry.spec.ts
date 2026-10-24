@@ -73,3 +73,28 @@ for (const failure of ['503', 'network'] as const) {
     expect(await page.evaluate(() => sessionStorage.getItem('lesson-attempt:account-recovery:unresolved'))).toBeNull();
   });
 }
+
+for (const signedIn of [true, false]) {
+  test(`a finish during session lookup survives (${signedIn ? 'account' : 'guest'})`, async ({ page }) => {
+    let release!: () => void;
+    const held = new Promise<void>(resolve => { release = resolve; });
+    const writes: number[] = [];
+    const initial = { version: 1, mode: 'guided', modes: ['guided', 'guided'], attempts: 2 };
+    if (!signedIn) await page.addInitScript(value => localStorage.setItem('lesson-attempt:account-recovery:guest', JSON.stringify(value)), initial);
+    await page.route('**/api/lessons?lesson=account-recovery', async route => {
+      if (route.request().method() === 'GET') {
+        await held;
+        await route.fulfill({ json: signedIn ? { signedIn: true, owner: 'slow-owner', state: initial } : { signedIn: false } });
+      } else {
+        writes.push(route.request().postDataJSON().attempts);
+        await route.fulfill({ json: { saved: true } });
+      }
+    });
+    await page.goto('/lessons/account-recovery');
+    await finishLesson(page);
+    expect(writes).toEqual([]);
+    release();
+    if (signedIn) await expect.poll(() => writes).toEqual([3]);
+    else await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('lesson-attempt:account-recovery:guest') || '{}').attempts)).toBe(3);
+  });
+}
