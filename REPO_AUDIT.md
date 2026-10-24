@@ -28,9 +28,11 @@ The same function deduplicates explicit additions with `new Set`. `=H2+H3+H4+H5+
 
 **Follow-up fix:** Validate safe, worksheet-bounded endpoints before expansion and reject repeated terms instead of deduplicating them. `formula-range-bounds.test.ts` covers huge/reversed ranges, unsafe integers, repeated additions and existing adjacent-row diagnostics.
 
-### 7. A failed lesson-session read is reported as a guest session — confirmed, medium-high on unreliable connections
+### 7. A failed lesson-session read is reported as a guest session — FIXED (follow-up 2/5)
 
 `src/app/lessons/useLessonSave.ts` maps non-OK GET responses and network failures to `who = null` and status `guest`. A signed-in learner who encounters a 503 then finishes writes to the guest key, and normal account reloads do not merge it without an explicit transfer. `retry()` cannot recover because it requires an owner. Missing test: authenticated GET 503 → finish → service restored → retry/reload, without signing in again.
+
+Session failures now surface as errors. Retry rechecks identity, and finishes made during the outage stay in a per-tab pending buffer until a confirmed session can receive them. Regression coverage mocks failed lookup and retry without database writes.
 
 ### 8. Finishing a lesson before the initial GET resolves loses the finish from current account state — confirmed race, medium
 

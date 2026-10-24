@@ -6,7 +6,7 @@ import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
 import { libraryReturn } from "@/lib/lessons/library";
-import { parseAttempt, recordFinish, type LessonAttempt } from "@/lib/lessons/attempts";
+import { mergeAttempts, parseAttempt, recordFinish, type LessonAttempt } from "@/lib/lessons/attempts";
 
 import { createLessonSaveQueue, parsePendingLessonSave, prepareLessonSave, type PendingLessonSave } from "@/lib/lessons/save-queue";
 
@@ -53,9 +53,12 @@ export function useLessonSave(
   const api = `/api/lessons?lesson=${taskKey}`;
   const guestKey = `lesson-attempt:${taskKey}:guest`;
   const transferKey = `lesson-attempt:${taskKey}:transfer`;
+  const unresolvedKey = `lesson-attempt:${taskKey}:unresolved`;
   const ownerKey = (o: string) => `lesson-attempt:${taskKey}:${o}`;
 
   const [status, setStatus] = useState<LessonSaveStatus>(preview ? "preview" : "loading");
+  const [lookup, setLookup] = useState(0);
+  const sessionFailed = useRef(false);
   const owner = useRef<string | null>(null);
   const current = useRef<LessonAttempt | null>(null);
 
@@ -89,16 +92,22 @@ export function useLessonSave(
       let server: LessonAttempt | null = null;
       try {
         const r = await fetch(api, { cache: "no-store" });
-        const data = r.ok ? await r.json() : { signedIn: false };
+        if (!r.ok) throw new Error("Session lookup failed");
+        const data = await r.json();
+        if (data.error || (data.signedIn !== false && !(data.signedIn === true && typeof data.owner === "string"))) throw new Error("Invalid session");
         who = data.signedIn && !data.error ? data.owner : null;
         server = parseAttempt(data.state);
       } catch {
-        /* Offline: treat as a guest; nothing is lost. */
+        if (live) { sessionFailed.current = true; setStatus("error"); }
+        return;
       }
       if (!live) return;
+      sessionFailed.current = false;
+      const unresolved = readJSON("session", unresolvedKey);
       owner.current = who;
       if (!who) {
-        current.current = readJSON("local", guestKey);
+        current.current = mergeAttempts(readJSON("local", guestKey), unresolved);
+        if (unresolved && writeJSON("local", guestKey, current.current)) writeJSON("session", unresolvedKey, null);
         setStatus("guest");
         return;
       }
@@ -106,10 +115,15 @@ export function useLessonSave(
       try { buffered = parsePendingLessonSave(JSON.parse(localStorage.getItem(ownerKey(who)) || "null")); } catch { /* unavailable storage */ }
       const carried = transfer ? readJSON("session", transferKey) : null;
       const prepared = prepareLessonSave(server, buffered, carried);
-      current.current = prepared?.attempt ?? null;
+      const recovered = mergeAttempts(prepared?.attempt ?? null, unresolved);
+      if (recovered && unresolved) {
+        writeJSON("local", ownerKey(who), { attempt: recovered, transferToken: prepared?.transferToken });
+        writeJSON("session", unresolvedKey, null);
+      }
+      current.current = recovered;
       transferToken.current = prepared?.transferToken;
-      if ((buffered || carried) && prepared) {
-        await push(who, prepared);
+      if ((buffered || carried || unresolved) && recovered) {
+        await push(who, { attempt: recovered, transferToken: prepared?.transferToken });
       } else if (live) {
         setStatus(server ? "saved" : "account");
       }
@@ -119,11 +133,17 @@ export function useLessonSave(
     };
     // The lesson is fixed for the page's life.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [preview]);
+  }, [preview, lookup]);
 
   const finish = useCallback(
     (m: LessonMode) => {
       if (preview) return;
+      if (sessionFailed.current) {
+        const pending = recordFinish(readJSON("session", unresolvedKey), m, new Date().toISOString());
+        writeJSON("session", unresolvedKey, pending);
+        setStatus("error");
+        return;
+      }
       const next = recordFinish(current.current, m, new Date().toISOString());
       current.current = next;
       if (owner.current) void push(owner.current, { attempt: next, transferToken: transferToken.current });
@@ -134,6 +154,7 @@ export function useLessonSave(
   );
 
   const retry = useCallback(() => {
+    if (sessionFailed.current) { setLookup(value => value + 1); return; }
     if (owner.current && current.current) void push(owner.current, { attempt: current.current, transferToken: transferToken.current });
   }, [push]);
 

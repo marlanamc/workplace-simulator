@@ -34,3 +34,42 @@ test('a failed guest transfer is counted once after reload and acknowledgement',
   await page.reload();
   await expect.poll(() => server.attempts).toBe(3);
 });
+
+async function finishLesson(page: import('@playwright/test').Page) {
+  await page.getByTestId('lesson-intro-start').click();
+  await page.getByTestId('practice-email').fill('you@harborsidecafe.com');
+  await page.getByPlaceholder('Enter your password').fill('Harbor2026');
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByTestId('phone-texts').getByRole('button', { name: /^Google/ }).click();
+  await page.getByPlaceholder('000000').fill('482915');
+  await page.getByRole('button', { name: 'Verify', exact: true }).click();
+  await expect(page.getByTestId('lesson-practice-again')).toBeVisible();
+}
+
+for (const failure of ['503', 'network'] as const) {
+  test(`failed session lookup (${failure}) keeps finishes for account retry`, async ({ page }) => {
+    let reads = 0;
+    let failing = true;
+    const writes: number[] = [];
+    await page.route('**/api/lessons?lesson=account-recovery', async route => {
+      if (route.request().method() === 'PUT') {
+        writes.push(route.request().postDataJSON().attempts);
+        await route.fulfill({ json: { saved: true } });
+      } else if (failing) {
+        reads++;
+        if (failure === 'network') await route.abort();
+        else await route.fulfill({ status: 503, json: { signedIn: true, error: true } });
+      } else {
+        await route.fulfill({ json: { signedIn: true, owner: 'recovered-owner', state: { version: 1, mode: 'guided', modes: ['guided', 'guided'], attempts: 2 } } });
+      }
+    });
+    await page.goto('/lessons/account-recovery');
+    await expect.poll(() => reads).toBeGreaterThan(0);
+    await finishLesson(page);
+    expect(await page.evaluate(() => localStorage.getItem('lesson-attempt:account-recovery:guest'))).toBeNull();
+    failing = false;
+    await page.getByTestId('lesson-retry-save').click();
+    await expect.poll(() => writes).toEqual([3]);
+    expect(await page.evaluate(() => sessionStorage.getItem('lesson-attempt:account-recovery:unresolved'))).toBeNull();
+  });
+}
