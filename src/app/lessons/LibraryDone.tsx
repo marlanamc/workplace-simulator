@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { speakText } from "@/lib/read-aloud";
 import type { Lang } from "@/lib/task-types";
-import { parseAttempt } from "@/lib/lessons/attempts";
+import { parsePendingLessonSave } from "@/lib/lessons/save-queue";
 import { fill, LIBRARY_COPY } from "@/lib/lessons/copy";
 
 /** Finished lesson keys, or null until known. The page renders "not done" until then, and without JavaScript. */
@@ -12,7 +12,7 @@ export const useLibraryDone = () => useContext(DoneContext);
 
 function localDone(key: string, owner: string) {
   try {
-    return (parseAttempt(JSON.parse(localStorage.getItem(`lesson-attempt:${key}:${owner}`) || "null"))?.attempts ?? 0) > 0;
+    return (parsePendingLessonSave(JSON.parse(localStorage.getItem(`lesson-attempt:${key}:${owner}`) || "null"))?.attempt.attempts ?? 0) > 0;
   } catch {
     return false;
   }

@@ -1,12 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import type { TaskKey } from "@/lib/desktop-content";
 import type { Lang } from "@/lib/task-types";
 import type { LessonMode } from "@/lib/lessons/types";
 import { libraryReturn } from "@/lib/lessons/library";
-import { mergeAttempts, parseAttempt, recordFinish, type LessonAttempt } from "@/lib/lessons/attempts";
+import { parseAttempt, recordFinish, type LessonAttempt } from "@/lib/lessons/attempts";
+
+import { createLessonSaveQueue, parsePendingLessonSave, prepareLessonSave, type PendingLessonSave } from "@/lib/lessons/save-queue";
 
 /**
  * `preview`: teacher preview, nothing saved. `guest`: saved in this browser
@@ -32,7 +34,7 @@ function readJSON(store: "local" | "session", key: string): LessonAttempt | null
     return null;
   }
 }
-function writeJSON(store: "local" | "session", key: string, value: LessonAttempt | null) {
+function writeJSON(store: "local" | "session", key: string, value: LessonAttempt | PendingLessonSave | null) {
   try {
     const s = store === "local" ? localStorage : sessionStorage;
     if (value) s.setItem(key, JSON.stringify(value));
@@ -57,24 +59,26 @@ export function useLessonSave(
   const owner = useRef<string | null>(null);
   const current = useRef<LessonAttempt | null>(null);
 
-  const push = useCallback(
-    async (who: string, next: LessonAttempt) => {
-      writeJSON("local", ownerKey(who), next); // retry copy until the server has it
-      setStatus("saving");
-      try {
-        const r = await fetch(api, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
-        if (!r.ok) throw new Error("not saved");
-        writeJSON("local", ownerKey(who), null);
-        setStatus("saved");
-        return true;
-      } catch {
-        setStatus("error");
-        return false;
-      }
+  const transferToken = useRef<string | undefined>(undefined);
+  const push = useMemo(() => createLessonSaveQueue({
+    write: (who, next) => { writeJSON("local", ownerKey(who), next); },
+    send: async (_who, next) => {
+      const r = await fetch(api, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) });
+      if (!r.ok) throw new Error("not saved");
     },
+    clear: (who, next) => {
+      const carried = readJSON("session", transferKey);
+      // Clear the transfer first, while the retry snapshot is still durable.
+      if (carried && JSON.stringify(carried) === next.transferToken) {
+        writeJSON("session", transferKey, null);
+        writeJSON("local", guestKey, null);
+      }
+      writeJSON("local", ownerKey(who), null);
+    },
+    status: setStatus,
+    // The lesson keys are fixed for the page's life.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [api],
-  );
+  }), [api]);
 
   // Syncs with the server session, an external system.
   useEffect(() => {
@@ -98,16 +102,14 @@ export function useLessonSave(
         setStatus("guest");
         return;
       }
-      const buffered = readJSON("local", ownerKey(who));
+      let buffered: PendingLessonSave | null = null;
+      try { buffered = parsePendingLessonSave(JSON.parse(localStorage.getItem(ownerKey(who)) || "null")); } catch { /* unavailable storage */ }
       const carried = transfer ? readJSON("session", transferKey) : null;
-      const merged = mergeAttempts(buffered ?? server, carried);
-      current.current = merged;
-      if (buffered || carried) {
-        const ok = await push(who, merged!);
-        if (ok && carried) {
-          writeJSON("session", transferKey, null);
-          writeJSON("local", guestKey, null);
-        }
+      const prepared = prepareLessonSave(server, buffered, carried);
+      current.current = prepared?.attempt ?? null;
+      transferToken.current = prepared?.transferToken;
+      if ((buffered || carried) && prepared) {
+        await push(who, prepared);
       } else if (live) {
         setStatus(server ? "saved" : "account");
       }
@@ -124,7 +126,7 @@ export function useLessonSave(
       if (preview) return;
       const next = recordFinish(current.current, m, new Date().toISOString());
       current.current = next;
-      if (owner.current) void push(owner.current, next);
+      if (owner.current) void push(owner.current, { attempt: next, transferToken: transferToken.current });
       else setStatus(writeJSON("local", guestKey, next) ? "guest" : "error");
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -132,7 +134,7 @@ export function useLessonSave(
   );
 
   const retry = useCallback(() => {
-    if (owner.current && current.current) void push(owner.current, current.current);
+    if (owner.current && current.current) void push(owner.current, { attempt: current.current, transferToken: transferToken.current });
   }, [push]);
 
   const signIn = useCallback((lang: Lang) => {
