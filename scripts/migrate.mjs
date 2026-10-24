@@ -16,32 +16,39 @@
  * A failure fails the build on purpose: shipping code whose tables do not
  * exist is the outage this is here to prevent.
  */
+import nextEnv from "@next/env";
 import { neon } from "@neondatabase/serverless";
 import { readdirSync, readFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const MIGRATIONS = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "lib", "db", "migrations");
+const PROJECT_ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
-const url = process.env.DATABASE_URL ?? process.env.POSTGRES_URL;
-if (!url) {
-  // Local `next build` without a database configured is a normal thing to do,
-  // and failing it would help nobody. Vercel always has DATABASE_URL set, so
-  // a real deploy never takes this branch.
-  console.log("migrate: no DATABASE_URL, skipping (set one to apply migrations)");
-  process.exit(0);
+/** Inject only the SQL client for offline regression tests; use Next's env precedence. */
+export async function runMigrations({ root = PROJECT_ROOT, createSql = neon } = {}) {
+  nextEnv.loadEnvConfig(root, false);
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    console.log("migrate: no DATABASE_URL, skipping (set one to apply migrations)");
+    return;
+  }
+
+  const migrations = join(root, "src", "lib", "db", "migrations");
+  const files = readdirSync(migrations).filter((f) => f.endsWith(".sql")).sort();
+  if (!files.length) {
+    console.log("migrate: no migrations to apply");
+    return;
+  }
+
+  const sql = createSql(url);
+  for (const file of files) {
+    process.stdout.write(`migrate: applying ${file} … `);
+    await sql.query(readFileSync(join(migrations, file), "utf8"));
+    console.log("ok");
+  }
+  console.log(`migrate: ${files.length} migration(s) applied`);
 }
 
-const files = readdirSync(MIGRATIONS).filter((f) => f.endsWith(".sql")).sort();
-if (!files.length) {
-  console.log("migrate: no migrations to apply");
-  process.exit(0);
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  await runMigrations();
 }
-
-const sql = neon(url);
-for (const file of files) {
-  process.stdout.write(`migrate: applying ${file} … `);
-  await sql.query(readFileSync(join(MIGRATIONS, file), "utf8"));
-  console.log("ok");
-}
-console.log(`migrate: ${files.length} migration(s) applied`);
