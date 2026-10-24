@@ -235,7 +235,7 @@ export async function setSubmissionNote(id: string, note: string) {
   const db = getDb();
   await db
     .update(submissions)
-    .set({ teacherNote: note, notedAt: new Date() })
+    .set({ teacherNote: note, notedAt: new Date(), seenAt: null })
     .where(eq(submissions.id, id));
 }
 

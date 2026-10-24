@@ -11,6 +11,7 @@ export default function NoteForm({
   submissionId: string;
   existingNote: string | null;
 }) {
+  const [confirmedNote, setConfirmedNote] = useState(existingNote);
   const [note, setNote] = useState(existingNote ?? "");
   const [editing, setEditing] = useState(!existingNote);
   const [saved, setSaved] = useState(false);
@@ -21,11 +22,13 @@ export default function NoteForm({
     setError(false);
     setSaved(false);
     startTransition(async () => {
-      const res = await saveSubmissionNote(submissionId, note);
-      if (res.ok) {
+      try {
+        const res = await saveSubmissionNote(submissionId, note);
+        if (!res.ok) throw new Error("Note not saved");
+        setConfirmedNote(note);
         setSaved(true);
-        if (existingNote) setEditing(false);
-      } else {
+        setEditing(false);
+      } catch {
         setError(true);
       }
     });
@@ -56,6 +59,7 @@ export default function NoteForm({
     <div className="mt-3">
       <textarea
         value={note}
+        disabled={pending}
         onChange={(e) => {
           setNote(e.target.value);
           setSaved(false);
@@ -71,13 +75,14 @@ export default function NoteForm({
           disabled={pending || !note.trim()}
           className="inline-flex h-9 items-center rounded-full bg-[#1a73e8] px-4 text-[13px] font-medium text-white hover:bg-[#1b66c9] disabled:opacity-40"
         >
-          {existingNote ? "Update note" : "Save note"}
+          {confirmedNote ? "Update note" : "Save note"}
         </button>
-        {existingNote && (
+        {confirmedNote && (
           <button
             type="button"
+            disabled={pending}
             onClick={() => {
-              setNote(existingNote);
+              setNote(confirmedNote);
               setEditing(false);
               setError(false);
             }}
