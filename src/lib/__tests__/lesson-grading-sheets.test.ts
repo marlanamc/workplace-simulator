@@ -14,7 +14,6 @@ import {
   RIGHT_NOW_STEPS as FORMULA_STEPS,
   STARTERS as FORMULA_STARTERS,
   fixEmailProblem,
-  keysToFix,
   rangeCoversCrew,
   sumCorrection,
   sumProblem,
@@ -76,21 +75,20 @@ describe("formula-check: the formula", () => {
   it("accepts PROMEDIO as AVERAGE", () => expect(rangeCoversCrew("=PROMEDIO(H2:H6)", "average")).toBe(true));
   it("shows SUMA on the Spanish screen", () => expect(wrongSumFormula("es")).toBe("=SUMA(H2:H5)"));
 
-  it("reads =SUM(H2:H5)H6 (caret at the end) as unreadable and names the keys", () => {
+  it("reads =SUM(H2:H5)H6 (caret at the end) as unreadable and says to select and retype", () => {
     const typed = "=SUM(H2:H5)H6";
     expect(sumProblem(typed)).toBe("unreadable");
-    expect(keysToFix(typed, "en")).toEqual({ backspaces: 4, type: "6)" });
     const hint = sumCorrection(typed, "en", 1)!;
-    expect(hint).toMatch(/Backspace 4 times, then type 6\)/);
-    expect(sumCorrection("=SUMA(H2:H5)H6", "es", 1)).toMatch(/Backspace\) 4 veces y luego escribe 6\)/);
+    expect(hint).toMatch(/select the formula, then type: =SUM\(H2:H6\)/);
+    expect(sumCorrection("=SUMA(H2:H5)H6", "es", 1)).toMatch(/seleccionar la fórmula, y escribe: =SUMA\(H2:H6\)/);
   });
 
-  it("first miss asks a looking question; the exact edit comes only after another wrong try", () => {
+  it("first miss asks a looking question; the exact formula comes only after another wrong try", () => {
     const first = sumCorrection("=SUM(H2:H5)", "en", 1)!;
     expect(first).toMatch(/green/);
     expect(first).not.toMatch(/H6|Casey|row 6/);
     const second = sumCorrection("=SUM(H2:H5)", "en", 2)!;
-    expect(second).toMatch(/Backspace 2 times, then type 6\)/);
+    expect(second).toMatch(/select the formula, then type: =SUM\(H2:H6\)/);
   });
 
   it("the Job Card does not give away the edit or the name", () => {

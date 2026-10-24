@@ -8,6 +8,7 @@ import { parseMoney } from "@/lib/text-facts";
 import { TIP_ROWS, entryMatches, wrongEntryHint } from "@/lib/tasks/spreadsheet/content";
 import { codeMatches } from "@/lib/tasks/account-recovery/content";
 import { firstMismatch, sameDate } from "@/lib/tasks/onboarding-paperwork/content";
+import { EMAILS } from "@/lib/tasks/phishing-check/content";
 
 /**
  * The rename step is the heaviest typing ask in the app — these pin down
@@ -187,5 +188,25 @@ describe("form dates", () => {
   it("names the W-4 box that does not match Robin", () => {
     expect(firstMismatch({ status: "single", dependents: "2", date: "10/1/2026" })).toBe("dependents");
     expect(firstMismatch({ status: "single", dependents: "0", date: "10/1/2026" })).toBeNull();
+  });
+});
+
+describe("Phishing check inbox", () => {
+  it("has exactly one message to report", () => {
+    expect(EMAILS.filter((e) => e.isTarget)).toHaveLength(1);
+  });
+
+  it("every real message has a bilingual wrong-click hint", () => {
+    for (const e of EMAILS) {
+      if (e.isTarget) continue;
+      expect(e.wrongHint?.en, `${e.key} en hint`).toBeTruthy();
+      expect(e.wrongHint?.es, `${e.key} es hint`).toBeTruthy();
+    }
+  });
+
+  it("only the fake message carries the fake verify link", () => {
+    for (const e of EMAILS) {
+      expect(Boolean(e.hasVerifyLink)).toBe(e.isTarget);
+    }
   });
 });

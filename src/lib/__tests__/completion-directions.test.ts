@@ -23,6 +23,7 @@ import { RIGHT_NOW_STEPS as BILLING_STEPS } from "@/lib/tasks/billing-sheet/cont
 import { RIGHT_NOW_STEPS as APPOINTMENT_STEPS } from "@/lib/tasks/appointment-scheduling/content";
 import { EVENT_INTRO as CALENDAR_INTRO, RIGHT_NOW_STEPS as CALENDAR_STEPS } from "@/lib/tasks/calendar/content";
 import { MAIL_JOB_CARD_STEPS } from "@/lib/tasks/mail/content";
+import { EVENT_INTRO as PHISHING_INTRO, RIGHT_NOW_STEPS as PHISHING_STEPS } from "@/lib/tasks/phishing-check/content";
 
 /**
  * Option C (owner decision, 28 Sep): question first, requirements named.
@@ -161,6 +162,14 @@ const ANSWERS: {
     intro: CALENDAR_INTRO,
     en: [/do not work|don't work|day off|decline/i],
     es: [/no trabajas|día libre|rechaz/i],
+  },
+  // Which email, and what gives it away.
+  {
+    key: "phishing-check",
+    steps: PHISHING_STEPS,
+    intro: PHISHING_INTRO,
+    en: [/cafe-help/i, /IT Support/i, /Verify Now/i, /locked today/i],
+    es: [/cafe-help/i, /soporte de TI/i, /verificar ahora/i, /bloqueará hoy/i],
   },
 ];
 

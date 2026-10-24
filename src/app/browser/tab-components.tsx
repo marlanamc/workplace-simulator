@@ -27,6 +27,7 @@ import PortfolioReflectionTask from "./PortfolioReflectionTask";
 import HandbookTask from "./HandbookTask";
 import IncidentTask from "./IncidentTask";
 import AccountRecoveryTask from "./AccountRecoveryTask";
+import PhishingCheckTask from "./PhishingCheckTask";
 import JobsTask from "./JobsTask";
 import ResumeBuildTask from "./ResumeBuildTask";
 import InterviewTask from "./InterviewTask";
@@ -70,6 +71,7 @@ export const TAB_COMPONENTS: Record<string, ComponentType> = {
   handbook: HandbookTask,
   incident: IncidentTask,
   "account-recovery": AccountRecoveryTask,
+  "phishing-check": PhishingCheckTask,
   jobs: JobsTask,
   resume: ResumeBuildTask,
   interview: InterviewTask,

@@ -58,7 +58,18 @@ export const LESSON_COPY = {
   infoTitle: { en: "Info card", es: "Tarjeta de información" },
   infoOpen: { en: "Info card", es: "Tarjeta de información" },
   infoClose: { en: "Close", es: "Cerrar" },
+  // The post-task comprehension check: a few recall questions, ungraded.
+  checkKicker: { en: "Quick check", es: "Repaso rápido" },
+  checkTitle: { en: "Check what you learned", es: "Repasa lo que aprendiste" },
+  checkCorrect: { en: "That's right.", es: "Correcto." },
+  checkIncorrect: { en: "Not quite. Try again.", es: "No es así. Intenta de nuevo." },
+  checkNext: { en: "Next question", es: "Siguiente pregunta" },
+  checkFinish: { en: "Done", es: "Listo" },
+  checkSkip: { en: "Skip this check", es: "Saltar este repaso" },
 } satisfies Record<string, Localized>;
+
+/** `{current}` and `{total}` are filled in: "Question 1 of 4". */
+export const CHECK_PROGRESS: Localized = { en: "Question {current} of {total}", es: "Pregunta {current} de {total}" };
 
 /** How the Job Card sends a learner to the info card. Its copy always says it this way. */
 export const MENTIONS_INFO_CARD = /info card|tarjeta de información/i;

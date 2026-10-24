@@ -285,6 +285,15 @@ export default function FormulaCheckTask() {
                   aria-label={lang === "en" ? "Formula bar" : "Barra de fórmulas"}
                   value={formulaBarContent}
                   onChange={(e) => onFormulaChange(e.target.value)}
+                  // The whole formula is always selected on the way in, mouse
+                  // or keyboard, so typing replaces it instead of landing at
+                  // the end and appending onto it (a real trap: the box is
+                  // wider than a short formula, so almost any click lands in
+                  // the empty space past the text, which puts the caret at
+                  // the end). onMouseUp runs after the native click already
+                  // placed the caret, so it reliably overrides it.
+                  onFocus={(e) => e.currentTarget.select()}
+                  onMouseUp={(e) => e.currentTarget.select()}
                   // Enter finishes the formula, like a real sheet: it is checked then.
                   onKeyDown={(e) => {
                     if (e.key !== "Enter") return;
