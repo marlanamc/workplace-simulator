@@ -1,4 +1,4 @@
-// Rung 2 needs two clean runs with no help asked before advancing; rung 3
+// Rung 2 needs two consecutive clean runs with no help asked before advancing; rung 3
 // needs only one, per the release ladder's "moves up when" rules.
 const CLEAN_RUNS_TO_ADVANCE: Partial<Record<Rung, number>> = { 2: 2, 3: 1 };
 const GAP_DECAY_MS = 21 * 24 * 60 * 60 * 1000;
@@ -61,7 +61,7 @@ export function recordMissedRun(map: RungMap, skillKey: string, now: string): Ru
 
   return {
     ...map,
-    [skillKey]: { ...prev, missStreak, lastPracticedAt: now },
+    [skillKey]: { ...prev, cleanRunStreak: 0, missStreak, lastPracticedAt: now },
   };
 }
 

@@ -46,6 +46,25 @@ describe("release ladder", () => {
     expect(rungFor(map, "mail")).toBe(2);
   });
 
+  it("requires consecutive clean runs at rung 2: clean/miss/clean does not advance", () => {
+    let map: RungMap = { mail: { rung: 2, cleanRunStreak: 0, missStreak: 0, lastPracticedAt: T0 } };
+    map = recordCleanRun(map, "mail", DAYS(1));
+    map = recordMissedRun(map, "mail", DAYS(2));
+    expect(map.mail).toMatchObject({ rung: 2, cleanRunStreak: 0, missStreak: 1 });
+    map = recordCleanRun(map, "mail", DAYS(3));
+    expect(map.mail).toMatchObject({ rung: 2, cleanRunStreak: 1, missStreak: 0 });
+    map = recordCleanRun(map, "mail", DAYS(4));
+    expect(map.mail).toMatchObject({ rung: 3, cleanRunStreak: 0 });
+  });
+
+  it.each([1, 2, 3, 4] as const)("a first miss clears the clean streak without dropping rung %s", rung => {
+    const before: RungMap = { mail: { rung, cleanRunStreak: 1, missStreak: 0, lastPracticedAt: T0 }, other: { rung: 2, cleanRunStreak: 1, missStreak: 0, lastPracticedAt: T0 } };
+    const after = recordMissedRun(before, "mail", DAYS(1));
+    expect(after.mail).toEqual({ rung, cleanRunStreak: 0, missStreak: 1, lastPracticedAt: DAYS(1) });
+    expect(before.mail.cleanRunStreak).toBe(1);
+    expect(after.other).toBe(before.other);
+  });
+
   it("never drops below rung 1", () => {
     let map: RungMap = {};
     for (let i = 0; i < 6; i++) map = recordMissedRun(map, "mail", T0);

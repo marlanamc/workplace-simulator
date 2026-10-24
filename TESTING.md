@@ -359,3 +359,10 @@ Run `npx playwright test --config playwright.component.config.ts` for the Englis
 and Spanish enrollment persistence checks. The browser renders the real task,
 draft hook and storage with a mocked account/lesson context; it requires neither
 an app server nor a database. This does not replace authenticated end-to-end tests.
+
+`SAVE_TEST_PG_PORT=<local-port> npx vitest run src/lib/__tests__/progress-reset.test.ts`
+uses the same isolated `workplace_save_test` database. It runs the real Drizzle
+reset statements in a PostgreSQL transaction and injects a failure after each
+mutation to check rollback. It also verifies learner/level isolation, reset skill
+rungs and retained teacher feedback. Production uses Neon’s transactional
+`db.batch`; the local adapter tests SQL behavior without calling the Neon service.

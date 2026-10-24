@@ -1,6 +1,6 @@
 # Repository audit — 24 October 2026
 
-Ten fixes across two batches of five commits. This follow-up fixes ranks 6–10 only; ranks 11–40 remain open.
+Fifteen fixes across three batches of five commits. The latest batch fixes ranks 11–15 only; ranks 16–40 remain open.
 
 ## Scope and evidence
 
@@ -52,7 +52,7 @@ Finish events now carry durable IDs. One atomic PostgreSQL statement inserts uns
 
 Pending writing saves now persist a stable attempt UUID before the first request. Retries reuse it, including after reload; a fresh submission after success receives a new ID even with identical text. A unique learner/task/attempt index makes repeated inserts no-ops without touching teacher notes or revision history. The additive `20261024-submission-attempts.sql` migration preserves existing rows. Unit and isolated PostgreSQL tests cover failed completion after writing, concurrent retries and deliberate revisions.
 
-## Remaining findings, ranked
+## Third batch fixes: ranks 11–15
 
 ### 11. Studio resets can resurrect old failed saves — FIXED (batch 3, 1/5)
 
@@ -78,9 +78,13 @@ All Studio presets now clear server skill rungs inside the reset transaction, ma
 
 Enrollment now uses `useTaskDraft` for its statement, preserving the existing restart behavior and in-memory lesson isolation. The persistence contract is documented in `TESTING.md`. Browser component regressions exercise the real task and storage in English and Spanish across reloads and account changes.
 
-### 15. A missed skill run does not break a clean-run streak — confirmed, medium
+### 15. A missed skill run does not break a clean-run streak — FIXED (batch 3, 5/5)
 
 `src/lib/release-ladder.ts`, `recordMissedRun`, preserves `cleanRunStreak` on the first miss. Reproduction: rung 2 with one clean run → miss → clean advances to rung 3. That contradicts the streak model implied by the field and clean-run threshold. Missing test: clean/miss/clean must not count as consecutive clean runs. Clarify the intended rule if non-consecutive runs are actually desired.
+
+Every miss now clears the clean-run streak. One miss still preserves the current rung; two misses retain the existing step-down rule. Tests cover clean/miss/clean, subsequent consecutive advancement, first misses at all four rungs, timestamps and immutable unrelated state.
+
+## Remaining findings, ranked
 
 ### 16. Gap decay can apply repeatedly without any new elapsed time — confirmed, medium when only the local cache exists
 
@@ -220,11 +224,31 @@ This batch fixes only ranks 6–10, in order, one commit per issue:
 | 7 | `5e38799` | Recover lesson saves after session lookup failures. |
 | 8 | `6c3a50d` | Retain lesson finishes while identity is loading. |
 | 9 | `c1fe561` | Count concurrent lesson finish events atomically. |
-| 10 | Fifth follow-up commit, containing this report | Deduplicate retries of one writing submission while retaining intentional revisions. |
+| 10 | `d8cafd9` | Deduplicate retries of one writing submission while retaining intentional revisions. |
 
 - `npm run check` passed before each commit. Final run: `SAVE_TEST_PG_PORT=55439 npm run check` — lint and TypeScript passed; **94 test files, 2,924 tests passed**, including all four optional PostgreSQL cases (see `TESTING.md`).
 - Guest/mocked browser regressions: **139 passed**, including all lesson startups in both languages, session errors, delayed lookup, lost acknowledgements and two concurrent tabs. These ran after the lesson-persistence changes; the final writing fix is covered by unit/action tests and the real database regression.
 - Real PostgreSQL: **4 integration tests passed** against an isolated temporary local cluster and `workplace_save_test`, including both new migrations applied twice. Tests cover concurrent increments, duplicate/out-of-order events, transferred aggregates, writing saved before completion fails, concurrent submission retries, teacher-note preservation and intentional identical revisions.
 - Both additive migrations must run before deployment: `20261024-lesson-save-events.sql` and `20261024-submission-attempts.sql`. The existing build migration runner includes them. They were tested only in the isolated cluster; the configured learner database was not modified.
 - Full authenticated browser flows against Neon, a production deployment and learner pilots were not run. Old legacy lesson snapshots have no event IDs; migration conservatively sends only their excess over the current server count. Previously lost concurrent increments or already duplicated submissions cannot be reconstructed automatically.
-- Ranks 11–40 remain deliberately open. No sixth follow-up fix was made.
+- That batch left ranks 11–40 open and stopped after five commits. The next batch is recorded below.
+
+## Third batch verification and limits
+
+This batch fixes ranks 11–15 in order, one commit each:
+
+| Rank | Commit | Result |
+| --- | --- | --- |
+| 11 | `bd40597` | Clear only the resetting learner’s pending saves after a successful Studio jump. |
+| 12 | `92db54b` | Make Studio replacement, completion deletion and level replay transactional. |
+| 13 | `280d217` | Clear server skill rungs within Studio resets; retain writing and feedback history. |
+| 14 | `626f807` | Persist enrollment statements under the existing learner-scoped Story draft contract. |
+| 15 | Fifth commit of this batch, containing this report | Break the clean-run streak on a missed run without an immediate rung drop. |
+
+- `npm run check` passed before each commit. Final run: `SAVE_TEST_PG_PORT=55439 npm run check` — lint and TypeScript passed; **97 test files, 2,950 tests passed**, including all optional local PostgreSQL cases.
+- Reset regression suite: **16 passed**, including failure after each of six Studio mutations, both completion-reset mutations and all three replay mutations. Tests also cover successful level/learner isolation, Fresh/later skill reset and preservation of teacher feedback.
+- Enrollment browser component tests: **4 passed**, exercising real task/rendering/storage with mocked account context, in English and Spanish. Story drafts survive reload and stay learner-scoped; lessons neither load nor overwrite Story drafts. The initial fixture run failed because its JavaScript was decoded with the wrong charset; the corrected UTF-8 fixture passed all four cases.
+- Real Next.js enrollment lesson smoke tests: **2 passed**, English and Spanish.
+- Full authenticated browser flows and Neon transport were not exercised. Database tests used the isolated local PostgreSQL cluster and never modified the configured learner database. The production driver’s `batch` delegates to Neon’s transactional API; local failure-injection tests execute those compiled statements transactionally via `psql`.
+- No new database migration is required for this batch. Existing writing and teacher feedback intentionally survive Studio presets; simulated completion credit starts with fresh skill support.
+- Ranks 16–40 remain open. This batch stops after exactly five commits.
