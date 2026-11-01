@@ -83,8 +83,7 @@ for (const lang of ["en", "es"] as const) {
       // Open the stub. The Spanish card names the English words on it.
       await row.click();
       await expect(page.locator('[data-showme="stub-net-pay"][data-showme-primary]')).toBeAttached();
-      await expect(card(page)).toContainText(t("Find the net pay on this stub.", "pago neto (Net pay)"));
-      await card(page).locator(".job-card-primary").first().click();
+      await expect(card(page)).toContainText(t("Find the net pay on the pay stub.", "pago neto (Net pay)"));
 
       // Question 1, with a wrong answer first.
       await expect(appWindow(page)).toContainText(t("What was the net pay on your stub?", "¿Cuál fue el pago neto (Net pay) en tu recibo?"));

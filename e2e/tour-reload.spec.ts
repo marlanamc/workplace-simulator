@@ -59,10 +59,10 @@ for (const lang of ["en", "es"] as const) {
   const startName = t("Start looking around", "Empezar a mirar");
   const welcome = t("This card tells you what to do.", "Esta tarjeta te dice qué hacer.");
   const practiceName = t("Practice clicking and scrolling", "Practicar clics y desplazamiento");
-  const bookmarks = t("These are your bookmarks.", "Estos son tus marcadores.");
+  const bookmarks = t("Look at the bookmarks for work websites.", "Mira los marcadores de los sitios del trabajo.");
   const clickMail = t("Click Mail.", "Haz clic en Correo.");
-  const workEmail = t("This is your work email.", "Este es tu correo del trabajo.");
-  const tryHelp = t("Tap I need help on this card to try it.", "Toca Necesito ayuda en esta tarjeta para probarlo.");
+  const workEmail = t("Look at your work inbox.", "Mira tu bandeja de correo del trabajo.");
+  const tryHelp = t("Click I need help on this card.", "Haz clic en Necesito ayuda en esta tarjeta.");
   const helpLead = t("You tried Help. You are ready for your first task.", "Ya probaste Ayuda. Ya puedes empezar tu primera tarea.");
 
   for (const size of sizes) {

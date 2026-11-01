@@ -40,7 +40,11 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
     test.use({ viewport: size });
     const t = (en: string, es: string) => (lang === "en" ? en : es);
     const clickSend = t("Click Send.", "Haz clic en Enviar.");
-    const goal = t("Tell Maria you cannot work today's shift.", "Dile a Maria que no puedes trabajar el turno de hoy.");
+    // App copy uses a typographic apostrophe (today’s), so match any character there.
+    const goal = lang === "en" ? /Tell Maria you cannot work today.s shift\./ : /Dile a Maria que no puedes trabajar el turno de hoy\./;
+    // The refusal's own correction, shown when the send is refused. After that the
+    // card keeps the write line (never "Click Send.") while the words are unchanged.
+    const fix = t("Maria needs to know you will not come in.", "Maria necesita saber que no vas a venir.");
 
     test(`Day 5: a refused message is still refused after another app and a reload (${lang})`, async ({ page }) => {
       test.slow();
@@ -58,6 +62,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       await box.fill(wrong);
       await page.getByRole("button", { name: /^(Send|Enviar)$/ }).click();
       await expect(card(page)).toContainText(goal);
+      await expect(card(page)).toContainText(fix);
       await expect(card(page)).not.toContainText(clickSend);
 
       // Another app and back: the same words, the same ask.

@@ -33,7 +33,7 @@ test("Day 14: phone message from a voicemail comes before the schedule", async (
   const sheets = page.getByTestId("bookmark-team-schedule");
   if (await sheets.isVisible().catch(() => false)) await sheets.click();
 
-  await expect(card).toContainText("voicemail for Renata");
+  await expect(card).toContainText("Send Renata a phone message");
   await expect(page.getByTestId("voicemail-transcript")).toContainText("555, 0137");
 
   // The schedule waits for the message.

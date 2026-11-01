@@ -43,7 +43,10 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
     test.use({ viewport: size });
     const t = (en: string, es: string) => (lang === "en" ? en : es);
     const clickSend = t("Click Send.", "Haz clic en Enviar.");
-    const goal = t("Tell Maria you arrived at 7 and clocked in at 8:15.", "Dile a Maria que llegaste a las 7 y marcaste a las 8:15.");
+    const goal = t("Email Maria your arrival time and the recorded clock-in time.", "Escribe a Maria tu hora de llegada y la hora de entrada registrada.");
+    // The refusal's own correction, shown when the send is refused. After that the
+    // card keeps the write line (never "Click Send.") while the words are unchanged.
+    const fix = t("Tell Maria what time you got here.", "Dile a Maria a qué hora llegaste.");
 
     test(`Day 3: a refused clock note is still refused after another app and a reload (${lang})`, async ({ page }) => {
       test.slow();
@@ -63,6 +66,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       await box.fill(wrong);
       await page.locator('[data-showme="send-button"]').first().click();
       await expect(card(page)).toContainText(goal);
+      await expect(card(page)).toContainText(fix);
       await expect(card(page)).not.toContainText(clickSend);
 
       // Another app and back: the same words, the same ask.
