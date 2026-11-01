@@ -87,7 +87,7 @@ test('Story budget uses an accurate status and the Sheets collaborator menu', as
   await page.getByRole('button', { name: /Cafe budget: week of/ }).click();
   await expect(page.getByRole('button', { name: 'within budget', exact: true })).toHaveCount(6);
   await page.getByRole('button', { name: 'over', exact: true }).click();
-  await expect(card).toContainText('Find what is over budget.');
+  await expect(card).toContainText('Find the category that is over budget.');
   await page.getByRole('button', { name: 'File', exact: true }).click();
   await page.getByRole('button', { name: 'Email', exact: true }).click();
   await page.getByRole('button', { name: 'Email collaborators', exact: true }).click();

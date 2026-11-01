@@ -27,16 +27,14 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
   const card = page.locator("[data-job-card]");
   await card.getByRole("button", { name: /^Open Sheets/ }).click();
   await page.getByTestId("bookmark-make-a-copy").click();
-  await card.getByTestId("job-card-drag-handle").focus();
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowUp");
 
   // Make the copy and type in it: that finishes the first task.
   await page.getByText("Weekly Status Template").first().click();
   // Wave 4: comment on Renata's template instead of editing it. The Copy waits for it.
   await page.getByRole("button", { name: "File" }).click();
   await page.getByRole("button", { name: "Make a copy" }).first().click();
-  await expect(card).toContainText("You cannot edit Renata's template");
+  // Copying before commenting just repeats the comment step.
+  await expect(card).toContainText("Select its cell and comment to Renata about the date");
   await page.getByTestId("heading-cell").click();
   await page.getByTestId("comment-button").click();
   await page.getByTestId("comment-input").fill("ok");
@@ -64,13 +62,8 @@ test("Day 12 hands off from the copy to the status report", async ({ page }) => 
   // The bookmark now opens the status report.
   await page.getByTestId("bookmark-status-report").click();
   await page.getByText("status-week-of-sep-14").first().click();
-  // The card goes back to the bottom-left corner on each task and covers the
-  // total cell (audit #2, Stream A). Move it, as a learner would.
-  await card.getByTestId("job-card-drag-handle").focus();
-  await page.keyboard.press("ArrowRight");
-  await page.keyboard.press("ArrowUp");
   // Wave 4 Undo practice: delete Friday's number on request, then Undo it.
-  await expect(card).toContainText("press Delete");
+  await expect(card).toContainText(/press Delete/i);
   const friday = page.getByTestId("status-cell-fri");
   await friday.click();
   await page.keyboard.press("Delete");

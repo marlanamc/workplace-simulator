@@ -33,7 +33,7 @@ test("Day 13: close the browser when asked, reopen, work is still there", async 
   await page.getByRole("button", { name: "Open Calendar" }).click();
   await page.getByRole("combobox", { name: "New time" }).selectOption("fri10");
   await page.getByRole("button", { name: "Propose a new time" }).click();
-  await expect(card).toContainText("Close the browser");
+  await expect(card).toContainText("Close the practice browser window");
 
   // The second request waits for the close.
   await page.getByRole("button", { name: "Open Drive" }).click();
@@ -47,7 +47,8 @@ test("Day 13: close the browser when asked, reopen, work is still there", async 
   // Reopen from the shelf, then Today.
   await page.getByRole("button", { name: "Browser" }).click();
   if (await today.isVisible().catch(() => false)) await today.click();
-  await expect(card).toContainText("Your work is still here");
+  await expect(card).toContainText("Finish the remaining request");
+  await expect(card).not.toContainText("Open Today again");
   await page.getByRole("button", { name: "Open Drive" }).click();
   await page.getByRole("button", { name: "Viewer" }).click();
   await page.getByRole("button", { name: "Share", exact: true }).click();
