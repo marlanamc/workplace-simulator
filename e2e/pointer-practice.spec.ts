@@ -94,6 +94,9 @@ test('practice exit remains reachable at a 200% equivalent Chromebook viewport',
 
 
 test('drag remains available and Studio fresh start restores the welcome choice', async ({ page }) => {
+  // The card floats (and can be dragged) only wider than a Chromebook; below
+  // 1440px it docks beside the window.
+  await page.setViewportSize({ width: 1600, height: 900 });
   await signup(page, 'en');
   const card = page.locator('[data-job-card]');
   const handle = card.getByTestId('job-card-drag-handle');
@@ -103,7 +106,7 @@ test('drag remains available and Studio fresh start restores the welcome choice'
   const box = await handle.boundingBox();
   await page.mouse.move(box!.x + 30, box!.y + 20);
   await page.mouse.down();
-  await page.mouse.move(1100, 600, { steps: 12 });
+  await page.mouse.move(1400, 750, { steps: 12 });
   await page.mouse.up();
   await expect(card).toHaveAttribute('data-corner', 'br');
   await expect(card.getByRole('button', { name: startName })).toBeVisible();

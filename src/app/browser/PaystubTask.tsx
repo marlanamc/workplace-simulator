@@ -79,7 +79,10 @@ export default function PaystubTask() {
     const size = new ResizeObserver(measure);
     size.observe(el);
     return () => size.disconnect();
-  }, []);
+    // The pane only exists on the question views, not the stub list the task
+    // opens on, so measure again when the view changes. Measured once on
+    // mount, it never fit: the stub stayed at 100% and was cut off.
+  }, [view]);
   const shownZoom = zoom ?? fit;
 
   const answer = (opt: CheckOption, onCorrect: () => void) => {
@@ -186,7 +189,7 @@ export default function PaystubTask() {
                   </button>
                 </div>
                 <div ref={paneRef} className="max-h-[70vh] overflow-auto">
-                  <div ref={sheetRoomRef} className="flex justify-center p-4">
+                  <div ref={sheetRoomRef} className="flex justify-center-safe p-4">
                     <PdfSheet doc={stubDoc} scale={shownZoom / 100} employeeName={displayName} />
                   </div>
                 </div>

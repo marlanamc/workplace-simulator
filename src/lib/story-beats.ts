@@ -212,12 +212,12 @@ const STORY_MAILS: InboxRow[] = [
     body: {
       en: [
         "Got it, and I have the shift covered. Rest today.",
-        "You wrote before the shift instead of after it started, which is the part that matters. Two hours' notice is the rule here.",
+        "You wrote before the shift instead of after it started, which is the part that matters. Next time, write as soon as you know.",
         "When you're back Friday, your first pay stub should be in the portal. Open it and check the numbers.",
       ],
       es: [
         "Recibido, y ya cubrí el turno. Descansa hoy.",
-        "Escribiste antes del turno y no después de que empezara, que es lo que importa. Aquí la regla son dos horas de aviso.",
+        "Escribiste antes del turno y no después de que empezara, que es lo que importa. La próxima vez, escribe en cuanto lo sepas.",
         "Cuando regreses el viernes, tu primer recibo debería estar en el portal. Ábrelo y revisa los números.",
       ],
     },
