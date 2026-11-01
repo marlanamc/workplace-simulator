@@ -81,7 +81,7 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { useLesson } from "@/lib/lesson-context";
-import { useDocked } from "@/lib/use-docked";
+import { useNarrowDocked } from "@/lib/use-docked";
 import { mailDraftFor, mailDraftKey, readMailDraft, type MailDraft } from "@/lib/mail-draft";
 import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_CORRECTIONS, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyVerdict, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { useJobCardOptional } from '@/lib/job-card-context';
@@ -684,10 +684,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     });
 
   // One pane at a time (the list, or one message with a way back) when the
-  // window is narrow: in a lesson, or beside the docked Job Card. Three
-  // columns need about 800px, and a docked window at 150% text has 567.
-  const docked = useDocked();
-  const singlePane = Boolean(lessonRun) || docked;
+  // window is narrow: in a lesson, or beside the docked Job Card on a small
+  // screen. Three columns need about 800px; a docked window at 150% text has
+  // 567, but at 1366 it has about 1000, so Mail keeps its normal layout there.
+  const narrowDocked = useNarrowDocked();
+  const singlePane = Boolean(lessonRun) || narrowDocked;
   // The clock-in message (Day 3) is written in the right pane whatever the
   // view is, so it counts as an open message too.
   const lessonReading = singlePane && (view !== "empty" || timeclockMailActive);

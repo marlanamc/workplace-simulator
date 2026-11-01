@@ -62,7 +62,7 @@ export const CARD_PRACTICE = {
 /**
  * Optional, ungraded practice for moving, collapsing, and restoring the Job
  * Card itself — offered next to `CARD_PRACTICE` on the welcome beat. Skipped
- * entirely wherever the card is docked (below ~1100px): there's nothing to
+ * entirely wherever the card is docked (below 1440px): there's nothing to
  * move there.
  */
 export const MOVE_PRACTICE = {

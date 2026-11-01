@@ -5,8 +5,9 @@ import { expectTaskFinished } from "./next-task";
 
 /**
  * Wave 5 F-2/F-25 (the runaway scroll gutter) and the owner's docked Job Card
- * (F-3, F-16, F-17). Below 1100px wide the card is a fixed strip on the left
- * and the app window narrows beside it; above that it floats. These try to
+ * (F-3, F-16, F-17). Below 1440px wide (every common Chromebook) the card is
+ * a fixed strip on the left and the app window narrows beside it; above that
+ * it floats. These try to
  * break both: live resizes, a reload, Spanish, a card held in a bottom
  * corner, and the one app (Mail) whose wide layout does not fit beside it.
  */
@@ -14,6 +15,8 @@ import { expectTaskFinished } from "./next-task";
 const CLASS_CODE = "TEST-E2E";
 const ZOOMED = { width: 911, height: 512 };
 const LAPTOP = { width: 1366, height: 768 };
+/** Wider than any Chromebook: the card floats here. */
+const WIDE = { width: 1600, height: 900 };
 
 type Box = { x: number; y: number; width: number; height: number };
 const intersects = (a: Box, b: Box) =>
@@ -105,19 +108,22 @@ for (const lang of ["en", "es"] as const) {
 }
 
 test("the card docks and floats as the window is resized, without a reload", async ({ page }) => {
-  await page.setViewportSize(LAPTOP);
+  await page.setViewportSize(WIDE);
   await signUp(page, `E2e Dock resize ${Date.now()}`);
   await openDay(page, "Start of Day 2: The First Week");
   await expect(card(page)).not.toHaveAttribute("data-corner", "dock");
   await expect(card(page).getByTestId("job-card-collapse")).toBeVisible();
 
+  // A 1366x768 Chromebook docks too: a floating card covered the inbox there.
+  await page.setViewportSize(LAPTOP);
+  await expectDockedBeside(page);
   await page.setViewportSize(ZOOMED);
   await expectDockedBeside(page);
 
   // Right at the breakpoint on either side.
-  await page.setViewportSize({ width: 1099, height: 700 });
+  await page.setViewportSize({ width: 1439, height: 800 });
   await expectDockedBeside(page);
-  await page.setViewportSize({ width: 1100, height: 700 });
+  await page.setViewportSize({ width: 1440, height: 800 });
   await expect(card(page)).not.toHaveAttribute("data-corner", "dock");
   const windowBox = (await appWindow(page).boundingBox())!;
   expect(windowBox.x).toBeLessThan(20);
@@ -129,9 +135,9 @@ test("the card docks and floats as the window is resized, without a reload", asy
 });
 
 test("a card held in a bottom corner on a short wide screen does not grow the page", async ({ page }) => {
-  // Floating (wider than 1100) but short, with the card held where a learner
+  // Floating (wider than 1440) but short, with the card held where a learner
   // put it: the exact case that sent the gutter into a loop before the fix.
-  await page.setViewportSize({ width: 1280, height: 560 });
+  await page.setViewportSize({ width: 1600, height: 560 });
   await signUp(page, `E2e Gutter ${Date.now()}`);
   await openDay(page, "Start of Day 2: The First Week");
   await page.locator('[data-showme="swap-button"]').first().click();
@@ -183,4 +189,18 @@ test("docked, the launcher opens beside the card, not under it", async ({ page }
   const panelBox = (await panel.boundingBox())!;
   expect(intersects(panelBox, (await card(page).boundingBox())!)).toBe(false);
   expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(ZOOMED.width);
+});
+
+test("docked on a 1366x768 Chromebook, Mail keeps its inbox beside the message (Day 3)", async ({ page }) => {
+  await page.setViewportSize(LAPTOP);
+  await signUp(page, `E2e Dock mail wide ${Date.now()}`);
+  await openDay(page, "Start of Day 3: Clock-In Fix");
+  await page.locator('[data-showme="clockin-button"]').click();
+  await page.locator('[data-showme="something-off-button"]').click();
+  const send = page.locator('[data-showme="send-button"]');
+  await expect(send).toBeVisible();
+  await expectDockedBeside(page);
+  // About 1000px of window: room for the list and the message together.
+  await expect(page.getByTestId("mail-inbox-list")).toBeVisible();
+  expect(intersects((await send.boundingBox())!, (await card(page).boundingBox())!)).toBe(false);
 });

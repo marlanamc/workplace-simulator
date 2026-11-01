@@ -156,12 +156,18 @@ export function cornerNearest(center: { x: number; y: number }, viewport: Size):
 /**
  * Below this width the card stops floating. It docks as a fixed strip on the
  * left and the app window narrows beside it (`.story-desktop` in
- * globals.css), so nothing the learner needs is ever under it. A Chromebook
- * at 150% text is 911 wide. Keep in step with the `max-width: 1099px` media
- * queries in globals.css.
+ * globals.css), so nothing the learner needs is ever under it. This covers
+ * every common Chromebook (1366x768, 1280x800, 911x512 at 150% text): at
+ * 1366x768 a floating card covered part of the inbox or schedule on most
+ * screens, because no corner was clear. Keep in step with the
+ * `max-width: 1439px` media queries in globals.css.
  */
-export const DOCK_MAX_WIDTH = 1099;
+export const DOCK_MAX_WIDTH = 1439;
 export const DOCK_QUERY = `(max-width: ${DOCK_MAX_WIDTH}px)`;
+/** Below this width the docked window is too narrow for multi-column apps
+ *  (Mail's three columns need about 800px; at 1099 the window has ~750). */
+export const NARROW_DOCK_MAX_WIDTH = 1099;
+export const NARROW_DOCK_QUERY = `(max-width: ${NARROW_DOCK_MAX_WIDTH}px)`;
 
 export function isDockedWidth(viewportWidth: number): boolean {
   return viewportWidth <= DOCK_MAX_WIDTH;

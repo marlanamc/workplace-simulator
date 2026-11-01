@@ -188,6 +188,37 @@ export const CALENDAR_REMINDER_STEPS: Record<Lang, TourStep[]> = {
   ],
 };
 
+/**
+ * The same help when the card is docked beside the window (every common
+ * Chromebook): it cannot be dragged, moved, or shrunk there, and it never
+ * covers anything, so those lines would only send the learner looking for
+ * controls that are not there.
+ */
+export const LESSONS_DOCKED: Record<Lang, Lesson[]> = {
+  en: [
+    {
+      t: "Where to look",
+      s: [
+        "This card on the left tells you what to do next.",
+        "Your work is on the right. The card never covers it.",
+        "Lost? Tap I need help on this card.",
+      ],
+      tip: "This card always tells you what to do next. Read it if you are not sure.",
+    },
+  ],
+  es: [
+    {
+      t: "Dónde mirar",
+      s: [
+        "Esta tarjeta a la izquierda te dice qué hacer.",
+        "Tu trabajo está a la derecha. La tarjeta nunca lo tapa.",
+        "¿Te perdiste? Toca Necesito ayuda en esta tarjeta.",
+      ],
+      tip: "Esta tarjeta siempre te dice qué hacer. Léela si tienes dudas.",
+    },
+  ],
+};
+
 export const LESSONS: Record<Lang, Lesson[]> = {
   en: [
     {

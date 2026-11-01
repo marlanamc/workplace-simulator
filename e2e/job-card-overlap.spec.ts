@@ -22,6 +22,8 @@ const CLASS_CODE = "TEST-E2E";
 const VIEWPORTS = [
   { name: "chromebook 100%", width: 1366, height: 768 },
   { name: "chromebook 150%", width: 911, height: 512 },
+  // Wider than a Chromebook, where the card still floats and picks a corner.
+  { name: "desktop", width: 1600, height: 900 },
 ];
 
 type Box = { x: number; y: number; width: number; height: number };
@@ -112,9 +114,10 @@ for (const viewport of VIEWPORTS) {
           .toEqual([])
           .catch(() => {});
         if (covered.length) failures.push(`${day}: ${covered.join(", ")}`);
-        // Below 1100px wide the card docks beside the window (Wave 5 F-3):
-        // it must not touch the window at all, not just its Show me targets.
-        if (viewport.width < 1100) {
+        // Below 1440px wide (every common Chromebook) the card docks beside
+        // the window: it must not touch the window at all, not just its
+        // Show me targets.
+        if (viewport.width < 1440) {
           const card = page.locator("[data-job-card]");
           if ((await card.getAttribute("data-corner")) !== "dock") failures.push(`${day}: card not docked`);
           const cardBox = await card.boundingBox();
