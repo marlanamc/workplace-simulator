@@ -88,23 +88,33 @@ for (const [lang, size] of [["en", { width: 1366, height: 768 }], ["es", { width
       await signUp(page, lang);
       // Welcome beat: "Start looking around".
       await enterOn(page, primary(page));
-      // "These are your bookmarks." [Next]
-      await expect(card(page)).toContainText(lang === "en" ? "These are your bookmarks." : "Estos son tus marcadores.");
+      // "Look at the bookmarks for work websites." [Next]
+      await expect(card(page)).toContainText(lang === "en" ? "Look at the bookmarks for work websites." : "Mira los marcadores de los sitios del trabajo.");
       await enterOn(page, primary(page));
       // "Click Mail." The bookmark itself has focus.
       await enterOn(page, page.getByTestId("bookmark-mail"));
-      // "This is your work email." [I understand]
+      // "Look at your work inbox." [I understand]
       await expect(page.getByTestId("mail-app-title")).toBeVisible();
       await enterOn(page, primary(page));
-      // "Tap the ?": the ? has focus.
+      // "Click I need help on this card.": that button has focus.
       await enterOn(page, card(page).getByTestId("job-card-help"));
       // Help is open: its close button has focus.
       await enterOn(page, primary(page));
       // "You tried Help." [I'm ready for the task]
       await enterOn(page, primary(page));
-      // The level card's button, then Day One's list pin beat.
+      // The level card's button, then the "Meet your team" screen's "Start my
+      // first day".
       await enterOn(page, page.locator("[data-celebration-continue]"));
-      await enterOn(page, primary(page));
+      await enterOn(page, page.getByTestId("new-hire-continue"));
+      // The Night Before opens in Mail with no card button: focus stays in the
+      // app (not lost to the page) and Maria's email is a few Tabs away.
+      await expect(card(page)).toContainText(lang === "en" ? "Open Maria Delgado" : "Abre el correo de Maria Delgado");
+      const maria = page.getByRole("button", { name: /Maria Delgado/ }).first();
+      await expect(maria).toBeVisible();
+      expect(await page.evaluate(() => document.activeElement === document.body || !document.activeElement), "focus lost to the page").toBe(false);
+      let tabs = 0;
+      while (!(await maria.evaluate((el) => el === document.activeElement)) && tabs++ < 8) await page.keyboard.press("Tab");
+      await expect(maria).toBeFocused();
       await expect(card(page)).not.toContainText(lang === "en" ? "orange button" : "botón naranja");
     });
 

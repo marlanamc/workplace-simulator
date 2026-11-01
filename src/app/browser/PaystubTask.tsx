@@ -57,8 +57,14 @@ export default function PaystubTask() {
 
   const stub = PAY_STUBS.find((p) => p.id === TARGET_STUB_ID);
   const stubDoc = stub?.pdfDocId ? PDF_DOCUMENTS.find((d) => d.id === stub.pdfDocId) : undefined;
+  // The stub list's button disappears when the stub opens, which drops
+  // keyboard focus to the top of the Portal (10 Tabs to the first answer).
+  // Land on the question instead, so the answers are the next Tab.
+  const questionRef = useRef<HTMLDivElement>(null);
   const openStub = (p: (typeof PAY_STUBS)[number]) => {
-    if (p.pdfDocId) setView("check1");
+    if (!p.pdfDocId) return;
+    setView("check1");
+    requestAnimationFrame(() => questionRef.current?.focus({ preventScroll: true }));
   };
 
   // The document's own zoom, independent of the PDF Reader app: the pane
@@ -79,7 +85,10 @@ export default function PaystubTask() {
     const size = new ResizeObserver(measure);
     size.observe(el);
     return () => size.disconnect();
-  }, []);
+    // The pane only exists on the question views, not the stub list the task
+    // opens on, so measure again when the view changes. Measured once on
+    // mount, it never fit: the stub stayed at 100% and was cut off.
+  }, [view]);
   const shownZoom = zoom ?? fit;
 
   const answer = (opt: CheckOption, onCorrect: () => void) => {
@@ -158,7 +167,7 @@ export default function PaystubTask() {
         <div className="@container">
           <div className="flex flex-col gap-5 @[900px]:flex-row @[900px]:items-start">
             {stubDoc && (
-              <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-[#525659] @[900px]:max-w-[58%]">
+              <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-[#525659]">
                 <div className="flex items-center justify-end gap-1 border-b border-[#3a3d40] bg-[#323639] px-2 py-1">
                   <button
                     type="button"
@@ -186,14 +195,17 @@ export default function PaystubTask() {
                   </button>
                 </div>
                 <div ref={paneRef} className="max-h-[70vh] overflow-auto">
-                  <div ref={sheetRoomRef} className="flex justify-center p-4">
+                  <div ref={sheetRoomRef} className="flex justify-center-safe p-4">
                     <PdfSheet doc={stubDoc} scale={shownZoom / 100} employeeName={displayName} />
                   </div>
                 </div>
               </div>
             )}
-            <div className="min-w-0 flex-1 rounded-xl border border-border bg-white p-5">
-              <div className="mb-2.5 text-[15px] font-medium">
+            {/* Side by side, the questions take a fixed column and the stub gets the
+                rest: beside the docked Job Card on a 1366 Chromebook, a 58/42 split
+                left the stub too narrow to fit even at the smallest zoom. */}
+            <div className="min-w-0 flex-1 rounded-xl border border-border bg-white p-5 @[900px]:max-w-[340px]">
+              <div ref={questionRef} tabIndex={-1} className="mb-2.5 text-[15px] font-medium outline-none">
                 {view === "check1" ? netCheck.question : hoursCheck.question}
               </div>
               {/* On the hours question the record sits beside the choices, so at

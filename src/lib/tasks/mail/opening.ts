@@ -31,7 +31,7 @@ export const OPENING_MESSAGES = [
     frame: copy('Hi Maria, thank you!', '¡Hola Maria, gracias!'),
   },
   {
-    id: 'start-time', sender: CAST.maria, time: '6:09 PM',
+    id: 'start-time', sender: CAST.maria, time: '6:03 PM',
     subject: copy('Tomorrow at 10 AM', 'Mañana a las 10 a. m.'),
     body: copy('Your shift tomorrow starts at 10 AM. Can you confirm you will be here?', 'Tu turno de mañana empieza a las 10 a. m. ¿Puedes confirmar que estarás aquí?'),
     more: lines(
@@ -43,7 +43,7 @@ export const OPENING_MESSAGES = [
     frame: copy('Hi Maria, I will be there at ___ AM.', 'Hola Maria, voy a estar ahí a las ___ a. m.'),
   },
   {
-    id: 'cups', sender: CAST.darnell, time: '6:15 PM',
+    id: 'cups', sender: CAST.darnell, time: '6:04 PM',
     subject: copy('Where to put your bag', 'Dónde dejar tu bolsa'),
     body: copy('I work mornings too. Tomorrow you can leave your bag on the shelf under the counter. Reply and tell me where you will put it, so I know you saw this.', 'Yo también trabajo por la mañana. Mañana puedes dejar tu bolsa en el estante debajo del mostrador. Responde y dime dónde la vas a dejar, para saber que lo viste.'),
     more: lines(

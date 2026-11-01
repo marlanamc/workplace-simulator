@@ -3,13 +3,14 @@ import { continuePastStudioArrivalIfPresent } from "./studio-arrival";
 import { clickIntoPage, waitForInteractive } from "./interactive";
 
 /**
- * Phase 3 N-9: at 911x512 the PDF Reader's window sits beside the docked Job
- * Card, and its Downloads list took 260px of it. The pay stub opened wider
- * than the room left, cut off on the right: the amounts and Net pay were off
- * screen with nothing to say there was more. A narrow Reader now puts the
- * Downloads above the page and opens the page at the width it has, so
- * nothing is cut at the side (reading down is ordinary scrolling). A wide
- * Reader is unchanged: Downloads beside the page, at 100%.
+ * Phase 3 N-9: at 911x512 the app window sits beside the docked Job Card,
+ * and the pay stub opened wider than the room left, cut off at the side: the
+ * amounts and Net pay were off screen with nothing to say there was more.
+ * Day 6 now reads the stub inline in the Browser task, beside the questions
+ * (above them when narrow). Its pane opens the page at the width it has
+ * (fit to width, never below 60%), re-measured when the view changes, and
+ * centers it with `justify-center-safe`, so nothing is cut at either side
+ * (reading down is ordinary scrolling).
  */
 
 type Lang = "en" | "es";
@@ -38,39 +39,52 @@ async function openTodaysJob(page: Page) {
   await expect(appWindow(page)).toBeVisible();
 }
 
+/** The scroll pane around the stub's page: the overflow ancestor of the real Net pay figure. */
+const PANE_JS = `(() => {
+  const net = [...document.querySelectorAll('[data-showme="stub-net-pay"]')].find((e) => !e.classList.contains("sr-only"));
+  let el = net && net.parentElement;
+  while (el && !/(auto|scroll)/.test(getComputedStyle(el).overflowX)) el = el.parentElement;
+  return el && net ? { pane: el, net } : null;
+})()`;
+
 async function openStub(page: Page) {
   await openTodaysJob(page);
-  const pane = page.locator("[data-pdf-pane]");
-  for (let press = 0; press < 3 && !(await pane.isVisible()); press++) {
-    // The stub from the list, or, once the questions are up, from the link under them.
-    await page.locator('[data-showme="target-stub"]').or(page.getByRole("button", { name: /^(Look at the pay stub again|Ver el recibo otra vez)$/ })).first().click();
-    await pane.waitFor({ state: "visible", timeout: 4_000 }).catch(() => {});
-  }
-  await expect(pane).toBeVisible();
+  const zoomIn = page.getByRole("button", { name: /^(Zoom in|Acercar)$/ });
+  // The stub from the list; after a reload the question view (and the stub) is already up.
+  if (!(await zoomIn.isVisible())) await page.locator('[data-showme="target-stub"]').click();
+  await expect(zoomIn).toBeVisible();
+  await expect.poll(() => page.evaluate((js) => eval(js) !== null, PANE_JS)).toBe(true);
   await page.waitForTimeout(300);
 }
 
-/** The reader's page pane, and how the stub sits in it across. */
+/** The stub's pane, and how the page sits in it across. */
 async function layout(page: Page) {
-  return page.evaluate(() => {
-    const pane = document.querySelector<HTMLElement>("[data-pdf-pane]")!;
+  return page.evaluate((js) => {
+    const { pane, net } = eval(js) as { pane: HTMLElement; net: HTMLElement };
     const p = pane.getBoundingClientRect();
-    const net = pane.querySelector('[data-showme="stub-net-pay"]')!.getBoundingClientRect();
-    const list = document.querySelector<HTMLElement>("[data-pdf-downloads]")!.getBoundingClientRect();
+    const n = net.getBoundingClientRect();
+    // The page itself: PdfSheet's outer box, sized to the scaled sheet.
+    let sheet: HTMLElement = net;
+    while (sheet.parentElement && sheet.parentElement.parentElement !== pane) sheet = sheet.parentElement;
+    const s = sheet.getBoundingClientRect();
+    const zoom = [...pane.parentElement!.querySelectorAll("span")].map((e) => e.textContent ?? "").find((t) => /^\d+%$/.test(t)) ?? "";
     return {
+      clientWidth: pane.clientWidth,
+      scrollWidth: pane.scrollWidth,
       sideways: pane.scrollWidth - pane.clientWidth,
-      netInside: net.left >= p.left - 1 && net.right <= p.right + 1,
-      listBeside: list.right <= p.left + 1,
-      listAbove: list.bottom <= p.top + 1,
-      zoom: document.querySelector("[data-pdf-zoom]")?.textContent ?? "",
+      scrollLeft: pane.scrollLeft,
+      netInside: n.left >= p.left - 1 && n.right <= p.right + 1,
+      sheetInside: s.left >= p.left - 1 && s.right <= p.right + 1,
+      sheet: { x: Math.round(s.x), width: Math.round(s.width) },
+      paneBox: { x: Math.round(p.x), width: Math.round(p.width) },
+      zoom,
     };
-  });
+  }, PANE_JS);
 }
 
 for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width: 911, height: 512 }], ["en", { width: 1366, height: 768 }]] as const) {
   test.describe(`${lang} ${size.width}x${size.height}`, () => {
     test.use({ viewport: size });
-    const narrow = size.width < 1000;
 
     test(`Day 6: the pay stub is not cut off at the side (${lang}, ${size.width})`, async ({ page }) => {
       test.slow();
@@ -84,17 +98,15 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
 
       const check = async () => {
         const l = await layout(page);
-        expect(l.sideways).toBeLessThanOrEqual(1);
-        expect(l.netInside).toBe(true);
-        if (narrow) {
-          expect(l.listAbove).toBe(true);
-        } else {
-          expect(l.listBeside).toBe(true);
-          expect(l.zoom).toBe("100%");
-        }
-        // Both files can still be opened from the list.
-        await expect(appWindow(page).getByRole("button", { name: /food-handler-certificate\.pdf/ })).toBeVisible();
-        await expect(appWindow(page).getByRole("button", { name: /paystub-/ })).toBeVisible();
+        const why = JSON.stringify(l);
+        // Not cut off: no sideways scroll, and the whole page (Net pay included) inside the pane.
+        expect(l.sideways, why).toBeLessThanOrEqual(1);
+        expect(l.sheetInside, why).toBe(true);
+        expect(l.netInside, why).toBe(true);
+        // Opened fitted to the pane: at most 100%, never below the readable 60%.
+        const zoom = parseInt(l.zoom, 10);
+        expect(zoom, why).toBeLessThanOrEqual(100);
+        expect(zoom, why).toBeGreaterThanOrEqual(60);
       };
 
       await openStub(page);
@@ -104,7 +116,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       // Zoom still works from the fitted size.
       const before = (await layout(page)).zoom;
       await page.getByRole("button", { name: /^(Zoom in|Acercar)$/ }).click();
-      await expect(page.locator("[data-pdf-zoom]")).not.toHaveText(before);
+      await expect.poll(async () => (await layout(page)).zoom).not.toBe(before);
 
       // A reload opens the same way.
       await page.reload();

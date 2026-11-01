@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { waitForInteractive } from "./interactive";
 import { verifyShowMe } from "./show-me";
 import { FOLLOWUP_ROUNDS } from "@/lib/tasks/lesson-followups/content";
+import { practiceScenario } from "@/lib/tasks/confidence/classroom";
 
 async function start(page: Page, key: string, lang: string) {
   await page.goto(`/lessons/${key}?lang=${lang}`);
@@ -79,13 +80,20 @@ for (const lang of ["en", "es"]) {
 for (const lang of ["en", "es"]) {
   test(`files change from viewing to authorized editing (${lang})`, async ({ page }) => {
     await start(page, "files", lang);
-    await page.locator('[data-showme="shared-drive"]').click();
-    await page.getByRole("button", { name: /sched_91426.pdf/ }).click();
-    await page.locator('[data-showme="preview-rename"]').click();
-    await page.locator('[data-showme="rename-input"]').fill("schedule-week-of-sep-14");
-    await page.locator('[data-showme="rename-input"]').press("Enter");
-    await page.locator('[data-showme="can-view"]').click();
-    await page.getByRole("button", { name: lang === "en" ? "Share" : "Compartir", exact: true }).click();
+    // The lesson's first round is the in-lesson Drive practice: rename this week's schedule, share it as Viewer, check.
+    const es = lang === "es";
+    const s = practiceScenario("files", "classroom");
+    const p = page.getByTestId("confidence-practice");
+    const target = s.files!.find((f) => f.key === s.expected.file)!;
+    await p.getByRole("row").filter({ hasText: target.name }).getByRole("button", { name: es ? "Cambiar nombre" : "Rename", exact: true }).click();
+    await page.getByRole("dialog").getByLabel(es ? "Nombre nuevo" : "New file name").fill(s.expected.name);
+    await page.getByRole("dialog").getByRole("button", { name: es ? "Guardar" : "Save", exact: true }).click();
+    await p.getByRole("row").filter({ hasText: s.expected.name }).getByRole("button", { name: es ? "Compartir" : "Share", exact: true }).click();
+    const share = page.getByRole("dialog");
+    await share.getByLabel(es ? "Agregar personas" : "Add people").fill(s.recipient!);
+    await share.getByLabel(es ? "Permiso" : "Role", { exact: true }).selectOption(s.expected.permission);
+    await share.getByRole("button", { name: es ? "Guardar" : "Save", exact: true }).click();
+    await page.locator("[data-job-card]").getByRole("button", { name: es ? "Revisar mi trabajo" : "Check my work", exact: true }).click();
     await expect(page.getByTestId("lesson-followup")).toHaveAttribute("data-round", "files-current");
     await choose(page, "file", "sep");
     await choose(page, "access", "view");
@@ -100,14 +108,19 @@ for (const lang of ["en", "es"]) {
   });
   test(`attachments require removal and allow asking for a missing file (${lang})`, async ({ page }) => {
     await start(page, "mail-attach", lang);
-    await page.locator('[data-showme="maria-row"]').click();
-    await page.locator('[data-showme="reply-button"]').click();
-    await page.getByRole("button", { name: lang === "en" ? "Your food handler certificate, today by 3 PM" : "Tu certificado de manipulador de alimentos, hoy antes de las 3 PM", exact: true }).click();
-    await page.locator('[data-showme="attach-button"]').click();
-    await page.getByRole("button", { name: /food-handler-certificate.pdf/ }).click();
-    await page.locator('[data-showme="attach-confirm"]').click();
-    await page.locator('[data-showme="compose-body"]').fill(lang === "en" ? "Here is my food handler certificate." : "Aquí está mi certificado de manipulador de alimentos.");
-    await page.locator('[data-showme="send-button"]').click();
+    // The lesson's first round is the in-lesson mail practice: reply to Maria with the current certificate, check.
+    const es = lang === "es";
+    const s = practiceScenario("mail-attach", "classroom");
+    const p = page.getByTestId("confidence-practice");
+    await p.locator("button").filter({ hasText: /@/ }).first().click();
+    await p.getByRole("button", { name: es ? "Responder" : "Reply", exact: true }).click();
+    await p.getByRole("button", { name: es ? "Adjuntar archivos" : "Attach files", exact: true }).click();
+    const picker = page.getByRole("dialog");
+    await picker.getByRole("button", { name: s.files!.find((f) => f.key === s.expected.file)!.name, exact: true }).click();
+    await picker.getByRole("button", { name: es ? "Abrir" : "Open", exact: true }).click();
+    await p.getByLabel(es ? "Mensaje" : "Message", { exact: true }).fill(es ? "Aquí está mi certificado de manipulador de alimentos." : "Here is my food handler certificate.");
+    await p.getByRole("button", { name: es ? "Enviar" : "Send", exact: true }).click();
+    await page.locator("[data-job-card]").getByRole("button", { name: es ? "Revisar mi trabajo" : "Check my work", exact: true }).click();
     await expect(page.getByTestId("lesson-followup")).toHaveAttribute("data-round", "attachment-replace");
     await choose(page, "message", "replaced");
     await page.getByTestId("practice-review-button").click();

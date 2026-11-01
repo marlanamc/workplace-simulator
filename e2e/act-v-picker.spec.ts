@@ -41,10 +41,10 @@ test("after Act II the learner chooses a route and can change it without losing 
   await card.getByTestId('course-route-confirm').click();
   await expect(page.getByTestId('act-intro')).toHaveAttribute('data-act', 'act6', {timeout:20000});
   await page.getByTestId('act-intro-continue').click();
-  await expect(card.getByText('Read the posting. Check what you have done, then write why you fit.')).toBeVisible();
+  await expect(card.getByText('Read the job requirements. Select at least three that match the work history.')).toBeVisible();
   await page.reload();
   await waitForInteractive(page);
-  await expect(card.getByText('Read the posting. Check what you have done, then write why you fit.')).toBeVisible({timeout:20000});
+  await expect(card.getByText('Read the job requirements. Select at least three that match the work history.')).toBeVisible({timeout:20000});
   // Mid-direction, Change direction lives inside the desktop card's Help.
   await card.getByTestId('job-card-route-help').click();
   await card.getByTestId('change-direction').click();

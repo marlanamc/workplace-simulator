@@ -7,7 +7,8 @@ import { clickIntoPage, waitForInteractive } from "./interactive";
  * on, for anyone not using a mouse (a mouse press already put it away). The
  * card said "Click Submit request." while the ring still said "This one.
  * Click it." over the filled shift choice; on Day 6 the ring and "Net pay."
- * stayed on an empty spot after the stub closed. Here every action is done
+ * stayed on an empty spot after the stub closed (the stub now reads inline,
+ * so Day 6 checks the ring goes when the step moves past net pay). Here every action is done
  * from the keyboard, so nothing but the step change can put the ring away.
  */
 
@@ -91,18 +92,21 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       expect(hole && submit && Math.abs(hole.y + hole.height / 2 - (submit.y + submit.height / 2)) < 4).toBe(true);
     });
 
-    test(`Day 6: the ring goes when the stub closes (${lang})`, async ({ page }) => {
+    test(`Day 6: the ring goes when the step moves past net pay (${lang})`, async ({ page }) => {
       test.slow();
       await signUp(page, lang);
       await startOf(page, /Start of Day 6: /);
       await enter(page, page.locator('[data-showme="target-stub"]'));
-      await expect(card(page)).toContainText(t("Find the net pay on this stub.", "pago neto (Net pay)"));
+      await expect(card(page)).toContainText(t("Find the net pay on the pay stub.", "pago neto (Net pay)"));
       await enter(page, showMe(page));
       await expect(ring(page)).toHaveCount(1);
 
-      // Back to the Browser from the keyboard: the stub is gone, so is the ring.
-      await enter(page, card(page).locator(".job-card-primary").first());
+      // The stub now reads inline beside the questions (no trip back to the
+      // Browser). Answer net pay from the keyboard: the card moves on to the
+      // hours, so the ring on net pay goes.
       await expect(appWindow(page)).toContainText(t("What was the net pay on your stub?", "¿Cuál fue el pago neto (Net pay) en tu recibo?"));
+      await enter(page, appWindow(page).getByRole("button", { name: "$571.32", exact: true }));
+      await expect(card(page)).toContainText(t("Select the matching paid hours.", "Selecciona las horas pagadas"));
       await expect(ring(page)).toHaveCount(0);
     });
   });

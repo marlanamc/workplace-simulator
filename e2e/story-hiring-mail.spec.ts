@@ -126,7 +126,7 @@ for (const lang of ['en', 'es'] as const) {
     await page.getByRole('button', { name: /Submit direct deposit|Enviar depósito directo/, exact: true }).click();
     await expect(arrival).toBeVisible();
     await arrival.locator('[data-celebration-continue]').click();
-    await expect(page.locator('[data-job-card]')).toContainText(lang === 'en' ? 'Chris asked for the Q3 notes' : 'Chris pidió las notas del T3');
+    await expect(page.locator('[data-job-card]')).toContainText(lang === 'en' ? 'Share the file with Chris' : 'Comparte el archivo con Chris');
     const card = page.locator('[data-job-card]');
     await page.getByTestId('bookmark-files').click();
     await page.getByRole('textbox').fill('Q3 notes');

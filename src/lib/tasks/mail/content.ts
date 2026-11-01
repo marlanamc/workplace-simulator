@@ -730,8 +730,8 @@ export function callOutSickSaysCannotAttend(body: string): boolean {
 /** The Job Card's correction. Each one names only what is missing. */
 export const SICK_CALL_CORRECTIONS: Record<Exclude<SickCallVerdict, "ok" | "empty">, Localized> = {
   "no-absence": {
-    en: "Tell Maria you cannot work today's shift. For example: I can't come in today.",
-    es: "Dile a Maria que no puedes trabajar tu turno de hoy. Por ejemplo: Hoy no puedo ir.",
+    en: "Maria needs to know you will not come in. Tell her you cannot work today's shift. For example: I can't come in today.",
+    es: "Maria necesita saber que no vas a venir. Dile que no puedes trabajar tu turno de hoy. Por ejemplo: Hoy no puedo ir.",
   },
   "no-day": {
     en: "Say when. Tell Maria it is today's shift.",

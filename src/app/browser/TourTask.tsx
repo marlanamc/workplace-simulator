@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useProgress } from "@/lib/progress-context";
-import { TOUR_COPY, LESSONS, tourEventIntro } from "@/lib/tasks/tour/content";
+import { TOUR_COPY, LESSONS, LESSONS_DOCKED, tourEventIntro } from "@/lib/tasks/tour/content";
+import { useDocked } from "@/lib/use-docked";
 import { welcomeHomeFor } from "@/lib/welcome-home-content";
 import { actForLevel, levelForTrack } from "@/lib/tracks-content";
 import { TASK_ICONS } from "@/lib/icons";
@@ -54,6 +55,8 @@ export default function TourTask({
   const view: View = startAtHelp && ownView === "intro" ? "help" : ownView;
 
   const c = TOUR_COPY[lang];
+  // Docked beside the window, the card cannot be dragged or shrunk: say so.
+  const docked = useDocked();
   const intro = tourEventIntro(lang, displayName);
   const actKey = actForLevel(levelForTrack(currentTrack.key))?.key ?? "act1";
   const home = welcomeHomeFor(actKey, bridgePath);
@@ -191,7 +194,7 @@ export default function TourTask({
         open={helpOpen}
         onClose={onCloseHelp}
         kicker={c.lessonKicker}
-        lesson={LESSONS[lang][0]}
+        lesson={(docked ? LESSONS_DOCKED : LESSONS)[lang][0]}
         tipLabel={c.tipLabel}
         gotItLabel={c.gotIt}
       />

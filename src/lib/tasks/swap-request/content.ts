@@ -104,7 +104,7 @@ export const RIGHT_NOW_STEPS: Localized[] = [
   // The question, not the rule: which shift works is the learner's call. A
   // wrong pick explains why (SWAP_OPTIONS.wrongHint); Help has the rule.
   {
-    en: "Look at the personal calendar on your phone. Pick a shift you can work instead.",
-    es: "Mira el calendario personal de tu teléfono. Elige un turno que sí puedas trabajar.",
+    en: "Look at the calendar on your phone. Pick a different time on Thursday that you can work.",
+    es: "Mira el calendario de tu teléfono. Elige otra hora el jueves que sí puedas trabajar.",
   },
 ];

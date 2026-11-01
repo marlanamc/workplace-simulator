@@ -61,7 +61,7 @@ export const TRACKS: Track[] = [
   {
     key: "mail-etiquette",
     title: { en: "Write to a Coworker", es: "Escríbele a un compañero" },
-    subtitle: { en: "The shape every short work email follows", es: "La forma que sigue todo correo corto de trabajo" },
+    subtitle: { en: "Answer a coworker's question clearly", es: "Responde con claridad la pregunta de un compañero" },
     taskKeys: ["mail-etiquette"],
     awardEmoji: "📧",
   },

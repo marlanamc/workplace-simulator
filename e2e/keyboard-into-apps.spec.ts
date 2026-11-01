@@ -114,8 +114,7 @@ for (const [lang, size] of [["es", { width: 911, height: 512 }], ["en", { width:
       // Day 6: the pay stub list, then the questions after the stub.
       await enterDay(page, /Start of Day 6: /);
       await tabsTo(page, page.locator('[data-showme="target-stub"]'));
-      await page.keyboard.press("Enter");
-      await expect(card(page).locator(".job-card-primary").first()).toBeFocused();
+      // The first question shows with the stub; there is no card button between.
       await page.keyboard.press("Enter");
       await tabsTo(page, page.getByRole("button", { name: "$720.00", exact: true }));
     });

@@ -59,7 +59,9 @@ import { Paperclip, Star, Inbox, Send, FileText } from "lucide-react";
 import NeedAStart from "@/components/task/NeedAStart";
 import MailSignature from "@/components/task/MailSignature";
 import { signatureFor } from "@/lib/mail-greeting";
-import { letterBody, sortInboxByTime, storyBodyFor, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
+import { letterBody, sortInboxByTime, storyBodyFor, storyMailAfter, storyMailsUpTo, type InboxRow } from "@/lib/story-beats";
+import { READ_PAUSE_TASK_KEYS } from "@/lib/tasks/registry";
+import { readPauseStage } from "@/lib/read-pause";
 import type { Localized, SubmissionContent } from "@/lib/task-types";
 import { taskNeedsTeacherReview } from "@/lib/curriculum-catalog";
 import { useWindowManager } from "@/lib/window-manager";
@@ -79,7 +81,7 @@ import {
 import { TIMECLOCK_MAIL_FLAG } from "@/lib/story-beats";
 
 import { useLesson } from "@/lib/lesson-context";
-import { useDocked } from "@/lib/use-docked";
+import { useNarrowDocked } from "@/lib/use-docked";
 import { mailDraftFor, mailDraftKey, readMailDraft, type MailDraft } from "@/lib/mail-draft";
 import { FIRST_REPLY_GUIDANCE, FIRST_REPLY_EXAMPLE, OPENING_CORRECTIONS, OPENING_MESSAGES, nextOpeningIndex, openingLines, openingReplyVerdict, openingInstruction, type OpeningReply } from '@/lib/tasks/mail/opening';
 import { useJobCardOptional } from '@/lib/job-card-context';
@@ -196,6 +198,10 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // A Guided lesson spells out every click, so the opening's fading scaffold stays up.
   const lessonRun = useLesson();
   const hiring = lessonRun ? undefined : hiringMailForTask(nextKey);
+  // The reply the Job Card's "Read reply" is waiting on, if any. Mail opens
+  // on it, so "Read the reply" never lands on an empty reading pane.
+  const pausedTask = lessonRun ? undefined : READ_PAUSE_TASK_KEYS.find((k) => readPauseStage(storyFlags, k) === "reading");
+  const pausedReply = pausedTask ? storyMailAfter(pausedTask) : undefined;
   // Day 10's upload job starts here: Renata's email carries the file to download.
   // It is the job's own source, so a lesson shows it too.
   const uploadMailActive = nextKey === "upload-schedule";
@@ -218,7 +224,7 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // Day 5's sick call), Mail opens at its inbox, as a real one would. The
   // done screen is only for the moment the job is finished (Wave 5 F-22).
   const [view, setView] = useState<View>(
-    !timeclockMailActive && restored ? restored.view : completedTaskKeys.includes(activeMailTask) ? "empty" : opening && nextOpeningIndex(openingReplies) === 3 ? "opening-sent" : isComposeOnly(activeMailTask) ? "compose" : "empty",
+    pausedReply ? "story" : !timeclockMailActive && restored ? restored.view : completedTaskKeys.includes(activeMailTask) ? "empty" : opening && nextOpeningIndex(openingReplies) === 3 ? "opening-sent" : isComposeOnly(activeMailTask) ? "compose" : "empty",
   );
   const [body, setBody] = useState(() => {
     if (restored) return restored.body;
@@ -234,8 +240,8 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
   // The file selected in the picker's preview, before it is attached.
   const [pickerPick, setPickerPick] = useState<string | null>(null);
   const [bridgeOutEligible, setBridgeOutEligible] = useState(false);
-  const [openStory, setOpenStory] = useState<InboxRow | null>(null);
-  const [readStoryKeys, setReadStoryKeys] = useState<string[]>([]);
+  const [openStory, setOpenStory] = useState<InboxRow | null>(pausedReply ?? null);
+  const [readStoryKeys, setReadStoryKeys] = useState<string[]>(pausedReply ? [pausedReply.key] : []);
   const [replyAudience, setReplyAudience] = useState<"dana" | "all" | null>(timeclockMailActive ? null : restored?.replyAudience ?? null);
   // The text of the last send that was refused. While the box still holds
   // exactly that, the card keeps asking for the fix instead of saying "Click
@@ -318,6 +324,12 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
       // card keeps asking for the fix (Phase 3 N-5).
       setRejectedBody(draft?.rejectedBody ?? null);
       setSendMissed(false);
+    }
+    // Already open when "Read reply" was pressed: switch to that reply.
+    if (pausedReply) {
+      setOpenStory(pausedReply);
+      setReadStoryKeys((keys) => (keys.includes(pausedReply.key) ? keys : [...keys, pausedReply.key]));
+      setView("story");
     }
   }
 
@@ -672,10 +684,11 @@ export default function MailClient({ welcomeWalkthroughActive = false }: { welco
     });
 
   // One pane at a time (the list, or one message with a way back) when the
-  // window is narrow: in a lesson, or beside the docked Job Card. Three
-  // columns need about 800px, and a docked window at 150% text has 567.
-  const docked = useDocked();
-  const singlePane = Boolean(lessonRun) || docked;
+  // window is narrow: in a lesson, or beside the docked Job Card on a small
+  // screen. Three columns need about 800px; a docked window at 150% text has
+  // 567, but at 1366 it has about 1000, so Mail keeps its normal layout there.
+  const narrowDocked = useNarrowDocked();
+  const singlePane = Boolean(lessonRun) || narrowDocked;
   // The clock-in message (Day 3) is written in the right pane whatever the
   // view is, so it counts as an open message too.
   const lessonReading = singlePane && (view !== "empty" || timeclockMailActive);

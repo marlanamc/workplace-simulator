@@ -515,7 +515,7 @@ export const TASKS: Record<TaskKey, TaskDescriptor> = {
         peerHelp: { en: "Ask your partner what they checked; let them control their own computer.", es: "Pregunte qué revisó su compañero; deje que controle su computadora." },
       },
     },
-    jobCardLine: { en: "Compare your work schedule with your phone calendar. Select the shift at the same time as a personal appointment. Request a shift you can work instead.", es: "Compara tu horario de trabajo con el calendario de tu teléfono. Selecciona el turno a la misma hora que una cita personal. Solicita otro turno que puedas trabajar." },
+    jobCardLine: { en: "Find the shift at the same time as an appointment on your phone. Click Request a swap on that shift. Ask for a time you can work.", es: "Busca el turno a la misma hora que una cita de tu teléfono. Haz clic en Pedir un cambio en ese turno. Pide una hora que sí puedas trabajar." },
     key: "schedule",
     built: true,
     label: { en: "Ask for a shift swap", es: "Pide un cambio de turno" },

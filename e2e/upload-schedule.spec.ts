@@ -77,7 +77,7 @@ test("Day 10: download from Mail, upload into Schedules, then the share job", as
   await card.getByRole("button", { name: /^Open Drive/ }).click();
   await page.getByTestId("bookmark-files").click();
   await expect(page.getByTestId("upload-done-result")).toHaveCount(0);
-  await expect(card).toContainText(/Rename this week's schedule/);
+  await expect(card).toContainText(/Find this week[’']s schedule\. Rename it/);
   await page.getByRole("button", { name: /Cafe Shared Drive/ }).first().click();
   await expect(page.getByRole("button", { name: /sched_92126\.pdf/ })).toBeVisible();
 });

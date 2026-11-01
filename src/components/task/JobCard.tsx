@@ -214,7 +214,7 @@ interface Script {
 export default function JobCard() {
   const { lang, completedTaskKeys, currentTrack, displayName, celebrateLevel, celebrateTrack, storyFlags, setStoryFlag, bridgePath, courseRoute, chooseCourseRoute, routeSaving, saveError, saving, retrySave } =
     useProgress();
-  const { active, openApp, minimizeActive, revisitTab } = useWindowManager();
+  const { active, openApp, minimizeActive, revisitTab, browserTab } = useWindowManager();
   const lesson = useLesson();
   const router = useRouter();
   const {
@@ -282,7 +282,7 @@ export default function JobCard() {
   // can see they covered.
   const [heldAt, setHeldAt] = useState<string | null>(null);
   const [collapsed, setCollapsed] = useState(false);
-  // Below about 1100px the card is a fixed strip on the left and the app
+  // Below 1440px the card is a fixed strip on the left and the app
   // window narrows beside it (`.story-desktop` in globals.css): nothing is
   // under it, so it has no corner to choose, nothing to drag and nothing to
   // fold out of the way. A lesson already keeps its own rail at every size.
@@ -631,6 +631,7 @@ export default function JobCard() {
         const target = TASKS[pendingPauseKey].readPause!;
         const stage = readPauseStage(storyFlags, pendingPauseKey);
         const rp = READ_PAUSE_COPY[lang];
+        const replyOnScreen = active === target.appKey && (!target.tab || browserTab === target.tab);
         return {
           badge: "✓",
           kicker: c.doneKicker,
@@ -648,6 +649,14 @@ export default function JobCard() {
                 setStoryFlag(readPauseFlagKey(pendingPauseKey), "acknowledged");
                 minimizeActive();
               },
+          // Back from a reload or a closed window mid-pause: the reply is no
+          // longer on screen, so keep a way back to it under Continue.
+          ...(stage === "reading" && !replyOnScreen
+            ? {
+                secondaryLabel: rp.readReply,
+                onSecondary: () => openApp(target.appKey, { tab: target.tab, section: target.section }),
+              }
+            : {}),
         };
       }
     }

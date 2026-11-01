@@ -45,12 +45,15 @@ for (const lang of ['en', 'es'] as const) {
     await page.keyboard.press('Space');
     await expect(card).toHaveAttribute('data-practice', 'complete');
     await card.getByRole('button', { name: startName }).click();
-    await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
+    await expect(card).toContainText(lang === 'en' ? 'Look at the bookmarks for work websites.' : 'Mira los marcadores de los sitios del trabajo.');
     // The keyboard lands on the card's next button, not the fold button
     // (where Enter would hide the card) (Wave 5 F-14).
     await expect(card.locator('.job-card-primary')).toBeFocused();
     // Practice is offered once, at the welcome; it never comes back mid-task.
     await expect(card.getByRole('button', { name: practiceName })).toHaveCount(0);
+    // Moving the card by keyboard is floating-card behavior: at 1366 the card
+    // docks beside the window and has no drag handle, so widen the screen.
+    await page.setViewportSize({ width: 1600, height: 900 });
     const handle = card.getByTestId('job-card-drag-handle');
     await handle.focus();
     await page.keyboard.press('ArrowRight');
@@ -64,12 +67,12 @@ for (const lang of ['en', 'es'] as const) {
     await card.getByRole('button', { name: practiceName }).click();
     await card.getByRole('button', { name: skipName }).click();
     await expect(card).toHaveAttribute('data-practice', 'inactive');
-    await expect(card).toContainText(lang === 'en' ? 'These are your bookmarks.' : 'Estos son tus marcadores.');
+    await expect(card).toContainText(lang === 'en' ? 'Look at the bookmarks for work websites.' : 'Mira los marcadores de los sitios del trabajo.');
     // A reload keeps the learner's place (Wave 5 F-7): they are in the tour
     // now, so the welcome beat and its practice offer do not come back.
     // Skipping is final; a Studio fresh account brings the welcome back.
     await page.reload();
-    await expect(card).toContainText(lang === 'en' ? 'Look around this computer.' : 'Conoce esta computadora.');
+    await expect(card).toContainText(lang === 'en' ? 'Open the practice computer.' : 'Abre la computadora de práctica.');
     await expect(card).not.toContainText(lang === 'en' ? 'This card tells you what to do.' : 'Esta tarjeta te dice qué hacer.');
     await expect(card.getByRole('button', { name: practiceName })).toHaveCount(0);
   });
@@ -94,6 +97,9 @@ test('practice exit remains reachable at a 200% equivalent Chromebook viewport',
 
 
 test('drag remains available and Studio fresh start restores the welcome choice', async ({ page }) => {
+  // The card floats (and can be dragged) only wider than a Chromebook; below
+  // 1440px it docks beside the window.
+  await page.setViewportSize({ width: 1600, height: 900 });
   await signup(page, 'en');
   const card = page.locator('[data-job-card]');
   const handle = card.getByTestId('job-card-drag-handle');
@@ -103,7 +109,7 @@ test('drag remains available and Studio fresh start restores the welcome choice'
   const box = await handle.boundingBox();
   await page.mouse.move(box!.x + 30, box!.y + 20);
   await page.mouse.down();
-  await page.mouse.move(1100, 600, { steps: 12 });
+  await page.mouse.move(1400, 750, { steps: 12 });
   await page.mouse.up();
   await expect(card).toHaveAttribute('data-corner', 'br');
   await expect(card.getByRole('button', { name: startName })).toBeVisible();

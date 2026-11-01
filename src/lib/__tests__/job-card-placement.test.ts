@@ -195,14 +195,18 @@ describe("learner moves", () => {
 });
 
 describe("isDockedWidth (Wave 5 F-3, F-16, F-17)", () => {
-  it("docks at Chromebook 150% text and floats at 100%", () => {
+  it("docks on every common Chromebook and floats on a wide desktop", () => {
     expect(isDockedWidth(ZOOMED.width)).toBe(true);
-    expect(isDockedWidth(LAPTOP.width)).toBe(false);
+    // 1366x768: a floating card covered part of the inbox or schedule on
+    // most screens, because no corner was clear (Day 1–3 playthrough).
+    expect(isDockedWidth(LAPTOP.width)).toBe(true);
+    expect(isDockedWidth(1280)).toBe(true);
+    expect(isDockedWidth(1920)).toBe(false);
   });
   it("switches exactly at the breakpoint the CSS uses", () => {
     expect(isDockedWidth(DOCK_MAX_WIDTH)).toBe(true);
     expect(isDockedWidth(DOCK_MAX_WIDTH + 1)).toBe(false);
-    expect(isDockedWidth(1100)).toBe(false);
+    expect(isDockedWidth(1440)).toBe(false);
   });
 });
 

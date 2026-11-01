@@ -224,14 +224,14 @@ function LoginWallpaper({ dimmed, hideCenterTitle }: { dimmed?: boolean; hideCen
               className="mt-3 font-medium text-white/90"
               style={{ fontSize: 44, lineHeight: 1.08, letterSpacing: "-0.03em", maxWidth: "11em" }}
             >
-              Workplace Simulator Game
+              Workplace Simulator
             </p>
           ) : (
             <h1
               className="mt-3 font-medium text-white/90"
               style={{ fontSize: 44, lineHeight: 1.08, letterSpacing: "-0.03em", maxWidth: "11em" }}
             >
-              Workplace Simulator Game
+              Workplace Simulator
             </h1>
           )}
         </div>
@@ -437,7 +437,7 @@ export default function LoginForm({ next, paused = false }: { next: string; paus
         <div className="flex flex-1 flex-col items-center justify-center px-5 py-6">
           {mode === "picker" && (
             <>
-              <LoginHarborMark school="EBHCS" title="Workplace Simulator Game" />
+              <LoginHarborMark school="EBHCS" title="Workplace Simulator" />
               {recents.length === 0 && !paused && (
                 <p className="mt-auto mb-2 max-w-[28ch] text-center text-[16px] text-white/80">
                   {c.pickerHint}
