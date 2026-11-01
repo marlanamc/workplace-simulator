@@ -11,11 +11,11 @@ import { affirms, denies, normalizeReply } from "@/lib/grading/meaning";
 export const SHIFT_FACTS: Record<Lang, { heading: string; lines: string[] }> = {
   en: {
     heading: "What happened on your shift",
-    lines: ["The shift ran smoothly.", "It got a little busy around 11 AM."],
+    lines: ["After the clock-in problem, the shift went well.", "It got a little busy around 11 AM."],
   },
   es: {
     heading: "Lo que pasó en tu turno",
-    lines: ["El turno salió bien.", "Se puso un poco ocupado alrededor de las 11 AM."],
+    lines: ["Después del problema con la entrada, el turno salió bien.", "Se puso un poco ocupado alrededor de las 11 AM."],
   },
 };
 
